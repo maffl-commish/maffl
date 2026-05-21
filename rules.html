@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a2e50">
+<title>Rulebook — MAFFL HQ</title>
+<meta name="description" content="The official MAFFL rulebook — general rules, auction draft, prize schedule, playoff format, credit system, and current league assignments.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --surface: #ffffff;
+    --page-bg: #f8f9fb;
+    --navy: #1a2e50;
+    --navy-soft: rgba(26, 46, 80, 0.08);
+    --navy-shadow: rgba(26, 46, 80, 0.12);
+    --navy-shadow-strong: rgba(26, 46, 80, 0.18);
+    --gold: #f5a623;
+    --gold-dark: #d98e10;
+    --gold-soft: #fff4e0;
+    --muted: #8a9ab5;
+    --border: #e2e6ed;
+    --win: #1d9e75;
+    --loss: #c04a4a;
+    --display: "Barlow Condensed", system-ui, sans-serif;
+    --body: "Barlow", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--body);
+    color: var(--navy);
+    background: var(--page-bg);
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.4;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  /* ---------- Header (matches index.html / weekly.html) ---------- */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand-logo { height: 48px; width: auto; display: block; flex: 0 0 auto; }
+  .brand-wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .site-nav { display: flex; align-items: center; gap: 22px; }
+  .site-nav a {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 8px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .site-nav a:hover { color: var(--gold-dark); }
+  .site-nav a.current { border-bottom-color: var(--gold); }
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--navy);
+    font-size: 24px;
+    line-height: 1;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Page title block ---------- */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 56px;
+  }
+  .page-title-block {
+    margin-bottom: 28px;
+  }
+  .page-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .gold-rule {
+    height: 1px;
+    background: var(--gold);
+    border: 0;
+    margin: 0;
+  }
+
+  /* ---------- Accordion sections ---------- */
+  .rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .rule-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+  }
+  .rule-section.open {
+    border-color: var(--navy-shadow);
+    box-shadow: 0 4px 14px var(--navy-soft);
+  }
+  .rule-head {
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .rule-head:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -2px;
+  }
+  .rule-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+  .rule-chev {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    flex: 0 0 auto;
+    transition: transform 0.18s ease;
+  }
+  .rule-section.open .rule-head .rule-chev {
+    transform: rotate(180deg);
+    color: var(--navy);
+  }
+  .rule-body {
+    display: none;
+    padding: 0 18px 18px 18px;
+    border-left: 3px solid transparent;
+  }
+  .rule-section.open .rule-body {
+    display: block;
+    border-left-color: var(--navy);
+  }
+  .rule-body > * { margin-top: 16px; }
+  .rule-body > *:first-child { margin-top: 0; }
+
+  /* ---------- Body content typography ---------- */
+  .rule-body p,
+  .rule-body li {
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--navy);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .rule-body p + p { margin-top: 12px; }
+  .rule-body ul {
+    list-style: disc;
+    padding-left: 20px;
+    margin: 0;
+  }
+  .rule-body ul li + li { margin-top: 8px; }
+  .rule-body strong { font-weight: 700; }
+
+  .subhead {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+  .subhead + * { margin-top: 8px !important; }
+
+  .callout {
+    background: var(--page-bg);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+  .callout p { font-size: 14px; }
+  .callout .callout-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- Tables ---------- */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table thead th {
+    background: var(--navy);
+    color: #fff;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: left;
+    padding: 10px 12px;
+  }
+  .data-table tbody td {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .data-table tbody tr:first-child td { border-top: 0; }
+  .data-table .row-label {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .data-table td.num,
+  .data-table th.num {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* League comparison — stack on mobile */
+  .comparison-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ---------- Prize formula list ---------- */
+  .prize-block + .prize-block { margin-top: 18px; }
+  .prize-block-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+
+  /* ---------- Playoff bracket ---------- */
+  .bracket {
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .bracket-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px 18px;
+    align-items: center;
+    text-align: center;
+  }
+  .bracket-seed {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .bracket-seed.bye {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .bracket-stage-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    grid-column: 1 / -1;
+    text-align: center;
+    margin-top: 6px;
+    margin-bottom: 2px;
+  }
+  .bracket-note {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  /* ---------- Tiebreaker columns ---------- */
+  .tiebreaker-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .tiebreaker-col {
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .tiebreaker-col h4 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 8px;
+  }
+  .tiebreaker-col ol {
+    margin: 0;
+    padding-left: 22px;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .tiebreaker-col ol li + li { margin-top: 4px; }
+
+  /* ---------- Owner lists ---------- */
+  .owner-block + .owner-block { margin-top: 18px; }
+  .owner-block-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+  .owner-list {
+    columns: 2;
+    column-gap: 24px;
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--navy);
+    line-height: 1.7;
+  }
+  .owner-list li {
+    break-inside: avoid;
+    padding-left: 0;
+  }
+
+  /* ---------- Inline link ---------- */
+  .inline-link {
+    color: var(--navy);
+    text-decoration: underline;
+    text-decoration-color: var(--navy-shadow);
+    text-underline-offset: 3px;
+    font-weight: 700;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  }
+  .inline-link:hover {
+    color: var(--gold-dark);
+    text-decoration-color: var(--gold);
+  }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1024px) {
+    .site-nav { gap: 16px; }
+    .site-nav a { font-size: 12px; }
+  }
+
+  @media (max-width: 767px) {
+    .header-inner { padding: 12px 18px; }
+    .brand-logo { height: 40px; }
+    .brand-wordmark { font-size: 20px; }
+
+    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 18px var(--navy-soft);
+      padding: 8px 0;
+    }
+    .site-nav.open { display: flex; }
+    .site-nav a {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .site-nav a:last-child { border-bottom: 0; }
+    .site-nav a.current { background: var(--page-bg); }
+
+    main { padding: 20px 16px 40px; }
+
+    .page-title { font-size: 24px; }
+    .page-subtitle { font-size: 13px; }
+
+    .rule-head { padding: 12px 14px; min-height: 56px; }
+    .rule-title { font-size: 15px; }
+    .rule-body { padding: 0 14px 16px 14px; }
+
+    /* League comparison: stack to vertical pairs */
+    .comparison-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .comparison-row {
+      background: var(--page-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .comparison-row-label {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .comparison-row-values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .comparison-cell {
+      font-family: var(--body);
+      font-size: 14px;
+      color: var(--navy);
+    }
+    .comparison-cell .tier-label {
+      display: block;
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+    .comparison-wrap { display: none; }
+
+    .tiebreaker-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    .bracket-grid { grid-template-columns: 1fr; gap: 8px; }
+    .bracket-stage-label { margin-top: 10px; }
+
+    .owner-list { columns: 1; }
+  }
+
+  @media (min-width: 768px) {
+    .comparison-stack { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rule-section, .rule-chev { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand" aria-label="MAFFL HQ home">
+      <img src="maffl-logo.png" alt="MAFFL" class="brand-logo">
+      <span class="brand-wordmark">MAFFL HQ</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-controls="primaryNav" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
+
+    <nav class="site-nav" id="primaryNav" aria-label="Primary">
+      <a href="weekly.html">Weekly</a>
+      <a href="rules.html" class="current" aria-current="page">Rulebook</a>
+      <a href="power-rankings.html">Power Rankings</a>
+      <a href="draft.html">Auction Draft</a>
+      <a href="stats.html">Stats</a>
+      <a href="history.html">History</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-title-block">
+    <h1 class="page-title">Rulebook</h1>
+    <p class="page-subtitle">The official MAFFL ruleset — current as of August 2026</p>
+    <hr class="gold-rule">
+  </div>
+
+  <div class="rules-list" id="rulesList">
+
+    <!-- =========================================================
+         SECTION 1 — General Rules
+         ========================================================= -->
+    <section class="rule-section" data-section="general">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-general">
+        <h2 class="rule-title">General Rules</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-general">
+        <ul>
+          <li>MAFFL will consist of 2 espn.com leagues and player pools, the &ldquo;MAFFL Upper-Tier&rdquo; league and the &ldquo;MAFFL Lower-Tier&rdquo; league.</li>
+          <li>Seasonal Entry Fee and Prizes, along with the new Credit system, are common to all MAFFL owners regardless of league placement.</li>
+          <li>The 2 leagues will have an identical rule set, the only exceptions being league size, divisions and post-season play.</li>
+          <li>Each season, 3 teams from the Upper-Tier will be relegated and 3 teams from the Lower-Tier will be promoted (see Promotion/Relegation Overview).</li>
+          <li>In-Season game rules will adhere to the ESPN League Settings (ESPN.com).</li>
+          <li>Following the 2024 placements, all new owners will enter in the Lower-Tier league.</li>
+          <li>We will fill unexpected Upper-Tier league openings with the highest Credit total from the Lower-Tier league (tiebreaker: the highest ranking team from the previous season).</li>
+          <li>The commissioner has final say on any disputes but will consider league votes for fairness.</li>
+        </ul>
+
+        <h3 class="subhead">Lower-Tier Odd-Team Rule (MAFFL Ghost)</h3>
+        <ul>
+          <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
+          <li>A placeholder team called &ldquo;MAFFL Ghost&rdquo; is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.</li>
+          <li>Each week, the commissioner totals all real teams&rsquo; scores, divides by the number of real teams, and applies that average to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.</li>
+          <li>The real team matched up against MAFFL Ghost that week wins if they beat the average and loses if they don&rsquo;t.</li>
+          <li>MAFFL Ghost does not draft, earn credits, win prizes, or affect promotion/relegation.</li>
+          <li>All real teams remain eligible for weekly high score prizes every week, including the team facing MAFFL Ghost.</li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-label">Example</span>
+          <p>Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 2 — League Comparison
+         ========================================================= -->
+    <section class="rule-section" data-section="comparison">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-comparison">
+        <h2 class="rule-title">League Comparison</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-comparison">
+
+        <!-- Desktop / tablet table -->
+        <div class="comparison-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">&nbsp;</th>
+                <th scope="col">Upper-Tier</th>
+                <th scope="col">Lower-Tier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">League Entry Fee</td><td>$100</td><td>$100</td></tr>
+              <tr><td class="row-label">League Size</td><td>12 Teams</td><td>Minimum 6</td></tr>
+              <tr><td class="row-label">Divisions</td><td>Yes</td><td>No</td></tr>
+              <tr><td class="row-label">Conferences</td><td>No</td><td>No</td></tr>
+              <tr><td class="row-label">Can Earn / Spend Credits</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td class="row-label">MAFFL Championship Playoff</td><td>Yes</td><td>No</td></tr>
+              <tr><td class="row-label">MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
+              <tr><td class="row-label">Promotion Showdown</td><td>No</td><td>Yes</td></tr>
+              <tr><td class="row-label">Relegation Showdown</td><td>Yes</td><td>No</td></tr>
+              <tr><td class="row-label">Auction Draft Slot 1</td><td>No</td><td>Yes</td></tr>
+              <tr><td class="row-label">Auction Draft Slot 2</td><td>Yes</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile stacked view -->
+        <div class="comparison-stack" aria-hidden="true">
+          <div class="comparison-row"><div class="comparison-row-label">League Entry Fee</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>$100</div><div class="comparison-cell"><span class="tier-label">Lower</span>$100</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">League Size</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>12 Teams</div><div class="comparison-cell"><span class="tier-label">Lower</span>Minimum 6</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Divisions</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Conferences</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>No</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Can Earn / Spend Credits</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>Yes</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">MAFFL Championship Playoff</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">MAFFL Cup Awarded</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Promotion Showdown</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>No</div><div class="comparison-cell"><span class="tier-label">Lower</span>Yes</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Relegation Showdown</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Auction Draft Slot 1</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>No</div><div class="comparison-cell"><span class="tier-label">Lower</span>Yes</div></div></div>
+          <div class="comparison-row"><div class="comparison-row-label">Auction Draft Slot 2</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 3 — Auction Draft
+         ========================================================= -->
+    <section class="rule-section" data-section="auction">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-auction">
+        <h2 class="rule-title">Auction Draft</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-auction">
+        <ul>
+          <li>We will utilize the espn.com platform to facilitate our league auctions.</li>
+          <li>Each team is assigned a <strong>$200 budget</strong>. Minimum bid = <strong>$1</strong>. Maximum bid = Team Cap (($200 &minus; Amount spent) &minus; (Remaining roster spots to be filled)).</li>
+          <li>See espn.com for more auction draft specific rules.</li>
+          <li><strong>Effective 2025:</strong> The Kicker (K) roster position has been permanently eliminated from the auction draft. All teams carry one fewer roster spot as a result. Roster sizes: 25 picks (2005), 16 picks (2006&ndash;2008), 17 picks (2009&ndash;2024), <strong>22 picks (2025+)</strong>.</li>
+        </ul>
+
+        <h3 class="subhead">Draft Schedule</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Slot</th>
+              <th scope="col">League</th>
+              <th scope="col">Window</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-label">Slot 1</td><td>Lower-Tier</td><td>Labor Day, 8:00&ndash;10:00 AM</td></tr>
+            <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 9:30&ndash;11:30 AM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 4 — Prize Schedule
+         ========================================================= -->
+    <section class="rule-section" data-section="prizes">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-prizes">
+        <h2 class="rule-title">Prize Schedule</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-prizes">
+        <ul>
+          <li><strong>Entry Fee:</strong> Each team pays $100 per season to participate.</li>
+          <li><strong>Total Prize Pool:</strong> Calculated as $100 &times; total number of teams across both leagues.</li>
+          <li><strong>Prize Allocation:</strong>
+            <ul>
+              <li><strong>67% (2/3)</strong> of the total prize pool goes to the Upper-Tier League.</li>
+              <li><strong>33% (1/3)</strong> of the total prize pool goes to the Lower-Tier League.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="prize-block">
+          <h3 class="prize-block-title">Upper-Tier Distribution (67% of Prize Pool)</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Placement</th>
+                <th scope="col">% of Upper-Tier Pool</th>
+                <th scope="col">Payout Formula</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">Champion</td><td>50%</td><td>0.50 &times; Upper-Tier Pool</td></tr>
+              <tr><td class="row-label">Runner-Up</td><td>15%</td><td>0.15 &times; Upper-Tier Pool</td></tr>
+              <tr><td class="row-label">Division Winner(s)</td><td>15% (divided by 4 winners)</td><td>0.15 &times; Upper-Tier Pool</td></tr>
+              <tr><td class="row-label">Highest Weekly Score Bonus</td><td>20% (divided into 14 payouts)</td><td>0.20 &times; Upper-Tier Pool</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="prize-block">
+          <h3 class="prize-block-title">Lower-Tier Distribution (33% of Prize Pool)</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Placement</th>
+                <th scope="col">% of Lower-Tier Pool</th>
+                <th scope="col">Payout Formula</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">Champion</td><td>50%</td><td>0.50 &times; Lower-Tier Pool</td></tr>
+              <tr><td class="row-label">Runner-Up</td><td>15%</td><td>0.15 &times; Lower-Tier Pool</td></tr>
+              <tr><td class="row-label">Promotion Showdown Winner</td><td>15%</td><td>0.15 &times; Lower-Tier Pool</td></tr>
+              <tr><td class="row-label">Highest Weekly Score Bonus</td><td>20% (divided into 14 payouts)</td><td>0.20 &times; Lower-Tier Pool</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Example Calculation</span>
+          <p><strong>If there are 12 teams in the Upper-Tier and 8 teams in the Lower-Tier:</strong></p>
+          <ul style="margin-top:8px">
+            <li>Total Prize Pool: $100 &times; (12 + 8) = <strong>$2,000</strong></li>
+            <li>Upper-Tier Pool (67%) = <strong>$1,340</strong></li>
+            <li>Lower-Tier Pool (33%) = <strong>$660</strong></li>
+            <li>Champion of Lower-Tier would receive <strong>$330</strong> (50% of $660)</li>
+            <li>Division Winner in Upper-Tier would receive <strong>$50.25</strong> in prizes (15% of $1,340, divided by 4)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 5 — Playoff Format
+         ========================================================= -->
+    <section class="rule-section" data-section="playoffs">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-playoffs">
+        <h2 class="rule-title">Playoff Format</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-playoffs">
+        <h3 class="subhead">Upper-Tier MAFFL Championship Playoff (Top 6 Teams)</h3>
+        <p>The top 6 seeds from the Upper-Tier qualify. The #1 and #2 seeds receive a first-round bye. #4 hosts #5 and #3 hosts #6 in the Wild Card round; winners advance to face the #1 and #2 seeds respectively.</p>
+
+        <div class="bracket" aria-label="Upper-Tier playoff bracket">
+          <div class="bracket-grid">
+            <div class="bracket-stage-label">Wild Card &mdash;&gt; Semifinals &mdash;&gt; Championship</div>
+
+            <div class="bracket-seed">#4 Seed</div>
+            <div></div>
+            <div class="bracket-seed bye">#1 Seed (BYE)</div>
+
+            <div class="bracket-seed">#5 Seed</div>
+            <div></div>
+            <div></div>
+
+            <div class="bracket-seed">#3 Seed</div>
+            <div></div>
+            <div class="bracket-seed bye">#2 Seed (BYE)</div>
+
+            <div class="bracket-seed">#6 Seed</div>
+            <div></div>
+            <div></div>
+          </div>
+          <p class="bracket-note">Winners of the #4/#5 and #3/#6 Wild Card games advance to face the #1 and #2 seeds. Semifinal winners meet in the MAFFL Championship.</p>
+        </div>
+
+        <h3 class="subhead">Tiebreakers</h3>
+        <div class="tiebreaker-grid">
+          <div class="tiebreaker-col">
+            <h4>General / Wildcard</h4>
+            <ol>
+              <li>Record (W/L %)</li>
+              <li>Credit Balance</li>
+              <li>Total Points For</li>
+            </ol>
+          </div>
+          <div class="tiebreaker-col">
+            <h4>Division</h4>
+            <ol>
+              <li>Record (W/L %)</li>
+              <li>Credit Balance</li>
+              <li>Division Record</li>
+              <li>Total Points For</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 6 — Annual Milestones
+         ========================================================= -->
+    <section class="rule-section" data-section="milestones">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-milestones">
+        <h2 class="rule-title">Annual Milestones</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-milestones">
+
+        <div>
+          <h3 class="subhead">In-Season</h3>
+          <table class="data-table" style="margin-top:8px">
+            <thead>
+              <tr>
+                <th scope="col">Milestone</th>
+                <th scope="col">Timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">FAAB Budget Set</td><td>Prior to Wk 1 kickoff</td></tr>
+              <tr><td class="row-label">First Weekly FAA Processes</td><td>Prior to Wk 1 kickoff</td></tr>
+              <tr><td class="row-label">Regular Season</td><td>NFL Wks 1&ndash;14</td></tr>
+              <tr><td class="row-label">FAAB Reset ($100)</td><td>Prior to Wk 15 kickoff</td></tr>
+              <tr><td class="row-label">Post Season</td><td>NFL Wks 15&ndash;17</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 class="subhead">Off-Season</h3>
+          <table class="data-table" style="margin-top:8px">
+            <thead>
+              <tr>
+                <th scope="col">Milestone</th>
+                <th scope="col">Timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">Season Prizes Awarded / Season Credits Issued</td><td>Following NFL Wk 17</td></tr>
+              <tr><td class="row-label">Promotions/Relegations Issued</td><td>Following NFL Wk 17</td></tr>
+              <tr><td class="row-label">New Season Begins 20##&ndash;20##</td><td>August 1st</td></tr>
+              <tr><td class="row-label">Seasonal Divisions Established (Upper-Tier Only)</td><td>August 1st</td></tr>
+              <tr><td class="row-label">Window to spend credits on division realignment</td><td>August 1st &ndash; Labor Day</td></tr>
+              <tr><td class="row-label">Draft</td><td>Labor Day</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 7 — Credit System
+         ========================================================= -->
+    <section class="rule-section" data-section="credits">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-credits">
+        <h2 class="rule-title">Credit System</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-credits">
+
+        <h3 class="subhead">Overview</h3>
+        <ul>
+          <li>The credit system creates a new league currency, issued to owners based on each team&rsquo;s performance over a season and across multiple seasons.</li>
+          <li>Credits are awarded for both overall season outcomes and specific in-season achievements (bonus points).</li>
+          <li>The credit system does not directly affect promotion or relegation.</li>
+          <li>Both Upper-Tier and Lower-Tier are rewarded on a similar scale, ensuring fairness regardless of league level.</li>
+          <li>Credit balance carries weight, and earned credits can be spent for competitive perks.</li>
+        </ul>
+
+        <h3 class="subhead">Rules</h3>
+        <ul>
+          <li>The &ldquo;Owner Credit Balance&rdquo; tab will serve as the source of truth when utilizing the Credit Balance for tiebreaking purposes.</li>
+          <li>All Credit transactions will be logged in the &ldquo;Credit Log&rdquo; tab.</li>
+          <li>All credits will be awarded at the end of the season.</li>
+          <li>Each season&rsquo;s total (Outcome Credits + Bonus Credits) is added to a running cumulative credits total.</li>
+        </ul>
+
+        <h3 class="subhead">Impact</h3>
+        <ul>
+          <li>Credit Balance serves as the tiebreaker for all division, playoff and end-of-season seeding.</li>
+          <li>Determines annual division alignment for the Upper-Tier League (1/6/12; 2/5/11; 3/4/10; 7/8/9). Tiebreakers determined by previous season W/L%, then total points.</li>
+          <li>Determines Upper-Tier placement if unexpected openings occur.</li>
+          <li>Credits are earned and can be spent (see Credit Overview tab).</li>
+          <li>Credits can be traded directly or packaged with players. (These trades adhere to the normal trade policy and deadlines.)</li>
+        </ul>
+
+        <p>To submit a credit request, use the official <a class="inline-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Credit Submission Form</a>. All transactions require commissioner approval.</p>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 8 — 2026 League Assignments
+         ========================================================= -->
+    <section class="rule-section" data-section="assignments">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-assignments">
+        <h2 class="rule-title">2026 League Assignments</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-assignments">
+
+        <div class="owner-block">
+          <h3 class="owner-block-title">Upper-Tier 2026 (12 owners)</h3>
+          <ul class="owner-list">
+            <li>BJ Funari</li>
+            <li>Braiden Snyder</li>
+            <li>Brian Murello / Ron Murello</li>
+            <li>Dan Reilly</li>
+            <li>David Murello</li>
+            <li>Ed Peters</li>
+            <li>Jacob Nickman</li>
+            <li>Joe Reilly</li>
+            <li>Jon Fetrow</li>
+            <li>Jon Murello / Rick Simmons</li>
+            <li>Mike Murello</li>
+            <li>Tony Trozzo</li>
+          </ul>
+        </div>
+
+        <div class="owner-block">
+          <h3 class="owner-block-title">Lower-Tier 2026 (9 owners)</h3>
+          <ul class="owner-list">
+            <li>Ben Funari</li>
+            <li>Bob Keslar</li>
+            <li>Charles Lavrinc</li>
+            <li>Chris Johnson</li>
+            <li>Dominic Nicastro</li>
+            <li>Nick Yankovich</li>
+            <li>Sam Lavrinc</li>
+            <li>Todd Trozzo</li>
+            <li>Tony Brooks</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  Est. 2002 &middot; Built by the Commish
+</footer>
+
+<script>
+/* =====================================================================
+ * COMMISSIONER WORKFLOW — updating the Rulebook
+ * ---------------------------------------------------------------------
+ * Rules content lives in THIS FILE as embedded HTML — it is NOT loaded
+ * dynamically from the CSV at runtime. That keeps the page fast and
+ * keeps the file self-contained for Gmail distribution.
+ *
+ * To update a rule:
+ *   1. Edit the CSV at ./data/MAFFL_Rules_revised.csv FIRST. The CSV is
+ *      the canonical master record — always update it before the HTML
+ *      so the source of truth stays in sync.
+ *   2. Sync the change into the relevant <section data-section="..."> in
+ *      this HTML file. Each of the 8 accordion sections maps cleanly to
+ *      a block of rows in the CSV.
+ *   3. Commit and push to GitHub. The repo is the GitHub Pages source,
+ *      so the change is live as soon as the push lands.
+ *   4. To update the 2026 league assignments mid-cycle, edit both the
+ *      owner CSV (./data/MAFFL_Owners_Sheet_revised.csv, "2026 League"
+ *      column) AND the two <ul class="owner-list"> blocks in this file.
+ *
+ * The accordion behavior below allows MULTIPLE sections to be open at
+ * once — this is intentional (unlike the Weekly Pulse grid). Owners
+ * often want to compare two sections side by side on a reference doc.
+ * ===================================================================== */
+
+(function wireHamburger() {
+  const btn = document.getElementById("navToggle");
+  const nav = document.getElementById("primaryNav");
+  btn.addEventListener("click", function () {
+    const open = nav.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+})();
+
+(function wireAccordions() {
+  const sections = document.querySelectorAll(".rule-section");
+  sections.forEach(function (section) {
+    const head = section.querySelector(".rule-head");
+    head.addEventListener("click", function () {
+      const isOpen = section.classList.toggle("open");
+      head.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
