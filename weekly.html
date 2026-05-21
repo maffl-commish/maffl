@@ -1,0 +1,1359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a2e50">
+<title>Weekly Pulse — MAFFL HQ</title>
+<meta name="description" content="MAFFL Weekly Pulse — standings, survivor, Elite 5, and news for the current week of the Mid-Atlantic Fantasy Football League.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --surface: #ffffff;
+    --page-bg: #f8f9fb;
+    --navy: #1a2e50;
+    --navy-soft: rgba(26, 46, 80, 0.08);
+    --navy-shadow: rgba(26, 46, 80, 0.12);
+    --navy-shadow-strong: rgba(26, 46, 80, 0.18);
+    --gold: #f5a623;
+    --gold-dark: #d98e10;
+    --gold-soft: #fff4e0;
+    --muted: #8a9ab5;
+    --border: #e2e6ed;
+    --win: #1d9e75;
+    --loss: #c04a4a;
+    --display: "Barlow Condensed", system-ui, sans-serif;
+    --body: "Barlow", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--body);
+    color: var(--navy);
+    background: var(--page-bg);
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.4;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  /* ---------- Header (matches index.html) ---------- */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand-logo { height: 48px; width: auto; display: block; flex: 0 0 auto; }
+  .brand-wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .site-nav { display: flex; align-items: center; gap: 22px; }
+  .site-nav a {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 8px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .site-nav a:hover { color: var(--gold-dark); }
+  .site-nav a.current { border-bottom-color: var(--gold); }
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--navy);
+    font-size: 24px;
+    line-height: 1;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Week selector bar ---------- */
+  .week-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .week-bar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .page-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+  .week-pill {
+    min-height: 36px;
+    padding: 8px 14px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 999px;
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .week-pill .chev {
+    color: var(--gold);
+    font-size: 12px;
+    line-height: 1;
+    transition: transform 0.18s ease;
+  }
+  .week-pill[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .week-picker {
+    position: absolute;
+    top: 100%;
+    right: 24px;
+    min-width: 220px;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--surface);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 12px 24px var(--navy-shadow);
+    border: 1px solid var(--border);
+    border-top: 0;
+    transition: max-height 0.2s ease;
+    z-index: 40;
+  }
+  .week-picker.open {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .week-picker ul { padding: 6px; }
+  .week-picker li button {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    text-align: left;
+    border-radius: 6px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .week-picker li button:hover { background: var(--page-bg); }
+  .week-picker li button[aria-current="true"] { background: var(--navy); color: #fff; }
+  .week-picker li button[aria-current="true"] .meta { color: #cbd5e8; }
+  .week-picker .meta {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  /* ---------- Main ---------- */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 24px 56px;
+  }
+
+  /* ---------- Hero card ---------- */
+  .hero-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 18px var(--navy-soft);
+  }
+  .hero-eyebrow {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    line-height: 1;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .hero-headline {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  /* ---------- Card grid ---------- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .pulse-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: box-shadow 0.18s ease, opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .pulse-card:hover { border-color: var(--navy-shadow); }
+  .pulse-card:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .pulse-card.dim { opacity: 0.45; }
+  .pulse-card.open {
+    grid-column: 1 / -1;
+    cursor: default;
+    box-shadow: 0 10px 28px var(--navy-shadow-strong);
+    border-color: var(--navy);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .card-head .left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .card-icon {
+    font-size: 20px;
+    line-height: 1;
+    flex: 0 0 auto;
+  }
+  .card-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+  .card-chev {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    flex: 0 0 auto;
+    transition: transform 0.18s ease;
+  }
+  .pulse-card.open .card-chev { transform: rotate(180deg); color: var(--navy); }
+
+  .card-preview {
+    margin-top: 12px;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.45;
+  }
+  .card-preview .muted-line {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+  .card-preview .strong { font-weight: 700; }
+  .card-preview .danger { color: var(--loss); font-weight: 700; }
+
+  .card-body {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .pulse-card.open .card-body { display: block; }
+  .pulse-card.open .card-preview { display: none; }
+
+  /* ---------- Standings ---------- */
+  .tier-block + .tier-block { margin-top: 18px; }
+  .tier-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+  }
+  .tier-head .chev {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.18s ease;
+  }
+  .tier-head[aria-expanded="true"] .chev { transform: rotate(180deg); color: var(--navy); }
+  .tier-body { display: none; padding-top: 6px; }
+  .tier-head[aria-expanded="true"] + .tier-body { display: block; }
+
+  .div-block + .div-block { margin-top: 8px; }
+  .div-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .div-head .chev { font-size: 11px; transition: transform 0.18s ease; }
+  .div-head[aria-expanded="true"] .chev { transform: rotate(180deg); color: var(--navy); }
+  .div-head[aria-expanded="true"] { color: var(--navy); }
+  .div-body { display: none; }
+  .div-head[aria-expanded="true"] + .div-body { display: block; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 6px 4px;
+    border-top: 1px solid var(--border);
+  }
+  .row:first-child { border-top: 0; }
+  .row .record {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--navy);
+    letter-spacing: 0.01em;
+  }
+  .row .mid { display: flex; flex-direction: column; min-width: 0; }
+  .row .team-name {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .row .owner {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .row .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+  .row .pts {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 44px;
+    text-align: right;
+  }
+  .streak {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    min-width: 32px;
+    justify-content: center;
+  }
+  .streak.w { background: rgba(29, 158, 117, 0.12); color: var(--win); }
+  .streak.l { background: rgba(192, 74, 74, 0.12); color: var(--loss); }
+  .cr {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    min-width: 36px;
+    text-align: right;
+    letter-spacing: 0.02em;
+  }
+  .cr .cr-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+
+  /* ---------- Survivor ---------- */
+  .survivor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .survivor-pool {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    background: var(--page-bg);
+  }
+  .pool-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pool-count {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .pool-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 0;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    border-top: 1px solid var(--border);
+  }
+  .pool-list li:first-child { border-top: 0; }
+  .pool-list .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: var(--win);
+  }
+  .pool-list li.eliminated { color: var(--muted); text-decoration: line-through; }
+  .pool-list li.eliminated .dot { background: var(--muted); }
+  .pool-list li.recent { color: var(--loss); text-decoration: none; font-weight: 700; }
+  .pool-list li.recent .dot { background: var(--loss); }
+  .pool-list .out-tag {
+    margin-left: auto;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: #fff;
+    background: var(--loss);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+  .pool-list .winner-tag {
+    margin-left: auto;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--navy);
+    background: var(--gold);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .survivor-summary {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    line-height: 1.45;
+  }
+  .survivor-summary .label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* ---------- Elite 5 ---------- */
+  .elite-list { display: flex; flex-direction: column; gap: 10px; }
+  .elite-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--page-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .elite-rank {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .elite-row.top .elite-rank { background: var(--gold); color: var(--navy); }
+  .elite-main { flex: 1 1 auto; min-width: 0; }
+  .elite-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tier-badge {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .tier-badge.U { background: var(--navy); color: #fff; }
+  .tier-badge.L { background: var(--gold-soft); color: var(--gold-dark); border: 1px solid var(--gold); }
+  .elite-owner {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .elite-note {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    font-style: italic;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ---------- Bracket placeholder ---------- */
+  .bracket-placeholder {
+    padding: 20px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: var(--page-bg);
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ---------- News reel ---------- */
+  .news-list { display: flex; flex-direction: column; }
+  .news-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.45;
+  }
+  .news-list li:first-child { border-top: 0; }
+  .news-list .bullet {
+    flex: 0 0 auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--navy);
+    margin-top: 8px;
+  }
+
+  /* ---------- Off-season state ---------- */
+  .offseason-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px 28px;
+    text-align: center;
+    box-shadow: 0 6px 18px var(--navy-soft);
+  }
+  .offseason-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--navy);
+    margin: 0 0 12px;
+    line-height: 1.2;
+  }
+  .offseason-sub {
+    font-family: var(--body);
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0 auto 28px;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  .offseason-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 22px;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .offseason-cta:hover {
+    background: var(--gold-dark);
+    box-shadow: 0 6px 18px var(--navy-shadow-strong);
+  }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1024px) {
+    .site-nav { gap: 16px; }
+    .site-nav a { font-size: 12px; }
+  }
+
+  @media (max-width: 767px) {
+    .header-inner { padding: 12px 18px; }
+    .brand-logo { height: 40px; }
+    .brand-wordmark { font-size: 20px; }
+
+    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 18px var(--navy-soft);
+      padding: 8px 0;
+    }
+    .site-nav.open { display: flex; }
+    .site-nav a {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .site-nav a:last-child { border-bottom: 0; }
+    .site-nav a.current { background: var(--page-bg); }
+
+    .week-bar-inner { padding: 10px 18px; }
+    .week-picker { right: 18px; left: 18px; }
+
+    main { padding: 18px 18px 40px; }
+
+    .hero-card { padding: 20px; margin-bottom: 18px; }
+    .hero-headline { font-size: 20px; }
+
+    .card-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    .survivor-grid { grid-template-columns: 1fr; }
+
+    .row { grid-template-columns: 48px 1fr auto; }
+    .row .pts { display: none; }
+    .row .team-name { font-size: 13px; }
+
+    .offseason-card { padding: 32px 22px; }
+    .offseason-head { font-size: 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-card, .week-pill .chev, .card-chev, .tier-head .chev, .div-head .chev { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand" aria-label="MAFFL HQ home">
+      <img src="maffl-logo.png" alt="MAFFL" class="brand-logo">
+      <span class="brand-wordmark">MAFFL HQ</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-controls="primaryNav" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
+
+    <nav class="site-nav" id="primaryNav" aria-label="Primary">
+      <a href="weekly.html" class="current" aria-current="page">Weekly</a>
+      <a href="rules.html">Rulebook</a>
+      <a href="power-rankings.html">Power Rankings</a>
+      <a href="draft.html">Auction Draft</a>
+      <a href="stats.html">Stats</a>
+      <a href="history.html">History</a>
+    </nav>
+  </div>
+</header>
+
+<div class="week-bar" id="weekBar">
+  <div class="week-bar-inner">
+    <h1 class="page-title">Weekly Pulse</h1>
+    <button class="week-pill" id="weekPill" aria-controls="weekPicker" aria-expanded="false" aria-haspopup="listbox">
+      <span id="weekPillLabel">Week —</span>
+      <span class="chev" aria-hidden="true">&#9662;</span>
+    </button>
+  </div>
+  <div class="week-picker" id="weekPicker" role="listbox" aria-label="Select a week">
+    <ul id="weekPickerList"></ul>
+  </div>
+</div>
+
+<main id="pulseMain">
+  <!-- Rendered by JS -->
+</main>
+
+<footer class="site-footer">
+  Est. 2002 &middot; Built by the Commish
+</footer>
+
+<script>
+/* =====================================================================
+ * COMMISSIONER WORKFLOW — publishing a new Weekly Pulse
+ * ---------------------------------------------------------------------
+ * 1. Use the newsletter AI prompt to generate the week's Pulse content.
+ * 2. Translate the AI output into the JS object shape below (a new entry
+ *    in the WEEKS array). Each entry needs: weekNumber, dateString,
+ *    headline, upperTier { divA, divB, divC, divD }, lowerTier,
+ *    survivor { ... }, elite5, newsReel.
+ * 3. Add the new week to the START of the WEEKS array (newest first).
+ *    Older weeks remain in place so deep links keep working.
+ * 4. Commit and push to GitHub (the repo is the GitHub Pages source).
+ * 5. Email the league with the link:
+ *      https://maffl-commish.github.io/maffl/weekly.html
+ * 6. To share a specific week (rewind, recap, dispute, etc.), append
+ *    the week parameter to the URL:
+ *      https://maffl-commish.github.io/maffl/weekly.html?week=5
+ *
+ * Off-season toggle: flip IS_OFFSEASON to true to replace the standard
+ * layout with the "dark until kickoff" hero block.
+ * ===================================================================== */
+
+const SEASON = 2026;
+const IS_OFFSEASON = false;
+
+const WEEKS = [
+  {
+    weekNumber: 1,
+    dateString: "Sep 13, 2026",
+    headline: "Joe Reilly's Reindeer trample Div C with a league-high 142.8, while Mike Murello's Upper-Tier return is anything but quiet. [PLACEHOLDER]",
+    upperTier: {
+      divA: [
+        { team: "Bad Attitude Gang",         owner: "Mike Murello",  w: 1, l: 0, points: 121.2, streak:  1, credits: 27 },
+        { team: "Kids BadBlood HighSchool",  owner: "David Murello", w: 1, l: 0, points: 128.4, streak:  1, credits: 12 },
+        { team: "South Hills FunShiners",    owner: "BJ Funari",     w: 0, l: 1, points:  98.7, streak: -1, credits:  4 }
+      ],
+      divB: [
+        { team: "The Prodigal Sons",         owner: "Jon Murello/Rick Simmons", w: 1, l: 0, points: 134.6, streak:  1, credits: 24 },
+        { team: "Mike Vicks Dog Sitting Co.",owner: "Braiden Snyder",           w: 1, l: 0, points: 119.5, streak:  1, credits:  5 },
+        { team: "Jake's Jagoffs",            owner: "Jacob Nickman",            w: 0, l: 1, points: 102.3, streak: -1, credits: 15 }
+      ],
+      divC: [
+        { team: "Reilly's Reindeer",         owner: "Joe Reilly",    w: 1, l: 0, points: 142.8, streak:  1, credits: 23 },
+        { team: "The Big Bang Theory",       owner: "Dan Reilly",    w: 1, l: 0, points: 117.9, streak:  1, credits:  6 },
+        { team: "Happy Valley Hammer Time",  owner: "Tony Trozzo",   w: 0, l: 1, points:  95.1, streak: -1, credits: 17 }
+      ],
+      divD: [
+        { team: "Hadley's Comets",           owner: "Brian Murello/Ron Murello", w: 1, l: 0, points: 126.7, streak:  1, credits: 7 },
+        { team: "Southside Shooters",        owner: "Jon Fetrow",                w: 0, l: 1, points: 110.2, streak: -1, credits: 7 },
+        { team: "Turkey Hat Conglomerate",   owner: "Ed Peters",                 w: 0, l: 1, points: 103.5, streak: -1, credits: 7 }
+      ]
+    },
+    lowerTier: [
+      { team: "U-Town Fightin Ferrets",   owner: "Todd Trozzo",      w: 1, l: 0, points: 124.3, streak:  1, credits:  1 },
+      { team: "Camp Kes",                 owner: "Bob Keslar",       w: 1, l: 0, points: 122.1, streak:  1, credits:  1 },
+      { team: "The V-Unit",               owner: "Chris Johnson",    w: 1, l: 0, points: 118.9, streak:  1, credits:  0 },
+      { team: "Tony's Talented Team",     owner: "Tony Brooks",      w: 1, l: 0, points: 115.4, streak:  1, credits: 10 },
+      { team: "The Best in The 'Burgh",   owner: "Ben Funari",       w: 1, l: 0, points: 109.2, streak:  1, credits:  6 },
+      { team: "Tommy Phamclub",           owner: "Sam Lavrinc",      w: 0, l: 1, points:  95.3, streak: -1, credits:  8 },
+      { team: "Portly Primates",          owner: "Charles Lavrinc",  w: 0, l: 1, points:  89.7, streak: -1, credits:  6 },
+      { team: "Steel City Champyinz",     owner: "Dominic Nicastro", w: 0, l: 1, points:  84.6, streak: -1, credits:  6 },
+      { team: "Sarge's Squad",            owner: "Nick Yankovich",   w: 0, l: 1, points:  78.5, streak: -1, credits:  5 }
+    ],
+    survivor: {
+      upperActive: [
+        "Bad Attitude Gang", "Kids BadBlood HighSchool", "The Prodigal Sons",
+        "Mike Vicks Dog Sitting Co.", "Jake's Jagoffs", "Reilly's Reindeer",
+        "The Big Bang Theory", "Happy Valley Hammer Time", "Hadley's Comets",
+        "Turkey Hat Conglomerate", "Southside Shooters"
+      ],
+      upperEliminated: [
+        { team: "South Hills FunShiners", week: 1, recent: true }
+      ],
+      upperConcluded: false,
+      upperWinner: null,
+      lowerActive: [
+        "U-Town Fightin Ferrets", "Camp Kes", "The V-Unit", "Tony's Talented Team",
+        "The Best in The 'Burgh", "Tommy Phamclub", "Portly Primates", "Steel City Champyinz"
+      ],
+      lowerEliminated: [
+        { team: "Sarge's Squad", week: 1, recent: true }
+      ],
+      lowerConcluded: false,
+      lowerWinner: null
+    },
+    elite5: [
+      { rank: 1, team: "Reilly's Reindeer",        owner: "Joe Reilly",                 tier: "U", note: "League-high 142.8 — the first Elite eyebrow-raiser of 2026. [PLACEHOLDER]" },
+      { rank: 2, team: "The Prodigal Sons",        owner: "Jon Murello/Rick Simmons",   tier: "U", note: "134.6 in a Div B opener — the WR room showed up to work. [PLACEHOLDER]" },
+      { rank: 3, team: "Kids BadBlood HighSchool", owner: "David Murello",              tier: "U", note: "Quiet 128.4 with the QB1 still on bye-script — room to grow. [PLACEHOLDER]" },
+      { rank: 4, team: "Hadley's Comets",          owner: "Brian Murello/Ron Murello",  tier: "U", note: "126.7 on the road in Div D — a statement vs Ed and Jon. [PLACEHOLDER]" },
+      { rank: 5, team: "U-Town Fightin Ferrets",   owner: "Todd Trozzo",                tier: "L", note: "Lower-Tier topper at 124.3 — promotion campaign starts here. [PLACEHOLDER]" }
+    ],
+    newsReel: [
+      "Joe Reilly drops a league-best 142.8 in Week 1 — the first triple-digit headline of 2026. [PLACEHOLDER]",
+      "Survivor draws first blood: BJ Funari (Upper) and Nick Yankovich (Lower) are out in Week 1. [PLACEHOLDER]",
+      "Tony Trozzo's return to the Upper-Tier opens with a Div C loss to Joe Reilly. [PLACEHOLDER]",
+      "Mike Murello celebrates his Upper-Tier return with 121.2 and a Div A win over BJ Funari. [PLACEHOLDER]",
+      "Todd Trozzo paces a packed Lower-Tier with 124.3 — five teams broke 100. [PLACEHOLDER]"
+    ]
+  }
+];
+
+/* --------- HELPERS --------- */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function streakLabel(n) {
+  if (n > 0) return "W" + n;
+  if (n < 0) return "L" + Math.abs(n);
+  return "—";
+}
+function streakClass(n) { return n >= 0 ? "w" : "l"; }
+function getWeekFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get("week");
+  if (!raw) return null;
+  const n = parseInt(raw, 10);
+  return isNaN(n) ? null : n;
+}
+function findWeek(weekNumber) {
+  return WEEKS.find(w => w.weekNumber === weekNumber) || null;
+}
+function leaderOfTier(divs) {
+  const all = [...divs.divA, ...divs.divB, ...divs.divC, ...divs.divD];
+  return all.slice().sort((a, b) => {
+    if (b.w !== a.w) return b.w - a.w;
+    if (a.l !== b.l) return a.l - b.l;
+    return b.points - a.points;
+  })[0];
+}
+
+/* --------- RENDER: HERO + GRID --------- */
+function renderPage(week) {
+  const main = document.getElementById("pulseMain");
+  main.innerHTML = `
+    <section class="hero-card" aria-label="Weekly headline">
+      <span class="hero-eyebrow">Week ${week.weekNumber} · ${esc(week.dateString)}</span>
+      <h2 class="hero-headline">${esc(week.headline)}</h2>
+    </section>
+
+    <section class="card-grid" id="cardGrid" aria-label="Pulse sections">
+      ${renderStandingsCard(week)}
+      ${renderSurvivorCard(week)}
+      ${renderElite5Card(week)}
+      ${renderNewsCard(week)}
+    </section>
+  `;
+  wireCards();
+  wireStandingsCollapsibles();
+}
+
+/* --------- STANDINGS CARD --------- */
+function renderStandingsCard(week) {
+  const upperLeader = leaderOfTier(week.upperTier);
+  const lowerLeader = week.lowerTier.slice().sort((a, b) => {
+    if (b.w !== a.w) return b.w - a.w;
+    if (a.l !== b.l) return a.l - b.l;
+    return b.points - a.points;
+  })[0];
+
+  const preview = `
+    <div><span class="strong">Upper:</span> ${esc(upperLeader.team)} <span>${upperLeader.w}-${upperLeader.l}</span></div>
+    <div style="margin-top:4px"><span class="strong">Lower:</span> ${esc(lowerLeader.team)} <span>${lowerLeader.w}-${lowerLeader.l}</span></div>
+    <div class="muted-line">Tap for full standings.</div>
+  `;
+
+  const upperBody = `
+    <div class="tier-block">
+      <button class="tier-head" data-toggle="tier" aria-expanded="true">
+        <span>Upper-Tier</span><span class="chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="tier-body">
+        ${renderDiv("Division A", week.upperTier.divA, true)}
+        ${renderDiv("Division B", week.upperTier.divB, false)}
+        ${renderDiv("Division C", week.upperTier.divC, false)}
+        ${renderDiv("Division D", week.upperTier.divD, false)}
+      </div>
+    </div>
+    <div class="tier-block">
+      <button class="tier-head" data-toggle="tier" aria-expanded="true">
+        <span>Lower-Tier</span><span class="chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="tier-body">
+        ${renderRanked(week.lowerTier)}
+      </div>
+    </div>
+  `;
+
+  return cardShell("standings", "🏆", "Standings", preview, upperBody);
+}
+
+function renderDiv(name, teams, openByDefault) {
+  const sorted = teams.slice().sort((a, b) => {
+    if (b.w !== a.w) return b.w - a.w;
+    if (a.l !== b.l) return a.l - b.l;
+    return b.points - a.points;
+  });
+  return `
+    <div class="div-block">
+      <button class="div-head" data-toggle="div" aria-expanded="${openByDefault ? "true" : "false"}">
+        <span>${esc(name)}</span><span class="chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="div-body">
+        ${sorted.map(t => row(t)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderRanked(teams) {
+  const sorted = teams.slice().sort((a, b) => {
+    if (b.w !== a.w) return b.w - a.w;
+    if (a.l !== b.l) return a.l - b.l;
+    return b.points - a.points;
+  });
+  return sorted.map(t => row(t)).join("");
+}
+
+function row(t) {
+  return `
+    <div class="row">
+      <div class="record">${t.w}-${t.l}</div>
+      <div class="mid">
+        <span class="team-name">${esc(t.team)}</span>
+        <span class="owner">${esc(t.owner)}</span>
+      </div>
+      <div class="meta">
+        <span class="pts">${t.points.toFixed(1)}</span>
+        <span class="streak ${streakClass(t.streak)}">${streakLabel(t.streak)}</span>
+        <span class="cr">${t.credits}<span class="cr-label">CR</span></span>
+      </div>
+    </div>
+  `;
+}
+
+/* --------- SURVIVOR CARD --------- */
+function renderSurvivorCard(week) {
+  const s = week.survivor;
+  const upperAlive = s.upperActive.length;
+  const lowerAlive = s.lowerActive.length;
+  const bothDone = s.upperConcluded && s.lowerConcluded;
+
+  if (bothDone) {
+    const summary = `
+      <div class="survivor-summary">
+        <div class="label">Survivor</div>
+        <div>Upper won by <span class="strong">${esc(s.upperWinner || "—")}</span></div>
+        <div>Lower won by <span class="strong">${esc(s.lowerWinner || "—")}</span></div>
+      </div>
+    `;
+    return cardShell("survivor", "💀", "Survivor", summary, summary, /*alwaysCollapsed=*/true);
+  }
+
+  const recentUpper = s.upperEliminated.filter(e => e.recent);
+  const recentLower = s.lowerEliminated.filter(e => e.recent);
+  const recentLine = (recentUpper.length || recentLower.length)
+    ? `<div class="muted-line"><span class="danger">💀 ${[...recentUpper, ...recentLower].map(e => esc(e.team)).join(" · ")} out this week.</span></div>`
+    : `<div class="muted-line">No fresh skulls this week.</div>`;
+
+  const preview = `
+    <div><span class="strong">${upperAlive}</span> alive in Upper · <span class="strong">${lowerAlive}</span> alive in Lower</div>
+    ${recentLine}
+  `;
+
+  const body = `
+    <div class="survivor-grid">
+      ${survivorPool("Upper Pool", s.upperActive, s.upperEliminated, s.upperConcluded, s.upperWinner)}
+      ${survivorPool("Lower Pool", s.lowerActive, s.lowerEliminated, s.lowerConcluded, s.lowerWinner)}
+    </div>
+  `;
+
+  return cardShell("survivor", "💀", "Survivor", preview, body);
+}
+
+function survivorPool(title, active, eliminated, concluded, winner) {
+  const activeRows = active.map(t => {
+    const isWinner = concluded && winner && t === winner;
+    return `
+      <li class="${isWinner ? "winner" : ""}">
+        <span class="dot"></span>
+        <span>${esc(t)}</span>
+        ${isWinner ? '<span class="winner-tag">WINNER</span>' : ""}
+      </li>
+    `;
+  }).join("");
+
+  const eliminatedRows = eliminated
+    .slice()
+    .sort((a, b) => b.week - a.week)
+    .map(e => `
+      <li class="${e.recent ? "recent" : "eliminated"}">
+        <span class="dot"></span>
+        <span>${esc(e.team)}</span>
+        ${e.recent ? '<span class="out-tag">OUT</span>' : `<span class="out-tag" style="background:var(--muted)">WK ${e.week}</span>`}
+      </li>
+    `).join("");
+
+  return `
+    <div class="survivor-pool">
+      <div class="pool-head">
+        <span>${esc(title)}</span>
+        <span class="pool-count">${active.length} alive</span>
+      </div>
+      <ul class="pool-list">
+        ${activeRows}
+        ${eliminatedRows}
+      </ul>
+    </div>
+  `;
+}
+
+/* --------- ELITE 5 / BRACKET CARD --------- */
+function renderElite5Card(week) {
+  if (week.weekNumber >= 14) {
+    const preview = `
+      <div><span class="strong">Bracket lives here once seeds lock in.</span></div>
+      <div class="muted-line">Tap to view the current playoff picture.</div>
+    `;
+    const body = `
+      <div class="bracket-placeholder">
+        Playoff bracket placeholder — commissioner adds the bracket structure here when relevant.
+      </div>
+    `;
+    return cardShell("bracket", "🏆", "Playoff Bracket", preview, body);
+  }
+
+  const top = week.elite5[0];
+  const preview = `
+    <div><span class="strong">#1 this week:</span> ${esc(top.team)}</div>
+    <div class="muted-line">${esc(top.note)}</div>
+  `;
+
+  const body = `
+    <div class="elite-list">
+      ${week.elite5.map(e => `
+        <div class="elite-row ${e.rank === 1 ? "top" : ""}">
+          <div class="elite-rank">${e.rank}</div>
+          <div class="elite-main">
+            <div class="elite-title">
+              <span>${esc(e.team)}</span>
+              <span class="tier-badge ${e.tier === "U" ? "U" : "L"}">${e.tier === "U" ? "Upper" : "Lower"}</span>
+            </div>
+            <div class="elite-owner">${esc(e.owner)}</div>
+            <div class="elite-note">${esc(e.note)}</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+  return cardShell("elite", "⭐", "Elite 5", preview, body);
+}
+
+/* --------- NEWS CARD --------- */
+function renderNewsCard(week) {
+  const count = week.newsReel.length;
+  const first = week.newsReel[0] || "";
+  const preview = `
+    <div><span class="strong">${count} item${count === 1 ? "" : "s"}</span> this week</div>
+    <div class="muted-line">${esc(first)}</div>
+  `;
+
+  const body = `
+    <ul class="news-list">
+      ${week.newsReel.map(item => `
+        <li><span class="bullet"></span><span>${esc(item)}</span></li>
+      `).join("")}
+    </ul>
+  `;
+
+  return cardShell("news", "📰", "News Reel", preview, body);
+}
+
+/* --------- CARD SHELL --------- */
+function cardShell(id, icon, title, previewHtml, bodyHtml, alwaysCollapsed) {
+  return `
+    <article class="pulse-card" data-card="${id}" tabindex="0" role="button" aria-expanded="false">
+      <div class="card-head">
+        <div class="left">
+          <span class="card-icon" aria-hidden="true">${icon}</span>
+          <h3 class="card-title">${esc(title)}</h3>
+        </div>
+        ${alwaysCollapsed ? "" : '<span class="card-chev" aria-hidden="true">&#9662;</span>'}
+      </div>
+      <div class="card-preview">${previewHtml}</div>
+      ${alwaysCollapsed ? "" : `<div class="card-body">${bodyHtml}</div>`}
+    </article>
+  `;
+}
+
+/* --------- WIRING: CARDS (one-at-a-time expand) --------- */
+function wireCards() {
+  const grid = document.getElementById("cardGrid");
+  if (!grid) return;
+  const cards = grid.querySelectorAll(".pulse-card");
+
+  cards.forEach(card => {
+    const body = card.querySelector(".card-body");
+    if (!body) return;
+
+    const toggle = (e) => {
+      if (card.classList.contains("open")) {
+        if (e.target.closest(".card-head") || e.target === card) {
+          closeAll();
+        }
+        return;
+      }
+      openOnly(card);
+    };
+
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("[data-toggle]")) return;
+      toggle(e);
+    });
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggle(e);
+      }
+      if (e.key === "Escape" && card.classList.contains("open")) {
+        closeAll();
+      }
+    });
+  });
+
+  function openOnly(target) {
+    cards.forEach(c => {
+      if (c === target) {
+        c.classList.add("open");
+        c.classList.remove("dim");
+        c.setAttribute("aria-expanded", "true");
+      } else {
+        c.classList.remove("open");
+        c.classList.add("dim");
+        c.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+  function closeAll() {
+    cards.forEach(c => {
+      c.classList.remove("open", "dim");
+      c.setAttribute("aria-expanded", "false");
+    });
+  }
+}
+
+/* --------- WIRING: STANDINGS COLLAPSIBLES --------- */
+function wireStandingsCollapsibles() {
+  document.querySelectorAll("[data-toggle]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", expanded ? "false" : "true");
+    });
+  });
+}
+
+/* --------- WEEK PICKER --------- */
+function renderWeekPicker(activeWeek) {
+  const list = document.getElementById("weekPickerList");
+  const label = document.getElementById("weekPillLabel");
+  label.textContent = "Week " + activeWeek.weekNumber;
+
+  list.innerHTML = WEEKS.map(w => `
+    <li>
+      <button data-week="${w.weekNumber}" aria-current="${w.weekNumber === activeWeek.weekNumber ? "true" : "false"}" role="option">
+        <span>Week ${w.weekNumber}</span>
+        <span class="meta">${esc(w.dateString)}</span>
+      </button>
+    </li>
+  `).join("");
+
+  list.querySelectorAll("button[data-week]").forEach(b => {
+    b.addEventListener("click", () => {
+      const n = parseInt(b.getAttribute("data-week"), 10);
+      const target = findWeek(n);
+      if (!target) return;
+      const url = new URL(window.location.href);
+      url.searchParams.set("week", String(n));
+      window.history.pushState({}, "", url);
+      closeWeekPicker();
+      renderPage(target);
+      renderWeekPicker(target);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+}
+
+function openWeekPicker() {
+  document.getElementById("weekPicker").classList.add("open");
+  document.getElementById("weekPill").setAttribute("aria-expanded", "true");
+}
+function closeWeekPicker() {
+  document.getElementById("weekPicker").classList.remove("open");
+  document.getElementById("weekPill").setAttribute("aria-expanded", "false");
+}
+
+/* --------- OFF-SEASON STATE --------- */
+function renderOffseason() {
+  const main = document.getElementById("pulseMain");
+  document.getElementById("weekBar").style.display = "none";
+  main.innerHTML = `
+    <section class="offseason-card">
+      <h2 class="offseason-head">Weekly Pulse is dark until kickoff.</h2>
+      <p class="offseason-sub">The ${SEASON} season is in the books. Check out the year-end content while you wait for September.</p>
+      <a class="offseason-cta" href="power-rankings.html">View ${SEASON} Power Rankings &rarr;</a>
+    </section>
+  `;
+}
+
+/* --------- BOOT --------- */
+(function init() {
+  // Hamburger nav
+  const btn = document.getElementById("navToggle");
+  const nav = document.getElementById("primaryNav");
+  btn.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+
+  // Off-season short-circuit
+  if (IS_OFFSEASON || WEEKS.length === 0) {
+    renderOffseason();
+    return;
+  }
+
+  // Week picker toggle
+  const pill = document.getElementById("weekPill");
+  pill.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = document.getElementById("weekPicker").classList.contains("open");
+    open ? closeWeekPicker() : openWeekPicker();
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#weekPicker") && !e.target.closest("#weekPill")) {
+      closeWeekPicker();
+    }
+  });
+
+  // Back/forward URL navigation
+  window.addEventListener("popstate", () => {
+    const n = getWeekFromUrl();
+    const target = (n && findWeek(n)) || WEEKS[0];
+    renderPage(target);
+    renderWeekPicker(target);
+  });
+
+  // Initial render
+  const urlWeek = getWeekFromUrl();
+  const activeWeek = (urlWeek && findWeek(urlWeek)) || WEEKS[0];
+  renderPage(activeWeek);
+  renderWeekPicker(activeWeek);
+})();
+</script>
+
+</body>
+</html>
