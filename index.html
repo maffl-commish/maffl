@@ -242,6 +242,34 @@
     margin: 0;
   }
 
+  /* Action variant (Credit Submission Form) */
+  .section-card.action {
+    position: relative;
+    background: var(--gold);
+    border-color: var(--gold-dark);
+  }
+  .section-card.action .card-title,
+  .section-card.action .card-tag {
+    color: var(--navy);
+  }
+  .section-card.action:hover,
+  .section-card.action:focus-visible {
+    background: var(--gold-dark);
+    border-color: var(--gold-dark);
+    box-shadow: none;
+    transform: translateY(-3px);
+  }
+  .section-card.action .card-external {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy);
+    line-height: 1;
+  }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -324,9 +352,9 @@
 
     <nav class="site-nav" id="primaryNav" aria-label="Primary">
       <a href="weekly.html">Weekly</a>
-      <a href="rules.html">Rules &amp; Credits</a>
+      <a href="rules.html">Rulebook</a>
       <a href="power-rankings.html">Power Rankings</a>
-      <a href="draft.html">Auction Draft Portal</a>
+      <a href="draft.html">Auction Draft</a>
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
     </nav>
@@ -350,25 +378,32 @@
       <a class="section-card" href="weekly.html">
         <span class="card-icon" aria-hidden="true">&#x1F7E2;</span>
         <h3 class="card-title">Weekly Pulse</h3>
-        <p class="card-tag">This week&rsquo;s report</p>
+        <p class="card-tag">Archive of weekly report outs</p>
+      </a>
+
+      <a class="section-card action" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">
+        <span class="card-external" aria-hidden="true">&#x2197;</span>
+        <span class="card-icon" aria-hidden="true">&#x270D;&#xFE0F;</span>
+        <h3 class="card-title">Credit Submission Form</h3>
+        <p class="card-tag">Submit a credit request</p>
       </a>
 
       <a class="section-card" href="rules.html">
         <span class="card-icon" aria-hidden="true">&#x1F4CB;</span>
-        <h3 class="card-title">Rules &amp; Credits</h3>
-        <p class="card-tag">Rulebook + submission form</p>
+        <h3 class="card-title">Rulebook</h3>
+        <p class="card-tag">The official MAFFL rulebook</p>
       </a>
 
       <a class="section-card" href="power-rankings.html">
         <span class="card-icon" aria-hidden="true">&#x1F3C6;</span>
         <h3 class="card-title">Power Rankings</h3>
-        <p class="card-tag">The franchise baseball cards</p>
+        <p class="card-tag">Madden-style franchise ratings</p>
       </a>
 
       <a class="section-card" href="draft.html">
         <span class="card-icon" aria-hidden="true">&#x1F3AF;</span>
-        <h3 class="card-title">Auction Draft Portal</h3>
-        <p class="card-tag">Every pick, 2005&ndash;2025</p>
+        <h3 class="card-title">Auction Draft</h3>
+        <p class="card-tag">Portal for all things Auction</p>
       </a>
 
       <a class="section-card" href="stats.html">
