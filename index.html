@@ -127,67 +127,54 @@
     padding: 32px 24px 56px;
   }
 
-  /* ---------- Hero (compact) ---------- */
+  /* ---------- Hero (single CTA) ---------- */
   .hero {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: 0 6px 20px var(--navy-soft);
-    padding: 32px 32px 28px;
-    text-align: center;
-    max-width: 720px;
+    max-width: 480px;
     margin: 0 auto 40px;
-  }
-
-  .hero-eyebrow {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 10px;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    margin-bottom: 14px;
-  }
-  .hero-eyebrow.offseason { color: var(--muted); }
-
-  .hero-headline {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 36px;
-    color: var(--navy);
-    line-height: 1.05;
-    margin: 0 0 20px;
+    text-align: center;
   }
 
   .hero-cta {
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 52px;
-    padding: 0 26px;
+    gap: 4px;
+    width: 100%;
+    height: 64px;
+    padding: 0 20px;
     background: var(--gold);
     color: var(--navy);
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 16px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
     border-radius: 8px;
-    transition: background 0.15s ease, transform 0.15s ease;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .hero-cta:hover { background: var(--gold-dark); }
+  .hero-cta:hover {
+    background: var(--gold-dark);
+    box-shadow: 0 6px 18px var(--navy-shadow-strong);
+  }
   .hero-cta:active { transform: translateY(1px); }
   .hero-cta:focus-visible {
     outline: 2px solid var(--navy);
     outline-offset: 3px;
   }
 
-  .hero-updated {
-    font-family: var(--body);
-    font-weight: 500;
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 14px;
+  .hero-cta-eyebrow {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    line-height: 1;
+  }
+
+  .hero-cta-headline {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    line-height: 1;
   }
 
   /* ---------- Section heading ---------- */
@@ -307,14 +294,10 @@
     main { padding: 24px 18px 40px; }
 
     .hero {
-      padding: 28px 20px 24px;
-      margin-bottom: 36px;
-      border-radius: 12px;
+      max-width: none;
+      margin: 0 8px 36px;
     }
-    .hero-headline { font-size: 28px; }
     .hero-cta {
-      display: flex;
-      width: 100%;
       padding: 0 16px;
     }
 
@@ -351,11 +334,11 @@
 </header>
 
 <main>
-  <section class="hero" aria-labelledby="heroHeadline">
-    <div class="hero-eyebrow" id="heroEyebrow">&#x1F7E2; LIVE NOW</div>
-    <h1 class="hero-headline" id="heroHeadline">Week 6 is Live</h1>
-    <a class="hero-cta" id="heroCta" href="weekly.html">View Week 6 Pulse &rarr;</a>
-    <div class="hero-updated" id="heroUpdated">Updated Oct 13, 2026</div>
+  <section class="hero" id="hero" aria-label="Featured now">
+    <a class="hero-cta" id="heroCta" href="weekly.html">
+      <span class="hero-cta-eyebrow" id="heroCtaEyebrow">MAFFL WEEKLY PULSE</span>
+      <span class="hero-cta-headline" id="heroCtaHeadline">Week 6 is Live &rarr;</span>
+    </a>
   </section>
 
   <section aria-labelledby="exploreHeading">
@@ -409,37 +392,40 @@
 
 <script>
   /*
-   * Update each week when publishing a new Pulse.
-   * Set isLive to false during offseason.
+   * FEATURED_NOW — the "What's Hot" slot at the top of the homepage.
+   *
+   * Update this object whenever you publish something new and want it
+   * featured at the top of the homepage. Examples:
+   *   - Weekly Pulse releases during the season
+   *   - Power Rankings during offseason
+   *   - Annual Edition drops
+   *   - Playoff brackets
+   *   - Champion announcements
+   *
+   * Set isLive to false to hide the hero entirely.
    */
-  const CURRENT_WEEK_DATA = {
-    weekNumber: 6,
-    dateString: "Oct 13, 2026",
+  const FEATURED_NOW = {
+    eyebrow: "MAFFL WEEKLY PULSE",
+    headline: "Week 6 is Live →",
+    link: "weekly.html",
     isLive: true
   };
 
   (function renderHero(data) {
-    const eyebrow  = document.getElementById("heroEyebrow");
-    const headline = document.getElementById("heroHeadline");
+    const hero     = document.getElementById("hero");
     const cta      = document.getElementById("heroCta");
-    const updated  = document.getElementById("heroUpdated");
+    const eyebrow  = document.getElementById("heroCtaEyebrow");
+    const headline = document.getElementById("heroCtaHeadline");
 
-    if (data.isLive) {
-      eyebrow.textContent = "\u{1F7E2} LIVE NOW";
-      eyebrow.classList.remove("offseason");
-      headline.textContent = "Week " + data.weekNumber + " is Live";
-      cta.textContent = "View Week " + data.weekNumber + " Pulse →";
-      cta.setAttribute("href", "weekly.html");
-    } else {
-      eyebrow.textContent = "⚪ OFF-SEASON";
-      eyebrow.classList.add("offseason");
-      headline.textContent = "The 2026 Season Returns Soon";
-      cta.textContent = "View Last Week’s Pulse →";
-      cta.setAttribute("href", "weekly.html");
+    if (!data.isLive) {
+      hero.style.display = "none";
+      return;
     }
 
-    updated.textContent = "Updated " + data.dateString;
-  })(CURRENT_WEEK_DATA);
+    eyebrow.textContent = data.eyebrow;
+    headline.textContent = data.headline;
+    cta.setAttribute("href", data.link);
+  })(FEATURED_NOW);
 
   (function wireHamburger() {
     const btn = document.getElementById("navToggle");
