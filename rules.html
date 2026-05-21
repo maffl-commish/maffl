@@ -136,12 +136,48 @@
     margin: 0;
   }
 
+  /* ---------- Rules controls (Expand / Collapse All) ---------- */
+  .rules-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin: 20px 0 16px 0;
+  }
+  .ghost-btn {
+    background: transparent;
+    border: 1px solid var(--navy);
+    color: var(--navy);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+    transition: background 0.15s ease;
+  }
+  .ghost-btn:hover { background: var(--navy-soft); }
+  .ghost-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .ghost-btn .ghost-btn-symbol {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
   /* ---------- Accordion sections ---------- */
   .rules-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-top: 24px;
+    margin-top: 0;
   }
   .rule-section {
     background: var(--surface);
@@ -210,13 +246,16 @@
     line-height: 1.6;
     margin: 0;
   }
-  .rule-body p + p { margin-top: 12px; }
+  .rule-body p { margin-bottom: 12px; }
+  .rule-body p:last-child { margin-bottom: 0; }
   .rule-body ul {
     list-style: disc;
     padding-left: 20px;
-    margin: 0;
+    margin: 0 0 16px 0;
   }
-  .rule-body ul li + li { margin-top: 8px; }
+  .rule-body ul:last-child { margin-bottom: 0; }
+  .rule-body li { margin-bottom: 8px; }
+  .rule-body li:last-child { margin-bottom: 0; }
   .rule-body strong { font-weight: 700; }
 
   .subhead {
@@ -226,9 +265,10 @@
     color: var(--navy);
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin: 0;
+    margin: 24px 0 12px 0;
   }
-  .subhead + * { margin-top: 8px !important; }
+  .rule-body > .subhead:first-child { margin-top: 0; }
+  .rule-body .subhead + * { margin-top: 0; }
 
   .callout {
     background: var(--page-bg);
@@ -288,8 +328,47 @@
     white-space: nowrap;
   }
 
-  /* League comparison — stack on mobile */
-  .comparison-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  /* ---------- Leagues Overview compact matrix ---------- */
+  .overview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .overview-table thead th {
+    background: var(--navy);
+    color: #fff;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 12px;
+    text-align: left;
+  }
+  .overview-table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  .overview-table tbody tr:last-child td { border-bottom: 0; }
+  .overview-table tbody tr:nth-child(odd) td { background: var(--surface); }
+  .overview-table tbody tr:nth-child(even) td { background: #f8f9fb; }
+  .overview-table tbody td:first-child {
+    font-weight: 400;
+    color: var(--navy);
+  }
+  .overview-table tbody td:nth-child(2),
+  .overview-table tbody td:nth-child(3) {
+    font-weight: 500;
+    color: var(--navy);
+    white-space: nowrap;
+  }
 
   /* ---------- Prize formula list ---------- */
   .prize-block + .prize-block { margin-top: 18px; }
@@ -483,48 +562,10 @@
     .rule-title { font-size: 15px; }
     .rule-body { padding: 0 14px 16px 14px; }
 
-    /* League comparison: stack to vertical pairs */
-    .comparison-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .comparison-row {
-      background: var(--page-bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-    }
-    .comparison-row-label {
-      font-family: var(--display);
-      font-weight: 700;
-      font-size: 12px;
-      color: var(--navy);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-    .comparison-row-values {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .comparison-cell {
-      font-family: var(--body);
-      font-size: 14px;
-      color: var(--navy);
-    }
-    .comparison-cell .tier-label {
-      display: block;
-      font-family: var(--display);
-      font-weight: 700;
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 2px;
-    }
-    .comparison-wrap { display: none; }
+    /* Leagues Overview: keep matrix readable on narrow screens */
+    .overview-table thead th { font-size: 10px; padding: 10px 8px; }
+    .overview-table tbody td { padding: 9px 8px; font-size: 13px; }
+    .rules-controls { justify-content: center; }
 
     .tiebreaker-grid { grid-template-columns: 1fr; gap: 12px; }
 
@@ -532,10 +573,6 @@
     .bracket-stage-label { margin-top: 10px; }
 
     .owner-list { columns: 1; }
-  }
-
-  @media (min-width: 768px) {
-    .comparison-stack { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -570,6 +607,13 @@
     <h1 class="page-title">Rulebook</h1>
     <p class="page-subtitle">The official MAFFL ruleset — current as of August 2026</p>
     <hr class="gold-rule">
+  </div>
+
+  <div class="rules-controls">
+    <button class="ghost-btn" id="expandAllBtn" type="button" aria-label="Expand all rule sections">
+      <span class="ghost-btn-symbol" id="expandAllSymbol" aria-hidden="true">+</span>
+      <span id="expandAllLabel">Expand All</span>
+    </button>
   </div>
 
   <div class="rules-list" id="rulesList">
@@ -612,55 +656,36 @@
     </section>
 
     <!-- =========================================================
-         SECTION 2 — League Comparison
+         SECTION 2 — Leagues Overview
          ========================================================= -->
-    <section class="rule-section" data-section="comparison">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-comparison">
-        <h2 class="rule-title">League Comparison</h2>
+    <section class="rule-section" data-section="overview">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-overview">
+        <h2 class="rule-title">Leagues Overview</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
-      <div class="rule-body" id="body-comparison">
-
-        <!-- Desktop / tablet table -->
-        <div class="comparison-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">&nbsp;</th>
-                <th scope="col">Upper-Tier</th>
-                <th scope="col">Lower-Tier</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="row-label">League Entry Fee</td><td>$100</td><td>$100</td></tr>
-              <tr><td class="row-label">League Size</td><td>12 Teams</td><td>Minimum 6</td></tr>
-              <tr><td class="row-label">Divisions</td><td>Yes</td><td>No</td></tr>
-              <tr><td class="row-label">Conferences</td><td>No</td><td>No</td></tr>
-              <tr><td class="row-label">Can Earn / Spend Credits</td><td>Yes</td><td>Yes</td></tr>
-              <tr><td class="row-label">MAFFL Championship Playoff</td><td>Yes</td><td>No</td></tr>
-              <tr><td class="row-label">MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
-              <tr><td class="row-label">Promotion Showdown</td><td>No</td><td>Yes</td></tr>
-              <tr><td class="row-label">Relegation Showdown</td><td>Yes</td><td>No</td></tr>
-              <tr><td class="row-label">Auction Draft Slot 1</td><td>No</td><td>Yes</td></tr>
-              <tr><td class="row-label">Auction Draft Slot 2</td><td>Yes</td><td>No</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Mobile stacked view -->
-        <div class="comparison-stack" aria-hidden="true">
-          <div class="comparison-row"><div class="comparison-row-label">League Entry Fee</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>$100</div><div class="comparison-cell"><span class="tier-label">Lower</span>$100</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">League Size</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>12 Teams</div><div class="comparison-cell"><span class="tier-label">Lower</span>Minimum 6</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Divisions</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Conferences</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>No</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Can Earn / Spend Credits</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>Yes</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">MAFFL Championship Playoff</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">MAFFL Cup Awarded</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Promotion Showdown</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>No</div><div class="comparison-cell"><span class="tier-label">Lower</span>Yes</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Relegation Showdown</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Auction Draft Slot 1</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>No</div><div class="comparison-cell"><span class="tier-label">Lower</span>Yes</div></div></div>
-          <div class="comparison-row"><div class="comparison-row-label">Auction Draft Slot 2</div><div class="comparison-row-values"><div class="comparison-cell"><span class="tier-label">Upper</span>Yes</div><div class="comparison-cell"><span class="tier-label">Lower</span>No</div></div></div>
-        </div>
+      <div class="rule-body" id="body-overview">
+        <table class="overview-table">
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Upper-Tier</th>
+              <th scope="col">Lower-Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Entry Fee</td><td>$100</td><td>$100</td></tr>
+            <tr><td>League Size</td><td>12 Teams</td><td>Min 6</td></tr>
+            <tr><td>Divisions</td><td>4</td><td>None</td></tr>
+            <tr><td>Regular Season</td><td>NFL Wks 1&ndash;14</td><td>NFL Wks 1&ndash;14</td></tr>
+            <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
+            <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>Promotion Showdown</td></tr>
+            <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Draft Slot</td><td>Labor Day 9:30 AM</td><td>Labor Day 8:00 AM</td></tr>
+            <tr><td>Promotion</td><td>&mdash;</td><td>Top 3 Up</td></tr>
+            <tr><td>Relegation</td><td>Bottom 3 Down</td><td>&mdash;</td></tr>
+            <tr><td>Credits</td><td>Earn &amp; Spend</td><td>Earn &amp; Spend</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -1008,13 +1033,50 @@
 
 (function wireAccordions() {
   const sections = document.querySelectorAll(".rule-section");
+  const expandBtn = document.getElementById("expandAllBtn");
+  const expandSymbol = document.getElementById("expandAllSymbol");
+  const expandLabel = document.getElementById("expandAllLabel");
+
+  function anyOpen() {
+    return Array.from(sections).some(function (s) {
+      return s.classList.contains("open");
+    });
+  }
+
+  function updateExpandBtn() {
+    const open = anyOpen();
+    expandSymbol.textContent = open ? "−" : "+"; // − vs +
+    expandLabel.textContent = open ? "Collapse All" : "Expand All";
+    expandBtn.setAttribute("aria-label", open
+      ? "Collapse all rule sections"
+      : "Expand all rule sections");
+  }
+
   sections.forEach(function (section) {
     const head = section.querySelector(".rule-head");
     head.addEventListener("click", function () {
       const isOpen = section.classList.toggle("open");
       head.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      updateExpandBtn();
     });
   });
+
+  expandBtn.addEventListener("click", function () {
+    const shouldCollapse = anyOpen();
+    sections.forEach(function (section) {
+      const head = section.querySelector(".rule-head");
+      if (shouldCollapse) {
+        section.classList.remove("open");
+        head.setAttribute("aria-expanded", "false");
+      } else {
+        section.classList.add("open");
+        head.setAttribute("aria-expanded", "true");
+      }
+    });
+    updateExpandBtn();
+  });
+
+  updateExpandBtn();
 })();
 </script>
 
