@@ -242,23 +242,8 @@
     margin: 0;
   }
 
-  /* Action variant (Credit Submission Form) */
-  .section-card.action {
-    position: relative;
-    background: var(--gold);
-    border-color: var(--gold-dark);
-  }
-  .section-card.action .card-title,
-  .section-card.action .card-tag {
-    color: var(--navy);
-  }
-  .section-card.action:hover,
-  .section-card.action:focus-visible {
-    background: var(--gold-dark);
-    border-color: var(--gold-dark);
-    box-shadow: none;
-    transform: translateY(-3px);
-  }
+  /* External-link variant (Credit Submission Form) */
+  .section-card.action { position: relative; }
   .section-card.action .card-external {
     position: absolute;
     top: 14px;
@@ -266,8 +251,12 @@
     font-family: var(--display);
     font-weight: 700;
     font-size: 16px;
-    color: var(--navy);
+    color: var(--muted);
     line-height: 1;
+  }
+  .section-card.action:hover .card-external,
+  .section-card.action:focus-visible .card-external {
+    color: var(--navy);
   }
 
   /* ---------- Footer ---------- */
@@ -385,7 +374,7 @@
         <span class="card-external" aria-hidden="true">&#x2197;</span>
         <span class="card-icon" aria-hidden="true">&#x270D;&#xFE0F;</span>
         <h3 class="card-title">Credit Submission Form</h3>
-        <p class="card-tag">Submit a credit request</p>
+        <p class="card-tag">Submit a spend or trade of credits</p>
       </a>
 
       <a class="section-card" href="rules.html">
