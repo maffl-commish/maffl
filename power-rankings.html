@@ -465,15 +465,13 @@
   }
 
   .timeline-scroll {
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
     padding: 4px 0 6px;
-    -webkit-overflow-scrolling: touch;
   }
   .timeline-row {
     display: flex;
-    gap: 4px;
-    min-width: min-content;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   .year-cell {
     width: 48px;
@@ -675,10 +673,9 @@
 
   <div class="filter-bar" role="tablist" aria-label="Filter owners">
     <button class="filter-pill active" data-filter="all" role="tab" aria-selected="true">All</button>
+    <button class="filter-pill" data-filter="active" role="tab" aria-selected="false">Active</button>
     <button class="filter-pill" data-filter="upper" role="tab" aria-selected="false">Upper-Tier 2026</button>
     <button class="filter-pill" data-filter="lower" role="tab" aria-selected="false">Lower-Tier 2026</button>
-    <button class="filter-pill" data-filter="inactive" role="tab" aria-selected="false">Inactive</button>
-    <button class="filter-pill" data-filter="rushmore" role="tab" aria-selected="false">Mount Rushmore</button>
   </div>
 
   <div class="owner-grid" id="ownerGrid" aria-live="polite"></div>
@@ -1729,10 +1726,9 @@ function renderOwnerCard(owner) {
       var rank = parseInt(card.getAttribute("data-rank"), 10);
       var show = true;
       switch (filter) {
-        case "upper":    show = active && league === "Upper-Tier"; break;
-        case "lower":    show = active && league === "Lower-Tier"; break;
-        case "inactive": show = !active; break;
-        case "rushmore": show = rank >= 1 && rank <= 4 && active; break;
+        case "active":   show = active; break;
+        case "upper":    show = league === "Upper-Tier"; break;
+        case "lower":    show = league === "Lower-Tier"; break;
         case "all":
         default:         show = true;
       }
