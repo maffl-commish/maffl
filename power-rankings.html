@@ -1,0 +1,1759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a2e50">
+<title>Power Rankings — MAFFL HQ</title>
+<meta name="description" content="MAFFL Power Rankings — Madden-style franchise ratings for every owner in MAFFL history. 2026 Off-Season Edition.">
+
+<link rel="icon" href="maffl-logo.png" type="image/png">
+<link rel="apple-touch-icon" href="maffl-logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="maffl-logo.png">
+<meta name="apple-mobile-web-app-title" content="MAFFL HQ">
+<meta name="application-name" content="MAFFL HQ">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --surface: #ffffff;
+    --page-bg: #f8f9fb;
+    --navy: #1a2e50;
+    --navy-soft: rgba(26, 46, 80, 0.08);
+    --navy-shadow: rgba(26, 46, 80, 0.12);
+    --navy-shadow-strong: rgba(26, 46, 80, 0.18);
+    --gold: #f5a623;
+    --gold-dark: #d98e10;
+    --gold-soft: #fff4e0;
+    --muted: #8a9ab5;
+    --border: #e2e6ed;
+    --win: #1d9e75;
+    --loss: #c04a4a;
+    --display: "Barlow Condensed", system-ui, sans-serif;
+    --body: "Barlow", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--body);
+    color: var(--navy);
+    background: var(--page-bg);
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.4;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+  /* ---------- Header (matches index.html / weekly.html / rules.html) ---------- */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand-logo { height: 48px; width: auto; display: block; flex: 0 0 auto; }
+  .brand-wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .site-nav { display: flex; align-items: center; gap: 22px; }
+  .site-nav a {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 8px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .site-nav a:hover { color: var(--gold-dark); }
+  .site-nav a.current { border-bottom-color: var(--gold); }
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--navy);
+    font-size: 24px;
+    line-height: 1;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Main / page title ---------- */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 56px;
+  }
+  .page-title-block { margin-bottom: 24px; }
+  .page-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .gold-rule {
+    height: 1px;
+    background: var(--gold);
+    border: 0;
+    margin: 0;
+  }
+  .version-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+  .version-chip {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .version-chip.primary { color: var(--navy); border-color: var(--navy); }
+  .version-chip.muted   { color: var(--muted); border-color: var(--muted); }
+  .version-divider {
+    display: inline-block;
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    flex: 0 0 auto;
+  }
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 22px 0 20px;
+  }
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 16px;
+    background: var(--surface);
+    color: var(--navy);
+    border: 1px solid var(--navy);
+    border-radius: 100px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+  .filter-pill:hover { background: var(--navy-soft); }
+  .filter-pill.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .filter-pill:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Card grid ---------- */
+  .owner-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .owner-grid.empty::after {
+    content: "No owners match this filter.";
+    grid-column: 1 / -1;
+    font-family: var(--body);
+    color: var(--muted);
+    font-size: 14px;
+    text-align: center;
+    padding: 24px;
+  }
+
+  /* ---------- Owner card ---------- */
+  .owner-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    position: relative;
+  }
+  .owner-card:hover {
+    box-shadow: 0 4px 14px var(--navy-soft);
+  }
+  .owner-card.open {
+    grid-column: 1 / -1;
+    box-shadow: 0 10px 28px var(--navy-shadow);
+    border-color: var(--navy-shadow);
+    cursor: default;
+  }
+  .owner-card:focus-within {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .card-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto 16px;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-rank {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--gold);
+    line-height: 1;
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+  .owner-card[data-active="N"] .card-rank {
+    opacity: 0.5;
+  }
+  .card-identity { min-width: 0; }
+  .card-owner-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--navy);
+    line-height: 1.15;
+    margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-team {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.2;
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-tier-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+  .card-tier-badge .badge-icon { margin-right: 4px; }
+  .card-tier-badge.inactive {
+    background: #eef0f4;
+    color: #6c7891;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+  .card-ovr {
+    text-align: right;
+    line-height: 1;
+  }
+  .card-ovr-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .card-ovr-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+  .card-chev {
+    color: var(--navy);
+    font-size: 14px;
+    line-height: 1;
+    transition: transform 0.18s ease;
+  }
+  .owner-card.open .card-chev { transform: rotate(180deg); }
+
+  /* ---------- Expanded body ---------- */
+  .card-body {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .owner-card.open .card-body { display: block; }
+
+  /* Career stats */
+  .career-stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: #f8f9fb;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-num.gold { color: var(--gold-dark); }
+  .stat-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+  }
+
+  /* Madden bars */
+  .madden-bars { margin-bottom: 22px; }
+  .madden-row {
+    display: grid;
+    grid-template-columns: 24px 1fr 32px;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .madden-row:first-child { margin-top: 0; }
+  .madden-emoji {
+    font-size: 18px;
+    line-height: 1;
+    text-align: center;
+  }
+  .madden-track {
+    background: #f0f2f5;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .madden-fill {
+    height: 100%;
+    background: var(--navy);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+  .madden-fill.heat { background: var(--gold); }
+  .madden-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    text-align: right;
+  }
+
+  /* Scout report */
+  .scout-report {
+    border-left: 3px solid var(--gold);
+    padding-left: 12px;
+    margin-bottom: 22px;
+  }
+  .scout-report p {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Timeline */
+  .timeline-section { margin-top: 4px; }
+  .timeline-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-bottom: 10px;
+  }
+  .timeline-head-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-right: 4px;
+  }
+  .legend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--body);
+    font-size: 11px;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .legend-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex: 0 0 auto;
+  }
+
+  .timeline-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 4px 0 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .timeline-row {
+    display: flex;
+    gap: 4px;
+    min-width: min-content;
+  }
+  .year-cell {
+    width: 48px;
+    flex: 0 0 48px;
+    height: 56px;
+    border-radius: 6px;
+    background: #f0f2f5;
+    color: #5a6478;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0 8px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: border-color 0.12s ease, transform 0.12s ease;
+  }
+  .year-cell:hover {
+    border-color: var(--navy);
+    transform: translateY(-1px);
+  }
+  .year-cell .yc-year {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+  }
+  .year-cell .yc-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+  /* Cell themes — color priority is enforced in JS */
+  .year-cell.champ      { background: var(--gold);    color: var(--navy); }
+  .year-cell.runner     { background: #c7c9d1;        color: var(--navy); }
+  .year-cell.division   { background: var(--navy);    color: #fff; }
+  .year-cell.playoff    { background: #e1f5ee;        color: #167256; }
+  .year-cell.lt1        { background: #fde9c7;        color: #8a5a09; }
+  .year-cell.ltrunner   { background: #fef4e1;        color: #8a5a09; }
+  .year-cell.regular    { background: #f0f2f5;        color: #5a6478; }
+
+  /* Tooltip / popover */
+  .year-cell .yc-tip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-family: var(--body);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+    pointer-events: none;
+  }
+  .year-cell .yc-tip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--navy);
+  }
+  .year-cell .yc-tip-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 2px;
+    letter-spacing: 0.04em;
+  }
+  .year-cell .yc-tip-meta {
+    color: #c8d1e4;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .year-cell .yc-tip-flags {
+    color: var(--gold);
+    font-size: 11px;
+  }
+  .year-cell:hover .yc-tip,
+  .year-cell:focus .yc-tip,
+  .year-cell.tip-open .yc-tip { display: block; }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1024px) {
+    .site-nav { gap: 16px; }
+    .site-nav a { font-size: 12px; }
+  }
+  @media (max-width: 767px) {
+    .header-inner { padding: 12px 18px; }
+    .brand-logo { height: 40px; }
+    .brand-wordmark { font-size: 20px; }
+    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 18px var(--navy-soft);
+      padding: 8px 0;
+    }
+    .site-nav.open { display: flex; }
+    .site-nav a {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .site-nav a:last-child { border-bottom: 0; }
+    .site-nav a.current { border-bottom: 1px solid var(--border); background: var(--page-bg); }
+
+    main { padding: 24px 16px 40px; }
+
+    .page-title { font-size: 24px; }
+
+    .filter-bar {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-pill { flex: 0 0 auto; }
+
+    .owner-grid { grid-template-columns: 1fr; gap: 12px; }
+    .owner-card.open { grid-column: auto; }
+
+    .card-row { grid-template-columns: 44px 1fr auto 14px; gap: 10px; }
+    .card-rank { font-size: 24px; }
+    .card-ovr-value { font-size: 26px; }
+
+    .career-stats { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .owner-card, .madden-fill, .card-chev, .year-cell { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand" aria-label="MAFFL HQ home">
+      <img src="maffl-logo.png" alt="MAFFL" class="brand-logo">
+      <span class="brand-wordmark">MAFFL HQ</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-controls="primaryNav" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
+
+    <nav class="site-nav" id="primaryNav" aria-label="Primary">
+      <a href="weekly.html">Weekly</a>
+      <a href="rules.html">Rulebook</a>
+      <a href="power-rankings.html" class="current">Power Rankings</a>
+      <a href="draft.html">Auction Draft</a>
+      <a href="stats.html">Stats</a>
+      <a href="history.html">History</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-title-block">
+    <h1 class="page-title">Power Rankings</h1>
+    <p class="page-subtitle">Madden-style franchise ratings &middot; 2026 Off-Season Edition</p>
+
+    <div class="version-chips" aria-label="Power Rankings version metadata">
+      <span class="version-chip primary">v1.0</span>
+      <span class="version-divider" aria-hidden="true"></span>
+      <span class="version-chip muted">Effective February 2026</span>
+    </div>
+
+    <hr class="gold-rule">
+  </div>
+
+  <div class="filter-bar" role="tablist" aria-label="Filter owners">
+    <button class="filter-pill active" data-filter="all" role="tab" aria-selected="true">All</button>
+    <button class="filter-pill" data-filter="upper" role="tab" aria-selected="false">Upper-Tier 2026</button>
+    <button class="filter-pill" data-filter="lower" role="tab" aria-selected="false">Lower-Tier 2026</button>
+    <button class="filter-pill" data-filter="inactive" role="tab" aria-selected="false">Inactive</button>
+    <button class="filter-pill" data-filter="rushmore" role="tab" aria-selected="false">Mount Rushmore</button>
+  </div>
+
+  <div class="owner-grid" id="ownerGrid" aria-live="polite"></div>
+</main>
+
+<footer class="site-footer">
+  Est. 2002 &middot; Built by the Commish
+</footer>
+
+<script>
+/* =====================================================================
+ * MAFFL POWER RANKINGS — COMMISSIONER WORKFLOW
+ * ---------------------------------------------------------------------
+ * This is the v1.0 Power Rankings, the first ever published. Madden-style
+ * franchise ratings (OVR / Clutch / Grind / Heat) and scout notes are
+ * commissioner-set values from the 2026 Off-Season edition emails.
+ *
+ * Career totals and the year-by-year timeline are derived from the
+ * canonical CSVs in ./data/ (Owners Sheet, cleaned_maffl_revised, and
+ * Division History 2005-2025), embedded inline below so this file is
+ * fully self-contained for Gmail distribution.
+ *
+ * To update for a future edition (v1.1, v2.0, etc.):
+ *   1. Refresh OWNERS_DATA below with the new ratings + scout notes
+ *   2. Append the next season's timeline entry to each owner that played
+ *   3. Bump the version chip text in the title block
+ *
+ * The accordion grid behavior is intentionally non-exclusive — owners
+ * routinely want to compare two cards side by side ("how do my Clutch
+ * and Grind stack against the guy above me").
+ * ===================================================================== */
+
+/* ----- Tier flags carried on each timeline entry ----- */
+/* t: "U" = 2025+ Upper, "L" = 2025+ Lower, "A" = pre-2025 single league */
+
+/* OWNERS_DATA — sorted by 2026 Power Ranking ascending (active first),
+   then inactive owners by historical rank. */
+const OWNERS_DATA = [
+  /* ============================================================
+     ACTIVE OWNERS — sorted by 2026 Power Ranking
+     ============================================================ */
+  {
+    key: "joe-reilly",
+    name: "Joe Reilly",
+    recentTeam: "Reilly's Reindeer",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 1,
+    ovr: 98, clutch: 97, grind: 98, heat: 98,
+    rings: 3, runners: 1, divTitles: 7, playoffApps: 12, years: 24, winPct: 54,
+    scout: "The standard-bearer. Twenty-four seasons in, 3 rings, defending MAFFL Cup champion, and a 2025 runner-up to boot. The Reindeer brand has become the league's measuring stick — when Joe is bad, the title is open; when he's good, everyone else is playing for second.",
+    timeline: [
+      [2002, "Reilly's RaMPagE", null, null, null, 0,0,0,0,0,0,0, "A"],
+      [2003, "Reilly's RaMPagE", null, null, null, 0,0,0,0,0,0,0, "A"],
+      [2004, "Reilly's RaMPagE", null, null, null, 0,0,0,0,0,0,0, "A"],
+      [2005, "Reilly's RaMPagE", 7, 6, 0, 0,0,0,1,0,0,0, "A"],
+      [2006, "Reilly's RaMPagE", 5, 8, 0, 0,0,0,0,0,0,0, "A"],
+      [2007, "Reilly's RaMPagE", 5, 8, 0, 0,0,0,0,0,0,0, "A"],
+      [2008, "Reilly's RaMPagE", 9, 4, 0, 0,0,0,1,0,0,0, "A"],
+      [2009, "Reilly's RaMPagE", 4, 9, 0, 0,0,0,0,0,0,0, "A"],
+      [2010, "Reilly's RaMPagE", 3,10, 0, 0,0,0,0,0,0,0, "A"],
+      [2011, "Reilly's RaMPagE", 5, 8, 0, 0,0,0,0,0,0,0, "A"],
+      [2012, "Reilly's Reindeers", 9, 4, 0, 0,0,0,1,0,0,0, "A"],
+      [2013, "Reilly's Reindeers", 6, 7, 0, 0,0,0,0,0,0,0, "A"],
+      [2014, "Reilly's Reindeers",10, 3, 0, 1,0,0,1,0,0,0, "A"],
+      [2015, "Reilly's Reindeers",11, 2, 0, 0,0,0,1,0,0,0, "A"],
+      [2016, "Reilly's Reindeers", 5, 8, 0, 0,0,0,0,0,0,0, "A"],
+      [2017, "Reilly's Reindeers", 7, 6, 0, 0,0,0,1,0,0,0, "A"],
+      [2018, "Reilly's Reindeer",  8, 5, 0, 1,0,1,1,0,0,0, "A"],
+      [2019, "Reilly's Reindeer",  9, 4, 0, 0,0,1,1,0,0,0, "A"],
+      [2020, "Reilly's Reindeer",  7, 6, 0, 0,0,0,1,0,0,0, "A"],
+      [2021, "Reilly's Reindeer",  7, 7, 0, 0,0,0,0,0,0,0, "A"],
+      [2022, "Reilly's Reindeer",  6, 8, 0, 0,0,1,1,0,0,0, "A"],
+      [2023, "Reilly's Reindeer",  8, 6, 0, 0,0,0,0,0,0,0, "A"],
+      [2024, "Reilly's Reindeer",  9, 5, 0, 1,0,1,1,0,0,0, "A"],
+      [2025, "Reilly's Reindeer", 11, 3, 0, 0,1,1,1,0,0,0, "U"]
+    ]
+  },
+  {
+    key: "brian-ron-murello",
+    name: "Brian Murello / Ron Murello",
+    recentTeam: "Hadley's Comets",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 2,
+    ovr: 94, clutch: 95, grind: 95, heat: 70,
+    rings: 2, runners: 3, divTitles: 4, playoffApps: 15, years: 24, winPct: 59,
+    scout: "The franchise. 24 seasons in, league-best 59% career win rate, and the highest playoff trip count in MAFFL history (15). The Heat score (70) is the only thing keeping them off the top of the mountain — they're machine-built for the regular season but the bracket has been less generous in recent years.",
+    timeline: [
+      [2002, "Swissvale SkeeDaddies", null,null,null, 0,0,0,0,0,0,0, "A"],
+      [2003, "Swissvale SkeeDaddies", null,null,null, 0,0,0,0,0,0,0, "A"],
+      [2004, "Swissvale SkeeDaddies", null,null,null, 0,0,0,0,0,0,0, "A"],
+      [2005, "Swissvale SkeeDaddies", 7,6,0, 0,0,0,1,0,0,0, "A"],
+      [2006, "Swissvale Flashes",     8,4,1, 1,0,0,1,0,0,0, "A"],
+      [2007, "ONE HOUSE DIVIDED",     8,5,0, 0,1,0,1,0,0,0, "A"],
+      [2008, "ONE HOUSE DIVIDED",     7,6,0, 0,0,0,0,0,0,0, "A"],
+      [2009, "Swissvale GallopingGhosts",11,2,0, 0,0,0,1,0,0,0, "A"],
+      [2010, "Swissvale GallopingGhosts",7,6,0, 0,0,0,1,0,0,0, "A"],
+      [2011, "Swissvale Ghosts",      8,5,0, 0,0,0,1,0,0,0, "A"],
+      [2012, "Swissvale Griffins III",9,3,1, 0,0,1,1,0,0,0, "A"],
+      [2013, "Swissvale Real McCoy's",8,5,0, 0,0,0,1,0,0,0, "A"],
+      [2014, "Swissvale Lucky's",     8,5,0, 0,0,0,1,0,0,0, "A"],
+      [2015, "Swissvale Norseman",    5,8,0, 0,0,0,0,0,0,0, "A"],
+      [2016, "Swissvale Architects",  6,7,0, 0,0,0,0,0,0,0, "A"],
+      [2017, "Swissvale Fire and Fury",11,2,0, 0,0,0,1,0,0,0, "A"],
+      [2018, "Swissvale Fire and Fury",6,7,0, 0,0,0,0,0,0,0, "A"],
+      [2019, "Swissvale Fire and Fury",7,6,0, 0,0,0,1,0,0,0, "A"],
+      [2020, "Hadley's Comets",       6,7,0, 0,0,0,0,0,0,0, "A"],
+      [2021, "Hadley's Comets",       7,7,0, 0,0,0,1,0,0,0, "A"],
+      [2022, "Hadley's Comets",      12,2,0, 0,0,1,1,0,0,0, "A"],
+      [2023, "Hadley's Comets",       9,5,0, 0,0,1,1,0,0,0, "A"],
+      [2024, "Hadley's Comets",       6,8,0, 0,0,0,0,0,0,0, "A"],
+      [2025, "Hadley's Comets",       8,6,0, 0,0,0,1,0,0,0, "U"]
+    ]
+  },
+  {
+    key: "tony-trozzo",
+    name: "Tony Trozzo",
+    recentTeam: "Happy Valley Hammer Time",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 3,
+    ovr: 89, clutch: 87, grind: 91, heat: 84,
+    rings: 3, runners: 1, divTitles: 5, playoffApps: 11, years: 24, winPct: 53,
+    scout: "Three rings (2009, 2010, 2017) and the Hammer Time brand never goes away. Got pushed to the Lower-Tier in 2025 — first time he's seen the basement — but won the Promotion Showdown to climb right back. Owners ranked above him better hope the relegation didn't sharpen his edge.",
+    timeline: [
+      [2002,"Happy Valley Hammer Time",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2003,"Happy Valley Hammer Time",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"Happy Valley Hammer Time",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"Happy Valley Hammer Time",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2006,"Happy Valley Hammer Time",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2007,"Happy Valley Hammer Time",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2008,"Happy Valley Hammer Time",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2009,"Happy Valley Hammer Time",7,6,0,1,0,0,1,0,0,0,"A"],
+      [2010,"Happy Valley Hammer Time",7,6,0,1,0,0,1,0,0,0,"A"],
+      [2011,"Happy Valley Hammer Time",8,4,1,0,0,0,1,0,0,0,"A"],
+      [2012,"Happy Valley Hammer Time",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2013,"Happy Valley Hammer Time",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2014,"Happy Valley Hammer Time",10,3,0,0,0,1,1,0,0,0,"A"],
+      [2015,"Happy Valley Hammer Time",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2016,"Happy Valley Hammer Time",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2017,"Happy Valley Hammer Time",10,3,0,1,0,1,1,0,0,0,"A"],
+      [2018,"Happy Valley Hammer Time",10,3,0,0,0,1,1,0,0,0,"A"],
+      [2019,"Happy Valley Hammer Time",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2020,"Happy Valley Hammer Time",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2021,"Happy Valley Hammer Time",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2022,"Happy Valley Hammer Time",10,4,0,0,0,1,1,0,0,0,"A"],
+      [2023,"Happy Valley Hammer Time",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2024,"Happy Valley Hammer Time",6,8,0,0,0,0,0,0,0,0,"A"],
+      [2025,"Happy Valley Hammer Time",7,5,0,0,0,0,0,0,0,1,"L"]
+    ]
+  },
+  {
+    key: "jon-rick",
+    name: "Jon Murello / Rick Simmons",
+    recentTeam: "The Prodigal Sons",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 4,
+    ovr: 86, clutch: 95, grind: 79, heat: 99,
+    rings: 3, runners: 2, divTitles: 4, playoffApps: 10, years: 20, winPct: 49,
+    scout: "Three rings (2008, 2022, 2025) and a 99 Heat — the highest in the league. The Prodigal Sons have always been streaky, but when they catch fire nobody scares Joe Reilly more. Coming off their second title in four years, this is the most dangerous they've ever been on paper.",
+    timeline: [
+      [2006,"Outlaw In-Law",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2007,"The Prodigal Sons",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2008,"The Prodigal Sons",7,6,0,1,0,0,1,0,0,0,"A"],
+      [2009,"The Prodigal Sons",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2010,"The Prodigal Sons",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2011,"The Prodigal Sons",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2012,"The Prodigal Sons",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2013,"The Prodigal Sons",8,5,0,0,0,1,1,0,0,0,"A"],
+      [2014,"The Prodigal Sons",6,7,0,0,0,1,1,0,0,0,"A"],
+      [2015,"The Prodigal Sons",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2016,"The Prodigal Sons",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2017,"The Prodigal Sons",8,5,0,0,0,0,0,0,0,0,"A"],
+      [2018,"The Prodigal Sons",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2019,"The Prodigal Sons",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2020,"The Prodigal Sons",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2021,"The Prodigal Sons",6,8,0,0,0,0,0,0,0,0,"A"],
+      [2022,"The Prodigal Sons",8,6,0,1,0,1,1,0,0,0,"A"],
+      [2023,"The Prodigal Sons",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2024,"The Prodigal Sons",6,8,0,0,0,0,0,0,0,0,"A"],
+      [2025,"The Prodigal Sons",10,4,0,1,0,1,1,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "mike-murello",
+    name: "Mike Murello",
+    recentTeam: "Bad Attitude Gang",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 5,
+    ovr: 80, clutch: 78, grind: 77, heat: 99,
+    rings: 2, runners: 2, divTitles: 1, playoffApps: 11, years: 24, winPct: 52,
+    scout: "Bad Attitude Gang is the longest continuously-running brand in the league. 2 rings, 99 Heat — Mike runs hot in big games. After a 2025 Lower-Tier Runner-Up finish climbed him back to the Upper, he's eyeing a third ring in his 25th season.",
+    timeline: [
+      [2002,"Bad Attitude Gang",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2003,"Bad Attitude Gang",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"Bad Attitude Gang",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"$Mike's Bad Attitude Gang",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2006,"$Mike's Bad Attitude Gang",10,3,0,0,0,0,1,0,0,0,"A"],
+      [2007,"Bad Attitude Gang",12,1,0,0,0,0,1,0,0,0,"A"],
+      [2008,"Bad Attitude Gang",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2009,"Bad Attitude Gang",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2010,"Bad Attitude Gang",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2011,"Bad Attitude Gang",7,5,1,0,0,0,1,0,0,0,"A"],
+      [2012,"Bad Attitude Gang",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2013,"Bad Attitude Gang",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2014,"Bad Attitude Gang",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2015,"Bad Attitude Gang",8,5,0,0,1,0,1,0,0,0,"A"],
+      [2016,"Bad Attitude Gang",9,4,0,1,0,1,1,0,0,0,"A"],
+      [2017,"Bad Attitude Gang",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2018,"Bad Attitude Gang",7,6,0,0,1,0,1,0,0,0,"A"],
+      [2019,"Bad Attitude Gang",6,7,0,0,0,0,1,0,0,0,"A"],
+      [2020,"Bad Attitude Gang",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2021,"Bad Attitude Gang",9,5,0,0,0,0,1,0,0,0,"A"],
+      [2022,"Bad Attitude Gang",8,6,0,0,0,0,1,0,0,0,"A"],
+      [2023,"Bad Attitude Gang",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2024,"Bad Attitude Gang",4,10,0,0,0,0,0,0,0,0,"A"],
+      [2025,"Bad Attitude Gang",8,5,0,0,0,0,0,0,1,0,"L"]
+    ]
+  },
+  {
+    key: "david-murello",
+    name: "David Murello",
+    recentTeam: "Kardiac Kids",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 6,
+    ovr: 78, clutch: 74, grind: 81, heat: 77,
+    rings: 1, runners: 2, divTitles: 6, playoffApps: 14, years: 23, winPct: 54,
+    scout: "Kardiac Kids has been an AFC mainstay for 23 seasons. One ring (2012), but 6 division titles and 14 playoff trips speaks to the Grind score. The 2024 brand reset to 'Kids Mixon with Lamar' didn't take — back to the Kids in 2025 and back to the bracket.",
+    timeline: [
+      [2003,"Kardiac Kids",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"Kardiac Kids",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"Kardiac Kids",7,6,0,0,1,0,1,0,0,0,"A"],
+      [2006,"Kardiac Kids",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2007,"Kardiac Kids",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2008,"Kardiac Kids",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2009,"Kardiac Kids",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2010,"Kardiac Kids",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2011,"Kardiac Kids",10,3,0,0,0,0,1,0,0,0,"A"],
+      [2012,"Kardiac Kids",9,4,0,1,0,0,1,0,0,0,"A"],
+      [2013,"Kardiac Kids",6,7,0,0,0,0,1,0,0,0,"A"],
+      [2014,"Kardiac Kids",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2015,"Kardiac Kids",2,11,0,0,0,0,0,0,0,0,"A"],
+      [2016,"Kardiac Kids",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2017,"Kardiac Kids",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2018,"Kardiac Kids",8,5,0,0,0,1,1,0,0,0,"A"],
+      [2019,"Kardiac Kids",8,5,0,0,1,1,1,0,0,0,"A"],
+      [2020,"Kardiac Kids",8,5,0,0,0,1,1,0,0,0,"A"],
+      [2021,"Kardiac Kids",11,3,0,0,0,1,1,0,0,0,"A"],
+      [2022,"Kardiac Kids",6,8,0,0,0,0,0,0,0,0,"A"],
+      [2023,"Kardiac Kids",4,10,0,0,0,0,0,0,0,0,"A"],
+      [2024,"Kardiac Kids",8,6,0,0,0,1,1,0,0,0,"A"],
+      [2025,"Kardiac Kids",9,5,0,0,0,0,1,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "todd-trozzo",
+    name: "Todd Trozzo",
+    recentTeam: "U-Town Fightin Ferrets",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 7,
+    ovr: 69, clutch: 70, grind: 71, heat: 41,
+    rings: 2, runners: 1, divTitles: 3, playoffApps: 7, years: 23, winPct: 47,
+    scout: "Two-time champion (2005, 2015) and one of the founding U-Town brands. Five straight losing seasons have caught up with him — relegated to the Lower-Tier for 2026, his first taste of the basement. Don't write off the Ferrets; this is a comeback waiting to happen.",
+    timeline: [
+      [2003,"U-Town Fightin Ferrets",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"U-Town Fightin Ferrets",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"U-Town Fightin Ferrets",10,3,0,1,0,0,1,0,0,0,"A"],
+      [2006,"U-Town Fightin Ferrets",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2007,"U-Town Fightin Ferrets",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2008,"U-Town Fightin Ferrets",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2009,"U-Town Fightin Ferrets",10,3,0,0,1,0,1,0,0,0,"A"],
+      [2010,"U-Town Fightin Ferrets",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2011,"U-Town Fightin Ferrets",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2012,"U-Town Fightin Ferrets",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2013,"U-Town Fightin Ferrets",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2014,"U-Town Fightin Ferrets",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2015,"U-Town Fightin Ferrets",8,5,0,1,0,0,1,0,0,0,"A"],
+      [2016,"U-Town Fightin Ferrets",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2017,"U-Town Fightin Ferrets",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2018,"U-Town Fightin Ferrets",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2019,"U-Town Fightin Ferrets",7,6,0,0,0,0,0,0,0,0,"A"],
+      [2020,"U-Town Fightin Ferrets",7,6,0,0,0,1,1,0,0,0,"A"],
+      [2021,"U-Town Fightin Ferrets",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2022,"U-Town Fightin Ferrets",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2023,"U-Town Fightin Ferrets",6,8,0,0,0,0,0,0,0,0,"A"],
+      [2024,"U-Town Fightin Ferrets",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2025,"U-Town Fightin Ferrets",4,10,0,0,0,0,0,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "chris-johnson",
+    name: "Chris Johnson",
+    recentTeam: "The V-Unit",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 8,
+    ovr: 67, clutch: 45, grind: 72, heat: 40,
+    rings: 2, runners: 1, divTitles: 2, playoffApps: 10, years: 23, winPct: 42,
+    scout: "Two surprise championship runs (2013, 2020) where the V-Unit caught fire from a low seed. 42% career mark is the lowest among multi-ring owners — Chris finds Octobers and forgets them by Decembers. Relegated for 2026 after a 3-11 stinker.",
+    timeline: [
+      [2003,"The V-Unit",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"The V-Unit",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"The V-Unit",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2006,"The V-Unit",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2007,"The V-Unit",6,7,0,0,0,0,1,0,0,0,"A"],
+      [2008,"The V-Unit",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2009,"The V-Unit",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2010,"The V-Unit",8,4,1,0,0,0,1,0,0,0,"A"],
+      [2011,"The V-Unit",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2012,"The V-Unit",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2013,"The V-Unit",7,6,0,1,0,1,1,0,0,0,"A"],
+      [2014,"The V-Unit",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2015,"The V-Unit",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2016,"The V-Unit",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2017,"The V-Unit",7,6,0,0,1,1,1,0,0,0,"A"],
+      [2018,"The V-Unit",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2019,"The V-Unit",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2020,"The V-Unit",7,6,0,1,0,0,1,0,0,0,"A"],
+      [2021,"The V-Unit",7,7,0,0,0,0,1,0,0,0,"A"],
+      [2022,"The V-Unit",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2023,"The V-Unit",8,6,0,0,0,0,1,0,0,0,"A"],
+      [2024,"The V-Unit",8,6,0,0,0,0,1,0,0,0,"A"],
+      [2025,"The V-Unit",3,11,0,0,0,0,0,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "jacob-nickman",
+    name: "Jacob Nickman",
+    recentTeam: "Jake's Jagoffs",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 9,
+    ovr: 63, clutch: 53, grind: 71, heat: 81,
+    rings: 2, runners: 0, divTitles: 1, playoffApps: 8, years: 24, winPct: 48,
+    scout: "Jake's Jagoffs has been here from day one. Two rings on the wall (2011, 2021) and a 2025 Lower-Tier Runner-Up to punch his ticket back to Upper. Heat of 81 is reflective of how dangerous he is once October hits.",
+    timeline: [
+      [2002,"Jake's Jagoffs",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2003,"Jake's Jagoffs",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"Jake's Jagoffs",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"Jake's Jagoffs",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2006,"Jake's Jagoffs",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2007,"Jake's Jagoffs",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2008,"Jake's Jagoffs",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2009,"Jake's Jagoffs",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2010,"Jake's Jagoffs",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2011,"Jake's Jagoffs",7,6,0,1,0,0,1,0,0,0,"A"],
+      [2012,"Jake's Jagoffs",7,6,0,0,0,0,0,0,0,0,"A"],
+      [2013,"Jake's Jagoffs",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2014,"Jake's Jagoffs",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2015,"Jake's Jagoffs",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2016,"Jake's Jagoffs",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2017,"Jake's Jagoffs",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2018,"Jake's Jagoffs",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2019,"Jake's Jagoffs",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2020,"Jake's Jagoffs",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2021,"Jake's Jagoffs",8,6,0,1,0,1,1,0,0,0,"A"],
+      [2022,"Jake's Jagoffs",4,10,0,0,0,0,0,0,0,0,"A"],
+      [2023,"Jake's Jagoffs",3,11,0,0,0,0,0,0,0,0,"A"],
+      [2024,"Jake's Jagoffs",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2025,"Jake's Jagoffs",9,4,0,0,0,0,0,0,1,0,"L"]
+    ]
+  },
+  {
+    key: "bj-funari",
+    name: "BJ Funari",
+    recentTeam: "South Hills FunShiners",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 10,
+    ovr: 61, clutch: 39, grind: 77, heat: 65,
+    rings: 1, runners: 2, divTitles: 3, playoffApps: 13, years: 20, winPct: 55,
+    scout: "Wilkinsburg N'@s → Greensburg → Motown → Fort Myers → SW Florida → South Hills. The most brand changes of any owner, and the 2019 ring as Fort Myers Sunshiners is the proof of concept. 55% career mark and 13 playoff trips put him in the upper half of the standings.",
+    timeline: [
+      [2006,"Wilkinsburg N'@s",7,6,0,0,1,0,1,0,0,0,"A"],
+      [2007,"Greensburg N'@s",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2008,"Greensburg N'@s",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2009,"Greensburg N'@s",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2010,"Greensburg N'@s",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2011,"Greensburg N'@s",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2012,"Greensburg N'@s",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2013,"Motown Moonshiners",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2014,"Motown Moonshiners",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2015,"Motown Moonshiners",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2016,"Motown Moonshiners",7,6,0,0,1,0,1,0,0,0,"A"],
+      [2017,"Motown Moonshiners",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2018,"Fort Myers Sunshiners",10,3,0,0,0,0,1,0,0,0,"A"],
+      [2019,"Fort Myers Sunshiners",9,4,0,1,0,0,1,0,0,0,"A"],
+      [2020,"SW Florida SunShiners",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2021,"South Hills FunShiners",11,3,0,0,0,1,1,0,0,0,"A"],
+      [2022,"South Hills FunShiners",10,4,0,0,0,0,1,0,0,0,"A"],
+      [2023,"South Hills FunShiners",9,5,0,0,0,0,1,0,0,0,"A"],
+      [2024,"South Hills FunShiners",10,4,0,0,0,1,1,0,0,0,"A"],
+      [2025,"South Hills FunShiners",5,9,0,0,0,0,0,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "bob-keslar",
+    name: "Bob Keslar",
+    recentTeam: "Camp Kes",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 11,
+    ovr: 50, clutch: 26, grind: 60, heat: 41,
+    rings: 1, runners: 1, divTitles: 2, playoffApps: 7, years: 12, winPct: 52,
+    scout: "Camp Kes broke through in 2023 with the ring, then again with the 2021 runner-up. Streaky — when Bob is hot, Camp Kes runs the table; when he's not, 4-10 happens. Relegated for 2026 but the Heat (41) says he won't stay down long.",
+    timeline: [
+      [2014,"Camp Kes",10,3,0,0,0,0,1,0,0,0,"A"],
+      [2015,"Camp Kes",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2016,"Camp Kes",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2017,"Camp Kes",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2018,"Camp Kes",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2019,"Camp Kes",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2020,"Camp Kes",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2021,"Camp Kes",9,5,0,0,1,1,1,0,0,0,"A"],
+      [2022,"Camp Kes",4,10,0,0,0,0,0,0,0,0,"A"],
+      [2023,"Camp Kes",9,5,0,1,0,0,1,0,0,0,"A"],
+      [2024,"Camp Kes",7,7,0,0,0,0,1,0,0,0,"A"],
+      [2025,"Camp Kes",4,10,0,0,0,0,0,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "dan-reilly",
+    name: "Dan Reilly",
+    recentTeam: "The Big Bang Theory",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 13,
+    ovr: 43, clutch: 11, grind: 67, heat: 68,
+    rings: 0, runners: 0, divTitles: 4, playoffApps: 6, years: 13, winPct: 56,
+    scout: "The Big Bang Theory has been the most consistent ringless team of the 2010s and 2020s. Four division titles, but Clutch of 11 tells the story — Dan gets there but can't close. 2026 is a referendum on whether that ever changes.",
+    timeline: [
+      [2013,"The Big Bang Theory",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2014,"The Big Bang Theory",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2015,"The Big Bang Theory",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2016,"The Big Bang Theory",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2017,"The Big Bang Theory",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2018,"The Big Bang Theory",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2019,"The Big Bang Theory",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2020,"The Big Bang Theory",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2021,"The Big Bang Theory",7,7,0,0,0,0,0,0,0,0,"A"],
+      [2022,"The Big Bang Theory",7,7,0,0,0,0,0,0,0,0,"A"],
+      [2023,"The Big Bang Theory",12,2,0,0,0,1,1,0,0,0,"A"],
+      [2024,"The Big Bang Theory",9,5,0,0,0,1,1,0,0,0,"A"],
+      [2025,"The Big Bang Theory",8,6,0,0,0,0,0,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "jon-fetrow",
+    name: "Jon Fetrow",
+    recentTeam: "Southside Shooters",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 14,
+    ovr: 38, clutch: 22, grind: 49, heat: 70,
+    rings: 0, runners: 1, divTitles: 2, playoffApps: 7, years: 12, winPct: 45,
+    scout: "Johnny Incognito → Southside Shooters. Rebranded in 2022 and the new identity is winning him divisions. 70 Heat is real — a 9-5 in 2025 and a Division title says the Shooters are about to threaten the upper crust.",
+    timeline: [
+      [2014,"Johnny Incognito",6,7,0,0,0,0,1,0,0,0,"A"],
+      [2015,"Johnny Incognito",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2016,"Johnny Incognito",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2017,"Johnny Incognito",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2018,"Johnny Incognito",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2019,"Johnny Incognito",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2020,"Johnny Incognito",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2021,"Johnny Incognito",8,6,0,0,0,0,1,0,0,0,"A"],
+      [2022,"Southside Shooters",5,9,0,0,0,0,0,0,0,0,"A"],
+      [2023,"Southside Shooters",6,8,0,0,0,0,1,0,0,0,"A"],
+      [2024,"Southside Shooters",7,7,0,0,0,1,1,0,0,0,"A"],
+      [2025,"Southside Shooters",9,5,0,0,0,1,1,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "ed-peters",
+    name: "Ed Peters",
+    recentTeam: "Turkey Hat Conglomerate",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 15,
+    ovr: 35, clutch: 9, grind: 53, heat: 70,
+    rings: 0, runners: 0, divTitles: 3, playoffApps: 5, years: 13, winPct: 44,
+    scout: "Turkey Hat Conglomerate is the league's most patient brand — thirteen seasons and three division titles, all coming since 2016. Made the playoffs in 2025. The Heat (70) is climbing but the Clutch (9) says the Conglomerate hasn't finished a job yet.",
+    timeline: [
+      [2013,"Turkey Hat Conglomerate",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2014,"Turkey Hat Conglomerate",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2015,"Turkey Hat Conglomerate",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2016,"Turkey Hat Conglomerate",8,5,0,0,0,1,1,0,0,0,"A"],
+      [2017,"Turkey Hat Conglomerate",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2018,"Turkey Hat Conglomerate",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2019,"Turkey Hat Conglomerate",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2020,"Turkey Hat Conglomerate",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2021,"Turkey Hat Conglomerate",4,10,0,0,0,0,0,0,0,0,"A"],
+      [2022,"Turkey Hat Conglomerate",7,7,0,0,0,0,1,0,0,0,"A"],
+      [2023,"Turkey Hat Conglomerate",7,7,0,0,0,1,1,0,0,0,"A"],
+      [2024,"Turkey Hat Conglomerate",7,7,0,0,0,0,0,0,0,0,"A"],
+      [2025,"Turkey Hat Conglomerate",7,7,0,0,0,1,1,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "tony-brooks",
+    name: "Tony Brooks",
+    recentTeam: "Number 2 Tony",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 19,
+    ovr: 20, clutch: 1, grind: 26, heat: 54,
+    rings: 0, runners: 0, divTitles: 2, playoffApps: 1, years: 5, winPct: 46,
+    scout: "Number 2 Tony came into 2021 swinging. Five seasons in, two division titles, and a 7-5 mark in 2025 (Lower) suggests the floor is rising. The Clutch (1) is the punchline — but every owner started somewhere.",
+    timeline: [
+      [2021,"Number 2 Tony",3,11,0,0,0,0,0,0,0,0,"A"],
+      [2022,"Number 2 Tony",6,8,0,0,0,0,0,0,0,0,"A"],
+      [2023,"Number 2 Tony",8,6,0,0,0,1,1,0,0,0,"A"],
+      [2024,"Number 2 Tony",7,7,0,0,0,0,0,0,0,0,"A"],
+      [2025,"Number 2 Tony",7,5,0,0,0,0,0,0,0,0,"L"]
+    ]
+  },
+  {
+    key: "braiden-snyder",
+    name: "Braiden Snyder",
+    recentTeam: "Mike Vicks Dog Sitting Co.",
+    active: true,
+    league2026: "Upper-Tier",
+    rank: 20,
+    ovr: 18, clutch: 5, grind: 28, heat: 67,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 2, years: 4, winPct: 55,
+    scout: "Young blood. 9-5 debut as Motown Ballers, brand pivot to Mike Vicks Dog Sitting Co. — already two playoff trips in four seasons and a 55% career mark. The Heat (67) for a 4-year owner is exceptional. He's coming for somebody's spot.",
+    timeline: [
+      [2022,"Motown Ballers",9,5,0,0,0,0,1,0,0,0,"A"],
+      [2023,"Motown Ballers",8,6,0,0,0,0,0,0,0,0,"A"],
+      [2024,"Motown Ballers",8,6,0,0,0,0,1,0,0,0,"A"],
+      [2025,"Mike Vicks Dog Sitting Co.",6,8,0,0,0,0,0,0,0,0,"U"]
+    ]
+  },
+  {
+    key: "ben-funari",
+    name: "Ben Funari",
+    recentTeam: "The Best in The 'Burgh",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 23,
+    ovr: 10, clutch: 0, grind: 17, heat: 48,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 50,
+    scout: "Rookie season as The Best in The 'Burgh — finished 6-6, right on the line. Bryan's son carrying the next generation into Lower-Tier. The Funari name has a ring on it; the kid has time to add another.",
+    timeline: [
+      [2025,"The Best in The 'Burgh",6,6,0,0,0,0,0,0,0,0,"L"]
+    ]
+  },
+  {
+    key: "charles-lavrinc",
+    name: "Charles Lavrinc",
+    recentTeam: "Portly Primates",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 25,
+    ovr: 9, clutch: 0, grind: 15, heat: 48,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 42,
+    scout: "Rookie owner, Portly Primates. 5-7 finish in his first MAFFL run. The Lavrinc family has a long history here — the brand expectations are set.",
+    timeline: [
+      [2025,"Portly Primates",5,7,0,0,0,0,0,0,0,0,"L"]
+    ]
+  },
+  {
+    key: "sam-lavrinc",
+    name: "Sam Lavrinc",
+    recentTeam: "Tommy Phamclub",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 27,
+    ovr: 8, clutch: 0, grind: 13, heat: 51,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 38,
+    scout: "Rookie. Tommy Phamclub finished 5-8 — the brand name suggests creativity, the record suggests learning curve. Year one of a project.",
+    timeline: [
+      [2025,"Tommy Phamclub",5,8,0,0,0,0,0,0,0,0,"L"]
+    ]
+  },
+  {
+    key: "nick-yankovich",
+    name: "Nick Yankovich",
+    recentTeam: "Sarge's Squad",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 28,
+    ovr: 8, clutch: 0, grind: 13, heat: 47,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 38,
+    scout: "Sarge's Squad: 5-8 in year one. Lower-Tier veteran-in-training. Plenty of room to grow.",
+    timeline: [
+      [2025,"Sarge's Squad",5,8,0,0,0,0,0,0,0,0,"L"]
+    ]
+  },
+  {
+    key: "dominic-nicastro",
+    name: "Dominic Nicastro",
+    recentTeam: "Steel City Champyinz",
+    active: true,
+    league2026: "Lower-Tier",
+    rank: 30,
+    ovr: 7, clutch: 0, grind: 11, heat: 48,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 33,
+    scout: "Steel City Champyinz — bold name, 4-8 inaugural record. Yinzer energy with a long road ahead. The branding writes the check; year two needs to cash it.",
+    timeline: [
+      [2025,"Steel City Champyinz",4,8,0,0,0,0,0,0,0,0,"L"]
+    ]
+  },
+
+  /* ============================================================
+     INACTIVE OWNERS — sorted by historical rank from PR emails
+     ============================================================ */
+  {
+    key: "josh-lavrinc",
+    name: "Josh Lavrinc",
+    recentTeam: "Bunch o' Bums",
+    active: false,
+    league2026: null,
+    rank: 12,
+    ovr: 46, clutch: 39, grind: 66, heat: 0,
+    rings: 1, runners: 1, divTitles: 2, playoffApps: 6, years: 20, winPct: 47,
+    scout: "Jefferson Juggernauts → West Mafflin Maffldivers → Jefferson Hills Juggernauts → Bunch o' Bums. Twenty seasons of evolving identities, one inaugural-era ring, and a 2010 runner-up. A genuine league cornerstone who stepped away after 2021.",
+    timeline: [
+      [2002,"Jefferson Juggernauts",null,null,null,1,0,0,0,0,0,0,"A"],
+      [2003,"Jefferson Juggernauts",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"Jefferson Juggernauts",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"Jefferson Juggernauts",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2006,"Jefferson Juggernauts",9,3,1,0,0,0,1,0,0,0,"A"],
+      [2007,"The Real Deal",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2008,"The Real Deal",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2009,"Jefferson Juggernauts",2,11,0,0,0,0,0,0,0,0,"A"],
+      [2010,"Jefferson Juggernauts",9,4,0,0,1,0,1,0,0,0,"A"],
+      [2011,"Jefferson Juggernauts",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2012,"Jefferson Juggernauts",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2013,"West Mafflin Maffldivers",7,6,0,0,0,0,0,0,0,0,"A"],
+      [2014,"Jefferson Hills Juggernauts",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2015,"Jefferson Hills Juggernauts",7,6,0,0,0,0,0,0,0,0,"A"],
+      [2016,"Jefferson Hills Juggernauts",6,7,0,0,0,0,1,0,0,0,"A"],
+      [2017,"Jefferson Hills Juggernauts",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2018,"Bunch o' Bums",10,3,0,0,0,1,1,0,0,0,"A"],
+      [2019,"Bunch o' Bums",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2020,"Bunch o' Bums",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2021,"Bunch o' Bums",5,9,0,0,0,0,0,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "jeff-grace",
+    name: "Jeff Grace",
+    recentTeam: "Pardon the Intoxication",
+    active: false,
+    league2026: null,
+    rank: 16,
+    ovr: 30, clutch: 32, grind: 40, heat: 0,
+    rings: 1, runners: 1, divTitles: 0, playoffApps: 5, years: 8, winPct: 62,
+    scout: "Pardon the Intoxication ran a tight eight-season window (2002-2009), capped by an early-era ring and a 62% career mark — second-best all-time. Disappeared after 2009 but the legacy is unimpeachable.",
+    timeline: [
+      [2002,"Pardon the Intoxication",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2003,"Pardon the Intoxication",null,null,null,1,0,0,0,0,0,0,"A"],
+      [2004,"Pardon the Intoxication",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2005,"Pardon the Intoxication",9,4,0,0,0,0,1,0,0,0,"A"],
+      [2006,"Pardon the Intoxication",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2007,"Pardon the Intoxication",7,6,0,0,1,0,1,0,0,0,"A"],
+      [2008,"Pardon the Intoxication",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2009,"Pardon the Intoxication",9,4,0,0,0,0,1,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "sean-ritson",
+    name: "Sean Ritson",
+    recentTeam: "Silver Bullets!!!",
+    active: false,
+    league2026: null,
+    rank: 17,
+    ovr: 26, clutch: 24, grind: 37, heat: 0,
+    rings: 0, runners: 2, divTitles: 0, playoffApps: 4, years: 7, winPct: 57,
+    scout: "Silver Bullets!!! — the exclamation points were earned. Seven seasons, two runner-up finishes (2008, 2011), and a 57% career mark. Walked away with the league's biggest 'what if.'",
+    timeline: [
+      [2006,"Silver Bullets",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2007,"Silver Bullets",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2008,"The Silver Bullets",8,5,0,0,1,0,1,0,0,0,"A"],
+      [2009,"The Silver Bullets",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2010,"Team Awesome!!!",6,6,1,0,0,0,0,0,0,0,"A"],
+      [2011,"Silver Bullets!!!",10,3,0,0,1,0,1,0,0,0,"A"],
+      [2012,"Silver Bullets!!!",9,4,0,0,0,0,1,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "jimmy-crisan",
+    name: "Jimmy Crisan",
+    recentTeam: "Warren Brownies",
+    active: false,
+    league2026: null,
+    rank: 18,
+    ovr: 21, clutch: 20, grind: 30, heat: 0,
+    rings: 1, runners: 0, divTitles: 0, playoffApps: 2, years: 11, winPct: 36,
+    scout: "Warren Brownies, 11 seasons, one inaugural-era ring (2004). The Brownies finished sub-.500 most years but had two playoff cameos. Hung up the cleats after 2013.",
+    timeline: [
+      [2003,"Warren Brownies",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2004,"Warren Brownies",null,null,null,1,0,0,0,0,0,0,"A"],
+      [2005,"Warren Brownies",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2006,"Warren Brownies",5,8,0,0,0,0,0,0,0,0,"A"],
+      [2007,"Warren Brownies",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2008,"Warren Brownies",1,12,0,0,0,0,0,0,0,0,"A"],
+      [2009,"Warren Brownies",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2010,"Warren Brownies",8,5,0,0,0,0,1,0,0,0,"A"],
+      [2011,"Warren Brownies",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2012,"Warren Brownies",2,11,0,0,0,0,0,0,0,0,"A"],
+      [2013,"Warren Brownies",5,8,0,0,0,0,0,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "marcus-joe-ruby",
+    name: "Marcus Ruby / Joe Ruby",
+    recentTeam: "Tooth Fairies",
+    active: false,
+    league2026: null,
+    rank: 21,
+    ovr: 13, clutch: 5, grind: 31, heat: 0,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 3, years: 7, winPct: 44,
+    scout: "Daddy Fat Sacks → Tooth Fairies. Seven seasons of brotherly co-management, three playoff trips. Exited after 2012 — the brand had personality even if the trophy case stayed empty.",
+    timeline: [
+      [2006,"Daddy Fat Sacks",7,6,0,0,0,0,0,0,0,0,"A"],
+      [2007,"Daddy Fat Sacks",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2008,"Tooth Fairies",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2009,"Tooth Fairies",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2010,"Tooth Fairies",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2011,"Tooth Fairies",3,8,2,0,0,0,0,0,0,0,"A"],
+      [2012,"Tooth Fairies",8,5,0,0,0,0,1,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "mike-licciardi",
+    name: "Mike Licciardi",
+    recentTeam: "So. U Shake 'n Bake",
+    active: false,
+    league2026: null,
+    rank: 22,
+    ovr: 11, clutch: 1, grind: 28, heat: 0,
+    rings: 0, runners: 0, divTitles: 1, playoffApps: 2, years: 6, winPct: 37,
+    scout: "Shake 'n Bake had a brief but memorable run — six seasons, one out-of-nowhere division title in 2016. The dish was undercooked by 2019.",
+    timeline: [
+      [2014,"So. U Shake 'n Bake",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2015,"So. U Shake 'n Bake",2,11,0,0,0,0,0,0,0,0,"A"],
+      [2016,"So. U Shake 'n Bake",7,6,0,0,0,1,1,0,0,0,"A"],
+      [2017,"So. U Shake 'n Bake",7,6,0,0,0,0,1,0,0,0,"A"],
+      [2018,"So. U Shake 'n Bake",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2019,"So. U Shake 'n Bake",4,9,0,0,0,0,0,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "josh-farber",
+    name: "Josh Farber",
+    recentTeam: "Farber's First Timers",
+    active: false,
+    league2026: null,
+    rank: 24,
+    ovr: 9, clutch: 1, grind: 24, heat: 0,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 1, years: 1, winPct: 69,
+    scout: "Showed up in 2020, went 9-4, won the Kunis division, made the playoffs, and walked. Highest single-season win rate in league history by a one-and-done. The mythology writes itself.",
+    timeline: [
+      [2020,"Farber's First Timers",9,4,0,0,0,0,1,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "craig-toth",
+    name: "Craig Toth",
+    recentTeam: "Moon Township Psycho Squirrels",
+    active: false,
+    league2026: null,
+    rank: 26,
+    ovr: 8, clutch: 1, grind: 23, heat: 0,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 1, years: 4, winPct: 44,
+    scout: "Moon Township Psycho Squirrels — easily the most underrated brand of the early era. Four seasons, one playoff appearance in 2008, then gone. The Squirrels live on in MAFFL lore.",
+    timeline: [
+      [2005,"Moon Township Psycho Squirrels",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2006,"Moon Township Psycho Squirrels",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2007,"Moon Township Psycho Squirrels",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2008,"Moon Township Psycho Squirrels",10,3,0,0,0,0,1,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "joni-murello",
+    name: "Joni Murello",
+    recentTeam: "Pink Berets",
+    active: false,
+    league2026: null,
+    rank: 29,
+    ovr: 7, clutch: 0, grind: 23, heat: 0,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 1, years: 4, winPct: 38,
+    scout: "Powder Puffs → Pink Berets. The lone female owner in MAFFL history. Four seasons, one 2013 playoff trip with the Berets. Brand identity was top-shelf.",
+    timeline: [
+      [2010,"Powder Puffs",6,6,1,0,0,0,0,0,0,0,"A"],
+      [2011,"Powder Puffs",3,10,0,0,0,0,0,0,0,0,"A"],
+      [2012,"Powder Puffs",4,9,0,0,0,0,0,0,0,0,"A"],
+      [2013,"Pink Berets",7,6,0,0,0,0,1,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "matt-brown",
+    name: "Matt Brown",
+    recentTeam: "Major League Brown",
+    active: false,
+    league2026: null,
+    rank: 31,
+    ovr: 7, clutch: 0, grind: 22, heat: 0,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 4, winPct: 44,
+    scout: "Major League Brown — never quite hit the playoffs in four seasons (2009-2012). The kind of grinder who keeps a 23-27 record interesting until Week 13.",
+    timeline: [
+      [2009,"Major League Brown",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2010,"Major League Brown",5,7,1,0,0,0,0,0,0,0,"A"],
+      [2011,"Major League Brown",6,7,0,0,0,0,0,0,0,0,"A"],
+      [2012,"Major League Brown",6,6,1,0,0,0,0,0,0,0,"A"]
+    ]
+  },
+  {
+    key: "kevin-radkowski",
+    name: "Kevin Radkowski",
+    recentTeam: "Mike Honcho",
+    active: false,
+    league2026: null,
+    rank: 32,
+    ovr: 5, clutch: 0, grind: 19, heat: 0,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 54,
+    scout: "Mike Honcho — one season (2013), 7-6, exited stage left. The brand had range; the owner had other plans.",
+    timeline: [
+      [2013,"Mike Honcho",7,6,0,0,0,0,0,0,0,0,"A"]
+    ]
+  }
+];
+
+/* =====================================================================
+ * RENDER
+ * ===================================================================== */
+
+function escHtml(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" })[c];
+  });
+}
+
+/* Decide the priority class for a year cell based on flags. */
+function yearCellTheme(entry) {
+  // entry = [year, team, w, l, t, c, r, d, p, l1, lr, ps, tier]
+  var c = entry[5], r = entry[6], d = entry[7], p = entry[8],
+      l1 = entry[9], lr = entry[10], ps = entry[11];
+  if (c) return { cls: "champ",    icon: "\u{1F3C6}" }; // 🏆
+  if (r) return { cls: "runner",   icon: "\u{1F948}" }; // 🥈
+  if (d) return { cls: "division", icon: "\u{1F451}" }; // 👑
+  if (p) return { cls: "playoff",  icon: "\u{1F39F}️" }; // 🎟
+  if (l1) return { cls: "lt1",     icon: "\u{1F947}" }; // 🥇
+  if (lr || ps) return { cls: "ltrunner", icon: "⭐" }; // ⭐
+  return { cls: "regular", icon: "" };
+}
+
+function flagListForTip(entry) {
+  var labels = [];
+  if (entry[5]) labels.push("Championship");
+  if (entry[6]) labels.push("Runner-Up");
+  if (entry[7]) labels.push("Division Title");
+  if (entry[8]) labels.push("Playoff Berth");
+  if (entry[9]) labels.push("Lower-Tier 1st");
+  if (entry[10]) labels.push("Lower-Tier Runner-Up");
+  if (entry[11]) labels.push("Promotion Showdown Winner");
+  return labels;
+}
+
+function tierLabel(t) {
+  if (t === "U") return "Upper-Tier";
+  if (t === "L") return "Lower-Tier";
+  return "Active";
+}
+
+function recordString(w, l, t) {
+  if (w == null || l == null) return "Pre-2005 (no record)";
+  if (t && t > 0) return w + "-" + l + "-" + t;
+  return w + "-" + l;
+}
+
+function renderTimelineCells(timeline) {
+  return timeline.map(function (e) {
+    var theme = yearCellTheme(e);
+    var year = e[0], team = e[1], w = e[2], l = e[3], t = e[4];
+    var flags = flagListForTip(e);
+    var tier = tierLabel(e[12]);
+    var tipFlags = flags.length ? flags.join(", ") : "Regular Season";
+    var tip =
+      '<div class="yc-tip" role="tooltip">' +
+        '<div class="yc-tip-title">' + escHtml(year) + ' &middot; ' + escHtml(team) + '</div>' +
+        '<div class="yc-tip-meta">' + escHtml(recordString(w, l, t)) + ' &middot; ' + escHtml(tier) + '</div>' +
+        '<div class="yc-tip-flags">' + escHtml(tipFlags) + '</div>' +
+      '</div>';
+    return (
+      '<button type="button" class="year-cell ' + theme.cls + '" aria-label="' + escHtml(year + ' ' + team + ', ' + recordString(w, l, t) + ', ' + tipFlags) + '">' +
+        '<span class="yc-year">' + escHtml(year) + '</span>' +
+        '<span class="yc-icon" aria-hidden="true">' + theme.icon + '</span>' +
+        tip +
+      '</button>'
+    );
+  }).join("");
+}
+
+function tierBadgeHtml(owner) {
+  if (!owner.active) {
+    return '<span class="card-tier-badge inactive">Inactive</span>';
+  }
+  if (owner.rank >= 1 && owner.rank <= 4) {
+    return '<span class="card-tier-badge"><span class="badge-icon">\u{1F3D4}️</span>Mount Rushmore</span>';
+  }
+  if (owner.league2026 === "Upper-Tier") {
+    return '<span class="card-tier-badge"><span class="badge-icon">\u{1F39F}️</span>Upper-Tier 2026</span>';
+  }
+  if (owner.league2026 === "Lower-Tier") {
+    return '<span class="card-tier-badge"><span class="badge-icon">\u{1F39F}️</span>Lower-Tier 2026</span>';
+  }
+  return "";
+}
+
+function renderOwnerCard(owner) {
+  var stats = [
+    { label: "Rings",     value: owner.rings,       gold: true },
+    { label: "Runner-Ups",value: owner.runners },
+    { label: "Div Titles",value: owner.divTitles },
+    { label: "Playoff Apps",value: owner.playoffApps },
+    { label: "Years",     value: owner.years },
+    { label: "Career Win %", value: owner.winPct + "%" }
+  ];
+
+  var statsHtml = stats.map(function (s) {
+    return (
+      '<div class="stat-box">' +
+        '<div class="stat-num' + (s.gold ? ' gold' : '') + '">' + escHtml(s.value) + '</div>' +
+        '<div class="stat-label">' + escHtml(s.label) + '</div>' +
+      '</div>'
+    );
+  }).join("");
+
+  var ratings = [
+    { emoji: "\u{1F9CA}", label: "Clutch", value: owner.clutch, heat: false },
+    { emoji: "\u{1F69C}", label: "Grind",  value: owner.grind,  heat: false },
+    { emoji: "\u{1F525}", label: "Heat",   value: owner.heat,   heat: true  }
+  ];
+  var ratingsHtml = ratings.map(function (r) {
+    var pct = Math.max(0, Math.min(99, r.value));
+    return (
+      '<div class="madden-row">' +
+        '<div class="madden-emoji" aria-label="' + escHtml(r.label) + '">' + r.emoji + '</div>' +
+        '<div class="madden-track"><div class="madden-fill' + (r.heat ? ' heat' : '') + '" style="width:' + pct + '%"></div></div>' +
+        '<div class="madden-value">' + escHtml(r.value) + '</div>' +
+      '</div>'
+    );
+  }).join("");
+
+  var legend =
+    '<div class="timeline-head">' +
+      '<span class="timeline-head-label">Season Legend</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#f5a623"></span>Champ</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#c7c9d1"></span>Runner-Up</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#1a2e50"></span>Division</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#e1f5ee"></span>Playoff</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#fde9c7"></span>LT 1st</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#fef4e1"></span>LT Runner / Promo</span>' +
+      '<span class="legend-chip"><span class="legend-swatch" style="background:#f0f2f5"></span>Regular</span>' +
+    '</div>';
+
+  var timelineHtml =
+    legend +
+    '<div class="timeline-scroll">' +
+      '<div class="timeline-row">' + renderTimelineCells(owner.timeline) + '</div>' +
+    '</div>';
+
+  var rankDisplay = owner.rank != null ? owner.rank : '—';
+
+  return (
+    '<article class="owner-card" data-key="' + escHtml(owner.key) + '" data-active="' + (owner.active ? "Y" : "N") + '" data-league="' + escHtml(owner.league2026 || "") + '" data-rank="' + escHtml(owner.rank) + '">' +
+      '<button type="button" class="card-row" aria-expanded="false" aria-controls="body-' + escHtml(owner.key) + '">' +
+        '<span class="card-rank" aria-label="Power Rank">' + escHtml(rankDisplay) + '</span>' +
+        '<span class="card-identity">' +
+          '<h3 class="card-owner-name">' + escHtml(owner.name) + '</h3>' +
+          '<p class="card-team">' + escHtml(owner.recentTeam) + '</p>' +
+          tierBadgeHtml(owner) +
+        '</span>' +
+        '<span class="card-ovr">' +
+          '<div class="card-ovr-value">' + escHtml(owner.ovr) + '</div>' +
+          '<div class="card-ovr-label">OVR</div>' +
+        '</span>' +
+        '<span class="card-chev" aria-hidden="true">▾</span>' +
+      '</button>' +
+      '<div class="card-body" id="body-' + escHtml(owner.key) + '">' +
+        '<div class="career-stats">' + statsHtml + '</div>' +
+        '<div class="madden-bars">' + ratingsHtml + '</div>' +
+        '<div class="scout-report"><p>' + escHtml(owner.scout) + '</p></div>' +
+        '<div class="timeline-section">' + timelineHtml + '</div>' +
+      '</div>' +
+    '</article>'
+  );
+}
+
+/* =====================================================================
+ * INIT
+ * ===================================================================== */
+(function init() {
+  var grid = document.getElementById("ownerGrid");
+  grid.innerHTML = OWNERS_DATA.map(renderOwnerCard).join("");
+
+  /* Card expand / collapse */
+  grid.addEventListener("click", function (ev) {
+    var head = ev.target.closest(".card-row");
+    if (head && grid.contains(head)) {
+      // Don't toggle if the click was on a year cell inside the body
+      var card = head.closest(".owner-card");
+      var open = card.classList.toggle("open");
+      head.setAttribute("aria-expanded", open ? "true" : "false");
+      return;
+    }
+    // Year cell tap toggle (for mobile / no-hover devices)
+    var yc = ev.target.closest(".year-cell");
+    if (yc && grid.contains(yc)) {
+      ev.preventDefault();
+      // Close any other open tip
+      grid.querySelectorAll(".year-cell.tip-open").forEach(function (n) {
+        if (n !== yc) n.classList.remove("tip-open");
+      });
+      yc.classList.toggle("tip-open");
+    }
+  });
+
+  /* Filter pills */
+  var filterBar = document.querySelector(".filter-bar");
+  filterBar.addEventListener("click", function (ev) {
+    var pill = ev.target.closest(".filter-pill");
+    if (!pill) return;
+    filterBar.querySelectorAll(".filter-pill").forEach(function (p) {
+      p.classList.remove("active");
+      p.setAttribute("aria-selected", "false");
+    });
+    pill.classList.add("active");
+    pill.setAttribute("aria-selected", "true");
+
+    var filter = pill.getAttribute("data-filter");
+    applyFilter(filter);
+  });
+
+  function applyFilter(filter) {
+    var anyVisible = false;
+    var cards = grid.querySelectorAll(".owner-card");
+    cards.forEach(function (card) {
+      var active = card.getAttribute("data-active") === "Y";
+      var league = card.getAttribute("data-league");
+      var rank = parseInt(card.getAttribute("data-rank"), 10);
+      var show = true;
+      switch (filter) {
+        case "upper":    show = active && league === "Upper-Tier"; break;
+        case "lower":    show = active && league === "Lower-Tier"; break;
+        case "inactive": show = !active; break;
+        case "rushmore": show = rank >= 1 && rank <= 4 && active; break;
+        case "all":
+        default:         show = true;
+      }
+      card.style.display = show ? "" : "none";
+      if (show) anyVisible = true;
+    });
+    grid.classList.toggle("empty", !anyVisible);
+  }
+})();
+
+/* Hamburger nav (mobile) */
+(function wireHamburger() {
+  var btn = document.getElementById("navToggle");
+  var nav = document.getElementById("primaryNav");
+  btn.addEventListener("click", function () {
+    var open = nav.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+})();
+</script>
+
+</body>
+</html>
