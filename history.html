@@ -471,6 +471,90 @@
     white-space: nowrap;
   }
 
+  /* Roster grouped by division */
+  .roster-division-group {
+    margin-bottom: 14px;
+  }
+  .roster-division-group:last-child { margin-bottom: 0; }
+  .roster-div-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 8px;
+    padding: 3px 10px;
+    display: inline-block;
+    background: var(--navy-soft);
+    border-radius: 100px;
+    line-height: 1.15;
+  }
+  .roster-owner-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-family: var(--body);
+    font-size: 13px;
+    border-bottom: 1px dashed var(--border);
+    padding: 4px 0;
+  }
+  .roster-owner-row:last-of-type { border-bottom: 0; }
+  .roster-owner-row .owner-name {
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .roster-owner-row .owner-team {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Collapsible Lower-Tier roster */
+  .lower-roster-toggle {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+  }
+  .lower-roster-toggle-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    border: 0;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 10px 14px;
+    cursor: pointer;
+    line-height: 1.1;
+    border-radius: 10px;
+  }
+  .lower-roster-toggle-btn .chev {
+    display: inline-block;
+    transition: transform 0.18s ease;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .lower-roster-toggle.open .lower-roster-toggle-btn .chev {
+    transform: rotate(180deg);
+  }
+  .lower-roster-body {
+    display: none;
+    padding: 4px 14px 12px;
+  }
+  .lower-roster-toggle.open .lower-roster-body { display: block; }
+
   /* Draft Highlights */
   .draft-row {
     display: grid;
@@ -7644,8 +7728,17 @@ function placeLabel(r, year) {
   return parts.join(" &middot; ");
 }
 
+function ownerRowHTML(r) {
+  const team = r.team ? `<span class="owner-team">${esc(r.team)}</span>` : "";
+  return `
+    <div class="roster-owner-row">
+      <span class="owner-name" data-owner="${esc(r.owner)}" data-team="${esc(r.team || "")}" data-year="${esc(r.year || "")}">${esc(r.owner)}</span>
+      ${team}
+    </div>`;
+}
+
 function renderRoster(b, year) {
-  // Dedup roster by owner; keep first entry
+  // Dedup roster by owner; keep first entry. Keep tier/conf/division on each entry.
   const seen = new Set();
   const list = b.roster.filter(r => {
     if (!r.owner) return false;
@@ -7654,16 +7747,59 @@ function renderRoster(b, year) {
     return true;
   });
   if (!list.length) return "";
-  // Sort by owner name for stable display
-  list.sort((a, b) => a.owner.localeCompare(b.owner));
-  const rows = list.map(r => `
-    <div class="roster-row">
-      <span class="roster-owner">${esc(r.owner)}</span>
-      <span class="roster-place">${placeLabel(r, year)}</span>
-    </div>`).join("");
+  list.forEach(r => { r.year = year; });
+
+  // Founding Era (2002-2004): no division structure, single list
+  if (year <= 2004) {
+    const sorted = list.slice().sort((a, b) => a.owner.localeCompare(b.owner));
+    const rows = sorted.map(ownerRowHTML).join("");
+    return `<div class="exp-section">
+      <h3 class="exp-section-head">Founding Era Roster</h3>
+      <div class="roster-grid">${rows}</div>
+    </div>`;
+  }
+
+  // 2005+: Group Upper-Tier by division
+  const upper = list.filter(r => r.tier === "Upper");
+  const lower = list.filter(r => r.tier === "Lower");
+
+  // Group Upper by division name
+  const byDivision = {};
+  upper.forEach(r => {
+    const key = r.division || "Unassigned";
+    if (!byDivision[key]) byDivision[key] = [];
+    byDivision[key].push(r);
+  });
+  const divisionNames = Object.keys(byDivision).sort((a, b) => a.localeCompare(b));
+
+  const upperGroupsHTML = divisionNames.map(divName => {
+    const owners = byDivision[divName].slice().sort((a, b) => a.owner.localeCompare(b.owner));
+    const rows = owners.map(ownerRowHTML).join("");
+    return `<div class="roster-division-group">
+      <div class="roster-div-head">${esc(divName)}</div>
+      ${rows}
+    </div>`;
+  }).join("");
+
+  // Lower-Tier collapsible (2025+)
+  let lowerHTML = "";
+  if (year >= 2025 && lower.length) {
+    const sortedLower = lower.slice().sort((a, b) => a.owner.localeCompare(b.owner));
+    const lowerRows = sortedLower.map(ownerRowHTML).join("");
+    lowerHTML = `
+      <div class="lower-roster-toggle" data-lower-roster-year="${year}">
+        <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
+          <span>Lower-Tier</span>
+          <span class="chev">&#x25BC;</span>
+        </button>
+        <div class="lower-roster-body">${lowerRows}</div>
+      </div>`;
+  }
+
   return `<div class="exp-section">
     <h3 class="exp-section-head">Roster That Season</h3>
-    <div class="roster-grid">${rows}</div>
+    ${upperGroupsHTML}
+    ${lowerHTML}
   </div>`;
 }
 
@@ -7804,6 +7940,16 @@ function attachTileHandlers() {
 
   document.querySelectorAll(".draft-link").forEach(a => {
     a.addEventListener("click", e => e.stopPropagation());
+  });
+
+  document.querySelectorAll(".lower-roster-toggle-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const wrap = btn.closest(".lower-roster-toggle");
+      if (!wrap) return;
+      const open = wrap.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
   });
 }
 
