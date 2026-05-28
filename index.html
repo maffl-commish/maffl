@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MAFFL HQ — Mid-Atlantic Fantasy Football League</title>
-<meta name="description" content="MAFFL HQ — home of the Mid-Atlantic Fantasy Football League. Weekly Pulse, Rules & Credits, Power Rankings, Auction Draft Portal, Stats, and History.">
+<meta name="description" content="MAFFL HQ — home of the Mid-Atlantic Fantasy Football League. Weekly Pulse, Archive, Rule Book, Power Rankings, Auction Draft Portal, Stats, and History.">
 
 <!-- Favicon + Apple Touch Icon (home-screen icon on iOS / iPadOS) -->
 <link rel="icon" href="maffl-logo.png" type="image/png">
@@ -26,6 +26,7 @@
     --navy-shadow-strong: rgba(26, 46, 80, 0.18);
     --gold: #f5a623;
     --gold-dark: #d98e10;
+    --gold-shadow: rgba(245, 166, 35, 0.28);
     --muted: #8a9ab5;
     --border: #e2e6ed;
     --win: #1d9e75;
@@ -135,11 +136,13 @@
     padding: 32px 24px 56px;
   }
 
-  /* ---------- Hero (single CTA) ---------- */
+  /* ---------- Hero (offseason: stacked CTAs / in-season: single CTA) ---------- */
   .hero {
-    max-width: 480px;
-    margin: 0 auto 40px;
-    text-align: center;
+    margin: 0 auto 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
   }
 
   .hero-cta {
@@ -149,22 +152,42 @@
     justify-content: center;
     gap: 4px;
     width: 100%;
+    max-width: 480px;
     height: 64px;
     padding: 0 20px;
     background: var(--gold);
     color: var(--navy);
+    border: 1px solid var(--gold);
     border-radius: 8px;
     box-shadow: 0 4px 14px var(--navy-shadow);
-    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
   .hero-cta:hover {
     background: var(--gold-dark);
+    border-color: var(--gold-dark);
     box-shadow: 0 6px 18px var(--navy-shadow-strong);
   }
   .hero-cta:active { transform: translateY(1px); }
   .hero-cta:focus-visible {
     outline: 2px solid var(--navy);
     outline-offset: 3px;
+  }
+
+  /* Primary CTA grows to 72px when both CTAs are rendered (offseason). */
+  .hero.offseason .hero-cta.primary { height: 72px; }
+
+  /* Secondary CTA: softer, white-on-navy outline. */
+  .hero-cta.secondary {
+    height: 56px;
+    background: var(--surface);
+    border: 1px solid var(--navy);
+    color: var(--navy);
+    box-shadow: none;
+  }
+  .hero-cta.secondary:hover {
+    background: var(--page-bg);
+    border-color: var(--navy);
+    box-shadow: 0 4px 12px var(--navy-soft);
   }
 
   .hero-cta-eyebrow {
@@ -185,11 +208,54 @@
     line-height: 1;
   }
 
+  /* ---------- Credit Submission band (standalone quick action) ---------- */
+  .quick-action {
+    margin: 0 0 40px;
+    text-align: center;
+  }
+  .quick-action-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 0 0 12px;
+    line-height: 1;
+  }
+  .credit-band {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    width: 100%;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 8px;
+    box-shadow: 0 6px 18px var(--gold-shadow);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    padding: 0 20px;
+  }
+  .credit-band:hover {
+    background: var(--gold-dark);
+    box-shadow: 0 8px 22px var(--gold-shadow);
+    transform: translateY(-1px);
+  }
+  .credit-band:active { transform: translateY(0); }
+  .credit-band:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 3px;
+  }
+
   /* ---------- Section heading ---------- */
   .section-head {
     border-bottom: 1px solid var(--border);
     padding-bottom: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
   .section-head h2 {
     font-family: var(--display);
@@ -201,70 +267,54 @@
     margin: 0;
   }
 
-  /* ---------- Card grid ---------- */
+  /* ---------- Card grid (compact, refined) ---------- */
   .card-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 14px;
   }
 
   .section-card {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    min-height: 88px;
+    min-height: 72px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    border-radius: 10px;
+    padding: 16px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
   }
   .section-card:hover,
   .section-card:focus-visible {
-    transform: translateY(-3px);
+    transform: translateY(-1px);
     border-color: var(--navy);
-    box-shadow: 0 10px 28px var(--navy-shadow);
     outline: none;
   }
-  .section-card:active { transform: translateY(-1px); }
+  .section-card:active { transform: translateY(0); }
 
   .card-icon {
-    font-size: 32px;
+    font-size: 24px;
     line-height: 1;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
   .card-title {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 15px;
     color: var(--navy);
-    margin: 0 0 6px;
+    margin: 0 0 2px;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    line-height: 1.1;
   }
   .card-tag {
     font-family: var(--body);
     font-weight: 400;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--muted);
     margin: 0;
-  }
-
-  /* External-link variant (Credit Submission Form) */
-  .section-card.action { position: relative; }
-  .section-card.action .card-external {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--muted);
-    line-height: 1;
-  }
-  .section-card.action:hover .card-external,
-  .section-card.action:focus-visible .card-external {
-    color: var(--navy);
+    line-height: 1.3;
   }
 
   /* ---------- Footer ---------- */
@@ -319,20 +369,28 @@
     main { padding: 24px 18px 40px; }
 
     .hero {
-      max-width: none;
-      margin: 0 8px 36px;
+      margin: 0 0 32px;
     }
     .hero-cta {
+      max-width: none;
+      width: calc(100% - 16px);
       padding: 0 16px;
     }
 
-    .card-grid { grid-template-columns: 1fr; gap: 14px; }
-    .section-card { padding: 20px; }
+    .quick-action { margin: 0 0 32px; }
+    .credit-band {
+      width: calc(100% - 16px);
+      margin: 0 auto;
+      font-size: 15px;
+    }
+
+    .card-grid { grid-template-columns: 1fr; gap: 10px; }
+    .section-card { min-height: 64px; padding: 14px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .section-card, .hero-cta, .site-nav a { transition: none; }
-    .section-card:hover { transform: none; }
+    .section-card, .hero-cta, .credit-band, .site-nav a { transition: none; }
+    .section-card:hover, .credit-band:hover { transform: none; }
   }
 </style>
 </head>
@@ -348,9 +406,10 @@
     <button class="nav-toggle" id="navToggle" aria-controls="primaryNav" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
 
     <nav class="site-nav" id="primaryNav" aria-label="Primary">
-      <a href="weekly.html">Weekly</a>
-      <a href="rules.html">Rulebook</a>
+      <a href="weekly.html">Weekly Pulse</a>
+      <a href="weekly.html">Archive</a>
       <a href="power-rankings.html">Power Rankings</a>
+      <a href="rules.html">Rule Book</a>
       <a href="draft.html">Auction Draft</a>
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
@@ -360,9 +419,20 @@
 
 <main>
   <section class="hero" id="hero" aria-label="Featured now">
-    <a class="hero-cta" id="heroCta" href="weekly.html">
-      <span class="hero-cta-eyebrow" id="heroCtaEyebrow">MAFFL WEEKLY PULSE</span>
-      <span class="hero-cta-headline" id="heroCtaHeadline">Week 6 is Live &rarr;</span>
+    <a class="hero-cta primary" id="heroCtaPrimary" href="weekly.html">
+      <span class="hero-cta-eyebrow" id="heroCtaPrimaryEyebrow">MAFFL WEEKLY PULSE</span>
+      <span class="hero-cta-headline" id="heroCtaPrimaryHeadline">Week 6 is Live &rarr;</span>
+    </a>
+    <a class="hero-cta secondary" id="heroCtaSecondary" href="#" hidden>
+      <span class="hero-cta-eyebrow" id="heroCtaSecondaryEyebrow"></span>
+      <span class="hero-cta-headline" id="heroCtaSecondaryHeadline"></span>
+    </a>
+  </section>
+
+  <section class="quick-action" aria-label="Submit a credit request">
+    <p class="quick-action-label">Quick Action</p>
+    <a class="credit-band" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">
+      &#x270D;&#xFE0F;&nbsp; Submit a Credit Request &rarr;
     </a>
   </section>
 
@@ -375,19 +445,18 @@
       <a class="section-card" href="weekly.html">
         <span class="card-icon" aria-hidden="true">&#x1F7E2;</span>
         <h3 class="card-title">Weekly Pulse</h3>
-        <p class="card-tag">Archive of weekly report outs</p>
+        <p class="card-tag">This week's report</p>
       </a>
 
-      <a class="section-card action" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">
-        <span class="card-external" aria-hidden="true">&#x2197;</span>
-        <span class="card-icon" aria-hidden="true">&#x270D;&#xFE0F;</span>
-        <h3 class="card-title">Credit Submission Form</h3>
-        <p class="card-tag">Submit a spend or trade of credits</p>
+      <a class="section-card" href="weekly.html">
+        <span class="card-icon" aria-hidden="true">&#x1F4C2;</span>
+        <h3 class="card-title">Archive</h3>
+        <p class="card-tag">Past weekly reports</p>
       </a>
 
       <a class="section-card" href="rules.html">
         <span class="card-icon" aria-hidden="true">&#x1F4CB;</span>
-        <h3 class="card-title">Rulebook</h3>
+        <h3 class="card-title">Rule Book</h3>
         <p class="card-tag">The official MAFFL rulebook</p>
       </a>
 
@@ -426,37 +495,50 @@
   /*
    * FEATURED_NOW — the "What's Hot" slot at the top of the homepage.
    *
-   * Update this object whenever you publish something new and want it
-   * featured at the top of the homepage. Examples:
-   *   - Weekly Pulse releases during the season
-   *   - Power Rankings during offseason
-   *   - Annual Edition drops
-   *   - Playoff brackets
-   *   - Champion announcements
+   * During offseason, both primary and secondary CTAs are visible —
+   * Power Rankings (or whatever's most current) takes primary, sample
+   * Weekly Pulse as secondary. During season, only primary CTA shows
+   * and points to current Weekly Pulse.
    *
-   * Set isLive to false to hide the hero entirely.
+   * Set isOffseason: false to revert to the single-CTA in-season state.
    */
   const FEATURED_NOW = {
-    eyebrow: "MAFFL WEEKLY PULSE",
-    headline: "Week 6 is Live →",
-    link: "weekly.html",
-    isLive: true
+    isOffseason: true,
+    primary: {
+      eyebrow: "JUST RELEASED",
+      headline: "2026 Power Rankings Are Live →",
+      link: "power-rankings.html"
+    },
+    secondary: {
+      eyebrow: "WEEK 6 PREVIEW (SIMULATED)",
+      headline: "View Sample Weekly Pulse →",
+      link: "weekly.html"
+    }
   };
 
   (function renderHero(data) {
-    const hero     = document.getElementById("hero");
-    const cta      = document.getElementById("heroCta");
-    const eyebrow  = document.getElementById("heroCtaEyebrow");
-    const headline = document.getElementById("heroCtaHeadline");
+    const hero        = document.getElementById("hero");
+    const primary     = document.getElementById("heroCtaPrimary");
+    const pEyebrow    = document.getElementById("heroCtaPrimaryEyebrow");
+    const pHeadline   = document.getElementById("heroCtaPrimaryHeadline");
+    const secondary   = document.getElementById("heroCtaSecondary");
+    const sEyebrow    = document.getElementById("heroCtaSecondaryEyebrow");
+    const sHeadline   = document.getElementById("heroCtaSecondaryHeadline");
 
-    if (!data.isLive) {
-      hero.style.display = "none";
-      return;
+    pEyebrow.textContent  = data.primary.eyebrow;
+    pHeadline.textContent = data.primary.headline;
+    primary.setAttribute("href", data.primary.link);
+
+    if (data.isOffseason && data.secondary) {
+      hero.classList.add("offseason");
+      sEyebrow.textContent  = data.secondary.eyebrow;
+      sHeadline.textContent = data.secondary.headline;
+      secondary.setAttribute("href", data.secondary.link);
+      secondary.hidden = false;
+    } else {
+      hero.classList.remove("offseason");
+      secondary.hidden = true;
     }
-
-    eyebrow.textContent = data.eyebrow;
-    headline.textContent = data.headline;
-    cta.setAttribute("href", data.link);
   })(FEATURED_NOW);
 
   (function wireHamburger() {
