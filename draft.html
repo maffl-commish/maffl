@@ -133,57 +133,6 @@
     margin: 0 0 18px;
   }
 
-  /* ---------- Stat strip ---------- */
-  .stat-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    align-items: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 0;
-    margin-bottom: 14px;
-  }
-  .stat-cell {
-    text-align: center;
-    padding: 4px 8px;
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-  .stat-cell:last-child { border-right: 0; }
-  .stat-num {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 28px;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .stat-label {
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: 10px;
-    color: var(--navy);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .gold-rule {
-    height: 1px;
-    background: var(--gold);
-    border: 0;
-    margin: 0 0 8px;
-  }
-  .footnote {
-    font-family: var(--body);
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--muted);
-    margin: 0 0 22px;
-  }
-
   /* ---------- Sub-tab navigation ---------- */
   .subtabs {
     display: flex;
@@ -225,10 +174,10 @@
   /* ---------- Filter bar (Search tab) ---------- */
   .filter-bar {
     display: grid;
-    grid-template-columns: 1.6fr 1.2fr 0.9fr 0.9fr 1.4fr;
+    grid-template-columns: 1.6fr 1.2fr 0.9fr 1.1fr;
     gap: 10px;
     align-items: stretch;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
   .filter-bar .field {
     position: relative;
@@ -278,105 +227,119 @@
     pointer-events: none;
   }
 
-  /* Year range slider */
-  .range-field {
+  /* Year filter: era buttons + From/To dropdowns */
+  .year-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 18px;
+    margin-bottom: 14px;
+  }
+  .era-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .era-btn {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
     gap: 4px;
-    padding: 4px 12px 0;
+    width: 80px;
+    min-height: 80px;
+    padding: 8px 6px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    height: 44px;
+    border: 1px solid var(--navy);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .range-label-row {
-    display: flex;
-    justify-content: space-between;
+  .era-btn:hover {
+    box-shadow: 0 4px 10px var(--navy-shadow);
+    transform: translateY(-1px);
+  }
+  .era-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .era-btn .era-emoji {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .era-btn .era-label {
     font-family: var(--display);
     font-weight: 600;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--navy);
-    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    line-height: 1.18;
+    max-width: 72px;
   }
-  .range-label-row .range-label-current {
-    font-weight: 700;
-    color: var(--navy);
+  .era-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
   }
-  .range-label-row .range-label-hint {
+  .era-btn.active .era-label { color: #fff; }
+
+  .year-selects {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .year-select-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 110px;
+  }
+  .year-select-label {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 10px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-size: 10px;
   }
-  .range-wrap {
-    position: relative;
-    height: 18px;
-  }
-  .range-track {
-    position: absolute;
-    top: 7px;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #f0f2f5;
-    border-radius: 2px;
-  }
-  .range-fill {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    background: var(--navy);
-    border-radius: 2px;
-  }
-  .range-wrap input[type="range"] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 18px;
-    background: none;
+  .year-select {
+    height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--navy);
+    border-radius: 6px;
+    padding: 0 30px 0 12px;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
     -webkit-appearance: none;
        -moz-appearance: none;
             appearance: none;
-    pointer-events: none;
-    margin: 0;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%231a2e50' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
   }
-  .range-wrap input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--gold);
-    border: 2px solid var(--navy);
-    cursor: pointer;
-    pointer-events: auto;
-    margin-top: -1px;
-  }
-  .range-wrap input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--gold);
-    border: 2px solid var(--navy);
-    cursor: pointer;
-    pointer-events: auto;
-  }
-  .range-wrap input[type="range"]::-webkit-slider-runnable-track {
-    background: transparent;
-    border: none;
-  }
-  .range-wrap input[type="range"]::-moz-range-track {
-    background: transparent;
-    border: none;
-  }
-  .range-wrap input[type="range"]:focus { outline: none; }
-  .range-wrap input[type="range"]:focus::-webkit-slider-thumb {
+  .year-select:focus {
+    outline: none;
+    border-color: var(--gold);
     box-shadow: 0 0 0 3px var(--gold-soft);
   }
-  .range-wrap input[type="range"]:focus::-moz-range-thumb {
-    box-shadow: 0 0 0 3px var(--gold-soft);
+  .year-clear-btn {
+    height: 44px;
+    background: none;
+    border: 0;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    padding: 0 6px;
+    align-self: flex-end;
   }
+  .year-clear-btn:hover { color: var(--navy); }
 
   .more-filters-btn { display: none; }
 
@@ -426,21 +389,33 @@
   }
   .clear-all-link:hover { color: var(--navy); }
 
-  /* Results count */
+  /* Results count (relocated above filter bar) */
+  .search-meta {
+    margin: 0 0 10px;
+  }
   .result-count {
     font-family: var(--body);
-    font-weight: 500;
-    font-size: 13px;
+    font-weight: 400;
+    font-size: 12px;
     color: var(--muted);
-    margin-bottom: 8px;
+    margin: 0 0 2px;
+    line-height: 1.4;
   }
-  .result-count strong { color: var(--navy); font-weight: 700; }
+  .result-count strong { color: var(--navy); font-weight: 600; }
   .truncation-note {
     font-family: var(--body);
     font-weight: 400;
     font-size: 12px;
     color: var(--gold-dark);
-    margin-left: 8px;
+    margin-left: 6px;
+  }
+  .trophy-key {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 12px;
+    line-height: 1.4;
   }
 
   /* ---------- Results table ---------- */
@@ -869,7 +844,7 @@
     .site-nav { gap: 16px; }
     .site-nav a { font-size: 12px; }
     .filter-bar {
-      grid-template-columns: 1.4fr 1fr 0.8fr 0.8fr 1.3fr;
+      grid-template-columns: 1.4fr 1fr 0.8fr 1fr;
       gap: 8px;
     }
   }
@@ -908,20 +883,6 @@
     .page-title { font-size: 24px; }
     .page-subtitle { font-size: 13px; }
 
-    .stat-strip {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0;
-      padding: 12px 0;
-    }
-    .stat-cell {
-      border-right: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 6px;
-    }
-    .stat-cell:nth-child(2n) { border-right: 0; }
-    .stat-cell:nth-child(n+3) { border-bottom: 0; }
-    .stat-num { font-size: 24px; }
-
     .subtab-btn { flex: 1 1 0; padding: 10px 8px; font-size: 12px; }
 
     /* Filter bar progressive disclosure */
@@ -932,11 +893,15 @@
     .filter-bar .player-field,
     .filter-bar .owner-field { display: flex; }
     .filter-bar .pos-field,
-    .filter-bar .team-field,
-    .filter-bar .range-field-wrap { display: none; }
+    .filter-bar .team-field { display: none; }
     .filter-bar.expanded .pos-field,
-    .filter-bar.expanded .team-field,
-    .filter-bar.expanded .range-field-wrap { display: flex; }
+    .filter-bar.expanded .team-field { display: flex; }
+
+    .year-filter { display: none; flex-direction: column; gap: 12px; }
+    .year-filter.expanded { display: flex; }
+    .year-selects { width: 100%; }
+    .year-select-field { flex: 1 1 0; min-width: 0; }
+    .year-clear-btn { align-self: flex-start; padding-left: 0; }
 
     .more-filters-btn {
       display: flex;
@@ -997,28 +962,6 @@
   <div class="page-title-block">
     <h1 class="page-title">Auction Draft Portal</h1>
     <p class="page-subtitle">Every pick, every dollar, 2005 to 2025</p>
-
-    <div class="stat-strip" aria-label="Portal headline stats">
-      <div class="stat-cell">
-        <div class="stat-num" id="statPicks">—</div>
-        <div class="stat-label">Picks</div>
-      </div>
-      <div class="stat-cell">
-        <div class="stat-num" id="statPlayers">—</div>
-        <div class="stat-label">Players</div>
-      </div>
-      <div class="stat-cell">
-        <div class="stat-num" id="statOwners">—</div>
-        <div class="stat-label">Owners</div>
-      </div>
-      <div class="stat-cell">
-        <div class="stat-num" id="statSeasons">—</div>
-        <div class="stat-label">Seasons</div>
-      </div>
-    </div>
-
-    <hr class="gold-rule">
-    <p class="footnote">🏆 = Drafted by that season's championship-winning owner.</p>
   </div>
 
   <nav class="subtabs" role="tablist" aria-label="Draft portal sections">
@@ -1030,6 +973,11 @@
 
   <!-- ============ SUB-TAB 1: SEARCH ============ -->
   <section class="subtab-panel active" id="tabSearch" role="tabpanel" aria-labelledby="btnSearch">
+    <div class="search-meta">
+      <p class="result-count" id="resultCount">Showing <strong>0</strong> picks</p>
+      <p class="trophy-key">🏆 = Drafted by that season's championship-winning owner.</p>
+    </div>
+
     <button class="more-filters-btn" id="moreFiltersBtn" aria-expanded="false">More filters ↓</button>
 
     <div class="filter-bar" id="filterBar">
@@ -1051,24 +999,45 @@
           <option value="">All Teams</option>
         </select>
       </div>
-      <div class="field range-field-wrap">
-        <div class="range-field" role="group" aria-label="Year range">
-          <div class="range-label-row">
-            <span class="range-label-current"><span id="rangeLabelMin">2005</span> — <span id="rangeLabelMax">2025</span></span>
-            <span class="range-label-hint">Years</span>
-          </div>
-          <div class="range-wrap">
-            <div class="range-track"><div class="range-fill" id="rangeFill"></div></div>
-            <input type="range" id="rangeMin" min="2005" max="2025" value="2005" step="1" aria-label="Earliest year">
-            <input type="range" id="rangeMax" min="2005" max="2025" value="2025" step="1" aria-label="Latest year">
-          </div>
+    </div>
+
+    <div class="year-filter" id="yearFilter">
+      <div class="era-buttons" role="group" aria-label="Era quick filter">
+        <button type="button" class="era-btn" data-era="wild-west" data-min="2005" data-max="2010" title="2005–2010" aria-label="Wild West Era, 2005 to 2010">
+          <span class="era-emoji" aria-hidden="true">🤠</span>
+          <span class="era-label">Wild West Era</span>
+        </button>
+        <button type="button" class="era-btn" data-era="wiggins" data-min="2011" data-max="2019" title="2011–2019" aria-label="Golden Wiggins Era, 2011 to 2019">
+          <span class="era-emoji" aria-hidden="true">🏠</span>
+          <span class="era-label">Golden Wiggins Era</span>
+        </button>
+        <button type="button" class="era-btn" data-era="remote" data-min="2020" data-max="2024" title="2020–2024" aria-label="Remote / Online Era, 2020 to 2024">
+          <span class="era-emoji" aria-hidden="true">💻</span>
+          <span class="era-label">Remote / Online Era</span>
+        </button>
+        <button type="button" class="era-btn" data-era="modern" data-min="2025" data-max="2025" title="2025–Present" aria-label="Modern Superflex Era, 2025 to present">
+          <span class="era-emoji" aria-hidden="true">🚀</span>
+          <span class="era-label">Modern Superflex Era</span>
+        </button>
+      </div>
+      <div class="year-selects">
+        <div class="year-select-field">
+          <label class="year-select-label" for="yearFrom">From</label>
+          <select id="yearFrom" class="year-select" aria-label="From year">
+            <option value="">Earliest</option>
+          </select>
         </div>
+        <div class="year-select-field">
+          <label class="year-select-label" for="yearTo">To</label>
+          <select id="yearTo" class="year-select" aria-label="To year">
+            <option value="">Latest</option>
+          </select>
+        </div>
+        <button type="button" class="year-clear-btn" id="yearClearBtn">All Years</button>
       </div>
     </div>
 
     <div class="active-filters" id="activeFilters" aria-live="polite"></div>
-
-    <div class="result-count" id="resultCount">Showing <strong>0</strong> picks</div>
 
     <div class="table-wrap">
       <table class="dp-table" id="resultsTable">
@@ -7054,11 +7023,6 @@ function fmtMoney(n) {
   return "$" + n.toLocaleString("en-US", { maximumFractionDigits: 1 });
 }
 
-document.getElementById("statPicks").textContent = fmtNum(PICKS.length);
-document.getElementById("statPlayers").textContent = fmtNum(uniquePlayers.size);
-document.getElementById("statOwners").textContent = fmtNum(OWNERS.length);
-document.getElementById("statSeasons").textContent = fmtNum(uniqueYears.length);
-
 /* ---------- Trophy helper ---------- */
 function trophyHTML(pick) {
   if (!pick[F_C]) return "";
@@ -7143,36 +7107,93 @@ tabBtns.forEach(btn => {
   });
 })();
 
-/* ---------- Year range slider ---------- */
-const rangeMin = document.getElementById("rangeMin");
-const rangeMax = document.getElementById("rangeMax");
-const rangeFill = document.getElementById("rangeFill");
-const rangeLabelMin = document.getElementById("rangeLabelMin");
-const rangeLabelMax = document.getElementById("rangeLabelMax");
+/* ---------- Year filter: era buttons + From/To selects ---------- */
+const ERAS = [
+  { key: "wild-west", min: 2005, max: 2010 },
+  { key: "wiggins",   min: 2011, max: 2019 },
+  { key: "remote",    min: 2020, max: 2024 },
+  { key: "modern",    min: 2025, max: 2025 }
+];
 
-function updateRangeUI() {
-  let mn = parseInt(rangeMin.value, 10);
-  let mx = parseInt(rangeMax.value, 10);
-  if (mn > mx) {
-    if (document.activeElement === rangeMin) { rangeMin.value = mx; mn = mx; }
-    else { rangeMax.value = mn; mx = mn; }
+const yearFromSel = document.getElementById("yearFrom");
+const yearToSel = document.getElementById("yearTo");
+const eraBtns = document.querySelectorAll(".era-btn");
+const yearClearBtn = document.getElementById("yearClearBtn");
+
+(function populateYearSelects() {
+  for (let y = YEAR_MIN; y <= YEAR_MAX; y++) {
+    const o1 = document.createElement("option");
+    o1.value = String(y); o1.textContent = String(y);
+    yearFromSel.appendChild(o1);
+    const o2 = document.createElement("option");
+    o2.value = String(y); o2.textContent = String(y);
+    yearToSel.appendChild(o2);
   }
-  const span = YEAR_MAX - YEAR_MIN;
-  const leftPct = ((mn - YEAR_MIN) / span) * 100;
-  const rightPct = ((mx - YEAR_MIN) / span) * 100;
-  rangeFill.style.left = leftPct + "%";
-  rangeFill.style.width = (rightPct - leftPct) + "%";
-  rangeLabelMin.textContent = mn;
-  rangeLabelMax.textContent = mx;
+})();
+
+function getYearRange() {
+  const fromV = yearFromSel.value;
+  const toV = yearToSel.value;
+  let mn = fromV === "" ? YEAR_MIN : parseInt(fromV, 10);
+  let mx = toV === ""   ? YEAR_MAX : parseInt(toV, 10);
+  if (mn > mx) { const t = mn; mn = mx; mx = t; }
+  return { min: mn, max: mx };
 }
-rangeMin.addEventListener("input", () => { updateRangeUI(); scheduleRender(); });
-rangeMax.addEventListener("input", () => { updateRangeUI(); scheduleRender(); });
-updateRangeUI();
+
+function syncEraButtons() {
+  const r = getYearRange();
+  const fromBlank = yearFromSel.value === "";
+  const toBlank = yearToSel.value === "";
+  eraBtns.forEach(b => {
+    const bMin = parseInt(b.dataset.min, 10);
+    const bMax = parseInt(b.dataset.max, 10);
+    const match = !fromBlank && !toBlank && bMin === r.min && bMax === r.max;
+    b.classList.toggle("active", match);
+    b.setAttribute("aria-pressed", match ? "true" : "false");
+  });
+}
+
+function setYearRange(min, max) {
+  yearFromSel.value = (min === null || min === YEAR_MIN) ? "" : String(min);
+  yearToSel.value = (max === null || max === YEAR_MAX) ? "" : String(max);
+  // If a specific era was requested, we keep the literal values so era buttons highlight.
+  if (min !== null && max !== null) {
+    yearFromSel.value = String(min);
+    yearToSel.value = String(max);
+  }
+  syncEraButtons();
+}
+
+function clearYearRange() {
+  yearFromSel.value = "";
+  yearToSel.value = "";
+  syncEraButtons();
+}
+
+eraBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const wasActive = btn.classList.contains("active");
+    if (wasActive) {
+      clearYearRange();
+    } else {
+      setYearRange(parseInt(btn.dataset.min, 10), parseInt(btn.dataset.max, 10));
+    }
+    scheduleRender();
+  });
+});
+
+yearFromSel.addEventListener("change", () => { syncEraButtons(); scheduleRender(); });
+yearToSel.addEventListener("change", () => { syncEraButtons(); scheduleRender(); });
+yearClearBtn.addEventListener("click", () => { clearYearRange(); scheduleRender(); });
+
+syncEraButtons();
 
 /* ---------- More filters toggle (mobile) ---------- */
 document.getElementById("moreFiltersBtn").addEventListener("click", function () {
   const bar = document.getElementById("filterBar");
+  const yf = document.getElementById("yearFilter");
   const expanded = bar.classList.toggle("expanded");
+  yf.classList.toggle("expanded", expanded);
   this.setAttribute("aria-expanded", expanded ? "true" : "false");
   this.textContent = expanded ? "Fewer filters ↑" : "More filters ↓";
 });
@@ -7225,13 +7246,14 @@ document.querySelectorAll("#resultsTable thead th[data-sort]").forEach(th => {
 });
 
 function getActiveFilters() {
+  const r = getYearRange();
   return {
     player: filterPlayer.value.trim().toLowerCase(),
     owner: filterOwner.value,
     pos: filterPos.value,
     team: filterTeam.value,
-    yearMin: parseInt(rangeMin.value, 10),
-    yearMax: parseInt(rangeMax.value, 10)
+    yearMin: r.min,
+    yearMax: r.max
   };
 }
 
@@ -7278,7 +7300,10 @@ function renderActiveChips(f) {
   if (f.pos) chips.push({ k: "pos", label: "Pos: " + f.pos });
   if (f.team) chips.push({ k: "team", label: "Team: " + f.team });
   if (f.yearMin !== YEAR_MIN || f.yearMax !== YEAR_MAX) {
-    chips.push({ k: "years", label: "Years: " + f.yearMin + "–" + f.yearMax });
+    const yLabel = (f.yearMin === f.yearMax)
+      ? "Year: " + f.yearMin
+      : "Years: " + f.yearMin + "–" + f.yearMax;
+    chips.push({ k: "years", label: yLabel });
   }
 
   if (chips.length === 0) {
@@ -7301,9 +7326,7 @@ function renderActiveChips(f) {
       else if (k === "pos") { filterPos.value = ""; }
       else if (k === "team") { filterTeam.value = ""; }
       else if (k === "years") {
-        rangeMin.value = YEAR_MIN;
-        rangeMax.value = YEAR_MAX;
-        updateRangeUI();
+        clearYearRange();
       }
       renderSearch();
     });
@@ -7318,9 +7341,7 @@ function clearAllFilters() {
   filterOwner.value = "";
   filterPos.value = "";
   filterTeam.value = "";
-  rangeMin.value = YEAR_MIN;
-  rangeMax.value = YEAR_MAX;
-  updateRangeUI();
+  clearYearRange();
   renderSearch();
 }
 document.getElementById("emptyClearBtn").addEventListener("click", clearAllFilters);
@@ -7397,6 +7418,29 @@ document.addEventListener("click", function (e) {
     t.classList.toggle("tip-open");
   }
 });
+
+/* ---------- URL parameter support (?year=YYYY) ---------- */
+(function applyUrlParams() {
+  let params;
+  try { params = new URLSearchParams(window.location.search); }
+  catch (e) { return; }
+  const yParam = params.get("year");
+  if (!yParam) return;
+  const y = parseInt(yParam, 10);
+  if (!Number.isFinite(y) || y < YEAR_MIN || y > YEAR_MAX) return;
+
+  // Force-activate the Search sub-tab.
+  document.querySelectorAll(".subtab-btn").forEach(b => {
+    const active = b.dataset.target === "tabSearch";
+    b.classList.toggle("active", active);
+    b.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  document.querySelectorAll(".subtab-panel").forEach(p => {
+    p.classList.toggle("active", p.id === "tabSearch");
+  });
+
+  setYearRange(y, y);
+})();
 
 // Initial render
 document.querySelectorAll("#resultsTable thead th[data-sort]").forEach(t => {
