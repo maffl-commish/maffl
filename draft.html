@@ -961,32 +961,34 @@
   }
   .owner-stat-strip {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-bottom: 22px;
   }
   .owner-stat-box {
-    background: var(--surface);
+    background: #f8f9fb;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 14px;
+    border-radius: 6px;
+    padding: 12px;
   }
   .owner-stat-label {
     font-family: var(--display);
-    font-weight: 700;
-    font-size: 10px;
+    font-weight: 600;
+    font-size: 9px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 4px;
+    line-height: 1.2;
   }
   .owner-stat-value {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 18px;
     color: var(--navy);
     line-height: 1.15;
     font-variant-numeric: tabular-nums;
+    word-break: break-word;
   }
   .owner-stat-value .accent { color: var(--gold-dark); }
   .owner-stat-value .small {
@@ -996,7 +998,140 @@
     font-size: 12px;
     color: var(--muted);
     letter-spacing: 0;
+    margin-top: 2px;
   }
+  .owner-stat-value .player-name,
+  .owner-stat-value .owner-name {
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* Draft Tendencies (position spend share) */
+  .tendencies-block { margin-bottom: 24px; }
+  .tendencies-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 4px;
+  }
+  .tendencies-desc {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .tendencies-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tendency-row {
+    display: grid;
+    grid-template-columns: 44px 1fr 52px;
+    align-items: center;
+    gap: 10px;
+  }
+  .tendency-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--navy);
+    letter-spacing: 0.04em;
+  }
+  .tendency-bar {
+    position: relative;
+    height: 8px;
+    background: #f0f2f5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .tendency-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--navy);
+    border-radius: 4px;
+  }
+  .tendency-pct {
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--navy);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Missed Opportunities */
+  .missed-block { margin-bottom: 24px; }
+  .missed-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 4px;
+  }
+  .missed-desc {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .missed-empty {
+    background: #f8f9fb;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+  }
+  table.missed-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  table.missed-table thead th {
+    background: var(--navy);
+    color: #fff;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  table.missed-table tbody tr { border-top: 1px solid var(--border); }
+  table.missed-table tbody tr:nth-child(even) { background: var(--row-alt); }
+  table.missed-table tbody tr:hover { background: rgba(26, 46, 80, 0.04); }
+  table.missed-table tbody td {
+    padding: 8px 10px;
+    vertical-align: middle;
+  }
+  table.missed-table td .player-name,
+  table.missed-table td .owner-name { font-weight: 700; color: var(--navy); }
+  table.missed-table td .meta {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 12px;
+  }
+  table.missed-table td .price-low { color: var(--win); font-weight: 700; font-variant-numeric: tabular-nums; }
+  table.missed-table td .price-high { color: var(--loss); font-weight: 700; font-variant-numeric: tabular-nums; }
 
   .year-card {
     background: var(--surface);
@@ -1178,8 +1313,14 @@
     table.dp-table td.col-price { width: 70px; }
 
     .owner-stat-strip { grid-template-columns: repeat(2, 1fr); }
+    .owner-stat-value { font-size: 16px; }
     .owner-picker select { min-width: 0; width: 100%; }
     .owner-picker { flex-direction: column; align-items: stretch; gap: 8px; }
+    .tendency-row { grid-template-columns: 38px 1fr 46px; gap: 8px; }
+    .tendency-pct { font-size: 11px; }
+    table.missed-table { font-size: 12px; }
+    table.missed-table thead th { padding: 7px 8px; font-size: 9px; }
+    table.missed-table tbody td { padding: 7px 8px; }
 
     .oracle-emoji { font-size: 48px; }
     .oracle-title { font-size: 24px; }
@@ -8236,37 +8377,131 @@ function renderOwnerProfile(ownerIdx) {
 
   const mostExp = mine.slice().sort((a, b) => b[F_PR] - a[F_PR])[0];
 
+  // Most frequent player drafted by this owner.
+  const byPlayer = new Map();
+  mine.forEach(p => byPlayer.set(p[F_P], (byPlayer.get(p[F_P]) || 0) + 1));
+  let topPlayerName = null, topPlayerCount = 0;
+  byPlayer.forEach((c, n) => { if (c > topPlayerCount) { topPlayerCount = c; topPlayerName = n; } });
+
+  // Favorite position by spend share.
+  const posSpend = new Map();
+  mine.forEach(p => posSpend.set(p[F_PS], (posSpend.get(p[F_PS]) || 0) + p[F_PR]));
+  let favPos = null, favPosAmt = -1;
+  posSpend.forEach((amt, pos) => { if (amt > favPosAmt) { favPosAmt = amt; favPos = pos; } });
+  const favPosPct = totalSpent > 0 ? Math.round((favPosAmt / totalSpent) * 100) : 0;
+
+  // Favorite NFL team by pick count.
+  const teamCount = new Map();
+  mine.forEach(p => teamCount.set(p[F_T], (teamCount.get(p[F_T]) || 0) + 1));
+  let favTeam = null, favTeamN = 0;
+  teamCount.forEach((c, t) => { if (c > favTeamN) { favTeamN = c; favTeam = t; } });
+
   // Years owner was champion (where CHAMPS[year] === ownerIdx)
   const champYears = new Set();
   Object.keys(CHAMPS).forEach(y => { if (CHAMPS[y] === ownerIdx) champYears.add(parseInt(y, 10)); });
 
   let html = '<div class="owner-profile-header">' +
-    '<h2>' + escapeHTML(name) + '</h2>' +
+    '<h2>' + tagOwner(name) + '</h2>' +
     '<p>Drafted ' + fmtNum(mine.length) + ' picks across ' + seasons.length + ' season' + (seasons.length === 1 ? '' : 's') + '.</p>' +
     '</div>';
 
   html += '<div class="owner-stat-strip">' +
     '<div class="owner-stat-box">' +
-      '<div class="owner-stat-label">Total Spent</div>' +
-      '<div class="owner-stat-value">$' + fmtNum(Math.round(totalSpent)) + '</div>' +
-    '</div>' +
-    '<div class="owner-stat-box">' +
-      '<div class="owner-stat-label">Avg Pick Price</div>' +
-      '<div class="owner-stat-value">$' + avg.toFixed(1) + '</div>' +
-    '</div>' +
-    '<div class="owner-stat-box">' +
       '<div class="owner-stat-label">Most Expensive Pick</div>' +
-      '<div class="owner-stat-value"><span class="accent">$' + fmtPrice(mostExp[F_PR]) + '</span>' +
-        '<span class="small">' + escapeHTML(mostExp[F_P]) + ' · ' + mostExp[F_Y] + '</span>' +
+      '<div class="owner-stat-value">' + tagPlayer(mostExp[F_P]) +
+        '<span class="small"><span class="accent">$' + fmtPrice(mostExp[F_PR]) + '</span> · ' + mostExp[F_Y] + '</span>' +
       '</div>' +
     '</div>' +
     '<div class="owner-stat-box">' +
-      '<div class="owner-stat-label">Total Picks</div>' +
-      '<div class="owner-stat-value">' + fmtNum(mine.length) + '</div>' +
+      '<div class="owner-stat-label">Average Price Per Pick</div>' +
+      '<div class="owner-stat-value">$' + Math.round(avg) +
+        '<span class="small">across ' + fmtNum(mine.length) + ' picks</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="owner-stat-box">' +
+      '<div class="owner-stat-label">Most Frequent Player</div>' +
+      '<div class="owner-stat-value">' + (topPlayerName ? tagPlayer(topPlayerName) : '—') +
+        '<span class="small">' + (topPlayerName ? (topPlayerCount + '× drafted') : 'no repeats') + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="owner-stat-box">' +
+      '<div class="owner-stat-label">Favorite Position</div>' +
+      '<div class="owner-stat-value">' + (favPos ? escapeHTML(favPos) : '—') +
+        '<span class="small">' + favPosPct + '% of spend</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="owner-stat-box">' +
+      '<div class="owner-stat-label">Favorite NFL Team</div>' +
+      '<div class="owner-stat-value">' + (favTeam ? escapeHTML(favTeam) : '—') +
+        '<span class="small">' + favTeamN + ' pick' + (favTeamN === 1 ? '' : 's') + '</span>' +
+      '</div>' +
     '</div>' +
   '</div>';
 
-  // Year cards
+  // ---------- Draft Tendencies (share of spend by position) ----------
+  const posShares = [...posSpend.entries()]
+    .map(([pos, amt]) => ({ pos, pct: totalSpent > 0 ? (amt / totalSpent) * 100 : 0 }))
+    .sort((a, b) => b.pct - a.pct);
+  const tendencyRows = posShares.map(s =>
+    '<div class="tendency-row">' +
+      '<span class="tendency-label">' + escapeHTML(s.pos) + '</span>' +
+      '<div class="tendency-bar"><div class="tendency-fill" style="width:' + s.pct.toFixed(1) + '%;"></div></div>' +
+      '<span class="tendency-pct">' + s.pct.toFixed(1) + '%</span>' +
+    '</div>'
+  ).join("");
+  html += '<div class="tendencies-block">' +
+    '<h3 class="tendencies-head">Draft Tendencies</h3>' +
+    '<p class="tendencies-desc">Share of draft dollars spent by position.</p>' +
+    '<div class="tendencies-list">' + tendencyRows + '</div>' +
+  '</div>';
+
+  // ---------- Missed Opportunities ----------
+  // Players this owner drafted for $1–$5 in year Y, where a DIFFERENT owner drafted the same player
+  // for $25+ in year Y+1. Top 5 by price jump.
+  const byPlayerYear = new Map();
+  PICKS.forEach(p => {
+    const k = p[F_P] + '|' + p[F_Y];
+    if (!byPlayerYear.has(k)) byPlayerYear.set(k, []);
+    byPlayerYear.get(k).push(p);
+  });
+  const missed = [];
+  mine.forEach(p => {
+    if (p[F_PR] < 1 || p[F_PR] > 5) return;
+    const nextKey = p[F_P] + '|' + (p[F_Y] + 1);
+    const next = byPlayerYear.get(nextKey);
+    if (!next) return;
+    const candidate = next
+      .filter(q => q[F_O] !== ownerIdx && q[F_PR] >= 25)
+      .sort((a, b) => b[F_PR] - a[F_PR])[0];
+    if (!candidate) return;
+    missed.push({ low: p, high: candidate, jump: candidate[F_PR] - p[F_PR] });
+  });
+  missed.sort((a, b) => b.jump - a.jump);
+  const missedTop = missed.slice(0, 5);
+
+  html += '<div class="missed-block">' +
+    '<h3 class="missed-head">Missed Opportunities</h3>' +
+    '<p class="missed-desc">Cheap picks that got away and cost someone else a fortune.</p>';
+  if (missedTop.length === 0) {
+    html += '<div class="missed-empty">No notable missed opportunities — this owner holds onto value.</div>';
+  } else {
+    const rows = missedTop.map(m =>
+      '<tr>' +
+        '<td>' + tagPlayer(m.low[F_P]) + (m.low[F_C] ? trophyHTML(m.low) : '') + (m.high[F_C] ? trophyHTML(m.high) : '') + '</td>' +
+        '<td><span class="meta">Held for </span><span class="price-low">$' + fmtPrice(m.low[F_PR]) + '</span>' +
+          '<span class="meta"> in ' + m.low[F_Y] + '</span></td>' +
+        '<td>' + tagOwner(OWNERS[m.high[F_O]]) + '<span class="meta"> paid </span>' +
+          '<span class="price-high">$' + fmtPrice(m.high[F_PR]) + '</span>' +
+          '<span class="meta"> in ' + m.high[F_Y] + '</span></td>' +
+      '</tr>'
+    ).join('');
+    html += '<table class="missed-table"><thead><tr>' +
+        '<th>Player</th><th>Their Hand</th><th>Next Year</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+  html += '</div>';
+
+  // ---------- Year-by-year history (unchanged behavior + player-name spans) ----------
   html += seasons.map(y => {
     const picksY = mine.filter(p => p[F_Y] === y).sort((a, b) => b[F_PR] - a[F_PR]);
     const yTotal = picksY.reduce((a, p) => a + p[F_PR], 0);
@@ -8274,7 +8509,7 @@ function renderOwnerProfile(ownerIdx) {
     const badge = isChampYear ? '<span class="champ-badge">' + y + ' Champion 🏆</span>' : '';
     const rows = picksY.map(p =>
       '<tr>' +
-        '<td>' + escapeHTML(p[F_P]) + trophyHTML(p) + '</td>' +
+        '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
         '<td><span class="pos-pill">' + escapeHTML(p[F_PS]) + '</span></td>' +
         '<td class="dp-hide-mobile">' + escapeHTML(p[F_T]) + '</td>' +
         '<td class="num">$' + fmtPrice(p[F_PR]) + '</td>' +
