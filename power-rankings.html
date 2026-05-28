@@ -251,9 +251,10 @@
 
   .card-row {
     display: grid;
-    grid-template-columns: 56px 1fr auto 16px;
+    grid-template-columns: 48px 1fr auto 16px;
     align-items: center;
     gap: 12px;
+    text-align: left;
   }
   .card-rank {
     font-family: var(--display);
@@ -261,7 +262,7 @@
     font-size: 28px;
     color: var(--gold);
     line-height: 1;
-    text-align: center;
+    text-align: left;
     letter-spacing: -0.02em;
   }
   .owner-card[data-active="N"] .card-rank {
@@ -290,23 +291,34 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .card-tier-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
   .card-tier-badge {
     display: inline-flex;
     align-items: center;
+    background: var(--gold);
+    color: var(--navy);
     font-family: var(--display);
     font-weight: 700;
     font-size: 10px;
-    color: var(--gold-dark);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     line-height: 1;
+    padding: 2px 8px;
+    border-radius: 3px;
+    width: max-content;
+    max-width: 100%;
   }
   .card-tier-badge .badge-icon { margin-right: 4px; }
   .card-tier-badge.inactive {
     background: #eef0f4;
     color: #6c7891;
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 2px 8px;
+    border-radius: 3px;
     letter-spacing: 0.08em;
   }
   .card-ovr {
@@ -316,17 +328,17 @@
   .card-ovr-value {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 32px;
+    font-size: 24px;
     color: var(--navy);
     line-height: 1;
     letter-spacing: -0.02em;
   }
   .card-ovr-label {
     font-family: var(--display);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 9px;
     color: var(--muted);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     margin-top: 2px;
     text-transform: uppercase;
   }
@@ -623,9 +635,9 @@
     .owner-grid { grid-template-columns: 1fr; gap: 12px; }
     .owner-card.open { grid-column: auto; }
 
-    .card-row { grid-template-columns: 44px 1fr auto 14px; gap: 10px; }
+    .card-row { grid-template-columns: 40px 1fr auto 14px; gap: 10px; }
     .card-rank { font-size: 24px; }
-    .card-ovr-value { font-size: 26px; }
+    .card-ovr-value { font-size: 22px; }
 
     .career-stats { grid-template-columns: repeat(3, 1fr); }
   }
@@ -1576,20 +1588,29 @@ function renderTimelineCells(timeline) {
   }).join("");
 }
 
+function tierInfoForRank(rank) {
+  if (rank >= 1  && rank <= 4)  return { icon: "\u{1F3D4}️", label: "Mount Rushmore" };
+  if (rank >= 5  && rank <= 8)  return { icon: "\u{1F3C5}",       label: "The Elite" };
+  if (rank >= 9  && rank <= 12) return { icon: "\u{1F6E1}️", label: "Upper-Tier Gatekeepers" };
+  if (rank >= 13 && rank <= 19) return { icon: "\u{1F9D7}‍♂️", label: "Middle of the Pack" };
+  if (rank >= 20 && rank <= 26) return { icon: "\u{1F47B}",       label: "The Departed & The Grinders" };
+  if (rank >= 27 && rank <= 32) return { icon: "\u{1F573}️", label: "The Rookies & The Basement" };
+  return null;
+}
+
 function tierBadgeHtml(owner) {
+  var info = tierInfoForRank(owner.rank);
+  var parts = [];
+  if (info) {
+    parts.push(
+      '<span class="card-tier-badge"><span class="badge-icon">' + info.icon + '</span>' + escHtml(info.label) + '</span>'
+    );
+  }
   if (!owner.active) {
-    return '<span class="card-tier-badge inactive">Inactive</span>';
+    parts.push('<span class="card-tier-badge inactive">Inactive</span>');
   }
-  if (owner.rank >= 1 && owner.rank <= 4) {
-    return '<span class="card-tier-badge"><span class="badge-icon">\u{1F3D4}️</span>Mount Rushmore</span>';
-  }
-  if (owner.league2026 === "Upper-Tier") {
-    return '<span class="card-tier-badge"><span class="badge-icon">\u{1F39F}️</span>Upper-Tier 2026</span>';
-  }
-  if (owner.league2026 === "Lower-Tier") {
-    return '<span class="card-tier-badge"><span class="badge-icon">\u{1F39F}️</span>Lower-Tier 2026</span>';
-  }
-  return "";
+  if (!parts.length) return "";
+  return '<span class="card-tier-badges">' + parts.join("") + '</span>';
 }
 
 function renderOwnerCard(owner) {
