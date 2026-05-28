@@ -652,11 +652,258 @@
   table.dp-compact td.pct.pos { color: var(--win); font-weight: 700; }
   table.dp-compact td.pct.neg { color: var(--loss); font-weight: 700; }
 
+  /* ---------- Superlatives: accordion + table variant ---------- */
+  .super-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .super-head {
+    width: 100%;
+    background: none;
+    border: 0;
+    padding: 0 16px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--navy);
+  }
+  .super-head:hover { background: rgba(26, 46, 80, 0.03); }
+  .super-head:focus-visible { outline: 2px solid var(--gold); outline-offset: -3px; }
+  .super-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.2;
+  }
+  .super-emoji {
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .super-chev {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    transition: transform 0.18s ease;
+    flex: 0 0 auto;
+  }
+  .super-card.open .super-chev { transform: rotate(180deg); }
+  .super-body {
+    display: none;
+    padding: 0 12px 14px;
+  }
+  .super-card.open .super-body { display: block; }
+
+  /* Superlative table */
+  table.super-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+  }
+  table.super-table thead th {
+    background: var(--navy);
+    color: #fff;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 9px 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  table.super-table thead th.num { text-align: right; }
+  table.super-table tbody tr {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  table.super-table tbody tr:nth-child(even) { background: var(--row-alt); }
+  table.super-table tbody tr:hover { background: rgba(26, 46, 80, 0.04); }
+  table.super-table tbody td {
+    padding: 8px 10px;
+    vertical-align: middle;
+  }
+  table.super-table td.rank {
+    color: var(--gold);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    width: 40px;
+    font-variant-numeric: tabular-nums;
+  }
+  table.super-table td.num,
+  table.super-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.super-table td.num { font-weight: 600; }
+  table.super-table td.num.high { color: var(--gold-dark); font-weight: 700; }
+  table.super-table td.yr {
+    color: var(--gold-dark);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    width: 64px;
+  }
+  table.super-table td .player-name,
+  table.super-table td .owner-name {
+    font-weight: 600;
+    color: var(--navy);
+  }
+  table.super-table td .pick-meta {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 12px;
+    margin-left: 2px;
+  }
+
+  .super-row-hidden { display: none; }
+  .super-show-all-wrap {
+    text-align: center;
+    padding: 10px 0 2px;
+  }
+  .super-show-all {
+    background: none;
+    border: 0;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    padding: 6px 8px;
+  }
+  .super-show-all:hover { color: var(--navy); }
+  .super-show-all:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
   .coming-soon {
     color: var(--muted);
     font-style: italic;
     font-size: 13px;
     padding: 8px 0;
+  }
+
+  /* ---------- Oracle ---------- */
+  .oracle-stage {
+    max-width: 640px;
+    margin: 8px auto 0;
+    padding: 8px 8px 24px;
+    text-align: center;
+  }
+  .oracle-header { margin-bottom: 22px; }
+  .oracle-emoji {
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 10px var(--navy-soft));
+  }
+  .oracle-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--navy);
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .oracle-subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 auto;
+    max-width: 480px;
+    line-height: 1.55;
+  }
+  .oracle-roll-btn {
+    height: 56px;
+    padding: 0 32px;
+    background: var(--gold);
+    color: var(--navy);
+    border: 0;
+    border-radius: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: 0 4px 14px var(--gold-soft);
+    transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+  }
+  .oracle-roll-btn:hover {
+    background: var(--gold-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(245, 166, 35, 0.32);
+  }
+  .oracle-roll-btn:active { transform: translateY(0); }
+  .oracle-roll-btn:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 3px;
+  }
+  .oracle-fact {
+    margin: 26px auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    text-align: center;
+  }
+  .oracle-fact[hidden] { display: none; }
+  .oracle-fact.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .oracle-fact-text {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--navy);
+    line-height: 1.5;
+    margin: 0 0 14px;
+  }
+  .oracle-fact-text .fact-emph {
+    font-weight: 700;
+    color: var(--gold-dark);
+  }
+  .oracle-fact-text .player-name,
+  .oracle-fact-text .owner-name {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .oracle-roll-again {
+    background: none;
+    border: 0;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--navy);
+    cursor: pointer;
+    padding: 4px 8px;
+    letter-spacing: 0.02em;
+  }
+  .oracle-roll-again:hover { color: var(--gold-dark); }
+  .oracle-roll-again:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 3px;
   }
 
   /* ---------- Owner Profiles ---------- */
@@ -933,6 +1180,21 @@
     .owner-stat-strip { grid-template-columns: repeat(2, 1fr); }
     .owner-picker select { min-width: 0; width: 100%; }
     .owner-picker { flex-direction: column; align-items: stretch; gap: 8px; }
+
+    .oracle-emoji { font-size: 48px; }
+    .oracle-title { font-size: 24px; }
+    .oracle-subtitle { font-size: 13px; }
+    .oracle-roll-btn { width: 100%; font-size: 17px; padding: 0 20px; }
+    .oracle-fact { padding: 20px 16px; }
+    .oracle-fact-text { font-size: 16px; }
+
+    .super-title { font-size: 14px; gap: 8px; }
+    .super-emoji { font-size: 18px; }
+    .super-body { padding: 0 8px 12px; }
+    table.super-table { font-size: 12px; }
+    table.super-table thead th { padding: 8px; font-size: 10px; }
+    table.super-table tbody td { padding: 7px 8px; }
+    table.super-table td.rank { width: 32px; }
   }
 </style>
 </head>
@@ -967,7 +1229,7 @@
   <nav class="subtabs" role="tablist" aria-label="Draft portal sections">
     <button class="subtab-btn active" role="tab" aria-selected="true" data-target="tabSearch" id="btnSearch">Search the Registry</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">The Oracle</button>
-    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabLeaderboards" id="btnLeaderboards">Leaderboards</button>
+    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabSuperlatives" id="btnSuperlatives">Superlatives</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOwners" id="btnOwners">Owner Profiles</button>
   </nav>
 
@@ -1063,57 +1325,70 @@
 
   <!-- ============ SUB-TAB 2: ORACLE ============ -->
   <section class="subtab-panel" id="tabOracle" role="tabpanel" aria-labelledby="btnOracle">
-    <div class="insight-card" id="cardMostExpensive">
-      <h3>Most Expensive Picks of All Time</h3>
-      <p class="insight-desc">The 10 priciest auction-tag prices in MAFFL history.</p>
-      <div id="bodyMostExpensive"></div>
-    </div>
-
-    <div class="insight-card" id="cardBusts">
-      <h3>Bust of the Year</h3>
-      <p class="insight-desc">Highest-priced pick by a bottom-tier finisher, year by year.</p>
-      <div class="coming-soon">Coming soon — requires per-tier standings cross-reference not present in this dataset.</div>
-    </div>
-
-    <div class="insight-card" id="cardInflation">
-      <h3>Position Inflation</h3>
-      <p class="insight-desc">Average price per position, first decade vs. second.</p>
-      <div id="bodyInflation"></div>
-    </div>
-
-    <div class="insight-card" id="cardOneDollar">
-      <h3>The $1 Heroes</h3>
-      <p class="insight-desc">Players drafted for exactly $1 who came back the next year at $20 or more.</p>
-      <div id="bodyOneDollar"></div>
-    </div>
-
-    <div class="insight-card" id="cardSpending">
-      <h3>Owner Spending Patterns</h3>
-      <p class="insight-desc">Total auction dollars spent across all years. Click a column header to re-sort.</p>
-      <div id="bodySpending"></div>
+    <div class="oracle-stage">
+      <div class="oracle-header">
+        <div class="oracle-emoji" aria-hidden="true">🔮</div>
+        <h2 class="oracle-title">The Oracle</h2>
+        <p class="oracle-subtitle">Ask and the auction history shall answer. Roll for a random nugget of MAFFL draft lore.</p>
+      </div>
+      <button type="button" class="oracle-roll-btn" id="oracleRollBtn">
+        <span aria-hidden="true">🔮</span> Roll the Oracle
+      </button>
+      <div class="oracle-fact" id="oracleFact" hidden aria-live="polite">
+        <p class="oracle-fact-text" id="oracleFactText"></p>
+        <button type="button" class="oracle-roll-again" id="oracleRollAgain">Roll Again →</button>
+      </div>
     </div>
   </section>
 
-  <!-- ============ SUB-TAB 3: LEADERBOARDS ============ -->
-  <section class="subtab-panel" id="tabLeaderboards" role="tabpanel" aria-labelledby="btnLeaderboards">
-    <div class="insight-card">
-      <h3>Top 25 Most Expensive Picks</h3>
-      <div id="lbExpensive"></div>
+  <!-- ============ SUB-TAB 3: SUPERLATIVES ============ -->
+  <section class="subtab-panel" id="tabSuperlatives" role="tabpanel" aria-labelledby="btnSuperlatives">
+    <div class="super-card open" data-super="expensive">
+      <button class="super-head" type="button" aria-expanded="true">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">💰</span> Top 25 Most Expensive Picks</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperExpensive"></div>
     </div>
 
-    <div class="insight-card">
-      <h3>Top 25 Owners by Total Draft Spend</h3>
-      <div id="lbOwnerSpend"></div>
+    <div class="super-card" data-super="heroes">
+      <button class="super-head" type="button" aria-expanded="false">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">🪙</span> $1 Heroes</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperHeroes"></div>
     </div>
 
-    <div class="insight-card">
-      <h3>Top 25 Players by Career Draft Value</h3>
-      <div id="lbPlayerValue"></div>
+    <div class="super-card" data-super="mostDrafted">
+      <button class="super-head" type="button" aria-expanded="false">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">🔁</span> Most Drafted Players</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperMostDrafted"></div>
     </div>
 
-    <div class="insight-card">
-      <h3>Most Drafted Players</h3>
-      <div id="lbMostDrafted"></div>
+    <div class="super-card" data-super="career">
+      <button class="super-head" type="button" aria-expanded="false">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">📈</span> Top 25 Players by Career Draft Value</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperCareer"></div>
+    </div>
+
+    <div class="super-card" data-super="splurges">
+      <button class="super-head" type="button" aria-expanded="false">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">🎯</span> Biggest Single-Year Splurges</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperSplurges"></div>
+    </div>
+
+    <div class="super-card" data-super="coldest">
+      <button class="super-head" type="button" aria-expanded="false">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">🧊</span> Coldest Years</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperColdest"></div>
     </div>
   </section>
 
@@ -7037,7 +7312,7 @@ function trophyHTML(pick) {
 const tabBtns = document.querySelectorAll(".subtab-btn");
 const tabPanels = document.querySelectorAll(".subtab-panel");
 let oracleRendered = false;
-let leaderboardsRendered = false;
+let superlativesRendered = false;
 
 tabBtns.forEach(btn => {
   btn.addEventListener("click", () => {
@@ -7053,9 +7328,9 @@ tabBtns.forEach(btn => {
       renderOracle();
       oracleRendered = true;
     }
-    if (target === "tabLeaderboards" && !leaderboardsRendered) {
-      renderLeaderboards();
-      leaderboardsRendered = true;
+    if (target === "tabSuperlatives" && !superlativesRendered) {
+      renderSuperlatives();
+      superlativesRendered = true;
     }
   });
 });
@@ -7451,284 +7726,485 @@ document.querySelectorAll("#resultsTable thead th[data-sort]").forEach(t => {
 renderSearch();
 
 /* =====================================================================
- * ORACLE — analytical insights
+ * ORACLE — random fun-fact generator
  * ===================================================================== */
+let oracleData = null;
+let oracleLastKey = null;
+
 function renderOracle() {
-  renderMostExpensive();
-  renderInflation();
-  renderOneDollarHeroes();
-  renderOwnerSpending();
+  if (oracleData) return;
+  oracleData = buildOracleData();
+  document.getElementById("oracleRollBtn").addEventListener("click", rollOracle);
+  document.getElementById("oracleRollAgain").addEventListener("click", rollOracle);
 }
 
-function renderMostExpensive() {
-  const top = PICKS.slice().sort((a, b) => b[F_PR] - a[F_PR]).slice(0, 10);
-  const rows = top.map((p, i) =>
-    '<tr>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td class="yr">' + p[F_Y] + '</td>' +
-      '<td>' + escapeHTML(p[F_P]) + trophyHTML(p) + '</td>' +
-      '<td>' + escapeHTML(OWNERS[p[F_O]]) + '</td>' +
-      '<td><span class="pos-pill">' + escapeHTML(p[F_PS]) + '</span></td>' +
-      '<td class="num">$' + fmtPrice(p[F_PR]) + '</td>' +
-    '</tr>'
-  ).join("");
-  document.getElementById("bodyMostExpensive").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th><th>Year</th><th>Player</th><th>Owner</th><th>Pos</th><th class="num">Price</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
-}
-
-function renderInflation() {
-  const d1 = {}, d2 = {}, d1c = {}, d2c = {};
+function buildOracleData() {
+  const players = new Map();
   PICKS.forEach(p => {
-    const y = p[F_Y], pos = p[F_PS], pr = p[F_PR];
-    if (y >= 2005 && y <= 2014) {
-      d1[pos] = (d1[pos] || 0) + pr;
-      d1c[pos] = (d1c[pos] || 0) + 1;
-    } else if (y >= 2015 && y <= 2024) {
-      d2[pos] = (d2[pos] || 0) + pr;
-      d2c[pos] = (d2c[pos] || 0) + 1;
+    const name = p[F_P];
+    let ent = players.get(name);
+    if (!ent) {
+      ent = { name, count: 0, picks: [], champPicks: [], maxPick: null, minPick: null };
+      players.set(name, ent);
     }
+    ent.count++;
+    ent.picks.push(p);
+    if (p[F_C]) ent.champPicks.push(p);
+    if (!ent.maxPick || p[F_PR] > ent.maxPick[F_PR]) ent.maxPick = p;
+    if (!ent.minPick || p[F_PR] < ent.minPick[F_PR]) ent.minPick = p;
   });
-  const posOrder = ["QB", "RB", "WR", "TE", "FLX", "K", "DL", "DE", "DT", "LB", "DB", "CB", "S"];
-  const seen = new Set([...Object.keys(d1), ...Object.keys(d2)]);
-  const posList = posOrder.filter(p => seen.has(p)).concat([...seen].filter(p => !posOrder.includes(p)));
 
-  const rows = posList.map(pos => {
-    const a1 = d1c[pos] ? d1[pos] / d1c[pos] : null;
-    const a2 = d2c[pos] ? d2[pos] / d2c[pos] : null;
-    let pct = "—", pctCls = "";
-    if (a1 != null && a2 != null && a1 > 0) {
-      const ch = ((a2 - a1) / a1) * 100;
-      pct = (ch >= 0 ? "+" : "") + ch.toFixed(1) + "%";
-      pctCls = ch >= 0 ? "pos" : "neg";
-    }
-    return '<tr>' +
-      '<td><span class="pos-pill">' + pos + '</span></td>' +
-      '<td class="num">' + (a1 != null ? "$" + a1.toFixed(1) : "—") + '</td>' +
-      '<td class="num">' + (a2 != null ? "$" + a2.toFixed(1) : "—") + '</td>' +
-      '<td class="num pct ' + pctCls + '">' + pct + '</td>' +
+  const owners = OWNERS.map((name, idx) => ({
+    idx, name, picks: [], maxPick: null, byPlayer: new Map(), favPlayer: null
+  }));
+  PICKS.forEach(p => {
+    const o = owners[p[F_O]];
+    o.picks.push(p);
+    if (!o.maxPick || p[F_PR] > o.maxPick[F_PR]) o.maxPick = p;
+    o.byPlayer.set(p[F_P], (o.byPlayer.get(p[F_P]) || 0) + 1);
+  });
+  owners.forEach(o => {
+    let best = null;
+    o.byPlayer.forEach((c, name) => {
+      if (c >= 2 && (!best || c > best.count)) best = { name, count: c };
+    });
+    o.favPlayer = best;
+  });
+
+  const yearTop = new Map();
+  PICKS.forEach(p => {
+    const cur = yearTop.get(p[F_Y]);
+    if (!cur || p[F_PR] > cur[F_PR]) yearTop.set(p[F_Y], p);
+  });
+
+  const posTop = new Map();
+  PICKS.forEach(p => {
+    const cur = posTop.get(p[F_PS]);
+    if (!cur || p[F_PR] > cur[F_PR]) posTop.set(p[F_PS], p);
+  });
+
+  const dollarPicks = PICKS.filter(p => p[F_PR] === 1);
+  const playerList = [...players.values()];
+
+  return {
+    playerList,
+    owners,
+    yearTop,
+    posTop,
+    dollarPicks,
+    multiDraftedVar: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] > e.minPick[F_PR]),
+    oneTimeBig: playerList.filter(e => e.count === 1 && e.picks[0][F_PR] >= 20),
+    expensivePlayers: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] >= 25),
+    champPlayers: playerList.filter(e => e.champPicks.length > 0),
+    ownersWithFav: owners.filter(o => o.favPlayer),
+    ownersWithBigPick: owners.filter(o => o.maxPick && o.maxPick[F_PR] >= 20)
+  };
+}
+
+function oraclePick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function tagPlayer(name) {
+  return '<span class="player-name" data-player="' + escapeHTML(name) + '">' + escapeHTML(name) + '</span>';
+}
+function tagOwner(name) {
+  return '<span class="owner-name" data-owner="' + escapeHTML(name) + '">' + escapeHTML(name) + '</span>';
+}
+function tagAmt(n) { return '<span class="fact-emph">$' + fmtPrice(n) + '</span>'; }
+function tagYear(y) { return '<span class="fact-emph">' + y + '</span>'; }
+function tagNum(n) { return '<span class="fact-emph">' + n + '</span>'; }
+function tagPos(pos) { return '<span class="fact-emph">' + escapeHTML(pos) + '</span>'; }
+
+const FACT_GENERATORS = [
+  // 1: Player draft frequency + price range
+  function () {
+    const e = oraclePick(oracleData.multiDraftedVar);
+    if (!e) return null;
+    const hi = e.maxPick, lo = e.minPick;
+    return {
+      key: "playerFreq:" + e.name,
+      html: tagPlayer(e.name) + ' was drafted ' + tagNum(e.count) +
+        ' times in MAFFL history, peaking at ' + tagAmt(hi[F_PR]) + ' in ' + tagYear(hi[F_Y]) +
+        ' and bottoming out at ' + tagAmt(lo[F_PR]) + ' in ' + tagYear(lo[F_Y]) + '.'
+    };
+  },
+  // 2: One-time wonder
+  function () {
+    const e = oraclePick(oracleData.oneTimeBig);
+    if (!e) return null;
+    const p = e.picks[0];
+    return {
+      key: "oneTime:" + e.name,
+      html: tagPlayer(e.name) + ' was drafted only once in MAFFL history — by ' +
+        tagOwner(OWNERS[p[F_O]]) + ' for ' + tagAmt(p[F_PR]) + ' in ' + tagYear(p[F_Y]) + '.'
+    };
+  },
+  // 3: Most expensive ever for a player
+  function () {
+    const e = oraclePick(oracleData.expensivePlayers);
+    if (!e) return null;
+    const p = e.maxPick;
+    return {
+      key: "playerMax:" + e.name,
+      html: 'The most anyone ever paid for ' + tagPlayer(e.name) + ' was ' +
+        tagAmt(p[F_PR]) + ' — ' + tagOwner(OWNERS[p[F_O]]) + ' in ' + tagYear(p[F_Y]) + '.'
+    };
+  },
+  // 4: Championship pedigree
+  function () {
+    const e = oraclePick(oracleData.champPlayers);
+    if (!e) return null;
+    const c = e.champPicks.length;
+    const ex = oraclePick(e.champPicks);
+    const word = c === 1 ? 'time' : 'times';
+    return {
+      key: "champPed:" + e.name,
+      html: tagPlayer(e.name) + ' was drafted by an eventual MAFFL champion ' +
+        tagNum(c) + ' ' + word + ': ' + tagOwner(OWNERS[ex[F_O]]) + ' in ' + tagYear(ex[F_Y]) + '.'
+    };
+  },
+  // 5: Owner's priciest pick
+  function () {
+    const o = oraclePick(oracleData.ownersWithBigPick);
+    if (!o) return null;
+    const p = o.maxPick;
+    return {
+      key: "ownerMax:" + o.name,
+      html: tagOwner(o.name) + "&rsquo;s most expensive draft pick ever was " +
+        tagPlayer(p[F_P]) + ' at ' + tagAmt(p[F_PR]) + ' in ' + tagYear(p[F_Y]) + '.'
+    };
+  },
+  // 6: Owner's favorite player
+  function () {
+    const o = oraclePick(oracleData.ownersWithFav);
+    if (!o) return null;
+    return {
+      key: "ownerFav:" + o.name,
+      html: tagOwner(o.name) + ' has drafted ' + tagPlayer(o.favPlayer.name) + ' ' +
+        tagNum(o.favPlayer.count) + ' times — more than any other player.'
+    };
+  },
+  // 7: Owner big spending year
+  function () {
+    const o = oraclePick(oracleData.ownersWithBigPick);
+    if (!o) return null;
+    const p = o.maxPick;
+    return {
+      key: "ownerBigYr:" + o.name,
+      html: 'In ' + tagYear(p[F_Y]) + ', ' + tagOwner(o.name) + ' spent ' +
+        tagAmt(p[F_PR]) + ' on a single pick — ' + tagPlayer(p[F_P]) + '.'
+    };
+  },
+  // 8: Year superlative
+  function () {
+    const years = [...oracleData.yearTop.keys()];
+    if (!years.length) return null;
+    const y = oraclePick(years);
+    const p = oracleData.yearTop.get(y);
+    return {
+      key: "yearTop:" + y,
+      html: 'The most expensive pick of the ' + tagYear(y) + ' auction was ' +
+        tagPlayer(p[F_P]) + ' — ' + tagAmt(p[F_PR]) + ' by ' + tagOwner(OWNERS[p[F_O]]) + '.'
+    };
+  },
+  // 9: Position record
+  function () {
+    const positions = [...oracleData.posTop.keys()];
+    if (!positions.length) return null;
+    const pos = oraclePick(positions);
+    const p = oracleData.posTop.get(pos);
+    return {
+      key: "posTop:" + pos,
+      html: 'The most expensive ' + tagPos(pos) + ' ever drafted was ' +
+        tagPlayer(p[F_P]) + ' at ' + tagAmt(p[F_PR]) + ' (' +
+        tagOwner(OWNERS[p[F_O]]) + ', ' + tagYear(p[F_Y]) + ').'
+    };
+  },
+  // 10: $1 special
+  function () {
+    const p = oraclePick(oracleData.dollarPicks);
+    if (!p) return null;
+    return {
+      key: "dollar:" + p[F_P] + ':' + p[F_Y] + ':' + p[F_O],
+      html: tagPlayer(p[F_P]) + ' was a ' + tagAmt(1) + ' steal for ' +
+        tagOwner(OWNERS[p[F_O]]) + ' in ' + tagYear(p[F_Y]) + '.'
+    };
+  }
+];
+
+function rollOracle() {
+  let fact = null;
+  let fallback = null;
+  for (let i = 0; i < 12; i++) {
+    const gen = oraclePick(FACT_GENERATORS);
+    const f = gen();
+    if (!f) continue;
+    if (!fallback) fallback = f;
+    if (f.key !== oracleLastKey) { fact = f; break; }
+  }
+  if (!fact) fact = fallback;
+  if (!fact) return;
+  oracleLastKey = fact.key;
+  displayOracleFact(fact.html);
+}
+
+function displayOracleFact(html) {
+  const card = document.getElementById("oracleFact");
+  const text = document.getElementById("oracleFactText");
+  if (card.hasAttribute("hidden")) {
+    card.removeAttribute("hidden");
+    text.innerHTML = html;
+    requestAnimationFrame(() => card.classList.add("visible"));
+    return;
+  }
+  card.classList.remove("visible");
+  setTimeout(function () {
+    text.innerHTML = html;
+    requestAnimationFrame(() => card.classList.add("visible"));
+  }, 180);
+}
+
+/* =====================================================================
+ * SUPERLATIVES
+ * ===================================================================== */
+const SUPER_LIMIT = 25;
+
+function priceCls(n) { return n >= 50 ? "num high" : "num"; }
+function trophyEverHTML() {
+  return ' <span class="trophy" data-tip="Drafted by an eventual champion at least once" tabindex="0" aria-label="Drafted by an eventual champion at least once">🏆</span>';
+}
+
+function renderSuperlatives() {
+  renderSuperExpensive();
+  renderSuperDollarHeroes();
+  renderSuperMostDrafted();
+  renderSuperCareer();
+  renderSuperSplurges();
+  renderSuperColdest();
+  wireSuperlativesUI();
+}
+
+function renderSuperExpensive() {
+  const sorted = PICKS.slice().sort((a, b) => b[F_PR] - a[F_PR]);
+  const rows = sorted.map((p, i) => {
+    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
+    return '<tr' + hidden + '>' +
+      '<td class="rank">' + (i + 1) + '</td>' +
+      '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
+      '<td class="yr">' + p[F_Y] + '</td>' +
+      '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
+      '<td class="' + priceCls(p[F_PR]) + '">$' + fmtPrice(p[F_PR]) + '</td>' +
     '</tr>';
   }).join("");
-
-  document.getElementById("bodyInflation").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>Position</th><th class="num">2005–2014 Avg</th><th class="num">2015–2024 Avg</th><th class="num">Change</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+  document.getElementById("bodySuperExpensive").innerHTML =
+    '<table class="super-table"><thead><tr>' +
+      '<th>#</th><th>Player</th><th>Year</th><th>Owner</th><th class="num">Price</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>' +
+    showAllControl(sorted.length, SUPER_LIMIT);
 }
 
-function renderOneDollarHeroes() {
-  // Group picks by player+year for fast lookup
+function renderSuperDollarHeroes() {
+  // Group picks by player-year for next-year lookups.
   const byPlayerYear = new Map();
   PICKS.forEach(p => {
-    const key = p[F_P] + "|" + p[F_Y];
-    if (!byPlayerYear.has(key)) byPlayerYear.set(key, []);
-    byPlayerYear.get(key).push(p);
+    const k = p[F_P] + '|' + p[F_Y];
+    if (!byPlayerYear.has(k)) byPlayerYear.set(k, []);
+    byPlayerYear.get(k).push(p);
   });
 
   const heroes = [];
   PICKS.forEach(p => {
     if (p[F_PR] !== 1) return;
-    const nextYearKey = p[F_P] + "|" + (p[F_Y] + 1);
-    const next = byPlayerYear.get(nextYearKey);
+    const nextKey = p[F_P] + '|' + (p[F_Y] + 1);
+    const next = byPlayerYear.get(nextKey);
     if (!next) return;
-    const maxNext = next.reduce((acc, q) => Math.max(acc, q[F_PR]), 0);
-    if (maxNext >= 20) {
-      const nextPick = next.find(q => q[F_PR] === maxNext);
-      heroes.push({
-        player: p[F_P],
-        y1: p[F_Y],
-        owner1: OWNERS[p[F_O]],
-        y2: nextPick[F_Y],
-        owner2: OWNERS[nextPick[F_O]],
-        priceNext: maxNext,
-        isChamp1: p[F_C],
-        isChamp2: nextPick[F_C],
-        pickRef1: p,
-        pickRef2: nextPick
-      });
+    const best = next.reduce((acc, q) => (acc && acc[F_PR] >= q[F_PR]) ? acc : q, null);
+    if (best && best[F_PR] >= 20) {
+      heroes.push({ p1: p, p2: best });
     }
   });
-  heroes.sort((a, b) => b.priceNext - a.priceNext);
-  const top = heroes.slice(0, 15);
+  heroes.sort((a, b) => b.p2[F_PR] - a.p2[F_PR]);
 
-  if (top.length === 0) {
-    document.getElementById("bodyOneDollar").innerHTML = '<div class="coming-soon">No $1 → $20+ rebounds found in the data.</div>';
-    return;
+  let html;
+  if (heroes.length >= 5) {
+    const rows = heroes.map((h) => {
+      const p1 = h.p1, p2 = h.p2;
+      const trophy1 = p1[F_C] ? trophyHTML(p1) : '';
+      const trophy2 = p2[F_C] ? trophyHTML(p2) : '';
+      return '<tr>' +
+        '<td>' + tagPlayer(p1[F_P]) + trophy1 + trophy2 + '</td>' +
+        '<td><strong style="color:var(--gold-dark);font-variant-numeric:tabular-nums;">' + p1[F_Y] + '</strong> <span class="pick-meta">' + tagOwner(OWNERS[p1[F_O]]) + '</span></td>' +
+        '<td class="' + priceCls(p2[F_PR]) + '">$' + fmtPrice(p2[F_PR]) +
+          ' <span class="pick-meta">' + p2[F_Y] + ', ' + tagOwner(OWNERS[p2[F_O]]) + '</span></td>' +
+      '</tr>';
+    }).join('');
+    html =
+      '<table class="super-table"><thead><tr>' +
+        '<th>Player</th><th>$1 Pick</th><th class="num">Next-Year Price</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>';
+  } else {
+    // Fallback: notable $1 picks (random sample of $1 picks, oldest first by year).
+    const dollarPicks = PICKS.filter(p => p[F_PR] === 1).slice().sort((a, b) => a[F_Y] - b[F_Y] || a[F_P].localeCompare(b[F_P]));
+    const sampleCount = Math.min(50, dollarPicks.length);
+    const sample = dollarPicks.slice(0, sampleCount);
+    const rows = sample.map((p, i) => {
+      const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
+      return '<tr' + hidden + '>' +
+        '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
+        '<td class="yr">' + p[F_Y] + '</td>' +
+        '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
+      '</tr>';
+    }).join('');
+    html =
+      '<p class="coming-soon" style="margin:0 0 8px;">Too few $1 → $20+ rebounds in the data — showing notable $1 picks instead.</p>' +
+      '<table class="super-table"><thead><tr>' +
+        '<th>Player</th><th>Year</th><th>Owner</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table>' +
+      showAllControl(sample.length, SUPER_LIMIT);
   }
-
-  const rows = top.map((h, i) =>
-    '<tr>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHTML(h.player) +
-        (h.isChamp1 ? trophyHTML(h.pickRef1) : "") +
-        (h.isChamp2 ? trophyHTML(h.pickRef2) : "") +
-      '</td>' +
-      '<td class="yr">' + h.y1 + '</td>' +
-      '<td>' + escapeHTML(h.owner1) + '</td>' +
-      '<td class="num">$1</td>' +
-      '<td class="yr">' + h.y2 + '</td>' +
-      '<td>' + escapeHTML(h.owner2) + '</td>' +
-      '<td class="num">$' + fmtPrice(h.priceNext) + '</td>' +
-    '</tr>'
-  ).join("");
-
-  document.getElementById("bodyOneDollar").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th><th>Player</th>' +
-      '<th>Yr 1</th><th>Owner</th><th class="num">Price</th>' +
-      '<th>Yr 2</th><th>Owner</th><th class="num">Price</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+  document.getElementById("bodySuperHeroes").innerHTML = html;
 }
 
-let spendingSortKey = "total";
-let spendingSortDir = -1;
-
-function computeOwnerSpending() {
-  const tot = new Array(OWNERS.length).fill(0);
-  const cnt = new Array(OWNERS.length).fill(0);
-  PICKS.forEach(p => { tot[p[F_O]] += p[F_PR]; cnt[p[F_O]]++; });
-  return OWNERS.map((name, i) => ({
-    name, total: tot[i], picks: cnt[i],
-    avg: cnt[i] ? tot[i] / cnt[i] : 0
-  }));
-}
-
-function renderOwnerSpending() {
-  const data = computeOwnerSpending();
-  data.sort((a, b) => {
-    const k = spendingSortKey, dir = spendingSortDir;
-    let av, bv;
-    if (k === "owner") { av = a.name; bv = b.name; }
-    else if (k === "total") { av = a.total; bv = b.total; }
-    else if (k === "picks") { av = a.picks; bv = b.picks; }
-    else if (k === "avg") { av = a.avg; bv = b.avg; }
-    if (av < bv) return -1 * dir;
-    if (av > bv) return 1 * dir;
-    return 0;
+function renderSuperMostDrafted() {
+  const map = new Map();
+  PICKS.forEach(p => {
+    let e = map.get(p[F_P]);
+    if (!e) { e = { name: p[F_P], count: 0, sum: 0, min: Infinity, max: -Infinity, anyChamp: false }; map.set(p[F_P], e); }
+    e.count++;
+    e.sum += p[F_PR];
+    if (p[F_PR] < e.min) e.min = p[F_PR];
+    if (p[F_PR] > e.max) e.max = p[F_PR];
+    if (p[F_C]) e.anyChamp = true;
   });
-
-  const arrow = (k) => spendingSortKey === k ? (spendingSortDir === 1 ? " ▲" : " ▼") : "";
-  const rows = data.map((d, i) =>
-    '<tr>' +
+  // Only meaningful for multi-drafted players.
+  const arr = [...map.values()]
+    .filter(e => e.count >= 2)
+    .sort((a, b) => b.count - a.count || (b.sum / b.count) - (a.sum / a.count));
+  const rows = arr.map((e, i) => {
+    const avg = e.sum / e.count;
+    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
+    const range = e.min === e.max ? '$' + fmtPrice(e.min) : '$' + fmtPrice(e.min) + '–$' + fmtPrice(e.max);
+    return '<tr' + hidden + '>' +
       '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHTML(d.name) + '</td>' +
-      '<td class="num">$' + fmtNum(Math.round(d.total)) + '</td>' +
-      '<td class="num">' + fmtNum(d.picks) + '</td>' +
-      '<td class="num">$' + d.avg.toFixed(1) + '</td>' +
-    '</tr>'
-  ).join("");
+      '<td>' + tagPlayer(e.name) + (e.anyChamp ? trophyEverHTML() : '') + '</td>' +
+      '<td class="num">' + e.count + '</td>' +
+      '<td class="num">$' + avg.toFixed(1) + '</td>' +
+      '<td class="num">' + range + '</td>' +
+    '</tr>';
+  }).join("");
+  document.getElementById("bodySuperMostDrafted").innerHTML =
+    '<table class="super-table"><thead><tr>' +
+      '<th>#</th><th>Player</th><th class="num">Times</th><th class="num">Avg $</th><th class="num">Range</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>' +
+    showAllControl(arr.length, SUPER_LIMIT);
+}
 
-  document.getElementById("bodySpending").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th>' +
-      '<th data-spend-sort="owner" style="cursor:pointer;">Owner' + arrow("owner") + '</th>' +
-      '<th data-spend-sort="total" class="num" style="cursor:pointer;">Total $' + arrow("total") + '</th>' +
-      '<th data-spend-sort="picks" class="num" style="cursor:pointer;">Picks' + arrow("picks") + '</th>' +
-      '<th data-spend-sort="avg" class="num" style="cursor:pointer;">Avg $' + arrow("avg") + '</th>' +
+function renderSuperCareer() {
+  const map = new Map();
+  PICKS.forEach(p => {
+    let e = map.get(p[F_P]);
+    if (!e) { e = { name: p[F_P], total: 0, count: 0, anyChamp: false }; map.set(p[F_P], e); }
+    e.total += p[F_PR];
+    e.count++;
+    if (p[F_C]) e.anyChamp = true;
+  });
+  const arr = [...map.values()].sort((a, b) => b.total - a.total || b.count - a.count);
+  const rows = arr.map((e, i) => {
+    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
+    const totalCls = e.total >= 50 ? 'num high' : 'num';
+    return '<tr' + hidden + '>' +
+      '<td class="rank">' + (i + 1) + '</td>' +
+      '<td>' + tagPlayer(e.name) + (e.anyChamp ? trophyEverHTML() : '') + '</td>' +
+      '<td class="' + totalCls + '">$' + fmtNum(Math.round(e.total)) + '</td>' +
+      '<td class="num">' + e.count + '</td>' +
+    '</tr>';
+  }).join("");
+  document.getElementById("bodySuperCareer").innerHTML =
+    '<table class="super-table"><thead><tr>' +
+      '<th>#</th><th>Player</th><th class="num">Career Draft $</th><th class="num">Times</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>' +
+    showAllControl(arr.length, SUPER_LIMIT);
+}
+
+function renderSuperSplurges() {
+  const topByYear = new Map();
+  PICKS.forEach(p => {
+    const cur = topByYear.get(p[F_Y]);
+    if (!cur || p[F_PR] > cur[F_PR]) topByYear.set(p[F_Y], p);
+  });
+  const years = [...topByYear.keys()].sort((a, b) => b - a);
+  const rows = years.map(y => {
+    const p = topByYear.get(y);
+    return '<tr>' +
+      '<td class="yr">' + y + '</td>' +
+      '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
+      '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
+      '<td class="' + priceCls(p[F_PR]) + '">$' + fmtPrice(p[F_PR]) + '</td>' +
+    '</tr>';
+  }).join("");
+  document.getElementById("bodySuperSplurges").innerHTML =
+    '<table class="super-table"><thead><tr>' +
+      '<th>Year</th><th>Player</th><th>Owner</th><th class="num">Price</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
 
-  document.querySelectorAll("#bodySpending th[data-spend-sort]").forEach(th => {
-    th.addEventListener("click", () => {
-      const k = th.dataset.spendSort;
-      if (spendingSortKey === k) spendingSortDir = -spendingSortDir;
-      else { spendingSortKey = k; spendingSortDir = (k === "owner") ? 1 : -1; }
-      renderOwnerSpending();
+function renderSuperColdest() {
+  const sumByYear = new Map();
+  const cntByYear = new Map();
+  const topByYear = new Map();
+  PICKS.forEach(p => {
+    sumByYear.set(p[F_Y], (sumByYear.get(p[F_Y]) || 0) + p[F_PR]);
+    cntByYear.set(p[F_Y], (cntByYear.get(p[F_Y]) || 0) + 1);
+    const cur = topByYear.get(p[F_Y]);
+    if (!cur || p[F_PR] > cur[F_PR]) topByYear.set(p[F_Y], p);
+  });
+  const arr = [...sumByYear.keys()].map(y => ({
+    y,
+    avg: sumByYear.get(y) / cntByYear.get(y),
+    top: topByYear.get(y)
+  })).sort((a, b) => a.avg - b.avg);
+
+  const rows = arr.map(e => {
+    const tp = e.top;
+    return '<tr>' +
+      '<td class="yr">' + e.y + '</td>' +
+      '<td class="num">$' + e.avg.toFixed(1) + '</td>' +
+      '<td>' + tagPlayer(tp[F_P]) + trophyHTML(tp) +
+        ' <span class="pick-meta">$' + fmtPrice(tp[F_PR]) + ', ' + tagOwner(OWNERS[tp[F_O]]) + '</span></td>' +
+    '</tr>';
+  }).join("");
+  document.getElementById("bodySuperColdest").innerHTML =
+    '<table class="super-table"><thead><tr>' +
+      '<th>Year</th><th class="num">Avg Pick $</th><th>Most Expensive Pick</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function showAllControl(total, limit) {
+  if (total <= limit) return '';
+  const remaining = total - limit;
+  return '<div class="super-show-all-wrap">' +
+    '<button type="button" class="super-show-all" data-show-all>Show all ' + total + ' →</button>' +
+  '</div>';
+}
+
+function wireSuperlativesUI() {
+  // Accordion toggle
+  document.querySelectorAll("#tabSuperlatives .super-card").forEach(card => {
+    const head = card.querySelector(".super-head");
+    head.addEventListener("click", () => {
+      const open = card.classList.toggle("open");
+      head.setAttribute("aria-expanded", open ? "true" : "false");
     });
   });
-}
 
-/* =====================================================================
- * LEADERBOARDS
- * ===================================================================== */
-function renderLeaderboards() {
-  renderLBExpensive();
-  renderLBOwnerSpend();
-  renderLBPlayerValue();
-  renderLBMostDrafted();
-}
-
-function renderLBExpensive() {
-  const top = PICKS.slice().sort((a, b) => b[F_PR] - a[F_PR]).slice(0, 25);
-  const rows = top.map((p, i) =>
-    '<tr>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHTML(p[F_P]) + trophyHTML(p) + '</td>' +
-      '<td class="yr">' + p[F_Y] + '</td>' +
-      '<td>' + escapeHTML(OWNERS[p[F_O]]) + '</td>' +
-      '<td class="num">$' + fmtPrice(p[F_PR]) + '</td>' +
-    '</tr>'
-  ).join("");
-  document.getElementById("lbExpensive").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th><th>Player</th><th>Year</th><th>Owner</th><th class="num">Price</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
-}
-
-function renderLBOwnerSpend() {
-  const data = computeOwnerSpending().sort((a, b) => b.total - a.total).slice(0, 25);
-  const rows = data.map((d, i) =>
-    '<tr>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHTML(d.name) + '</td>' +
-      '<td class="num">$' + fmtNum(Math.round(d.total)) + '</td>' +
-      '<td class="num">' + fmtNum(d.picks) + '</td>' +
-    '</tr>'
-  ).join("");
-  document.getElementById("lbOwnerSpend").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th><th>Owner</th><th class="num">Total $</th><th class="num">Picks</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
-}
-
-function renderLBPlayerValue() {
-  const tot = new Map();
-  const champs = new Map();
-  PICKS.forEach(p => {
-    const k = p[F_P];
-    tot.set(k, (tot.get(k) || 0) + p[F_PR]);
-    if (p[F_C]) champs.set(k, true);
+  // Show-all buttons (delegated)
+  document.getElementById("tabSuperlatives").addEventListener("click", (e) => {
+    const btn = e.target.closest(".super-show-all");
+    if (!btn) return;
+    const wrap = btn.closest(".super-body");
+    if (!wrap) return;
+    wrap.querySelectorAll("tr.super-row-hidden").forEach(tr => tr.classList.remove("super-row-hidden"));
+    btn.closest(".super-show-all-wrap").remove();
   });
-  const arr = Array.from(tot.entries()).sort((a, b) => b[1] - a[1]).slice(0, 25);
-  const rows = arr.map((e, i) => {
-    const name = e[0], total = e[1], wasChamp = champs.has(name);
-    const trophy = wasChamp ? ' <span class="trophy" data-tip="At least one championship-team draft" tabindex="0">🏆</span>' : "";
-    return '<tr>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHTML(name) + trophy + '</td>' +
-      '<td class="num">$' + fmtNum(Math.round(total)) + '</td>' +
-    '</tr>';
-  }).join("");
-  document.getElementById("lbPlayerValue").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th><th>Player</th><th class="num">Career Draft $</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
-}
-
-function renderLBMostDrafted() {
-  const cnt = new Map();
-  const tot = new Map();
-  PICKS.forEach(p => {
-    const k = p[F_P];
-    cnt.set(k, (cnt.get(k) || 0) + 1);
-    tot.set(k, (tot.get(k) || 0) + p[F_PR]);
-  });
-  const arr = Array.from(cnt.entries())
-    .sort((a, b) => b[1] - a[1] || (tot.get(b[0]) - tot.get(a[0])))
-    .slice(0, 25);
-  const rows = arr.map((e, i) => {
-    const name = e[0], times = e[1], avg = tot.get(name) / times;
-    return '<tr>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + escapeHTML(name) + '</td>' +
-      '<td class="num">' + times + '</td>' +
-      '<td class="num">$' + avg.toFixed(1) + '</td>' +
-    '</tr>';
-  }).join("");
-  document.getElementById("lbMostDrafted").innerHTML =
-    '<table class="dp-compact"><thead><tr>' +
-      '<th>#</th><th>Player</th><th class="num">Times Drafted</th><th class="num">Avg $</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
 }
 
 /* =====================================================================
