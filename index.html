@@ -138,64 +138,6 @@
   }
 
   .stack > * + * { margin-top: 20px; }
-  .stack > .featured + .credit-band { margin-top: 12px; }
-
-  /* ---------- Featured slot ---------- */
-  .featured[hidden] { display: none; }
-  .featured-eyebrow {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 10px;
-    color: var(--gold-dark);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin: 0 0 10px;
-    line-height: 1;
-    text-align: center;
-  }
-  .featured-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .featured.single .featured-buttons {
-    grid-template-columns: 1fr;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .featured-btn {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .featured-btn:hover,
-  .featured-btn:focus-visible {
-    border-color: var(--navy);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px var(--navy-shadow);
-    outline: none;
-  }
-  .featured-btn-label {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 18px;
-    color: var(--navy);
-    line-height: 1.1;
-    letter-spacing: 0.01em;
-  }
-  .featured-btn-sublabel {
-    font-family: var(--body);
-    font-weight: 400;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.3;
-  }
 
   /* ---------- Credit Submission band (navy) ---------- */
   .credit-band {
@@ -256,12 +198,11 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    aspect-ratio: 1 / 1;
-    min-height: 120px;
+    min-height: 84px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 16px;
+    padding: 12px;
     transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .section-card:hover,
@@ -274,9 +215,9 @@
   .section-card:active { transform: translateY(0); }
 
   .card-icon {
-    font-size: 28px;
+    font-size: 22px;
     line-height: 1;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .card-title {
     font-family: var(--display);
@@ -347,10 +288,6 @@
     main { padding: 16px 16px 16px; }
     .stack > * + * { margin-top: 16px; }
 
-    .featured-buttons { grid-template-columns: 1fr; }
-    .featured.single .featured-buttons { max-width: none; }
-    .featured-btn-label { font-size: 16px; }
-
     .credit-band {
       font-size: 15px;
       padding: 0 16px;
@@ -361,15 +298,15 @@
       gap: 10px;
     }
     .section-card {
-      min-height: 100px;
-      padding: 12px;
+      min-height: 72px;
+      padding: 10px;
     }
-    .card-icon { font-size: 26px; margin-bottom: 6px; }
+    .card-icon { font-size: 20px; margin-bottom: 5px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .section-card, .featured-btn, .credit-band, .site-nav a { transition: none; }
-    .section-card:hover, .featured-btn:hover, .credit-band:hover { transform: none; }
+    .section-card, .credit-band, .site-nav a { transition: none; }
+    .section-card:hover, .credit-band:hover { transform: none; }
   }
 </style>
 </head>
@@ -396,20 +333,6 @@
 </header>
 
 <main class="stack">
-  <section class="featured" id="featured" aria-label="Featured">
-    <p class="featured-eyebrow" id="featuredEyebrow"></p>
-    <div class="featured-buttons">
-      <a class="featured-btn" id="featuredPrimary" href="#">
-        <span class="featured-btn-label" id="featuredPrimaryLabel"></span>
-        <span class="featured-btn-sublabel" id="featuredPrimarySublabel"></span>
-      </a>
-      <a class="featured-btn" id="featuredSecondary" href="#">
-        <span class="featured-btn-label" id="featuredSecondaryLabel"></span>
-        <span class="featured-btn-sublabel" id="featuredSecondarySublabel"></span>
-      </a>
-    </div>
-  </section>
-
   <a class="credit-band" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener" aria-label="Submit a credit request">
     &#x270D;&#xFE0F;&nbsp; Submit a Credit Request &rarr;
   </a>
@@ -464,64 +387,6 @@
 </footer>
 
 <script>
-  /*
-   * FEATURED_NOW — the Featured area at the top of the homepage.
-   *
-   * The Featured area can show one or two buttons. Set secondary to null
-   * to show only the primary. Update freely whenever you want to push
-   * items to the front (Power Rankings in offseason, Weekly Pulse
-   * in-season, draft countdown, special announcements, etc).
-   *
-   * Set isVisible to false to hide the entire Featured area.
-   */
-  const FEATURED_NOW = {
-    isVisible: true,
-    eyebrow: "OFFSEASON FEATURED",
-    primary: {
-      label: "🏆 2026 Power Rankings",
-      sublabel: "Madden-style franchise ratings",
-      link: "power-rankings.html"
-    },
-    secondary: {
-      label: "🟢 Week 1 Sample Pulse",
-      sublabel: "Preview the in-season experience",
-      link: "weekly.html"
-    }
-  };
-
-  (function renderFeatured(data) {
-    const slot       = document.getElementById("featured");
-    const eyebrow    = document.getElementById("featuredEyebrow");
-    const primary    = document.getElementById("featuredPrimary");
-    const pLabel     = document.getElementById("featuredPrimaryLabel");
-    const pSublabel  = document.getElementById("featuredPrimarySublabel");
-    const secondary  = document.getElementById("featuredSecondary");
-    const sLabel     = document.getElementById("featuredSecondaryLabel");
-    const sSublabel  = document.getElementById("featuredSecondarySublabel");
-
-    if (!data.isVisible) {
-      slot.hidden = true;
-      return;
-    }
-
-    eyebrow.textContent = data.eyebrow;
-
-    pLabel.textContent    = data.primary.label;
-    pSublabel.textContent = data.primary.sublabel;
-    primary.setAttribute("href", data.primary.link);
-
-    if (data.secondary) {
-      slot.classList.remove("single");
-      sLabel.textContent    = data.secondary.label;
-      sSublabel.textContent = data.secondary.sublabel;
-      secondary.setAttribute("href", data.secondary.link);
-      secondary.hidden = false;
-    } else {
-      slot.classList.add("single");
-      secondary.hidden = true;
-    }
-  })(FEATURED_NOW);
-
   (function wireHamburger() {
     const btn = document.getElementById("navToggle");
     const nav = document.getElementById("primaryNav");
