@@ -1337,6 +1337,328 @@
     table.super-table tbody td { padding: 7px 8px; }
     table.super-table td.rank { width: 32px; }
   }
+
+  /* ---------- Clickable name affordance ---------- */
+  .player-name,
+  .owner-name {
+    cursor: pointer;
+    border-bottom: 1px dotted transparent;
+    transition: color 0.12s ease, border-color 0.12s ease;
+  }
+  .player-name:hover,
+  .owner-name:hover,
+  .player-name:focus-visible,
+  .owner-name:focus-visible {
+    color: var(--gold-dark);
+    border-bottom-color: var(--gold-dark);
+    outline: none;
+  }
+  @media (hover: none) {
+    .player-name,
+    .owner-name {
+      border-bottom-color: rgba(26, 46, 80, 0.22);
+    }
+  }
+
+  /* ---------- Profile Popup Modal ---------- */
+  .profile-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .profile-modal[hidden] { display: none; }
+  .profile-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 46, 80, 0.4);
+    animation: profileBackdropIn 0.18s ease-out;
+  }
+  .profile-card {
+    position: relative;
+    background: var(--surface);
+    border-radius: 16px;
+    max-width: 480px;
+    width: 100%;
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(26, 46, 80, 0.28), 0 8px 24px rgba(26, 46, 80, 0.16);
+    animation: profileCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+  @keyframes profileBackdropIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes profileCardIn {
+    from { opacity: 0; transform: scale(0.94) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .profile-card-top {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px 0;
+    z-index: 2;
+    background: var(--surface);
+    flex: 0 0 auto;
+  }
+  .profile-back {
+    background: none;
+    border: 0;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--navy);
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .profile-back[hidden] { display: none; }
+  .profile-back:hover { background: var(--navy-soft); color: var(--gold-dark); }
+  .profile-close {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .profile-close:hover { background: var(--navy-soft); color: var(--navy); }
+  .profile-card-body {
+    padding: 4px 24px 24px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pp-header { margin-bottom: 16px; }
+  .pp-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--navy);
+    margin: 0 0 4px;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+  .pp-subtitle {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .pp-champ-badge {
+    display: inline-block;
+    margin-left: 8px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+  .pp-champ-indicator {
+    margin-left: 6px;
+    font-size: 18px;
+    vertical-align: middle;
+  }
+
+  .pp-stat-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .pp-stat-box {
+    background: var(--row-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .pp-stat-label {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+  }
+  .pp-stat-value {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    line-height: 1.25;
+  }
+  .pp-stat-value .accent { color: var(--gold-dark); }
+  .pp-stat-value .small {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .pp-section-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 14px 0 8px;
+  }
+
+  table.pp-timeline {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.pp-timeline th,
+  table.pp-timeline td {
+    padding: 7px 6px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  table.pp-timeline th {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  table.pp-timeline td.yr {
+    font-variant-numeric: tabular-nums;
+    color: var(--gold-dark);
+    font-weight: 700;
+    width: 48px;
+  }
+  table.pp-timeline td.pr {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    width: 56px;
+  }
+  table.pp-timeline td.tr {
+    width: 24px;
+    text-align: right;
+  }
+  table.pp-timeline tbody tr:last-child td { border-bottom: 0; }
+
+  .pp-chart {
+    margin: 8px 0 4px;
+    background: var(--row-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 12px 8px;
+  }
+  .pp-chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 90px;
+    margin-bottom: 6px;
+  }
+  .pp-chart-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .pp-chart-bar {
+    width: 100%;
+    background: var(--navy);
+    border-radius: 3px 3px 0 0;
+    min-height: 2px;
+    transition: background 0.15s ease;
+  }
+  .pp-chart-col.peak .pp-chart-bar { background: var(--gold); }
+  .pp-chart-price {
+    font-family: var(--body);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-top: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .pp-chart-col.peak .pp-chart-price { color: var(--gold-dark); }
+  .pp-chart-years {
+    display: flex;
+    gap: 6px;
+  }
+  .pp-chart-year {
+    flex: 1 1 0;
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .pp-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: none;
+    border: 0;
+    padding: 8px 0;
+    cursor: pointer;
+    transition: color 0.12s ease;
+  }
+  .pp-link:hover { color: var(--navy); }
+
+  /* Names inside the popup keep clickable styling */
+  .profile-card-body .player-name,
+  .profile-card-body .owner-name {
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  @media (max-width: 600px) {
+    .profile-modal { padding: 12px; align-items: flex-start; padding-top: 32px; }
+    .profile-card { max-height: calc(100vh - 64px); border-radius: 14px; }
+    .profile-card-body { padding: 4px 18px 20px; }
+    .pp-name { font-size: 22px; }
+    .pp-stat-strip { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .pp-stat-box { padding: 9px 10px; }
+    .pp-stat-value { font-size: 14px; }
+    .pp-chart-bars { height: 76px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .profile-backdrop,
+    .profile-card { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -1548,6 +1870,18 @@
   </section>
 
 </main>
+
+<!-- ============ PROFILE POPUP MODAL ============ -->
+<div class="profile-modal" id="profileModal" hidden aria-hidden="true">
+  <div class="profile-backdrop" id="profileBackdrop"></div>
+  <div class="profile-card" role="dialog" aria-modal="true" aria-labelledby="profileTitle" tabindex="-1">
+    <div class="profile-card-top">
+      <button type="button" class="profile-back" id="profileBack" aria-label="Back to previous profile" hidden>← Back</button>
+      <button type="button" class="profile-close" id="profileClose" aria-label="Close profile">×</button>
+    </div>
+    <div class="profile-card-body" id="profileBody"></div>
+  </div>
+</div>
 
 <footer class="site-footer">
   Est. 2002 &middot; Built by the Commish
@@ -7800,8 +8134,8 @@ function renderSearch() {
     html[i] =
       '<tr>' +
         '<td class="col-year">' + p[F_Y] + '</td>' +
-        '<td class="col-owner">' + escapeHTML(OWNERS[p[F_O]]) + '</td>' +
-        '<td class="col-player">' + escapeHTML(p[F_P]) + trophyHTML(p) + '</td>' +
+        '<td class="col-owner">' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
+        '<td class="col-player">' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
         '<td class="col-team dp-hide-mobile">' + escapeHTML(p[F_T]) + '</td>' +
         '<td class="col-pos"><span class="pos-pill">' + escapeHTML(p[F_PS]) + '</span></td>' +
         '<td class="col-price ' + priceCls + '">$' + fmtPrice(p[F_PR]) + '</td>' +
@@ -8540,6 +8874,335 @@ function renderOwnerProfile(ownerIdx) {
     });
   });
 }
+
+/* =====================================================================
+ * PROFILE POPUP — cross-cutting modal for player & owner profiles.
+ * Triggered by clicks on any .player-name or .owner-name across all tabs.
+ * Profile data is computed on demand from the embedded PICKS dataset.
+ * ===================================================================== */
+(function wireProfilePopup() {
+  const modal = document.getElementById("profileModal");
+  const backdrop = document.getElementById("profileBackdrop");
+  const card = modal.querySelector(".profile-card");
+  const body = document.getElementById("profileBody");
+  const closeBtn = document.getElementById("profileClose");
+  const backBtn = document.getElementById("profileBack");
+
+  const stack = [];      // navigation stack within one open session
+  let lastFocus = null;  // element to restore focus to on close
+
+  function isOpen() { return !modal.hasAttribute("hidden"); }
+
+  function showModal() {
+    if (isOpen()) return;
+    lastFocus = document.activeElement;
+    modal.removeAttribute("hidden");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    // Defer focus until the card is in the DOM.
+    setTimeout(() => { try { card.focus(); } catch (e) {} }, 0);
+  }
+
+  function hideModal() {
+    if (!isOpen()) return;
+    modal.setAttribute("hidden", "");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    stack.length = 0;
+    if (lastFocus && typeof lastFocus.focus === "function") {
+      try { lastFocus.focus(); } catch (e) {}
+    }
+    lastFocus = null;
+  }
+
+  function openProfile(type, name) {
+    stack.length = 0;
+    stack.push({ type, name });
+    render();
+    showModal();
+  }
+
+  function navigateTo(type, name) {
+    stack.push({ type, name });
+    render();
+    body.scrollTop = 0;
+  }
+
+  function goBack() {
+    if (stack.length <= 1) return;
+    stack.pop();
+    render();
+    body.scrollTop = 0;
+  }
+
+  function render() {
+    const cur = stack[stack.length - 1];
+    if (!cur) return;
+    backBtn.hidden = stack.length <= 1;
+    if (cur.type === "player") {
+      body.innerHTML = renderPlayerProfile(cur.name);
+    } else if (cur.type === "owner") {
+      body.innerHTML = renderOwnerPopup(cur.name);
+    } else {
+      body.innerHTML = "";
+    }
+  }
+
+  /* ---------- Player profile computation ---------- */
+  function computePlayer(name) {
+    const all = PICKS.filter(p => p[F_P] === name);
+    if (all.length === 0) return null;
+    // Newest first
+    const byYear = all.slice().sort((a, b) => b[F_Y] - a[F_Y]);
+    const recent = byYear[0];
+    let peak = all[0], low = all[0];
+    let total = 0;
+    let anyChamp = false;
+    for (const p of all) {
+      if (p[F_PR] > peak[F_PR]) peak = p;
+      if (p[F_PR] < low[F_PR]) low = p;
+      total += p[F_PR];
+      if (p[F_C]) anyChamp = true;
+    }
+    return {
+      name,
+      pos: recent[F_PS],
+      team: recent[F_T],
+      count: all.length,
+      peak, low,
+      avg: total / all.length,
+      anyChamp,
+      picksNewestFirst: byYear
+    };
+  }
+
+  function renderPlayerProfile(name) {
+    const d = computePlayer(name);
+    if (!d) {
+      return '<div class="pp-header"><h2 class="pp-name">' + escapeHTML(name) + '</h2>' +
+        '<p class="pp-subtitle">No draft history found.</p></div>';
+    }
+    const champIndicator = d.anyChamp ? '<span class="pp-champ-indicator" title="Drafted by an eventual MAFFL champion">🏆</span>' : '';
+
+    let html = '<div class="pp-header">' +
+      '<h2 class="pp-name" id="profileTitle">' + escapeHTML(d.name) + champIndicator + '</h2>' +
+      '<p class="pp-subtitle">' + escapeHTML(d.pos) + ' &middot; ' + escapeHTML(d.team) + '</p>' +
+      '</div>';
+
+    html += '<div class="pp-stat-strip">' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Times Drafted</div>' +
+        '<div class="pp-stat-value">' + d.count + '<span class="small">' +
+          (d.count === 1 ? 'one auction' : 'auctions') + '</span></div>' +
+      '</div>' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Peak Price</div>' +
+        '<div class="pp-stat-value"><span class="accent">$' + fmtPrice(d.peak[F_PR]) + '</span>' +
+          '<span class="small">' + d.peak[F_Y] + '</span></div>' +
+      '</div>' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Low Price</div>' +
+        '<div class="pp-stat-value">$' + fmtPrice(d.low[F_PR]) +
+          '<span class="small">' + d.low[F_Y] + '</span></div>' +
+      '</div>' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Average Price</div>' +
+        '<div class="pp-stat-value">$' + fmtPrice(Math.round(d.avg * 10) / 10) +
+          '<span class="small">per draft</span></div>' +
+      '</div>' +
+    '</div>';
+
+    if (d.count >= 3) {
+      html += renderPlayerChart(d);
+    }
+
+    html += '<h3 class="pp-section-head">Draft History</h3>';
+    html += '<table class="pp-timeline"><thead><tr>' +
+      '<th>Year</th><th>Owner</th><th style="text-align:right;">Price</th><th></th>' +
+      '</tr></thead><tbody>';
+    d.picksNewestFirst.forEach(p => {
+      const champ = p[F_C] ? '🏆' : '';
+      html += '<tr>' +
+        '<td class="yr">' + p[F_Y] + '</td>' +
+        '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
+        '<td class="pr">$' + fmtPrice(p[F_PR]) + '</td>' +
+        '<td class="tr">' + champ + '</td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+
+    return html;
+  }
+
+  function renderPlayerChart(d) {
+    // Oldest → newest for chart timeline
+    const chrono = d.picksNewestFirst.slice().reverse();
+    const peakPrice = d.peak[F_PR];
+    const maxBar = Math.max(peakPrice, 1);
+    const bars = chrono.map(p => {
+      const isPeak = p === d.peak || (p[F_Y] === d.peak[F_Y] && p[F_PR] === d.peak[F_PR] && p[F_O] === d.peak[F_O]);
+      const h = Math.max(2, Math.round((p[F_PR] / maxBar) * 78));
+      return '<div class="pp-chart-col' + (isPeak ? ' peak' : '') + '">' +
+        '<div class="pp-chart-price">$' + fmtPrice(p[F_PR]) + '</div>' +
+        '<div class="pp-chart-bar" style="height:' + h + 'px;"></div>' +
+        '</div>';
+    }).join("");
+    const years = chrono.map(p =>
+      '<div class="pp-chart-year">' + p[F_Y] + '</div>'
+    ).join("");
+    return '<div class="pp-chart">' +
+      '<div class="pp-chart-bars">' + bars + '</div>' +
+      '<div class="pp-chart-years">' + years + '</div>' +
+    '</div>';
+  }
+
+  /* ---------- Owner profile computation (condensed for popup) ---------- */
+  function computeOwner(name) {
+    const ownerIdx = OWNERS.indexOf(name);
+    if (ownerIdx === -1) return null;
+    const mine = PICKS.filter(p => p[F_O] === ownerIdx);
+    if (mine.length === 0) return null;
+
+    const seasons = new Set(mine.map(p => p[F_Y]));
+    let mostExp = mine[0];
+    let total = 0;
+    const byPlayer = new Map();
+    const posSpend = new Map();
+    for (const p of mine) {
+      if (p[F_PR] > mostExp[F_PR]) mostExp = p;
+      total += p[F_PR];
+      byPlayer.set(p[F_P], (byPlayer.get(p[F_P]) || 0) + 1);
+      posSpend.set(p[F_PS], (posSpend.get(p[F_PS]) || 0) + p[F_PR]);
+    }
+    let topPlayer = null, topPlayerCount = 0;
+    byPlayer.forEach((c, n) => { if (c > topPlayerCount) { topPlayerCount = c; topPlayer = n; } });
+    let favPos = null, favPosAmt = -1;
+    posSpend.forEach((amt, pos) => { if (amt > favPosAmt) { favPosAmt = amt; favPos = pos; } });
+    const favPosPct = total > 0 ? Math.round((favPosAmt / total) * 100) : 0;
+
+    let champCount = 0;
+    Object.keys(CHAMPS).forEach(y => { if (CHAMPS[y] === ownerIdx) champCount++; });
+
+    return {
+      ownerIdx, name, seasons: seasons.size,
+      mostExp, avg: total / mine.length,
+      topPlayer, topPlayerCount,
+      favPos, favPosPct, champCount
+    };
+  }
+
+  function renderOwnerPopup(name) {
+    const d = computeOwner(name);
+    if (!d) {
+      return '<div class="pp-header"><h2 class="pp-name">' + escapeHTML(name) + '</h2>' +
+        '<p class="pp-subtitle">No draft history found.</p></div>';
+    }
+
+    const champBadge = d.champCount > 0
+      ? '<span class="pp-champ-badge">🏆 ' + d.champCount + '× Champion</span>'
+      : '';
+
+    let html = '<div class="pp-header">' +
+      '<h2 class="pp-name" id="profileTitle">' + escapeHTML(d.name) + champBadge + '</h2>' +
+      '<p class="pp-subtitle">Drafted across ' + d.seasons + ' season' + (d.seasons === 1 ? '' : 's') + '</p>' +
+      '</div>';
+
+    html += '<div class="pp-stat-strip">' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Most Expensive Pick</div>' +
+        '<div class="pp-stat-value">' + tagPlayer(d.mostExp[F_P]) +
+          '<span class="small"><span class="accent">$' + fmtPrice(d.mostExp[F_PR]) + '</span> &middot; ' + d.mostExp[F_Y] + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Avg Price Per Pick</div>' +
+        '<div class="pp-stat-value">$' + fmtPrice(Math.round(d.avg * 10) / 10) +
+          '<span class="small">across career</span></div>' +
+      '</div>' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Most Frequent Player</div>' +
+        '<div class="pp-stat-value">' + (d.topPlayer ? tagPlayer(d.topPlayer) : '—') +
+          '<span class="small">' + (d.topPlayer ? (d.topPlayerCount + '× drafted') : 'no repeats') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pp-stat-box">' +
+        '<div class="pp-stat-label">Favorite Position</div>' +
+        '<div class="pp-stat-value">' + (d.favPos ? escapeHTML(d.favPos) : '—') +
+          '<span class="small">' + d.favPosPct + '% of spend</span></div>' +
+      '</div>' +
+    '</div>';
+
+    html += '<button type="button" class="pp-link" data-pp-full-profile="' + escapeHTML(String(d.ownerIdx)) + '">View Full Profile →</button>';
+
+    return html;
+  }
+
+  /* ---------- Cross-navigation: View Full Profile link ---------- */
+  body.addEventListener("click", function (e) {
+    const link = e.target.closest("[data-pp-full-profile]");
+    if (!link) return;
+    e.preventDefault();
+    const ownerIdx = parseInt(link.getAttribute("data-pp-full-profile"), 10);
+    if (!Number.isFinite(ownerIdx)) return;
+    hideModal();
+    switchToOwnerProfilesTab(ownerIdx);
+  });
+
+  function switchToOwnerProfilesTab(ownerIdx) {
+    document.querySelectorAll(".subtab-btn").forEach(b => {
+      const active = b.dataset.target === "tabOwners";
+      b.classList.toggle("active", active);
+      b.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    document.querySelectorAll(".subtab-panel").forEach(p => {
+      p.classList.toggle("active", p.id === "tabOwners");
+    });
+    const sel = document.getElementById("ownerSelect");
+    if (sel) {
+      sel.value = String(ownerIdx);
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) { window.scrollTo(0, 0); }
+  }
+
+  /* ---------- Universal delegated click handler ---------- */
+  document.addEventListener("click", function (e) {
+    // Inside the popup, clicks on names swap to that entity (chained nav).
+    // Outside the popup, clicks open a fresh popup.
+    const nameEl = e.target.closest(".player-name, .owner-name");
+    if (!nameEl) return;
+    e.preventDefault();
+
+    const isPlayer = nameEl.classList.contains("player-name");
+    const name = isPlayer
+      ? nameEl.getAttribute("data-player")
+      : nameEl.getAttribute("data-owner");
+    if (!name) return;
+    const type = isPlayer ? "player" : "owner";
+
+    if (isOpen()) {
+      const cur = stack[stack.length - 1];
+      // Don't re-push the same entity onto the stack.
+      if (cur && cur.type === type && cur.name === name) return;
+      navigateTo(type, name);
+    } else {
+      openProfile(type, name);
+    }
+  });
+
+  /* ---------- Close interactions ---------- */
+  closeBtn.addEventListener("click", hideModal);
+  backdrop.addEventListener("click", hideModal);
+  backBtn.addEventListener("click", goBack);
+
+  document.addEventListener("keydown", function (e) {
+    if (!isOpen()) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      hideModal();
+    }
+  });
+})();
 
 </script>
 </body>
