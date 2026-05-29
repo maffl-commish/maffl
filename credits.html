@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Current Credit Count — MAFFL HQ</title>
+<meta name="description" content="MAFFL HQ — every owner's current credit balance at a glance. A hand-updated snapshot so owners never have to open the Google Sheet.">
+
+<!-- Favicon + Apple Touch Icon (home-screen icon on iOS / iPadOS) -->
+<link rel="icon" href="maffl-logo.png" type="image/png">
+<link rel="apple-touch-icon" href="maffl-logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="maffl-logo.png">
+<meta name="apple-mobile-web-app-title" content="MAFFL HQ">
+<meta name="application-name" content="MAFFL HQ">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --surface: #ffffff;
+    --page-bg: #f8f9fb;
+    --navy: #1a2e50;
+    --navy-hover: #243a62;
+    --navy-soft: rgba(26, 46, 80, 0.08);
+    --navy-shadow: rgba(26, 46, 80, 0.10);
+    --navy-shadow-strong: rgba(26, 46, 80, 0.16);
+    --gold: #f5a623;
+    --gold-dark: #d98e10;
+    --muted: #8a9ab5;
+    --muted-soft: #9aa6bd;
+    --border: #e2e6ed;
+    --win: #1d9e75;
+    --loss: #c04a4a;
+    --display: "Barlow Condensed", system-ui, sans-serif;
+    --body: "Barlow", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--body);
+    color: var(--navy);
+    background: var(--page-bg);
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.4;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    height: 40px;
+    width: auto;
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  .brand-wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .site-nav a {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .site-nav a:hover { color: var(--gold-dark); }
+  .site-nav a.current { border-bottom-color: var(--gold); }
+
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--navy);
+    font-size: 24px;
+    line-height: 1;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Main ---------- */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px 20px;
+  }
+
+  .stack > * + * { margin-top: 20px; }
+
+  /* ---------- Prizes & Dues / shared card section ---------- */
+  .dues-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .dues-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+  .dues-head h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dues-note {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .dues-venmo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
+    color: #fff;
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 20px;
+  }
+  .dues-venmo:hover {
+    background: var(--navy-hover);
+    box-shadow: 0 6px 18px var(--navy-shadow-strong);
+    transform: translateY(-1px);
+  }
+  .dues-venmo:active { transform: translateY(0); }
+  .dues-venmo:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .dues-tiers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .dues-tier h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dues-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+  }
+  .dues-table th,
+  .dues-table td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dues-table th {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .dues-table th:last-child,
+  .dues-table td:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .dues-table tbody tr:last-child td { border-bottom: 0; }
+
+  /* ---------- Page-specific: credit count ---------- */
+
+  /* Snapshot note — makes it clear this is hand-updated, not live. */
+  .snapshot-note {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .snapshot-note strong { color: var(--navy); font-weight: 700; }
+
+  /* "Read the full Credit rules" link — reuses the navy/gold button language
+     of the site's .dues-venmo so it sits consistently with the rest. */
+  .rules-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--navy);
+    color: #fff;
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 20px;
+  }
+  .rules-link:hover {
+    background: var(--navy-hover);
+    box-shadow: 0 6px 18px var(--navy-shadow-strong);
+    transform: translateY(-1px);
+  }
+  .rules-link:active { transform: translateY(0); }
+  .rules-link:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  /* Owner-name links inside the credit tables — keep them obviously tappable. */
+  .dues-table td a {
+    color: var(--navy);
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .dues-table td a:hover {
+    color: var(--gold-dark);
+    border-bottom-color: var(--gold);
+  }
+  .dues-table td a:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    text-align: center;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 767px) {
+    .header-inner { padding: 10px 16px; }
+    .brand-logo { height: 36px; }
+    .brand-wordmark { font-size: 18px; }
+
+    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 18px var(--navy-soft);
+      padding: 8px 0;
+    }
+    .site-nav.open { display: flex; }
+    .site-nav a {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .site-nav a:last-child { border-bottom: 0; }
+    .site-nav a.current { border-bottom: 1px solid var(--border); background: var(--page-bg); }
+
+    main { padding: 16px 16px 16px; }
+    .stack > * + * { margin-top: 16px; }
+
+    .dues-section { padding: 14px; }
+    .dues-head h2 { font-size: 18px; }
+
+    /* Full-width, tappable rules link on phones (matches .dues-venmo reflow). */
+    .rules-link {
+      display: flex;
+      width: 100%;
+      font-size: 14px;
+      padding: 14px 16px;
+    }
+
+    .dues-tiers { grid-template-columns: 1fr; gap: 18px; }
+    .dues-table { font-size: 13px; }
+    .dues-table th, .dues-table td { padding: 8px 6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rules-link, .dues-venmo, .site-nav a, .dues-table td a { transition: none; }
+    .rules-link:hover, .dues-venmo:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand" aria-label="MAFFL HQ home">
+      <img src="maffl-logo.png" alt="MAFFL" class="brand-logo">
+      <span class="brand-wordmark">MAFFL HQ</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-controls="primaryNav" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
+
+    <!-- Nav mirrors index.html exactly. None of the existing pages carry a
+         "Credits" nav item (the homepage reaches this page via the "Current
+         Credit Count" button), so we don't add one here either — and so
+         nothing is marked .current. If a Credits nav item is added site-wide
+         later, add it here too and give it class="current". -->
+    <nav class="site-nav" id="primaryNav" aria-label="Primary">
+      <a href="weekly.html">Weekly Pulse</a>
+      <a href="rules.html">Rulebook</a>
+      <a href="power-rankings.html">Power Rankings</a>
+      <a href="draft.html">Auction Draft</a>
+      <a href="stats.html">Stats</a>
+      <a href="history.html">History</a>
+      <a href="prizes.html">Prizes &amp; Dues</a>
+    </nav>
+  </div>
+</header>
+
+<main class="stack">
+
+  <section class="dues-section" aria-labelledby="creditCountHeading">
+    <div class="dues-head">
+      <h2 id="creditCountHeading">Current Credit Count</h2>
+    </div>
+
+    <!-- ============================================================
+         SNAPSHOT DATE — BUMP THIS WHENEVER YOU UPDATE THE BALANCES BELOW.
+         These numbers are hand-copied from the league Google Sheet; they are
+         NOT live. Edit the date in the <strong> tag below (and the credit
+         values in the two tables) each time you refresh from the sheet.
+         ============================================================ -->
+    <p class="snapshot-note">
+      Current as of <strong>May 29, 2026</strong> — a hand-updated snapshot
+      copied from the league Google Sheet, not live data.
+    </p>
+
+    <!-- Rules deep-link: jumps to the Credit System section of the rulebook and
+         auto-expands it on arrival (rules.html reads this #hash and opens the
+         matching accordion section). -->
+    <a class="rules-link" href="rules.html#credit-system">Read the full Credit rules &rarr;</a>
+
+    <!--
+      OWNER NAME LINKS → POWER RANKINGS
+      ---------------------------------------------------------------
+      The Power Rankings page renders every owner card dynamically from a
+      JS OWNERS_DATA array into #ownerGrid. Cards carry a data-key (e.g.
+      data-key="mike-murello") and the collapsed body has id="body-<key>",
+      but there are NO per-owner anchors/IDs on the cards themselves and NO
+      location.hash handling to scroll to / open a specific owner on arrival.
+      So there is no usable per-owner deep-link target today — every owner
+      name below links to the top of power-rankings.html for now.
+
+      TO ADD PER-OWNER DEEP LINKS LATER: in power-rankings.html, give each
+      rendered .owner-card an id (e.g. id="owner-<key>") and add an on-load
+      hash handler that opens + scrolls to the matching card (mirroring the
+      pattern now used in rules.html). Then point each name here at
+      power-rankings.html#owner-<key>. Co-owner pairs share a single card
+      (keys "jon-rick" and "brian-ron-murello"), so each pair stays one link.
+    -->
+
+    <div class="dues-tiers">
+      <div class="dues-tier">
+        <h3>Upper-Tier</h3>
+        <table class="dues-table">
+          <thead>
+            <tr>
+              <th scope="col">Owner</th>
+              <th scope="col">Credits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="power-rankings.html">Mike Murello</a></td><td>27</td></tr>
+            <tr><td><a href="power-rankings.html">Jon Murello / Rick Simmons</a></td><td>24</td></tr>
+            <tr><td><a href="power-rankings.html">Joe Reilly</a></td><td>23</td></tr>
+            <tr><td><a href="power-rankings.html">Tony Trozzo</a></td><td>17</td></tr>
+            <tr><td><a href="power-rankings.html">Jacob Nickman</a></td><td>15</td></tr>
+            <tr><td><a href="power-rankings.html">David Murello</a></td><td>12</td></tr>
+            <tr><td><a href="power-rankings.html">Brian Murello / Ron Murello</a></td><td>7</td></tr>
+            <tr><td><a href="power-rankings.html">Jon Fetrow</a></td><td>7</td></tr>
+            <tr><td><a href="power-rankings.html">Ed Peters</a></td><td>7</td></tr>
+            <tr><td><a href="power-rankings.html">Dan Reilly</a></td><td>6</td></tr>
+            <tr><td><a href="power-rankings.html">Braiden Snyder</a></td><td>5</td></tr>
+            <tr><td><a href="power-rankings.html">BJ Funari</a></td><td>4</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dues-tier">
+        <h3>Lower-Tier</h3>
+        <table class="dues-table">
+          <thead>
+            <tr>
+              <th scope="col">Owner</th>
+              <th scope="col">Credits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="power-rankings.html">Tony Brooks</a></td><td>10</td></tr>
+            <tr><td><a href="power-rankings.html">Sam Lavrinc</a></td><td>8</td></tr>
+            <tr><td><a href="power-rankings.html">Ben Funari</a></td><td>6</td></tr>
+            <tr><td><a href="power-rankings.html">Charles Lavrinc</a></td><td>6</td></tr>
+            <tr><td><a href="power-rankings.html">Dominic Nicastro</a></td><td>6</td></tr>
+            <tr><td><a href="power-rankings.html">Nick Yankovich</a></td><td>5</td></tr>
+            <tr><td><a href="power-rankings.html">Todd Trozzo</a></td><td>1</td></tr>
+            <tr><td><a href="power-rankings.html">Bob Keslar</a></td><td>1</td></tr>
+            <tr><td><a href="power-rankings.html">Chris Johnson</a></td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  League founded 2002 &middot; Site est. 2026 &middot; Built by the Commish
+</footer>
+
+<script>
+  (function wireHamburger() {
+    const btn = document.getElementById("navToggle");
+    const nav = document.getElementById("primaryNav");
+    btn.addEventListener("click", function () {
+      const open = nav.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    });
+  })();
+</script>
+
+</body>
+</html>
