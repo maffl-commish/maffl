@@ -195,6 +195,25 @@
     font-weight: 700;
   }
 
+  /* ---------- Movement badges (Promotion & Relegation) ---------- */
+  .move-badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .move-badge.safe      { background: var(--win);       color: #fff; }
+  .move-badge.promoted  { background: var(--gold-soft); color: var(--gold-dark); }
+  .move-badge.relegated { background: var(--loss);      color: #fff; }
+  .move-badge.tbd       { background: var(--navy-soft); color: var(--navy); }
+
   /* ---------- Change log entries ---------- */
   .changelog-group + .changelog-group { margin-top: 22px; }
   .changelog-date {
@@ -747,6 +766,7 @@
           <li>The commissioner has final say on any disputes but will consider league votes for fairness.</li>
         </ul>
 
+<!-- HIDDEN UNTIL v1.1 — MAFFL Ghost rule, pending public announcement. Restore by removing these comment markers.
         <h3 class="subhead">Lower-Tier Odd-Team Rule (MAFFL Ghost)<span class="rule-tag new">NEW<span class="tag-sep">&middot;</span>2026</span></h3>
         <ul>
           <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
@@ -761,6 +781,8 @@
           <span class="callout-label">Example</span>
           <p>Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
         </div>
+-->
+
       </div>
     </section>
 
@@ -799,7 +821,70 @@
     </section>
 
     <!-- =========================================================
-         SECTION 3 — Auction Draft
+         SECTION 3 — Promotion & Relegation
+         ========================================================= -->
+    <section class="rule-section" data-section="movement">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-movement">
+        <h2 class="rule-title">Promotion &amp; Relegation</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-movement">
+        <p>Each season, 3 teams move down from the Upper-Tier and 3 teams move up from the Lower-Tier. Final regular-season standings set each team&rsquo;s post-season path; the tables below show the full finish-by-finish matrix.</p>
+
+        <h3 class="subhead">Upper-Tier (12 Teams)</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col" class="num">Finish</th>
+              <th scope="col">Post-Season Activity</th>
+              <th scope="col">Movement</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="num row-label">1</td><td>Championship Playoff #1 Seed (bye)</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">2</td><td>Championship Playoff #2 Seed (bye)</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">3</td><td>Championship Playoff #3 Seed</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">4</td><td>Championship Playoff #4 Seed</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">5</td><td>Championship Playoff #5 Seed</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">6</td><td>Championship Playoff #6 Seed</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">7</td><td>Consolation Matchup vs Upper-Tier #8 (3 Gm Series)</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">8</td><td>Consolation Matchup vs Upper-Tier #7 (3 Gm Series)</td><td><span class="move-badge safe">Safe</span></td><td>Automatic safety based on regular season standings.</td></tr>
+            <tr><td class="num row-label">9</td><td>Relegation Showdown vs Upper-Tier #10 (3 Gm Series)</td><td><span class="move-badge tbd">TBD</span></td><td>Must win Showdown to avoid relegation.</td></tr>
+            <tr><td class="num row-label">10</td><td>Relegation Showdown vs Upper-Tier #9 (3 Gm Series)</td><td><span class="move-badge tbd">TBD</span></td><td>Must win Showdown to avoid relegation.</td></tr>
+            <tr><td class="num row-label">11</td><td>Consolation Matchup vs #12 (3 Gm Series)</td><td><span class="move-badge relegated">Relegated</span></td><td>Direct drop to Lower-Tier. Still plays a consolation series vs #12.</td></tr>
+            <tr><td class="num row-label">12</td><td>Consolation Matchup vs #11 (3 Gm Series)</td><td><span class="move-badge relegated">Relegated</span></td><td>Direct drop to Lower-Tier. Still plays a consolation series vs #11.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="subhead">Lower-Tier</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col" class="num">Finish</th>
+              <th scope="col">Post-Season Activity</th>
+              <th scope="col">Movement</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="num row-label">1</td><td>Consolation Matchup vs Lower-Tier #2 (3 Gm Series)</td><td><span class="move-badge promoted">Promoted</span></td><td>Direct promotion based on regular season standings.</td></tr>
+            <tr><td class="num row-label">2</td><td>Consolation Matchup vs Lower-Tier #1 (3 Gm Series)</td><td><span class="move-badge promoted">Promoted</span></td><td>Direct promotion based on regular season standings.</td></tr>
+            <tr><td class="num row-label">3</td><td>Promotion Showdown vs Lower-Tier #4 (3 Gm Series)</td><td><span class="move-badge tbd">TBD</span></td><td>Must win Showdown to earn promotion.</td></tr>
+            <tr><td class="num row-label">4</td><td>Promotion Showdown vs Lower-Tier #3 (3 Gm Series)</td><td><span class="move-badge tbd">TBD</span></td><td>Must win Showdown to earn promotion.</td></tr>
+            <tr><td class="num row-label">5+</td><td>N/A</td><td><span class="move-badge safe">Safe</span></td><td>No promotion opportunity; teams stay in the Lower-Tier.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <span class="callout-label">How the 3rd spots are decided</span>
+          <p>In each tier, two of the three moves are automatic and the third is settled head-to-head. Lower-Tier finishes 1&ndash;2 are promoted automatically; Upper-Tier finishes 11&ndash;12 are relegated automatically (they still play a consolation 3-game series against each other). The remaining promotion and relegation spots are decided by the Upper-Tier <strong>Relegation Showdown</strong> (#9 vs #10) and the Lower-Tier <strong>Promotion Showdown</strong> (#3 vs #4), each a 3-game series across NFL Wks 15&ndash;17.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 4 — Auction Draft
          ========================================================= -->
     <section class="rule-section" data-section="auction">
       <button class="rule-head" aria-expanded="false" aria-controls="body-auction">
@@ -832,7 +917,7 @@
     </section>
 
     <!-- =========================================================
-         SECTION 4 — Prize Schedule
+         SECTION 5 — Prize Schedule
          ========================================================= -->
     <section class="rule-section" data-section="prizes">
       <button class="rule-head" aria-expanded="false" aria-controls="body-prizes">
@@ -904,7 +989,7 @@
     </section>
 
     <!-- =========================================================
-         SECTION 5 — Playoff Format
+         SECTION 6 — Playoff Format
          ========================================================= -->
     <section class="rule-section" data-section="playoffs">
       <button class="rule-head" aria-expanded="false" aria-controls="body-playoffs">
@@ -962,7 +1047,7 @@
     </section>
 
     <!-- =========================================================
-         SECTION 6 — Annual Milestones
+         SECTION 7 — Annual Milestones
          ========================================================= -->
     <section class="rule-section" data-section="milestones">
       <button class="rule-head" aria-expanded="false" aria-controls="body-milestones">
@@ -1013,7 +1098,7 @@
     </section>
 
     <!-- =========================================================
-         SECTION 7 — Credit System
+         SECTION 8 — Credit System
          ========================================================= -->
     <section class="rule-section" data-section="credits">
       <button class="rule-head" aria-expanded="false" aria-controls="body-credits">
@@ -1048,12 +1133,81 @@
           <li>Credits can be traded directly or packaged with players. (These trades adhere to the normal trade policy and deadlines.)</li>
         </ul>
 
+        <h3 class="subhead">Earning Credits &mdash; Outcome</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">League</th>
+              <th scope="col">Outcome Category</th>
+              <th scope="col">Finishing Position / Method</th>
+              <th scope="col" class="num">Credits</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-label">Upper-Tier</td><td>Championship Winner</td><td>1st in playoffs</td><td class="num">+15</td><td>Champ!</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Championship Runner-Up</td><td>2nd in playoffs</td><td class="num">+12</td><td>Runner-Up!</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Playoff Semifinalists</td><td>Eliminated in semifinals</td><td class="num">+7</td><td>Reward for 1 playoff win</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Playoff Quarterfinalists</td><td>Eliminated in quarterfinals</td><td class="num">+6</td><td>Reward for playoff appearance</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Safe (Non-Playoff) &mdash; Consolation Winner</td><td>7th overall</td><td class="num">+5</td><td>Secured Upper-Tier status without a playoff run. Made 7 vs 8 match.</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Safe (Non-Playoff) &mdash; Consolation Loser</td><td>8th overall</td><td class="num">+4</td><td>Secured Upper-Tier status without a playoff run. Made 7 vs 8 match.</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Relegation Showdown Winner</td><td>Winning Relegation Showdown</td><td class="num">+3</td><td>Win a challenge to remain in the Upper-Tier.</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Relegation Showdown Loser / Consolation Game Winner</td><td>Winning consolation vs #12 or losing Relegation Showdown</td><td class="num">+1</td><td>Relegated.</td></tr>
+            <tr><td class="row-label">Upper-Tier</td><td>Consolation Game Loser</td><td>Finishing position 12 (losing consolation vs #11)</td><td class="num">0</td><td>No points; team is relegated.</td></tr>
+            <tr><td class="row-label">Lower-Tier</td><td>Automatic Promotion &mdash; Consolation Winner</td><td>Winning #1 vs #2 Promotion Consolation Match</td><td class="num">+15</td><td>Direct promotion to the Upper-Tier.</td></tr>
+            <tr><td class="row-label">Lower-Tier</td><td>Automatic Promotion &mdash; Consolation Loser</td><td>Losing #1 vs #2 Promotion Consolation Match</td><td class="num">+12</td><td>Direct promotion to the Upper-Tier.</td></tr>
+            <tr><td class="row-label">Lower-Tier</td><td>Promotion Showdown Winner</td><td>Finishing positions 3&ndash;4 &amp; winning Promotion Showdown</td><td class="num">+10</td><td>Wins the challenge to move up.</td></tr>
+            <tr><td class="row-label">Lower-Tier</td><td>Promotion Showdown Loser</td><td>Finishing positions 3&ndash;4 but losing Promotion Showdown</td><td class="num">+8</td><td>Reward for a strong season even in a loss.</td></tr>
+            <tr><td class="row-label">Lower-Tier</td><td>Safe (Lower-Tier)</td><td>Finishing positions 5+</td><td class="num">+5</td><td>Remains in the Lower-Tier.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="subhead">Earning Credits &mdash; Bonus</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">League</th>
+              <th scope="col">Bonus Category</th>
+              <th scope="col">Criteria</th>
+              <th scope="col" class="num">Credits</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-label">Each</td><td>Most Team Points Scored</td><td>Highest cumulative team score in the season</td><td class="num">+5</td><td>Awarded to the team with the highest total score.</td></tr>
+            <tr><td class="row-label">Each</td><td>Highest Weekly Score</td><td>Highest score in any single week</td><td class="num">+1</td><td>Awarded for each reg season wk (x14).</td></tr>
+            <tr><td class="row-label">Each</td><td>Individual High Score (Wkly Total)</td><td>Most points from a single player in a weekly performance</td><td class="num">+3</td><td>Awarded once (highest wkly performance, including playoffs, consolation, promotion, and relegation matches).</td></tr>
+            <tr><td class="row-label">Each</td><td>Largest Blowout Victory</td><td>Largest margin of victory in a single week</td><td class="num">+3</td><td>Awarded once (regular season only).</td></tr>
+            <tr><td class="row-label">Each</td><td>Survivor Bonus</td><td>Avoiding the lowest weekly score all season</td><td class="num">+5</td><td>Awarded once &mdash; Survivor style with weekly elimination.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="subhead">Spending Credits</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">League</th>
+              <th scope="col">Option</th>
+              <th scope="col">Perk Description</th>
+              <th scope="col" class="num">Credit Cost</th>
+              <th scope="col">Notes / Restrictions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-label">Each</td><td>Purchase additional FAAB $</td><td>$20 added to your Free Agent Auction Budget (FAAB) balance</td><td class="num">&minus;1</td><td>Can be used anytime in-season. These dollars will follow normal &lsquo;reset&rsquo; league settings once added to the owner&rsquo;s FAAB balance.</td></tr>
+            <tr><td class="row-label">Each</td><td>Double Player Bonus</td><td>Double your point total for one position for one week</td><td class="num">&minus;10</td><td>Must be declared to commish and opponent before 1st game of the week kickoff. NOT ELIGIBLE for MAFFL Upper-Tier playoffs.</td></tr>
+            <tr><td class="row-label">Each</td><td>Matchup Swap</td><td>Make a regular season swap of opponents. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Regular season only. Division matchups are not eligible to be swapped. Must be declared to commish and all parties involved before 1st game of the week kickoff.</td></tr>
+            <tr><td class="row-label">Each</td><td>Division Swap</td><td>Make a pre-season swap of divisional alignment. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Must be declared in off-season prior to MAFFL draft, following division alignment on 8/1.</td></tr>
+            <tr><td class="row-label">Each</td><td>Relegation Insurance</td><td>Guarantee your safety from relegation for the current season regardless of your final standing.</td><td class="num">&minus;25</td><td>Must be declared before Regular Season Week 4 (1st game of the week kickoff). Ensures tiebreaker elevation to Seed #7 if owner is unable to make Playoffs.</td></tr>
+          </tbody>
+        </table>
+
         <p>To submit a credit request, use the official <a class="inline-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Credit Submission Form</a>. All transactions require commissioner approval.</p>
       </div>
     </section>
 
     <!-- =========================================================
-         SECTION 8 — 2026 League Assignments
+         SECTION 9 — 2026 League Assignments
          ========================================================= -->
     <section class="rule-section" data-section="assignments">
       <button class="rule-head" aria-expanded="false" aria-controls="body-assignments">
@@ -1098,7 +1252,7 @@
     </section>
 
     <!-- =========================================================
-         SECTION 9 — What's Changed (change log)
+         SECTION 10 — What's Changed (change log)
          ========================================================= -->
     <section class="rule-section" data-section="changelog">
       <button class="rule-head" aria-expanded="false" aria-controls="body-changelog">
@@ -1130,7 +1284,7 @@
  *      the canonical master record — always update it before the HTML
  *      so the source of truth stays in sync.
  *   2. Sync the change into the relevant <section data-section="..."> in
- *      this HTML file. Each of the 8 accordion sections maps cleanly to
+ *      this HTML file. Each of the 9 accordion sections maps cleanly to
  *      a block of rows in the CSV.
  *   3. Commit and push to GitHub. The repo is the GitHub Pages source,
  *      so the change is live as soon as the push lands.
@@ -1165,9 +1319,9 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
-const RULEBOOK_VERSION      = "v2.1";
-const RULEBOOK_EFFECTIVE    = "August 2026";
-const RULEBOOK_LAST_UPDATED = "Aug 17, 2026";
+const RULEBOOK_VERSION      = "v1.0";
+const RULEBOOK_EFFECTIVE    = "Offseason 2026";
+const RULEBOOK_LAST_UPDATED = "Offseason 2026";
 
 /* ---------------------------------------------------------------------
  * Add a new entry to the top of CHANGE_LOG whenever a rule changes.
@@ -1177,17 +1331,25 @@ const RULEBOOK_LAST_UPDATED = "Aug 17, 2026";
  * ------------------------------------------------------------------- */
 const CHANGE_LOG = [
   {
-    date: "August 2026",
+    date: "Offseason 2026",
     changes: [
       {
         type: "NEW",
-        rule: "Lower-Tier Odd-Team Rule (MAFFL Ghost)",
-        description: "Introduced placeholder team for odd-numbered Lower-Tier seasons to maintain even scheduling."
+        rule: "Promotion & Relegation Matrix",
+        description: "Added the full finish-by-finish promotion and relegation matrix for both tiers, including the Relegation Showdown (Upper-Tier #9 vs #10) and Promotion Showdown (Lower-Tier #3 vs #4) — each a 3-game series across NFL Wks 15–17."
+      },
+      {
+        type: "NEW",
+        rule: "Credit Earning & Spending Tables",
+        description: "Published the full credit earn (outcome and bonus) and spend menus directly in the rulebook's Credit System section."
+      },
+      {
+        type: "NEW",
+        rule: "Initial online edition",
+        description: "First public release of the MAFFL rulebook as a live web page."
       }
-      // Add other 2026 changes here as needed
     ]
   }
-  // Older change log entries can be added below
 ];
 
 /* --------- HELPERS --------- */
