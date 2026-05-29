@@ -257,10 +257,30 @@
 
   .exp-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 18px;
+  }
+  .exp-collapse-chevron {
+    margin-left: auto;
+    align-self: center;
+    background: none;
+    border: 0;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--muted);
+    line-height: 1;
+    transition: color 0.15s ease;
+  }
+  .exp-collapse-chevron:hover { color: var(--gold-dark); }
+  .exp-collapse-chevron:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
   .exp-year {
     font-family: var(--display);
@@ -7865,6 +7885,7 @@ function renderExpanded(year, eraShort) {
     <div class="exp-header">
       <span class="exp-year">${year}</span>
       <span class="era-chip">${esc(eraShort)}</span>
+      <button type="button" class="exp-collapse-chevron" data-collapse-year="${year}" aria-label="Collapse ${year}">&#x25B4;</button>
     </div>
     ${renderWinnersRow(year, b)}
     ${renderDivisionWinners(b, year)}
@@ -7911,7 +7932,7 @@ function attachTileHandlers() {
     }
     el.addEventListener("click", e => {
       const target = e.target;
-      if (target.closest(".collapse-btn")) return;
+      if (target.closest("[data-collapse-year]")) return;
       if (target.closest(".draft-link")) return;
       // Ignore clicks inside expanded content other than the collapsed header
       if (el.classList.contains("expanded") && !target.closest(".year-collapsed")) return;
@@ -7925,7 +7946,7 @@ function attachTileHandlers() {
     });
   });
 
-  document.querySelectorAll(".collapse-btn").forEach(btn => {
+  document.querySelectorAll(".collapse-btn, .exp-collapse-chevron").forEach(btn => {
     btn.addEventListener("click", e => {
       e.stopPropagation();
       const tile = btn.closest(".year-tile");
