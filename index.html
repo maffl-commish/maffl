@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MAFFL HQ — Mid-Atlantic Fantasy Football League</title>
-<meta name="description" content="MAFFL HQ — home of the Mid-Atlantic Fantasy Football League. Weekly Pulse, Rule Book, Power Rankings, Auction Draft, Stats, and History.">
+<meta name="description" content="MAFFL HQ — home of the Mid-Atlantic Fantasy Football League. Weekly Pulse, Rulebook, Power Rankings, Auction Draft, Stats, and History.">
 
 <!-- Favicon + Apple Touch Icon (home-screen icon on iOS / iPadOS) -->
 <link rel="icon" href="maffl-logo.png" type="image/png">
@@ -169,6 +169,117 @@
     outline-offset: 3px;
   }
 
+  /* ---------- Prizes & Dues ---------- */
+  .dues-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .dues-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+  .dues-head h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dues-note {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .dues-venmo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--navy);
+    color: #fff;
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 20px;
+  }
+  .dues-venmo:hover {
+    background: var(--navy-hover);
+    box-shadow: 0 6px 18px var(--navy-shadow-strong);
+    transform: translateY(-1px);
+  }
+  .dues-venmo:active { transform: translateY(0); }
+  .dues-venmo:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .dues-tiers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .dues-tier h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dues-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+  }
+  .dues-table th,
+  .dues-table td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dues-table th {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .dues-table th:last-child,
+  .dues-table td:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .dues-table tbody tr:last-child td { border-bottom: 0; }
+
   /* ---------- Section heading ---------- */
   .section-head {
     border-bottom: 1px solid var(--border);
@@ -188,7 +299,7 @@
   /* ---------- Card grid (springboard) ---------- */
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
@@ -198,11 +309,11 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: 84px;
+    min-height: 96px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 12px;
+    padding: 14px;
     transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .section-card:hover,
@@ -215,9 +326,9 @@
   .section-card:active { transform: translateY(0); }
 
   .card-icon {
-    font-size: 22px;
+    font-size: 24px;
     line-height: 1;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
   }
   .card-title {
     font-family: var(--display);
@@ -240,6 +351,147 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* ---------- What's New callouts (color-coded banners) ---------- */
+  .callout-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .callout {
+    display: block;
+    width: 100%;
+    background: var(--navy);
+    color: #fff;
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    padding: 14px 20px;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .callout:hover {
+    background: var(--navy-hover);
+    box-shadow: 0 6px 18px var(--navy-shadow-strong);
+    transform: translateY(-1px);
+  }
+  .callout:active { transform: translateY(0); }
+  .callout:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+  .callout-headline {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    margin: 0 0 3px;
+    line-height: 1.15;
+  }
+  .callout-body {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.82);
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  /* Color-coded variants — each news type gets a light tint + colored left
+     border + dark text so it reads differently at a glance. These override
+     the navy base above (equal specificity, later in source = variant wins). */
+  .callout--rule,
+  .callout--pulse,
+  .callout--offseason,
+  .callout--dues {
+    color: var(--navy);
+  }
+  .callout--rule .callout-body,
+  .callout--pulse .callout-body,
+  .callout--offseason .callout-body,
+  .callout--dues .callout-body {
+    color: rgba(26, 46, 80, 0.72);
+  }
+
+  /* callout--rule — hot rule-change look (warm red/gold accent) */
+  .callout--rule {
+    background: #fdeee6;
+    border-left-color: var(--loss);
+  }
+  .callout--rule:hover { background: #fbe1d3; }
+
+  /* callout--pulse — fresh/live new Weekly Pulse drop (green accent) */
+  .callout--pulse {
+    background: rgba(29, 158, 117, 0.10);
+    border-left-color: var(--win);
+  }
+  .callout--pulse:hover { background: rgba(29, 158, 117, 0.17); }
+
+  /* callout--offseason — offseason releases like Power Rankings (navy/blue) */
+  .callout--offseason {
+    background: var(--navy-soft);
+    border-left-color: var(--navy);
+  }
+  .callout--offseason:hover { background: rgba(26, 46, 80, 0.13); }
+
+  /* callout--dues — the money one (gold accent) */
+  .callout--dues {
+    background: rgba(245, 166, 35, 0.14);
+    border-left-color: var(--gold);
+  }
+  .callout--dues:hover { background: rgba(245, 166, 35, 0.23); }
+
+  /* ---------- Credit block (one grid cell: icon + two stacked buttons) ---------- */
+  .credit-cell {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 96px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    gap: 10px;
+  }
+  .credit-cell .card-icon {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
+  .credit-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .credit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 34px;
+    padding: 7px 8px;
+    background: var(--navy);
+    color: #fff;
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .credit-btn:hover {
+    background: var(--navy-hover);
+    box-shadow: 0 4px 12px var(--navy-shadow);
+    transform: translateY(-1px);
+  }
+  .credit-btn:active { transform: translateY(0); }
+  .credit-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
   }
 
   /* ---------- Footer ---------- */
@@ -293,20 +545,35 @@
       padding: 0 16px;
     }
 
+    .callout { padding: 12px 16px; }
+    .callout-headline { font-size: 15px; }
+
     .card-grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
     .section-card {
-      min-height: 72px;
-      padding: 10px;
+      min-height: 80px;
+      padding: 12px;
     }
-    .card-icon { font-size: 20px; margin-bottom: 5px; }
+    .card-icon { font-size: 21px; margin-bottom: 6px; }
+
+    .dues-section { padding: 14px; }
+    .dues-head h2 { font-size: 18px; }
+    .dues-venmo {
+      display: flex;
+      width: 100%;
+      font-size: 14px;
+      padding: 12px 16px;
+    }
+    .dues-tiers { grid-template-columns: 1fr; gap: 18px; }
+    .dues-table { font-size: 13px; }
+    .dues-table th, .dues-table td { padding: 6px 6px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .section-card, .credit-band, .site-nav a { transition: none; }
-    .section-card:hover, .credit-band:hover { transform: none; }
+    .section-card, .credit-band, .dues-venmo, .callout, .credit-btn, .site-nav a { transition: none; }
+    .section-card:hover, .credit-band:hover, .dues-venmo:hover, .callout:hover, .credit-btn:hover { transform: none; }
   }
 </style>
 </head>
@@ -323,67 +590,131 @@
 
     <nav class="site-nav" id="primaryNav" aria-label="Primary">
       <a href="weekly.html">Weekly Pulse</a>
-      <a href="rules.html">Rule Book</a>
+      <a href="rules.html">Rulebook</a>
       <a href="power-rankings.html">Power Rankings</a>
       <a href="draft.html">Auction Draft</a>
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
+      <a href="prizes.html">Prizes &amp; Dues</a>
     </nav>
   </div>
 </header>
 
 <main class="stack">
-  <a class="credit-band" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener" aria-label="Submit a credit request">
-    &#x270D;&#xFE0F;&nbsp; Submit a Credit Request &rarr;
-  </a>
 
-  <section aria-labelledby="exploreHeading">
+  <!--
+    ============================================================
+    ZONE 1 — "WHAT'S NEW"  (HAND-EDITED NEWS STRIP)
+    ------------------------------------------------------------
+    Edit these callouts BY HAND each time you update the site.
+    Keep it to 1–3 items, newest first. Each <a class="callout ...">
+    is one item and the WHOLE banner is the clickable link:
+        - callout-headline : a short, bold headline
+        - callout-body     : one sentence of flavor text
+        - href             : the page this callout links into
+    To remove a callout, delete its entire <a class="callout ..."> … </a>.
+
+    COLOR-CODE each item by adding ONE variant class alongside "callout"
+    so the type reads at a glance:
+        - callout--rule      : hot red/gold — rule changes
+        - callout--pulse     : green (--win) — a NEW Weekly Pulse drop
+                               (this is how a fresh week shows up now)
+        - callout--offseason : navy/blue — offseason releases (Power Rankings, etc.)
+        - callout--dues       : gold — the money one; lean into 💰💵🤑
+    ============================================================
+  -->
+  <section aria-labelledby="whatsNewHeading">
     <div class="section-head">
-      <h2 id="exploreHeading">Explore MAFFL HQ</h2>
+      <h2 id="whatsNewHeading">What's New</h2>
+    </div>
+
+    <div class="callout-strip">
+      <a class="callout callout--offseason" href="draft.html">
+        <p class="callout-headline">Auction Draft Portal is live</p>
+        <p class="callout-body">New this offseason — explore everything auction.</p>
+      </a>
+
+      <a class="callout callout--dues" href="prizes.html">
+        <p class="callout-headline">💰 Dues are due 💵</p>
+        <p class="callout-body">Don't forget your 2026 dues — see what you owe. 🤑</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- ZONE 2 — "QUICK ACCESS" (year-round handy links) -->
+  <section aria-labelledby="quickAccessHeading">
+    <div class="section-head">
+      <h2 id="quickAccessHeading">Quick Access</h2>
     </div>
 
     <div class="card-grid">
       <a class="section-card" href="weekly.html">
         <span class="card-icon" aria-hidden="true">&#x1F7E2;</span>
         <h3 class="card-title">Weekly Pulse</h3>
-        <p class="card-tag">Current + past reports</p>
+        <p class="card-tag">Report Archive</p>
       </a>
 
       <a class="section-card" href="rules.html">
         <span class="card-icon" aria-hidden="true">&#x1F4CB;</span>
-        <h3 class="card-title">Rule Book</h3>
-        <p class="card-tag">Official rulebook</p>
+        <h3 class="card-title">Rulebook</h3>
+        <p class="card-tag">Official Rulebook</p>
       </a>
 
+      <!-- Credit block: ONE grid cell containing TWO separate buttons. -->
+      <div class="credit-cell" role="group" aria-label="Credits">
+        <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
+        <div class="credit-buttons">
+          <!-- NOTE: credits.html does not exist yet — to be built in a later step.
+               This link will 404 until then; that is intentional. -->
+          <a class="credit-btn" href="credits.html">Current Credit Count</a>
+          <a class="credit-btn" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Submit a Credit Request</a>
+        </div>
+      </div>
+
+      <a class="section-card" href="prizes.html">
+        <span class="card-icon" aria-hidden="true">&#x1F4B0;</span>
+        <h3 class="card-title">Prizes &amp; Dues</h3>
+        <p class="card-tag">Everything Prize Money</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- ZONE 3 — "THE LEAGUE" (annual-cycle pages) -->
+  <section aria-labelledby="theLeagueHeading">
+    <div class="section-head">
+      <h2 id="theLeagueHeading">The League</h2>
+    </div>
+
+    <div class="card-grid">
       <a class="section-card" href="power-rankings.html">
         <span class="card-icon" aria-hidden="true">&#x1F3C6;</span>
         <h3 class="card-title">Power Rankings</h3>
-        <p class="card-tag">Madden-style ratings</p>
+        <p class="card-tag">Owner Profiles</p>
       </a>
 
       <a class="section-card" href="draft.html">
         <span class="card-icon" aria-hidden="true">&#x1F3AF;</span>
         <h3 class="card-title">Auction Draft</h3>
-        <p class="card-tag">All things auction</p>
-      </a>
-
-      <a class="section-card" href="stats.html">
-        <span class="card-icon" aria-hidden="true">&#x1F4CA;</span>
-        <h3 class="card-title">Stats</h3>
-        <p class="card-tag">Sortable records</p>
+        <p class="card-tag">All Things Auction</p>
       </a>
 
       <a class="section-card" href="history.html">
         <span class="card-icon" aria-hidden="true">&#x1F3DB;</span>
         <h3 class="card-title">History</h3>
-        <p class="card-tag">24 seasons</p>
+        <p class="card-tag">24 Seasons</p>
+      </a>
+
+      <a class="section-card" href="stats.html">
+        <span class="card-icon" aria-hidden="true">&#x1F4CA;</span>
+        <h3 class="card-title">Stats</h3>
+        <p class="card-tag">Sortable Records</p>
       </a>
     </div>
   </section>
 </main>
 
 <footer class="site-footer">
-  Est. 2002 &middot; Built by the Commish
+  League founded 2002 &middot; Site est. 2026 &middot; Built by the Commish
 </footer>
 
 <script>
