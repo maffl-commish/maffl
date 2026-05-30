@@ -509,6 +509,32 @@
   .status-pill--paid { background: var(--win-soft); color: var(--win); }
   .status-pill--unpaid { background: var(--gold-soft); color: var(--gold-dark); }
 
+  /* ---------- Pay Commish button ---------- */
+  .pay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: var(--gold);
+    border: 1px solid var(--gold-dark);
+    border-radius: 999px;
+    padding: 10px 18px;
+    min-height: 44px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px var(--navy-shadow);
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+  .pay-btn:hover { background: var(--gold-dark); color: #fff; transform: translateY(-1px); }
+  .pay-btn:active { transform: translateY(0); }
+  .pay-btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -558,7 +584,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .site-nav a, .lens-tab, .pill, .lb-item > summary, .lb-arrow { transition: none; }
+    .site-nav a, .lens-tab, .pill, .lb-item > summary, .lb-arrow, .pay-btn { transition: none; }
+    .pay-btn:hover { transform: none; }
   }
 </style>
 </head>
@@ -591,7 +618,6 @@
   <!-- ---------- Page intro ---------- -->
   <div class="page-intro">
     <h1 class="page-title">Prize History</h1>
-    <p class="page-sub">How every prize traveled across the years, and what each owner has banked all-time. For the season-by-season view, see <a href="history.html" style="color:var(--gold-dark);font-weight:600;">History</a>.</p>
     <div class="intro-tags">
       <span class="pill-caveat">&#128202; Prize data begins 2013</span>
     </div>
@@ -608,8 +634,13 @@
     <!-- ===== Dues: 2026 roster status (default) ===== -->
     <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues">
       <div class="card-head">
-        <h2>2026 Dues Status</h2>
-        <p class="card-note">Current owner status</p>
+        <div>
+          <h2>2026 Dues Status</h2>
+          <p class="card-note">Current owner status</p>
+        </div>
+        <a class="pay-btn" href="https://venmo.com/u/mmurello" target="_blank" rel="noopener noreferrer" aria-label="Pay the Commish on Venmo at @mmurello">
+          <span aria-hidden="true">&#128176;</span> Pay Commish
+        </a>
       </div>
       <div class="dues-summary" id="duesSummary"></div>
       <table class="dues-table">
