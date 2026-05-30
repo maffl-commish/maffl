@@ -300,6 +300,7 @@
   .card-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr; /* every row matches the tallest cell → uniform cards */
     gap: 12px;
   }
 
@@ -310,6 +311,7 @@
     justify-content: center;
     text-align: center;
     min-height: 96px;
+    height: 100%;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -458,9 +460,18 @@
   .credit-card {
     cursor: default;
     gap: 0;
+    justify-content: flex-start;
   }
-  .credit-card .card-icon { margin-bottom: 5px; }
-  .credit-card .card-title { margin-bottom: 7px; }
+  /* Icon + title share one row, freeing vertical space for the two buttons. */
+  .credit-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-bottom: 9px;
+  }
+  .credit-head .card-icon { margin-bottom: 0; }
+  .credit-head .card-title { margin-bottom: 0; }
   /* Don't lift the whole card on hover — only the inner links react. */
   .credit-card:hover,
   .credit-card:focus-within {
@@ -468,12 +479,13 @@
     border-color: var(--border);
     box-shadow: 0 1px 3px rgba(26, 46, 80, 0.06);
   }
-  /* Side-by-side links keep the card the same height as the other cells. */
+  /* Two buttons side-by-side, splitting the width 50/50. */
   .credit-links {
     display: flex;
     flex-direction: row;
     gap: 6px;
     width: 100%;
+    flex: 1 1 auto;
   }
   .credit-link {
     flex: 1 1 0;
@@ -482,16 +494,16 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: 38px;
-    padding: 5px 6px;
+    min-height: 30px;
+    padding: 5px 8px;
     background: var(--surface);
     color: var(--navy);
     border: 1px solid var(--border);
     border-radius: 7px;
     font-family: var(--display);
     font-weight: 700;
-    font-size: 10.5px;
-    letter-spacing: 0.02em;
+    font-size: 11px;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
     line-height: 1.15;
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
@@ -685,8 +697,10 @@
 
       <!-- Credits: one Quick Access card holding two equal-weight links. -->
       <div class="section-card credit-card" role="group" aria-label="Credits">
-        <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
-        <h3 class="card-title">Credits</h3>
+        <div class="credit-head">
+          <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
+          <h3 class="card-title">Credits</h3>
+        </div>
         <div class="credit-links">
           <a class="credit-link" href="credits.html">View Owner Totals</a>
           <a class="credit-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Submit a Request</a>
