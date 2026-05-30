@@ -1,0 +1,1317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prize History — MAFFL HQ</title>
+<meta name="description" content="MAFFL HQ Prize History — every prize tracked across the years (2013–2025) and all-time career earnings by owner.">
+
+<!-- Favicon + Apple Touch Icon (home-screen icon on iOS / iPadOS) -->
+<link rel="icon" href="maffl-logo.png" type="image/png">
+<link rel="apple-touch-icon" href="maffl-logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="maffl-logo.png">
+<meta name="apple-mobile-web-app-title" content="MAFFL HQ">
+<meta name="application-name" content="MAFFL HQ">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --surface: #ffffff;
+    --page-bg: #f8f9fb;
+    --navy: #1a2e50;
+    --navy-hover: #243a62;
+    --navy-soft: rgba(26, 46, 80, 0.08);
+    --navy-shadow: rgba(26, 46, 80, 0.10);
+    --navy-shadow-strong: rgba(26, 46, 80, 0.16);
+    --gold: #f5a623;
+    --gold-soft: rgba(245, 166, 35, 0.16);
+    --gold-dark: #d98e10;
+    --muted: #8a9ab5;
+    --muted-soft: #9aa6bd;
+    --border: #e2e6ed;
+    --win: #1d9e75;
+    --win-soft: rgba(29, 158, 117, 0.12);
+    --loss: #c04a4a;
+    --display: "Barlow Condensed", system-ui, sans-serif;
+    --body: "Barlow", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--body);
+    color: var(--navy);
+    background: var(--page-bg);
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.4;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- Header (shared MAFFL HQ chrome) ---------- */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding-top: env(safe-area-inset-top);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand-logo { height: 40px; width: auto; display: block; flex: 0 0 auto; }
+  .brand-wordmark {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .site-nav { display: flex; align-items: center; gap: 20px; }
+  .site-nav a {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .site-nav a:hover { color: var(--gold-dark); }
+  .site-nav a.current { border-bottom-color: var(--gold); }
+
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--navy);
+    font-size: 24px;
+    line-height: 1;
+    padding: 8px;
+    cursor: pointer;
+  }
+  .nav-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---------- Main ---------- */
+  main {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 20px 24px 28px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+  }
+  .stack > * + * { margin-top: 18px; }
+
+  /* ---------- Page intro ---------- */
+  .page-intro { display: flex; flex-direction: column; gap: 8px; }
+  .page-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--navy);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .page-sub {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .intro-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+  .pill-caveat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px var(--navy-shadow);
+  }
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .card-head h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .card-note { font-family: var(--body); font-weight: 400; font-size: 12px; color: var(--muted); margin: 0; }
+
+  /* ---------- Lens tabs ---------- */
+  .lens-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .lens-tab {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    padding: 10px 8px;
+    margin-bottom: -1px;
+    min-height: 44px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    flex: 1 1 auto;
+  }
+  .lens-tab:hover { color: var(--navy); }
+  .lens-tab[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--gold); }
+  .lens-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+  .lens-panel[hidden] { display: none; }
+  .lens-intro { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+
+  /* ---------- Category filter pills (Lens 1) ---------- */
+  .filter-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 8px;
+  }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    min-height: 44px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .pill:hover { border-color: var(--gold); }
+  .pill[aria-pressed="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .pill-sub {
+    font-size: 13px;
+    padding: 6px 14px;
+    min-height: 40px;
+  }
+  .subfilter-wrap { margin-top: 12px; }
+
+  /* ---------- Category summary strip ---------- */
+  .cat-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 6px;
+  }
+  .stat {
+    flex: 1 1 130px;
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .stat-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    margin-top: 2px;
+  }
+  .stat-value small { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  /* ---------- Timeline (Lens 1) ---------- */
+  .timeline { margin-top: 14px; }
+  .tl-row {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tl-row:last-child { border-bottom: 0; }
+  .tl-year {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--navy);
+    letter-spacing: 0.03em;
+    flex: 0 0 46px;
+    padding-top: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tl-year .tl-split {
+    display: block;
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 9px;
+    color: var(--gold-dark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .tl-chips { display: flex; flex-wrap: wrap; gap: 7px; flex: 1 1 auto; min-width: 0; }
+  .tl-empty { color: var(--muted-soft); font-size: 13px; font-style: italic; padding-top: 5px; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 13px;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  .chip .who { font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+  .chip .amt { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .chip .cnt { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .chip .medal { font-size: 13px; }
+  .chip.is-champ { background: var(--gold-soft); border-color: rgba(245,166,35,0.4); }
+  .chip .tier-badge {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .tier-Upper { background: var(--navy-soft); color: var(--navy); }
+  .tier-Lower { background: var(--gold-soft); color: var(--gold-dark); }
+
+  /* ---------- Grand total band (Lens 2) ---------- */
+  .gt-band {
+    background: var(--navy);
+    color: #fff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 10px var(--navy-shadow);
+  }
+  .gt-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.75);
+  }
+  .gt-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 40px;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+    margin: 2px 0 4px;
+  }
+  .gt-caveat { font-size: 12px; color: rgba(255,255,255,0.8); margin: 0; }
+
+  /* ---------- Owner leaderboard (Lens 2) ---------- */
+  .lb { display: flex; flex-direction: column; gap: 8px; }
+  .lb-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .lb-item > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    transition: background 0.15s ease;
+  }
+  .lb-item > summary::-webkit-details-marker { display: none; }
+  .lb-item > summary:hover { background: var(--navy-soft); }
+  .lb-item > summary:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .lb-rank {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+    flex: 0 0 24px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .lb-main { flex: 1 1 auto; min-width: 0; }
+  .lb-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lb-bar-track {
+    height: 5px;
+    background: var(--page-bg);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  .lb-bar-fill { height: 100%; background: var(--gold); border-radius: 3px; }
+  .lb-total {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+    flex: 0 0 auto;
+  }
+  .lb-arrow { flex: 0 0 auto; color: var(--muted); font-size: 12px; transition: transform 0.15s ease; }
+  .lb-item[open] .lb-arrow { transform: rotate(90deg); }
+  .lb-item[open] > summary { border-bottom: 1px solid var(--border); }
+
+  .lb-body { padding: 4px 14px 12px; }
+  .lb-tagline {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+    margin: 8px 0 10px;
+    font-weight: 500;
+  }
+  .brk { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .brk td { padding: 5px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .brk tr:last-child td { border-bottom: 0; }
+  .brk .brk-cat { font-weight: 500; }
+  .brk .brk-detail { color: var(--muted); font-size: 12px; }
+  .brk .brk-amt { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ---------- 2026 Dues (distinct roster-status section) ---------- */
+  .dues-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px var(--navy-shadow);
+  }
+  .dues-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .dues-chip {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .dues-chip--paid { background: var(--win-soft); color: var(--win); }
+  .dues-chip--unpaid { background: var(--gold-soft); color: var(--gold-dark); }
+  .dues-chip--owed { background: var(--navy); color: #fff; }
+
+  .dues-table { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--navy); }
+  .dues-table th, .dues-table td {
+    text-align: left;
+    padding: 8px 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .dues-table th {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .dues-table td.owner { font-weight: 500; }
+  .dues-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dues-table tbody tr:last-child td { border-bottom: 0; }
+  .status-pill {
+    display: inline-block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .status-pill--paid { background: var(--win-soft); color: var(--win); }
+  .status-pill--unpaid { background: var(--gold-soft); color: var(--gold-dark); }
+
+  /* ---------- Footer ---------- */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    text-align: center;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 767px) {
+    .header-inner { padding: 10px 16px; }
+    .brand-logo { height: 36px; }
+    .brand-wordmark { font-size: 18px; }
+    .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 18px var(--navy-soft);
+      padding: 8px 0;
+    }
+    .site-nav.open { display: flex; }
+    .site-nav a {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .site-nav a:last-child { border-bottom: 0; }
+    .site-nav a.current { border-bottom: 1px solid var(--border); background: var(--page-bg); }
+
+    main { padding: 16px 16px 24px; }
+    .page-title { font-size: 24px; }
+    .card, .dues-card { padding: 14px; }
+    .gt-value { font-size: 34px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav a, .lens-tab, .pill, .lb-item > summary, .lb-arrow { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand" aria-label="MAFFL HQ home">
+      <img src="maffl-logo.png" alt="MAFFL" class="brand-logo">
+      <span class="brand-wordmark">MAFFL HQ</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-controls="primaryNav" aria-expanded="false" aria-label="Open navigation">&#9776;</button>
+
+    <nav class="site-nav" id="primaryNav" aria-label="Primary">
+      <a href="weekly.html">Weekly Pulse</a>
+      <a href="rules.html">Rulebook</a>
+      <a href="power-rankings.html">Power Rankings</a>
+      <a href="draft.html">Auction Draft</a>
+      <a href="stats.html">Stats</a>
+      <a href="history.html">History</a>
+      <a href="prize.html" class="current" aria-current="page">Prize History</a>
+      <a href="prizes.html">Prizes &amp; Dues</a>
+    </nav>
+  </div>
+</header>
+
+<main class="stack">
+
+  <!-- ---------- Page intro ---------- -->
+  <div class="page-intro">
+    <h1 class="page-title">Prize History</h1>
+    <p class="page-sub">How every prize traveled across the years, and what each owner has banked all-time. For the season-by-season view, see <a href="history.html" style="color:var(--gold-dark);font-weight:600;">History</a>.</p>
+    <div class="intro-tags">
+      <span class="pill-caveat">&#128202; Prize data begins 2013</span>
+    </div>
+  </div>
+
+  <!-- ---------- Lens card ---------- -->
+  <section class="card" aria-label="Prize history views">
+    <div class="lens-tabs" role="tablist" aria-label="Prize history lens">
+      <button class="lens-tab" id="tab-dues" role="tab" aria-selected="true" aria-controls="panel-dues">Dues</button>
+      <button class="lens-tab" id="tab-career" role="tab" aria-selected="false" aria-controls="panel-career">Career Earnings</button>
+      <button class="lens-tab" id="tab-time" role="tab" aria-selected="false" aria-controls="panel-time">Prize Across Time</button>
+    </div>
+
+    <!-- ===== Dues: 2026 roster status (default) ===== -->
+    <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues">
+      <div class="card-head">
+        <h2>2026 Dues Status</h2>
+        <p class="card-note">Current owner status</p>
+      </div>
+      <div class="dues-summary" id="duesSummary"></div>
+      <table class="dues-table">
+        <thead>
+          <tr>
+            <th scope="col">Owner</th>
+            <th scope="col" class="num">Owed</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody id="duesBody"></tbody>
+      </table>
+    </div>
+
+    <!-- ===== Lens 1: Prize Category Across Time ===== -->
+    <div class="lens-panel" id="panel-time" role="tabpanel" aria-labelledby="tab-time" hidden>
+      <p class="lens-intro">Pick a prize and watch it march from 2013 &rarr; 2025 &mdash; dollar amounts and win counts, year by year.</p>
+
+      <p class="filter-label">Prize Category</p>
+      <div class="pill-row" id="catPills" role="group" aria-label="Prize category"></div>
+
+      <div class="subfilter-wrap" id="placeWrap" hidden>
+        <p class="filter-label">Place</p>
+        <div class="pill-row" id="placePills" role="group" aria-label="Placement finish"></div>
+      </div>
+
+      <div class="cat-summary" id="catSummary"></div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- ===== Lens 2: Owner Career Earnings ===== -->
+    <div class="lens-panel" id="panel-career" role="tabpanel" aria-labelledby="tab-career" hidden>
+      <div class="gt-band">
+        <div class="gt-label">League Prizes Paid, All-Time</div>
+        <div class="gt-value" id="gtValue">$0</div>
+        <p class="gt-caveat" id="gtCaveat">Across the 2013&ndash;2025 seasons. Prize records before 2013 do not exist, so earlier winnings are not counted.</p>
+      </div>
+      <p class="lens-intro">Every owner's total winnings, biggest first. Tap a name for the category-by-category breakdown.</p>
+      <div class="lb" id="leaderboard"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  League founded 2002 &middot; Prize records since 2013 &middot; Built by the Commish
+</footer>
+
+<script>
+/* =====================================================================
+   EMBEDDED DATA — source of truth for this page (already reconciled).
+   Do not re-derive attribution; render everything from here.
+   ===================================================================== */
+const MAFFL = {
+ "prize_events": [
+  {"year":2013,"owner":"Chris Johnson","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2013,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2013,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2014,"owner":"Joe Reilly","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2014,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2014,"owner":"Bob Keslar","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2015,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2015,"owner":"Mike Murello","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2015,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2016,"owner":"Mike Murello","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2016,"owner":"BJ Funari","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2016,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2017,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2017,"owner":"Chris Johnson","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2017,"owner":"Joe Reilly","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2018,"owner":"Joe Reilly","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2018,"owner":"Mike Murello","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2018,"owner":"David Murello","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2019,"owner":"BJ Funari","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2019,"owner":"David Murello","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2019,"owner":"Mike Murello","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2020,"owner":"Chris Johnson","era":"Single-League","prize_type":"Placement","amount":475,"place":1},
+  {"year":2020,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Placement","amount":150,"place":2},
+  {"year":2020,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2021,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Placement","amount":500,"place":1},
+  {"year":2021,"owner":"Bob Keslar","era":"Single-League","prize_type":"Placement","amount":170,"place":2},
+  {"year":2021,"owner":"David Murello","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2022,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Placement","amount":500,"place":1},
+  {"year":2022,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Placement","amount":170,"place":2},
+  {"year":2022,"owner":"Ed Peters","era":"Single-League","prize_type":"Placement","amount":75,"place":3},
+  {"year":2023,"owner":"Bob Keslar","era":"Single-League","prize_type":"Placement","amount":700,"place":1},
+  {"year":2023,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Placement","amount":180,"place":2},
+  {"year":2023,"owner":"BJ Funari","era":"Single-League","prize_type":"Placement","amount":100,"place":3},
+  {"year":2024,"owner":"Joe Reilly","era":"Single-League","prize_type":"Placement","amount":700,"place":1},
+  {"year":2024,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Placement","amount":180,"place":2},
+  {"year":2024,"owner":"BJ Funari","era":"Single-League","prize_type":"Placement","amount":100,"place":3},
+  {"year":2015,"owner":"BJ Funari","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2015,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2015,"owner":"Joe Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2015,"owner":"Dan Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2021,"owner":"David Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2021,"owner":"BJ Funari","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2021,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2021,"owner":"Bob Keslar","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2024,"owner":"David Murello","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2024,"owner":"BJ Funari","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2024,"owner":"Joe Reilly","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2024,"owner":"Dan Reilly","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2019,"owner":"David Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2019,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2019,"owner":"Joe Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2019,"owner":"Bob Keslar","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2014,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2014,"owner":"Joe Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2014,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2014,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2017,"owner":"Chris Johnson","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2017,"owner":"David Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2017,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2017,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2022,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2022,"owner":"Joe Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2022,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2022,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2023,"owner":"Tony Brooks","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2023,"owner":"Dan Reilly","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2023,"owner":"Ed Peters","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2023,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Division","amount":50},
+  {"year":2013,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2013,"owner":"Dan Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2013,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2013,"owner":"Chris Johnson","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2018,"owner":"David Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2018,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2018,"owner":"Joe Reilly","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2018,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2020,"owner":"David Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2020,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2020,"owner":"Josh Farber","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2020,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2016,"owner":"Mike Murello","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2016,"owner":"Mike Licciardi","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2016,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2016,"owner":"Ed Peters","era":"Single-League","prize_type":"Division","amount":25},
+  {"year":2016,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2016,"owner":"Mike Licciardi","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2016,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2016,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2016,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2016,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2016,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2016,"owner":"Mike Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2016,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2017,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2017,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2017,"owner":"Mike Murello","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2017,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":125,"count":5},
+  {"year":2017,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2017,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2017,"owner":"Ed Peters","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2017,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2017,"owner":"Mike Licciardi","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2018,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2018,"owner":"Mike Murello","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2018,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2018,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2018,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2018,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2018,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2018,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2019,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2019,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2019,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2019,"owner":"Ed Peters","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2019,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2019,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2019,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2019,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2020,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2020,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2020,"owner":"Josh Farber","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2020,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"Ed Peters","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2020,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"Mike Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"Bob Keslar","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2020,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2021,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2021,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2021,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2021,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2021,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2021,"owner":"Mike Murello","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2021,"owner":"Bob Keslar","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2021,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2022,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Weekly High Score","amount":100,"count":4},
+  {"year":2022,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2022,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2022,"owner":"Braiden Snyder","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2022,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2022,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2022,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2022,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2022,"owner":"Bob Keslar","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2022,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2023,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2023,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2023,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":150,"count":5},
+  {"year":2023,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2023,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2023,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2023,"owner":"Tony Brooks","era":"Single-League","prize_type":"Weekly High Score","amount":60,"count":2},
+  {"year":2023,"owner":"Braiden Snyder","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2023,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2024,"owner":"Tony Brooks","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2024,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":90,"count":3},
+  {"year":2024,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":60,"count":2},
+  {"year":2024,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":60,"count":2},
+  {"year":2024,"owner":"Braiden Snyder","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2024,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2024,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2024,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":30,"count":1},
+  {"year":2024,"owner":"Ed Peters","era":"Single-League","prize_type":"Weekly High Score","amount":60,"count":2},
+  {"year":2017,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":50,"count":5},
+  {"year":2017,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2017,"owner":"Mike Licciardi","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2017,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2017,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2017,"owner":"Ed Peters","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2017,"owner":"Bob Keslar","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2017,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2017,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2017,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"Chris Johnson","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"Ed Peters","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2018,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2018,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2018,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"David Murello","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2018,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2018,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2019,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2019,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2019,"owner":"BJ Funari","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2019,"owner":"Mike Licciardi","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2019,"owner":"Ed Peters","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2019,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2019,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2019,"owner":"Dan Reilly","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2019,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2019,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Chris Johnson","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2021,"owner":"Bob Keslar","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2021,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2021,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2021,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Dan Reilly","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2021,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2022,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2022,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2022,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2022,"owner":"Braiden Snyder","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"BJ Funari","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"Dan Reilly","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"Tony Brooks","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"David Murello","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2022,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2020,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2020,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2020,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2020,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2020,"owner":"Josh Farber","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2020,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2020,"owner":"Chris Johnson","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2020,"owner":"Jon Fetrow","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2020,"owner":"Dan Reilly","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2020,"owner":"Bob Keslar","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2013,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":30},
+  {"year":2013,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":50},
+  {"year":2013,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2013,"owner":"Kevin Radkowski","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2013,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":20},
+  {"year":2013,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2013,"owner":"Chris Johnson","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2013,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2013,"owner":"Ed Peters","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2014,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2014,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2014,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2014,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":20},
+  {"year":2014,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Coach","amount":20},
+  {"year":2014,"owner":"Chris Johnson","era":"Single-League","prize_type":"Coach","amount":70},
+  {"year":2014,"owner":"Dan Reilly","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2014,"owner":"Bob Keslar","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2015,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2015,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":30},
+  {"year":2015,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2015,"owner":"Joe Reilly","era":"Single-League","prize_type":"Coach","amount":70},
+  {"year":2015,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2015,"owner":"Ed Peters","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2015,"owner":"Dan Reilly","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2015,"owner":"Bob Keslar","era":"Single-League","prize_type":"Coach","amount":10},
+  {"year":2013,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":100,"count":4},
+  {"year":2013,"owner":"Josh Lavrinc","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2013,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2013,"owner":"Kevin Radkowski","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2013,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2013,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2013,"owner":"Jimmy Crisan","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2013,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":100,"count":4},
+  {"year":2014,"owner":"Jacob Nickman","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2014,"owner":"David Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Chris Johnson","era":"Single-League","prize_type":"Weekly High Score","amount":75,"count":3},
+  {"year":2014,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2014,"owner":"Bob Keslar","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2015,"owner":"Mike Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2015,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2015,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2015,"owner":"Jon Murello/Rick Simmons","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2015,"owner":"Joe Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":100,"count":4},
+  {"year":2015,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2015,"owner":"BJ Funari","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2015,"owner":"Ed Peters","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2015,"owner":"Dan Reilly","era":"Single-League","prize_type":"Weekly High Score","amount":50,"count":2},
+  {"year":2015,"owner":"Bob Keslar","era":"Single-League","prize_type":"Weekly High Score","amount":25,"count":1},
+  {"year":2016,"owner":"Mike Murello","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2016,"owner":"Todd Trozzo","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2016,"owner":"Brian Murello/Ron Murello","era":"Single-League","prize_type":"Coach","amount":30,"count":3},
+  {"year":2016,"owner":"Mike Licciardi","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2016,"owner":"David Murello","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2016,"owner":"Tony Trozzo","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2016,"owner":"Chris Johnson","era":"Single-League","prize_type":"Coach","amount":10,"count":1},
+  {"year":2016,"owner":"BJ Funari","era":"Single-League","prize_type":"Coach","amount":20,"count":2},
+  {"year":2025,"owner":"Jon Murello/Rick Simmons","era":"Upper-Tier","prize_type":"Placement","amount":704,"place":1},
+  {"year":2025,"owner":"Joe Reilly","era":"Upper-Tier","prize_type":"Placement","amount":211,"place":2},
+  {"year":2025,"owner":"Mike Murello","era":"Lower-Tier","prize_type":"Placement","amount":347,"place":1},
+  {"year":2025,"owner":"Jacob Nickman","era":"Lower-Tier","prize_type":"Placement","amount":104,"place":2},
+  {"year":2025,"owner":"Tony Trozzo","era":"Lower-Tier","prize_type":"Promotion Showdown","amount":104},
+  {"year":2025,"owner":"Jon Murello/Rick Simmons","era":"Upper-Tier","prize_type":"Division","amount":53},
+  {"year":2025,"owner":"Joe Reilly","era":"Upper-Tier","prize_type":"Division","amount":53},
+  {"year":2025,"owner":"Jon Fetrow","era":"Upper-Tier","prize_type":"Division","amount":53},
+  {"year":2025,"owner":"Ed Peters","era":"Upper-Tier","prize_type":"Division","amount":53},
+  {"year":2025,"owner":"Jon Murello/Rick Simmons","era":"Upper-Tier","prize_type":"Weekly High Score","amount":80,"count":4},
+  {"year":2025,"owner":"Dan Reilly","era":"Upper-Tier","prize_type":"Weekly High Score","amount":20,"count":1},
+  {"year":2025,"owner":"BJ Funari","era":"Upper-Tier","prize_type":"Weekly High Score","amount":20,"count":1},
+  {"year":2025,"owner":"Joe Reilly","era":"Upper-Tier","prize_type":"Weekly High Score","amount":60,"count":3},
+  {"year":2025,"owner":"David Murello","era":"Upper-Tier","prize_type":"Weekly High Score","amount":40,"count":2},
+  {"year":2025,"owner":"Brian Murello/Ron Murello","era":"Upper-Tier","prize_type":"Weekly High Score","amount":20,"count":1},
+  {"year":2025,"owner":"Ed Peters","era":"Upper-Tier","prize_type":"Weekly High Score","amount":20,"count":1},
+  {"year":2025,"owner":"Braiden Snyder","era":"Upper-Tier","prize_type":"Weekly High Score","amount":20,"count":1},
+  {"year":2025,"owner":"Sam Lavrinc","era":"Lower-Tier","prize_type":"Weekly High Score","amount":30,"count":3},
+  {"year":2025,"owner":"Tony Brooks","era":"Lower-Tier","prize_type":"Weekly High Score","amount":20,"count":2},
+  {"year":2025,"owner":"Charles Lavrinc","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1},
+  {"year":2025,"owner":"Mike Murello","era":"Lower-Tier","prize_type":"Weekly High Score","amount":40,"count":4},
+  {"year":2025,"owner":"Tony Trozzo","era":"Lower-Tier","prize_type":"Weekly High Score","amount":20,"count":2},
+  {"year":2025,"owner":"Ben Funari","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1},
+  {"year":2025,"owner":"Dominic Nicastro","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1}
+ ],
+ "dues_2026": [
+  {"owner":"Mike Murello","owed":0,"status":"PAID"},
+  {"owner":"Todd Trozzo","owed":100,"status":"UNPAID"},
+  {"owner":"Brian Murello/Ron Murello","owed":80,"status":"UNPAID"},
+  {"owner":"Braiden Snyder","owed":80,"status":"UNPAID"},
+  {"owner":"Jacob Nickman","owed":0,"status":"PAID"},
+  {"owner":"Jon Murello/Rick Simmons","owed":0,"status":"PAID"},
+  {"owner":"Joe Reilly","owed":0,"status":"PAID"},
+  {"owner":"Tony Brooks","owed":80,"status":"UNPAID"},
+  {"owner":"David Murello","owed":60,"status":"UNPAID"},
+  {"owner":"Tony Trozzo","owed":0,"status":"PAID"},
+  {"owner":"Chris Johnson","owed":100,"status":"UNPAID"},
+  {"owner":"Jon Fetrow","owed":47,"status":"UNPAID"},
+  {"owner":"BJ Funari","owed":80,"status":"UNPAID"},
+  {"owner":"Ed Peters","owed":27,"status":"UNPAID"},
+  {"owner":"Dan Reilly","owed":80,"status":"UNPAID"},
+  {"owner":"Charles Lavrinc","owed":90,"status":"UNPAID"},
+  {"owner":"Sam Lavrinc","owed":70,"status":"UNPAID"},
+  {"owner":"Ben Funari","owed":90,"status":"UNPAID"},
+  {"owner":"Nick Yankovich","owed":100,"status":"UNPAID"},
+  {"owner":"Dominic Nicastro","owed":90,"status":"UNPAID"},
+  {"owner":"Bob Keslar","owed":100,"status":"UNPAID"}
+ ],
+ "meta": {
+  "data_start": 2013,
+  "grand_total": 19062,
+  "note_2025_lower": "Source weekly pool rounding: Lower captured $695 vs $693 stated ($1 source rounding in 2 spots).",
+  "note_2020_cotw": "2020 COTW counts derived from $10/win dollar totals (no week-by-week object existed).",
+  "note_early_weekly": "2013-2016 weekly + 2016 coach counts derived from dollars/known rate (no week object)."
+ }
+};
+
+/* ===================== helpers ===================== */
+const EVENTS = MAFFL.prize_events;
+const YEARS = (function () {
+  const ys = EVENTS.map(e => e.year);
+  const lo = Math.min(...ys), hi = Math.max(...ys);
+  const out = [];
+  for (let y = lo; y <= hi; y++) out.push(y);
+  return out;
+})();
+const usd = n => "$" + Number(n).toLocaleString("en-US");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const MEDAL = {1:"🥇", 2:"🥈", 3:"🥉"};
+const tierOf = era => era === "Upper-Tier" ? "Upper" : era === "Lower-Tier" ? "Lower" : "";
+
+/* Categories for Lens 1 (order matters) */
+const CATEGORIES = [
+  {key:"Placement", label:"Placement", hasPlace:true, unit:"finishes"},
+  {key:"Weekly High Score", label:"Weekly High Score", hasPlace:false, unit:"wins"},
+  {key:"Division", label:"Division", hasPlace:false, unit:"titles"},
+  {key:"Coach", label:"Coach (COTW)", hasPlace:false, unit:"wins"},
+  {key:"Promotion Showdown", label:"3rd Place (Lower)", hasPlace:false, unit:"payouts"}
+];
+
+/* ===================== Lens 1: state + render ===================== */
+let curCat = "Placement";
+let curPlace = "all"; // 'all' | '1' | '2' | '3'
+
+function buildCatPills() {
+  const wrap = document.getElementById("catPills");
+  wrap.innerHTML = CATEGORIES.map(c =>
+    `<button class="pill" type="button" data-cat="${esc(c.key)}" aria-pressed="${c.key===curCat}">${esc(c.label)}</button>`
+  ).join("");
+  wrap.querySelectorAll(".pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      curCat = btn.dataset.cat;
+      curPlace = "all";
+      buildCatPills();
+      renderLens1();
+    });
+  });
+}
+
+function buildPlacePills() {
+  const wrap = document.getElementById("placeWrap");
+  const cat = CATEGORIES.find(c => c.key === curCat);
+  if (!cat || !cat.hasPlace) { wrap.hidden = true; return; }
+  wrap.hidden = false;
+  const opts = [["all","All places"],["1","🥇 1st"],["2","🥈 2nd"],["3","🥉 3rd"]];
+  const pp = document.getElementById("placePills");
+  pp.innerHTML = opts.map(([v,l]) =>
+    `<button class="pill pill-sub" type="button" data-place="${v}" aria-pressed="${v===curPlace}">${l}</button>`
+  ).join("");
+  pp.querySelectorAll(".pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      curPlace = btn.dataset.place;
+      pp.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.place === curPlace)));
+      renderLens1();
+    });
+  });
+}
+
+function lens1Events() {
+  let evs = EVENTS.filter(e => e.prize_type === curCat);
+  if (curCat === "Placement" && curPlace !== "all") {
+    evs = evs.filter(e => String(e.place) === curPlace);
+  }
+  return evs;
+}
+
+function renderSummary(evs) {
+  const total = evs.reduce((s,e) => s + e.amount, 0);
+  // total label reflects the active filter (place sub-filter when Placement)
+  let totalLabel = "Total Paid 2013&ndash;2025";
+  if (curCat === "Placement" && curPlace !== "all") {
+    totalLabel = `Total ${curPlace==="1"?"1st":curPlace==="2"?"2nd":"3rd"}-Place Paid`;
+  }
+  // value drift: representative top value per year (first vs last with data)
+  const byYear = {};
+  evs.forEach(e => { byYear[e.year] = Math.max(byYear[e.year] || 0, headlineValue(e)); });
+  const yrs = Object.keys(byYear).map(Number).sort((a,b)=>a-b);
+  let drift = "&mdash;";
+  if (yrs.length) {
+    const f = yrs[0], l = yrs[yrs.length-1];
+    drift = `${usd(byYear[f])} <small>(${f})</small> &rarr; ${usd(byYear[l])} <small>(${l})</small>`;
+  }
+  const driftLabel = (curCat === "Weekly High Score" || curCat === "Coach") ? "Per-Win Value" :
+                     (curCat === "Placement") ? "Top Prize" : "Prize Value";
+  document.getElementById("catSummary").innerHTML = `
+    <div class="stat"><div class="stat-label">${totalLabel}</div><div class="stat-value">${usd(total)}</div></div>
+    <div class="stat"><div class="stat-label">${driftLabel} Drift</div><div class="stat-value" style="font-size:16px;">${drift}</div></div>
+  `;
+}
+
+function headlineValue(e) {
+  if (curCat === "Weekly High Score" || curCat === "Coach") {
+    return e.count ? Math.round(e.amount / e.count) : e.amount;
+  }
+  return e.amount;
+}
+
+function chipHTML(e) {
+  const tier = tierOf(e.era);
+  const tierBadge = tier ? ` <span class="tier-badge tier-${tier}">${tier}</span>` : "";
+  const medal = (curCat === "Placement" && e.place) ? `<span class="medal">${MEDAL[e.place] || ""}</span>` : "";
+  const cnt = e.count ? `<span class="cnt">&times;${e.count}</span>` : "";
+  const champ = (curCat === "Placement" && e.place === 1) ? " is-champ" : "";
+  return `<span class="chip${champ}">${medal}<span class="who">${esc(e.owner)}</span>${tierBadge}<span class="amt">${usd(e.amount)}</span>${cnt}</span>`;
+}
+
+function renderTimeline(evs) {
+  const tl = document.getElementById("timeline");
+  // Only render year-rows within the category's active range (first → last year with data),
+  // so categories that only exist in some years don't show empty pre/post rows.
+  const dataYears = evs.map(e => e.year);
+  let years = YEARS;
+  if (dataYears.length) {
+    const lo = Math.min(...dataYears), hi = Math.max(...dataYears);
+    years = YEARS.filter(y => y >= lo && y <= hi);
+  }
+  tl.innerHTML = years.map(year => {
+    let yev = evs.filter(e => e.year === year);
+    // sort: placement by place asc, else amount desc then count desc
+    if (curCat === "Placement") {
+      yev.sort((a,b) => (a.place||9) - (b.place||9) || b.amount - a.amount);
+    } else {
+      yev.sort((a,b) => b.amount - a.amount || (b.count||0) - (a.count||0) || a.owner.localeCompare(b.owner));
+    }
+    const is2025 = year === 2025;
+    const split = is2025 ? `<span class="tl-split">2-tier</span>` : "";
+    const body = yev.length
+      ? `<div class="tl-chips">${yev.map(chipHTML).join("")}</div>`
+      : `<div class="tl-empty">no payouts recorded</div>`;
+    return `<div class="tl-row"><div class="tl-year">${year}${split}</div>${body}</div>`;
+  }).join("");
+}
+
+function renderLens1() {
+  buildPlacePills();
+  const evs = lens1Events();
+  renderSummary(evs);
+  renderTimeline(evs);
+}
+
+/* ===================== Lens 2: career earnings ===================== */
+function buildCareer() {
+  const map = {};
+  EVENTS.forEach(e => {
+    const o = map[e.owner] || (map[e.owner] = {
+      owner: e.owner, total: 0,
+      cats: {}, // key -> {amount, count, hasMissingCount, places:{1,2,3}}
+      champs: 0
+    });
+    o.total += e.amount;
+    const c = o.cats[e.prize_type] || (o.cats[e.prize_type] = {amount:0, count:0, hasMissingCount:false, places:{1:0,2:0,3:0}});
+    c.amount += e.amount;
+    if (typeof e.count === "number") c.count += e.count;
+    else if (e.prize_type === "Weekly High Score" || e.prize_type === "Coach") c.hasMissingCount = true;
+    if (e.prize_type === "Placement" && e.place) {
+      c.places[e.place]++;
+      if (e.place === 1) o.champs++;
+    }
+  });
+  const owners = Object.values(map).sort((a,b) => b.total - a.total || a.owner.localeCompare(b.owner));
+  return owners;
+}
+
+const CAT_ORDER = ["Placement","Weekly High Score","Division","Coach","Promotion Showdown"];
+const CAT_DISPLAY = {
+  "Placement":"Placement", "Weekly High Score":"Weekly High Score",
+  "Division":"Division", "Coach":"Coach of the Week", "Promotion Showdown":"3rd Place (Lower)"
+};
+
+function ownerCardHTML(o, rank, maxTotal) {
+  // tagline: champs, weekly, cotw
+  const weekly = o.cats["Weekly High Score"] ? o.cats["Weekly High Score"].count : 0;
+  const cotw = o.cats["Coach"] ? o.cats["Coach"].count : 0;
+  const cotwStar = (o.cats["Coach"] && o.cats["Coach"].hasMissingCount) ? "+" : "";
+  const tagParts = [];
+  if (o.champs) tagParts.push(`${o.champs} championship${o.champs===1?"":"s"}`);
+  if (weekly) tagParts.push(`${weekly} weekly win${weekly===1?"":"s"}`);
+  if (o.cats["Coach"]) tagParts.push(`${cotw}${cotwStar} COTW`);
+  const tagline = tagParts.join(" · ");
+
+  // breakdown rows
+  const rows = CAT_ORDER.filter(k => o.cats[k]).map(k => {
+    const c = o.cats[k];
+    let detail;
+    if (k === "Placement") {
+      const parts = [];
+      [1,2,3].forEach(p => { if (c.places[p]) parts.push(`${MEDAL[p]}×${c.places[p]}`); });
+      detail = parts.join("  ") || "&mdash;";
+    } else if (k === "Division") {
+      // Division events carry no count; titles = number of division wins (set in renderLens2)
+      detail = `${c.titles} title${c.titles===1?"":"s"}`;
+    } else if (k === "Weekly High Score") {
+      detail = `${c.count} win${c.count===1?"":"s"}`;
+    } else if (k === "Coach") {
+      const plus = c.hasMissingCount ? "+" : "";
+      detail = `${c.count}${plus} win${c.count===1?"":"s"}`;
+    } else if (k === "Promotion Showdown") {
+      detail = `${MEDAL[3]} 3rd place (Lower)`;
+    }
+    return `<tr><td><span class="brk-cat">${esc(CAT_DISPLAY[k])}</span><br><span class="brk-detail">${detail}</span></td><td class="brk-amt">${usd(c.amount)}</td></tr>`;
+  }).join("");
+
+  const pct = maxTotal ? Math.max(4, Math.round(o.total / maxTotal * 100)) : 0;
+  return `
+    <details class="lb-item">
+      <summary>
+        <span class="lb-rank">${rank}</span>
+        <span class="lb-main">
+          <span class="lb-name">${esc(o.owner)}</span>
+          <span class="lb-bar-track"><span class="lb-bar-fill" style="width:${pct}%"></span></span>
+        </span>
+        <span class="lb-total">${usd(o.total)}</span>
+        <span class="lb-arrow">▸</span>
+      </summary>
+      <div class="lb-body">
+        ${tagline ? `<div class="lb-tagline">${tagline}</div>` : ""}
+        <table class="brk"><tbody>${rows}</tbody></table>
+      </div>
+    </details>`;
+}
+
+function renderLens2() {
+  const owners = buildCareer();
+  // compute division titles (count of division events) since Division has no count field
+  owners.forEach(o => {
+    if (o.cats["Division"]) {
+      o.cats["Division"].titles = EVENTS.filter(e => e.owner === o.owner && e.prize_type === "Division").length;
+    }
+  });
+  const maxTotal = owners.length ? owners[0].total : 0;
+  document.getElementById("leaderboard").innerHTML =
+    owners.map((o,i) => ownerCardHTML(o, i+1, maxTotal)).join("");
+
+  // grand total
+  const computed = EVENTS.reduce((s,e) => s + e.amount, 0);
+  document.getElementById("gtValue").textContent = usd(MAFFL.meta.grand_total);
+  const note = (computed !== MAFFL.meta.grand_total)
+    ? ` (events on file sum to ${usd(computed)})` : "";
+  document.getElementById("gtCaveat").innerHTML =
+    `Across the ${MAFFL.meta.data_start}&ndash;${YEARS[YEARS.length-1]} seasons, paid to ${owners.length} owners. Prize records before ${MAFFL.meta.data_start} do not exist, so earlier winnings are not counted.${note}`;
+}
+
+/* ===================== 2026 Dues ===================== */
+function renderDues() {
+  const dues = MAFFL.dues_2026.slice().sort((a,b) => a.owner.localeCompare(b.owner));
+  const paid = dues.filter(d => d.status === "PAID").length;
+  const unpaid = dues.length - paid;
+  const owed = dues.reduce((s,d) => s + d.owed, 0);
+  document.getElementById("duesSummary").innerHTML = `
+    <span class="dues-chip dues-chip--owed">${usd(owed)} outstanding</span>
+    <span class="dues-chip dues-chip--unpaid">${unpaid} unpaid</span>
+    <span class="dues-chip dues-chip--paid">${paid} paid</span>
+  `;
+  document.getElementById("duesBody").innerHTML = dues.map(d => {
+    const pill = d.status === "PAID"
+      ? `<span class="status-pill status-pill--paid">Paid</span>`
+      : `<span class="status-pill status-pill--unpaid">Unpaid</span>`;
+    return `<tr><td class="owner">${esc(d.owner)}</td><td class="num">${usd(d.owed)}</td><td>${pill}</td></tr>`;
+  }).join("");
+}
+
+/* ===================== Tabs ===================== */
+function wireTabs() {
+  const tabs = [
+    {tab: "tab-dues", panel: "panel-dues"},
+    {tab: "tab-career", panel: "panel-career"},
+    {tab: "tab-time", panel: "panel-time"}
+  ];
+  tabs.forEach(({tab, panel}) => {
+    document.getElementById(tab).addEventListener("click", () => {
+      tabs.forEach(t => {
+        const selected = t.tab === tab;
+        document.getElementById(t.tab).setAttribute("aria-selected", String(selected));
+        document.getElementById(t.panel).hidden = !selected;
+      });
+    });
+  });
+}
+
+/* ===================== Hamburger ===================== */
+(function wireHamburger() {
+  const btn = document.getElementById("navToggle");
+  const nav = document.getElementById("primaryNav");
+  btn.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+})();
+
+/* ===================== Init ===================== */
+buildCatPills();
+renderLens1();
+renderLens2();
+renderDues();
+wireTabs();
+</script>
+
+</body>
+</html>
