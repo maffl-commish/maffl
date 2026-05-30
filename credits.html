@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Current Credit Count — MAFFL HQ</title>
+<title>Credit Portal — MAFFL HQ</title>
 <meta name="description" content="MAFFL HQ — every owner's current credit balance at a glance. A hand-updated snapshot so owners never have to open the Google Sheet.">
 
 <!-- Favicon + Apple Touch Icon (home-screen icon on iOS / iPadOS) -->
@@ -310,6 +310,196 @@
     border-radius: 3px;
   }
 
+  /* ---------- Credit Portal: header row, date tag, tabs ---------- */
+  .portal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+  .portal-head h2 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--navy);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .portal-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+
+  /* Solid date stamp — bump the date each time the balances are revised. */
+  .update-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navy);
+    color: #fff;
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+  }
+  .update-tag__label { color: var(--gold); }
+
+  /* Smaller variant of the navy/gold rules button — sits inline in the portal header. */
+  .rules-link--sm {
+    margin-bottom: 0;
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+
+  /* ---------- Tabs ---------- */
+  .portal-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .portal-tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    padding: 10px 16px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .portal-tab:hover { color: var(--navy); }
+  .portal-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  .portal-tab:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .portal-panel[hidden] { display: none; }
+
+  /* ---------- Credit Registry ---------- */
+  .registry-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .registry-summary {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .registry-summary strong { color: var(--navy); font-weight: 700; }
+
+  .registry-filter {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .registry-filter select {
+    font-family: var(--body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navy);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 210px;
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+  }
+  .registry-filter select:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .registry-table-wrap { overflow-x: auto; }
+  .registry-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+  }
+  .registry-table th,
+  .registry-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .registry-table th {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .registry-table th.num,
+  .registry-table td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .registry-table tbody tr:last-child td { border-bottom: 0; }
+
+  .registry-owner { font-weight: 700; white-space: nowrap; }
+  .registry-team {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .registry-type { font-weight: 500; }
+  .registry-notes {
+    font-size: 13px;
+    color: var(--muted-soft);
+    line-height: 1.45;
+    min-width: 220px;
+  }
+  .registry-amount { color: var(--win); }   /* Earn  → green */
+  .registry-spend  { color: var(--loss); }  /* Spend → red (future-proof) */
+  .registry-empty td {
+    text-align: center;
+    color: var(--muted);
+    padding: 28px 10px;
+  }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -367,6 +557,23 @@
       padding: 14px 16px;
     }
 
+    /* Portal header reflows; keep the inline rules button compact, not full-width. */
+    .portal-head h2 { font-size: 20px; }
+    .portal-meta { margin-left: 0; width: 100%; }
+    .rules-link--sm {
+      display: inline-flex;
+      width: auto;
+      font-size: 13px;
+      padding: 9px 14px;
+    }
+    .portal-tab { font-size: 14px; padding: 10px 12px; }
+
+    .registry-filter select { min-width: 0; width: 100%; }
+    .registry-filter { width: 100%; }
+    .registry-table { font-size: 13px; }
+    .registry-table th, .registry-table td { padding: 8px; }
+    .registry-notes { min-width: 180px; }
+
     .dues-tiers { grid-template-columns: 1fr; gap: 18px; }
     .dues-table { font-size: 13px; }
     .dues-table th, .dues-table td { padding: 8px 6px; }
@@ -408,26 +615,30 @@
 
 <main class="stack">
 
-  <section class="dues-section" aria-labelledby="creditCountHeading">
-    <div class="dues-head">
-      <h2 id="creditCountHeading">Current Credit Count</h2>
+  <section class="dues-section" aria-labelledby="creditPortalHeading">
+    <!-- ============================================================
+         LAST UPDATE STAMP — BUMP THE DATE IN .update-tag BELOW WHENEVER YOU
+         REVISE THE BALANCES. These numbers are hand-copied from the league
+         Google Sheet; they are NOT live.
+         ============================================================ -->
+    <div class="portal-head">
+      <h2 id="creditPortalHeading">Credit Portal</h2>
+      <div class="portal-meta">
+        <span class="update-tag"><span class="update-tag__label">Last Update</span> 06/01/2026</span>
+        <!-- Rules deep-link: jumps to the Credit System section of the rulebook and
+             auto-expands it on arrival (rules.html reads this #hash and opens the
+             matching accordion section). -->
+        <a class="rules-link rules-link--sm" href="rules.html#credit-system">See full Credit ruleset &rarr;</a>
+      </div>
     </div>
 
-    <!-- ============================================================
-         SNAPSHOT DATE — BUMP THIS WHENEVER YOU UPDATE THE BALANCES BELOW.
-         These numbers are hand-copied from the league Google Sheet; they are
-         NOT live. Edit the date in the <strong> tag below (and the credit
-         values in the two tables) each time you refresh from the sheet.
-         ============================================================ -->
-    <p class="snapshot-note">
-      Current as of <strong>May 29, 2026</strong> — a hand-updated snapshot
-      copied from the league Google Sheet, not live data.
-    </p>
+    <div class="portal-tabs" role="tablist" aria-label="Credit Portal sections">
+      <button class="portal-tab active" id="tab-count" role="tab" aria-selected="true" aria-controls="panel-count" type="button">Current Credit Count</button>
+      <button class="portal-tab" id="tab-registry" role="tab" aria-selected="false" aria-controls="panel-registry" type="button">Credit Registry</button>
+    </div>
 
-    <!-- Rules deep-link: jumps to the Credit System section of the rulebook and
-         auto-expands it on arrival (rules.html reads this #hash and opens the
-         matching accordion section). -->
-    <a class="rules-link" href="rules.html#credit-system">Read the full Credit rules &rarr;</a>
+    <!-- ===== Panel 1: Current Credit Count (landing tab) ===== -->
+    <div class="portal-panel" id="panel-count" role="tabpanel" aria-labelledby="tab-count">
 
     <!--
       OWNER NAME LINKS → POWER RANKINGS
@@ -498,6 +709,35 @@
         </table>
       </div>
     </div>
+    </div><!-- /panel-count -->
+
+    <!-- ===== Panel 2: Credit Registry =====
+         A full ledger of every credit earned/spent. Rows render dynamically
+         from the REGISTRY_DATA array in the script at the bottom of the page —
+         to add or revise entries, edit that array (and bump the .update-tag
+         date above). The owner dropdown and summary are derived automatically. -->
+    <div class="portal-panel" id="panel-registry" role="tabpanel" aria-labelledby="tab-registry" hidden>
+      <div class="registry-toolbar">
+        <p class="registry-summary" id="registrySummary"></p>
+        <label class="registry-filter">
+          <span>Filter by owner</span>
+          <select id="registryOwner"></select>
+        </label>
+      </div>
+      <div class="registry-table-wrap">
+        <table class="registry-table">
+          <thead>
+            <tr>
+              <th scope="col">Owner</th>
+              <th scope="col">Credit Type</th>
+              <th scope="col" class="num">Credits</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="registryBody"></tbody>
+        </table>
+      </div>
+    </div><!-- /panel-registry -->
   </section>
 
 </main>
@@ -515,6 +755,141 @@
       btn.setAttribute("aria-expanded", open ? "true" : "false");
       btn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     });
+  })();
+
+  (function wirePortalTabs() {
+    const tabs = Array.from(document.querySelectorAll(".portal-tab"));
+    tabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        tabs.forEach(function (t) {
+          const selected = t === tab;
+          t.classList.toggle("active", selected);
+          t.setAttribute("aria-selected", selected ? "true" : "false");
+          document.getElementById(t.getAttribute("aria-controls")).hidden = !selected;
+        });
+      });
+    });
+  })();
+
+  /* ============================================================
+     CREDIT REGISTRY DATA — the full ledger. Add/revise entries here.
+     creditCategory "Earn" renders a green +N; "Spend" renders a red −N.
+     ============================================================ */
+  const REGISTRY_DATA = [
+    {"season":2025,"owner":"Dominic Nicastro","team":"Steel City Champyinz","creditCategory":"Earn","creditType":"Safe (Lower-Tier)","amount":5,"approved":true,"notes":"2025 Regular season finish"},
+    {"season":2025,"owner":"Sam Lavrinc","team":"Tommy Phamclub","creditCategory":"Earn","creditType":"Safe (Lower-Tier)","amount":5,"approved":true,"notes":"2025 Regular season finish"},
+    {"season":2025,"owner":"Ben Funari","team":"The Best in The 'Burgh","creditCategory":"Earn","creditType":"Safe (Lower-Tier)","amount":5,"approved":true,"notes":"2025 Regular season finish"},
+    {"season":2025,"owner":"Nick Yankovich","team":"Sarge's Squad","creditCategory":"Earn","creditType":"Safe (Lower-Tier)","amount":5,"approved":true,"notes":"2025 Regular season finish"},
+    {"season":2025,"owner":"Charles Lavrinc","team":"Portly Primates","creditCategory":"Earn","creditType":"Safe (Lower-Tier)","amount":5,"approved":true,"notes":"2025 Regular season finish"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Most Team Points Scored","amount":5,"approved":true,"notes":"2025 Most Points For (Lower-Tier) (Note: Not all teams had an equal number of games in 2025, so an average was used and BAG still was on top with an average of 160.80/gm.)"},
+    {"season":2025,"owner":"Joe Reilly","team":"Reindeers","creditCategory":"Earn","creditType":"Most Team Points Scored","amount":5,"approved":true,"notes":"2025 Most Points For (Upper-Tier)"},
+    {"season":2025,"owner":"Joe Reilly","team":"Reindeers","creditCategory":"Earn","creditType":"Largest Blowout Victory","amount":3,"approved":true,"notes":"2025 Upper-Tier (Week 12 — Reilly’s Reindeer vs. Mike Vicks Dog Sitting Co.; Final: 221.00 – 112.76; Margin: 108.24 points)"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Largest Blowout Victory","amount":3,"approved":true,"notes":"2025 Lower-Tier (Week 12 — Bad Attitude Gangr vs. Tommy Phamclub; Final: 199.04 – 111.32; Margin: 87.72 points)"},
+    {"season":2025,"owner":"Jon Murello / Rick Simmons","team":"Prodigal Sons","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 1"},
+    {"season":2025,"owner":"Jon Murello / Rick Simmons","team":"Prodigal Sons","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 3"},
+    {"season":2025,"owner":"Jon Murello / Rick Simmons","team":"Prodigal Sons","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 11"},
+    {"season":2025,"owner":"Jon Murello / Rick Simmons","team":"Prodigal Sons","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 14"},
+    {"season":2025,"owner":"Dan Reilly","team":"The Big Bang Theory","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 2"},
+    {"season":2025,"owner":"BJ Funari","team":"Funshiners","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 4"},
+    {"season":2025,"owner":"Joe Reilly","team":"Reindeers","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 5"},
+    {"season":2025,"owner":"Joe Reilly","team":"Reindeers","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 6"},
+    {"season":2025,"owner":"Joe Reilly","team":"Reindeers","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 12"},
+    {"season":2025,"owner":"David Murello","team":"Kardiac Kids","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 7"},
+    {"season":2025,"owner":"David Murello","team":"Kardiac Kids","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 8"},
+    {"season":2025,"owner":"Brian Murello / Ron Murello","team":"Hadley's Comets","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 9"},
+    {"season":2025,"owner":"Ed Peters","team":"Turkey Hat","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 10"},
+    {"season":2025,"owner":"Braiden Snyder","team":"Mike Vick's Dog Sitting","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Upper-Tier Week 13"},
+    {"season":2025,"owner":"Sam Lavrinc","team":"Tommy Phamclub","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 1"},
+    {"season":2025,"owner":"Tony Brooks","team":"Number 2 Tony","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 2"},
+    {"season":2025,"owner":"Charles Lavrinc","team":"Portly Primates","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 3"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 4"},
+    {"season":2025,"owner":"Tony Trozzo","team":"HV Hammer Time","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 5"},
+    {"season":2025,"owner":"Tony Trozzo","team":"HV Hammer Time","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 6"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 7"},
+    {"season":2025,"owner":"Sam Lavrinc","team":"Tommy Phamclub","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 8"},
+    {"season":2025,"owner":"Ben Funari","team":"The Best in The 'Burgh","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 9"},
+    {"season":2025,"owner":"Tony Brooks","team":"Number 2 Tony","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 10"},
+    {"season":2025,"owner":"Dominic Nicastro","team":"Steel City Champyinz","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 11"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 12"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 13"},
+    {"season":2025,"owner":"Sam Lavrinc","team":"Tommy Phamclub","creditCategory":"Earn","creditType":"Highest Weekly Score","amount":1,"approved":true,"notes":"Lower-Tier Week 14"},
+    {"season":2025,"owner":"Tony Trozzo","team":"HV Hammer Time","creditCategory":"Earn","creditType":"Survivor Bonus","amount":5,"approved":true,"notes":"2025 Lower-Tier Survivor"},
+    {"season":2025,"owner":"Jon Murello / Rick Simmons","team":"Prodigal Sons","creditCategory":"Earn","creditType":"Survivor Bonus","amount":5,"approved":true,"notes":"2025 Upper-Tier Survivor"},
+    {"season":2025,"owner":"Jon Murello / Rick Simmons","team":"Prodigal Sons","creditCategory":"Earn","creditType":"Championship Winner","amount":15,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Joe Reilly","team":"Reindeers","creditCategory":"Earn","creditType":"Championship Runner-Up","amount":12,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"David Murello","team":"Kardiac Kids","creditCategory":"Earn","creditType":"Playoff Semifinalists","amount":7,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Jon Fetrow","team":"Southside Shooters","creditCategory":"Earn","creditType":"Playoff Semifinalists","amount":7,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Ed Peters","team":"Turkey Hat","creditCategory":"Earn","creditType":"Playoff Quarterfinalists","amount":6,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Brian Murello / Ron Murello","team":"Hadley's Comets","creditCategory":"Earn","creditType":"Playoff Quarterfinalists","amount":6,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Dan Reilly","team":"The Big Bang Theory","creditCategory":"Earn","creditType":"Safe (Non-Playoff) - Consolation Winner","amount":5,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Braiden Snyder","team":"Mike Vick's Dog Sitting","creditCategory":"Earn","creditType":"Safe (Non-Playoff) - Consolation Loser","amount":4,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"BJ Funari","team":"Funshiners","creditCategory":"Earn","creditType":"Relegation Showdown Winner","amount":3,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Todd Trozzo","team":"Fightin Ferrets","creditCategory":"Earn","creditType":"Relegation Showdown Loser / Consolation Game Winner","amount":1,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Bob Keslar","team":"Camp Kes","creditCategory":"Earn","creditType":"Relegation Showdown Loser / Consolation Game Winner","amount":1,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Mike Murello","team":"Bad Attitude Gang","creditCategory":"Earn","creditType":"Automatic Promotion - Consolation Winner","amount":15,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Jacob Nickman","team":"Jake's Jagoffs","creditCategory":"Earn","creditType":"Automatic Promotion - Consolation Loser","amount":12,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Tony Trozzo","team":"HV Hammer Time","creditCategory":"Earn","creditType":"Promotion Showdown Winner","amount":10,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"Tony Brooks","team":"Number 2 Tony","creditCategory":"Earn","creditType":"Promotion Showdown Loser","amount":8,"approved":true,"notes":"2025 Season Result"},
+    {"season":2025,"owner":"David Murello","team":"Kardiac Kids","creditCategory":"Earn","creditType":"Individual High Score (Wkly Total)","amount":3,"approved":true,"notes":"2025 Upper-Tier Week 10 - Jonathan Taylor (47.6)"},
+    {"season":2025,"owner":"Jacob Nickman","team":"Jake's Jagoffs","creditCategory":"Earn","creditType":"Individual High Score (Wkly Total)","amount":3,"approved":true,"notes":"2025 Lower-Tier Week 10 - Jonathan Taylor (47.6)"}
+  ];
+
+  (function wireRegistry() {
+    const body = document.getElementById("registryBody");
+    const select = document.getElementById("registryOwner");
+    const summary = document.getElementById("registrySummary");
+    if (!body || !select || !summary) return;
+
+    function esc(s) {
+      return String(s).replace(/[&<>"]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+      });
+    }
+
+    // Populate the owner filter (unique, alphabetical).
+    const owners = Array.from(new Set(REGISTRY_DATA.map(function (r) { return r.owner; })))
+      .sort(function (a, b) { return a.localeCompare(b); });
+    select.innerHTML = '<option value="">All owners</option>' +
+      owners.map(function (o) { return '<option value="' + esc(o) + '">' + esc(o) + "</option>"; }).join("");
+
+    function render() {
+      const filter = select.value;
+      const rows = REGISTRY_DATA
+        .filter(function (r) { return !filter || r.owner === filter; })
+        .slice()
+        // Group by owner, biggest credits first within each owner.
+        .sort(function (a, b) { return a.owner.localeCompare(b.owner) || b.amount - a.amount; });
+
+      if (!rows.length) {
+        body.innerHTML = '<tr class="registry-empty"><td colspan="4">No credits on record.</td></tr>';
+      } else {
+        body.innerHTML = rows.map(function (r) {
+          const spend = r.creditCategory === "Spend";
+          const sign = spend ? "−" : "+";
+          const cls = spend ? "registry-spend" : "registry-amount";
+          return "<tr>" +
+            '<td><span class="registry-owner">' + esc(r.owner) + "</span>" +
+            '<span class="registry-team">' + esc(r.team) + "</span></td>" +
+            '<td class="registry-type">' + esc(r.creditType) + "</td>" +
+            '<td class="num ' + cls + '">' + sign + r.amount + "</td>" +
+            '<td class="registry-notes">' + esc(r.notes) + "</td>" +
+            "</tr>";
+        }).join("");
+      }
+
+      const total = rows.reduce(function (sum, r) {
+        return sum + (r.creditCategory === "Spend" ? -r.amount : r.amount);
+      }, 0);
+      const seasons = Array.from(new Set(rows.map(function (r) { return r.season; }))).sort();
+      const seasonTxt = seasons.length
+        ? seasons.join(", ") + " season" + (seasons.length > 1 ? "s" : "")
+        : "—";
+      summary.innerHTML = "<strong>" + rows.length + "</strong> entr" + (rows.length === 1 ? "y" : "ies") +
+        " · <strong>" + total + "</strong> total credits · " + esc(seasonTxt);
+    }
+
+    select.addEventListener("change", render);
+    render();
   })();
 </script>
 
