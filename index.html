@@ -78,7 +78,7 @@
   }
 
   .brand-logo {
-    height: 40px;
+    height: 48px;
     width: auto;
     display: block;
     flex: 0 0 auto;
@@ -87,7 +87,7 @@
   .brand-wordmark {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 24px;
     color: var(--navy);
     line-height: 1;
     letter-spacing: 0.01em;
@@ -459,6 +459,8 @@
     cursor: default;
     gap: 0;
   }
+  .credit-card .card-icon { margin-bottom: 5px; }
+  .credit-card .card-title { margin-bottom: 7px; }
   /* Don't lift the whole card on hover — only the inner links react. */
   .credit-card:hover,
   .credit-card:focus-within {
@@ -466,28 +468,32 @@
     border-color: var(--border);
     box-shadow: 0 1px 3px rgba(26, 46, 80, 0.06);
   }
+  /* Side-by-side links keep the card the same height as the other cells. */
   .credit-links {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 6px;
     width: 100%;
-    margin-top: 2px;
   }
   .credit-link {
-    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    min-height: 30px;
-    padding: 6px 8px;
+    min-height: 38px;
+    padding: 5px 6px;
     background: var(--surface);
     color: var(--navy);
     border: 1px solid var(--border);
     border-radius: 7px;
     font-family: var(--display);
     font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 0.03em;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    line-height: 1.2;
+    line-height: 1.15;
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   }
   .credit-link:hover {
@@ -516,8 +522,8 @@
   /* ---------- Responsive ---------- */
   @media (max-width: 767px) {
     .header-inner { padding: 10px 16px; }
-    .brand-logo { height: 36px; }
-    .brand-wordmark { font-size: 18px; }
+    .brand-logo { height: 42px; }
+    .brand-wordmark { font-size: 21px; }
 
     .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
 
@@ -603,7 +609,7 @@
       <a href="draft.html">Auction Draft</a>
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
-      <a href="prizes.html">Prizes &amp; Dues</a>
+      <a href="prize.html">Prizes &amp; Dues</a>
     </nav>
   </div>
 </header>
@@ -636,16 +642,22 @@
 
     <div class="carousel">
       <div class="carousel-track" id="newsTrack" tabindex="0" aria-label="What's New, swipe to browse">
-        <a class="slide" href="draft.html">
-          <p class="slide-eyebrow">New this offseason</p>
-          <p class="slide-headline">Auction Draft Portal is live</p>
-          <p class="slide-body">Explore everything auction — values, history, and the full board.</p>
+        <a class="slide" href="weekly.html">
+          <p class="slide-eyebrow">🟢 Fresh drop</p>
+          <p class="slide-headline">Weekly Pulse — Week 1 Edition is live</p>
+          <p class="slide-body">Check out a sample of what the new Weekly Pulse delivers.</p>
         </a>
 
-        <a class="slide" href="prizes.html">
+        <a class="slide" href="draft.html">
+          <p class="slide-eyebrow">New this offseason</p>
+          <p class="slide-headline">🎯 Auction Draft Portal is live</p>
+          <p class="slide-body">Explore everything auction — draft prep, trends, owner profiles.</p>
+        </a>
+
+        <a class="slide" href="prize.html">
           <p class="slide-eyebrow">💰 Money matters</p>
-          <p class="slide-headline">Dues are due 💵</p>
-          <p class="slide-body">Don't forget your 2026 dues — see exactly what you owe. 🤑</p>
+          <p class="slide-headline">Time to Pay Up 💵</p>
+          <p class="slide-body">Click here to see what you owe and get square. 🤑</p>
         </a>
       </div>
       <div class="carousel-dots" id="newsDots" aria-hidden="true"></div>
@@ -681,7 +693,7 @@
         </div>
       </div>
 
-      <a class="section-card" href="prizes.html">
+      <a class="section-card" href="prize.html">
         <span class="card-icon" aria-hidden="true">&#x1F4B0;</span>
         <h3 class="card-title">Prizes &amp; Dues</h3>
         <p class="card-tag">Everything Prize Money</p>
