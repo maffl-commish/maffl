@@ -437,16 +437,16 @@
     margin-top: 12px;
   }
   .carousel-dot {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
     padding: 0;
-    border: 0;
+    border: 1.5px solid var(--navy);
     border-radius: 50%;
-    background: var(--border);
+    background: transparent;
     cursor: pointer;
     transition: background 0.15s ease, transform 0.15s ease;
   }
-  .carousel-dot:hover { background: var(--muted); }
+  .carousel-dot:hover { background: var(--navy-soft); }
   .carousel-dot.is-active {
     background: var(--navy);
     transform: scale(1.25);
@@ -655,8 +655,8 @@
     <div class="carousel">
       <div class="carousel-track" id="newsTrack" tabindex="0" aria-label="What's New, swipe to browse">
         <a class="slide" href="weekly.html">
-          <p class="slide-eyebrow">🟢 Fresh drop</p>
-          <p class="slide-headline">Weekly Pulse — Week 1 Edition is live</p>
+          <p class="slide-eyebrow">Fresh drop</p>
+          <p class="slide-headline">🟢 Weekly Pulse — Week 1 Edition is live</p>
           <p class="slide-body">Check out a sample of what the new Weekly Pulse delivers.</p>
         </a>
 
@@ -669,7 +669,7 @@
         <a class="slide" href="prize.html">
           <p class="slide-eyebrow">💰 Money matters</p>
           <p class="slide-headline">Time to Pay Up 💵</p>
-          <p class="slide-body">Click here to see what you owe and get square. 🤑</p>
+          <p class="slide-body">Click here to see what you owe and get square.</p>
         </a>
       </div>
       <div class="carousel-dots" id="newsDots" aria-hidden="true"></div>
@@ -702,8 +702,8 @@
           <h3 class="card-title">Credits</h3>
         </div>
         <div class="credit-links">
-          <a class="credit-link" href="credits.html">View Owner Totals</a>
-          <a class="credit-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Submit a Request</a>
+          <a class="credit-link" href="credits.html">Portal</a>
+          <a class="credit-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Request</a>
         </div>
       </div>
 
