@@ -185,9 +185,10 @@
     line-height: 1;
     white-space: nowrap;
   }
-  .rule-tag.new        { background: var(--gold); color: var(--navy); }
-  .rule-tag.amended    { background: #dde7f2;     color: var(--navy); }
-  .rule-tag.deprecated { background: #f0f2f5;     color: #5a6478; }
+  .rule-tag.new          { background: var(--gold); color: var(--navy); }
+  .rule-tag.amended      { background: #dde7f2;     color: var(--navy); }
+  .rule-tag.deprecated   { background: #f0f2f5;     color: #5a6478; }
+  .rule-tag.announcement { background: var(--navy); color: #fff; }
   .rule-tag .tag-sep {
     display: inline-block;
     margin: 0 5px;
@@ -255,6 +256,38 @@
     margin: 0;
   }
 
+  /* ---------- Page tabs (Info / Rulebook) — mirrors credits.html ---------- */
+  .portal-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .portal-tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    padding: 10px 16px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .portal-tab:hover { color: var(--navy); }
+  .portal-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  .portal-tab:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .portal-panel[hidden] { display: none; }
+
   /* ---------- Rules controls (Expand / Collapse All) ---------- */
   .rules-controls {
     display: flex;
@@ -304,6 +337,9 @@
     border-radius: 8px;
     overflow: hidden;
     transition: border-color 0.15s ease;
+    /* Keep deep-linked sections (e.g. rules.html#credit-system) clear of the
+       sticky header when scrolled into view. */
+    scroll-margin-top: 80px;
   }
   .rule-section.open {
     border-color: var(--navy-shadow);
@@ -446,6 +482,16 @@
     text-align: right;
     white-space: nowrap;
   }
+
+  /* Wide tables (4+ columns) scroll horizontally instead of clipping on
+     narrow screens, so the long Notes column stays reachable. On wide
+     screens the table fits and no scrollbar shows. */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-scroll .data-table { min-width: 640px; }
 
   /* ---------- Leagues Overview compact matrix ---------- */
   .overview-table {
@@ -677,6 +723,8 @@
     .page-title { font-size: 24px; }
     .page-subtitle { font-size: 13px; }
 
+    .portal-tab { font-size: 14px; padding: 10px 12px; }
+
     .rule-head { padding: 12px 14px; min-height: 56px; }
     .rule-title { font-size: 15px; }
     .rule-body { padding: 0 14px 16px 14px; }
@@ -723,18 +771,21 @@
 
 <main>
   <div class="page-title-block">
-    <h1 class="page-title">Rulebook</h1>
-    <p class="page-subtitle">The official MAFFL ruleset — current as of August 2026</p>
+    <h1 class="page-title">Rulebook &amp; Info</h1>
+    <p class="page-subtitle">The official MAFFL ruleset</p>
 
     <div class="version-chips" aria-label="Rulebook version metadata">
       <span class="version-chip primary" id="versionChipVersion">v—</span>
-      <span class="version-divider" aria-hidden="true"></span>
-      <span class="version-chip muted" id="versionChipEffective">Effective —</span>
       <span class="version-divider" aria-hidden="true"></span>
       <span class="version-chip muted" id="versionChipUpdated">Last Updated —</span>
     </div>
 
     <hr class="gold-rule">
+  </div>
+
+  <div class="portal-tabs" role="tablist" aria-label="Rulebook &amp; Info sections">
+    <button class="portal-tab active" id="tabBtnInfo" role="tab" aria-selected="true" aria-controls="tab-info" data-tab="info" type="button">Info</button>
+    <button class="portal-tab" id="tabBtnRulebook" role="tab" aria-selected="false" aria-controls="tab-rulebook" data-tab="rulebook" type="button">Rulebook</button>
   </div>
 
   <div class="rules-controls">
@@ -744,7 +795,104 @@
     </button>
   </div>
 
-  <div class="rules-list" id="rulesList">
+  <!-- =========================================================
+       INFO TAB — league feed + 2026 assignments & alignment.
+       This is the landing tab.
+       ========================================================= -->
+  <div class="tab-panel" id="tab-info" data-tab-panel="info" role="tabpanel" aria-labelledby="tabBtnInfo">
+  <div class="rules-list">
+
+    <!-- =========================================================
+         What's Changed (league feed) — rule changes & announcements,
+         newest first. Shown first so owners see the latest league news.
+         ========================================================= -->
+    <section class="rule-section" data-section="changelog">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-changelog">
+        <h2 class="rule-title">What&rsquo;s Changed</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-changelog">
+        <div id="changeLogContent"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         2026 League Assignments — per-owner tier & division.
+         ========================================================= -->
+    <section class="rule-section" id="assignments" data-section="assignments">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-assignments">
+        <h2 class="rule-title">2026 League Assignments</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-assignments">
+        <!-- DATA INTEGRITY: Verify tier assignments against the Owners Sheet each offseason.
+             Promotions/relegations can leave stale tier labels in one source while another is
+             correct. 2026: Mike Murello, Tony Trozzo, Jacob Nickman were promoted to Upper-Tier;
+             the alignment sheet's "Lower-Tier" label for them is a known anomaly — Upper-Tier is correct. -->
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Owner</th>
+              <th scope="col">Tier</th>
+              <th scope="col">Division</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-label">David Murello</td><td>Upper-Tier</td><td>A</td></tr>
+            <tr><td class="row-label">BJ Funari</td><td>Upper-Tier</td><td>A</td></tr>
+            <tr><td class="row-label">Mike Murello</td><td>Upper-Tier</td><td>A</td></tr>
+            <tr><td class="row-label">Jon Murello / Rick Simmons</td><td>Upper-Tier</td><td>B</td></tr>
+            <tr><td class="row-label">Jacob Nickman</td><td>Upper-Tier</td><td>B</td></tr>
+            <tr><td class="row-label">Braiden Snyder</td><td>Upper-Tier</td><td>B</td></tr>
+            <tr><td class="row-label">Joe Reilly</td><td>Upper-Tier</td><td>C</td></tr>
+            <tr><td class="row-label">Dan Reilly</td><td>Upper-Tier</td><td>C</td></tr>
+            <tr><td class="row-label">Tony Trozzo</td><td>Upper-Tier</td><td>C</td></tr>
+            <tr><td class="row-label">Brian Murello / Ron Murello</td><td>Upper-Tier</td><td>D</td></tr>
+            <tr><td class="row-label">Ed Peters</td><td>Upper-Tier</td><td>D</td></tr>
+            <tr><td class="row-label">Jon Fetrow</td><td>Upper-Tier</td><td>D</td></tr>
+            <tr><td class="row-label">Tony Brooks</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Sam Lavrinc</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Ben Funari</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Charles Lavrinc</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Dominic Nicastro</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Nick Yankovich</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Todd Trozzo</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Bob Keslar</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">Chris Johnson</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         2026 Division Alignment — how Upper-Tier divisions are set.
+         ========================================================= -->
+    <section class="rule-section" id="alignment" data-section="alignment">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-alignment">
+        <h2 class="rule-title">2026 Division Alignment</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-alignment">
+        <h3 class="subhead">How Divisions Are Set</h3>
+        <p>Each offseason, Upper-Tier division alignment is set by credit totals: owners are seeded into the four divisions (A&ndash;D) by their credit rank. Alignment locks on August 1, after which owners may spend credits on a <strong>Division Swap</strong> (see Credit System) during the Aug 1 &rarr; Labor Day window. The Lower-Tier has no divisions.</p>
+
+        <div class="callout">
+          <span class="callout-label">Alignment Formula</span>
+          <p>Credit-rank groupings fill the four divisions on the pattern <strong>1/6/12 &middot; 2/5/11 &middot; 3/4/10 &middot; 7/8/9</strong> (Divisions A&ndash;D). Credit ties are broken by previous-season W/L %, then previous-season total points.</p>
+        </div>
+
+        <p>Full year-by-year division history lives on the <a class="inline-link" href="history.html">History page</a>.</p>
+      </div>
+    </section>
+
+  </div><!-- /.rules-list (info) -->
+  </div><!-- /#tab-info -->
+
+  <!-- =========================================================
+       RULEBOOK TAB — the full ruleset.
+       ========================================================= -->
+  <div class="tab-panel" id="tab-rulebook" data-tab-panel="rulebook" role="tabpanel" aria-labelledby="tabBtnRulebook" hidden>
+  <div class="rules-list">
 
     <!-- =========================================================
          SECTION 1 — General Rules
@@ -765,9 +913,19 @@
           <li>We will fill unexpected Upper-Tier league openings with the highest Credit total from the Lower-Tier league (tiebreaker: the highest ranking team from the previous season).</li>
           <li>The commissioner has final say on any disputes but will consider league votes for fairness.</li>
         </ul>
+      </div>
+    </section>
 
-<!-- HIDDEN UNTIL v1.1 — MAFFL Ghost rule, pending public announcement. Restore by removing these comment markers.
-        <h3 class="subhead">Lower-Tier Odd-Team Rule (MAFFL Ghost)<span class="rule-tag new">NEW<span class="tag-sep">&middot;</span>2026</span></h3>
+    <!-- =========================================================
+         SECTION 1b — MAFFL Ghost (Lower-Tier odd-team rule)
+         ========================================================= -->
+    <section class="rule-section" id="maffl-ghost" data-section="ghost">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-ghost">
+        <h2 class="rule-title">MAFFL Ghost</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-ghost">
+        <h3 class="subhead">Lower-Tier Odd-Team Rule<span class="rule-tag new">NEW<span class="tag-sep">&middot;</span>2026</span></h3>
         <ul>
           <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
           <li>A placeholder team called &ldquo;MAFFL Ghost&rdquo; is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.</li>
@@ -781,8 +939,6 @@
           <span class="callout-label">Example</span>
           <p>Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
         </div>
--->
-
       </div>
     </section>
 
@@ -811,7 +967,8 @@
             <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
             <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>Promotion Showdown</td></tr>
             <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
-            <tr><td>Draft Slot</td><td>Labor Day 9:30 AM</td><td>Labor Day 8:00 AM</td></tr>
+            <tr><td>MAFFL Ghost</td><td>No</td><td>Yes</td></tr>
+            <tr><td>Draft Slot</td><td>Labor Day 8:30 AM EST</td><td>Labor Day 8:00 AM EST</td></tr>
             <tr><td>Promotion</td><td>&mdash;</td><td>Top 3 Up</td></tr>
             <tr><td>Relegation</td><td>Bottom 3 Down</td><td>&mdash;</td></tr>
             <tr><td>Credits</td><td>Earn &amp; Spend</td><td>Earn &amp; Spend</td></tr>
@@ -832,6 +989,7 @@
         <p>Each season, 3 teams move down from the Upper-Tier and 3 teams move up from the Lower-Tier. Final regular-season standings set each team&rsquo;s post-season path; the tables below show the full finish-by-finish matrix.</p>
 
         <h3 class="subhead">Upper-Tier (12 Teams)</h3>
+        <div class="table-scroll">
         <table class="data-table">
           <thead>
             <tr>
@@ -856,8 +1014,10 @@
             <tr><td class="num row-label">12</td><td>Consolation Matchup vs #11 (3 Gm Series)</td><td><span class="move-badge relegated">Relegated</span></td><td>Direct drop to Lower-Tier. Still plays a consolation series vs #11.</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h3 class="subhead">Lower-Tier</h3>
+        <div class="table-scroll">
         <table class="data-table">
           <thead>
             <tr>
@@ -875,6 +1035,7 @@
             <tr><td class="num row-label">5+</td><td>N/A</td><td><span class="move-badge safe">Safe</span></td><td>No promotion opportunity; teams stay in the Lower-Tier.</td></tr>
           </tbody>
         </table>
+        </div>
 
         <div class="callout">
           <span class="callout-label">How the 3rd spots are decided</span>
@@ -896,7 +1057,7 @@
           <li>We will utilize the espn.com platform to facilitate our league auctions.</li>
           <li>Each team is assigned a <strong>$200 budget</strong>. Minimum bid = <strong>$1</strong>. Maximum bid = Team Cap (($200 &minus; Amount spent) &minus; (Remaining roster spots to be filled)).</li>
           <li>See espn.com for more auction draft specific rules.</li>
-          <li><strong>Effective 2025:</strong> The Kicker (K) roster position has been permanently eliminated from the auction draft. All teams carry one fewer roster spot as a result. Roster sizes: 25 picks (2005), 16 picks (2006&ndash;2008), 17 picks (2009&ndash;2024), <strong>22 picks (2025+)</strong>.</li>
+          <li>As of 2025, rosters are 22 picks per the current ESPN roster settings.</li>
         </ul>
 
         <h3 class="subhead">Draft Schedule</h3>
@@ -909,8 +1070,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td class="row-label">Slot 1</td><td>Lower-Tier</td><td>Labor Day, 8:00&ndash;10:00 AM</td></tr>
-            <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 9:30&ndash;11:30 AM</td></tr>
+            <tr><td class="row-label">Slot 1</td><td>Lower-Tier</td><td>Labor Day, 8:00&ndash;10:00 AM EST</td></tr>
+            <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 8:30&ndash;10:30 AM EST</td></tr>
           </tbody>
         </table>
       </div>
@@ -1100,7 +1261,7 @@
     <!-- =========================================================
          SECTION 8 — Credit System
          ========================================================= -->
-    <section class="rule-section" data-section="credits">
+    <section class="rule-section" id="credit-system" data-section="credits">
       <button class="rule-head" aria-expanded="false" aria-controls="body-credits">
         <h2 class="rule-title">Credit System</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
@@ -1118,8 +1279,8 @@
 
         <h3 class="subhead">Rules</h3>
         <ul>
-          <li>The &ldquo;Owner Credit Balance&rdquo; tab will serve as the source of truth when utilizing the Credit Balance for tiebreaking purposes.</li>
-          <li>All Credit transactions will be logged in the &ldquo;Credit Log&rdquo; tab.</li>
+          <li>The <a class="inline-link" href="credits.html">Credits page</a> serves as the source of truth when utilizing the Credit Balance for tiebreaking purposes.</li>
+          <li>All Credit transactions are logged on the <a class="inline-link" href="credits.html">Credits page</a>.</li>
           <li>All credits will be awarded at the end of the season.</li>
           <li>Each season&rsquo;s total (Outcome Credits + Bonus Credits) is added to a running cumulative credits total.</li>
         </ul>
@@ -1129,11 +1290,12 @@
           <li>Credit Balance serves as the tiebreaker for all division, playoff and end-of-season seeding.</li>
           <li>Determines annual division alignment for the Upper-Tier League (1/6/12; 2/5/11; 3/4/10; 7/8/9). Tiebreakers determined by previous season W/L%, then total points.</li>
           <li>Determines Upper-Tier placement if unexpected openings occur.</li>
-          <li>Credits are earned and can be spent (see Credit Overview tab).</li>
+          <li>Credits are earned and can be spent (see options below).</li>
           <li>Credits can be traded directly or packaged with players. (These trades adhere to the normal trade policy and deadlines.)</li>
         </ul>
 
         <h3 class="subhead">Earning Credits &mdash; Outcome</h3>
+        <div class="table-scroll">
         <table class="data-table">
           <thead>
             <tr>
@@ -1161,8 +1323,10 @@
             <tr><td class="row-label">Lower-Tier</td><td>Safe (Lower-Tier)</td><td>Finishing positions 5+</td><td class="num">+5</td><td>Remains in the Lower-Tier.</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h3 class="subhead">Earning Credits &mdash; Bonus</h3>
+        <div class="table-scroll">
         <table class="data-table">
           <thead>
             <tr>
@@ -1181,8 +1345,10 @@
             <tr><td class="row-label">Each</td><td>Survivor Bonus</td><td>Avoiding the lowest weekly score all season</td><td class="num">+5</td><td>Awarded once &mdash; Survivor style with weekly elimination.</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h3 class="subhead">Spending Credits</h3>
+        <div class="table-scroll">
         <table class="data-table">
           <thead>
             <tr>
@@ -1201,70 +1367,14 @@
             <tr><td class="row-label">Each</td><td>Relegation Insurance</td><td>Guarantee your safety from relegation for the current season regardless of your final standing.</td><td class="num">&minus;25</td><td>Must be declared before Regular Season Week 4 (1st game of the week kickoff). Ensures tiebreaker elevation to Seed #7 if owner is unable to make Playoffs.</td></tr>
           </tbody>
         </table>
+        </div>
 
         <p>To submit a credit request, use the official <a class="inline-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Credit Submission Form</a>. All transactions require commissioner approval.</p>
       </div>
     </section>
 
-    <!-- =========================================================
-         SECTION 9 — 2026 League Assignments
-         ========================================================= -->
-    <section class="rule-section" data-section="assignments">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-assignments">
-        <h2 class="rule-title">2026 League Assignments</h2>
-        <span class="rule-chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="rule-body" id="body-assignments">
-
-        <div class="owner-block">
-          <h3 class="owner-block-title">Upper-Tier 2026 (12 owners)</h3>
-          <ul class="owner-list">
-            <li>BJ Funari</li>
-            <li>Braiden Snyder</li>
-            <li>Brian Murello / Ron Murello</li>
-            <li>Dan Reilly</li>
-            <li>David Murello</li>
-            <li>Ed Peters</li>
-            <li>Jacob Nickman</li>
-            <li>Joe Reilly</li>
-            <li>Jon Fetrow</li>
-            <li>Jon Murello / Rick Simmons</li>
-            <li>Mike Murello</li>
-            <li>Tony Trozzo</li>
-          </ul>
-        </div>
-
-        <div class="owner-block">
-          <h3 class="owner-block-title">Lower-Tier 2026 (9 owners)</h3>
-          <ul class="owner-list">
-            <li>Ben Funari</li>
-            <li>Bob Keslar</li>
-            <li>Charles Lavrinc</li>
-            <li>Chris Johnson</li>
-            <li>Dominic Nicastro</li>
-            <li>Nick Yankovich</li>
-            <li>Sam Lavrinc</li>
-            <li>Todd Trozzo</li>
-            <li>Tony Brooks</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
-         SECTION 10 — What's Changed (change log)
-         ========================================================= -->
-    <section class="rule-section" data-section="changelog">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-changelog">
-        <h2 class="rule-title">What&rsquo;s Changed</h2>
-        <span class="rule-chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="rule-body" id="body-changelog">
-        <div id="changeLogContent"></div>
-      </div>
-    </section>
-
-  </div>
+  </div><!-- /.rules-list (rulebook) -->
+  </div><!-- /#tab-rulebook -->
 </main>
 
 <footer class="site-footer">
@@ -1284,13 +1394,24 @@
  *      the canonical master record — always update it before the HTML
  *      so the source of truth stays in sync.
  *   2. Sync the change into the relevant <section data-section="..."> in
- *      this HTML file. Each of the 9 accordion sections maps cleanly to
- *      a block of rows in the CSV.
+ *      this HTML file. Each accordion section maps cleanly to a block of
+ *      rows in the CSV.
  *   3. Commit and push to GitHub. The repo is the GitHub Pages source,
  *      so the change is live as soon as the push lands.
- *   4. To update the 2026 league assignments mid-cycle, edit both the
- *      owner CSV (./data/MAFFL_Owners_Sheet_revised.csv, "2026 League"
- *      column) AND the two <ul class="owner-list"> blocks in this file.
+ *   4. To update the league assignments mid-cycle, edit both the owner
+ *      CSV (./data/MAFFL_Owners_Sheet_revised.csv, "2026 League" column)
+ *      AND the Owner | Tier | Division table in the "2026 League
+ *      Assignments" section (data-section="assignments") of this file.
+ *      DATA-INTEGRITY: reconcile tiers against the Owners Sheet each
+ *      offseason — promotions/relegations can leave a stale "Lower-Tier"
+ *      label on a promoted owner in one source while another is correct.
+ *
+ * PAGE LAYOUT: this page has two top-level tabs (.portal-tab) wrapping the
+ * accordion sections — an "Info" tab (the What's Changed feed plus the
+ * 2026 League Assignments and 2026 Division Alignment sections) and a
+ * "Rulebook" tab (the full ruleset). Info is the landing tab. Each tab's
+ * sections live in a .tab-panel > .rules-list; add new sections inside the
+ * appropriate panel.
  *
  * The accordion behavior below allows MULTIPLE sections to be open at
  * once — this is intentional (unlike the Weekly Pulse grid). Owners
@@ -1319,34 +1440,37 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
-const RULEBOOK_VERSION      = "v1.0";
-const RULEBOOK_EFFECTIVE    = "Offseason 2026";
-const RULEBOOK_LAST_UPDATED = "Offseason 2026";
+const RULEBOOK_VERSION      = "v1.1";
+const RULEBOOK_LAST_UPDATED = "Aug 1, 2026";
 
 /* ---------------------------------------------------------------------
- * Add a new entry to the top of CHANGE_LOG whenever a rule changes.
- * Bump RULEBOOK_VERSION and update RULEBOOK_LAST_UPDATED accordingly.
+ * CHANGE_LOG powers the "What's Changed" feed on the Info tab — the
+ * league's running headline log of rule changes AND announcements
+ * (alignment locks, votes, clarifications). It grows over time, newest
+ * first, and is the closest thing to global version control for the
+ * league. Add a new entry to the top whenever something noteworthy
+ * happens; bump RULEBOOK_VERSION / RULEBOOK_LAST_UPDATED for rule changes.
  * Newest dates first. Each entry: { type, rule, description }.
- * Valid type values: "NEW", "AMENDED", "DEPRECATED".
+ * Valid type values: "NEW", "AMENDED", "DEPRECATED", "ANNOUNCEMENT".
  * ------------------------------------------------------------------- */
 const CHANGE_LOG = [
   {
-    date: "Offseason 2026",
+    date: "Aug 1, 2026",
     changes: [
       {
-        type: "NEW",
-        rule: "Promotion & Relegation Matrix",
-        description: "Added the full finish-by-finish promotion and relegation matrix for both tiers, including the Relegation Showdown (Upper-Tier #9 vs #10) and Promotion Showdown (Lower-Tier #3 vs #4) — each a 3-game series across NFL Wks 15–17."
-      },
-      {
-        type: "NEW",
-        rule: "Credit Earning & Spending Tables",
-        description: "Published the full credit earn (outcome and bonus) and spend menus directly in the rulebook's Credit System section."
+        type: "ANNOUNCEMENT",
+        rule: "2026 Division Alignment Set",
+        description: "2026 Upper-Tier divisional alignment is locked for the season. See the 2026 Division Alignment section for the formula."
       },
       {
         type: "NEW",
         rule: "Initial online edition",
         description: "First public release of the MAFFL rulebook as a live web page."
+      },
+      {
+        type: "NEW",
+        rule: "MAFFL Ghost rule",
+        description: "Introduces the Lower-Tier odd-team rule (\"MAFFL Ghost\"), a scoring-average placeholder team used to keep the schedule even when the Lower-Tier has an odd number of teams."
       }
     ]
   }
@@ -1369,10 +1493,8 @@ function renderTag(type, year) {
 /* --------- RENDER: VERSION CHIPS --------- */
 (function renderVersionChips() {
   const v  = document.getElementById("versionChipVersion");
-  const ef = document.getElementById("versionChipEffective");
   const lu = document.getElementById("versionChipUpdated");
   if (v)  v.textContent  = RULEBOOK_VERSION;
-  if (ef) ef.textContent = "Effective " + RULEBOOK_EFFECTIVE;
   if (lu) lu.textContent = "Last Updated " + RULEBOOK_LAST_UPDATED;
 })();
 
@@ -1413,14 +1535,47 @@ function renderTag(type, year) {
   });
 })();
 
+/* Page tabs (Info / Rulebook). Mirrors the .portal-tab pattern in
+   credits.html. Switching tabs shows/hides the matching .tab-panel and
+   refreshes the Expand/Collapse All button for the now-visible sections.
+   activateRulesTab is exposed so deep-link handling can switch tabs. */
+(function wireTabs() {
+  const tabs = Array.from(document.querySelectorAll(".portal-tab"));
+  if (!tabs.length) return;
+  window.activateRulesTab = function (name) {
+    tabs.forEach(function (t) {
+      const selected = t.getAttribute("data-tab") === name;
+      t.classList.toggle("active", selected);
+      t.setAttribute("aria-selected", selected ? "true" : "false");
+      const panel = document.getElementById(t.getAttribute("aria-controls"));
+      if (panel) panel.hidden = !selected;
+    });
+    if (window.updateRulesExpandBtn) window.updateRulesExpandBtn();
+  };
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      window.activateRulesTab(tab.getAttribute("data-tab"));
+    });
+  });
+})();
+
 (function wireAccordions() {
   const sections = document.querySelectorAll(".rule-section");
   const expandBtn = document.getElementById("expandAllBtn");
   const expandSymbol = document.getElementById("expandAllSymbol");
   const expandLabel = document.getElementById("expandAllLabel");
 
+  /* Only sections inside the currently visible tab panel count toward the
+     Expand/Collapse All control, so it acts on what the owner can see. */
+  function activeSections() {
+    return Array.from(sections).filter(function (s) {
+      const panel = s.closest(".portal-panel");
+      return !panel || !panel.hidden;
+    });
+  }
+
   function anyOpen() {
-    return Array.from(sections).some(function (s) {
+    return activeSections().some(function (s) {
       return s.classList.contains("open");
     });
   }
@@ -1445,7 +1600,7 @@ function renderTag(type, year) {
 
   expandBtn.addEventListener("click", function () {
     const shouldCollapse = anyOpen();
-    sections.forEach(function (section) {
+    activeSections().forEach(function (section) {
       const head = section.querySelector(".rule-head");
       if (shouldCollapse) {
         section.classList.remove("open");
@@ -1457,6 +1612,33 @@ function renderTag(type, year) {
     });
     updateExpandBtn();
   });
+
+  /* Let the tab wiring refresh this control when the visible panel changes. */
+  window.updateRulesExpandBtn = updateExpandBtn;
+
+  /* Deep-link support: when the page is reached with a #hash that matches a
+     rule-section id (e.g. credits.html → rules.html#credit-system), switch to
+     the tab that holds it, open that section, and scroll it into view below
+     the sticky header. */
+  function openSectionFromHash() {
+    const id = window.location.hash.slice(1);
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target || !target.classList.contains("rule-section")) return;
+    const panel = target.closest(".portal-panel");
+    if (panel && panel.hidden && window.activateRulesTab) {
+      window.activateRulesTab(panel.getAttribute("data-tab-panel"));
+    }
+    const head = target.querySelector(".rule-head");
+    target.classList.add("open");
+    if (head) head.setAttribute("aria-expanded", "true");
+    updateExpandBtn();
+    const reduce = window.matchMedia
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }
+  window.addEventListener("hashchange", openSectionFromHash);
+  openSectionFromHash();
 
   updateExpandBtn();
 })();
