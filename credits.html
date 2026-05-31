@@ -249,16 +249,18 @@
   .dues-table th,
   .dues-table td {
     text-align: left;
-    padding: 6px 8px;
+    padding: 8px 8px;
     border-bottom: 1px solid var(--border);
+    vertical-align: middle;
   }
   .dues-table th {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    white-space: nowrap;
   }
   .dues-table th:last-child,
   .dues-table td:last-child {
@@ -349,12 +351,14 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  .portal-meta {
+  /* Lead cluster: heading + date tag grouped on one side. .portal-head's
+     space-between then pushes the Credit Ruleset button to the opposite end. */
+  .portal-head__lead {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-left: auto;
+    min-width: 0;
   }
 
   /* Solid date stamp — bump the date each time the balances are revised. */
@@ -377,11 +381,62 @@
   }
   .update-tag__label { color: var(--gold); }
 
+  /* Version + last-update chips — mirrors rules.html's .version-chips. */
+  .version-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .version-chip {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .version-chip.primary { color: var(--navy); border-color: var(--navy); }
+  .version-chip.muted   { color: var(--muted); border-color: var(--muted); }
+  .version-divider {
+    display: inline-block;
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    flex: 0 0 auto;
+  }
+
+  /* Group the two header buttons together so space-between pushes the pair right. */
+  .portal-head__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
   /* Smaller variant of the navy/gold rules button — sits inline in the portal header. */
   .rules-link--sm {
     margin-bottom: 0;
     padding: 9px 16px;
     font-size: 13px;
+  }
+
+  /* Credit Request — gold fill / navy text so it reads as a distinct action from
+     the navy Credit Ruleset button beside it. */
+  .rules-link--request {
+    background: var(--gold);
+    color: var(--navy);
+    border-left-color: var(--navy);
+  }
+  .rules-link--request:hover {
+    background: var(--gold-dark);
+    color: var(--navy);
   }
 
   /* ---------- Tabs ---------- */
@@ -433,18 +488,10 @@
   }
   .registry-summary strong { color: var(--navy); font-weight: 700; }
 
-  .registry-filter {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 4px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-  }
-  .registry-filter select {
+  /* Live search box — filters rows against owner / team / type / notes. */
+  .registry-search { flex: 1 1 260px; max-width: 360px; }
+  .registry-search input {
+    width: 100%;
     font-family: var(--body);
     font-size: 14px;
     font-weight: 500;
@@ -452,16 +499,90 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 8px 12px;
-    min-width: 210px;
-    text-transform: none;
-    letter-spacing: 0;
-    cursor: pointer;
+    padding: 9px 14px;
   }
-  .registry-filter select:focus-visible {
+  .registry-search input::placeholder { color: var(--muted-soft); }
+  .registry-search input:focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;
   }
+
+  /* Collapsible multi-select pill facets (owner / credit type / category).
+     Each <details> facet is collapsed by default and toggles independently. */
+  .registry-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .registry-facet {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .registry-facet > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .registry-facet > summary::-webkit-details-marker { display: none; }
+  .registry-facet > summary:hover { color: var(--navy); }
+  .registry-facet > summary:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  .registry-facet > summary::after {
+    content: "\203A";                 /* › chevron, rotates when open */
+    margin-left: auto;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  .registry-facet[open] > summary::after { transform: rotate(90deg); }
+  .registry-facet[open] > summary { border-bottom: 1px solid var(--border); }
+  /* Active-count hint so selections stay visible while a facet is collapsed. */
+  .facet-count {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--gold-dark);
+  }
+  .facet-count:empty { display: none; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; }
+  .pill {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    min-height: 40px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .pill:hover { border-color: var(--gold); }
+  .pill[aria-pressed="true"] {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
   .registry-table-wrap { overflow-x: auto; }
   .registry-table {
@@ -474,14 +595,14 @@
   .registry-table th,
   .registry-table td {
     text-align: left;
-    padding: 10px;
+    padding: 8px;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
   }
   .registry-table th {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -578,7 +699,7 @@
 
     /* Portal header reflows; keep the inline rules button compact, not full-width. */
     .portal-head h2 { font-size: 20px; }
-    .portal-meta { margin-left: 0; width: 100%; }
+    .portal-head__lead { width: 100%; }
     .rules-link--sm {
       display: inline-flex;
       width: auto;
@@ -587,8 +708,7 @@
     }
     .portal-tab { font-size: 14px; padding: 10px 12px; }
 
-    .registry-filter select { min-width: 0; width: 100%; }
-    .registry-filter { width: 100%; }
+    .registry-search { flex-basis: 100%; max-width: none; width: 100%; }
     .registry-table { font-size: 13px; }
     .registry-table th, .registry-table td { padding: 8px; }
     .registry-notes { min-width: 180px; }
@@ -599,7 +719,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rules-link, .dues-venmo, .site-nav a, .dues-table td a { transition: none; }
+    .rules-link, .dues-venmo, .site-nav a, .dues-table td a, .pill,
+    .registry-facet > summary::after { transition: none; }
     .rules-link:hover, .dues-venmo:hover { transform: none; }
   }
 </style>
@@ -636,18 +757,29 @@
 
   <section class="dues-section" aria-labelledby="creditPortalHeading">
     <!-- ============================================================
-         LAST UPDATE STAMP — BUMP THE DATE IN .update-tag BELOW WHENEVER YOU
-         REVISE THE BALANCES. These numbers are hand-copied from the league
-         Google Sheet; they are NOT live.
+         VERSION + LAST UPDATE STAMP — BUMP THE DATE (and the version, if the
+         page format changes) IN THE .version-chips BELOW WHENEVER YOU REVISE
+         THE BALANCES. These numbers are hand-copied from the league Google
+         Sheet; they are NOT live.
          ============================================================ -->
     <div class="portal-head">
-      <h2 id="creditPortalHeading">Credit Portal</h2>
-      <div class="portal-meta">
-        <span class="update-tag"><span class="update-tag__label">Last Update</span> 06/01/2026</span>
-        <!-- Rules deep-link: jumps to the Credit System section of the rulebook and
-             auto-expands it on arrival (rules.html reads this #hash and opens the
-             matching accordion section). -->
-        <a class="rules-link rules-link--sm" href="rules.html#credit-system">See full Credit ruleset &rarr;</a>
+      <div class="portal-head__lead">
+        <h2 id="creditPortalHeading">Credit Portal</h2>
+        <!-- Version + last-update chips, in rules.html's .version-chips format. -->
+        <div class="version-chips" aria-label="Credit portal version metadata">
+          <span class="version-chip primary">v1.0</span>
+          <span class="version-divider" aria-hidden="true"></span>
+          <span class="version-chip muted">Last Update 06/01/2026</span>
+        </div>
+      </div>
+      <!-- Two deep-link buttons grouped to the opposite end of the row from the
+           heading cluster via .portal-head's space-between. Credit Request (gold)
+           opens the league Google Form; Credit Ruleset (navy) jumps to the Credit
+           System section of the rulebook and auto-expands it (rules.html reads the
+           #hash). The Request link mirrors the one on index.html. -->
+      <div class="portal-head__actions">
+        <a class="rules-link rules-link--sm rules-link--request" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Credit Request &rarr;</a>
+        <a class="rules-link rules-link--sm" href="rules.html#credit-system">Credit Ruleset &rarr;</a>
       </div>
     </div>
 
@@ -738,10 +870,28 @@
     <div class="portal-panel" id="panel-registry" role="tabpanel" aria-labelledby="tab-registry" hidden>
       <div class="registry-toolbar">
         <p class="registry-summary" id="registrySummary"></p>
-        <label class="registry-filter">
-          <span>Filter by owner</span>
-          <select id="registryOwner"></select>
-        </label>
+        <div class="registry-search">
+          <input type="search" id="registrySearch" placeholder="Search owner, team, type, notes…" aria-label="Search the credit registry">
+        </div>
+      </div>
+      <!-- Multi-select pill facets. Owner + Credit Type are derived from
+           REGISTRY_DATA; Credit Category is a fixed Earn/Spend/Trade set
+           ("Trade" is future-ready even with no matching rows yet). Within a
+           facet, active pills OR together; across facets they AND; the search
+           box ANDs on top. All wired in wireRegistry() below. -->
+      <div class="registry-filters">
+        <details class="registry-facet">
+          <summary id="facet-owner">Owner <span class="facet-count" data-facet="owner"></span></summary>
+          <div class="pill-row" id="ownerPills" role="group" aria-labelledby="facet-owner"></div>
+        </details>
+        <details class="registry-facet">
+          <summary id="facet-type">Credit Type <span class="facet-count" data-facet="type"></span></summary>
+          <div class="pill-row" id="typePills" role="group" aria-labelledby="facet-type"></div>
+        </details>
+        <details class="registry-facet">
+          <summary id="facet-category">Credit Category <span class="facet-count" data-facet="category"></span></summary>
+          <div class="pill-row" id="categoryPills" role="group" aria-labelledby="facet-category"></div>
+        </details>
       </div>
       <div class="registry-table-wrap">
         <table class="registry-table">
@@ -855,9 +1005,12 @@
 
   (function wireRegistry() {
     const body = document.getElementById("registryBody");
-    const select = document.getElementById("registryOwner");
     const summary = document.getElementById("registrySummary");
-    if (!body || !select || !summary) return;
+    const search = document.getElementById("registrySearch");
+    const ownerPills = document.getElementById("ownerPills");
+    const typePills = document.getElementById("typePills");
+    const categoryPills = document.getElementById("categoryPills");
+    if (!body || !summary || !search || !ownerPills || !typePills || !categoryPills) return;
 
     function esc(s) {
       return String(s).replace(/[&<>"]/g, function (c) {
@@ -865,22 +1018,71 @@
       });
     }
 
-    // Populate the owner filter (unique, alphabetical).
+    // Active selections per facet. OR within a facet; AND across facets.
+    const active = { owner: new Set(), type: new Set(), category: new Set() };
+
+    // Reflect each facet's active count in its (possibly collapsed) summary.
+    function updateCounts() {
+      Array.from(document.querySelectorAll(".facet-count")).forEach(function (el) {
+        const n = active[el.getAttribute("data-facet")].size;
+        el.textContent = n ? "· " + n : "";
+      });
+    }
+
+    // Render a pill group into `container`, toggling membership of active[key].
+    function buildPills(container, key, values) {
+      container.innerHTML = values.map(function (v) {
+        return '<button type="button" class="pill" aria-pressed="false" data-value="' +
+          esc(v) + '">' + esc(v) + "</button>";
+      }).join("");
+      container.addEventListener("click", function (e) {
+        const btn = e.target.closest(".pill");
+        if (!btn) return;
+        const val = btn.getAttribute("data-value");
+        if (active[key].has(val)) {
+          active[key].delete(val);
+          btn.setAttribute("aria-pressed", "false");
+        } else {
+          active[key].add(val);
+          btn.setAttribute("aria-pressed", "true");
+        }
+        render();
+      });
+    }
+
+    // Owner + Credit Type derive from the data (unique, alphabetical);
+    // Credit Category is a fixed set so "Trade" shows even with no rows yet.
     const owners = Array.from(new Set(REGISTRY_DATA.map(function (r) { return r.owner; })))
       .sort(function (a, b) { return a.localeCompare(b); });
-    select.innerHTML = '<option value="">All owners</option>' +
-      owners.map(function (o) { return '<option value="' + esc(o) + '">' + esc(o) + "</option>"; }).join("");
+    const types = Array.from(new Set(REGISTRY_DATA.map(function (r) { return r.creditType; })))
+      .sort(function (a, b) { return a.localeCompare(b); });
+    const categories = ["Earn", "Spend", "Trade"];
+
+    buildPills(ownerPills, "owner", owners);
+    buildPills(typePills, "type", types);
+    buildPills(categoryPills, "category", categories);
+
+    function matches(r) {
+      if (active.owner.size && !active.owner.has(r.owner)) return false;
+      if (active.type.size && !active.type.has(r.creditType)) return false;
+      if (active.category.size && !active.category.has(r.creditCategory)) return false;
+      const q = search.value.trim().toLowerCase();
+      if (q) {
+        const hay = (r.owner + " " + r.team + " " + r.creditType + " " + r.notes).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    }
 
     function render() {
-      const filter = select.value;
       const rows = REGISTRY_DATA
-        .filter(function (r) { return !filter || r.owner === filter; })
+        .filter(matches)
         .slice()
         // Group by owner, biggest credits first within each owner.
         .sort(function (a, b) { return a.owner.localeCompare(b.owner) || b.amount - a.amount; });
 
       if (!rows.length) {
-        body.innerHTML = '<tr class="registry-empty"><td colspan="4">No credits on record.</td></tr>';
+        body.innerHTML = '<tr class="registry-empty"><td colspan="4">No credits match these filters.</td></tr>';
       } else {
         body.innerHTML = rows.map(function (r) {
           const spend = r.creditCategory === "Spend";
@@ -905,9 +1107,11 @@
         : "—";
       summary.innerHTML = "<strong>" + rows.length + "</strong> entr" + (rows.length === 1 ? "y" : "ies") +
         " · <strong>" + total + "</strong> total credits · " + esc(seasonTxt);
+
+      updateCounts();
     }
 
-    select.addEventListener("change", render);
+    search.addEventListener("input", render);
     render();
   })();
 </script>
