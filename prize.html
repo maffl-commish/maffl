@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Prize History — MAFFL HQ</title>
+<title>Prizes &amp; Dues — MAFFL HQ</title>
 <meta name="description" content="MAFFL HQ Prize History — every prize tracked across the years (2013–2025) and all-time career earnings by owner.">
 
 <!-- Favicon + Apple Touch Icon (home-screen icon on iOS / iPadOS) -->
@@ -154,6 +154,20 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
+  .pill-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--navy-soft);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
 
   /* ---------- Cards ---------- */
   .card {
@@ -214,6 +228,11 @@
 
   .lens-panel[hidden] { display: none; }
   .lens-intro { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+
+  /* secondary (sub) tab row under "Prizes" */
+  .lens-subtabs { margin-top: 2px; }
+  .lens-subtab { font-size: 13px; }
+  #group-prizes[hidden] { display: none; }
 
   /* ---------- Category filter pills (Lens 1) ---------- */
   .filter-label {
@@ -520,9 +539,9 @@
     font-size: 14px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--navy);
-    background: var(--gold);
-    border: 1px solid var(--gold-dark);
+    color: #fff;
+    background: var(--win);
+    border: 1px solid #178a64;
     border-radius: 999px;
     padding: 10px 18px;
     min-height: 44px;
@@ -531,7 +550,7 @@
     box-shadow: 0 2px 6px var(--navy-shadow);
     transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
   }
-  .pay-btn:hover { background: var(--gold-dark); color: #fff; transform: translateY(-1px); }
+  .pay-btn:hover { background: #178a64; color: #fff; transform: translateY(-1px); }
   .pay-btn:active { transform: translateY(0); }
   .pay-btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 
@@ -607,7 +626,7 @@
       <a href="draft.html">Auction Draft</a>
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
-      <a href="prize.html" class="current" aria-current="page">Prize History</a>
+      <a href="prize.html" class="current" aria-current="page">Prizes &amp; Dues</a>
       <a href="prizes.html">Prizes &amp; Dues</a>
     </nav>
   </div>
@@ -617,22 +636,55 @@
 
   <!-- ---------- Page intro ---------- -->
   <div class="page-intro">
-    <h1 class="page-title">Prize History</h1>
+    <h1 class="page-title">Prizes &amp; Dues</h1>
     <div class="intro-tags">
       <span class="pill-caveat">&#128202; Prize data begins 2013</span>
+      <span class="pill-stamp">V.1</span>
+      <span class="pill-stamp">Last updated: May 31, 2026</span>
     </div>
   </div>
 
   <!-- ---------- Lens card ---------- -->
-  <section class="card" aria-label="Prize history views">
-    <div class="lens-tabs" role="tablist" aria-label="Prize history lens">
-      <button class="lens-tab" id="tab-dues" role="tab" aria-selected="true" aria-controls="panel-dues">Dues</button>
-      <button class="lens-tab" id="tab-career" role="tab" aria-selected="false" aria-controls="panel-career">Career Earnings</button>
-      <button class="lens-tab" id="tab-time" role="tab" aria-selected="false" aria-controls="panel-time">Prize Across Time</button>
+  <section class="card" aria-label="Prizes and dues views">
+    <div class="lens-tabs" role="tablist" aria-label="Prizes or dues">
+      <button class="lens-tab" id="tab-prizes" role="tab" aria-selected="true" aria-controls="group-prizes">Prizes</button>
+      <button class="lens-tab" id="tab-dues" role="tab" aria-selected="false" aria-controls="panel-dues">Dues</button>
     </div>
 
-    <!-- ===== Dues: 2026 roster status (default) ===== -->
-    <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues">
+    <!-- ===== Prizes: two sub-views (Career Earnings / Prize History) ===== -->
+    <div id="group-prizes">
+      <div class="lens-tabs lens-subtabs" role="tablist" aria-label="Prizes view">
+        <button class="lens-tab lens-subtab" id="tab-career" role="tab" aria-selected="true" aria-controls="panel-career">Career Earnings</button>
+        <button class="lens-tab lens-subtab" id="tab-time" role="tab" aria-selected="false" aria-controls="panel-time">Prize History</button>
+      </div>
+
+    <!-- ===== Prize History: prize category across time ===== -->
+    <div class="lens-panel" id="panel-time" role="tabpanel" aria-labelledby="tab-time" hidden>
+      <p class="filter-label">Prize Category</p>
+      <div class="pill-row" id="catPills" role="group" aria-label="Prize category"></div>
+
+      <div class="subfilter-wrap" id="placeWrap" hidden>
+        <p class="filter-label">Place</p>
+        <div class="pill-row" id="placePills" role="group" aria-label="Placement finish"></div>
+      </div>
+
+      <div class="cat-summary" id="catSummary"></div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+
+    <!-- ===== Career Earnings: owner leaderboard ===== -->
+    <div class="lens-panel" id="panel-career" role="tabpanel" aria-labelledby="tab-career">
+      <div class="gt-band">
+        <div class="gt-label">League Prizes Paid, all time*</div>
+        <div class="gt-value" id="gtValue">$0</div>
+        <p class="gt-caveat" id="gtCaveat">*2013&ndash;2025 Seasons Only.</p>
+      </div>
+      <div class="lb" id="leaderboard"></div>
+    </div>
+    </div><!-- /#group-prizes -->
+
+    <!-- ===== Dues: 2026 roster status ===== -->
+    <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues" hidden>
       <div class="card-head">
         <div>
           <h2>2026 Dues Status</h2>
@@ -653,33 +705,6 @@
         </thead>
         <tbody id="duesBody"></tbody>
       </table>
-    </div>
-
-    <!-- ===== Lens 1: Prize Category Across Time ===== -->
-    <div class="lens-panel" id="panel-time" role="tabpanel" aria-labelledby="tab-time" hidden>
-      <p class="lens-intro">Pick a prize and watch it march from 2013 &rarr; 2025 &mdash; dollar amounts and win counts, year by year.</p>
-
-      <p class="filter-label">Prize Category</p>
-      <div class="pill-row" id="catPills" role="group" aria-label="Prize category"></div>
-
-      <div class="subfilter-wrap" id="placeWrap" hidden>
-        <p class="filter-label">Place</p>
-        <div class="pill-row" id="placePills" role="group" aria-label="Placement finish"></div>
-      </div>
-
-      <div class="cat-summary" id="catSummary"></div>
-      <div class="timeline" id="timeline"></div>
-    </div>
-
-    <!-- ===== Lens 2: Owner Career Earnings ===== -->
-    <div class="lens-panel" id="panel-career" role="tabpanel" aria-labelledby="tab-career" hidden>
-      <div class="gt-band">
-        <div class="gt-label">League Prizes Paid, All-Time</div>
-        <div class="gt-value" id="gtValue">$0</div>
-        <p class="gt-caveat" id="gtCaveat">Across the 2013&ndash;2025 seasons. Prize records before 2013 do not exist, so earlier winnings are not counted.</p>
-      </div>
-      <p class="lens-intro">Every owner's total winnings, biggest first. Tap a name for the category-by-category breakdown.</p>
-      <div class="lb" id="leaderboard"></div>
     </div>
   </section>
 
@@ -1044,7 +1069,12 @@ const MAFFL = {
 };
 
 /* ===================== helpers ===================== */
-const EVENTS = MAFFL.prize_events;
+/* Normalize the 2025 Lower-Tier "Promotion Showdown" payout into a 3rd-place
+   Placement so it lives in the single 3rd-place bucket (no standalone filter).
+   We derive a fresh array — the embedded MAFFL data object is left untouched. */
+const EVENTS = MAFFL.prize_events.map(e =>
+  e.prize_type === "Promotion Showdown" ? {...e, prize_type:"Placement", place:3} : e
+);
 const YEARS = (function () {
   const ys = EVENTS.map(e => e.year);
   const lo = Math.min(...ys), hi = Math.max(...ys);
@@ -1062,24 +1092,25 @@ const CATEGORIES = [
   {key:"Placement", label:"Placement", hasPlace:true, unit:"finishes"},
   {key:"Weekly High Score", label:"Weekly High Score", hasPlace:false, unit:"wins"},
   {key:"Division", label:"Division", hasPlace:false, unit:"titles"},
-  {key:"Coach", label:"Coach (COTW)", hasPlace:false, unit:"wins"},
-  {key:"Promotion Showdown", label:"3rd Place (Lower)", hasPlace:false, unit:"payouts"}
+  {key:"Coach", label:"COTW", hasPlace:false, unit:"wins"}
 ];
 
 /* ===================== Lens 1: state + render ===================== */
-let curCat = "Placement";
-let curPlace = "all"; // 'all' | '1' | '2' | '3'
+/* Multi-select: any number of categories active at once. Placement carries a
+   secondary multi-select on finishing place. */
+const selCats = new Set(["Placement"]);
+const selPlaces = new Set(["1","2","3"]); // applies only to Placement events
 
 function buildCatPills() {
   const wrap = document.getElementById("catPills");
   wrap.innerHTML = CATEGORIES.map(c =>
-    `<button class="pill" type="button" data-cat="${esc(c.key)}" aria-pressed="${c.key===curCat}">${esc(c.label)}</button>`
+    `<button class="pill" type="button" data-cat="${esc(c.key)}" aria-pressed="${selCats.has(c.key)}">${esc(c.label)}</button>`
   ).join("");
   wrap.querySelectorAll(".pill").forEach(btn => {
     btn.addEventListener("click", () => {
-      curCat = btn.dataset.cat;
-      curPlace = "all";
-      buildCatPills();
+      const k = btn.dataset.cat;
+      if (selCats.has(k)) selCats.delete(k); else selCats.add(k);
+      btn.setAttribute("aria-pressed", String(selCats.has(k)));
       renderLens1();
     });
   });
@@ -1087,75 +1118,54 @@ function buildCatPills() {
 
 function buildPlacePills() {
   const wrap = document.getElementById("placeWrap");
-  const cat = CATEGORIES.find(c => c.key === curCat);
-  if (!cat || !cat.hasPlace) { wrap.hidden = true; return; }
+  if (!selCats.has("Placement")) { wrap.hidden = true; return; }
   wrap.hidden = false;
-  const opts = [["all","All places"],["1","🥇 1st"],["2","🥈 2nd"],["3","🥉 3rd"]];
+  const opts = [["1","🥇 1st"],["2","🥈 2nd"],["3","🥉 3rd"]];
   const pp = document.getElementById("placePills");
   pp.innerHTML = opts.map(([v,l]) =>
-    `<button class="pill pill-sub" type="button" data-place="${v}" aria-pressed="${v===curPlace}">${l}</button>`
+    `<button class="pill pill-sub" type="button" data-place="${v}" aria-pressed="${selPlaces.has(v)}">${l}</button>`
   ).join("");
   pp.querySelectorAll(".pill").forEach(btn => {
     btn.addEventListener("click", () => {
-      curPlace = btn.dataset.place;
-      pp.querySelectorAll(".pill").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.place === curPlace)));
+      const v = btn.dataset.place;
+      if (selPlaces.has(v)) selPlaces.delete(v); else selPlaces.add(v);
+      btn.setAttribute("aria-pressed", String(selPlaces.has(v)));
       renderLens1();
     });
   });
 }
 
 function lens1Events() {
-  let evs = EVENTS.filter(e => e.prize_type === curCat);
-  if (curCat === "Placement" && curPlace !== "all") {
-    evs = evs.filter(e => String(e.place) === curPlace);
-  }
-  return evs;
+  // union of selected categories; Placement events additionally honor the place filter
+  return EVENTS.filter(e => {
+    if (!selCats.has(e.prize_type)) return false;
+    if (e.prize_type === "Placement") return e.place && selPlaces.has(String(e.place));
+    return true;
+  });
 }
 
 function renderSummary(evs) {
   const total = evs.reduce((s,e) => s + e.amount, 0);
-  // total label reflects the active filter (place sub-filter when Placement)
-  let totalLabel = "Total Paid 2013&ndash;2025";
-  if (curCat === "Placement" && curPlace !== "all") {
-    totalLabel = `Total ${curPlace==="1"?"1st":curPlace==="2"?"2nd":"3rd"}-Place Paid`;
-  }
-  // value drift: representative top value per year (first vs last with data)
-  const byYear = {};
-  evs.forEach(e => { byYear[e.year] = Math.max(byYear[e.year] || 0, headlineValue(e)); });
-  const yrs = Object.keys(byYear).map(Number).sort((a,b)=>a-b);
-  let drift = "&mdash;";
-  if (yrs.length) {
-    const f = yrs[0], l = yrs[yrs.length-1];
-    drift = `${usd(byYear[f])} <small>(${f})</small> &rarr; ${usd(byYear[l])} <small>(${l})</small>`;
-  }
-  const driftLabel = (curCat === "Weekly High Score" || curCat === "Coach") ? "Per-Win Value" :
-                     (curCat === "Placement") ? "Top Prize" : "Prize Value";
+  const years = new Set(evs.map(e => e.year));
   document.getElementById("catSummary").innerHTML = `
-    <div class="stat"><div class="stat-label">${totalLabel}</div><div class="stat-value">${usd(total)}</div></div>
-    <div class="stat"><div class="stat-label">${driftLabel} Drift</div><div class="stat-value" style="font-size:16px;">${drift}</div></div>
+    <div class="stat"><div class="stat-label">Total Paid 2013&ndash;2025</div><div class="stat-value">${usd(total)}</div></div>
+    <div class="stat"><div class="stat-label">Payouts</div><div class="stat-value">${evs.length} <small>over ${years.size} yr${years.size===1?"":"s"}</small></div></div>
   `;
-}
-
-function headlineValue(e) {
-  if (curCat === "Weekly High Score" || curCat === "Coach") {
-    return e.count ? Math.round(e.amount / e.count) : e.amount;
-  }
-  return e.amount;
 }
 
 function chipHTML(e) {
   const tier = tierOf(e.era);
   const tierBadge = tier ? ` <span class="tier-badge tier-${tier}">${tier}</span>` : "";
-  const medal = (curCat === "Placement" && e.place) ? `<span class="medal">${MEDAL[e.place] || ""}</span>` : "";
+  const medal = (e.prize_type === "Placement" && e.place) ? `<span class="medal">${MEDAL[e.place] || ""}</span>` : "";
   const cnt = e.count ? `<span class="cnt">&times;${e.count}</span>` : "";
-  const champ = (curCat === "Placement" && e.place === 1) ? " is-champ" : "";
+  const champ = (e.prize_type === "Placement" && e.place === 1) ? " is-champ" : "";
   return `<span class="chip${champ}">${medal}<span class="who">${esc(e.owner)}</span>${tierBadge}<span class="amt">${usd(e.amount)}</span>${cnt}</span>`;
 }
 
 function renderTimeline(evs) {
   const tl = document.getElementById("timeline");
-  // Only render year-rows within the category's active range (first → last year with data),
-  // so categories that only exist in some years don't show empty pre/post rows.
+  // Only render year-rows within the active data range (first → last year with data),
+  // so a selection that only exists in some years doesn't show empty pre/post rows.
   const dataYears = evs.map(e => e.year);
   let years = YEARS;
   if (dataYears.length) {
@@ -1164,12 +1174,12 @@ function renderTimeline(evs) {
   }
   tl.innerHTML = years.map(year => {
     let yev = evs.filter(e => e.year === year);
-    // sort: placement by place asc, else amount desc then count desc
-    if (curCat === "Placement") {
-      yev.sort((a,b) => (a.place||9) - (b.place||9) || b.amount - a.amount);
-    } else {
-      yev.sort((a,b) => b.amount - a.amount || (b.count||0) - (a.count||0) || a.owner.localeCompare(b.owner));
-    }
+    // placements first (by place), then everything else by amount desc
+    yev.sort((a,b) => {
+      const pa = a.prize_type === "Placement" ? (a.place||9) : 99;
+      const pb = b.prize_type === "Placement" ? (b.place||9) : 99;
+      return pa - pb || b.amount - a.amount || (b.count||0) - (a.count||0) || a.owner.localeCompare(b.owner);
+    });
     const is2025 = year === 2025;
     const split = is2025 ? `<span class="tl-split">2-tier</span>` : "";
     const body = yev.length
@@ -1181,6 +1191,12 @@ function renderTimeline(evs) {
 
 function renderLens1() {
   buildPlacePills();
+  if (selCats.size === 0) {
+    document.getElementById("catSummary").innerHTML = "";
+    document.getElementById("timeline").innerHTML =
+      `<p class="tl-empty" style="padding:12px 0;">Select a prize category to see the timeline.</p>`;
+    return;
+  }
   const evs = lens1Events();
   renderSummary(evs);
   renderTimeline(evs);
@@ -1209,43 +1225,47 @@ function buildCareer() {
   return owners;
 }
 
-const CAT_ORDER = ["Placement","Weekly High Score","Division","Coach","Promotion Showdown"];
+const CAT_ORDER = ["Placement","Weekly High Score","Division","Coach"];
 const CAT_DISPLAY = {
   "Placement":"Placement", "Weekly High Score":"Weekly High Score",
-  "Division":"Division", "Coach":"Coach of the Week", "Promotion Showdown":"3rd Place (Lower)"
+  "Division":"Division", "Coach":"Coach of the Week"
 };
 
 function ownerCardHTML(o, rank, maxTotal) {
   // tagline: champs, weekly, cotw
   const weekly = o.cats["Weekly High Score"] ? o.cats["Weekly High Score"].count : 0;
   const cotw = o.cats["Coach"] ? o.cats["Coach"].count : 0;
-  const cotwStar = (o.cats["Coach"] && o.cats["Coach"].hasMissingCount) ? "+" : "";
   const tagParts = [];
   if (o.champs) tagParts.push(`${o.champs} championship${o.champs===1?"":"s"}`);
   if (weekly) tagParts.push(`${weekly} weekly win${weekly===1?"":"s"}`);
-  if (o.cats["Coach"]) tagParts.push(`${cotw}${cotwStar} COTW`);
+  if (o.cats["Coach"]) tagParts.push(`${cotw} COTW`);
   const tagline = tagParts.join(" · ");
+
+  const ORD = {1:"1st", 2:"2nd", 3:"3rd"};
+  const brkRow = (cat, detail, amt) =>
+    `<tr><td><span class="brk-cat">${esc(cat)}</span><br><span class="brk-detail">${detail}</span></td><td class="brk-amt">${usd(amt)}</td></tr>`;
 
   // breakdown rows
   const rows = CAT_ORDER.filter(k => o.cats[k]).map(k => {
     const c = o.cats[k];
-    let detail;
     if (k === "Placement") {
-      const parts = [];
-      [1,2,3].forEach(p => { if (c.places[p]) parts.push(`${MEDAL[p]}×${c.places[p]}`); });
-      detail = parts.join("  ") || "&mdash;";
-    } else if (k === "Division") {
+      // one row per individual finish (best place first, then earliest year)
+      return EVENTS
+        .filter(e => e.owner === o.owner && e.prize_type === "Placement" && e.place)
+        .sort((a,b) => a.place - b.place || a.year - b.year)
+        .map(e => brkRow(CAT_DISPLAY[k], `${MEDAL[e.place]||""} ${ORD[e.place]} place · ${e.year}`, e.amount))
+        .join("");
+    }
+    let detail;
+    if (k === "Division") {
       // Division events carry no count; titles = number of division wins (set in renderLens2)
       detail = `${c.titles} title${c.titles===1?"":"s"}`;
     } else if (k === "Weekly High Score") {
       detail = `${c.count} win${c.count===1?"":"s"}`;
     } else if (k === "Coach") {
-      const plus = c.hasMissingCount ? "+" : "";
-      detail = `${c.count}${plus} win${c.count===1?"":"s"}`;
-    } else if (k === "Promotion Showdown") {
-      detail = `${MEDAL[3]} 3rd place (Lower)`;
+      detail = `${c.count} win${c.count===1?"":"s"}`;
     }
-    return `<tr><td><span class="brk-cat">${esc(CAT_DISPLAY[k])}</span><br><span class="brk-detail">${detail}</span></td><td class="brk-amt">${usd(c.amount)}</td></tr>`;
+    return brkRow(CAT_DISPLAY[k], detail, c.amount);
   }).join("");
 
   const pct = maxTotal ? Math.max(4, Math.round(o.total / maxTotal * 100)) : 0;
@@ -1280,12 +1300,8 @@ function renderLens2() {
     owners.map((o,i) => ownerCardHTML(o, i+1, maxTotal)).join("");
 
   // grand total
-  const computed = EVENTS.reduce((s,e) => s + e.amount, 0);
   document.getElementById("gtValue").textContent = usd(MAFFL.meta.grand_total);
-  const note = (computed !== MAFFL.meta.grand_total)
-    ? ` (events on file sum to ${usd(computed)})` : "";
-  document.getElementById("gtCaveat").innerHTML =
-    `Across the ${MAFFL.meta.data_start}&ndash;${YEARS[YEARS.length-1]} seasons, paid to ${owners.length} owners. Prize records before ${MAFFL.meta.data_start} do not exist, so earlier winnings are not counted.${note}`;
+  document.getElementById("gtCaveat").innerHTML = "*2013&ndash;2025 Seasons Only.";
 }
 
 /* ===================== 2026 Dues ===================== */
@@ -1308,12 +1324,7 @@ function renderDues() {
 }
 
 /* ===================== Tabs ===================== */
-function wireTabs() {
-  const tabs = [
-    {tab: "tab-dues", panel: "panel-dues"},
-    {tab: "tab-career", panel: "panel-career"},
-    {tab: "tab-time", panel: "panel-time"}
-  ];
+function wireTabGroup(tabs) {
   tabs.forEach(({tab, panel}) => {
     document.getElementById(tab).addEventListener("click", () => {
       tabs.forEach(t => {
@@ -1323,6 +1334,19 @@ function wireTabs() {
       });
     });
   });
+}
+
+function wireTabs() {
+  // Top level: Prizes (group) vs Dues
+  wireTabGroup([
+    {tab: "tab-prizes", panel: "group-prizes"},
+    {tab: "tab-dues", panel: "panel-dues"}
+  ]);
+  // Sub level (under Prizes): Career Earnings vs Prize History
+  wireTabGroup([
+    {tab: "tab-career", panel: "panel-career"},
+    {tab: "tab-time", panel: "panel-time"}
+  ]);
 }
 
 /* ===================== Hamburger ===================== */
