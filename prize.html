@@ -647,12 +647,12 @@
   <!-- ---------- Lens card ---------- -->
   <section class="card" aria-label="Prizes and dues views">
     <div class="lens-tabs" role="tablist" aria-label="Prizes or dues">
-      <button class="lens-tab" id="tab-prizes" role="tab" aria-selected="true" aria-controls="group-prizes">Prizes</button>
-      <button class="lens-tab" id="tab-dues" role="tab" aria-selected="false" aria-controls="panel-dues">Dues</button>
+      <button class="lens-tab" id="tab-dues" role="tab" aria-selected="true" aria-controls="panel-dues">Dues</button>
+      <button class="lens-tab" id="tab-prizes" role="tab" aria-selected="false" aria-controls="group-prizes">Prizes</button>
     </div>
 
     <!-- ===== Prizes: two sub-views (Career Earnings / Prize History) ===== -->
-    <div id="group-prizes">
+    <div id="group-prizes" hidden>
       <div class="lens-tabs lens-subtabs" role="tablist" aria-label="Prizes view">
         <button class="lens-tab lens-subtab" id="tab-career" role="tab" aria-selected="true" aria-controls="panel-career">Career Earnings</button>
         <button class="lens-tab lens-subtab" id="tab-time" role="tab" aria-selected="false" aria-controls="panel-time">Prize History</button>
@@ -684,7 +684,7 @@
     </div><!-- /#group-prizes -->
 
     <!-- ===== Dues: 2026 roster status ===== -->
-    <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues" hidden>
+    <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues">
       <div class="card-head">
         <div>
           <h2>2026 Dues Status</h2>
