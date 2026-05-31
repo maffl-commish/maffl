@@ -7,6 +7,22 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>
+  /* Keep same-origin navigation inside the iOS Home-Screen standalone window.
+     Without this, tapping an internal link hands off to Safari and the URL bar
+     reappears. External / target=_blank links fall through to the Safari overlay. */
+  (function () {
+    if (!("standalone" in window.navigator) || !window.navigator.standalone) return;
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || a.target === "_blank") return;
+      if (a.host && a.host !== location.host) return;          // external link
+      if (/^(mailto:|tel:|sms:)/i.test(a.getAttribute("href"))) return;
+      e.preventDefault();
+      location.href = a.href;                                  // stay in standalone
+    }, false);
+  })();
+</script>
 <meta name="apple-mobile-web-app-title" content="MAFFL HQ">
 <meta name="application-name" content="MAFFL HQ">
 <title>MAFFL HQ Weekly · Week 01 · 2026</title>
