@@ -487,65 +487,59 @@
     outline-offset: 2px;
   }
 
-  /* ---------- Credits card (matches .section-card, two subtle links) ---------- */
+  /* ---------- Credits card: whole cell = Credit Portal button, Request inside ---------- */
+  /* Keep the icon + title centered, but nudge them left to clear the Request button. */
   .credit-card {
-    cursor: default;
-    gap: 0;
-    justify-content: flex-start;
+    position: relative;
+    cursor: pointer;
+    padding-right: 96px;
   }
-  /* Icon + title share one row, freeing vertical space for the two buttons. */
-  .credit-head {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    margin-bottom: 9px;
+  /* Stretched-link overlay: fills the card so any click on the cell opens the
+     portal. Sits above the card content but below the Request button. */
+  .credit-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
   }
-  .credit-head .card-icon { margin-bottom: 0; }
-  .credit-head .card-title { margin-bottom: 0; }
-  /* Don't lift the whole card on hover — only the inner links react. */
-  .credit-card:hover,
-  .credit-card:focus-within {
-    transform: none;
-    border-color: var(--border);
-    box-shadow: 0 1px 3px rgba(26, 46, 80, 0.06);
+  .credit-overlay:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: -3px;
+    border-radius: inherit;
   }
-  /* Two buttons side-by-side, splitting the width 50/50. */
-  .credit-links {
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    width: 100%;
-    flex: 1 1 auto;
-  }
-  .credit-link {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
+  /* Request button rides above the overlay so it gets its own click target,
+     anchored to the right edge of the cell and vertically centered. */
+  .credit-request {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: 30px;
-    padding: 5px 8px;
+    min-height: 42px;
+    padding: 8px 20px;
     background: var(--surface);
     color: var(--navy);
     border: 1px solid var(--border);
-    border-radius: 7px;
+    border-radius: 8px;
     font-family: var(--display);
     font-weight: 700;
-    font-size: 11px;
+    font-size: 13px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     line-height: 1.15;
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   }
-  .credit-link:hover {
+  .credit-request:hover {
     background: var(--navy-soft);
     border-color: var(--navy);
-    transform: translateY(-1px);
+    transform: translateY(-50%) translateY(-1px);
   }
-  .credit-link:active { transform: translateY(0); }
-  .credit-link:focus-visible {
+  .credit-request:active { transform: translateY(-50%); }
+  .credit-request:focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;
   }
@@ -605,14 +599,15 @@
     color: var(--muted);
     letter-spacing: 0.04em;
   }
-  /* Bottom-of-page version + date pills (index.html only). */
+  .site-footer > div + div { margin-top: 4px; }
+  /* Top-line version + date pills (index.html only). */
   .footer-meta {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 12px;
+    margin-bottom: 12px;
   }
 
   /* ---------- Responsive ---------- */
@@ -713,14 +708,6 @@
 
 <main class="stack">
 
-  <!-- Identity header (left side only — version/date pills live at page bottom). -->
-  <header class="page-header">
-    <div class="page-header__id">
-      <h1 class="page-header__title">🏈 MAFFL HQ</h1>
-      <p class="page-header__subtitle">Digital Headquarters</p>
-    </div>
-  </header>
-
   <!--
     ============================================================
     ZONE 1 — "WHAT'S NEW"  (HAND-EDITED NEWS STRIP)
@@ -753,15 +740,15 @@
           <p class="slide-body">Explore everything auction — draft prep, trends, owner profiles.</p>
         </a>
 
-        <a class="slide" href="weekly.html">
+        <a class="slide" href="credits.html">
           <p class="slide-eyebrow">Fresh drop</p>
-          <p class="slide-headline">🟢 Weekly Pulse — Week 1 Edition is live</p>
-          <p class="slide-body">Check out a sample of what the new Weekly Pulse delivers.</p>
+          <p class="slide-headline">🪙 Credit Portal is Live</p>
+          <p class="slide-body">A web-based Credit experience to get us out of spreadsheets.</p>
         </a>
 
         <a class="slide" href="rules.html">
-          <p class="slide-eyebrow">Rule change</p>
-          <p class="slide-headline">📋 MAFFL Ghost Update for Lower-Tier</p>
+          <p class="slide-eyebrow">📋 Rule change</p>
+          <p class="slide-headline">MAFFL Ghost 👻 Update for Lower-Tier</p>
           <p class="slide-body">Click here to learn about the latest rule update.</p>
         </a>
 
@@ -790,20 +777,18 @@
 
       <a class="section-card" href="rules.html">
         <span class="card-icon" aria-hidden="true">&#x1F4CB;</span>
-        <h3 class="card-title">Rulebook</h3>
+        <h3 class="card-title">Rulebook &amp; Info</h3>
         <p class="card-tag">Official Rulebook</p>
       </a>
 
-      <!-- Credits: one Quick Access card holding two equal-weight links. -->
-      <div class="section-card credit-card" role="group" aria-label="Credits">
-        <div class="credit-head">
-          <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
-          <h3 class="card-title">Credits</h3>
-        </div>
-        <div class="credit-links">
-          <a class="credit-link" href="credits.html">Portal</a>
-          <a class="credit-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Request</a>
-        </div>
+      <!-- Credits: the whole card is the Credit Portal link (stretched overlay),
+           with a Request button layered above it. (Anchors can't nest, so the
+           portal link is an absolutely-positioned overlay rather than a wrapper.) -->
+      <div class="section-card credit-card">
+        <a class="credit-overlay" href="credits.html" aria-label="Open Credit Portal"></a>
+        <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
+        <h3 class="card-title">Credit Portal</h3>
+        <a class="credit-request" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Request</a>
       </div>
 
       <a class="section-card" href="prize.html">
@@ -849,11 +834,12 @@
 </main>
 
 <footer class="site-footer">
-  League founded 2002 &middot; Site est. 2026 &middot; Built by the Commish
   <div class="footer-meta" aria-label="Site version metadata">
     <span class="meta-pill">v1.0</span>
     <span class="meta-pill">Last Updated May 31, 2026</span>
   </div>
+  <div>League Founded 2002 &middot; Site est. 2026</div>
+  <div>Built by the Commish</div>
 </footer>
 
 <script>
