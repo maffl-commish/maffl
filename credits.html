@@ -424,6 +424,57 @@
     flex: 0 0 auto;
   }
 
+  /* ---------- Universal Subpage Header (Launch Roster v1.0) ---------- */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 24px;
+  }
+  .page-header__id { min-width: 0; }
+  .page-header__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-header__subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .page-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #eceff4;
+    color: var(--navy);
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  @media (max-width: 767px) {
+    .page-header__title { font-size: 24px; }
+  }
+
   /* Group the two header buttons together so space-between pushes the pair right. */
   .portal-head__actions {
     display: flex;
@@ -767,22 +818,27 @@
 
 <main class="stack">
 
+  <header class="page-header">
+    <div class="page-header__id">
+      <h1 class="page-header__title">🪙 Credits</h1>
+      <p class="page-header__subtitle">View Totals &amp; Requests</p>
+    </div>
+    <div class="page-header__meta" aria-label="Credits version metadata">
+      <span class="meta-pill">v1.0</span>
+      <span class="meta-pill">Last Updated May 31, 2026</span>
+    </div>
+  </header>
+
   <section class="dues-section" aria-labelledby="creditPortalHeading">
     <!-- ============================================================
          VERSION + LAST UPDATE STAMP — BUMP THE DATE (and the version, if the
-         page format changes) IN THE .version-chips BELOW WHENEVER YOU REVISE
-         THE BALANCES. These numbers are hand-copied from the league Google
-         Sheet; they are NOT live.
+         page format changes) IN THE .meta-pill PILLS IN THE .page-header ABOVE
+         WHENEVER YOU REVISE THE BALANCES. These numbers are hand-copied from the
+         league Google Sheet; they are NOT live.
          ============================================================ -->
     <div class="portal-head">
       <div class="portal-head__lead">
         <h2 id="creditPortalHeading">Credit Portal</h2>
-        <!-- Version + last-update chips, in rules.html's .version-chips format. -->
-        <div class="version-chips" aria-label="Credit portal version metadata">
-          <span class="version-chip primary">v1.0</span>
-          <span class="version-divider" aria-hidden="true"></span>
-          <span class="version-chip muted">Last Update 06/01/2026</span>
-        </div>
       </div>
       <!-- Two deep-link buttons grouped to the opposite end of the row from the
            heading cluster via .portal-head's space-between. Credit Request (gold)

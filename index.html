@@ -550,6 +550,50 @@
     outline-offset: 2px;
   }
 
+  /* ---------- Universal Subpage Header (Launch Roster v1.0) ----------
+     index.html uses identity only in the header (no meta pills); the
+     version + date pills live at the bottom of the page (.footer-meta). */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 4px;
+  }
+  .page-header__id { min-width: 0; }
+  .page-header__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-header__subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #eceff4;
+    color: var(--navy);
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -560,6 +604,15 @@
     font-size: 12px;
     color: var(--muted);
     letter-spacing: 0.04em;
+  }
+  /* Bottom-of-page version + date pills (index.html only). */
+  .footer-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
   }
 
   /* ---------- Responsive ---------- */
@@ -595,6 +648,7 @@
 
     main { padding: 16px 16px 16px; }
     .stack > * + * { margin-top: 16px; }
+    .page-header__title { font-size: 24px; }
 
     .credit-band {
       font-size: 15px;
@@ -658,6 +712,14 @@
 </header>
 
 <main class="stack">
+
+  <!-- Identity header (left side only — version/date pills live at page bottom). -->
+  <header class="page-header">
+    <div class="page-header__id">
+      <h1 class="page-header__title">🏈 MAFFL HQ</h1>
+      <p class="page-header__subtitle">Digital Headquarters</p>
+    </div>
+  </header>
 
   <!--
     ============================================================
@@ -723,7 +785,7 @@
       <a class="section-card" href="weekly.html">
         <span class="card-icon" aria-hidden="true">&#x1F7E2;</span>
         <h3 class="card-title">Weekly Pulse</h3>
-        <p class="card-tag">Report Archive</p>
+        <p class="card-tag">Current + Archive</p>
       </a>
 
       <a class="section-card" href="rules.html">
@@ -788,6 +850,10 @@
 
 <footer class="site-footer">
   League founded 2002 &middot; Site est. 2026 &middot; Built by the Commish
+  <div class="footer-meta" aria-label="Site version metadata">
+    <span class="meta-pill">v1.0</span>
+    <span class="meta-pill">Last Updated May 31, 2026</span>
+  </div>
 </footer>
 
 <script>

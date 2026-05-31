@@ -137,6 +137,59 @@
     border-radius: 4px;
   }
 
+  /* ---------- Universal Subpage Header (Launch Roster v1.0) ---------- */
+  .page-header-band {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 22px 24px 0;
+  }
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 22px;
+  }
+  .page-header__id { min-width: 0; }
+  .page-header__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-header__subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .page-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #eceff4;
+    color: var(--navy);
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
   /* ---------- Week selector bar ---------- */
   .week-bar {
     background: var(--surface);
@@ -764,6 +817,9 @@
     .site-nav a:last-child { border-bottom: 0; }
     .site-nav a.current { background: var(--page-bg); }
 
+    .page-header-band { padding: 18px 18px 0; }
+    .page-header__title { font-size: 24px; }
+
     .week-bar-inner { padding: 10px 18px; }
     .week-picker { right: 18px; left: 18px; }
 
@@ -811,9 +867,22 @@
   </div>
 </header>
 
+<div class="page-header-band">
+  <header class="page-header">
+    <div class="page-header__id">
+      <h1 class="page-header__title">🟢 Weekly Pulse</h1>
+      <p class="page-header__subtitle">Current + Archive of the MAFFL Weekly Pulse</p>
+    </div>
+    <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
+      <span class="meta-pill">v1.0</span>
+      <span class="meta-pill">Last Updated May 31, 2026</span>
+    </div>
+  </header>
+</div>
+
 <div class="week-bar" id="weekBar">
   <div class="week-bar-inner">
-    <h1 class="page-title">Weekly Pulse</h1>
+    <span class="page-title">Select Week</span>
     <button class="week-pill" id="weekPill" aria-controls="weekPicker" aria-expanded="false" aria-haspopup="listbox">
       <span id="weekPillLabel">Week —</span>
       <span class="chev" aria-hidden="true">&#9662;</span>

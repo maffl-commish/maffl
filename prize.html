@@ -200,6 +200,57 @@
     text-transform: uppercase;
   }
 
+  /* ---------- Universal Subpage Header (Launch Roster v1.0) ---------- */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 24px;
+  }
+  .page-header__id { min-width: 0; }
+  .page-header__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-header__subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .page-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #eceff4;
+    color: var(--navy);
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  @media (max-width: 767px) {
+    .page-header__title { font-size: 24px; }
+  }
+
   /* ---------- Cards ---------- */
   .card {
     background: var(--surface);
@@ -658,7 +709,6 @@
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
       <a href="prize.html" class="current" aria-current="page">Prizes &amp; Dues</a>
-      <a href="prize.html">Prizes &amp; Dues</a>
     </nav>
   </div>
 </header>
@@ -666,14 +716,16 @@
 <main class="stack">
 
   <!-- ---------- Page intro ---------- -->
-  <div class="page-intro">
-    <h1 class="page-title">Prizes &amp; Dues</h1>
-    <div class="intro-tags">
-      <span class="pill-caveat">&#128202; Prize data begins 2013</span>
-      <span class="pill-stamp">V.1</span>
-      <span class="pill-stamp">Last updated: May 31, 2026</span>
+  <header class="page-header">
+    <div class="page-header__id">
+      <h1 class="page-header__title">💰 Prizes &amp; Dues</h1>
+      <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
-  </div>
+    <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
+      <span class="meta-pill">v1.0</span>
+      <span class="meta-pill">Last Updated May 31, 2026</span>
+    </div>
+  </header>
 
   <!-- ---------- Lens card ---------- -->
   <section class="card" aria-label="Prizes and dues views">

@@ -169,6 +169,57 @@
     margin: 0;
   }
 
+  /* ---------- Universal Subpage Header (Launch Roster v1.0) ---------- */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 24px;
+  }
+  .page-header__id { min-width: 0; }
+  .page-header__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1.1;
+    margin: 0 0 6px;
+    letter-spacing: 0.01em;
+  }
+  .page-header__subtitle {
+    font-family: var(--body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .page-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #eceff4;
+    color: var(--navy);
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  @media (max-width: 767px) {
+    .page-header__title { font-size: 24px; }
+  }
+
   /* ---------- Version chips (under subtitle) ---------- */
   .version-chips {
     display: flex;
@@ -803,18 +854,16 @@
 </header>
 
 <main>
-  <div class="page-title-block">
-    <h1 class="page-title">Rulebook &amp; Info</h1>
-    <p class="page-subtitle">The official MAFFL ruleset</p>
-
-    <div class="version-chips" aria-label="Rulebook version metadata">
-      <span class="version-chip primary" id="versionChipVersion">v—</span>
-      <span class="version-divider" aria-hidden="true"></span>
-      <span class="version-chip muted" id="versionChipUpdated">Last Updated —</span>
+  <header class="page-header">
+    <div class="page-header__id">
+      <h1 class="page-header__title">📋 Info &amp; Rulebook</h1>
+      <p class="page-header__subtitle">Official Rulebook</p>
     </div>
-
-    <hr class="gold-rule">
-  </div>
+    <div class="page-header__meta" aria-label="Rulebook version metadata">
+      <span class="meta-pill" id="versionChipVersion">v1.0</span>
+      <span class="meta-pill" id="versionChipUpdated">Last Updated May 31, 2026</span>
+    </div>
+  </header>
 
   <div class="portal-tabs" role="tablist" aria-label="Rulebook &amp; Info sections">
     <button class="portal-tab active" id="tabBtnInfo" role="tab" aria-selected="true" aria-controls="tab-info" data-tab="info" type="button">Info</button>
@@ -1473,8 +1522,8 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
-const RULEBOOK_VERSION      = "v1.1";
-const RULEBOOK_LAST_UPDATED = "Aug 1, 2026";
+const RULEBOOK_VERSION      = "v1.0";
+const RULEBOOK_LAST_UPDATED = "May 31, 2026";
 
 /* ---------------------------------------------------------------------
  * CHANGE_LOG powers the "What's Changed" feed on the Info tab — the
