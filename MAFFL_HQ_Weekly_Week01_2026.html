@@ -12,14 +12,26 @@
      Without this, tapping an internal link hands off to Safari and the URL bar
      reappears. External / target=_blank links fall through to the Safari overlay. */
   (function () {
-    if (!("standalone" in window.navigator) || !window.navigator.standalone) return;
+    var standalone = ("standalone" in window.navigator) && window.navigator.standalone;
+    if (/[?&]diag=1/.test(location.search)) {
+      window.addEventListener("DOMContentLoaded", function () {
+        var b = document.createElement("div");
+        b.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;font:12px/1.45 monospace;color:#fff;padding:6px 10px;white-space:pre;background:" + (standalone ? "#0a7d4b" : "#c0392b");
+        b.textContent = "navigator.standalone: " + standalone + "   display-mode: " + matchMedia("(display-mode: standalone)").matches + "\npage: " + location.pathname.split("/").pop() + "   referrer: " + (document.referrer || "(none)");
+        b.addEventListener("click", function () { b.remove(); });
+        document.body.appendChild(b);
+      });
+    }
+    if (!standalone) return;
     document.addEventListener("click", function (e) {
       var a = e.target.closest && e.target.closest("a[href]");
       if (!a || a.target === "_blank") return;
       if (a.host && a.host !== location.host) return;          // external link
       if (/^(mailto:|tel:|sms:)/i.test(a.getAttribute("href"))) return;
       e.preventDefault();
-      location.href = a.href;                                  // stay in standalone
+      var url = a.href;
+      if (/[?&]diag=1/.test(location.search) && url.indexOf("diag=1") === -1) url += (url.indexOf("?") === -1 ? "?" : "&") + "diag=1";
+      location.href = url;                                  // stay in standalone
     }, false);
   })();
 </script>
