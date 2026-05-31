@@ -115,22 +115,34 @@
   }
 
   /* ---------- Page title block ---------- */
-  .page-title-block { margin-bottom: 24px; }
+  .page-title-block {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
   .page-title {
     font-family: var(--display);
     font-weight: 700;
     font-size: 32px;
     color: var(--navy);
     line-height: 1.05;
-    margin: 0 0 6px;
+    margin: 0;
     letter-spacing: 0.01em;
   }
-  .page-subtitle {
-    font-family: var(--body);
-    font-weight: 400;
-    font-size: 14px;
-    color: var(--muted);
-    margin: 0 0 18px;
+  .page-title-tag {
+    display: inline-block;
+    background: var(--navy-soft);
+    color: var(--gold-dark);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
   }
 
   /* ---------- Sub-tab navigation ---------- */
@@ -171,21 +183,21 @@
   .subtab-panel { display: none; }
   .subtab-panel.active { display: block; }
 
-  /* ---------- Filter bar (Search tab) ---------- */
-  .filter-bar {
-    display: grid;
-    grid-template-columns: 1.6fr 1.2fr 0.9fr 1.1fr;
+  /* ---------- Search row + filter panel (Search tab) ---------- */
+  .search-row {
+    display: flex;
     gap: 10px;
     align-items: stretch;
     margin-bottom: 12px;
   }
-  .filter-bar .field {
+  .search-row .player-field { flex: 1 1 auto; }
+  .field {
     position: relative;
     display: flex;
     align-items: stretch;
   }
-  .filter-bar input[type="text"],
-  .filter-bar select {
+  .field input[type="text"],
+  .field select {
     width: 100%;
     height: 44px;
     background: var(--surface);
@@ -200,20 +212,20 @@
        -moz-appearance: none;
             appearance: none;
   }
-  .filter-bar input[type="text"]:focus,
-  .filter-bar select:focus {
+  .field input[type="text"]:focus,
+  .field select:focus {
     outline: none;
     border-color: var(--gold);
     box-shadow: 0 0 0 3px var(--gold-soft);
   }
-  .filter-bar select {
+  .field select {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%231a2e50' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 30px;
   }
-  .filter-bar .player-field input { padding-left: 34px; }
-  .filter-bar .player-field::before {
+  .player-field input[type="text"] { padding-left: 34px; }
+  .player-field::before {
     content: "";
     position: absolute;
     left: 11px;
@@ -227,14 +239,92 @@
     pointer-events: none;
   }
 
+  /* Filters toggle button */
+  .more-filters-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+    height: 44px;
+    padding: 0 20px;
+    background: var(--navy);
+    color: #fff;
+    border: 1px solid var(--navy);
+    border-radius: 6px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .more-filters-btn:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+  .more-filters-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .more-filters-btn .mf-chev { transition: transform 0.15s ease; font-size: 11px; }
+  .more-filters-btn[aria-expanded="true"] .mf-chev { transform: rotate(180deg); }
+
+  /* Expandable filter panel */
+  .filter-panel {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .filter-panel[hidden] { display: none; }
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+  }
+  .filter-group { min-width: 0; }
+  .filter-group-wide { grid-column: 1 / -1; }
+  .filter-group-label {
+    display: block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .filter-group-hint {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--muted);
+    opacity: 0.75;
+  }
+  .fopt-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fopt {
+    padding: 7px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--navy);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  .fopt:hover { border-color: var(--gold); color: var(--gold-dark); }
+  .fopt.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .fopt:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
   /* Year filter: era buttons + From/To dropdowns */
   .year-filter {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     gap: 18px;
-    margin-bottom: 14px;
+    margin: 18px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
   }
+  .year-filter > .filter-group-label { flex: 1 1 100%; margin-bottom: 0; }
   .era-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -341,8 +431,6 @@
   }
   .year-clear-btn:hover { color: var(--navy); }
 
-  .more-filters-btn { display: none; }
-
   /* Active filter chips */
   .active-filters {
     display: flex;
@@ -388,35 +476,6 @@
     padding: 4px 6px;
   }
   .clear-all-link:hover { color: var(--navy); }
-
-  /* Results count (relocated above filter bar) */
-  .search-meta {
-    margin: 0 0 10px;
-  }
-  .result-count {
-    font-family: var(--body);
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--muted);
-    margin: 0 0 2px;
-    line-height: 1.4;
-  }
-  .result-count strong { color: var(--navy); font-weight: 600; }
-  .truncation-note {
-    font-family: var(--body);
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--gold-dark);
-    margin-left: 6px;
-  }
-  .trophy-key {
-    font-family: var(--body);
-    font-weight: 400;
-    font-size: 12px;
-    color: var(--muted);
-    margin: 0 0 12px;
-    line-height: 1.4;
-  }
 
   /* ---------- Results table ---------- */
   .table-wrap {
@@ -719,6 +778,45 @@
     padding: 0 12px 14px;
   }
   .super-card.open .super-body { display: block; }
+
+  /* Insight team picker */
+  .super-team-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 4px 0 14px;
+    flex-wrap: wrap;
+  }
+  .super-team-picker label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .super-team-picker select {
+    height: 40px;
+    min-width: 120px;
+    background: var(--surface);
+    border: 1px solid var(--navy);
+    border-radius: 6px;
+    padding: 0 30px 0 12px;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%231a2e50' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  .super-team-picker select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-soft);
+  }
 
   /* Superlative table */
   table.super-table {
@@ -1238,10 +1336,6 @@
   @media (max-width: 1024px) {
     .site-nav { gap: 16px; }
     .site-nav a { font-size: 12px; }
-    .filter-bar {
-      grid-template-columns: 1.4fr 1fr 0.8fr 1fr;
-      gap: 8px;
-    }
   }
 
   @media (max-width: 767px) {
@@ -1276,46 +1370,18 @@
 
     main { padding: 20px 16px 40px; }
     .page-title { font-size: 24px; }
-    .page-subtitle { font-size: 13px; }
 
     .subtab-btn { flex: 1 1 0; padding: 10px 8px; font-size: 12px; }
 
-    /* Filter bar progressive disclosure */
-    .filter-bar {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-    .filter-bar .player-field,
-    .filter-bar .owner-field { display: flex; }
-    .filter-bar .pos-field,
-    .filter-bar .team-field { display: none; }
-    .filter-bar.expanded .pos-field,
-    .filter-bar.expanded .team-field { display: flex; }
-
-    .year-filter { display: none; flex-direction: column; gap: 12px; }
-    .year-filter.expanded { display: flex; }
+    /* Search controls stack on phones */
+    .search-row { flex-wrap: wrap; }
+    .search-row .player-field { flex: 1 1 100%; }
+    .more-filters-btn { flex: 1 1 100%; justify-content: center; }
+    .filter-grid { grid-template-columns: 1fr; }
+    .year-filter { flex-direction: column; align-items: stretch; gap: 12px; }
     .year-selects { width: 100%; }
     .year-select-field { flex: 1 1 0; min-width: 0; }
     .year-clear-btn { align-self: flex-start; padding-left: 0; }
-
-    .more-filters-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 40px;
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-family: var(--display);
-      font-weight: 600;
-      font-size: 12px;
-      color: var(--navy);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      margin-bottom: 8px;
-    }
-    .more-filters-btn:hover { border-color: var(--gold); color: var(--gold-dark); }
 
     /* Hide NFL team column on phones */
     .dp-hide-mobile { display: none !important; }
@@ -1371,6 +1437,36 @@
     .owner-name {
       border-bottom-color: rgba(26, 46, 80, 0.22);
     }
+  }
+
+  /* Results table: player name as a prominent clickable button */
+  table.dp-table td.col-player .player-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    margin: -3px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--navy-soft);
+    color: var(--navy);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  table.dp-table td.col-player .player-name::after {
+    content: "›";
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--gold-dark);
+  }
+  table.dp-table td.col-player .player-name:hover,
+  table.dp-table td.col-player .player-name:focus-visible {
+    background: var(--gold-soft);
+    border-color: var(--gold);
+    color: var(--navy);
   }
 
   /* ---------- Profile Popup Modal ---------- */
@@ -1586,21 +1682,22 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 12px 12px 8px;
+    overflow-x: auto;
   }
   .pp-chart-bars {
     display: flex;
     align-items: flex-end;
     gap: 6px;
-    height: 90px;
-    margin-bottom: 6px;
+    min-height: 90px;
   }
   .pp-chart-col {
-    flex: 1 1 0;
+    /* grow to fill when few seasons; never shrink so labels never collide */
+    flex: 1 0 auto;
+    min-width: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    min-width: 0;
   }
   .pp-chart-bar {
     width: 100%;
@@ -1615,22 +1712,20 @@
     font-size: 10px;
     font-weight: 600;
     color: var(--navy);
-    margin-top: 3px;
+    margin-bottom: 3px;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
   .pp-chart-col.peak .pp-chart-price { color: var(--gold-dark); }
-  .pp-chart-years {
-    display: flex;
-    gap: 6px;
-  }
   .pp-chart-year {
-    flex: 1 1 0;
+    margin-top: 4px;
     text-align: center;
     font-family: var(--display);
     font-weight: 600;
     font-size: 9px;
     color: var(--muted);
     letter-spacing: 0.04em;
+    white-space: nowrap;
   }
 
   .pp-link {
@@ -1665,7 +1760,7 @@
     .pp-stat-strip { grid-template-columns: repeat(2, 1fr); gap: 6px; }
     .pp-stat-box { padding: 9px 10px; }
     .pp-stat-value { font-size: 14px; }
-    .pp-chart-bars { height: 76px; }
+    .pp-chart-bars { min-height: 76px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1699,48 +1794,59 @@
 <main>
   <div class="page-title-block">
     <h1 class="page-title">Auction Draft Portal</h1>
-    <p class="page-subtitle">Every pick, every dollar, 2005 to 2025</p>
+    <span class="page-title-tag">2005&ndash;2025</span>
   </div>
 
   <nav class="subtabs" role="tablist" aria-label="Draft portal sections">
-    <button class="subtab-btn active" role="tab" aria-selected="true" data-target="tabSearch" id="btnSearch">Search the Registry</button>
+    <button class="subtab-btn active" role="tab" aria-selected="true" data-target="tabSearch" id="btnSearch">Search</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">The Oracle</button>
-    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabSuperlatives" id="btnSuperlatives">Superlatives</button>
+    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabSuperlatives" id="btnSuperlatives">Insights</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOwners" id="btnOwners">Owner Profiles</button>
   </nav>
 
   <!-- ============ SUB-TAB 1: SEARCH ============ -->
   <section class="subtab-panel active" id="tabSearch" role="tabpanel" aria-labelledby="btnSearch">
-    <div class="search-meta">
-      <p class="result-count" id="resultCount">Showing <strong>0</strong> picks</p>
-      <p class="trophy-key">🏆 = Drafted by that season's championship-winning owner.</p>
-    </div>
-
-    <button class="more-filters-btn" id="moreFiltersBtn" aria-expanded="false">More filters ↓</button>
-
-    <div class="filter-bar" id="filterBar">
+    <div class="search-row">
       <div class="field player-field">
         <input type="text" id="filterPlayer" placeholder="Search players..." aria-label="Search players">
       </div>
-      <div class="field owner-field">
-        <select id="filterOwner" aria-label="Filter by owner">
-          <option value="">All Owners</option>
-        </select>
-      </div>
-      <div class="field pos-field">
-        <select id="filterPos" aria-label="Filter by position">
-          <option value="">All Positions</option>
-        </select>
-      </div>
-      <div class="field team-field">
-        <select id="filterTeam" aria-label="Filter by NFL team">
-          <option value="">All Teams</option>
-        </select>
-      </div>
+      <button class="more-filters-btn" id="moreFiltersBtn" aria-expanded="false" aria-controls="filterPanel">Filters <span class="mf-chev" aria-hidden="true">▾</span></button>
     </div>
 
-    <div class="year-filter" id="yearFilter">
-      <div class="era-buttons" role="group" aria-label="Era quick filter">
+    <div class="filter-panel" id="filterPanel" hidden>
+      <div class="filter-grid">
+        <div class="filter-group">
+          <span class="filter-group-label">Owner</span>
+          <div class="field">
+            <select id="filterOwner" aria-label="Filter by owner">
+              <option value="">All Owners</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">NFL Team</span>
+          <div class="field">
+            <select id="filterTeam" aria-label="Filter by NFL team">
+              <option value="">All Teams</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-group filter-group-wide">
+          <span class="filter-group-label">Position <span class="filter-group-hint">— multi-select</span></span>
+          <div class="fopt-group" id="posOptions" role="group" aria-label="Filter by position"></div>
+        </div>
+        <div class="filter-group filter-group-wide">
+          <span class="filter-group-label">Tier <span class="filter-group-hint">— 2025 only, multi-select</span></span>
+          <div class="fopt-group" id="tierOptions" role="group" aria-label="Filter by tier">
+            <button type="button" class="fopt" data-tier="UPPER">Upper-Tier</button>
+            <button type="button" class="fopt" data-tier="LOWER">Lower-Tier</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="year-filter" id="yearFilter">
+        <span class="filter-group-label">Year</span>
+        <div class="era-buttons" role="group" aria-label="Era quick filter">
         <button type="button" class="era-btn" data-era="wild-west" data-min="2005" data-max="2010" title="2005–2010" aria-label="Wild West Era, 2005 to 2010">
           <span class="era-emoji" aria-hidden="true">🤠</span>
           <span class="era-label">Wild West Era</span>
@@ -1772,6 +1878,7 @@
           </select>
         </div>
         <button type="button" class="year-clear-btn" id="yearClearBtn">All Years</button>
+      </div>
       </div>
     </div>
 
@@ -1817,18 +1924,10 @@
     </div>
   </section>
 
-  <!-- ============ SUB-TAB 3: SUPERLATIVES ============ -->
+  <!-- ============ SUB-TAB 3: INSIGHTS ============ -->
   <section class="subtab-panel" id="tabSuperlatives" role="tabpanel" aria-labelledby="btnSuperlatives">
-    <div class="super-card open" data-super="expensive">
+    <div class="super-card open" data-super="heroes">
       <button class="super-head" type="button" aria-expanded="true">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">💰</span> Top 25 Most Expensive Picks</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperExpensive"></div>
-    </div>
-
-    <div class="super-card" data-super="heroes">
-      <button class="super-head" type="button" aria-expanded="false">
         <span class="super-title"><span class="super-emoji" aria-hidden="true">🪙</span> $1 Heroes</span>
         <span class="super-chev" aria-hidden="true">▾</span>
       </button>
@@ -1843,28 +1942,20 @@
       <div class="super-body" id="bodySuperMostDrafted"></div>
     </div>
 
+    <div class="super-card" data-super="teamPlayers">
+      <button class="super-head" type="button" aria-expanded="false">
+        <span class="super-title"><span class="super-emoji" aria-hidden="true">🏟️</span> Most Drafted Players by NFL Team ($)</span>
+        <span class="super-chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="super-body" id="bodySuperTeamPlayers"></div>
+    </div>
+
     <div class="super-card" data-super="career">
       <button class="super-head" type="button" aria-expanded="false">
         <span class="super-title"><span class="super-emoji" aria-hidden="true">📈</span> Top 25 Players by Career Draft Value</span>
         <span class="super-chev" aria-hidden="true">▾</span>
       </button>
       <div class="super-body" id="bodySuperCareer"></div>
-    </div>
-
-    <div class="super-card" data-super="splurges">
-      <button class="super-head" type="button" aria-expanded="false">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">🎯</span> Biggest Single-Year Splurges</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperSplurges"></div>
-    </div>
-
-    <div class="super-card" data-super="coldest">
-      <button class="super-head" type="button" aria-expanded="false">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">🧊</span> Coldest Years</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperColdest"></div>
     </div>
   </section>
 
@@ -7878,12 +7969,14 @@ tabBtns.forEach(btn => {
     ownerProfileSel.appendChild(opt2);
   });
 
-  const posSel = document.getElementById("filterPos");
+  const posGroup = document.getElementById("posOptions");
   uniquePositions.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p;
-    opt.textContent = p;
-    posSel.appendChild(opt);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "fopt";
+    btn.setAttribute("data-pos", p);
+    btn.textContent = p;
+    posGroup.appendChild(btn);
   });
 
   const teamSel = document.getElementById("filterTeam");
@@ -7976,34 +8069,61 @@ yearClearBtn.addEventListener("click", () => { clearYearRange(); scheduleRender(
 
 syncEraButtons();
 
-/* ---------- More filters toggle (mobile) ---------- */
+/* ---------- Filters panel toggle ---------- */
 document.getElementById("moreFiltersBtn").addEventListener("click", function () {
-  const bar = document.getElementById("filterBar");
-  const yf = document.getElementById("yearFilter");
-  const expanded = bar.classList.toggle("expanded");
-  yf.classList.toggle("expanded", expanded);
-  this.setAttribute("aria-expanded", expanded ? "true" : "false");
-  this.textContent = expanded ? "Fewer filters ↑" : "More filters ↓";
+  const panel = document.getElementById("filterPanel");
+  const open = panel.hasAttribute("hidden");
+  if (open) panel.removeAttribute("hidden");
+  else panel.setAttribute("hidden", "");
+  this.setAttribute("aria-expanded", open ? "true" : "false");
 });
 
 /* ---------- Search state + render ---------- */
 const filterPlayer = document.getElementById("filterPlayer");
 const filterOwner = document.getElementById("filterOwner");
-const filterPos = document.getElementById("filterPos");
 const filterTeam = document.getElementById("filterTeam");
 const resultsBody = document.getElementById("resultsBody");
-const resultCount = document.getElementById("resultCount");
 const activeFilters = document.getElementById("activeFilters");
 const emptyState = document.getElementById("emptyState");
 const tableEl = document.getElementById("resultsTable");
+
+// Multi-select state (empty set = no filter applied)
+const selectedPos = new Set();
+const selectedTiers = new Set();
 
 let sortKey = "year";
 let sortDir = -1; // -1 = desc, 1 = asc
 
 filterPlayer.addEventListener("input", scheduleRender);
 filterOwner.addEventListener("change", scheduleRender);
-filterPos.addEventListener("change", scheduleRender);
 filterTeam.addEventListener("change", scheduleRender);
+
+// Multi-select chip toggles (Position + Tier)
+document.getElementById("posOptions").addEventListener("click", function (e) {
+  const btn = e.target.closest(".fopt");
+  if (!btn) return;
+  const v = btn.getAttribute("data-pos");
+  if (selectedPos.has(v)) selectedPos.delete(v); else selectedPos.add(v);
+  btn.classList.toggle("active", selectedPos.has(v));
+  scheduleRender();
+});
+document.getElementById("tierOptions").addEventListener("click", function (e) {
+  const btn = e.target.closest(".fopt");
+  if (!btn) return;
+  const v = btn.getAttribute("data-tier");
+  if (selectedTiers.has(v)) selectedTiers.delete(v); else selectedTiers.add(v);
+  btn.classList.toggle("active", selectedTiers.has(v));
+  scheduleRender();
+});
+
+function syncChipUI() {
+  document.querySelectorAll("#posOptions .fopt").forEach(b => {
+    b.classList.toggle("active", selectedPos.has(b.getAttribute("data-pos")));
+  });
+  document.querySelectorAll("#tierOptions .fopt").forEach(b => {
+    b.classList.toggle("active", selectedTiers.has(b.getAttribute("data-tier")));
+  });
+}
 
 let renderTimer = null;
 function scheduleRender() {
@@ -8038,7 +8158,8 @@ function getActiveFilters() {
   return {
     player: filterPlayer.value.trim().toLowerCase(),
     owner: filterOwner.value,
-    pos: filterPos.value,
+    pos: Array.from(selectedPos),
+    tiers: Array.from(selectedTiers),
     team: filterTeam.value,
     yearMin: r.min,
     yearMax: r.max
@@ -8054,7 +8175,8 @@ function applyFilters() {
     const y = p[F_Y];
     if (y < yMin || y > yMax) continue;
     if (f.owner !== "" && p[F_O] !== parseInt(f.owner, 10)) continue;
-    if (f.pos !== "" && p[F_PS] !== f.pos) continue;
+    if (selectedPos.size > 0 && !selectedPos.has(p[F_PS])) continue;
+    if (selectedTiers.size > 0 && !selectedTiers.has(pickTier(p))) continue;
     if (f.team !== "" && p[F_T] !== f.team) continue;
     if (f.player !== "" && p[F_P].toLowerCase().indexOf(f.player) === -1) continue;
     out.push(p);
@@ -8085,7 +8207,8 @@ function renderActiveChips(f) {
   const chips = [];
   if (f.player) chips.push({ k: "player", label: "Player: " + filterPlayer.value });
   if (f.owner !== "") chips.push({ k: "owner", label: "Owner: " + OWNERS[parseInt(f.owner, 10)] });
-  if (f.pos) chips.push({ k: "pos", label: "Pos: " + f.pos });
+  f.pos.forEach(pos => chips.push({ k: "pos:" + pos, label: "Pos: " + pos }));
+  f.tiers.forEach(t => chips.push({ k: "tier:" + t, label: "Tier: " + (t === "UPPER" ? "Upper" : "Lower") }));
   if (f.team) chips.push({ k: "team", label: "Team: " + f.team });
   if (f.yearMin !== YEAR_MIN || f.yearMax !== YEAR_MAX) {
     const yLabel = (f.yearMin === f.yearMax)
@@ -8101,7 +8224,7 @@ function renderActiveChips(f) {
 
   const chipsHTML = chips.map(c =>
     '<span class="filter-chip">' + escapeHTML(c.label) +
-    ' <button type="button" data-clear="' + c.k + '" aria-label="Remove filter">×</button></span>'
+    ' <button type="button" data-clear="' + escapeHTML(c.k) + '" aria-label="Remove filter">×</button></span>'
   ).join("");
   activeFilters.innerHTML = chipsHTML +
     '<button type="button" class="clear-all-link" id="clearAllChips">Clear All</button>';
@@ -8111,8 +8234,9 @@ function renderActiveChips(f) {
       const k = b.dataset.clear;
       if (k === "player") { filterPlayer.value = ""; }
       else if (k === "owner") { filterOwner.value = ""; }
-      else if (k === "pos") { filterPos.value = ""; }
       else if (k === "team") { filterTeam.value = ""; }
+      else if (k.indexOf("pos:") === 0) { selectedPos.delete(k.slice(4)); syncChipUI(); }
+      else if (k.indexOf("tier:") === 0) { selectedTiers.delete(k.slice(5)); syncChipUI(); }
       else if (k === "years") {
         clearYearRange();
       }
@@ -8127,8 +8251,10 @@ function renderActiveChips(f) {
 function clearAllFilters() {
   filterPlayer.value = "";
   filterOwner.value = "";
-  filterPos.value = "";
   filterTeam.value = "";
+  selectedPos.clear();
+  selectedTiers.clear();
+  syncChipUI();
   clearYearRange();
   renderSearch();
 }
@@ -8152,17 +8278,14 @@ function renderSearch() {
     resultsBody.innerHTML = "";
     tableEl.style.display = "none";
     emptyState.style.display = "block";
-    resultCount.innerHTML = "Showing <strong>0</strong> picks";
     return;
   }
 
   tableEl.style.display = "";
   emptyState.style.display = "none";
 
-  let truncated = false;
   if (rows.length > RESULT_CAP) {
     rows = rows.slice(0, RESULT_CAP);
-    truncated = true;
   }
 
   const html = new Array(rows.length);
@@ -8180,14 +8303,6 @@ function renderSearch() {
       '</tr>';
   }
   resultsBody.innerHTML = html.join("");
-
-  if (truncated) {
-    resultCount.innerHTML =
-      'Showing first <strong>' + fmtNum(RESULT_CAP) + '</strong> of <strong>' + fmtNum(total) + '</strong> picks' +
-      '<span class="truncation-note">— narrow your filters to see more.</span>';
-  } else {
-    resultCount.innerHTML = 'Showing <strong>' + fmtNum(total) + '</strong> ' + (total === 1 ? 'pick' : 'picks');
-  }
 }
 
 function fmtPrice(n) {
@@ -8537,32 +8652,11 @@ function trophyEverHTML() {
 }
 
 function renderSuperlatives() {
-  renderSuperExpensive();
   renderSuperDollarHeroes();
   renderSuperMostDrafted();
+  renderSuperTeamPlayers();
   renderSuperCareer();
-  renderSuperSplurges();
-  renderSuperColdest();
   wireSuperlativesUI();
-}
-
-function renderSuperExpensive() {
-  const sorted = PICKS.slice().sort((a, b) => b[F_PR] - a[F_PR]);
-  const rows = sorted.map((p, i) => {
-    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
-    return '<tr' + hidden + '>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
-      '<td class="yr">' + p[F_Y] + '</td>' +
-      '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
-      '<td class="' + priceCls(p[F_PR]) + '">$' + fmtPrice(p[F_PR]) + '</td>' +
-    '</tr>';
-  }).join("");
-  document.getElementById("bodySuperExpensive").innerHTML =
-    '<table class="super-table"><thead><tr>' +
-      '<th>#</th><th>Player</th><th>Year</th><th>Owner</th><th class="num">Price</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>' +
-    showAllControl(sorted.length, SUPER_LIMIT);
 }
 
 function renderSuperDollarHeroes() {
@@ -8688,57 +8782,57 @@ function renderSuperCareer() {
     showAllControl(arr.length, SUPER_LIMIT);
 }
 
-function renderSuperSplurges() {
-  const topByYear = new Map();
-  PICKS.forEach(p => {
-    const cur = topByYear.get(p[F_Y]);
-    if (!cur || p[F_PR] > cur[F_PR]) topByYear.set(p[F_Y], p);
-  });
-  const years = [...topByYear.keys()].sort((a, b) => b - a);
-  const rows = years.map(y => {
-    const p = topByYear.get(y);
-    return '<tr>' +
-      '<td class="yr">' + y + '</td>' +
-      '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
-      '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
-      '<td class="' + priceCls(p[F_PR]) + '">$' + fmtPrice(p[F_PR]) + '</td>' +
-    '</tr>';
-  }).join("");
-  document.getElementById("bodySuperSplurges").innerHTML =
-    '<table class="super-table"><thead><tr>' +
-      '<th>Year</th><th>Player</th><th>Owner</th><th class="num">Price</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+function renderSuperTeamPlayers() {
+  const host = document.getElementById("bodySuperTeamPlayers");
+  const teams = uniqueTeams.slice();
+  if (teams.length === 0) { host.innerHTML = ''; return; }
+  const defaultTeam = teams.indexOf("PIT") !== -1 ? "PIT" : teams[0];
+  const options = teams.map(t =>
+    '<option value="' + escapeHTML(t) + '"' + (t === defaultTeam ? ' selected' : '') + '>' + escapeHTML(t) + '</option>'
+  ).join("");
+  host.innerHTML =
+    '<div class="super-team-picker">' +
+      '<label for="superTeamSelect">NFL Team</label>' +
+      '<select id="superTeamSelect" aria-label="Choose NFL team">' + options + '</select>' +
+    '</div>' +
+    '<div id="superTeamTable"></div>';
+  const sel = document.getElementById("superTeamSelect");
+  sel.addEventListener("change", () => renderSuperTeamTable(sel.value));
+  renderSuperTeamTable(defaultTeam);
 }
 
-function renderSuperColdest() {
-  const sumByYear = new Map();
-  const cntByYear = new Map();
-  const topByYear = new Map();
+function renderSuperTeamTable(team) {
+  const target = document.getElementById("superTeamTable");
+  if (!target) return;
+  const map = new Map();
   PICKS.forEach(p => {
-    sumByYear.set(p[F_Y], (sumByYear.get(p[F_Y]) || 0) + p[F_PR]);
-    cntByYear.set(p[F_Y], (cntByYear.get(p[F_Y]) || 0) + 1);
-    const cur = topByYear.get(p[F_Y]);
-    if (!cur || p[F_PR] > cur[F_PR]) topByYear.set(p[F_Y], p);
+    if (p[F_T] !== team) return;
+    let e = map.get(p[F_P]);
+    if (!e) { e = { name: p[F_P], count: 0, total: 0, anyChamp: false }; map.set(p[F_P], e); }
+    e.count++;
+    e.total += p[F_PR];
+    if (p[F_C]) e.anyChamp = true;
   });
-  const arr = [...sumByYear.keys()].map(y => ({
-    y,
-    avg: sumByYear.get(y) / cntByYear.get(y),
-    top: topByYear.get(y)
-  })).sort((a, b) => a.avg - b.avg);
-
-  const rows = arr.map(e => {
-    const tp = e.top;
-    return '<tr>' +
-      '<td class="yr">' + e.y + '</td>' +
-      '<td class="num">$' + e.avg.toFixed(1) + '</td>' +
-      '<td>' + tagPlayer(tp[F_P]) + trophyHTML(tp) +
-        ' <span class="pick-meta">$' + fmtPrice(tp[F_PR]) + ', ' + tagOwner(OWNERS[tp[F_O]]) + '</span></td>' +
+  const arr = [...map.values()].sort((a, b) => b.total - a.total || b.count - a.count);
+  if (arr.length === 0) {
+    target.innerHTML = '<p class="coming-soon" style="margin:0;">No picks found for ' + escapeHTML(team) + '.</p>';
+    return;
+  }
+  const rows = arr.map((e, i) => {
+    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
+    const totalCls = e.total >= 50 ? 'num high' : 'num';
+    return '<tr' + hidden + '>' +
+      '<td class="rank">' + (i + 1) + '</td>' +
+      '<td>' + tagPlayer(e.name) + (e.anyChamp ? trophyEverHTML() : '') + '</td>' +
+      '<td class="' + totalCls + '">$' + fmtNum(Math.round(e.total)) + '</td>' +
+      '<td class="num">' + e.count + '</td>' +
     '</tr>';
   }).join("");
-  document.getElementById("bodySuperColdest").innerHTML =
+  target.innerHTML =
     '<table class="super-table"><thead><tr>' +
-      '<th>Year</th><th class="num">Avg Pick $</th><th>Most Expensive Pick</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>';
+      '<th>#</th><th>Player</th><th class="num">Total Draft $</th><th class="num">Times</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>' +
+    showAllControl(arr.length, SUPER_LIMIT);
 }
 
 function showAllControl(total, limit) {
@@ -9123,24 +9217,23 @@ function renderOwnerProfile(ownerIdx) {
   }
 
   function renderPlayerChart(d) {
-    // Oldest → newest for chart timeline
+    // Oldest → newest for chart timeline. Year sits inside each column so bars
+    // and labels stay aligned no matter how many seasons; the chart scrolls
+    // horizontally when a player has many seasons (e.g. Aaron Rodgers, 18).
     const chrono = d.picksNewestFirst.slice().reverse();
     const peakPrice = d.peak[F_PR];
     const maxBar = Math.max(peakPrice, 1);
-    const bars = chrono.map(p => {
+    const cols = chrono.map(p => {
       const isPeak = p === d.peak || (p[F_Y] === d.peak[F_Y] && p[F_PR] === d.peak[F_PR] && p[F_O] === d.peak[F_O]);
       const h = Math.max(2, Math.round((p[F_PR] / maxBar) * 78));
       return '<div class="pp-chart-col' + (isPeak ? ' peak' : '') + '">' +
         '<div class="pp-chart-price">$' + fmtPrice(p[F_PR]) + '</div>' +
         '<div class="pp-chart-bar" style="height:' + h + 'px;"></div>' +
+        '<div class="pp-chart-year">' + p[F_Y] + '</div>' +
         '</div>';
     }).join("");
-    const years = chrono.map(p =>
-      '<div class="pp-chart-year">' + p[F_Y] + '</div>'
-    ).join("");
     return '<div class="pp-chart">' +
-      '<div class="pp-chart-bars">' + bars + '</div>' +
-      '<div class="pp-chart-years">' + years + '</div>' +
+      '<div class="pp-chart-bars">' + cols + '</div>' +
     '</div>';
   }
 
