@@ -828,6 +828,81 @@
     .owner-list { columns: 1; }
   }
 
+  /* ---------- News & Announcements feed (Info tab) ---------- */
+  .news-list { display: flex; flex-direction: column; gap: 10px; }
+  .news-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .news-item .news-note {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.5;
+    min-width: 0;
+  }
+  .news-item .news-note .rule-tag { margin-left: 0; margin-right: 6px; }
+  .news-item .news-date {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .news-item.news-item--soon { border-style: dashed; }
+  .news-item.news-item--soon .news-date { color: var(--muted); }
+
+  /* ---------- Static (non-collapsible) section head ---------- */
+  .rule-head.is-static { cursor: default; }
+  .rule-head-titlewrap { display: flex; align-items: center; min-width: 0; }
+
+  /* Pill shown on a section head only while the section is collapsed. */
+  .rule-section.open .rule-head .head-pill { display: none; }
+
+  /* ---------- Division alignment grid (Info tab) ---------- */
+  .division-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .division-card {
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .division-card h4 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 8px;
+  }
+  .division-card ul.division-teams {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.7;
+  }
+  .division-card ul.division-teams li { margin: 0; }
+  @media (max-width: 767px) {
+    .division-grid { grid-template-columns: 1fr; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .rule-section, .rule-chev { transition: none; }
   }
@@ -858,7 +933,7 @@
 <main>
   <header class="page-header">
     <div class="page-header__id">
-      <h1 class="page-header__title">📋 Info &amp; Rulebook</h1>
+      <h1 class="page-header__title">📋 Rulebook &amp; Info</h1>
       <p class="page-header__subtitle">Official Rulebook</p>
     </div>
     <div class="page-header__meta" aria-label="Rulebook version metadata">
@@ -872,40 +947,41 @@
     <button class="portal-tab" id="tabBtnRulebook" role="tab" aria-selected="false" aria-controls="tab-rulebook" data-tab="rulebook" type="button">Rulebook</button>
   </div>
 
-  <div class="rules-controls">
-    <button class="ghost-btn" id="expandAllBtn" type="button" aria-label="Expand all rule sections">
-      <span class="ghost-btn-symbol" id="expandAllSymbol" aria-hidden="true">+</span>
-      <span id="expandAllLabel">Expand All</span>
-    </button>
-  </div>
-
   <!-- =========================================================
        INFO TAB — league feed + 2026 assignments & alignment.
-       This is the landing tab.
+       This is the landing tab. (The Expand/Collapse All control lives
+       only on the Rulebook tab.)
        ========================================================= -->
   <div class="tab-panel" id="tab-info" data-tab-panel="info" role="tabpanel" aria-labelledby="tabBtnInfo">
   <div class="rules-list">
 
     <!-- =========================================================
-         What's Changed (league feed) — rule changes & announcements,
-         newest first. Shown first so owners see the latest league news.
+         News & Announcements — non-collapsible league feed, always
+         open and shown first so owners land on the latest league news.
+         Quick-hitting one-line notes with date stamps (newest first),
+         plus a "Coming Soon" subsection. Powered by NEWS_FEED /
+         COMING_SOON in the script below.
          ========================================================= -->
-    <section class="rule-section" data-section="changelog">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-changelog">
-        <h2 class="rule-title">What&rsquo;s Changed</h2>
-        <span class="rule-chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="rule-body" id="body-changelog">
-        <div id="changeLogContent"></div>
+    <section class="rule-section open" id="news" data-section="news" data-static="open">
+      <div class="rule-head is-static">
+        <span class="rule-head-titlewrap">
+          <h2 class="rule-title">News &amp; Announcements</h2>
+        </span>
+      </div>
+      <div class="rule-body" id="body-news">
+        <div class="news-list" id="newsFeed"></div>
+        <h3 class="subhead">Coming Soon</h3>
+        <div class="news-list" id="comingSoonFeed"></div>
       </div>
     </section>
 
     <!-- =========================================================
-         2026 League Assignments — per-owner tier & division.
+         2026 Upper-Tier & Lower-Tier Assignments — per-owner tier only.
+         Division detail lives in "2026 Upper-Tier Division Alignment".
          ========================================================= -->
     <section class="rule-section" id="assignments" data-section="assignments">
       <button class="rule-head" aria-expanded="false" aria-controls="body-assignments">
-        <h2 class="rule-title">2026 League Assignments</h2>
+        <h2 class="rule-title">2026 Upper-Tier &amp; Lower-Tier Assignments</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="rule-body" id="body-assignments">
@@ -918,51 +994,81 @@
             <tr>
               <th scope="col">Owner</th>
               <th scope="col">Tier</th>
-              <th scope="col">Division</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td class="row-label">David Murello</td><td>Upper-Tier</td><td>A</td></tr>
-            <tr><td class="row-label">BJ Funari</td><td>Upper-Tier</td><td>A</td></tr>
-            <tr><td class="row-label">Mike Murello</td><td>Upper-Tier</td><td>A</td></tr>
-            <tr><td class="row-label">Jon Murello / Rick Simmons</td><td>Upper-Tier</td><td>B</td></tr>
-            <tr><td class="row-label">Jacob Nickman</td><td>Upper-Tier</td><td>B</td></tr>
-            <tr><td class="row-label">Braiden Snyder</td><td>Upper-Tier</td><td>B</td></tr>
-            <tr><td class="row-label">Joe Reilly</td><td>Upper-Tier</td><td>C</td></tr>
-            <tr><td class="row-label">Dan Reilly</td><td>Upper-Tier</td><td>C</td></tr>
-            <tr><td class="row-label">Tony Trozzo</td><td>Upper-Tier</td><td>C</td></tr>
-            <tr><td class="row-label">Brian Murello / Ron Murello</td><td>Upper-Tier</td><td>D</td></tr>
-            <tr><td class="row-label">Ed Peters</td><td>Upper-Tier</td><td>D</td></tr>
-            <tr><td class="row-label">Jon Fetrow</td><td>Upper-Tier</td><td>D</td></tr>
-            <tr><td class="row-label">Tony Brooks</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Sam Lavrinc</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Ben Funari</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Charles Lavrinc</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Dominic Nicastro</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Nick Yankovich</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Todd Trozzo</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Bob Keslar</td><td>Lower-Tier</td><td>&mdash;</td></tr>
-            <tr><td class="row-label">Chris Johnson</td><td>Lower-Tier</td><td>&mdash;</td></tr>
+            <tr><td class="row-label">David Murello</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">BJ Funari</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Mike Murello</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Jon Murello / Rick Simmons</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Jacob Nickman</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Braiden Snyder</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Joe Reilly</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Dan Reilly</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Tony Trozzo</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Brian Murello / Ron Murello</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Ed Peters</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Jon Fetrow</td><td>Upper-Tier</td></tr>
+            <tr><td class="row-label">Tony Brooks</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Sam Lavrinc</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Ben Funari</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Charles Lavrinc</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Dominic Nicastro</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Nick Yankovich</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Todd Trozzo</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Bob Keslar</td><td>Lower-Tier</td></tr>
+            <tr><td class="row-label">Chris Johnson</td><td>Lower-Tier</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <!-- =========================================================
-         2026 Division Alignment — how Upper-Tier divisions are set.
+         2026 Upper-Tier Division Alignment — the season's division
+         announcement: the twelve Upper-Tier teams grouped A–D. The
+         "how it's set" rules live in the Rulebook's Division Alignment.
          ========================================================= -->
     <section class="rule-section" id="alignment" data-section="alignment">
       <button class="rule-head" aria-expanded="false" aria-controls="body-alignment">
-        <h2 class="rule-title">2026 Division Alignment</h2>
+        <h2 class="rule-title">2026 Upper-Tier Division Alignment</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="rule-body" id="body-alignment">
-        <h3 class="subhead">How Divisions Are Set</h3>
-        <p>Each offseason, Upper-Tier division alignment is set by credit totals: owners are seeded into the four divisions (A&ndash;D) by their credit rank. Alignment locks on August 1, after which owners may spend credits on a <strong>Division Swap</strong> (see Credit System) during the Aug 1 &rarr; Labor Day window. The Lower-Tier has no divisions.</p>
+        <p>The twelve Upper-Tier teams for 2026, grouped into Divisions A&ndash;D. Alignment locks August 1, 2026. For how divisions are determined, see <strong>Division Alignment</strong> in the Rulebook.</p>
 
-        <div class="callout">
-          <span class="callout-label">Alignment Formula</span>
-          <p>Credit-rank groupings fill the four divisions on the pattern <strong>1/6/12 &middot; 2/5/11 &middot; 3/4/10 &middot; 7/8/9</strong> (Divisions A&ndash;D). Credit ties are broken by previous-season W/L %, then previous-season total points.</p>
+        <div class="division-grid">
+          <div class="division-card">
+            <h4>Division A</h4>
+            <ul class="division-teams">
+              <li>David Murello</li>
+              <li>BJ Funari</li>
+              <li>Mike Murello</li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Division B</h4>
+            <ul class="division-teams">
+              <li>Jon Murello / Rick Simmons</li>
+              <li>Jacob Nickman</li>
+              <li>Braiden Snyder</li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Division C</h4>
+            <ul class="division-teams">
+              <li>Joe Reilly</li>
+              <li>Dan Reilly</li>
+              <li>Tony Trozzo</li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Division D</h4>
+            <ul class="division-teams">
+              <li>Brian Murello / Ron Murello</li>
+              <li>Ed Peters</li>
+              <li>Jon Fetrow</li>
+            </ul>
+          </div>
         </div>
 
         <p>Full year-by-year division history lives on the <a class="inline-link" href="history.html">History page</a>.</p>
@@ -976,6 +1082,15 @@
        RULEBOOK TAB — the full ruleset.
        ========================================================= -->
   <div class="tab-panel" id="tab-rulebook" data-tab-panel="rulebook" role="tabpanel" aria-labelledby="tabBtnRulebook" hidden>
+
+  <!-- Expand / Collapse All lives only on the Rulebook tab. -->
+  <div class="rules-controls">
+    <button class="ghost-btn" id="expandAllBtn" type="button" aria-label="Expand all rule sections">
+      <span class="ghost-btn-symbol" id="expandAllSymbol" aria-hidden="true">+</span>
+      <span id="expandAllLabel">Expand All</span>
+    </button>
+  </div>
+
   <div class="rules-list">
 
     <!-- =========================================================
@@ -997,32 +1112,6 @@
           <li>We will fill unexpected Upper-Tier league openings with the highest Credit total from the Lower-Tier league (tiebreaker: the highest ranking team from the previous season).</li>
           <li>The commissioner has final say on any disputes but will consider league votes for fairness.</li>
         </ul>
-      </div>
-    </section>
-
-    <!-- =========================================================
-         SECTION 1b — MAFFL Ghost (Lower-Tier odd-team rule)
-         ========================================================= -->
-    <section class="rule-section" id="maffl-ghost" data-section="ghost">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-ghost">
-        <h2 class="rule-title">MAFFL Ghost</h2>
-        <span class="rule-chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="rule-body" id="body-ghost">
-        <h3 class="subhead">Lower-Tier Odd-Team Rule<span class="rule-tag new">NEW<span class="tag-sep">&middot;</span>2026</span></h3>
-        <ul>
-          <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
-          <li>A placeholder team called &ldquo;MAFFL Ghost&rdquo; is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.</li>
-          <li>Each week, the commissioner totals all real teams&rsquo; scores, divides by the number of real teams, and applies that average to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.</li>
-          <li>The real team matched up against MAFFL Ghost that week wins if they beat the average and loses if they don&rsquo;t.</li>
-          <li>MAFFL Ghost does not draft, earn credits, win prizes, or affect promotion/relegation.</li>
-          <li>All real teams remain eligible for weekly high score prizes every week, including the team facing MAFFL Ghost.</li>
-        </ul>
-
-        <div class="callout">
-          <span class="callout-label">Example</span>
-          <p>Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
-        </div>
       </div>
     </section>
 
@@ -1051,7 +1140,7 @@
             <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
             <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>Promotion Showdown</td></tr>
             <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
-            <tr><td>MAFFL Ghost</td><td>No</td><td>Yes</td></tr>
+            <tr><td>MAFFL Ghost</td><td>No</td><td>Yes, if odd-numbered</td></tr>
             <tr><td>Draft Slot</td><td>Labor Day 8:30 AM EST</td><td>Labor Day 8:00 AM EST</td></tr>
             <tr><td>Promotion</td><td>&mdash;</td><td>Top 3 Up</td></tr>
             <tr><td>Relegation</td><td>Bottom 3 Down</td><td>&mdash;</td></tr>
@@ -1158,6 +1247,27 @@
             <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 8:30&ndash;10:30 AM EST</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 4b — Division Alignment (how Upper-Tier divisions are set)
+         ========================================================= -->
+    <section class="rule-section" id="division-alignment" data-section="division-alignment">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-division-alignment">
+        <h2 class="rule-title">Division Alignment</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-division-alignment">
+        <h3 class="subhead">How Divisions Are Set</h3>
+        <p>Each offseason, Upper-Tier division alignment is set by credit totals: owners are seeded into the four divisions (A&ndash;D) by their credit rank. Alignment locks on August 1, after which owners may spend credits on a <strong>Division Swap</strong> (see Credit System) during the Aug 1 &rarr; Labor Day window. The Lower-Tier has no divisions.</p>
+
+        <div class="callout">
+          <span class="callout-label">Alignment Formula</span>
+          <p>Credit-rank groupings fill the four divisions on the pattern <strong>1/6/12 &middot; 2/5/11 &middot; 3/4/10 &middot; 7/8/9</strong> (Divisions A&ndash;D). Credit ties are broken by previous-season W/L %, then previous-season total points.</p>
+        </div>
+
+        <p>The current season&rsquo;s groupings are posted under <strong>2026 Upper-Tier Division Alignment</strong> on the Info tab. Full year-by-year division history lives on the <a class="inline-link" href="history.html">History page</a>.</p>
       </div>
     </section>
 
@@ -1457,6 +1567,36 @@
       </div>
     </section>
 
+    <!-- =========================================================
+         MAFFL Ghost (Lower-Tier odd-team rule) — placed last in the
+         ruleset. Carries a "New 2026" pill on the head while collapsed.
+         ========================================================= -->
+    <section class="rule-section" id="maffl-ghost" data-section="ghost">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-ghost">
+        <span class="rule-head-titlewrap">
+          <h2 class="rule-title">MAFFL Ghost</h2>
+          <span class="rule-tag new head-pill">New<span class="tag-sep">&middot;</span>2026</span>
+        </span>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-ghost">
+        <h3 class="subhead">Lower-Tier Odd-Team Rule<span class="rule-tag new">NEW<span class="tag-sep">&middot;</span>2026</span></h3>
+        <ul>
+          <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
+          <li>A placeholder team called &ldquo;MAFFL Ghost&rdquo; is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.</li>
+          <li>Each week, the commissioner totals all real teams&rsquo; scores, divides by the number of real teams, and applies that average to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.</li>
+          <li>The real team matched up against MAFFL Ghost that week wins if they beat the average and loses if they don&rsquo;t.</li>
+          <li>MAFFL Ghost does not draft, earn credits, win prizes, or affect promotion/relegation.</li>
+          <li>All real teams remain eligible for weekly high score prizes every week, including the team facing MAFFL Ghost.</li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-label">Example</span>
+          <p>Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
+        </div>
+      </div>
+    </section>
+
   </div><!-- /.rules-list (rulebook) -->
   </div><!-- /#tab-rulebook -->
 </main>
@@ -1492,11 +1632,12 @@
  *      label on a promoted owner in one source while another is correct.
  *
  * PAGE LAYOUT: this page has two top-level tabs (.portal-tab) wrapping the
- * accordion sections — an "Info" tab (the What's Changed feed plus the
- * 2026 League Assignments and 2026 Division Alignment sections) and a
- * "Rulebook" tab (the full ruleset). Info is the landing tab. Each tab's
- * sections live in a .tab-panel > .rules-list; add new sections inside the
- * appropriate panel.
+ * accordion sections — an "Info" tab (the always-open News & Announcements
+ * feed plus the 2026 Upper-Tier & Lower-Tier Assignments and 2026 Upper-Tier
+ * Division Alignment sections) and a "Rulebook" tab (the full ruleset, which
+ * also owns the Expand/Collapse All control). Info is the landing tab. Each
+ * tab's sections live in a .tab-panel > .rules-list; add new sections inside
+ * the appropriate panel.
  *
  * The accordion behavior below allows MULTIPLE sections to be open at
  * once — this is intentional (unlike the Weekly Pulse grid). Owners
@@ -1529,35 +1670,32 @@ const RULEBOOK_VERSION      = "v1.0";
 const RULEBOOK_LAST_UPDATED = "May 31, 2026";
 
 /* ---------------------------------------------------------------------
- * CHANGE_LOG powers the "What's Changed" feed on the Info tab — the
- * league's running headline log of rule changes AND announcements
- * (alignment locks, votes, clarifications). It grows over time, newest
- * first, and is the closest thing to global version control for the
- * league. Add a new entry to the top whenever something noteworthy
- * happens; bump RULEBOOK_VERSION / RULEBOOK_LAST_UPDATED for rule changes.
- * Newest dates first. Each entry: { type, rule, description }.
+ * NEWS_FEED / COMING_SOON power the "News & Announcements" feed on the
+ * Info tab — the league's running, quick-hitting headline log. Each entry
+ * is a one-line note with a clear date stamp, newest first. NEWS_FEED holds
+ * things that have happened; COMING_SOON holds upcoming items. Add a new
+ * entry to the top of NEWS_FEED whenever something noteworthy happens;
+ * bump RULEBOOK_VERSION / RULEBOOK_LAST_UPDATED for actual rule changes.
+ * Each entry: { date, note, type? }.
  * Valid type values: "NEW", "AMENDED", "DEPRECATED", "ANNOUNCEMENT".
  * ------------------------------------------------------------------- */
-const CHANGE_LOG = [
+const NEWS_FEED = [
   {
-    date: "Aug 1, 2026",
-    changes: [
-      {
-        type: "ANNOUNCEMENT",
-        rule: "2026 Division Alignment Set",
-        description: "2026 Upper-Tier divisional alignment is locked for the season. See the 2026 Division Alignment section for the formula."
-      },
-      {
-        type: "NEW",
-        rule: "Initial online edition",
-        description: "First public release of the MAFFL rulebook as a live web page."
-      },
-      {
-        type: "NEW",
-        rule: "MAFFL Ghost rule",
-        description: "Introduces the Lower-Tier odd-team rule (\"MAFFL Ghost\"), a scoring-average placeholder team used to keep the schedule even when the Lower-Tier has an odd number of teams."
-      }
-    ]
+    date: "July 1, 2026",
+    type: "ANNOUNCEMENT",
+    note: "MAFFL HQ website is live."
+  },
+  {
+    date: "July 1, 2026",
+    type: "NEW",
+    note: "MAFFL Ghost rule introduced — a scoring-average placeholder team keeps the Lower-Tier schedule even when it has an odd number of teams."
+  }
+];
+
+const COMING_SOON = [
+  {
+    date: "August 1, 2026",
+    note: "2026 Division Alignment to be set."
   }
 ];
 
@@ -1583,31 +1721,28 @@ function renderTag(type, year) {
   if (lu) lu.textContent = "Last Updated " + RULEBOOK_LAST_UPDATED;
 })();
 
-/* --------- RENDER: CHANGE LOG --------- */
-(function renderChangeLog() {
-  const container = document.getElementById("changeLogContent");
-  if (!container) return;
-  if (!CHANGE_LOG.length) {
-    container.innerHTML = '<p style="color:var(--muted);font-style:italic;margin:0;">No changes logged yet.</p>';
-    return;
-  }
-  container.innerHTML = CHANGE_LOG.map(function (group) {
-    const entries = group.changes.map(function (c) {
-      return '' +
-        '<div class="changelog-entry">' +
-          '<div class="changelog-entry-head">' +
-            renderTag(c.type) +
-            '<span class="changelog-entry-rule">' + escHtml(c.rule) + '</span>' +
-          '</div>' +
-          '<p class="changelog-entry-desc">' + escHtml(c.description) + '</p>' +
-        '</div>';
-    }).join("");
+/* --------- RENDER: NEWS & ANNOUNCEMENTS --------- */
+(function renderNews() {
+  function newsRow(item, soon) {
+    const tag = item.type ? renderTag(item.type) : "";
     return '' +
-      '<div class="changelog-group">' +
-        '<h3 class="changelog-date">' + escHtml(group.date) + '</h3>' +
-        entries +
+      '<div class="news-item' + (soon ? ' news-item--soon' : '') + '">' +
+        '<span class="news-note">' + tag + escHtml(item.note) + '</span>' +
+        '<span class="news-date">' + escHtml(item.date) + '</span>' +
       '</div>';
-  }).join("");
+  }
+  const feed = document.getElementById("newsFeed");
+  if (feed) {
+    feed.innerHTML = NEWS_FEED.length
+      ? NEWS_FEED.map(function (n) { return newsRow(n, false); }).join("")
+      : '<p style="color:var(--muted);font-style:italic;margin:0;">No announcements yet.</p>';
+  }
+  const soon = document.getElementById("comingSoonFeed");
+  if (soon) {
+    soon.innerHTML = COMING_SOON.length
+      ? COMING_SOON.map(function (n) { return newsRow(n, true); }).join("")
+      : '<p style="color:var(--muted);font-style:italic;margin:0;">Nothing on deck right now.</p>';
+  }
 })();
 
 (function wireHamburger() {
@@ -1654,7 +1789,8 @@ function renderTag(type, year) {
      Expand/Collapse All control, so it acts on what the owner can see. */
   function activeSections() {
     return Array.from(sections).filter(function (s) {
-      const panel = s.closest(".portal-panel");
+      if (s.dataset.static) return false; // non-collapsible (News feed)
+      const panel = s.closest(".tab-panel");
       return !panel || !panel.hidden;
     });
   }
@@ -1675,6 +1811,7 @@ function renderTag(type, year) {
   }
 
   sections.forEach(function (section) {
+    if (section.dataset.static) return; // News feed is always open, not a toggle
     const head = section.querySelector(".rule-head");
     head.addEventListener("click", function () {
       const isOpen = section.classList.toggle("open");
@@ -1710,7 +1847,7 @@ function renderTag(type, year) {
     if (!id) return;
     const target = document.getElementById(id);
     if (!target || !target.classList.contains("rule-section")) return;
-    const panel = target.closest(".portal-panel");
+    const panel = target.closest(".tab-panel");
     if (panel && panel.hidden && window.activateRulesTab) {
       window.activateRulesTab(panel.getAttribute("data-tab-panel"));
     }
