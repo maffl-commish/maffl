@@ -308,6 +308,21 @@
   .lens-tab[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--gold); }
   .lens-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
 
+  .tab-pill {
+    display: inline-block;
+    margin-left: 6px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    vertical-align: middle;
+  }
+
   .lens-panel[hidden] { display: none; }
   .lens-intro { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
 
@@ -731,7 +746,7 @@
   <section class="card" aria-label="Prizes and dues views">
     <div class="lens-tabs" role="tablist" aria-label="Prizes or dues">
       <button class="lens-tab" id="tab-dues" role="tab" aria-selected="true" aria-controls="panel-dues">Dues</button>
-      <button class="lens-tab" id="tab-prizes" role="tab" aria-selected="false" aria-controls="group-prizes">Prizes</button>
+      <button class="lens-tab" id="tab-prizes" role="tab" aria-selected="false" aria-controls="group-prizes">Prizes<span class="tab-pill">As of 2013</span></button>
     </div>
 
     <!-- ===== Prizes: two sub-views (Career Earnings / Prize History) ===== -->
@@ -758,9 +773,8 @@
     <!-- ===== Career Earnings: owner leaderboard ===== -->
     <div class="lens-panel" id="panel-career" role="tabpanel" aria-labelledby="tab-career">
       <div class="gt-band">
-        <div class="gt-label">League Prizes Paid, all time*</div>
+        <div class="gt-label">League Prizes Paid, all time</div>
         <div class="gt-value" id="gtValue">$0</div>
-        <p class="gt-caveat" id="gtCaveat">*2013&ndash;2025 Seasons Only.</p>
       </div>
       <div class="lb" id="leaderboard"></div>
     </div>
@@ -1173,7 +1187,7 @@ const tierOf = era => era === "Upper-Tier" ? "Upper" : era === "Lower-Tier" ? "L
 /* Categories for Lens 1 (order matters) */
 const CATEGORIES = [
   {key:"Placement", label:"Placement", hasPlace:true, unit:"finishes"},
-  {key:"Weekly High Score", label:"Weekly High Score", hasPlace:false, unit:"wins"},
+  {key:"Weekly High Score", label:"High Score", hasPlace:false, unit:"wins"},
   {key:"Division", label:"Division", hasPlace:false, unit:"titles"},
   {key:"Coach", label:"COTW", hasPlace:false, unit:"wins"}
 ];
@@ -1255,6 +1269,7 @@ function renderTimeline(evs) {
     const lo = Math.min(...dataYears), hi = Math.max(...dataYears);
     years = YEARS.filter(y => y >= lo && y <= hi);
   }
+  years = years.slice().reverse(); // newest → oldest (show 2025 first)
   tl.innerHTML = years.map(year => {
     let yev = evs.filter(e => e.year === year);
     // placements first (by place), then everything else by amount desc
@@ -1384,7 +1399,6 @@ function renderLens2() {
 
   // grand total
   document.getElementById("gtValue").textContent = usd(MAFFL.meta.grand_total);
-  document.getElementById("gtCaveat").innerHTML = "*2013&ndash;2025 Seasons Only.";
 }
 
 /* ===================== 2026 Dues ===================== */
