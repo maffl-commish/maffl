@@ -1,0 +1,12 @@
+{
+  "name": "MAFFL HQ",
+  "short_name": "MAFFL HQ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a2e50",
+  "theme_color": "#1a2e50",
+  "icons": [
+    { "src": "maffl-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
