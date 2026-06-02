@@ -1,0 +1,30 @@
+Earning Credits,,,,
+League,Outcome Category,Finishing Position / Method,Credits Awarded,Notes
+Upper-Tier,Championship Winner,1st in playoffs,15,Champ!
+Upper-Tier,Championship Runner-Up,2nd in playoffs,12,Runner-Up!
+Upper-Tier,Playoff Semifinalists,Eliminated in semifinals ,7,Reward for 1 playoff win
+Upper-Tier,Playoff Quarterfinalists,Eliminated in quarterfinals ,6,Reward for playoff appearance
+Upper-Tier,Safe (Non-Playoff) - Consolation Winner,7th overall,5,Secured upper-tier status without a playoff run. Made 7 vs 8 match
+Upper-Tier,Safe (Non-Playoff) - Consolation Loser,8th overall,4,Secured upper-tier status without a playoff run. Made 7 vs 8 match
+Upper-Tier,Relegation Showdown Winner,Winning Relegation Showdown,3,Win a challenge to remain in the upper tier
+Upper-Tier,Relegation Showdown Loser / Consolation Game Winner,Winning consolation vs #12 or losing Relegation Showdown,1,Relegated
+Upper-Tier,Consolation Game Loser,Finishing position 12 (Losing consolation vs #11),0,No points; team is relegated
+Lower-Tier,Automatic Promotion - Consolation Winner,Winning #1 vs #2 Promotion Consolation Match,15,Direct promotion to the upper tier
+Lower-Tier,Automatic Promotion - Consolation Loser,Losing #1 vs #2 Promotion Consolation Match,12,Direct promotion to the upper tier
+Lower-Tier,Promotion Showdown Winner,Finishing positions 3–4 & winning Promotion Showdown,10,Wins the challenge to move up
+Lower-Tier,Promotion Showdown Loser,Finishing positions 3–4 but losing Promotion Showdown,8,Reward for a strong season even in a loss
+Lower-Tier,Safe (Lower-Tier),Finishing positions 5+,5,Remains in the lower tier
+League,Bonus Category,Criteria,Credits Awarded,Notes
+Each,Most Team Points Scored,Highest cumulative team score in the season,5,Awarded to the team with the highest total score
+Each,Highest Weekly Score,Highest score in any single week,1,Awarded for each reg season wk (x14)
+Each,Individual High Score (Wkly Total),Most points from a single player in a weekly performance,3,"Awarded once (highest wkly performance (including playoffs, consolation, promotion, and relegation matches))"
+Each,Largest Blowout Victory,Largest margin of victory in a single week,3,Awarded once (regular season only)
+Each,Survivor Bonus,Avoiding the lowest weekly score all season,5,Awarded once - Survivor style with weekly elimination
+,,,,
+Spending Credits,,,,
+League,Option,Perk Description,Credit Cost,Notes/Restrictions
+Each,Purchase additional FAAB $,$20 Added to your Free Agent Auction Budget (FAAB) balance,-1,Can be used anytime in-season. These dollars will follow normal 'reset' league settings once added to the owner's FAAB balance.
+Each,Double Player Bonus,Double your point total for one position for one week,-10,Must be declared to commish and opponent before 1st game of the week kickoff.  NOT ELIGIBLE for MAFFL Upper-Tier playoffs.
+Each,Matchup Swap,Make a regular season swap of opponents.  A 1-for-1 swap of teams.,-10,Regular season only.  Division matchups are not eligible to be swapped.  Must be declared to commish and all parties involved before 1st game of the week kickoff.
+Each,Division Swap,Make a pre-season swap of divisional alignment.  A 1-for-1 swap of teams.,-10,"Must be declared in off-season prior to MAFFL draft, following division alignment on 8/1"
+Each,Relegation Insurance,Guarantee your safety from relegation for the current season regardless of your final standing.,-25,Must be declared before Regular Season Week 4 (1st game of the week kickoff).   Ensures tiebreaker elevation to Seed #7 if owner is unlabe to make Playoffs

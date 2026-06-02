@@ -1,0 +1,176 @@
+MAFFL Rules,Unnamed: 1,8/17/25,Unnamed: 3
+General,,,
+,"MAFFL will consist of 2 espn.com leagues and player pools, the 'MAFFL Upper-Tier' league and the 'MAFFL Lower-Tier' league",,
+,"Seasonal Entry Fee and Prizes, along with the new Credit system are common to all MAFFL owners regardless of league placement",,
+,"The 2 leagues will have an identical rule set, the only exceptions being league size, divisions and post-season play",,
+,"Each season, 3 teams from the upper-tier will be relegated and 3 teams from the lower-tier will be promoted (see 'Promotion/Relegation Overview' tab)",,
+,In-Season game rules will adhere to the ESPN League Settings (ESPN.com),,
+,"Following the 2024 placements, all new owners will enter in the Lower-Tier league.",,
+,We will fill unexpected Upper-Tier league openings with the highest Credit total from the lower-tier league (tiebreaker: the highest ranking team from previous season).,,
+,The commissioner has final say on any disputes but will consider league votes for fairness.,,
+,,,
+,,Upper-Tier,Lower-Tier
+,League Entry Fee,$100,$100
+,League Size,12 Teams,Minimum 6
+,Divisions,Yes,No
+,Conferences,No,No
+,Can Earn / Spend Credits,Yes,Yes
+,MAFFL Championship Playoff,Yes,No
+,MAFFL Cup Awarded,Yes,No
+,Promotion Showdown,No,Yes
+,Relegation Showdown,Yes,No
+,Auction Draft Slot 1,No,Yes
+,Auction Draft Slot 2,Yes,No
+,,,
+Promotion/Relegation Overview,,,
+,Each season 3 teams move down from the Upper-Tier and 3 teams move up from the Lower-Tier.,,
+,Finishes 1-2 in each tier move automatically; the 3rd promotion and 3rd relegation spots are decided by head-to-head Showdowns (Upper #9 vs #10; Lower #3 vs #4) across NFL Wks 15-17.,,
+,Upper-Tier (12 Teams),,
+,Finish,Post-Season Activity,Movement
+,Upper-Tier Finish 1,Championship Playoff #1 Seed (bye). Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 2,Championship Playoff #2 Seed (bye). Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 3,Championship Playoff #3 Seed. Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 4,Championship Playoff #4 Seed. Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 5,Championship Playoff #5 Seed. Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 6,Championship Playoff #6 Seed. Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 7,Consolation Matchup vs Upper-Tier #8 (3 Gm Series). Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 8,Consolation Matchup vs Upper-Tier #7 (3 Gm Series). Automatic safety based on regular season standings.,Safe
+,Upper-Tier Finish 9,Relegation Showdown vs Upper-Tier #10 (3 Gm Series). Must win Showdown to avoid relegation.,TBD
+,Upper-Tier Finish 10,Relegation Showdown vs Upper-Tier #9 (3 Gm Series). Must win Showdown to avoid relegation.,TBD
+,Upper-Tier Finish 11,Consolation Matchup vs #12 (3 Gm Series). Direct drop to Lower-Tier. Still plays a consolation series vs #12.,Relegated
+,Upper-Tier Finish 12,Consolation Matchup vs #11 (3 Gm Series). Direct drop to Lower-Tier. Still plays a consolation series vs #11.,Relegated
+,Lower-Tier,,
+,Finish,Post-Season Activity,Movement
+,Lower-Tier Finish 1,Consolation Matchup vs Lower-Tier #2 (3 Gm Series). Direct promotion based on regular season standings.,Promoted
+,Lower-Tier Finish 2,Consolation Matchup vs Lower-Tier #1 (3 Gm Series). Direct promotion based on regular season standings.,Promoted
+,Lower-Tier Finish 3,Promotion Showdown vs Lower-Tier #4 (3 Gm Series). Must win Showdown to earn promotion.,TBD
+,Lower-Tier Finish 4,Promotion Showdown vs Lower-Tier #3 (3 Gm Series). Must win Showdown to earn promotion.,TBD
+,Lower-Tier Finish 5+,N/A. No promotion opportunity; teams stay in the Lower-Tier.,Safe
+,,,
+Auction Draft,,,
+,We will utilize espn.com platform to facilitate our league auctions,,
+,Each team is assigned a $200 budget.  Minimum bid = $1.   Maximum bid = Team Cap (($200 - Amount spent) - (Remaining roster spots to be filled)),,
+,See espn.com for more auction draft specific rules,,
+,"Effective 2025: The Kicker (K) roster position has been permanently eliminated from the auction draft. All teams carry one fewer roster spot as a result. Roster sizes: 25 picks (2005), 16 picks (2006-2008), 17 picks (2009-2024), 22 picks (2025+).",,
+,Auction Draft Slot 1,,
+,       Labor Day 8-10AM,,
+,Auction Draft Slot 2,,
+,       Labor Day 8:30-10:30AM   ,,
+,,,
+Lower-Tier Odd-Team Rule (MAFFL Ghost),,,
+,Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.,,
+,A placeholder team called 'MAFFL Ghost' is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.,,
+,"Each week, the commissioner totals all real teams' scores, divides by the number of real teams, and applies that average to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.",,
+,The real team matched up against MAFFL Ghost that week wins if they beat the average and loses if they don't.,,
+,"MAFFL Ghost does not draft, earn credits, win prizes, or affect promotion/relegation.",,
+,"All real teams remain eligible for weekly high score prizes every week, including the team facing MAFFL Ghost.",,
+,"Example: Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.",,
+,,,
+Season Prize Schedule,,,
+,Entry Fee: Each team pays $100 per season to participate,,
+,Total Prize Pool: Calculated as $100 × total number of teams across both leagues,,
+,Prize Allocation:,,
+,     67% (2/3) of the total prize pool goes to the Upper-Tier League.,,
+,     33% (1/3) of the total prize pool goes to the Lower-Tier League.,,
+,,,
+,Upper-Tier Prize Distribution (67% of Prize Pool),,
+,Placement,% of Upper-Tier Pool,Payout Formula
+,Champion,50%,0.50 × Upper-Tier Pool
+,Runner-Up,15%,0.15 × Upper-Tier Pool
+,Division Winner(s),15% (divided by 4 winners),0.15 × Upper-Tier Pool
+,Highest Weekly Score Bonus,20% (divided into 14 payouts),0.20 × Upper-Tier Pool
+,Lower-Tier Prize Distribution (33% of Prize Pool),,
+,Placement,% of Lower-Tier Pool,Payout Formula
+,Champion,50%,0.50 × Lower-Tier Pool
+,Runner-Up,15%,0.15 × Lower-Tier Pool
+,Promotion Showdown Winner,15%,0.15 × Lower-Tier Pool
+,Highest Weekly Score Bonus,20% (divided into 14 payouts),0.20 × Lower-Tier Pool
+,,,
+,Example Calculation (if there are 12 teams in the Upper-Tier and 8 teams in the Lower-Tier),,
+,"Total Prize Pool: $100 × (12 + 8) = $2,000",,
+,"Upper-Tier Pool (67%) = $1,340",,
+,Lower-Tier Pool (33%) = $660,,
+,Champion of Lower-Tier would receive $330 (50% of $660),,
+,"Division Winner in Upper-Tier would receive $50.25 in prizes (15% of $1340, divided by 4)",,
+,,,
+,,,
+Upper-Tier MAFFL Championship Playoff (Top 6 Teams),,,
+,,,
+,,#1 Seed,
+,#4 Seed,,
+,,,
+,#5 Seed,,
+,,,
+,#3 Seed,,
+,,,
+,#6 Seed,,
+,,#2 Seed,
+,,,
+,,,
+Tiebreakers,,,
+,General / Wildcard,Division,
+,     Record (W/L %),     Record (W/L %),
+,     Credit Balance,     Credit Balance,
+,     Total Points For,     Division Record,
+,,     Total Points For,
+,,,
+Annual Milestones,,,
+In-Season,FAAB Budget Set,,Prior to Wk 1 kickoff
+,First Weekly FAA Processes,,Prior to Wk 1 kickoff
+,Regular Season,,NFL Wks 1-14
+,FAAB Reset ($100),,Prior to Wk 15 kickoff
+,Post Season,,NFL Wks 15-17
+Off-Season,Season Prizes Awarded / Season Credits Issued,,Following NFL Wk 17
+,Promotions/Relegations Issued,,Following NFL Wk 17
+,New Season Begins 20##-20##,,August 1st
+,Seasonal Divisions Established (Upper-Tier Only),,August 1st
+,Window to spend credits on division realignment,,August 1st - Labor Day
+,Draft,,Labor Day
+,,,
+Credit System,,,
+Overview,,,
+,"The credit system creates a new league currency,  issued to owners based on each team performance over a season and across multiple seasons.",,
+,Credits are awarded for both overall season outcomes and specific in-season achievements (bonus points).,,
+,The credit system does not directly affect promotion or relegation.,,
+,"Both upper-tier and lower-tiers are rewarded on a similar scale, ensuring fairness regardless of the league level.",,
+,Credit balance carries weight and earned credits can be spent for competitive perks,,
+Rules,,,
+,The 'Owner Credit Balance' tab will serve as the source of truth when utilizing the Credit Balance for tiebreaking purposes,,
+,All Credit transactions will be logged in the 'Credit Log' tab,,
+,All credits will be awarded at the end of the season,,
+,Each season’s total (Outcome Credits + Bonus Credits) is added to a running cumulative credits total.,,
+Impact,,,
+,"Credit Balance serves as the tiebreaker for all division, playoff and end-of-season seeding",,
+,"Determines annual division alignment for Upper-Tier League (1/6/12 ; 2/5/11; 3/4/10; 7/8/9) (Note: tiebreakers determined by previous season W/L%, then total pts)",,
+,Determines Upper-Tier placement if unexpected openings occur,,
+,Credits are earned and can be spent (see 'Credit Overview' tab),,
+,Credits can be traded directly or packaged with players.  (These trades adhere to the normal trade policy and deadlines),,
+Earning Credits,,,
+League,Outcome Category,Finishing Position / Method,Credits Awarded
+Upper-Tier,Championship Winner,1st in playoffs (Champ!),15
+Upper-Tier,Championship Runner-Up,2nd in playoffs (Runner-Up!),12
+Upper-Tier,Playoff Semifinalists,Eliminated in semifinals (reward for 1 playoff win),7
+Upper-Tier,Playoff Quarterfinalists,Eliminated in quarterfinals (reward for playoff appearance),6
+Upper-Tier,Safe (Non-Playoff) - Consolation Winner,7th overall - secured upper-tier status without a playoff run (made 7 vs 8 match),5
+Upper-Tier,Safe (Non-Playoff) - Consolation Loser,8th overall - secured upper-tier status without a playoff run (made 7 vs 8 match),4
+Upper-Tier,Relegation Showdown Winner,Winning Relegation Showdown - win a challenge to remain in the upper tier,3
+Upper-Tier,Relegation Showdown Loser / Consolation Game Winner,Winning consolation vs #12 or losing Relegation Showdown (relegated),1
+Upper-Tier,Consolation Game Loser,Finishing position 12 / losing consolation vs #11 (no points; team is relegated),0
+Lower-Tier,Automatic Promotion - Consolation Winner,Winning #1 vs #2 Promotion Consolation Match - direct promotion to the upper tier,15
+Lower-Tier,Automatic Promotion - Consolation Loser,Losing #1 vs #2 Promotion Consolation Match - direct promotion to the upper tier,12
+Lower-Tier,Promotion Showdown Winner,Finishing positions 3-4 & winning Promotion Showdown - wins the challenge to move up,10
+Lower-Tier,Promotion Showdown Loser,Finishing positions 3-4 but losing Promotion Showdown - reward for a strong season even in a loss,8
+Lower-Tier,Safe (Lower-Tier),Finishing positions 5+ - remains in the lower tier,5
+League,Bonus Category,Criteria,Credits Awarded
+Each,Most Team Points Scored,Highest cumulative team score in the season (awarded to the team with the highest total score),5
+Each,Highest Weekly Score,Highest score in any single week (awarded for each reg season wk x14),1
+Each,Individual High Score (Wkly Total),Most points from a single player in a weekly performance (awarded once; highest wkly performance including playoffs/consolation/promotion/relegation),3
+Each,Largest Blowout Victory,Largest margin of victory in a single week (awarded once; regular season only),3
+Each,Survivor Bonus,Avoiding the lowest weekly score all season (awarded once; Survivor style with weekly elimination),5
+Spending Credits,,,
+League,Option,Perk Description,Credit Cost
+Each,Purchase additional FAAB $,$20 added to your Free Agent Auction Budget (FAAB) balance (anytime in-season; follows normal 'reset' league settings once added),-1
+Each,Double Player Bonus,Double your point total for one position for one week (declare to commish and opponent before 1st game of the week kickoff; NOT ELIGIBLE for MAFFL Upper-Tier playoffs),-10
+Each,Matchup Swap,Make a regular season swap of opponents - a 1-for-1 swap of teams (regular season only; division matchups not eligible; declare to commish and all parties before 1st game of the week kickoff),-10
+Each,Division Swap,Make a pre-season swap of divisional alignment - a 1-for-1 swap of teams (declare in off-season prior to MAFFL draft following division alignment on 8/1),-10
+Each,Relegation Insurance,Guarantee your safety from relegation for the current season regardless of final standing (declare before Regular Season Week 4 1st game kickoff; ensures tiebreaker elevation to Seed #7 if unable to make Playoffs),-25

@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "statusMessage": "Checking iOS standalone tags + shim...",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\micha\\OneDrive\\Desktop\\MAFFL\\check-standalone.ps1\" -Quiet"
+          }
+        ]
+      }
+    ]
+  }
+}
