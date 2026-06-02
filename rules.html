@@ -172,10 +172,11 @@
 
   /* ---------- Universal Subpage Header (Launch Roster v1.0) ---------- */
   .page-header {
+    position: relative;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 12px 20px;
     margin-bottom: 24px;
   }
@@ -219,6 +220,11 @@
   }
   @media (max-width: 767px) {
     .page-header__title { font-size: 24px; }
+    .page-header__meta {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
   }
 
   /* ---------- Version chips (under subtitle) ---------- */
@@ -962,12 +968,13 @@
          plus a "Coming Soon" subsection. Powered by NEWS_FEED /
          COMING_SOON in the script below.
          ========================================================= -->
-    <section class="rule-section open" id="news" data-section="news" data-static="open">
-      <div class="rule-head is-static">
+    <section class="rule-section open" id="news" data-section="news">
+      <button class="rule-head" aria-expanded="true" aria-controls="body-news">
         <span class="rule-head-titlewrap">
           <h2 class="rule-title">News &amp; Announcements</h2>
         </span>
-      </div>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
       <div class="rule-body" id="body-news">
         <div class="news-list" id="newsFeed"></div>
         <h3 class="subhead">Coming Soon</h3>
