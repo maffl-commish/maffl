@@ -145,10 +145,11 @@
     padding: 22px 24px 0;
   }
   .page-header {
+    position: relative;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 12px 20px;
     margin-bottom: 22px;
   }
@@ -821,6 +822,11 @@
 
     .page-header-band { padding: 18px 18px 0; }
     .page-header__title { font-size: 24px; }
+    .page-header__meta {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
 
     .week-bar-inner { padding: 10px 18px; }
     .week-picker { right: 18px; left: 18px; }
