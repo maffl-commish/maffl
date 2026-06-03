@@ -734,7 +734,7 @@
   }
 
   /* ---------- Owner Portal: header kicker + "Member Since" ---------- */
-  .card-kicker { margin-bottom: 5px; }
+  .card-kicker { margin: 4px 0 0; }
   .card-meta-row {
     display: flex;
     flex-wrap: wrap;
@@ -893,7 +893,7 @@
   .rv-list { list-style: none; margin: 0; padding: 0; }
   .rv-row {
     display: grid;
-    grid-template-columns: 1fr auto 52px;
+    grid-template-columns: minmax(0, 1fr) 58px 58px;
     align-items: center;
     gap: 10px;
     padding: 7px 0;
@@ -950,6 +950,172 @@
     padding: 8px 0;
   }
 
+  /* ---------- Per-tier pill colors (light tints, navy text for AA) ---------- */
+  .card-tier-badge.tier-rushmore   { background: #fbf0d4; color: #5d4a12; }
+  .card-tier-badge.tier-elite      { background: #e1ecfb; color: #1f3a63; }
+  .card-tier-badge.tier-gatekeeper { background: #dcf2ea; color: #15604a; }
+  .card-tier-badge.tier-middle     { background: #e7eaf0; color: #3a4256; }
+  .card-tier-badge.tier-departed   { background: #ece6f7; color: #4b3a73; }
+  .card-tier-badge.tier-basement   { background: #efebe6; color: #5a5046; }
+
+  /* ---------- Power tab: league-rank chip under each career stat ---------- */
+  .stat-rank {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 3px;
+    line-height: 1;
+  }
+
+  /* ---------- Overview: prominent current team + "See more" ---------- */
+  .ov-team-section { margin-bottom: 20px; }
+  .ov-current-team {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+  }
+  .ov-seemore {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--navy);
+    background: var(--navy-soft);
+    border-radius: 100px;
+    padding: 7px 14px;
+    min-height: 34px;
+    cursor: pointer;
+  }
+  .ov-seemore:hover { background: var(--navy-shadow); }
+  .ov-seemore:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .ov-team-section .prog-list { margin-top: 12px; }
+
+  /* ---------- Draft tab: compact auction summary ---------- */
+  .draft-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .draft-priciest {
+    background: #f8f9fb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+  .draft-priciest .stat-label { margin-bottom: 4px; }
+  .draft-priciest-val {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.3;
+  }
+  .draft-priciest-price { color: var(--gold-dark); }
+  .draft-cta--compact { background: none; padding: 0; text-align: left; }
+
+  /* ---------- Rivals: RS / Playoff record cells ---------- */
+  .rv-rec.rv-rs, .rv-rec.rv-po {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 4px 0;
+  }
+  .rv-rec.rv-po { background: #eef0f4; color: var(--navy); }
+  .rv-rec.rv-po.rv-empty { background: transparent; color: var(--muted); }
+  .rv-head .rv-rs, .rv-head .rv-po {
+    background: transparent !important;
+    color: var(--muted);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .rv-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin: 4px 0 14px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--navy);
+    background: var(--navy-soft);
+    border-radius: 100px;
+    padding: 8px 14px;
+    min-height: 34px;
+    cursor: pointer;
+  }
+  .rv-toggle:hover { background: var(--navy-shadow); }
+  .rv-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .rv-breakdown { margin-bottom: 18px; }
+
+  /* ---------- Rivals: Big Game Matchups ---------- */
+  .bg-head { margin-top: 4px; }
+  .bg-list { list-style: none; margin: 0; padding: 0; }
+  .bg-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    padding-left: 10px;
+  }
+  .bg-row:last-child { border-bottom: 0; }
+  .bg-row.bg-win  { border-left-color: var(--win); }
+  .bg-row.bg-loss { border-left-color: var(--loss); }
+  .bg-meta { display: flex; flex-direction: column; gap: 2px; }
+  .bg-year {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .bg-round {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    line-height: 1.1;
+  }
+  .bg-result {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    line-height: 1.4;
+  }
+  .bg-verb { font-weight: 700; }
+  .bg-row.bg-win  .bg-verb { color: var(--win); }
+  .bg-row.bg-loss .bg-verb { color: var(--loss); }
+  .bg-score {
+    font-family: var(--display);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .bg-empty {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    padding: 6px 0;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .owner-card, .madden-fill, .card-chev, .year-cell { transition: none; }
   }
@@ -985,13 +1151,13 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated May 31, 2026</span>
+      <span class="meta-pill">Last Updated June 3, 2026</span>
     </div>
   </header>
 
   <div class="filter-bar" role="tablist" aria-label="Filter owners">
-    <button class="filter-pill active" data-filter="all" role="tab" aria-selected="true">All</button>
-    <button class="filter-pill" data-filter="active" role="tab" aria-selected="false">Active</button>
+    <button class="filter-pill" data-filter="all" role="tab" aria-selected="false">All</button>
+    <button class="filter-pill active" data-filter="active" role="tab" aria-selected="true">Active</button>
     <button class="filter-pill" data-filter="upper" role="tab" aria-selected="false">Upper-Tier 2026</button>
     <button class="filter-pill" data-filter="lower" role="tab" aria-selected="false">Lower-Tier 2026</button>
   </div>
@@ -1007,6 +1173,8 @@
 <!-- Head-to-head source data (consolation games already excluded). Kept in a
      separate file so the portal stays lean and the data is reusable. -->
 <script src="matchups-data.js"></script>
+<!-- Per-owner auction-draft rollup (compact summary; full history stays in draft.html). -->
+<script src="draft-summary-data.js"></script>
 <script>
 /* =====================================================================
  * MAFFL POWER RANKINGS — COMMISSIONER WORKFLOW
@@ -1048,7 +1216,7 @@ const OWNERS_DATA = [
     rank: 1,
     ovr: 98, clutch: 97, grind: 98, heat: 98,
     rings: 3, runners: 1, divTitles: 7, playoffApps: 12, years: 24, winPct: 54,
-    scout: "The standard-bearer. Twenty-four seasons in, 3 rings, defending MAFFL Cup champion, and a 2025 runner-up to boot. The Reindeer brand has become the league's measuring stick — when Joe is bad, the title is open; when he's good, everyone else is playing for second.",
+    scout: "We have a reigning King. Holding the all-time MAFFL record for most Division Titles (7), he is riding massive heat after a 2024 Championship and a 2025 Runner-Up finish. Three rings and a league-leading seven division titles show that when Joe is locked in, he's almost impossible to beat. His recent dominance provided the Heat factor needed to push him just past Brian and Ron Murello to claim the #1 overall spot.",
     timeline: [
       [2002, "Reilly's RaMPagE", null, null, null, 0,0,0,0,0,0,0, "A"],
       [2003, "Reilly's RaMPagE", null, null, null, 0,0,0,0,0,0,0, "A"],
@@ -1085,19 +1253,19 @@ const OWNERS_DATA = [
     rank: 2,
     ovr: 94, clutch: 95, grind: 95, heat: 70,
     rings: 2, runners: 3, divTitles: 4, playoffApps: 15, years: 24, winPct: 59,
-    scout: "The franchise. 24 seasons in, league-best 59% career win rate, and the highest playoff trip count in MAFFL history (15). The Heat score (70) is the only thing keeping them off the top of the mountain — they're machine-built for the regular season but the bracket has been less generous in recent years.",
+    scout: "Holding the all-time league records for Total Wins (164), Playoff Appearances (15), Runner-Ups (3), and the highest active career win percentage (59%), their absurd statistics show that they are an absolute juggernaut. It was an incredibly tight margin, but the #1 overall franchise has been on a hotter streak over the last three seasons.",
     timeline: [
       [2002, "Swissvale SkeeDaddies", null,null,null, 0,0,0,0,0,0,0, "A"],
       [2003, "Swissvale SkeeDaddies", null,null,null, 0,0,0,0,0,0,0, "A"],
       [2004, "Swissvale SkeeDaddies", null,null,null, 0,0,0,0,0,0,0, "A"],
       [2005, "Swissvale SkeeDaddies", 7,6,0, 0,0,0,1,0,0,0, "A"],
       [2006, "Swissvale Flashes",     8,4,1, 1,0,0,1,0,0,0, "A"],
-      [2007, "ONE HOUSE DIVIDED",     8,5,0, 0,1,0,1,0,0,0, "A"],
+      [2007, "ONE HOUSE DIVIDED",     8,5,0, 1,0,0,1,0,0,0, "A"],
       [2008, "ONE HOUSE DIVIDED",     7,6,0, 0,0,0,0,0,0,0, "A"],
       [2009, "Swissvale GallopingGhosts",11,2,0, 0,0,0,1,0,0,0, "A"],
       [2010, "Swissvale GallopingGhosts",7,6,0, 0,0,0,1,0,0,0, "A"],
       [2011, "Swissvale Ghosts",      8,5,0, 0,0,0,1,0,0,0, "A"],
-      [2012, "Swissvale Griffins III",9,3,1, 0,0,1,1,0,0,0, "A"],
+      [2012, "Swissvale Griffins III",9,3,1, 0,1,1,1,0,0,0, "A"],
       [2013, "Swissvale Real McCoy's",8,5,0, 0,0,0,1,0,0,0, "A"],
       [2014, "Swissvale Lucky's",     8,5,0, 0,0,0,1,0,0,0, "A"],
       [2015, "Swissvale Norseman",    5,8,0, 0,0,0,0,0,0,0, "A"],
@@ -1107,8 +1275,8 @@ const OWNERS_DATA = [
       [2019, "Swissvale Fire and Fury",7,6,0, 0,0,0,1,0,0,0, "A"],
       [2020, "Hadley's Comets",       6,7,0, 0,0,0,0,0,0,0, "A"],
       [2021, "Hadley's Comets",       7,7,0, 0,0,0,1,0,0,0, "A"],
-      [2022, "Hadley's Comets",      12,2,0, 0,0,1,1,0,0,0, "A"],
-      [2023, "Hadley's Comets",       9,5,0, 0,0,1,1,0,0,0, "A"],
+      [2022, "Hadley's Comets",      12,2,0, 0,1,1,1,0,0,0, "A"],
+      [2023, "Hadley's Comets",       9,5,0, 0,1,1,1,0,0,0, "A"],
       [2024, "Hadley's Comets",       6,8,0, 0,0,0,0,0,0,0, "A"],
       [2025, "Hadley's Comets",       8,6,0, 0,0,0,1,0,0,0, "U"]
     ]
@@ -1122,7 +1290,7 @@ const OWNERS_DATA = [
     rank: 3,
     ovr: 89, clutch: 87, grind: 91, heat: 84,
     rings: 3, runners: 1, divTitles: 5, playoffApps: 11, years: 24, winPct: 53,
-    scout: "Three rings (2009, 2010, 2017) and the Hammer Time brand never goes away. Got pushed to the Lower-Tier in 2025 — first time he's seen the basement — but won the Promotion Showdown to climb right back. Owners ranked above him better hope the relegation didn't sharpen his edge.",
+    scout: "Boasting a lethal combination of regular-season supremacy and playoff execution, this 24-year veteran has three championships and a solid 53% win rate. Tony is the definition of a powerhouse franchise who knows how to survive the grind and close the deal.",
     timeline: [
       [2002,"Happy Valley Hammer Time",null,null,null,0,0,0,0,0,0,0,"A"],
       [2003,"Happy Valley Hammer Time",null,null,null,0,0,0,0,0,0,0,"A"],
@@ -1142,7 +1310,7 @@ const OWNERS_DATA = [
       [2017,"Happy Valley Hammer Time",10,3,0,1,0,1,1,0,0,0,"A"],
       [2018,"Happy Valley Hammer Time",10,3,0,0,0,1,1,0,0,0,"A"],
       [2019,"Happy Valley Hammer Time",4,9,0,0,0,0,0,0,0,0,"A"],
-      [2020,"Happy Valley Hammer Time",9,4,0,0,0,1,1,0,0,0,"A"],
+      [2020,"Happy Valley Hammer Time",9,4,0,0,1,1,1,0,0,0,"A"],
       [2021,"Happy Valley Hammer Time",5,9,0,0,0,0,0,0,0,0,"A"],
       [2022,"Happy Valley Hammer Time",10,4,0,0,0,1,1,0,0,0,"A"],
       [2023,"Happy Valley Hammer Time",5,9,0,0,0,0,0,0,0,0,"A"],
@@ -1159,7 +1327,7 @@ const OWNERS_DATA = [
     rank: 4,
     ovr: 86, clutch: 95, grind: 79, heat: 99,
     rings: 3, runners: 2, divTitles: 4, playoffApps: 10, years: 20, winPct: 49,
-    scout: "Three rings (2008, 2022, 2025) and a 99 Heat — the highest in the league. The Prodigal Sons have always been streaky, but when they catch fire nobody scares Joe Reilly more. Coming off their second title in four years, this is the most dangerous they've ever been on paper.",
+    scout: "As only one of three franchises to reach the prestigious 3-Ring club, you don't luck into three championships. They might have a slightly lower win percentage than the top three, but this duo consistently shows up and executes when the playoffs start.",
     timeline: [
       [2006,"Outlaw In-Law",3,10,0,0,0,0,0,0,0,0,"A"],
       [2007,"The Prodigal Sons",7,6,0,0,0,0,1,0,0,0,"A"],
@@ -1168,8 +1336,8 @@ const OWNERS_DATA = [
       [2010,"The Prodigal Sons",9,4,0,0,0,0,1,0,0,0,"A"],
       [2011,"The Prodigal Sons",5,8,0,0,0,0,0,0,0,0,"A"],
       [2012,"The Prodigal Sons",7,6,0,0,0,0,1,0,0,0,"A"],
-      [2013,"The Prodigal Sons",8,5,0,0,0,1,1,0,0,0,"A"],
-      [2014,"The Prodigal Sons",6,7,0,0,0,1,1,0,0,0,"A"],
+      [2013,"The Prodigal Sons",8,5,0,0,1,1,1,0,0,0,"A"],
+      [2014,"The Prodigal Sons",6,7,0,0,1,1,1,0,0,0,"A"],
       [2015,"The Prodigal Sons",9,4,0,0,0,1,1,0,0,0,"A"],
       [2016,"The Prodigal Sons",4,9,0,0,0,0,0,0,0,0,"A"],
       [2017,"The Prodigal Sons",8,5,0,0,0,0,0,0,0,0,"A"],
@@ -1192,9 +1360,9 @@ const OWNERS_DATA = [
     rank: 5,
     ovr: 80, clutch: 78, grind: 77, heat: 99,
     rings: 2, runners: 2, divTitles: 1, playoffApps: 11, years: 24, winPct: 52,
-    scout: "Bad Attitude Gang is the longest continuously-running brand in the league. 2 rings, 99 Heat — Mike runs hot in big games. After a 2025 Lower-Tier Runner-Up finish climbed him back to the Upper, he's eyeing a third ring in his 25th season.",
+    scout: "The league's original voice and high-speed auctioneer, he was the spreadsheet architect who kept the heyday chaos organized to ensure the league's foundation was built to last. The Commish runs a tight ship, and team BAG always comes ready to play. Decades of consistency, with two rings, two runner-ups and 11 playoff appearances, create a résumé that claims a top-5 spot.",
     timeline: [
-      [2002,"Bad Attitude Gang",null,null,null,0,0,0,0,0,0,0,"A"],
+      [2002,"Bad Attitude Gang",null,null,null,1,0,0,0,0,0,0,"A"],
       [2003,"Bad Attitude Gang",null,null,null,0,0,0,0,0,0,0,"A"],
       [2004,"Bad Attitude Gang",null,null,null,0,0,0,0,0,0,0,"A"],
       [2005,"$Mike's Bad Attitude Gang",6,7,0,0,0,0,0,0,0,0,"A"],
@@ -1229,7 +1397,7 @@ const OWNERS_DATA = [
     rank: 6,
     ovr: 78, clutch: 74, grind: 81, heat: 77,
     rings: 1, runners: 2, divTitles: 6, playoffApps: 14, years: 23, winPct: 54,
-    scout: "Kardiac Kids has been an AFC mainstay for 23 seasons. One ring (2012), but 6 division titles and 14 playoff trips speaks to the Grind score. The 2024 brand reset to 'Kids Mixon with Lamar' didn't take — back to the Kids in 2025 and back to the bracket.",
+    scout: "A true OG who planted the seed in the 90s, he let your very own MAFFL commish circle a $3,000 Steve Young in the USA Today and call in the lineup. With 14 playoff appearances, 6 division titles and 151 wins, Grampy is a foundational pillar. He might 'only' have one ring, but his 54% win rate proves he is a weekly nightmare to match up against.",
     timeline: [
       [2003,"Kardiac Kids",null,null,null,0,0,0,0,0,0,0,"A"],
       [2004,"Kardiac Kids",null,null,null,0,0,0,0,0,0,0,"A"],
@@ -1265,7 +1433,7 @@ const OWNERS_DATA = [
     rank: 7,
     ovr: 69, clutch: 70, grind: 71, heat: 41,
     rings: 2, runners: 1, divTitles: 3, playoffApps: 7, years: 23, winPct: 47,
-    scout: "Two-time champion (2005, 2015) and one of the founding U-Town brands. Five straight losing seasons have caught up with him — relegated to the Lower-Tier for 2026, his first taste of the basement. Don't write off the Ferrets; this is a comeback waiting to happen.",
+    scout: "A multi-time champion who has survived the league since 2002, when Todd's franchise is on top, there is joy in the MAFFL community. Todd has his championships written in our brains with photoshoots and championship apparel. However, ending up relegated for 2026 shows that past glory doesn't save you from a tough rebuild.",
     timeline: [
       [2003,"U-Town Fightin Ferrets",null,null,null,0,0,0,0,0,0,0,"A"],
       [2004,"U-Town Fightin Ferrets",null,null,null,0,0,0,0,0,0,0,"A"],
@@ -1301,7 +1469,7 @@ const OWNERS_DATA = [
     rank: 8,
     ovr: 67, clutch: 45, grind: 72, heat: 40,
     rings: 2, runners: 1, divTitles: 2, playoffApps: 10, years: 23, winPct: 42,
-    scout: "Two surprise championship runs (2013, 2020) where the V-Unit caught fire from a low seed. 42% career mark is the lowest among multi-ring owners — Chris finds Octobers and forgets them by Decembers. Relegated for 2026 after a 3-11 stinker.",
+    scout: "A boom-or-bust franchise, he holds the all-time MAFFL record for most regular-season losses (159). Owners ahead of him on the ranks can point to his sub-.500 career win percentage, but you can't deny an owner with two shiny rings. Heading to the Lower-Tier with 0 credits in 2026 is a harsh reality check.",
     timeline: [
       [2003,"The V-Unit",null,null,null,0,0,0,0,0,0,0,"A"],
       [2004,"The V-Unit",null,null,null,0,0,0,0,0,0,0,"A"],
@@ -1337,7 +1505,7 @@ const OWNERS_DATA = [
     rank: 9,
     ovr: 63, clutch: 53, grind: 71, heat: 81,
     rings: 2, runners: 0, divTitles: 1, playoffApps: 8, years: 24, winPct: 48,
-    scout: "Jake's Jagoffs has been here from day one. Two rings on the wall (2011, 2021) and a 2025 Lower-Tier Runner-Up to punch his ticket back to Upper. Heat of 81 is reflective of how dangerous he is once October hits.",
+    scout: "As one of the prestigious 'Day One' franchises with multiple titles, his two rings and 132 wins keep him comfortably in the top ten. However, a career win rate sitting under 45% holds him back from the Elite group.",
     timeline: [
       [2002,"Jake's Jagoffs",null,null,null,0,0,0,0,0,0,0,"A"],
       [2003,"Jake's Jagoffs",null,null,null,0,0,0,0,0,0,0,"A"],
@@ -1374,7 +1542,7 @@ const OWNERS_DATA = [
     rank: 10,
     ovr: 61, clutch: 39, grind: 77, heat: 65,
     rings: 1, runners: 2, divTitles: 3, playoffApps: 13, years: 20, winPct: 55,
-    scout: "Wilkinsburg N'@s → Greensburg → Motown → Fort Myers → SW Florida → South Hills. The most brand changes of any owner, and the 2019 ring as Fort Myers Sunshiners is the proof of concept. 55% career mark and 13 playoff trips put him in the upper half of the standings.",
+    scout: "Running an incredibly efficient regular-season operation that has racked up 115 wins and a 58% career win rate, this franchise is constantly pushing the group at the top in its 20 years of action. However, the owners above him on this ranking have more deep post-season runs. A 2026 championship run could propel BJ into the Elite.",
     timeline: [
       [2006,"Wilkinsburg N'@s",7,6,0,0,1,0,1,0,0,0,"A"],
       [2007,"Greensburg N'@s",8,5,0,0,0,0,1,0,0,0,"A"],
@@ -1407,7 +1575,7 @@ const OWNERS_DATA = [
     rank: 11,
     ovr: 50, clutch: 26, grind: 60, heat: 41,
     rings: 1, runners: 1, divTitles: 2, playoffApps: 7, years: 12, winPct: 52,
-    scout: "Camp Kes broke through in 2023 with the ring, then again with the 2021 runner-up. Streaky — when Bob is hot, Camp Kes runs the table; when he's not, 4-10 happens. Relegated for 2026 but the Heat (41) says he won't stay down long.",
+    scout: "Sitting right on the edge of the Upper Echelon and anchored by a solid winning record, Bo boasts a championship and a very respectable 52% win rate. However, sliding down to the Lower-Tier for 2026 stings. Time to claw back up.",
     timeline: [
       [2014,"Camp Kes",10,3,0,0,0,0,1,0,0,0,"A"],
       [2015,"Camp Kes",6,7,0,0,0,0,0,0,0,0,"A"],
@@ -1432,7 +1600,7 @@ const OWNERS_DATA = [
     rank: 13,
     ovr: 43, clutch: 11, grind: 67, heat: 68,
     rings: 0, runners: 0, divTitles: 4, playoffApps: 6, years: 13, winPct: 56,
-    scout: "The Big Bang Theory has been the most consistent ringless team of the 2010s and 2020s. Four division titles, but Clutch of 11 tells the story — Dan gets there but can't close. 2026 is a referendum on whether that ever changes.",
+    scout: "As the highest-ranked active franchise without a championship ring, Dan runs a franchise that always builds a great roster and dominates the regular season. Despite this, he can't seem to get over the final playoff hump.",
     timeline: [
       [2013,"The Big Bang Theory",9,4,0,0,0,1,1,0,0,0,"A"],
       [2014,"The Big Bang Theory",5,8,0,0,0,0,0,0,0,0,"A"],
@@ -1458,7 +1626,7 @@ const OWNERS_DATA = [
     rank: 14,
     ovr: 38, clutch: 22, grind: 49, heat: 70,
     rings: 0, runners: 1, divTitles: 2, playoffApps: 7, years: 12, winPct: 45,
-    scout: "Johnny Incognito → Southside Shooters. Rebranded in 2022 and the new identity is winning him divisions. 70 Heat is real — a 9-5 in 2025 and a Division title says the Shooters are about to threaten the upper crust.",
+    scout: "Making the postseason in over half of their active seasons (7 appearances in 12 years), this franchise is incredibly consistent at building competitive rosters year in and year out. Still, they are desperately chasing that elusive first championship ring.",
     timeline: [
       [2014,"Johnny Incognito",6,7,0,0,0,0,1,0,0,0,"A"],
       [2015,"Johnny Incognito",4,9,0,0,0,0,0,0,0,0,"A"],
@@ -1470,7 +1638,7 @@ const OWNERS_DATA = [
       [2021,"Johnny Incognito",8,6,0,0,0,0,1,0,0,0,"A"],
       [2022,"Southside Shooters",5,9,0,0,0,0,0,0,0,0,"A"],
       [2023,"Southside Shooters",6,8,0,0,0,0,1,0,0,0,"A"],
-      [2024,"Southside Shooters",7,7,0,0,0,1,1,0,0,0,"A"],
+      [2024,"Southside Shooters",7,7,0,0,1,1,1,0,0,0,"A"],
       [2025,"Southside Shooters",9,5,0,0,0,1,1,0,0,0,"U"]
     ]
   },
@@ -1483,7 +1651,7 @@ const OWNERS_DATA = [
     rank: 15,
     ovr: 35, clutch: 9, grind: 53, heat: 70,
     rings: 0, runners: 0, divTitles: 3, playoffApps: 5, years: 13, winPct: 44,
-    scout: "Turkey Hat Conglomerate is the league's most patient brand — thirteen seasons and three division titles, all coming since 2016. Made the playoffs in 2025. The Heat (70) is climbing but the Clutch (9) says the Conglomerate hasn't finished a job yet.",
+    scout: "Consistently finding ways to stay alive, this franchise can win a division despite a low winning percentage. They hold their own in the Upper-Tier, but a sub-50% win rate shows there's a lot of boom-or-bust in their weekly drafting and waiver strategy. They will need to string together a solid year to avoid a relegation battle next year.",
     timeline: [
       [2013,"Turkey Hat Conglomerate",6,7,0,0,0,0,0,0,0,0,"A"],
       [2014,"Turkey Hat Conglomerate",5,8,0,0,0,0,0,0,0,0,"A"],
@@ -1509,7 +1677,7 @@ const OWNERS_DATA = [
     rank: 19,
     ovr: 20, clutch: 1, grind: 26, heat: 54,
     rings: 0, runners: 0, divTitles: 2, playoffApps: 1, years: 5, winPct: 46,
-    scout: "Number 2 Tony came into 2021 swinging. Five seasons in, two division titles, and a 7-5 mark in 2025 (Lower) suggests the floor is rising. The Clutch (1) is the punchline — but every owner started somewhere.",
+    scout: "Falling into the Lower-Tier during the inaugural relegation season, he has been battling down there ever since. Six years deep into the MAFFL grind with a solid 46% win rate, he is competitive, but needs to piece together a complete season to earn a promotion and get back to the Upper-Tier.",
     timeline: [
       [2021,"Number 2 Tony",3,11,0,0,0,0,0,0,0,0,"A"],
       [2022,"Number 2 Tony",6,8,0,0,0,0,0,0,0,0,"A"],
@@ -1527,7 +1695,7 @@ const OWNERS_DATA = [
     rank: 20,
     ovr: 18, clutch: 5, grind: 28, heat: 67,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 2, years: 4, winPct: 55,
-    scout: "Young blood. 9-5 debut as Motown Ballers, brand pivot to Mike Vicks Dog Sitting Co. — already two playoff trips in four seasons and a 55% career mark. The Heat (67) for a 4-year owner is exceptional. He's coming for somebody's spot.",
+    scout: "Securing 3 playoff appearances and a winning record (55%) in his first four seasons, Braiden's resume reveals a highly efficient start where he hit the ground running. However, he needs to build more longevity to climb into the upper echelons.",
     timeline: [
       [2022,"Motown Ballers",9,5,0,0,0,0,1,0,0,0,"A"],
       [2023,"Motown Ballers",8,6,0,0,0,0,0,0,0,0,"A"],
@@ -1544,7 +1712,7 @@ const OWNERS_DATA = [
     rank: 23,
     ovr: 10, clutch: 0, grind: 17, heat: 48,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 50,
-    scout: "Rookie season as The Best in The 'Burgh — finished 6-6, right on the line. Bryan's son carrying the next generation into Lower-Tier. The Funari name has a ring on it; the kid has time to add another.",
+    scout: "As the highest-ranked franchise from the 2025 rookie class, going .500 right out of the gate in the Lower-Tier is a solid foundation to build on.",
     timeline: [
       [2025,"The Best in The 'Burgh",6,6,0,0,0,0,0,0,0,0,"L"]
     ]
@@ -1558,7 +1726,7 @@ const OWNERS_DATA = [
     rank: 25,
     ovr: 9, clutch: 0, grind: 15, heat: 48,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 42,
-    scout: "Rookie owner, Portly Primates. 5-7 finish in his first MAFFL run. The Lavrinc family has a long history here — the brand expectations are set.",
+    scout: "Keeping it competitive as a rookie, he ground out 5 wins in a tough Lower-Tier for a quiet but respectable debut. Going into year two, putting extra study hours into draft prep could be the key to climbing the ranks.",
     timeline: [
       [2025,"Portly Primates",5,7,0,0,0,0,0,0,0,0,"L"]
     ]
@@ -1572,7 +1740,7 @@ const OWNERS_DATA = [
     rank: 27,
     ovr: 8, clutch: 0, grind: 13, heat: 51,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 38,
-    scout: "Rookie. Tommy Phamclub finished 5-8 — the brand name suggests creativity, the record suggests learning curve. Year one of a project.",
+    scout: "Managing to secure 5 hard-fought wins during a grueling 2025 rookie campaign, he took some rookie lumps with a 5-8 record but survived the grind. Now that the first-year jitters are out of the way, it's time to see if year two brings a promotion.",
     timeline: [
       [2025,"Tommy Phamclub",5,8,0,0,0,0,0,0,0,0,"L"]
     ]
@@ -1586,7 +1754,7 @@ const OWNERS_DATA = [
     rank: 28,
     ovr: 8, clutch: 0, grind: 13, heat: 47,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 38,
-    scout: "Sarge's Squad: 5-8 in year one. Lower-Tier veteran-in-training. Plenty of room to grow.",
+    scout: "Fighting through the rookie wall to put 5 wins on the board, he finished his debut campaign at 5-8. The Lower-Tier is unforgiving, Sarge, but now you know exactly what it takes to compete in this league.",
     timeline: [
       [2025,"Sarge's Squad",5,8,0,0,0,0,0,0,0,0,"L"]
     ]
@@ -1600,7 +1768,7 @@ const OWNERS_DATA = [
     rank: 30,
     ovr: 7, clutch: 0, grind: 11, heat: 48,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 33,
-    scout: "Steel City Champyinz — bold name, 4-8 inaugural record. Yinzer energy with a long road ahead. The branding writes the check; year two needs to cash it.",
+    scout: "Enduring a tough rookie season, taking the bottom spot for active franchises is a rite of passage for some. With 4 wins in his debut, this leaves plenty of room for a massive sophomore leap—the only place left to go is up!",
     timeline: [
       [2025,"Steel City Champyinz",4,8,0,0,0,0,0,0,0,0,"L"]
     ]
@@ -1618,7 +1786,7 @@ const OWNERS_DATA = [
     rank: 12,
     ovr: 46, clutch: 39, grind: 66, heat: 0,
     rings: 1, runners: 1, divTitles: 2, playoffApps: 6, years: 20, winPct: 47,
-    scout: "Jefferson Juggernauts → West Mafflin Maffldivers → Jefferson Hills Juggernauts → Bunch o' Bums. Twenty seasons of evolving identities, one inaugural-era ring, and a 2010 runner-up. A genuine league cornerstone who stepped away after 2021.",
+    scout: "As 1 of 11 franchises to put in 20+ years of MAFFL service, he had a solid 20-year run. He was awarded co-champion in MAFFL's inaugural season and made the playoffs six times before retiring.",
     timeline: [
       [2002,"Jefferson Juggernauts",null,null,null,1,0,0,0,0,0,0,"A"],
       [2003,"Jefferson Juggernauts",null,null,null,0,0,0,0,0,0,0,"A"],
@@ -1651,7 +1819,7 @@ const OWNERS_DATA = [
     rank: 16,
     ovr: 30, clutch: 32, grind: 40, heat: 0,
     rings: 1, runners: 1, divTitles: 0, playoffApps: 5, years: 8, winPct: 62,
-    scout: "Pardon the Intoxication ran a tight eight-season window (2002-2009), capped by an early-era ring and a 62% career mark — second-best all-time. Disappeared after 2009 but the legacy is unimpeachable.",
+    scout: "Holding the highest career win percentage of any multi-year franchise in MAFFL history, this was the most efficient flash-in-the-pan run. An insane 62% win rate and a championship in just eight years is a legendary sprint.",
     timeline: [
       [2002,"Pardon the Intoxication",null,null,null,0,0,0,0,0,0,0,"A"],
       [2003,"Pardon the Intoxication",null,null,null,1,0,0,0,0,0,0,"A"],
@@ -1672,7 +1840,7 @@ const OWNERS_DATA = [
     rank: 17,
     ovr: 26, clutch: 24, grind: 37, heat: 0,
     rings: 0, runners: 2, divTitles: 0, playoffApps: 4, years: 7, winPct: 57,
-    scout: "Silver Bullets!!! — the exclamation points were earned. Seven seasons, two runner-up finishes (2008, 2011), and a 57% career mark. Walked away with the league's biggest 'what if.'",
+    scout: "Reaching the championship game in 28% of his seasons, he suffered two heartbreaking runner-up finishes in just seven years. A 57% win rate proves this franchise was a sharp drafting operation.",
     timeline: [
       [2006,"Silver Bullets",5,8,0,0,0,0,0,0,0,0,"A"],
       [2007,"Silver Bullets",6,7,0,0,0,0,0,0,0,0,"A"],
@@ -1692,7 +1860,7 @@ const OWNERS_DATA = [
     rank: 18,
     ovr: 21, clutch: 20, grind: 30, heat: 0,
     rings: 1, runners: 0, divTitles: 0, playoffApps: 2, years: 11, winPct: 36,
-    scout: "Warren Brownies, 11 seasons, one inaugural-era ring (2004). The Brownies finished sub-.500 most years but had two playoff cameos. Hung up the cleats after 2013.",
+    scout: "He got his ring, but holding the lowest win percentage of any MAFFL champion at a brutal 36% across 11 years tells the real story of this franchise's fantasy football suffering.",
     timeline: [
       [2003,"Warren Brownies",null,null,null,0,0,0,0,0,0,0,"A"],
       [2004,"Warren Brownies",null,null,null,1,0,0,0,0,0,0,"A"],
@@ -1716,7 +1884,7 @@ const OWNERS_DATA = [
     rank: 21,
     ovr: 13, clutch: 5, grind: 31, heat: 0,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 3, years: 7, winPct: 44,
-    scout: "Daddy Fat Sacks → Tooth Fairies. Seven seasons of brotherly co-management, three playoff trips. Exited after 2012 — the brand had personality even if the trophy case stayed empty.",
+    scout: "Managing to crack the postseason in nearly half of the seasons played (three playoff appearances in seven years), this was an otherwise forgettable run before exiting the league.",
     timeline: [
       [2006,"Daddy Fat Sacks",7,6,0,0,0,0,0,0,0,0,"A"],
       [2007,"Daddy Fat Sacks",4,9,0,0,0,0,0,0,0,0,"A"],
@@ -1736,7 +1904,7 @@ const OWNERS_DATA = [
     rank: 22,
     ovr: 11, clutch: 1, grind: 28, heat: 0,
     rings: 0, runners: 0, divTitles: 1, playoffApps: 2, years: 6, winPct: 37,
-    scout: "Shake 'n Bake had a brief but memorable run — six seasons, one out-of-nowhere division title in 2016. The dish was undercooked by 2019.",
+    scout: "Securing a division title in a very short, volatile window was the only statistical highlight, but Mike's ability to build camaraderie left a lasting impression as a universally beloved owner.",
     timeline: [
       [2014,"So. U Shake 'n Bake",3,10,0,0,0,0,0,0,0,0,"A"],
       [2015,"So. U Shake 'n Bake",2,11,0,0,0,0,0,0,0,0,"A"],
@@ -1755,7 +1923,7 @@ const OWNERS_DATA = [
     rank: 24,
     ovr: 9, clutch: 1, grind: 24, heat: 0,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 1, years: 1, winPct: 69,
-    scout: "Showed up in 2020, went 9-4, won the Kunis division, made the playoffs, and walked. Highest single-season win rate in league history by a one-and-done. The mythology writes itself.",
+    scout: "Holding the highest career win percentage in league history, he played for one year, getting nine wins. It was a solid regular season, and he refused to elaborate further.",
     timeline: [
       [2020,"Farber's First Timers",9,4,0,0,0,0,1,0,0,0,"A"]
     ]
@@ -1769,7 +1937,7 @@ const OWNERS_DATA = [
     rank: 26,
     ovr: 8, clutch: 1, grind: 23, heat: 0,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 1, years: 4, winPct: 44,
-    scout: "Moon Township Psycho Squirrels — easily the most underrated brand of the early era. Four seasons, one playoff appearance in 2008, then gone. The Squirrels live on in MAFFL lore.",
+    scout: "Consistently mediocre for exactly 48 games, this was four years of perfectly average, unremarkable performance.",
     timeline: [
       [2005,"Moon Township Psycho Squirrels",4,9,0,0,0,0,0,0,0,0,"A"],
       [2006,"Moon Township Psycho Squirrels",3,10,0,0,0,0,0,0,0,0,"A"],
@@ -1786,7 +1954,7 @@ const OWNERS_DATA = [
     rank: 29,
     ovr: 7, clutch: 0, grind: 23, heat: 0,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 1, years: 4, winPct: 38,
-    scout: "Powder Puffs → Pink Berets. The lone female owner in MAFFL history. Four seasons, one 2013 playoff trip with the Berets. Brand identity was top-shelf.",
+    scout: "Walking away with a highly respectable 48% career win rate and securing 20 wins during her time managing, she's certainly the real MVP here at commissioner HQ regardless of any fantasy accolades.",
     timeline: [
       [2010,"Powder Puffs",6,6,1,0,0,0,0,0,0,0,"A"],
       [2011,"Powder Puffs",3,10,0,0,0,0,0,0,0,0,"A"],
@@ -1803,7 +1971,7 @@ const OWNERS_DATA = [
     rank: 31,
     ovr: 7, clutch: 0, grind: 22, heat: 0,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 4, winPct: 44,
-    scout: "Major League Brown — never quite hit the playoffs in four seasons (2009-2012). The kind of grinder who keeps a 23-27 record interesting until Week 13.",
+    scout: "Managing to fly completely under the radar for almost half a decade, this was four years with zero playoffs and zero drama.",
     timeline: [
       [2009,"Major League Brown",6,7,0,0,0,0,0,0,0,0,"A"],
       [2010,"Major League Brown",5,7,1,0,0,0,0,0,0,0,"A"],
@@ -1820,9 +1988,47 @@ const OWNERS_DATA = [
     rank: 32,
     ovr: 5, clutch: 0, grind: 19, heat: 0,
     rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 1, winPct: 54,
-    scout: "Mike Honcho — one season (2013), 7-6, exited stage left. The brand had range; the owner had other plans.",
+    scout: "The ultimate 'one and done' penalty applied. He spent one year getting a winning record (7-6) and made an immediate exit to the basement of the franchise power rankings.",
     timeline: [
       [2013,"Mike Honcho",7,6,0,0,0,0,0,0,0,0,"A"]
+    ]
+  },
+
+  /* ============================================================
+     HISTORICAL OWNERS — created during the matchup audit. Never
+     part of the annual power-ranking effort, so Power ratings are
+     N/A (null OVR/Clutch/Grind/Heat, rendered as "–"). rank: null
+     sorts them to the very bottom; both inactive.
+     ============================================================ */
+  {
+    key: "marcus-ruby",
+    name: "Marcus Ruby",
+    recentTeam: "Daddy Fat Sacks",
+    active: false,
+    league2026: null,
+    rank: null,
+    ovr: null, clutch: null, grind: null, heat: null,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 2, winPct: 42,
+    scout: "The original Daddy Fat Sacks. A two-year cameo (2006–2007) before the franchise rebranded to the Tooth Fairies — a brief, sub-.500 run that opened the Ruby chapter of MAFFL history.",
+    timeline: [
+      [2006, "Daddy Fat Sacks", 7,6,0, 0,0,0,0,0,0,0, "A"],
+      [2007, "Daddy Fat Sacks", 4,9,0, 0,0,0,0,0,0,0, "A"]
+    ]
+  },
+  {
+    key: "cavalier-nicastro",
+    name: "Vincent Cavalier / Dominic Nicastro",
+    recentTeam: "Warren Brownies",
+    active: false,
+    league2026: null,
+    rank: null,
+    ovr: null, clutch: null, grind: null, heat: null,
+    rings: 0, runners: 0, divTitles: 0, playoffApps: 0, years: 3, winPct: 28,
+    scout: "Took the Warren Brownies reins from Jimmy Crisan for a three-season stint (2011–2013). The wins were hard to come by, but they kept a historic franchise name alive during a transition era.",
+    timeline: [
+      [2011, "Warren Brownies", 4,9,0, 0,0,0,0,0,0,0, "A"],
+      [2012, "Warren Brownies", 2,11,0, 0,0,0,0,0,0,0, "A"],
+      [2013, "Warren Brownies", 5,8,0, 0,0,0,0,0,0,0, "A"]
     ]
   }
 ];
@@ -1853,7 +2059,8 @@ var TOTAL_PF_BY_KEY = {
   "josh-lavrinc": 23351.47, "jeff-grace": 7411.0, "sean-ritson": 9513.0,
   "jimmy-crisan": 7616.75, "marcus-joe-ruby": 6593.0, "mike-licciardi": 7253.26,
   "josh-farber": 1477.34, "craig-toth": 5344.75, "joni-murello": 4942.4,
-  "matt-brown": 4819.5, "kevin-radkowski": 1287.06
+  "matt-brown": 4819.5, "kevin-radkowski": 1287.06,
+  "marcus-ruby": 2487.5, "cavalier-nicastro": 3654.3
 };
 OWNERS_DATA.forEach(function (o) {
   o.thirds = THIRDS_BY_KEY[o.key] || 0;
@@ -1878,17 +2085,23 @@ var KEY_TO_OWNER = (function () {
   return m;
 })();
 
-/* Head-to-head index from window.MATCHUPS_DATA (consolation already removed).
-   Shape: H2H_INDEX[ownerKey][oppKey] = { w, l }. The matchup file records a
-   winner/loser per row (no ties), so H2H is W-L. Gold names that don't resolve
-   to a portal key are logged once and skipped (never guessed). */
-var H2H_INDEX = (function () {
-  var idx = {};
+/* Head-to-head + big-game index from window.MATCHUPS_DATA (consolation already
+   removed). Each row is [year, winnerName, winnerScore, loserName, loserScore,
+   type] where type is "R" (regular season), "C" (championship), or "T"
+   (3rd-place game). "C" and "T" together are the playoff (Big Game) matchups.
+   Builds two indexes:
+     H2H_INDEX[ownerKey][oppKey] = { rsW, rsL, poW, poL }
+     BIG_GAMES_BY_KEY[ownerKey]  = [ { year, type, oppKey, won, ownScore, oppScore } ]
+   The matchup file records a winner/loser per row (no ties). Gold names that
+   don't resolve to a portal key are logged once and skipped (never guessed). */
+var H2H_INDEX = {};
+var BIG_GAMES_BY_KEY = {};
+(function buildMatchupIndexes() {
   var unresolved = {};
   var rows = (window.MATCHUPS_DATA || []);
   if (!rows.length) {
-    console.warn("[portal] MATCHUPS_DATA not loaded — Rivalry section will be empty.");
-    return idx;
+    console.warn("[portal] MATCHUPS_DATA not loaded — Rivals section will be empty.");
+    return;
   }
   function keyFor(name) {
     var k = NAME_TO_KEY[normalizeName(name)];
@@ -1896,20 +2109,75 @@ var H2H_INDEX = (function () {
     return k || null;
   }
   rows.forEach(function (r) {
-    var wk = keyFor(r[1]), lk = keyFor(r[3]);
+    var year = r[0], wk = keyFor(r[1]), ws = r[2], lk = keyFor(r[3]), ls = r[4];
+    var type = r[5] || "R";
     if (!wk || !lk || wk === lk) return;
-    idx[wk] = idx[wk] || {};
-    idx[lk] = idx[lk] || {};
-    (idx[wk][lk] = idx[wk][lk] || { w: 0, l: 0 }).w++;
-    (idx[lk][wk] = idx[lk][wk] || { w: 0, l: 0 }).l++;
+    var po = (type === "C" || type === "T");
+    H2H_INDEX[wk] = H2H_INDEX[wk] || {};
+    H2H_INDEX[lk] = H2H_INDEX[lk] || {};
+    var wrec = (H2H_INDEX[wk][lk] = H2H_INDEX[wk][lk] || { rsW: 0, rsL: 0, poW: 0, poL: 0 });
+    var lrec = (H2H_INDEX[lk][wk] = H2H_INDEX[lk][wk] || { rsW: 0, rsL: 0, poW: 0, poL: 0 });
+    if (po) { wrec.poW++; lrec.poL++; } else { wrec.rsW++; lrec.rsL++; }
+    if (po) {
+      BIG_GAMES_BY_KEY[wk] = BIG_GAMES_BY_KEY[wk] || [];
+      BIG_GAMES_BY_KEY[lk] = BIG_GAMES_BY_KEY[lk] || [];
+      BIG_GAMES_BY_KEY[wk].push({ year: year, type: type, oppKey: lk, won: true,  ownScore: ws, oppScore: ls });
+      BIG_GAMES_BY_KEY[lk].push({ year: year, type: type, oppKey: wk, won: false, ownScore: ls, oppScore: ws });
+    }
   });
   var miss = Object.keys(unresolved);
   if (miss.length) {
-    console.warn("[portal] Rivalry: " + miss.length +
+    console.warn("[portal] Rivals: " + miss.length +
       " matchup owner name(s) did not resolve to a portal key and were skipped:", unresolved);
   }
+})();
+
+/* Draft summary index (compact per-owner auction rollup; full history lives in
+   draft.html). Resolves gold names → portal key the same way as matchups. */
+var DRAFT_BY_KEY = (function () {
+  var idx = {};
+  (window.DRAFT_SUMMARY || []).forEach(function (d) {
+    var k = NAME_TO_KEY[normalizeName(d.owner)];
+    if (k) idx[k] = d;
+  });
   return idx;
 })();
+
+/* League-rank index for the Power-tab career stats. Computed at render time from
+   the (item-4 corrected) OWNERS_DATA so ranks always reflect current data — never
+   hardcoded. For each metric, rank = 1 + (# owners with a strictly greater value);
+   values shared by 2+ owners are flagged as ties ("T-"). Owners with a null value
+   (none today for these metrics) are excluded from the ranking. */
+var STAT_RANKS = (function () {
+  var metrics = ["rings", "runners", "divTitles", "playoffApps", "winPct"];
+  var out = {};
+  metrics.forEach(function (m) {
+    var vals = OWNERS_DATA.map(function (o) { return o[m]; })
+                          .filter(function (v) { return v != null; });
+    var map = {};
+    vals.forEach(function (v) {
+      if (map[v]) return;
+      var greater = 0, same = 0;
+      vals.forEach(function (x) { if (x > v) greater++; else if (x === v) same++; });
+      map[v] = { rank: greater + 1, tie: same > 1 };
+    });
+    out[m] = map;
+  });
+  return out;
+})();
+
+function ordinal(n) {
+  var s = ["th", "st", "nd", "rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/* "(T-1st)" style rank chip for a given career metric + value. */
+function rankLabel(metric, value) {
+  if (value == null) return "";
+  var e = STAT_RANKS[metric] && STAT_RANKS[metric][value];
+  if (!e) return "";
+  return (e.tie ? "T-" : "") + ordinal(e.rank);
+}
 
 /* =====================================================================
  * RENDER
@@ -1983,12 +2251,13 @@ function renderTimelineCells(timeline) {
 }
 
 function tierInfoForRank(rank) {
-  if (rank >= 1  && rank <= 4)  return { icon: "\u{1F3D4}️", label: "Mount Rushmore" };
-  if (rank >= 5  && rank <= 8)  return { icon: "\u{1F3C5}",       label: "The Elite" };
-  if (rank >= 9  && rank <= 12) return { icon: "\u{1F6E1}️", label: "Upper-Tier Gatekeepers" };
-  if (rank >= 13 && rank <= 19) return { icon: "\u{1F9D7}‍♂️", label: "Middle of the Pack" };
-  if (rank >= 20 && rank <= 26) return { icon: "\u{1F47B}",       label: "The Departed & The Grinders" };
-  if (rank >= 27 && rank <= 32) return { icon: "\u{1F573}️", label: "The Rookies & The Basement" };
+  if (rank == null) return null;
+  if (rank >= 1  && rank <= 4)  return { icon: "\u{1F3D4}️", label: "Mount Rushmore", cls: "tier-rushmore" };
+  if (rank >= 5  && rank <= 8)  return { icon: "\u{1F3C5}",       label: "The Elite", cls: "tier-elite" };
+  if (rank >= 9  && rank <= 12) return { icon: "\u{1F6E1}️", label: "Upper-Tier Gatekeepers", cls: "tier-gatekeeper" };
+  if (rank >= 13 && rank <= 19) return { icon: "\u{1F9D7}‍♂️", label: "Middle of the Pack", cls: "tier-middle" };
+  if (rank >= 20 && rank <= 26) return { icon: "\u{1F47B}",       label: "The Departed & The Grinders", cls: "tier-departed" };
+  if (rank >= 27 && rank <= 32) return { icon: "\u{1F573}️", label: "The Rookies & The Basement", cls: "tier-basement" };
   return null;
 }
 
@@ -2045,58 +2314,159 @@ function winRateColor(pct) {
   return "hsl(" + hue + ", 70%, 86%)";
 }
 
-/* Section 3 — Rivalry: head-to-head vs. every opponent, color-scaled by win
-   rate. Stacks vertically so it never overflows a ~390px card. */
-function renderRivalry(owner) {
+/* Round label for a playoff game type. */
+function roundLabel(type) {
+  if (type === "C") return "Championship";
+  if (type === "T") return "3rd-Place Game";
+  return "Playoff";
+}
+
+/* Big Game Matchups — this owner's playoff games (Championship + 3rd-Place)
+   with final scores, newest first. (The matchup data carries no distinct
+   promotion/relegation showdown game type, so only true playoff games appear.) */
+function renderBigGames(owner) {
+  var games = (BIG_GAMES_BY_KEY[owner.key] || []).slice();
+  if (!games.length) {
+    return '<div class="bg-empty">No playoff games on record.</div>';
+  }
+  games.sort(function (a, b) { return (b.year - a.year) || a.type.localeCompare(b.type); });
+  var items = games.map(function (g) {
+    var opp = KEY_TO_OWNER[g.oppKey];
+    var oppName = opp ? opp.name : g.oppKey;
+    var verb = g.won ? "def." : "lost to";
+    return '<li class="bg-row ' + (g.won ? "bg-win" : "bg-loss") + '">' +
+      '<span class="bg-meta"><span class="bg-year">' + escHtml(g.year) + '</span>' +
+        '<span class="bg-round">' + escHtml(roundLabel(g.type)) + '</span></span>' +
+      '<span class="bg-result">' +
+        '<span class="bg-verb">' + verb + '</span> ' + escHtml(oppName) +
+        ' <span class="bg-score">' + escHtml(g.ownScore) + '–' + escHtml(g.oppScore) + '</span>' +
+      '</span>' +
+    '</li>';
+  }).join("");
+  return '<ul class="bg-list">' + items + '</ul>';
+}
+
+/* Rivals — head-to-head vs. every opponent, split into Regular Season (heat-map
+   colored by win rate) and Playoffs. The full breakdown is collapsible; the Big
+   Game Matchups block sits below it. Stacks vertically so it never overflows a
+   ~390px card. */
+function renderRivals(owner) {
+  var bigGames =
+    '<div class="ov-head bg-head">Big Game Matchups</div>' + renderBigGames(owner);
   var opp = H2H_INDEX[owner.key];
   if (!opp || !Object.keys(opp).length) {
-    return '<div class="rivalry-empty">No head-to-head games on record.</div>';
+    return '<div class="rivalry-wrap">' +
+      '<div class="rivalry-empty">No head-to-head games on record.</div>' +
+      bigGames +
+    '</div>';
   }
   var rows = Object.keys(opp).map(function (k) {
-    var rec = opp[k], g = rec.w + rec.l, oo = KEY_TO_OWNER[k];
-    return { name: oo ? oo.name : k, w: rec.w, l: rec.l, g: g, pct: g ? rec.w / g : 0 };
+    var rec = opp[k], oo = KEY_TO_OWNER[k];
+    var rsG = rec.rsW + rec.rsL, poG = rec.poW + rec.poL;
+    return {
+      name: oo ? oo.name : k,
+      rsW: rec.rsW, rsL: rec.rsL, poW: rec.poW, poL: rec.poL,
+      rsG: rsG, poG: poG, g: rsG + poG, pct: rsG ? rec.rsW / rsG : 0
+    };
   });
   rows.sort(function (a, b) {
     return (b.g - a.g) || (b.pct - a.pct) || a.name.localeCompare(b.name);
   });
-  var totW = 0, totL = 0;
+  var totRsW = 0, totRsL = 0, totPoW = 0, totPoL = 0;
   var items = rows.map(function (r) {
-    totW += r.w; totL += r.l;
+    totRsW += r.rsW; totRsL += r.rsL; totPoW += r.poW; totPoL += r.poL;
+    var poCell = r.poG
+      ? '<span class="rv-rec rv-po">' + r.poW + '–' + r.poL + '</span>'
+      : '<span class="rv-rec rv-po rv-empty">—</span>';
     return '<li class="rv-row">' +
       '<span class="rv-opp">' + escHtml(r.name) + '</span>' +
-      '<span class="rv-rec">' + r.w + '–' + r.l + '</span>' +
-      '<span class="rv-pct" style="background:' + winRateColor(r.pct) + '">' + Math.round(r.pct * 100) + '%</span>' +
+      '<span class="rv-rec rv-rs" style="background:' + winRateColor(r.pct) + '">' + r.rsW + '–' + r.rsL + '</span>' +
+      poCell +
     '</li>';
   }).join("");
-  var allG = totW + totL, allPct = allG ? Math.round(totW / allG * 100) : 0;
+  var rsTot = totRsW + totRsL, rsPct = rsTot ? Math.round(totRsW / rsTot * 100) : 0;
+  var summary =
+    '<div class="rv-summary">' +
+      'Regular season: <strong>' + totRsW + '–' + totRsL + '</strong> (' + rsPct + '%)' +
+      ' &middot; Playoffs: <strong>' + totPoW + '–' + totPoL + '</strong>' +
+    '</div>';
   return '<div class="rivalry-wrap">' +
-    '<div class="rv-summary">All-time vs. the league: <strong>' + totW + '–' + totL + '</strong> (' + allPct + '%)</div>' +
-    '<ul class="rv-list">' +
-      '<li class="rv-row rv-head"><span class="rv-opp">Opponent</span><span class="rv-rec">W–L</span><span class="rv-pct">Win%</span></li>' +
-      items +
-    '</ul>' +
-    '<p class="rv-note">Regular season + playoffs, consolation games excluded.</p>' +
+    summary +
+    '<button type="button" class="rv-toggle" aria-expanded="false">Show opponent-by-opponent breakdown</button>' +
+    '<div class="rv-breakdown" hidden>' +
+      '<ul class="rv-list">' +
+        '<li class="rv-row rv-head"><span class="rv-opp">Opponent</span><span class="rv-rec rv-rs">Reg. Szn</span><span class="rv-rec rv-po">Playoffs</span></li>' +
+        items +
+      '</ul>' +
+    '</div>' +
+    bigGames +
   '</div>';
 }
 
-function renderOwnerCard(owner) {
-  /* ---- Section 4 (Power Rankings): career stats + trophies + points ---- */
+function fmtMoney(v) {
+  if (v == null) return "—";
+  return "$" + Math.round(v).toLocaleString("en-US");
+}
+
+/* Draft tab — compact auction summary sourced from window.DRAFT_SUMMARY plus a
+   deep-link to the owner's full profile in draft.html. The full 5,855-row draft
+   history never loads on this page. */
+function renderDraftSummary(owner) {
+  var cta = '<a class="draft-cta-btn" href="draft.html#owner=' + escHtml(owner.key) +
+    '">View full draft profile →</a>';
+  var d = DRAFT_BY_KEY[owner.key];
+  if (!d) {
+    return '<div class="draft-cta">' +
+      '<p class="draft-cta-text">No auction draft history on record for this franchise.</p>' +
+      cta +
+    '</div>';
+  }
+  var boxes = [
+    { num: fmtMoney(d.spent), label: "Total Spent" },
+    { num: "$" + d.avg,       label: "Avg / Pick" },
+    { num: d.picks,           label: "Total Picks" },
+    { num: escHtml(d.topPos), label: "Top Pos by Spend" }
+  ];
+  var boxesHtml = boxes.map(function (b) {
+    return '<div class="stat-box">' +
+      '<div class="stat-num">' + b.num + '</div>' +
+      '<div class="stat-label">' + escHtml(b.label) + '</div>' +
+    '</div>';
+  }).join("");
+  var priciest =
+    '<div class="draft-priciest">' +
+      '<div class="stat-label">Priciest Pick</div>' +
+      '<div class="draft-priciest-val">' + escHtml(d.maxPlayer) +
+        ' <span class="draft-priciest-price">$' + escHtml(d.maxPrice) + '</span> (' + escHtml(d.maxYear) + ')</div>' +
+    '</div>';
+  return '<div class="draft-summary">' +
+    '<div class="draft-stats">' + boxesHtml + '</div>' +
+    priciest +
+    '<div class="draft-cta draft-cta--compact">' + cta + '</div>' +
+  '</div>';
+}
+
+function renderOwnerCard(owner, index) {
+  /* ---- Power tab: career stats (+ league rank) + Madden ratings + scout ---- */
   var stats = [
-    { label: "\u{1F3C6} Rings",      value: owner.rings,   gold: true },
-    { label: "\u{1F948} Runner-Ups", value: owner.runners },
+    { label: "\u{1F3C6} Rings",      value: owner.rings,       rankKey: "rings", gold: true },
+    { label: "\u{1F948} Runner-Ups", value: owner.runners,     rankKey: "runners" },
     { label: "\u{1F949} 3rd Place",  value: owner.thirds },
-    { label: "Div Titles",           value: owner.divTitles },
-    { label: "Playoff Apps",         value: owner.playoffApps },
+    { label: "Div Titles",           value: owner.divTitles,   rankKey: "divTitles" },
+    { label: "Playoff Apps",         value: owner.playoffApps, rankKey: "playoffApps" },
     { label: "Years",                value: owner.years },
-    { label: "Career Win %",         value: owner.winPct + "%" },
+    { label: "Career Win %",         value: owner.winPct + "%", rankKey: "winPct", rankVal: owner.winPct },
     { label: "Total PF",             value: formatPF(owner.totalPF) }
   ];
 
   var statsHtml = stats.map(function (s) {
+    var rk = s.rankKey ? rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value) : "";
+    var rankHtml = rk ? '<div class="stat-rank">(' + escHtml(rk) + ')</div>' : "";
     return (
       '<div class="stat-box">' +
         '<div class="stat-num' + (s.gold ? ' gold' : '') + '">' + escHtml(s.value) + '</div>' +
         '<div class="stat-label">' + escHtml(s.label) + '</div>' +
+        rankHtml +
       '</div>'
     );
   }).join("");
@@ -2107,12 +2477,13 @@ function renderOwnerCard(owner) {
     { emoji: "\u{1F525}", label: "Heat",   value: owner.heat,   heat: true  }
   ];
   var ratingsHtml = ratings.map(function (r) {
-    var pct = Math.max(0, Math.min(99, r.value));
+    var hasVal = r.value != null;
+    var pct = hasVal ? Math.max(0, Math.min(99, r.value)) : 0;
     return (
       '<div class="madden-row">' +
         '<div class="madden-emoji" aria-label="' + escHtml(r.label) + '">' + r.emoji + '</div>' +
         '<div class="madden-track"><div class="madden-fill' + (r.heat ? ' heat' : '') + '" style="width:' + pct + '%"></div></div>' +
-        '<div class="madden-value">' + escHtml(r.value) + '</div>' +
+        '<div class="madden-value">' + (hasVal ? escHtml(r.value) : "–") + '</div>' +
       '</div>'
     );
   }).join("");
@@ -2152,11 +2523,7 @@ function renderOwnerCard(owner) {
     '</li>';
   }).join("");
 
-  var yearsFact =
-    '<div class="ov-fact">' +
-      '<span class="ov-fact-label">Years in League</span>' +
-      '<span class="ov-fact-value">Member since ' + escHtml(since) + ' &middot; ' + escHtml(owner.years) + ' seasons</span>' +
-    '</div>';
+  var currentTeam = owner.recentTeam || (prog.length ? prog[prog.length - 1].team : "");
   var coownerFact = "";
   if (String(owner.name).indexOf("/") !== -1) {
     var members = owner.name.split("/").map(function (s) { return s.trim(); }).filter(Boolean).join(" & ");
@@ -2168,34 +2535,32 @@ function renderOwnerCard(owner) {
   }
 
   var overviewHtml =
-    '<div class="ov-section">' +
-      '<div class="ov-head">Team History</div>' +
-      '<ol class="prog-list">' + progItems + '</ol>' +
+    '<div class="ov-section ov-team-section">' +
+      '<div class="ov-current-team">' + escHtml(currentTeam) + '</div>' +
+      '<button type="button" class="ov-seemore" aria-expanded="false" aria-controls="prog-' + escHtml(owner.key) + '">See more</button>' +
+      '<ol class="prog-list" id="prog-' + escHtml(owner.key) + '" hidden>' + progItems + '</ol>' +
     '</div>' +
-    '<div class="ov-facts">' + yearsFact + coownerFact + '</div>' +
+    (coownerFact ? '<div class="ov-facts">' + coownerFact + '</div>' : "") +
     '<div class="ov-section">' +
       '<div class="ov-head">Season Timeline</div>' +
       '<div class="timeline-section">' + timelineHtml + '</div>' +
     '</div>';
 
-  /* ---- Section 2 (Draft Profile): deep-link out to the Auction Draft Portal ---- */
-  var draftHtml =
-    '<div class="draft-cta">' +
-      '<p class="draft-cta-text">Every auction pick, spend, and value for this owner lives in the Auction Draft Portal.</p>' +
-      '<a class="draft-cta-btn" href="draft.html#owner=' + escHtml(owner.key) + '">View Auction Draft Profile →</a>' +
-    '</div>';
+  /* ---- Draft tab: compact summary + deep-link to full profile ---- */
+  var draftHtml = renderDraftSummary(owner);
 
-  /* ---- Section 3 (Rivalry) ---- */
-  var rivalryHtml = renderRivalry(owner);
+  /* ---- Rivals tab ---- */
+  var rivalsHtml = renderRivals(owner);
 
-  /* ---- Collapsed header: rank · tier kicker · name · "Member Since" · OVR ---- */
+  /* ---- Collapsed header: rank · name · tier pill · "Member Since" · OVR ---- */
   var info = tierInfoForRank(owner.rank);
-  var kickerHtml = info
-    ? '<span class="card-tier-badges card-kicker"><span class="card-tier-badge">' +
+  var tierPillHtml = info
+    ? '<span class="card-tier-badges card-kicker"><span class="card-tier-badge ' + info.cls + '">' +
         '<span class="badge-icon">' + info.icon + '</span>' + escHtml(info.label) + '</span></span>'
     : "";
   var inactiveBadge = owner.active ? "" : '<span class="card-tier-badge inactive">Inactive</span>';
-  var rankDisplay = owner.rank != null ? owner.rank : '—';
+  var rankDisplay = owner.rank != null ? owner.rank : '–';
+  var ovrDisplay = owner.ovr != null ? owner.ovr : '–';
 
   /* ---- Section tabs ---- */
   function tabBtn(id, label, active) {
@@ -2209,19 +2574,19 @@ function renderOwnerCard(owner) {
   }
 
   return (
-    '<article class="owner-card" data-key="' + escHtml(owner.key) + '" data-active="' + (owner.active ? "Y" : "N") + '" data-league="' + escHtml(owner.league2026 || "") + '" data-rank="' + escHtml(owner.rank) + '">' +
+    '<article class="owner-card" data-key="' + escHtml(owner.key) + '" data-active="' + (owner.active ? "Y" : "N") + '" data-league="' + escHtml(owner.league2026 || "") + '" data-rank="' + escHtml(owner.rank) + '" data-ovr="' + (owner.ovr != null ? owner.ovr : "") + '" data-order="' + index + '">' +
       '<button type="button" class="card-row" aria-expanded="false" aria-controls="body-' + escHtml(owner.key) + '">' +
         '<span class="card-rank" aria-label="Power Rank">' + escHtml(rankDisplay) + '</span>' +
         '<span class="card-identity">' +
-          kickerHtml +
           '<h3 class="card-owner-name">' + escHtml(owner.name) + '</h3>' +
+          tierPillHtml +
           '<span class="card-meta-row">' +
             '<span class="card-since-pill">Member Since ' + escHtml(since) + '</span>' +
             inactiveBadge +
           '</span>' +
         '</span>' +
         '<span class="card-ovr">' +
-          '<div class="card-ovr-value">' + escHtml(owner.ovr) + '</div>' +
+          '<div class="card-ovr-value">' + escHtml(ovrDisplay) + '</div>' +
           '<div class="card-ovr-label">OVR</div>' +
         '</span>' +
         '<span class="card-chev" aria-hidden="true">▾</span>' +
@@ -2229,14 +2594,14 @@ function renderOwnerCard(owner) {
       '<div class="card-body" id="body-' + escHtml(owner.key) + '">' +
         '<div class="portal-tabs" role="tablist" aria-label="Owner sections">' +
           tabBtn("overview", "Overview", true) +
-          tabBtn("draft", "Draft", false) +
-          tabBtn("rivalry", "Rivalry", false) +
           tabBtn("power", "Power", false) +
+          tabBtn("rivalry", "Rivals", false) +
+          tabBtn("draft", "Draft", false) +
         '</div>' +
         panel("overview", overviewHtml, true) +
-        panel("draft", draftHtml, false) +
-        panel("rivalry", rivalryHtml, false) +
         panel("power", powerHtml, false) +
+        panel("rivalry", rivalsHtml, false) +
+        panel("draft", draftHtml, false) +
       '</div>' +
     '</article>'
   );
@@ -2266,6 +2631,30 @@ function renderOwnerCard(owner) {
         p.classList.toggle("active", on);
         if (on) p.removeAttribute("hidden"); else p.setAttribute("hidden", "");
       });
+      return;
+    }
+
+    // Overview "See more" — reveal full team-name progression (tap-friendly)
+    var seemore = ev.target.closest(".ov-seemore");
+    if (seemore && grid.contains(seemore)) {
+      var list = document.getElementById(seemore.getAttribute("aria-controls"));
+      var expanded = seemore.getAttribute("aria-expanded") === "true";
+      seemore.setAttribute("aria-expanded", expanded ? "false" : "true");
+      seemore.textContent = expanded ? "See more" : "See less";
+      if (list) { if (expanded) list.setAttribute("hidden", ""); else list.removeAttribute("hidden"); }
+      return;
+    }
+
+    // Rivals opponent-by-opponent breakdown — collapsible (tap-friendly)
+    var rvToggle = ev.target.closest(".rv-toggle");
+    if (rvToggle && grid.contains(rvToggle)) {
+      var breakdown = rvToggle.nextElementSibling;
+      var rvExpanded = rvToggle.getAttribute("aria-expanded") === "true";
+      rvToggle.setAttribute("aria-expanded", rvExpanded ? "false" : "true");
+      rvToggle.textContent = rvExpanded
+        ? "Show opponent-by-opponent breakdown"
+        : "Hide opponent-by-opponent breakdown";
+      if (breakdown) { if (rvExpanded) breakdown.setAttribute("hidden", ""); else breakdown.removeAttribute("hidden"); }
       return;
     }
 
@@ -2305,13 +2694,34 @@ function renderOwnerCard(owner) {
     applyFilter(filter);
   });
 
+  function ovrOf(card) {
+    var v = card.getAttribute("data-ovr");
+    return (v === "" || v == null) ? -1 : parseInt(v, 10);
+  }
+  function orderOf(card) {
+    return parseInt(card.getAttribute("data-order"), 10) || 0;
+  }
+
   function applyFilter(filter) {
     var anyVisible = false;
-    var cards = grid.querySelectorAll(".owner-card");
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".owner-card"));
+
+    /* "All" sorts purely by OVR descending (active + inactive interleaved; the
+       two N/A-rating owners fall to the bottom). Every other view keeps the
+       OWNERS_DATA / power-rank order (data-order). */
+    var ordered = cards.slice();
+    if (filter === "all") {
+      ordered.sort(function (a, b) {
+        return (ovrOf(b) - ovrOf(a)) || (orderOf(a) - orderOf(b));
+      });
+    } else {
+      ordered.sort(function (a, b) { return orderOf(a) - orderOf(b); });
+    }
+    ordered.forEach(function (card) { grid.appendChild(card); });
+
     cards.forEach(function (card) {
       var active = card.getAttribute("data-active") === "Y";
       var league = card.getAttribute("data-league");
-      var rank = parseInt(card.getAttribute("data-rank"), 10);
       var show = true;
       switch (filter) {
         case "active":   show = active; break;
@@ -2325,6 +2735,9 @@ function renderOwnerCard(owner) {
     });
     grid.classList.toggle("empty", !anyVisible);
   }
+
+  /* Default landing state = Active filter (the "Active" pill is pre-selected). */
+  applyFilter("active");
 })();
 
 /* Hamburger nav (mobile) */
