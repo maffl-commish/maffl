@@ -1900,7 +1900,6 @@
   <nav class="subtabs" role="tablist" aria-label="Draft portal sections">
     <button class="subtab-btn active" role="tab" aria-selected="true" data-target="tabSearch" id="btnSearch">Search</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">The Oracle</button>
-    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabSuperlatives" id="btnSuperlatives">Insights</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOwners" id="btnOwners">Owner Profiles</button>
   </nav>
 
@@ -2024,42 +2023,7 @@
     </div>
   </section>
 
-  <!-- ============ SUB-TAB 3: INSIGHTS ============ -->
-  <section class="subtab-panel" id="tabSuperlatives" role="tabpanel" aria-labelledby="btnSuperlatives">
-    <div class="super-card open" data-super="heroes">
-      <button class="super-head" type="button" aria-expanded="true">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">🪙</span> $1 Heroes</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperHeroes"></div>
-    </div>
-
-    <div class="super-card" data-super="mostDrafted">
-      <button class="super-head" type="button" aria-expanded="false">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">🔁</span> Most Drafted Players</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperMostDrafted"></div>
-    </div>
-
-    <div class="super-card" data-super="teamPlayers">
-      <button class="super-head" type="button" aria-expanded="false">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">🏟️</span> Most Drafted Players by NFL Team ($)</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperTeamPlayers"></div>
-    </div>
-
-    <div class="super-card" data-super="career">
-      <button class="super-head" type="button" aria-expanded="false">
-        <span class="super-title"><span class="super-emoji" aria-hidden="true">📈</span> Top 25 Players by Career Draft Value</span>
-        <span class="super-chev" aria-hidden="true">▾</span>
-      </button>
-      <div class="super-body" id="bodySuperCareer"></div>
-    </div>
-  </section>
-
-  <!-- ============ SUB-TAB 4: OWNER PROFILES ============ -->
+  <!-- ============ SUB-TAB 3: OWNER PROFILES ============ -->
   <section class="subtab-panel" id="tabOwners" role="tabpanel" aria-labelledby="btnOwners">
     <div class="owner-picker">
       <label for="ownerSelect">Select an owner</label>
@@ -8019,7 +7983,6 @@ function trophyHTML(pick) {
 const tabBtns = document.querySelectorAll(".subtab-btn");
 const tabPanels = document.querySelectorAll(".subtab-panel");
 let oracleRendered = false;
-let superlativesRendered = false;
 
 tabBtns.forEach(btn => {
   btn.addEventListener("click", () => {
@@ -8034,10 +7997,6 @@ tabBtns.forEach(btn => {
     if (target === "tabOracle" && !oracleRendered) {
       renderOracle();
       oracleRendered = true;
-    }
-    if (target === "tabSuperlatives" && !superlativesRendered) {
-      renderSuperlatives();
-      superlativesRendered = true;
     }
   });
 });
@@ -8550,8 +8509,8 @@ function buildOracleData() {
     posTop,
     dollarPicks,
     multiDraftedVar: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] > e.minPick[F_PR]),
-    oneTimeBig: playerList.filter(e => e.count === 1 && e.picks[0][F_PR] >= 20),
-    expensivePlayers: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] >= 25),
+    oneTimeBig: playerList.filter(e => e.count === 1 && e.picks[0][F_PR] >= 35),
+    expensivePlayers: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] >= 40),
     champPlayers: playerList.filter(e => e.champPicks.length > 0),
     ownersWithFav: owners.filter(o => o.favPlayer),
     ownersWithBigPick: owners.filter(o => o.maxPick && o.maxPick[F_PR] >= 20),
@@ -8575,6 +8534,18 @@ function tagYear(y) { return '<span class="fact-emph">' + y + '</span>'; }
 function tagNum(n) { return '<span class="fact-emph">' + n + '</span>'; }
 function tagPos(pos) { return '<span class="fact-emph">' + escapeHTML(pos) + '</span>'; }
 
+/* ---------------------------------------------------------------------
+ * ORACLE_TIDBITS — curated lore.
+ * BAKED from oracle_tidbits.csv (repo root). This array is NOT live —
+ * the page never fetch()es. If you edit oracle_tidbits.csv, you MUST
+ * re-bake it into this array (tokens expanded into tag*() helper calls)
+ * for the changes to appear on the page.
+ * ------------------------------------------------------------------- */
+const ORACLE_TIDBITS = [
+  { key: "tidbit:hinesWard", weight: 3, html: tagPlayer("Hines Ward") + ' was drafted ' + tagNum(8) + ' times, peaking at ' + tagAmt(30) + ' — and won a championship with ' + tagOwner("Tony Trozzo") + ' in ' + tagYear(2010) + '.' },
+  { key: "tidbit:joshAllen2223", weight: 3, html: tagPlayer("Josh Allen") + ' went from a ' + tagAmt(1) + ' steal for ' + tagOwner("Jacob Nickman") + ' in ' + tagYear(2022) + ' to a ' + tagAmt(79) + ' haul for ' + tagOwner("Mike Murello") + ' the very next year in ' + tagYear(2023) + '.' },
+];
+
 const FACT_GENERATORS = [
   // 1: Player draft frequency + price range
   function () {
@@ -8583,9 +8554,9 @@ const FACT_GENERATORS = [
     const hi = e.maxPick, lo = e.minPick;
     return {
       key: "playerFreq:" + e.name,
-      html: tagPlayer(e.name) + ' was drafted ' + tagNum(e.count) +
-        ' times in MAFFL history, peaking at ' + tagAmt(hi[F_PR]) + ' in ' + tagYear(hi[F_Y]) +
-        ' and bottoming out at ' + tagAmt(lo[F_PR]) + ' in ' + tagYear(lo[F_Y]) + '.'
+      html: tagNum(e.count) + ' different times the league has called ' + tagPlayer(e.name) +
+        ' to the block — anywhere from a ' + tagAmt(lo[F_PR]) + ' afterthought in ' + tagYear(lo[F_Y]) +
+        ' to a ' + tagAmt(hi[F_PR]) + ' centerpiece in ' + tagYear(hi[F_Y]) + '.'
     };
   },
   // 2: One-time wonder
@@ -8595,8 +8566,9 @@ const FACT_GENERATORS = [
     const p = e.picks[0];
     return {
       key: "oneTime:" + e.name,
-      html: tagPlayer(e.name) + ' was drafted only once in MAFFL history — by ' +
-        tagOwner(OWNERS[p[F_O]]) + ' for ' + tagAmt(p[F_PR]) + ' in ' + tagYear(p[F_Y]) + '.'
+      html: 'One auction, one believer — ' + tagOwner(OWNERS[p[F_O]]) +
+        ' is the only manager who ever rostered ' + tagPlayer(e.name) + ', and it cost ' +
+        tagAmt(p[F_PR]) + ' back in ' + tagYear(p[F_Y]) + '.'
     };
   },
   // 3: Most expensive ever for a player
@@ -8606,8 +8578,8 @@ const FACT_GENERATORS = [
     const p = e.maxPick;
     return {
       key: "playerMax:" + e.name,
-      html: 'The most anyone ever paid for ' + tagPlayer(e.name) + ' was ' +
-        tagAmt(p[F_PR]) + ' — ' + tagOwner(OWNERS[p[F_O]]) + ' in ' + tagYear(p[F_Y]) + '.'
+      html: 'Nobody has ever topped the ' + tagAmt(p[F_PR]) + ' that ' + tagOwner(OWNERS[p[F_O]]) +
+        ' laid out for ' + tagPlayer(e.name) + ' in ' + tagYear(p[F_Y]) + ' — still his high-water mark.'
     };
   },
   // 4: Championship pedigree
@@ -8619,8 +8591,8 @@ const FACT_GENERATORS = [
     const word = c === 1 ? 'time' : 'times';
     return {
       key: "champPed:" + e.name,
-      html: tagPlayer(e.name) + ' was drafted by an eventual MAFFL champion ' +
-        tagNum(c) + ' ' + word + ': ' + tagOwner(OWNERS[ex[F_O]]) + ' in ' + tagYear(ex[F_Y]) + '.'
+      html: 'Winners keep finding ' + tagPlayer(e.name) + ': an eventual MAFFL champ has rostered him ' +
+        tagNum(c) + ' ' + word + ', ' + tagOwner(OWNERS[ex[F_O]]) + ' among them in ' + tagYear(ex[F_Y]) + '.'
     };
   },
   // 5: Owner's priciest pick
@@ -8630,8 +8602,8 @@ const FACT_GENERATORS = [
     const p = o.maxPick;
     return {
       key: "ownerMax:" + o.name,
-      html: tagOwner(o.name) + "&rsquo;s most expensive draft pick ever was " +
-        tagPlayer(p[F_P]) + ' at ' + tagAmt(p[F_PR]) + ' in ' + tagYear(p[F_Y]) + '.'
+      html: 'When ' + tagOwner(o.name) + ' opened the checkbook widest, it was for ' + tagPlayer(p[F_P]) +
+        ' — ' + tagAmt(p[F_PR]) + ' in ' + tagYear(p[F_Y]) + ', a personal record.'
     };
   },
   // 6: Owner's favorite player
@@ -8640,8 +8612,8 @@ const FACT_GENERATORS = [
     if (!o) return null;
     return {
       key: "ownerFav:" + o.name,
-      html: tagOwner(o.name) + ' has drafted ' + tagPlayer(o.favPlayer.name) + ' ' +
-        tagNum(o.favPlayer.count) + ' times — more than any other player.'
+      html: 'No name turns up on ' + tagOwner(o.name) + '&rsquo;s rosters more than ' +
+        tagPlayer(o.favPlayer.name) + ' — ' + tagNum(o.favPlayer.count) + ' times and counting.'
     };
   },
   // 7: Owner big spending year
@@ -8651,8 +8623,8 @@ const FACT_GENERATORS = [
     const p = o.maxPick;
     return {
       key: "ownerBigYr:" + o.name,
-      html: 'In ' + tagYear(p[F_Y]) + ', ' + tagOwner(o.name) + ' spent ' +
-        tagAmt(p[F_PR]) + ' on a single pick — ' + tagPlayer(p[F_P]) + '.'
+      html: 'Back in ' + tagYear(p[F_Y]) + ', ' + tagOwner(o.name) + ' decided ' + tagPlayer(p[F_P]) +
+        ' was worth a cool ' + tagAmt(p[F_PR]) + ' — all on a single nameplate.'
     };
   },
   // 8: Year superlative
@@ -8663,8 +8635,8 @@ const FACT_GENERATORS = [
     const p = oracleData.yearTop.get(y);
     return {
       key: "yearTop:" + y,
-      html: 'The most expensive pick of the ' + tagYear(y) + ' auction was ' +
-        tagPlayer(p[F_P]) + ' — ' + tagAmt(p[F_PR]) + ' by ' + tagOwner(OWNERS[p[F_O]]) + '.'
+      html: 'No pick stung the wallet more in ' + tagYear(y) + ' than ' + tagPlayer(p[F_P]) +
+        ', who ran ' + tagOwner(OWNERS[p[F_O]]) + ' a draft-high ' + tagAmt(p[F_PR]) + '.'
     };
   },
   // 9: Position record
@@ -8675,19 +8647,20 @@ const FACT_GENERATORS = [
     const p = oracleData.posTop.get(pos);
     return {
       key: "posTop:" + pos,
-      html: 'The most expensive ' + tagPos(pos) + ' ever drafted was ' +
-        tagPlayer(p[F_P]) + ' at ' + tagAmt(p[F_PR]) + ' (' +
-        tagOwner(OWNERS[p[F_O]]) + ', ' + tagYear(p[F_Y]) + ').'
+      html: 'No ' + tagPos(pos) + ' has ever commanded more than ' + tagPlayer(p[F_P]) +
+        ', who set ' + tagOwner(OWNERS[p[F_O]]) + ' back ' + tagAmt(p[F_PR]) + ' in ' + tagYear(p[F_Y]) + '.'
     };
   },
-  // 10: $1 special
+  // 10: $1 special — only surface recognizable names (3+ drafts or a $20+ peak)
   function () {
     const p = oraclePick(oracleData.dollarPicks);
     if (!p) return null;
+    const ent = oracleData.playerList.find(e => e.name === p[F_P]);
+    if (!ent || !(ent.count >= 3 || ent.maxPick[F_PR] >= 20)) return null;
     return {
       key: "dollar:" + p[F_P] + ':' + p[F_Y] + ':' + p[F_O],
-      html: tagPlayer(p[F_P]) + ' was a ' + tagAmt(1) + ' steal for ' +
-        tagOwner(OWNERS[p[F_O]]) + ' in ' + tagYear(p[F_Y]) + '.'
+      html: 'Bargain-bin gold — ' + tagOwner(OWNERS[p[F_O]]) + ' landed ' + tagPlayer(p[F_P]) +
+        ' for a lone ' + tagAmt(1) + ' in ' + tagYear(p[F_Y]) + '.'
     };
   },
   function () {
@@ -8718,17 +8691,53 @@ const FACT_GENERATORS = [
   }
 ];
 
-function rollOracle() {
-  let fact = null;
+// Weighted draw from the curated tidbit pool (respects each tidbit's weight).
+function pickWeightedTidbit() {
+  const pool = ORACLE_TIDBITS;
+  if (!pool.length) return null;
+  let total = 0;
+  for (const t of pool) total += (t.weight > 0 ? t.weight : 1);
+  let r = Math.random() * total;
+  for (const t of pool) {
+    r -= (t.weight > 0 ? t.weight : 1);
+    if (r < 0) return t;
+  }
+  return pool[pool.length - 1];
+}
+
+// Weighted draw from the curated pool, avoiding an immediate repeat where possible.
+function rollCurated() {
+  if (!ORACLE_TIDBITS.length) return null;
+  for (let i = 0; i < 12; i++) {
+    const t = pickWeightedTidbit();
+    if (t && t.key !== oracleLastKey) return t;
+  }
+  return null; // only candidate matches oracleLastKey — caller falls through
+}
+
+// Draw from the procedural generators, avoiding an immediate repeat where possible.
+function rollGenerator() {
   let fallback = null;
   for (let i = 0; i < 12; i++) {
     const gen = oraclePick(FACT_GENERATORS);
     const f = gen();
     if (!f) continue;
     if (!fallback) fallback = f;
-    if (f.key !== oracleLastKey) { fact = f; break; }
+    if (f.key !== oracleLastKey) return f;
   }
-  if (!fact) fact = fallback;
+  return fallback;
+}
+
+function rollOracle() {
+  let fact = null;
+  // ~70% curated tidbits, ~30% procedural generators.
+  if (ORACLE_TIDBITS.length && Math.random() < 0.7) {
+    fact = rollCurated();
+    if (!fact) fact = rollGenerator(); // single tidbit just shown — fall through
+  } else {
+    fact = rollGenerator();
+    if (!fact) fact = rollCurated(); // generators yielded nothing usable
+  }
   if (!fact) return;
   oracleLastKey = fact.key;
   displayOracleFact(fact.html);
@@ -8748,229 +8757,6 @@ function displayOracleFact(html) {
     text.innerHTML = html;
     requestAnimationFrame(() => card.classList.add("visible"));
   }, 180);
-}
-
-/* =====================================================================
- * SUPERLATIVES
- * ===================================================================== */
-const SUPER_LIMIT = 25;
-
-function priceCls(n) { return n >= 50 ? "num high" : "num"; }
-function trophyEverHTML() {
-  return ' <span class="trophy" data-tip="Drafted by an eventual champion at least once" tabindex="0" aria-label="Drafted by an eventual champion at least once">🏆</span>';
-}
-
-function renderSuperlatives() {
-  renderSuperDollarHeroes();
-  renderSuperMostDrafted();
-  renderSuperTeamPlayers();
-  renderSuperCareer();
-  wireSuperlativesUI();
-}
-
-function renderSuperDollarHeroes() {
-  // Group picks by player-year for next-year lookups.
-  const byPlayerYear = new Map();
-  PICKS.forEach(p => {
-    const k = p[F_P] + '|' + p[F_Y];
-    if (!byPlayerYear.has(k)) byPlayerYear.set(k, []);
-    byPlayerYear.get(k).push(p);
-  });
-
-  const heroes = [];
-  PICKS.forEach(p => {
-    if (p[F_PR] !== 1) return;
-    const nextKey = p[F_P] + '|' + (p[F_Y] + 1);
-    const next = byPlayerYear.get(nextKey);
-    if (!next) return;
-    const best = next.reduce((acc, q) => (acc && acc[F_PR] >= q[F_PR]) ? acc : q, null);
-    if (best && best[F_PR] >= 20) {
-      heroes.push({ p1: p, p2: best });
-    }
-  });
-  heroes.sort((a, b) => b.p2[F_PR] - a.p2[F_PR]);
-
-  let html;
-  if (heroes.length >= 5) {
-    const rows = heroes.map((h) => {
-      const p1 = h.p1, p2 = h.p2;
-      const trophy1 = p1[F_C] ? trophyHTML(p1) : '';
-      const trophy2 = p2[F_C] ? trophyHTML(p2) : '';
-      return '<tr>' +
-        '<td>' + tagPlayer(p1[F_P]) + trophy1 + trophy2 + '</td>' +
-        '<td><strong style="color:var(--gold-dark);font-variant-numeric:tabular-nums;">' + p1[F_Y] + '</strong> <span class="pick-meta">' + tagOwner(OWNERS[p1[F_O]]) + '</span></td>' +
-        '<td class="' + priceCls(p2[F_PR]) + '">' + fmtDollar(p2[F_PR]) +
-          ' <span class="pick-meta">' + p2[F_Y] + ', ' + tagOwner(OWNERS[p2[F_O]]) + '</span></td>' +
-      '</tr>';
-    }).join('');
-    html =
-      '<table class="super-table"><thead><tr>' +
-        '<th>Player</th><th>$1 Pick</th><th class="num">Next-Year Price</th>' +
-      '</tr></thead><tbody>' + rows + '</tbody></table>';
-  } else {
-    // Fallback: notable $1 picks (random sample of $1 picks, oldest first by year).
-    const dollarPicks = PICKS.filter(p => p[F_PR] === 1).slice().sort((a, b) => a[F_Y] - b[F_Y] || a[F_P].localeCompare(b[F_P]));
-    const sampleCount = Math.min(50, dollarPicks.length);
-    const sample = dollarPicks.slice(0, sampleCount);
-    const rows = sample.map((p, i) => {
-      const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
-      return '<tr' + hidden + '>' +
-        '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
-        '<td class="yr">' + p[F_Y] + '</td>' +
-        '<td>' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
-      '</tr>';
-    }).join('');
-    html =
-      '<p class="coming-soon" style="margin:0 0 8px;">Too few $1 → $20+ rebounds in the data — showing notable $1 picks instead.</p>' +
-      '<table class="super-table"><thead><tr>' +
-        '<th>Player</th><th>Year</th><th>Owner</th>' +
-      '</tr></thead><tbody>' + rows + '</tbody></table>' +
-      showAllControl(sample.length, SUPER_LIMIT);
-  }
-  document.getElementById("bodySuperHeroes").innerHTML = html;
-}
-
-function renderSuperMostDrafted() {
-  const map = new Map();
-  PICKS.forEach(p => {
-    let e = map.get(p[F_P]);
-    if (!e) { e = { name: p[F_P], count: 0, sum: 0, min: Infinity, max: -Infinity, anyChamp: false }; map.set(p[F_P], e); }
-    e.count++;
-    e.sum += p[F_PR];
-    if (p[F_PR] < e.min) e.min = p[F_PR];
-    if (p[F_PR] > e.max) e.max = p[F_PR];
-    if (p[F_C]) e.anyChamp = true;
-  });
-  // Only meaningful for multi-drafted players.
-  const arr = [...map.values()]
-    .filter(e => e.count >= 2)
-    .sort((a, b) => b.count - a.count || (b.sum / b.count) - (a.sum / a.count));
-  const rows = arr.map((e, i) => {
-    const avg = e.sum / e.count;
-    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
-    const range = e.min === e.max ? fmtDollar(e.min) : fmtDollar(e.min) + '–' + fmtDollar(e.max);
-    return '<tr' + hidden + '>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + tagPlayer(e.name) + (e.anyChamp ? trophyEverHTML() : '') + '</td>' +
-      '<td class="num">' + e.count + '</td>' +
-      '<td class="num">$' + avg.toFixed(1) + '</td>' +
-      '<td class="num">' + range + '</td>' +
-    '</tr>';
-  }).join("");
-  document.getElementById("bodySuperMostDrafted").innerHTML =
-    '<table class="super-table"><thead><tr>' +
-      '<th>#</th><th>Player</th><th class="num">Times</th><th class="num">Avg $</th><th class="num">Range</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>' +
-    showAllControl(arr.length, SUPER_LIMIT);
-}
-
-function renderSuperCareer() {
-  const map = new Map();
-  PICKS.forEach(p => {
-    let e = map.get(p[F_P]);
-    if (!e) { e = { name: p[F_P], total: 0, count: 0, anyChamp: false }; map.set(p[F_P], e); }
-    e.total += p[F_PR];
-    e.count++;
-    if (p[F_C]) e.anyChamp = true;
-  });
-  const arr = [...map.values()].sort((a, b) => b.total - a.total || b.count - a.count);
-  const rows = arr.map((e, i) => {
-    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
-    const totalCls = e.total >= 50 ? 'num high' : 'num';
-    return '<tr' + hidden + '>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + tagPlayer(e.name) + (e.anyChamp ? trophyEverHTML() : '') + '</td>' +
-      '<td class="' + totalCls + '">$' + fmtNum(Math.round(e.total)) + '</td>' +
-      '<td class="num">' + e.count + '</td>' +
-    '</tr>';
-  }).join("");
-  document.getElementById("bodySuperCareer").innerHTML =
-    '<table class="super-table"><thead><tr>' +
-      '<th>#</th><th>Player</th><th class="num">Career Draft $</th><th class="num">Times</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>' +
-    showAllControl(arr.length, SUPER_LIMIT);
-}
-
-function renderSuperTeamPlayers() {
-  const host = document.getElementById("bodySuperTeamPlayers");
-  const teams = uniqueTeams.slice();
-  if (teams.length === 0) { host.innerHTML = ''; return; }
-  const defaultTeam = teams.indexOf("PIT") !== -1 ? "PIT" : teams[0];
-  const options = teams.map(t =>
-    '<option value="' + escapeHTML(t) + '"' + (t === defaultTeam ? ' selected' : '') + '>' + escapeHTML(t) + '</option>'
-  ).join("");
-  host.innerHTML =
-    '<div class="super-team-picker">' +
-      '<label for="superTeamSelect">NFL Team</label>' +
-      '<select id="superTeamSelect" aria-label="Choose NFL team">' + options + '</select>' +
-    '</div>' +
-    '<div id="superTeamTable"></div>';
-  const sel = document.getElementById("superTeamSelect");
-  sel.addEventListener("change", () => renderSuperTeamTable(sel.value));
-  renderSuperTeamTable(defaultTeam);
-}
-
-function renderSuperTeamTable(team) {
-  const target = document.getElementById("superTeamTable");
-  if (!target) return;
-  const map = new Map();
-  PICKS.forEach(p => {
-    if (p[F_T] !== team) return;
-    let e = map.get(p[F_P]);
-    if (!e) { e = { name: p[F_P], count: 0, total: 0, anyChamp: false }; map.set(p[F_P], e); }
-    e.count++;
-    e.total += p[F_PR];
-    if (p[F_C]) e.anyChamp = true;
-  });
-  const arr = [...map.values()].sort((a, b) => b.total - a.total || b.count - a.count);
-  if (arr.length === 0) {
-    target.innerHTML = '<p class="coming-soon" style="margin:0;">No picks found for ' + escapeHTML(team) + '.</p>';
-    return;
-  }
-  const rows = arr.map((e, i) => {
-    const hidden = i >= SUPER_LIMIT ? ' class="super-row-hidden"' : '';
-    const totalCls = e.total >= 50 ? 'num high' : 'num';
-    return '<tr' + hidden + '>' +
-      '<td class="rank">' + (i + 1) + '</td>' +
-      '<td>' + tagPlayer(e.name) + (e.anyChamp ? trophyEverHTML() : '') + '</td>' +
-      '<td class="' + totalCls + '">$' + fmtNum(Math.round(e.total)) + '</td>' +
-      '<td class="num">' + e.count + '</td>' +
-    '</tr>';
-  }).join("");
-  target.innerHTML =
-    '<table class="super-table"><thead><tr>' +
-      '<th>#</th><th>Player</th><th class="num">Total Draft $</th><th class="num">Times</th>' +
-    '</tr></thead><tbody>' + rows + '</tbody></table>' +
-    showAllControl(arr.length, SUPER_LIMIT);
-}
-
-function showAllControl(total, limit) {
-  if (total <= limit) return '';
-  const remaining = total - limit;
-  return '<div class="super-show-all-wrap">' +
-    '<button type="button" class="super-show-all" data-show-all>Show all ' + total + ' →</button>' +
-  '</div>';
-}
-
-function wireSuperlativesUI() {
-  // Accordion toggle
-  document.querySelectorAll("#tabSuperlatives .super-card").forEach(card => {
-    const head = card.querySelector(".super-head");
-    head.addEventListener("click", () => {
-      const open = card.classList.toggle("open");
-      head.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-  });
-
-  // Show-all buttons (delegated)
-  document.getElementById("tabSuperlatives").addEventListener("click", (e) => {
-    const btn = e.target.closest(".super-show-all");
-    if (!btn) return;
-    const wrap = btn.closest(".super-body");
-    if (!wrap) return;
-    wrap.querySelectorAll("tr.super-row-hidden").forEach(tr => tr.classList.remove("super-row-hidden"));
-    btn.closest(".super-show-all-wrap").remove();
-  });
 }
 
 /* =====================================================================
