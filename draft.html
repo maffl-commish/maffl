@@ -1524,12 +1524,13 @@
   }
 
   /* Results table: player name as a prominent clickable button */
-  table.dp-table td.col-player .player-name {
+  table.dp-table td.col-player .player-name,
+  table.dp-table td.col-owner .owner-name {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 5px 10px;
-    margin: -3px 0;
+    padding: 3px 8px;
+    margin: -2px 0;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--navy-soft);
@@ -1538,7 +1539,8 @@
     border-bottom: 1px solid var(--border);
     transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
   }
-  table.dp-table td.col-player .player-name::after {
+  table.dp-table td.col-player .player-name::after,
+  table.dp-table td.col-owner .owner-name::after {
     content: "›";
     font-family: var(--display);
     font-weight: 700;
@@ -1547,7 +1549,9 @@
     color: var(--gold-dark);
   }
   table.dp-table td.col-player .player-name:hover,
-  table.dp-table td.col-player .player-name:focus-visible {
+  table.dp-table td.col-player .player-name:focus-visible,
+  table.dp-table td.col-owner .owner-name:hover,
+  table.dp-table td.col-owner .owner-name:focus-visible {
     background: var(--gold-soft);
     border-color: var(--gold);
     color: var(--navy);
