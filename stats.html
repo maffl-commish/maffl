@@ -506,6 +506,7 @@
           <th class="col-winpct" data-sort="winPct" data-sort-default="desc" scope="col" title="Win % — W / (W + L + T)">Win %<span class="sort-arrow"></span></th>
           <th class="col-champ"   data-sort="champ"   data-sort-default="desc" scope="col" title="&#x1F3C6; Championships" aria-label="Championships">&#x1F3C6;<span class="sort-arrow"></span></th>
           <th class="col-runner"  data-sort="runner"  data-sort-default="desc" scope="col" title="&#x1F948; Runner-Ups" aria-label="Runner-Ups">&#x1F948;<span class="sort-arrow"></span></th>
+          <th class="col-third"   data-sort="third"   data-sort-default="desc" scope="col" title="&#x1F949; 3rd-Place Finishes" aria-label="3rd-Place Finishes">&#x1F949;<span class="sort-arrow"></span></th>
           <th class="col-div"     data-sort="div"     data-sort-default="desc" scope="col" title="&#x1F451; Division Titles" aria-label="Division Titles">&#x1F451;<span class="sort-arrow"></span></th>
           <th class="col-playoff" data-sort="playoff" data-sort-default="desc" scope="col" title="&#x1F39F; Playoff Appearances" aria-label="Playoff Appearances">&#x1F39F;<span class="sort-arrow"></span></th>
           <th class="col-ovr"    data-sort="ovr"    data-sort-default="desc" scope="col" title="OVR — Overall Power Rankings rating">OVR<span class="sort-arrow"></span></th>
@@ -536,38 +537,38 @@
  * ===================================================================== */
 
 const OWNERS = [
-  { name: "Joe Reilly",                       active: true,  years: 24, champ: 3, runner: 1, playoff: 12, div: 7, wins: 151, losses: 127, ties: 0, ovr: 98, clutch: 97, grind: 98, heat: 98 },
-  { name: "Brian Murello / Ron Murello",      active: true,  years: 24, champ: 2, runner: 3, playoff: 15, div: 4, wins: 164, losses: 112, ties: 2, ovr: 94, clutch: 95, grind: 95, heat: 70 },
-  { name: "Tony Trozzo",                      active: true,  years: 24, champ: 3, runner: 1, playoff: 11, div: 5, wins: 147, losses: 128, ties: 1, ovr: 89, clutch: 87, grind: 91, heat: 84 },
-  { name: "Josh Lavrinc",                     active: false, years: 20, champ: 1, runner: 1, playoff: 6,  div: 2, wins: 104, losses: 117, ties: 1, ovr: 46, clutch: 39, grind: 66, heat: 0  },
-  { name: "Jon Murello / Rick Simmons",       active: true,  years: 20, champ: 3, runner: 2, playoff: 10, div: 4, wins: 131, losses: 134, ties: 0, ovr: 86, clutch: 95, grind: 79, heat: 99 },
-  { name: "Mike Murello",                     active: true,  years: 24, champ: 2, runner: 2, playoff: 11, div: 1, wins: 144, losses: 132, ties: 1, ovr: 80, clutch: 78, grind: 77, heat: 99 },
-  { name: "David Murello",                    active: true,  years: 23, champ: 1, runner: 2, playoff: 14, div: 6, wins: 151, losses: 127, ties: 0, ovr: 78, clutch: 74, grind: 81, heat: 77 },
-  { name: "Jeff Grace",                       active: false, years: 8,  champ: 1, runner: 1, playoff: 5,  div: 0, wins: 40,  losses: 25,  ties: 0, ovr: 30, clutch: 32, grind: 40, heat: 0  },
-  { name: "Sean Ritson",                      active: false, years: 7,  champ: 0, runner: 2, playoff: 4,  div: 0, wins: 52,  losses: 38,  ties: 1, ovr: 26, clutch: 24, grind: 37, heat: 0  },
-  { name: "Jimmy Crisan",                     active: false, years: 11, champ: 1, runner: 0, playoff: 2,  div: 0, wins: 42,  losses: 75,  ties: 0, ovr: 21, clutch: 20, grind: 30, heat: 0  },
-  { name: "Todd Trozzo",                      active: true,  years: 23, champ: 2, runner: 1, playoff: 7,  div: 3, wins: 131, losses: 147, ties: 0, ovr: 69, clutch: 70, grind: 71, heat: 41 },
-  { name: "Chris Johnson",                    active: true,  years: 23, champ: 2, runner: 1, playoff: 10, div: 2, wins: 118, losses: 159, ties: 1, ovr: 67, clutch: 45, grind: 72, heat: 40 },
-  { name: "Marcus Ruby / Joe Ruby",           active: false, years: 7,  champ: 0, runner: 0, playoff: 3,  div: 0, wins: 40,  losses: 49,  ties: 2, ovr: 13, clutch: 5,  grind: 31, heat: 0  },
-  { name: "Mike Licciardi",                   active: false, years: 6,  champ: 0, runner: 0, playoff: 2,  div: 1, wins: 29,  losses: 49,  ties: 0, ovr: 11, clutch: 1,  grind: 28, heat: 0  },
-  { name: "Jacob Nickman",                    active: true,  years: 24, champ: 2, runner: 0, playoff: 8,  div: 1, wins: 132, losses: 145, ties: 0, ovr: 63, clutch: 53, grind: 71, heat: 81 },
-  { name: "Josh Farber",                      active: false, years: 1,  champ: 0, runner: 0, playoff: 1,  div: 0, wins: 9,   losses: 4,   ties: 0, ovr: 9,  clutch: 1,  grind: 24, heat: 0  },
-  { name: "BJ Funari",                        active: true,  years: 20, champ: 1, runner: 2, playoff: 13, div: 3, wins: 146, losses: 119, ties: 0, ovr: 61, clutch: 39, grind: 77, heat: 65 },
-  { name: "Craig Toth",                       active: false, years: 4,  champ: 0, runner: 0, playoff: 1,  div: 0, wins: 23,  losses: 29,  ties: 0, ovr: 8,  clutch: 1,  grind: 23, heat: 0  },
-  { name: "Bob Keslar",                       active: true,  years: 12, champ: 1, runner: 1, playoff: 7,  div: 2, wins: 84,  losses: 77,  ties: 0, ovr: 50, clutch: 26, grind: 60, heat: 41 },
-  { name: "Dan Reilly",                       active: true,  years: 13, champ: 0, runner: 0, playoff: 6,  div: 4, wins: 97,  losses: 77,  ties: 0, ovr: 43, clutch: 11, grind: 67, heat: 68 },
-  { name: "Joni Murello",                     active: false, years: 4,  champ: 0, runner: 0, playoff: 1,  div: 0, wins: 20,  losses: 31,  ties: 1, ovr: 7,  clutch: 0,  grind: 23, heat: 0  },
-  { name: "Jon Fetrow",                       active: true,  years: 12, champ: 0, runner: 1, playoff: 7,  div: 2, wins: 72,  losses: 89,  ties: 0, ovr: 38, clutch: 22, grind: 49, heat: 70 },
-  { name: "Matt Brown",                       active: false, years: 4,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 23,  losses: 27,  ties: 2, ovr: 7,  clutch: 0,  grind: 22, heat: 0  },
-  { name: "Kevin Radkowski",                  active: false, years: 1,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 7,   losses: 6,   ties: 0, ovr: 5,  clutch: 0,  grind: 19, heat: 0  },
-  { name: "Ed Peters",                        active: true,  years: 13, champ: 0, runner: 0, playoff: 5,  div: 3, wins: 76,  losses: 98,  ties: 0, ovr: 35, clutch: 9,  grind: 53, heat: 70 },
-  { name: "Tony Brooks",                      active: true,  years: 5,  champ: 0, runner: 0, playoff: 1,  div: 1, wins: 31,  losses: 37,  ties: 0, ovr: 20, clutch: 1,  grind: 26, heat: 54 },
-  { name: "Braiden Snyder",                   active: true,  years: 4,  champ: 0, runner: 0, playoff: 2,  div: 0, wins: 31,  losses: 25,  ties: 0, ovr: 18, clutch: 5,  grind: 28, heat: 67 },
-  { name: "Ben Funari",                       active: true,  years: 1,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 6,   losses: 6,   ties: 0, ovr: 10, clutch: 0,  grind: 17, heat: 48 },
-  { name: "Charles Lavrinc",                  active: true,  years: 1,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 5,   losses: 7,   ties: 0, ovr: 9,  clutch: 0,  grind: 15, heat: 48 },
-  { name: "Sam Lavrinc",                      active: true,  years: 1,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 5,   losses: 8,   ties: 0, ovr: 8,  clutch: 0,  grind: 13, heat: 51 },
-  { name: "Nick Yankovich",                   active: true,  years: 1,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 5,   losses: 8,   ties: 0, ovr: 8,  clutch: 0,  grind: 13, heat: 47 },
-  { name: "Dominic Nicastro",                 active: true,  years: 1,  champ: 0, runner: 0, playoff: 0,  div: 0, wins: 4,   losses: 8,   ties: 0, ovr: 7,  clutch: 0,  grind: 11, heat: 48 }
+  { name: "Joe Reilly",                       active: true,  years: 24, champ: 3, runner: 1, third: 2, playoff: 12, div: 7, wins: 152, losses: 126, ties: 0, ovr: 98, clutch: 97, grind: 98, heat: 98 },
+  { name: "Brian Murello / Ron Murello",      active: true,  years: 24, champ: 2, runner: 3, third: 2, playoff: 15, div: 4, wins: 163, losses: 113, ties: 2, ovr: 94, clutch: 95, grind: 95, heat: 70 },
+  { name: "Tony Trozzo",                      active: true,  years: 24, champ: 3, runner: 1, third: 2, playoff: 11, div: 5, wins: 148, losses: 127, ties: 1, ovr: 89, clutch: 87, grind: 91, heat: 84 },
+  { name: "Josh Lavrinc",                     active: false, years: 20, champ: 1, runner: 1, third: 1, playoff: 6,  div: 2, wins: 104, losses: 117, ties: 1, ovr: 46, clutch: 39, grind: 66, heat: 0  },
+  { name: "Jon Murello / Rick Simmons",       active: true,  years: 20, champ: 3, runner: 2, third: 0, playoff: 10, div: 4, wins: 131, losses: 134, ties: 0, ovr: 86, clutch: 95, grind: 79, heat: 99 },
+  { name: "Mike Murello",                     active: true,  years: 24, champ: 2, runner: 2, third: 2, playoff: 11, div: 1, wins: 145, losses: 131, ties: 1, ovr: 80, clutch: 78, grind: 77, heat: 99 },
+  { name: "David Murello",                    active: true,  years: 23, champ: 1, runner: 2, third: 3, playoff: 14, div: 6, wins: 151, losses: 127, ties: 0, ovr: 78, clutch: 74, grind: 81, heat: 77 },
+  { name: "Jeff Grace",                       active: false, years: 8,  champ: 1, runner: 1, third: 2, playoff: 5,  div: 0, wins: 40,  losses: 25,  ties: 0, ovr: 30, clutch: 32, grind: 40, heat: 0  },
+  { name: "Sean Ritson",                      active: false, years: 7,  champ: 0, runner: 2, third: 0, playoff: 4,  div: 0, wins: 52,  losses: 38,  ties: 1, ovr: 26, clutch: 24, grind: 37, heat: 0  },
+  { name: "Jimmy Crisan",                     active: false, years: 11, champ: 1, runner: 0, third: 0, playoff: 2,  div: 0, wins: 31,  losses: 47,  ties: 0, ovr: 21, clutch: 20, grind: 30, heat: 0  },
+  { name: "Todd Trozzo",                      active: true,  years: 23, champ: 2, runner: 1, third: 2, playoff: 7,  div: 3, wins: 131, losses: 147, ties: 0, ovr: 69, clutch: 70, grind: 71, heat: 41 },
+  { name: "Chris Johnson",                    active: true,  years: 23, champ: 2, runner: 1, third: 0, playoff: 10, div: 2, wins: 118, losses: 159, ties: 1, ovr: 67, clutch: 45, grind: 72, heat: 40 },
+  { name: "Marcus Ruby / Joe Ruby",           active: false, years: 7,  champ: 0, runner: 0, third: 0, playoff: 3,  div: 0, wins: 29,  losses: 34,  ties: 2, ovr: 13, clutch: 5,  grind: 31, heat: 0  },
+  { name: "Mike Licciardi",                   active: false, years: 6,  champ: 0, runner: 0, third: 0, playoff: 2,  div: 1, wins: 29,  losses: 49,  ties: 0, ovr: 11, clutch: 1,  grind: 28, heat: 0  },
+  { name: "Jacob Nickman",                    active: true,  years: 24, champ: 2, runner: 0, third: 1, playoff: 8,  div: 1, wins: 131, losses: 146, ties: 0, ovr: 63, clutch: 53, grind: 71, heat: 81 },
+  { name: "Josh Farber",                      active: false, years: 1,  champ: 0, runner: 0, third: 0, playoff: 1,  div: 0, wins: 9,   losses: 4,   ties: 0, ovr: 9,  clutch: 1,  grind: 24, heat: 0  },
+  { name: "BJ Funari",                        active: true,  years: 20, champ: 1, runner: 2, third: 1, playoff: 13, div: 3, wins: 146, losses: 119, ties: 0, ovr: 61, clutch: 39, grind: 77, heat: 65 },
+  { name: "Craig Toth",                       active: false, years: 4,  champ: 0, runner: 0, third: 0, playoff: 1,  div: 0, wins: 23,  losses: 29,  ties: 0, ovr: 8,  clutch: 1,  grind: 23, heat: 0  },
+  { name: "Bob Keslar",                       active: true,  years: 12, champ: 1, runner: 1, third: 2, playoff: 7,  div: 2, wins: 84,  losses: 77,  ties: 0, ovr: 50, clutch: 26, grind: 60, heat: 41 },
+  { name: "Dan Reilly",                       active: true,  years: 13, champ: 0, runner: 0, third: 0, playoff: 6,  div: 4, wins: 96,  losses: 78,  ties: 0, ovr: 43, clutch: 11, grind: 67, heat: 68 },
+  { name: "Joni Murello",                     active: false, years: 4,  champ: 0, runner: 0, third: 0, playoff: 1,  div: 0, wins: 20,  losses: 31,  ties: 1, ovr: 7,  clutch: 0,  grind: 23, heat: 0  },
+  { name: "Jon Fetrow",                       active: true,  years: 12, champ: 0, runner: 1, third: 0, playoff: 7,  div: 2, wins: 72,  losses: 89,  ties: 0, ovr: 38, clutch: 22, grind: 49, heat: 70 },
+  { name: "Matt Brown",                       active: false, years: 4,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 23,  losses: 27,  ties: 2, ovr: 7,  clutch: 0,  grind: 22, heat: 0  },
+  { name: "Kevin Radkowski",                  active: false, years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 7,   losses: 6,   ties: 0, ovr: 5,  clutch: 0,  grind: 19, heat: 0  },
+  { name: "Ed Peters",                        active: true,  years: 13, champ: 0, runner: 0, third: 0, playoff: 5,  div: 3, wins: 76,  losses: 98,  ties: 0, ovr: 35, clutch: 9,  grind: 53, heat: 70 },
+  { name: "Tony Brooks",                      active: true,  years: 5,  champ: 0, runner: 0, third: 0, playoff: 1,  div: 1, wins: 31,  losses: 37,  ties: 0, ovr: 20, clutch: 1,  grind: 26, heat: 54 },
+  { name: "Braiden Snyder",                   active: true,  years: 4,  champ: 0, runner: 0, third: 0, playoff: 2,  div: 0, wins: 31,  losses: 25,  ties: 0, ovr: 18, clutch: 5,  grind: 28, heat: 67 },
+  { name: "Ben Funari",                       active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 6,   losses: 6,   ties: 0, ovr: 10, clutch: 0,  grind: 17, heat: 48 },
+  { name: "Charles Lavrinc",                  active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 5,   losses: 7,   ties: 0, ovr: 9,  clutch: 0,  grind: 15, heat: 48 },
+  { name: "Sam Lavrinc",                      active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 5,   losses: 8,   ties: 0, ovr: 8,  clutch: 0,  grind: 13, heat: 51 },
+  { name: "Nick Yankovich",                   active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 5,   losses: 8,   ties: 0, ovr: 8,  clutch: 0,  grind: 13, heat: 47 },
+  { name: "Dominic Nicastro",                 active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 4,   losses: 8,   ties: 0, ovr: 7,  clutch: 0,  grind: 11, heat: 48 }
 ];
 
 /* Pre-compute Win % using W / (W + L + T) */
@@ -584,6 +585,7 @@ const COL_DEFS = [
   { key: "winPct",  type: "pct", gold: v => v >= 0.55 },
   { key: "champ",   type: "num", gold: v => v >= 2 },
   { key: "runner",  type: "num" },
+  { key: "third",   type: "num" },
   { key: "div",     type: "num" },
   { key: "playoff", type: "num" },
   { key: "ovr",     type: "num", gold: v => v >= 80 },
@@ -658,6 +660,7 @@ function renderTable() {
         <td class="col-winpct${goldCls("winPct", o.winPct)}">${winPctStr}</td>
         <td class="col-champ${goldCls("champ", o.champ)}">${o.champ}</td>
         <td class="col-runner${goldCls("runner", o.runner)}">${o.runner}</td>
+        <td class="col-third${goldCls("third", o.third)}">${o.third}</td>
         <td class="col-div${goldCls("div", o.div)}">${o.div}</td>
         <td class="col-playoff${goldCls("playoff", o.playoff)}">${o.playoff}</td>
         <td class="col-ovr${goldCls("ovr", o.ovr)}">${o.ovr}</td>
