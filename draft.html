@@ -9280,6 +9280,60 @@ function renderOwnerProfile(ownerIdx) {
   });
 })();
 
+/* =====================================================================
+ * OWNER DEEP-LINK  —  draft.html#owner=<portal-key>
+ * ---------------------------------------------------------------------
+ * The Owner Portal (power-rankings.html) links here with the owner's portal
+ * key in the hash. Open the Owner Profiles subtab and select that owner.
+ * Most portal keys are a plain slug of the owner name; the three co-owned
+ * teams use bespoke keys, mapped explicitly below.
+ * ===================================================================== */
+(function ownerDeepLink() {
+  var PORTAL_KEY_ALIASES = {
+    "brian-ron-murello": "Brian Murello / Ron Murello",
+    "jon-rick": "Jon Murello / Rick Simmons",
+    "marcus-joe-ruby": "Marcus Ruby / Joe Ruby"
+  };
+  function slugify(s) {
+    return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function ownerIdxForKey(key) {
+    if (!key) return -1;
+    var aliasName = PORTAL_KEY_ALIASES[key];
+    if (aliasName) {
+      var ai = OWNERS.indexOf(aliasName);
+      if (ai !== -1) return ai;
+    }
+    for (var i = 0; i < OWNERS.length; i++) {
+      if (slugify(OWNERS[i]) === key) return i;
+    }
+    return -1;
+  }
+  function applyHash() {
+    var m = /(?:^|[#&])owner=([^&]+)/.exec(location.hash || "");
+    if (!m) return;
+    var key = decodeURIComponent(m[1]).toLowerCase();
+    var idx = ownerIdxForKey(key);
+    if (idx === -1) { console.warn("[draft] owner deep-link key not found:", key); return; }
+    document.querySelectorAll(".subtab-btn").forEach(function (b) {
+      var on = b.dataset.target === "tabOwners";
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    document.querySelectorAll(".subtab-panel").forEach(function (p) {
+      p.classList.toggle("active", p.id === "tabOwners");
+    });
+    var sel = document.getElementById("ownerSelect");
+    if (sel) {
+      sel.value = String(idx);
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) { window.scrollTo(0, 0); }
+  }
+  applyHash();
+  window.addEventListener("hashchange", applyHash);
+})();
+
 </script>
 </body>
 </html>
