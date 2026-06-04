@@ -604,6 +604,66 @@
   .bracket-winner .bracket-score { color: var(--navy); font-weight: 700; }
   .bracket-badge { flex: 0 0 auto; font-size: 12px; line-height: 1; }
 
+  /* Full season schedule (reuses .lower-roster-toggle look) */
+  .schedule-toggle .lower-roster-body { padding: 4px 12px 12px; }
+  .schedule-tier { margin-bottom: 14px; }
+  .schedule-tier:last-child { margin-bottom: 0; }
+  .schedule-week-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 12px 0 4px;
+  }
+  .schedule-week-head:first-child { margin-top: 0; }
+  .schedule-game {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 0;
+    border-top: 1px solid var(--border);
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.25;
+  }
+  .schedule-week-head + .schedule-game { border-top: 0; }
+  .schedule-team {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .schedule-team .owner-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .schedule-winner .owner-name { font-weight: 700; color: var(--navy); }
+  .schedule-score {
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .schedule-winner .schedule-score { color: var(--navy); font-weight: 700; }
+  .schedule-vs {
+    flex: 0 0 auto;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
   /* Lower tier */
   .lower-grid {
     display: grid;
@@ -973,6 +1033,12 @@
     .bracket-side { gap: 6px; padding: 5px 8px; }
     .bracket-side .owner-name { font-size: 12px; }
     .bracket-score { font-size: 11px; }
+
+    .schedule-game { gap: 6px; }
+    .schedule-team { gap: 5px; }
+    .schedule-team .owner-name { font-size: 12px; }
+    .schedule-score { font-size: 11px; }
+    .schedule-week-head { font-size: 10px; margin: 10px 0 3px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -7838,6 +7904,7 @@ function getYearBucket(y) {
       roster: [],            // list of {owner, tier, conf, division}
       draftPicks: [],        // [{owner, player, position, price}]
       bracketGames: [],      // [{gameType, tier, winner, winnerScore, loser, loserScore}]
+      scheduleGames: [],     // [{week, tier, gameType, winner, winnerScore, loser, loserScore}] — full season, unfiltered
     };
   }
   return byYear[y];
@@ -7930,13 +7997,25 @@ MATCHUPS.forEach(r => {
   if (!yr) return;
   const gameType = (r.Game_Type || "").trim();
   if (!gameType) return;
+  const bucket = getYearBucket(yr);
+
+  // Full season schedule: every matchup row (regular + postseason), unfiltered
+  bucket.scheduleGames.push({
+    week: parseInt(r.Week, 10),
+    tier: (r.Tier || "").trim(),
+    gameType,
+    winner: normalizeOwner(r.Winner_Owner),
+    winnerScore: parseFloat(r.Winner_Score),
+    loser: normalizeOwner(r.Loser_Owner),
+    loserScore: parseFloat(r.Loser_Score),
+  });
+
   // Regular-season and consolation games are not part of the bracket
   if (NON_BRACKET_TYPES.indexOf(gameType) !== -1) return;
   if (BRACKET_ROUNDS.indexOf(gameType) === -1) {
     console.warn(`Pass 4 (matchups): unexpected Game_Type "${gameType}" (year ${yr}) — skipped`);
     return;
   }
-  const bucket = getYearBucket(yr);
   bucket.bracketGames.push({
     gameType,
     tier: (r.Tier || "").trim(),
@@ -8400,6 +8479,90 @@ function renderDraft(b, year) {
       ${topCardHTML}
     </div>
     <a class="draft-link" href="draft.html?year=${year}">View full ${year} auction draft &rarr;</a>
+  </div>
+  ${renderSchedule(b, year)}`;
+}
+
+function renderSchedule(b, year) {
+  if (year <= 2004) return "";
+  if (!b.scheduleGames || !b.scheduleGames.length) return "";
+
+  const fmtScore = s => isNaN(s) ? "" : (Number.isInteger(s) ? String(s) : s.toFixed(1));
+  const ownerSpan = name =>
+    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(name)}</span>`;
+
+  // Postseason weeks head under their round name; regular weeks under "Week N"
+  const ROUND_LABELS = {
+    Quarterfinal: "Quarterfinals",
+    Semifinal: "Semifinals",
+    Championship: "Championship",
+    ThirdPlace: "Third Place",
+    Consolation: "Consolation",
+  };
+  const TYPE_RANK = { Regular: 0, Quarterfinal: 1, Semifinal: 2, Championship: 3, ThirdPlace: 4, Consolation: 5 };
+  const rank = t => (TYPE_RANK[t] == null ? 9 : TYPE_RANK[t]);
+  const headFor = g =>
+    g.gameType === "Regular"
+      ? `Week ${isNaN(g.week) ? "?" : g.week}`
+      : (ROUND_LABELS[g.gameType] || g.gameType);
+
+  const gameRowHTML = g => `
+    <div class="schedule-game">
+      <span class="schedule-team schedule-winner">
+        ${ownerSpan(g.winner)}<span class="schedule-score">${fmtScore(g.winnerScore)}</span>
+      </span>
+      <span class="schedule-vs">vs</span>
+      <span class="schedule-team">
+        ${ownerSpan(g.loser)}<span class="schedule-score">${fmtScore(g.loserScore)}</span>
+      </span>
+    </div>`;
+
+  // Sort by week asc, then by round order within a week; group under week sub-headings
+  const renderList = games => {
+    const sorted = games.slice().sort((a, b2) => {
+      const wa = isNaN(a.week) ? Infinity : a.week;
+      const wb = isNaN(b2.week) ? Infinity : b2.week;
+      return (wa - wb) || (rank(a.gameType) - rank(b2.gameType));
+    });
+    const groups = [];
+    const index = {};
+    sorted.forEach(g => {
+      const head = headFor(g);
+      if (index[head] == null) { index[head] = groups.length; groups.push({ head, games: [] }); }
+      groups[index[head]].games.push(g);
+    });
+    return groups.map(grp =>
+      `<div class="schedule-week-head">${esc(grp.head)}</div>${grp.games.map(gameRowHTML).join("")}`
+    ).join("");
+  };
+
+  // Modern 2-tier era (2025+): split Upper then Lower when both have games
+  const upper = b.scheduleGames.filter(g => g.tier === "Upper");
+  const lower = b.scheduleGames.filter(g => g.tier === "Lower");
+  let body;
+  if (year >= 2025 && upper.length && lower.length) {
+    body = `
+      <div class="schedule-tier">
+        <div class="bracket-tier-head">Upper-Tier</div>
+        ${renderList(upper)}
+      </div>
+      <div class="schedule-tier">
+        <div class="bracket-tier-head">Lower-Tier</div>
+        ${renderList(lower)}
+      </div>`;
+  } else {
+    body = renderList(b.scheduleGames);
+  }
+
+  if (!body.trim()) return "";
+  return `<div class="exp-section">
+    <div class="lower-roster-toggle schedule-toggle" data-schedule-year="${year}">
+      <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
+        <span>View Full Season Schedule</span>
+        <span class="chev">&#x25BC;</span>
+      </button>
+      <div class="lower-roster-body">${body}</div>
+    </div>
   </div>`;
 }
 
