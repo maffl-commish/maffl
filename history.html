@@ -537,6 +537,73 @@
   }
   .playoff-list .badge { margin-right: 2px; }
 
+  /* Playoff bracket */
+  .bracket-tier { margin-bottom: 16px; }
+  .bracket-tier:last-child { margin-bottom: 0; }
+  .bracket-tier-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+  .bracket-round { margin-bottom: 12px; }
+  .bracket-round:last-child { margin-bottom: 0; }
+  .bracket-round-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 4px;
+  }
+  .bracket-game {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    background: var(--surface);
+  }
+  .bracket-game:last-child { margin-bottom: 0; }
+  .bracket-side {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 10px;
+    font-family: var(--body);
+    font-size: 13px;
+    min-width: 0;
+  }
+  .bracket-side + .bracket-side { border-top: 1px dashed var(--border); }
+  .bracket-side .owner-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .bracket-winner { background: var(--gold-soft); }
+  .bracket-winner .owner-name {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .bracket-score {
+    flex: 0 0 auto;
+    margin-left: auto;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .bracket-winner .bracket-score { color: var(--navy); font-weight: 700; }
+  .bracket-badge { flex: 0 0 auto; font-size: 12px; line-height: 1; }
+
   /* Lower tier */
   .lower-grid {
     display: grid;
@@ -902,6 +969,10 @@
     .draft-row { grid-template-columns: 1fr; }
 
     .pick-owner { max-width: 90px; font-size: 10px; }
+
+    .bracket-side { gap: 6px; padding: 5px 8px; }
+    .bracket-side .owner-name { font-size: 12px; }
+    .bracket-score { font-size: 11px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -7531,6 +7602,10 @@ Tony Trozzo,2025,Happy Valley Hammer Time,7.0,5.0,0.0,1,0,0,0,0,0,0,1
 2025,Dominic Nicastro,Alex Anzalone,Alex Anzalone,LB,LB,DET,1.0
 2021,Tony Brooks,Bobby Wagner Sea,Bobby Wagner,LB,LB,SEA,3.0
 </script>
+<script type="text/csv" id="csv-matchups">Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,Winner_Score,Loser_Owner,Loser_Owner_ESPN,Loser_Team,Loser_Score
+<!-- TODO: paste cleaned MAFFL_Matchups_Clean.csv rows below the header -->
+// PASTE MATCHUPS CSV ROWS HERE
+</script>
 
 <script>
 /* =====================================================================
@@ -7583,6 +7658,7 @@ function parseCSV(text) {
 const SEASONS = parseCSV(document.getElementById("csv-seasons").textContent);
 const DIVISIONS = parseCSV(document.getElementById("csv-divisions").textContent);
 const DRAFTS = parseCSV(document.getElementById("csv-drafts").textContent);
+const MATCHUPS = parseCSV(document.getElementById("csv-matchups").textContent);
 
 /* ---------- Index data by year ---------- */
 const byYear = {};
@@ -7600,6 +7676,7 @@ function getYearBucket(y) {
       promotionWinner: null,
       roster: [],            // list of {owner, tier, conf, division}
       draftPicks: [],        // [{owner, player, position, price}]
+      bracketGames: [],      // [{gameType, tier, winner, winnerScore, loser, loserScore}]
     };
   }
   return byYear[y];
@@ -7682,6 +7759,31 @@ DRAFTS.forEach(r => {
   const price = parseFloat(r.Price) || 0;
   const bucket = getYearBucket(yr);
   bucket.draftPicks.push({ owner, player, position, price });
+});
+
+/* Pass 4: Matchups — index postseason bracket games by year */
+const BRACKET_ROUNDS = ["Quarterfinal", "Semifinal", "Championship", "ThirdPlace"];
+const NON_BRACKET_TYPES = ["Regular", "Consolation"]; // valid labels, just not bracket games
+MATCHUPS.forEach(r => {
+  const yr = parseInt(r.Year, 10);
+  if (!yr) return;
+  const gameType = (r.Game_Type || "").trim();
+  if (!gameType) return;
+  // Regular-season and consolation games are not part of the bracket
+  if (NON_BRACKET_TYPES.indexOf(gameType) !== -1) return;
+  if (BRACKET_ROUNDS.indexOf(gameType) === -1) {
+    console.warn(`Pass 4 (matchups): unexpected Game_Type "${gameType}" (year ${yr}) — skipped`);
+    return;
+  }
+  const bucket = getYearBucket(yr);
+  bucket.bracketGames.push({
+    gameType,
+    tier: (r.Tier || "").trim(),
+    winner: normalizeOwner(r.Winner_Owner),
+    winnerScore: parseFloat(r.Winner_Score),
+    loser: normalizeOwner(r.Loser_Owner),
+    loserScore: parseFloat(r.Loser_Score),
+  });
 });
 
 /* ---------- Era definitions (newest first) ---------- */
@@ -7871,6 +7973,79 @@ function renderPlayoffs(b, year) {
   return `<div class="exp-section">
     <h3 class="exp-section-head">Playoff Teams</h3>
     <p class="playoff-list">${items.join(", ")}</p>
+  </div>`;
+}
+
+function renderBracket(b, year) {
+  if (year <= 2004) return "";
+  if (!b.bracketGames || !b.bracketGames.length) return "";
+
+  // Fixed display order so rounds sequence correctly regardless of CSV row order
+  const ROUND_ORDER = ["Quarterfinal", "Semifinal", "Championship", "ThirdPlace"];
+  const ROUND_LABELS = {
+    Quarterfinal: "Quarterfinals",
+    Semifinal: "Semifinals",
+    Championship: "Championship",
+    ThirdPlace: "Third Place",
+  };
+
+  const fmtScore = s => isNaN(s) ? "" : (Number.isInteger(s) ? String(s) : s.toFixed(1));
+  const ownerSpan = name =>
+    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(name)}</span>`;
+
+  const gameRowHTML = g => {
+    let badge = "";
+    if (g.gameType === "Championship") badge = `<span class="bracket-badge">&#x1F3C6;</span>`;
+    else if (g.gameType === "ThirdPlace") badge = `<span class="bracket-badge">&#x1F949;</span>`;
+    return `
+      <div class="bracket-game">
+        <div class="bracket-side bracket-winner">
+          ${badge}${ownerSpan(g.winner)}
+          <span class="bracket-score">${fmtScore(g.winnerScore)}</span>
+        </div>
+        <div class="bracket-side bracket-loser">
+          ${ownerSpan(g.loser)}
+          <span class="bracket-score">${fmtScore(g.loserScore)}</span>
+        </div>
+      </div>`;
+  };
+
+  const renderRounds = games => {
+    const byRound = {};
+    games.forEach(g => {
+      (byRound[g.gameType] = byRound[g.gameType] || []).push(g);
+    });
+    return ROUND_ORDER.filter(rt => byRound[rt]).map(rt => {
+      const rows = byRound[rt].map(gameRowHTML).join("");
+      return `<div class="bracket-round">
+        <div class="bracket-round-head">${ROUND_LABELS[rt]}</div>
+        ${rows}
+      </div>`;
+    }).join("");
+  };
+
+  // Modern 2-tier era (2025+): split into Upper/Lower when both tiers have games
+  const upper = b.bracketGames.filter(g => g.tier === "Upper");
+  const lower = b.bracketGames.filter(g => g.tier === "Lower");
+  let body;
+  if (year >= 2025 && upper.length && lower.length) {
+    body = `
+      <div class="bracket-tier">
+        <div class="bracket-tier-head">Upper-Tier</div>
+        ${renderRounds(upper)}
+      </div>
+      <div class="bracket-tier">
+        <div class="bracket-tier-head">Lower-Tier</div>
+        ${renderRounds(lower)}
+      </div>`;
+  } else {
+    body = renderRounds(b.bracketGames);
+  }
+
+  if (!body.trim()) return "";
+  return `<div class="exp-section">
+    <h3 class="exp-section-head">Playoff Bracket</h3>
+    ${body}
   </div>`;
 }
 
@@ -8078,6 +8253,7 @@ function renderExpanded(year, eraShort) {
     </div>
     ${renderWinnersRow(year, b)}
     ${renderPlayoffs(b, year)}
+    ${renderBracket(b, year)}
     ${renderLowerTier(b, year)}
     ${renderRoster(b, year)}
     ${renderDraft(b, year)}
