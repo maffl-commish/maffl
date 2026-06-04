@@ -340,6 +340,13 @@
     margin-bottom: 12px;
   }
 
+  .year-collapsed-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
   /* ---------- Expanded view ---------- */
   .year-expanded { display: none; }
   .year-tile.expanded .year-expanded { display: block; }
@@ -402,6 +409,15 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-bottom: 22px;
+  }
+  /* Normal seasons: champion stacks full-width over a 2-up runner-up/3rd row */
+  .winners-row:has(.runnerup-third-row) {
+    grid-template-columns: 1fr;
+  }
+  .runnerup-third-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
   .winner-card {
     border: 1px solid var(--gold);
@@ -466,6 +482,22 @@
   .winner-card--runnerup .winner-owner { font-size: 16px; }
   .winner-card--runnerup .winner-team { font-size: 11px; }
   .winner-card--runnerup .winner-record { font-size: 11px; }
+  /* 3rd Place = equal-weight secondary card, mirrors runner-up */
+  .winner-card--third {
+    padding: 11px 13px;
+    border-color: var(--border);
+    background: #f4f5f7;
+    box-shadow: 0 2px 6px var(--navy-soft);
+  }
+  .winner-card--third .winner-label { font-size: 9px; }
+  .winner-card--third .winner-owner {
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .winner-card--third .winner-team { font-size: 11px; }
+  .winner-card--third .winner-record { font-size: 11px; }
 
   .exp-section {
     margin-bottom: 22px;
@@ -549,8 +581,19 @@
     letter-spacing: 0.08em;
     margin: 0 0 8px;
   }
-  .bracket-round { margin-bottom: 12px; }
-  .bracket-round:last-child { margin-bottom: 0; }
+  /* Rounds flow left-to-right; each round is a vertically-centered column */
+  .bracket-rounds-flow {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .bracket-round {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   .bracket-round-head {
     font-family: var(--display);
     font-weight: 700;
@@ -1033,6 +1076,17 @@
     .bracket-side { gap: 6px; padding: 5px 8px; }
     .bracket-side .owner-name { font-size: 12px; }
     .bracket-score { font-size: 11px; }
+    /* A 4-column bracket won't fit at 375px: scroll horizontally so the
+       left-to-right bracket metaphor survives instead of stacking. */
+    .bracket-rounds-flow {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      gap: 12px;
+    }
+    .bracket-round { flex: 0 0 auto; min-width: 150px; }
+    /* Let the grid tile shrink to the viewport so the bracket scrolls
+       inside it instead of forcing the whole tile to min-content width. */
+    .year-tile { min-width: 0; }
 
     .schedule-game { gap: 6px; }
     .schedule-team { gap: 5px; }
@@ -1077,7 +1131,7 @@
     </div>
     <div class="page-header__meta" aria-label="History version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated May 31, 2026</span>
+      <span class="meta-pill">Last Updated June 4, 2026</span>
     </div>
   </header>
 
@@ -8116,7 +8170,7 @@ function formatPrice(p) {
   return "$" + (p | 0);
 }
 
-function renderCollapsedTile(year) {
+function renderCollapsedTile(year, eraShort) {
   const b = byYear[year];
   const isFounding = year >= 2002 && year <= 2004;
   let champLine;
@@ -8130,9 +8184,15 @@ function renderCollapsedTile(year) {
   }
 
   const pill = isFounding ? `<div class="founding-pill">Founding Era</div>` : "";
+  const de = draftEraFor(year);
+  const chips = `<div class="year-collapsed-chips">
+      ${eraShort ? `<span class="era-chip">${esc(eraShort)}</span>` : ""}
+      ${de ? `<span class="era-chip era-chip--draft">${esc(de)}</span>` : ""}
+    </div>`;
   return `
     <div class="year-collapsed">
       ${pill}
+      ${chips}
       <div class="year-num">${year}</div>
       <p class="year-champ-line">${champLine}</p>
       <span class="year-chevron" aria-hidden="true">&#x276F;</span>
@@ -8166,9 +8226,20 @@ function renderWinnersRow(year, b) {
       ${renderWinnerCard("Co-Champion", co2, "&#x1F3C6;")}
     </div>`;
   }
+  // 3rd place = winner of the ThirdPlace bracket game (prefer Upper tier for 2025+).
+  // There is no team/record on bracketGames, so build a name-only person object.
+  let thirdPerson = null;
+  if (b.bracketGames && b.bracketGames.length) {
+    const thirds = b.bracketGames.filter(g => g.gameType === "ThirdPlace");
+    const g = thirds.find(x => x.tier === "Upper") || thirds[0];
+    if (g && g.winner) thirdPerson = { owner: g.winner };
+  }
   return `<div class="winners-row">
     ${renderWinnerCard("Champion", b.champion, "&#x1F3C6;", "champion")}
-    ${renderWinnerCard("Runner-Up", b.runnerUp, "&#x1F948;", "runnerup")}
+    <div class="runnerup-third-row">
+      ${renderWinnerCard("Runner-Up", b.runnerUp, "&#x1F948;", "runnerup")}
+      ${renderWinnerCard("3rd Place", thirdPerson, "&#x1F949;", "third")}
+    </div>
   </div>`;
 }
 
@@ -8184,35 +8255,6 @@ function renderDivisionWinners(b, year) {
   return `<div class="exp-section">
     <h3 class="exp-section-head">Division Winners</h3>
     <div class="div-winners">${rows}</div>
-  </div>`;
-}
-
-function renderPlayoffs(b, year) {
-  // No playoff data for founding era
-  if (year <= 2004) return "";
-
-  const usedOwners = new Set();
-  const items = [];
-
-  if (b.champion) {
-    items.push(`<span class="top-team"><span class="badge">&#x1F3C6;</span>${esc(b.champion.owner)}</span>`);
-    usedOwners.add(b.champion.owner);
-  }
-  if (b.runnerUp) {
-    items.push(`<span class="top-team"><span class="badge">&#x1F948;</span>${esc(b.runnerUp.owner)}</span>`);
-    usedOwners.add(b.runnerUp.owner);
-  }
-
-  b.playoffOwners.forEach(p => {
-    if (usedOwners.has(p.owner)) return;
-    items.push(`<span>${esc(p.owner)}</span>`);
-    usedOwners.add(p.owner);
-  });
-
-  if (!items.length) return "";
-  return `<div class="exp-section">
-    <h3 class="exp-section-head">Playoff Teams</h3>
-    <p class="playoff-list">${items.join(", ")}</p>
   </div>`;
 }
 
@@ -8255,13 +8297,16 @@ function renderBracket(b, year) {
     games.forEach(g => {
       (byRound[g.gameType] = byRound[g.gameType] || []).push(g);
     });
-    return ROUND_ORDER.filter(rt => byRound[rt]).map(rt => {
+    const cols = ROUND_ORDER.filter(rt => byRound[rt]).map(rt => {
       const rows = byRound[rt].map(gameRowHTML).join("");
       return `<div class="bracket-round">
         <div class="bracket-round-head">${ROUND_LABELS[rt]}</div>
         ${rows}
       </div>`;
     }).join("");
+    if (!cols) return "";
+    // Rounds flow left-to-right (QF -> SF -> Championship/3rd) as columns.
+    return `<div class="bracket-rounds-flow">${cols}</div>`;
   };
 
   // Modern 2-tier era (2025+): split into Upper/Lower when both tiers have games
@@ -8419,9 +8464,19 @@ function renderRoster(b, year) {
       </div>`;
   }
 
+  // Wrap Upper-Tier in its own collapsible (default collapsed), mirroring Lower-Tier.
+  const upperHTML = upperGroupsHTML ? `
+      <div class="lower-roster-toggle" data-upper-roster-year="${year}">
+        <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
+          <span>Upper-Tier</span>
+          <span class="chev">&#x25BC;</span>
+        </button>
+        <div class="lower-roster-body">${upperGroupsHTML}</div>
+      </div>` : "";
+
   return `<div class="exp-section">
     <h3 class="exp-section-head">Season Results</h3>
-    ${upperGroupsHTML}
+    ${upperHTML}
     ${lowerHTML}
   </div>`;
 }
@@ -8479,8 +8534,7 @@ function renderDraft(b, year) {
       ${topCardHTML}
     </div>
     <a class="draft-link" href="draft.html?year=${year}">View full ${year} auction draft &rarr;</a>
-  </div>
-  ${renderSchedule(b, year)}`;
+  </div>`;
 }
 
 function renderSchedule(b, year) {
@@ -8576,10 +8630,10 @@ function renderExpanded(year, eraShort) {
       <button type="button" class="exp-collapse-chevron" data-collapse-year="${year}" aria-label="Collapse ${year}">&#x25B4;</button>
     </div>
     ${renderWinnersRow(year, b)}
-    ${renderPlayoffs(b, year)}
     ${renderBracket(b, year)}
     ${renderLowerTier(b, year)}
     ${renderRoster(b, year)}
+    ${renderSchedule(b, year)}
     ${renderDraft(b, year)}
     <div class="collapse-row">
       <button type="button" class="collapse-btn" data-collapse-year="${year}">Collapse &#x25B2;</button>
@@ -8589,7 +8643,7 @@ function renderExpanded(year, eraShort) {
 
 function renderTile(year, eraShort) {
   return `<div class="year-tile" data-year="${year}" role="button" tabindex="0" aria-expanded="false">
-    ${renderCollapsedTile(year)}
+    ${renderCollapsedTile(year, eraShort)}
     ${renderExpanded(year, eraShort)}
   </div>`;
 }
