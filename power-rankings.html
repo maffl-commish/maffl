@@ -2087,8 +2087,9 @@ var KEY_TO_OWNER = (function () {
 
 /* Head-to-head + big-game index from window.MATCHUPS_DATA (consolation already
    removed). Each row is [year, winnerName, winnerScore, loserName, loserScore,
-   type] where type is "R" (regular season), "C" (championship), or "T"
-   (3rd-place game). "C" and "T" together are the playoff (Big Game) matchups.
+   type] where type is "R" (regular season), "Q" (quarterfinal), "S"
+   (semifinal), "C" (championship), or "T" (3rd-place game). Every non-"R"
+   type is a playoff (Big Game) matchup.
    Builds two indexes:
      H2H_INDEX[ownerKey][oppKey] = { rsW, rsL, poW, poL }
      BIG_GAMES_BY_KEY[ownerKey]  = [ { year, type, oppKey, won, ownScore, oppScore } ]
@@ -2112,7 +2113,7 @@ var BIG_GAMES_BY_KEY = {};
     var year = r[0], wk = keyFor(r[1]), ws = r[2], lk = keyFor(r[3]), ls = r[4];
     var type = r[5] || "R";
     if (!wk || !lk || wk === lk) return;
-    var po = (type === "C" || type === "T");
+    var po = (type !== "R");
     H2H_INDEX[wk] = H2H_INDEX[wk] || {};
     H2H_INDEX[lk] = H2H_INDEX[lk] || {};
     var wrec = (H2H_INDEX[wk][lk] = H2H_INDEX[wk][lk] || { rsW: 0, rsL: 0, poW: 0, poL: 0 });
@@ -2318,12 +2319,15 @@ function winRateColor(pct) {
 function roundLabel(type) {
   if (type === "C") return "Championship";
   if (type === "T") return "3rd-Place Game";
+  if (type === "S") return "Semifinal";
+  if (type === "Q") return "Quarterfinal";
   return "Playoff";
 }
 
-/* Big Game Matchups — this owner's playoff games (Championship + 3rd-Place)
-   with final scores, newest first. (The matchup data carries no distinct
-   promotion/relegation showdown game type, so only true playoff games appear.) */
+/* Big Game Matchups — this owner's playoff games (Quarterfinal, Semifinal,
+   Championship + 3rd-Place) with final scores, newest first. (The matchup data
+   carries no distinct promotion/relegation showdown game type, so only true
+   championship-bracket playoff games appear.) */
 function renderBigGames(owner) {
   var games = (BIG_GAMES_BY_KEY[owner.key] || []).slice();
   if (!games.length) {
