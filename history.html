@@ -392,6 +392,10 @@
     border-radius: 100px;
     line-height: 1;
   }
+  .era-chip--draft {
+    color: var(--navy);
+    background: var(--navy-soft);
+  }
 
   .winners-row {
     display: grid;
@@ -7694,6 +7698,17 @@ const ERAS = [
   },
 ];
 
+const DRAFT_ERAS = [
+  // TODO: confirm draft-era names and year ranges with league owner
+  { short: "Wild West",       years: range(2009, 2002) },
+  { short: "Golden Wiggins",  years: range(2018, 2010) },
+  { short: "Modern",          years: range(2025, 2019) },
+];
+function draftEraFor(year) {
+  const e = DRAFT_ERAS.find(d => d.years.includes(year));
+  return e ? e.short : null;
+}
+
 function range(hi, lo) {
   const out = [];
   for (let y = hi; y >= lo; y--) out.push(y);
@@ -8000,6 +8015,7 @@ function renderExpanded(year, eraShort) {
     <div class="exp-header">
       <span class="exp-year">${year}</span>
       <span class="era-chip">${esc(eraShort)}</span>
+      ${(() => { const de = draftEraFor(year); return de ? `<span class="era-chip era-chip--draft">${esc(de)}</span>` : ""; })()}
       <button type="button" class="exp-collapse-chevron" data-collapse-year="${year}" aria-label="Collapse ${year}">&#x25B4;</button>
     </div>
     ${renderWinnersRow(year, b)}
