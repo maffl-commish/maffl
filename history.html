@@ -8040,8 +8040,8 @@ function renderDraft(b, year) {
     }
   }
 
-  // League-wide top 3
-  const allTop = b.draftPicks.slice().sort((a, b) => b.price - a.price).slice(0, 3);
+  // League-wide top 10
+  const allTop = b.draftPicks.slice().sort((a, b) => b.price - a.price).slice(0, 10);
   const topRows = allTop.map(p => {
     const isChamp = p.owner === champOwner;
     return `
@@ -8077,7 +8077,6 @@ function renderExpanded(year, eraShort) {
       <button type="button" class="exp-collapse-chevron" data-collapse-year="${year}" aria-label="Collapse ${year}">&#x25B4;</button>
     </div>
     ${renderWinnersRow(year, b)}
-    ${renderDivisionWinners(b, year)}
     ${renderPlayoffs(b, year)}
     ${renderLowerTier(b, year)}
     ${renderRoster(b, year)}
