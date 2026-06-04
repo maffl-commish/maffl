@@ -646,6 +646,40 @@
     text-overflow: ellipsis;
   }
 
+  /* Season Results standings rows */
+  .standings-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: var(--body);
+    font-size: 13px;
+    border-bottom: 1px dashed var(--border);
+    padding: 4px 0;
+  }
+  .standings-row:last-of-type { border-bottom: 0; }
+  .standings-row .owner-name {
+    font-weight: 600;
+    color: var(--navy);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .standings-record {
+    color: var(--muted);
+    font-size: 12px;
+    margin-left: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    text-align: right;
+  }
+  .standings-crown {
+    flex: 0 0 auto;
+    font-size: 12px;
+    line-height: 1;
+  }
+
   /* Collapsible Lower-Tier roster */
   .lower-roster-toggle {
     margin-top: 14px;
@@ -862,6 +896,8 @@
     .winners-row { grid-template-columns: 1fr; gap: 10px; }
     .div-winners { grid-template-columns: 1fr; }
     .roster-grid { grid-template-columns: 1fr; }
+    .standings-row { gap: 6px; }
+    .standings-record { font-size: 11px; }
     .lower-grid { grid-template-columns: 1fr; }
     .draft-row { grid-template-columns: 1fr; }
 
@@ -7628,8 +7664,11 @@ DIVISIONS.forEach(r => {
   if (rank === 1 && tier === "Upper") {
     bucket.divisionWinners.push({ division: div, team, owner });
   }
+  const w = r.W ? parseFloat(r.W) : null;
+  const l = r.L ? parseFloat(r.L) : null;
+  const t = r.T ? parseFloat(r.T) : null;
   if (!bucket.roster.find(x => x.owner === owner && x.team === team)) {
-    bucket.roster.push({ owner, team, tier, conf, division: div });
+    bucket.roster.push({ owner, team, tier, conf, division: div, w, l, t, rank });
   }
 });
 
@@ -7887,6 +7926,18 @@ function ownerRowHTML(r) {
     </div>`;
 }
 
+function standingsRowHTML(r) {
+  const rec = record(r);
+  const recHTML = rec ? `<span class="standings-record">${rec}</span>` : "";
+  const crown = r.rank === 1 ? `<span class="standings-crown">&#x1F451;</span>` : "";
+  return `
+    <div class="standings-row">
+      ${crown}
+      <span class="owner-name" data-owner="${esc(r.owner)}" data-team="${esc(r.team || "")}" data-year="${esc(r.year || "")}">${esc(r.owner)}</span>
+      ${recHTML}
+    </div>`;
+}
+
 function renderRoster(b, year) {
   // Dedup roster by owner; keep first entry. Keep tier/conf/division on each entry.
   const seen = new Set();
@@ -7909,6 +7960,13 @@ function renderRoster(b, year) {
     </div>`;
   }
 
+  // Standings sort: rank ascending, missing/NaN rank to the bottom
+  const byRank = (a, b) => {
+    const ra = (a.rank == null || isNaN(a.rank)) ? Infinity : a.rank;
+    const rb = (b.rank == null || isNaN(b.rank)) ? Infinity : b.rank;
+    return ra - rb;
+  };
+
   // 2005+: Group Upper-Tier by division
   const upper = list.filter(r => r.tier === "Upper");
   const lower = list.filter(r => r.tier === "Lower");
@@ -7923,8 +7981,8 @@ function renderRoster(b, year) {
   const divisionNames = Object.keys(byDivision).sort((a, b) => a.localeCompare(b));
 
   const upperGroupsHTML = divisionNames.map(divName => {
-    const owners = byDivision[divName].slice().sort((a, b) => a.owner.localeCompare(b.owner));
-    const rows = owners.map(ownerRowHTML).join("");
+    const owners = byDivision[divName].slice().sort(byRank);
+    const rows = owners.map(standingsRowHTML).join("");
     return `<div class="roster-division-group">
       <div class="roster-div-head">${esc(divName)}</div>
       ${rows}
@@ -7934,8 +7992,8 @@ function renderRoster(b, year) {
   // Lower-Tier collapsible (2025+)
   let lowerHTML = "";
   if (year >= 2025 && lower.length) {
-    const sortedLower = lower.slice().sort((a, b) => a.owner.localeCompare(b.owner));
-    const lowerRows = sortedLower.map(ownerRowHTML).join("");
+    const sortedLower = lower.slice().sort(byRank);
+    const lowerRows = sortedLower.map(standingsRowHTML).join("");
     lowerHTML = `
       <div class="lower-roster-toggle" data-lower-roster-year="${year}">
         <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
@@ -7947,7 +8005,7 @@ function renderRoster(b, year) {
   }
 
   return `<div class="exp-section">
-    <h3 class="exp-section-head">Roster That Season</h3>
+    <h3 class="exp-section-head">Season Results</h3>
     ${upperGroupsHTML}
     ${lowerHTML}
   </div>`;
