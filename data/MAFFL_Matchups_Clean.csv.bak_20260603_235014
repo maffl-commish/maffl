@@ -77,22 +77,22 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2005,13,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,143.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,125.5
 2005,13,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,130.0,Jimmy Crisan,James Crisan,Warren Brownies,89.0
 2005,13,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,124.0,Chris Johnson,Chris Johnson,The V-Unit,70.0
-2005,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,144.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,107.0
-2005,14,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,151.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,127.5
-2005,14,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,117.75
-2005,14,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,112.0,Jimmy Crisan,James Crisan,Warren Brownies,102.5
-2005,14,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,165.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,111.5
-2005,15,Upper,True,Semifinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,112.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,100.0
-2005,15,Upper,True,Semifinal,David Murello,David Murello,Kardiac Kids,138.5,Jeff Grace,Jeff Grace,. Pardon the Intoxication,123.5
-2005,15,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,142.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,113.0
-2005,15,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,131.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,129.0
-2005,15,Upper,False,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,80.5,Jimmy Crisan,James Crisan,Warren Brownies,80.0
+2005,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,144.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,107.0
+2005,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,151.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,127.5
+2005,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,117.75
+2005,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,112.0,Jimmy Crisan,James Crisan,Warren Brownies,102.5
+2005,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,165.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,111.5
+2005,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,112.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,100.0
+2005,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,138.5,Jeff Grace,Jeff Grace,. Pardon the Intoxication,123.5
+2005,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,142.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,113.0
+2005,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,131.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,129.0
+2005,15,Upper,True,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,80.5,Jimmy Crisan,James Crisan,Warren Brownies,80.0
 2005,16,Upper,True,Championship,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,130.0,David Murello,David Murello,Kardiac Kids,122.0
 2005,16,Upper,True,ThirdPlace,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,147.5,Jeff Grace,Jeff Grace,. Pardon the Intoxication,96.0
-2005,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,143.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,138.5
-2005,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,154.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,141.0
-2005,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,133.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,98.0
-2005,16,Upper,False,Consolation,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,136.25,Jimmy Crisan,James Crisan,Warren Brownies,116.0
+2005,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,143.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,138.5
+2005,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,154.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,141.0
+2005,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,133.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,98.0
+2005,16,Upper,True,Consolation,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,136.25,Jimmy Crisan,James Crisan,Warren Brownies,116.0
 2006,1,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,105.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,101.0
 2006,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,131.0,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,77.0
 2006,1,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,119.0,BJ Funari,Bryan Funari,Wilkinsburg N'@s,106.0
@@ -197,30 +197,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,13,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,111.0,Chris Johnson,Chris Johnson,The V-Unit,67.5
 2006,13,Upper,False,Regular,Sean Ritson,Sean Ritson,Silver Bullets,103.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,96.0
 2006,13,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,111.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,96.0
-2006,14,Upper,True,Quarterfinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,166.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,110.0
-2006,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,112.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,86.0
-2006,14,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,Wilkinsburg N'@s,160.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,96.0
-2006,14,Upper,True,Quarterfinal,Jeff Grace,Jeff Grace,Pardon the Intoxication,109.5,David Murello,David Murello,Kardiac Kids,94.5
-2006,14,Upper,False,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,73.0,Chris Johnson,Chris Johnson,The V-Unit,60.0
-2006,14,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,127.0,Sean Ritson,Sean Ritson,Silver Bullets,96.0
-2006,14,Upper,False,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,108.5,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,76.5
-2006,14,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,122.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,120.0
-2006,15,Upper,True,Semifinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,144.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.5
-2006,15,Upper,True,Semifinal,BJ Funari,Bryan Funari,Wilkinsburg N'@s,107.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,83.0
-2006,15,Upper,False,Consolation,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,98.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,89.0
-2006,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,132.0,David Murello,David Murello,Kardiac Kids,93.5
-2006,15,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,103.5,Jimmy Crisan,James Crisan,Warren Brownies,102.5
-2006,15,Upper,False,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,85.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,74.5
-2006,15,Upper,False,Consolation,Sean Ritson,Sean Ritson,Silver Bullets,83.0,Chris Johnson,Chris Johnson,The V-Unit,81.0
-2006,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,120.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,100.0
+2006,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,166.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,110.0
+2006,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,112.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,86.0
+2006,14,Upper,True,Consolation,BJ Funari,Bryan Funari,Wilkinsburg N'@s,160.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,96.0
+2006,14,Upper,True,Consolation,Jeff Grace,Jeff Grace,Pardon the Intoxication,109.5,David Murello,David Murello,Kardiac Kids,94.5
+2006,14,Upper,True,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,73.0,Chris Johnson,Chris Johnson,The V-Unit,60.0
+2006,14,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,127.0,Sean Ritson,Sean Ritson,Silver Bullets,96.0
+2006,14,Upper,True,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,108.5,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,76.5
+2006,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,122.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,120.0
+2006,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,144.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.5
+2006,15,Upper,True,Consolation,BJ Funari,Bryan Funari,Wilkinsburg N'@s,107.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,83.0
+2006,15,Upper,True,Consolation,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,98.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,89.0
+2006,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,132.0,David Murello,David Murello,Kardiac Kids,93.5
+2006,15,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,103.5,Jimmy Crisan,James Crisan,Warren Brownies,102.5
+2006,15,Upper,True,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,85.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,74.5
+2006,15,Upper,True,Consolation,Sean Ritson,Sean Ritson,Silver Bullets,83.0,Chris Johnson,Chris Johnson,The V-Unit,81.0
+2006,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,120.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,100.0
 2006,16,Upper,True,Championship,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,147.5,BJ Funari,Bryan Funari,Wilkinsburg N'@s,128.5
 2006,16,Upper,True,ThirdPlace,Jeff Grace,Jeff Grace,Pardon the Intoxication,90.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.5
-2006,16,Upper,False,Consolation,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,119.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,81.0
-2006,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,109.0,David Murello,David Murello,Kardiac Kids,93.0
-2006,16,Upper,False,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,108.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,101.5
-2006,16,Upper,False,Consolation,Sean Ritson,Sean Ritson,Silver Bullets,143.0,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,75.0
-2006,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,78.0,Jimmy Crisan,James Crisan,Warren Brownies,62.0
-2006,16,Upper,False,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,94.0,Chris Johnson,Chris Johnson,The V-Unit,71.0
+2006,16,Upper,True,Consolation,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,119.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,81.0
+2006,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,109.0,David Murello,David Murello,Kardiac Kids,93.0
+2006,16,Upper,True,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,108.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,101.5
+2006,16,Upper,True,Consolation,Sean Ritson,Sean Ritson,Silver Bullets,143.0,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,75.0
+2006,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,78.0,Jimmy Crisan,James Crisan,Warren Brownies,62.0
+2006,16,Upper,True,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,94.0,Chris Johnson,Chris Johnson,The V-Unit,71.0
 2007,1,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,119.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,99.5
 2007,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,97.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,67.0
 2007,1,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,118.5,BJ Funari,Bryan Funari,Greensburg N'@s,98.5
@@ -325,30 +325,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2007,13,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,104.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,85.0
 2007,13,Upper,False,Regular,Sean Ritson,Sean Ritson,Silver Bullets,95.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,87.5
 2007,13,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,123.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,93.5
-2007,14,Upper,True,Quarterfinal,Mike Murello,Michael Murello,Bad Attitude Gang,149.0,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,111.0
-2007,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,126.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,77.5
-2007,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,115.5,BJ Funari,Bryan Funari,Greensburg N'@s,91.5
-2007,14,Upper,True,Quarterfinal,Jeff Grace,Jeff Grace,Pardon the Intoxication,135.0,Jimmy Crisan,Brandon Snyder / James Crisan,Warren Brownies,82.5
-2007,14,Upper,False,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,126.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,84.0
-2007,14,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,128.0,Josh Lavrinc,Joshua Lavrinc,The Real Deal,112.0
-2007,14,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,86.0,Sean Ritson,Sean Ritson,Silver Bullets,80.5
-2007,14,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,101.5,David Murello,David Murello,Kardiac Kids,58.5
-2007,15,Upper,True,Semifinal,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,98.0,Mike Murello,Michael Murello,Bad Attitude Gang,85.5
-2007,15,Upper,True,Semifinal,Jeff Grace,Jeff Grace,Pardon the Intoxication,100.0,Chris Johnson,Chris Johnson,The V-Unit,76.5
-2007,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,80.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,75.5
-2007,15,Upper,False,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,124.5,Jimmy Crisan,Brandon Snyder / James Crisan,Warren Brownies,86.5
-2007,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,104.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,73.5
-2007,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,85.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,75.0
-2007,15,Upper,False,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,87.0,Josh Lavrinc,Joshua Lavrinc,The Real Deal,86.0
-2007,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,127.5,Sean Ritson,Sean Ritson,Silver Bullets,97.5
+2007,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,149.0,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,111.0
+2007,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,126.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,77.5
+2007,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,115.5,BJ Funari,Bryan Funari,Greensburg N'@s,91.5
+2007,14,Upper,True,Consolation,Jeff Grace,Jeff Grace,Pardon the Intoxication,135.0,Jimmy Crisan,Brandon Snyder / James Crisan,Warren Brownies,82.5
+2007,14,Upper,True,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,126.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,84.0
+2007,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,128.0,Josh Lavrinc,Joshua Lavrinc,The Real Deal,112.0
+2007,14,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,86.0,Sean Ritson,Sean Ritson,Silver Bullets,80.5
+2007,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,101.5,David Murello,David Murello,Kardiac Kids,58.5
+2007,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,98.0,Mike Murello,Michael Murello,Bad Attitude Gang,85.5
+2007,15,Upper,True,Consolation,Jeff Grace,Jeff Grace,Pardon the Intoxication,100.0,Chris Johnson,Chris Johnson,The V-Unit,76.5
+2007,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,80.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,75.5
+2007,15,Upper,True,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,124.5,Jimmy Crisan,Brandon Snyder / James Crisan,Warren Brownies,86.5
+2007,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,104.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,73.5
+2007,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,85.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,75.0
+2007,15,Upper,True,Consolation,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,87.0,Josh Lavrinc,Joshua Lavrinc,The Real Deal,86.0
+2007,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,127.5,Sean Ritson,Sean Ritson,Silver Bullets,97.5
 2007,16,Upper,True,Championship,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,110.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,79.0
 2007,16,Upper,True,ThirdPlace,Mike Murello,Michael Murello,Bad Attitude Gang,103.5,Chris Johnson,Chris Johnson,The V-Unit,83.0
-2007,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,91.5,BJ Funari,Bryan Funari,Greensburg N'@s,90.5
-2007,16,Upper,False,Consolation,Jimmy Crisan,Brandon Snyder / James Crisan,Warren Brownies,119.0,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,116.5
-2007,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,89.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,78.0
-2007,16,Upper,False,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,162.0,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,60.0
-2007,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,134.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,69.5
-2007,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,The Real Deal,86.5,Sean Ritson,Sean Ritson,Silver Bullets,76.5
+2007,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,91.5,BJ Funari,Bryan Funari,Greensburg N'@s,90.5
+2007,16,Upper,True,Consolation,Jimmy Crisan,Brandon Snyder / James Crisan,Warren Brownies,119.0,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,116.5
+2007,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,89.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,78.0
+2007,16,Upper,True,Consolation,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,162.0,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,60.0
+2007,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,134.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,69.5
+2007,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,The Real Deal,86.5,Sean Ritson,Sean Ritson,Silver Bullets,76.5
 2008,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,92.5,Mike Murello,Michael Murello,Bad Attitude Gang,62.0
 2008,1,Upper,False,Regular,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,108.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,99.5
 2008,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,121.0,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,95.5
@@ -453,30 +453,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2008,13,Upper,False,Regular,Sean Ritson,Sean Ritson,The Silver Bullets,144.0,Jimmy Crisan,James Crisan,Warren Brownies,81.0
 2008,13,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,121.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,86.0
 2008,13,Upper,False,Regular,BJ Funari,Bryan Funari,Greensburg N'@s,128.5,Chris Johnson,Chris Johnson,The V-Unit,109.5
-2008,14,Upper,True,Quarterfinal,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,120.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,76.0
-2008,14,Upper,True,Quarterfinal,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,101.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,88.0
-2008,14,Upper,True,Quarterfinal,Sean Ritson,Sean Ritson,The Silver Bullets,101.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,85.5
-2008,14,Upper,True,Quarterfinal,Jeff Grace,Jeff Grace,Pardon the Intoxication,114.5,BJ Funari,Bryan Funari,Greensburg N'@s,103.0
-2008,14,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,112.0,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,84.5
-2008,14,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc / Brandon Snyder,The Real Deal,132.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,114.0
-2008,14,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,106.0,Jimmy Crisan,James Crisan,Warren Brownies,76.5
-2008,14,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,108.5,Chris Johnson,Chris Johnson,The V-Unit,43.5
-2008,15,Upper,True,Semifinal,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,125.0,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,75.5
-2008,15,Upper,True,Semifinal,Sean Ritson,Sean Ritson,The Silver Bullets,107.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,100.5
-2008,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,132.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,116.0
-2008,15,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,89.5,BJ Funari,Bryan Funari,Greensburg N'@s,80.5
-2008,15,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc / Brandon Snyder,The Real Deal,103.0,Mike Murello,Michael Murello,Bad Attitude Gang,97.5
-2008,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,100.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,65.0
-2008,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,91.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,85.5
-2008,15,Upper,False,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,121.0,Chris Johnson,Chris Johnson,The V-Unit,84.0
+2008,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,120.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,76.0
+2008,14,Upper,True,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,101.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,88.0
+2008,14,Upper,True,Consolation,Sean Ritson,Sean Ritson,The Silver Bullets,101.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,85.5
+2008,14,Upper,True,Consolation,Jeff Grace,Jeff Grace,Pardon the Intoxication,114.5,BJ Funari,Bryan Funari,Greensburg N'@s,103.0
+2008,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,112.0,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,84.5
+2008,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc / Brandon Snyder,The Real Deal,132.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,114.0
+2008,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,106.0,Jimmy Crisan,James Crisan,Warren Brownies,76.5
+2008,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,108.5,Chris Johnson,Chris Johnson,The V-Unit,43.5
+2008,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,125.0,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,75.5
+2008,15,Upper,True,Consolation,Sean Ritson,Sean Ritson,The Silver Bullets,107.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,100.5
+2008,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,132.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,116.0
+2008,15,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,89.5,BJ Funari,Bryan Funari,Greensburg N'@s,80.5
+2008,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc / Brandon Snyder,The Real Deal,103.0,Mike Murello,Michael Murello,Bad Attitude Gang,97.5
+2008,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,100.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,65.0
+2008,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,91.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,85.5
+2008,15,Upper,True,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,121.0,Chris Johnson,Chris Johnson,The V-Unit,84.0
 2008,16,Upper,True,Championship,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,124.0,Sean Ritson,Sean Ritson,The Silver Bullets,83.0
 2008,16,Upper,True,ThirdPlace,Jeff Grace,Jeff Grace,Pardon the Intoxication,143.0,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,132.5
-2008,16,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,94.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,45.5
-2008,16,Upper,False,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,96.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,90.5
-2008,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,118.0,Josh Lavrinc,Joshua Lavrinc / Brandon Snyder,The Real Deal,111.5
-2008,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,110.5,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,106.5
-2008,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,99.0,Jimmy Crisan,James Crisan,Warren Brownies,83.5
-2008,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,103.5,Chris Johnson,Chris Johnson,The V-Unit,91.0
+2008,16,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,94.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,45.5
+2008,16,Upper,True,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,96.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,90.5
+2008,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,118.0,Josh Lavrinc,Joshua Lavrinc / Brandon Snyder,The Real Deal,111.5
+2008,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,110.5,Brian Murello/ Ron Murello,Ron Murello,ONE HOUSE DIVIDED,106.5
+2008,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,99.0,Jimmy Crisan,James Crisan,Warren Brownies,83.5
+2008,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,103.5,Chris Johnson,Chris Johnson,The V-Unit,91.0
 2009,1,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,99.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,79.0
 2009,1,Upper,False,Regular,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,102.0,Matt Brown,Matthew Brown,Major League Brown,81.0
 2009,1,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,115.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,110.0
@@ -581,30 +581,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2009,13,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,78.0,Jimmy Crisan,James Crisan,Warren Brownies,75.5
 2009,13,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,117.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,69.0
 2009,13,Upper,False,Regular,BJ Funari,Bryan Funari,Greensburg N'@s,79.5,Chris Johnson,Chris Johnson,The V-Unit,78.5
-2009,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,110.5,Mike Murello,Michael Murello,Bad Attitude Gang,110.0
-2009,14,Upper,True,Quarterfinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,98.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,91.5
-2009,14,Upper,True,Quarterfinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,116.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,81.0
-2009,14,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,105.5,Sean Ritson,Sean Ritson,The Silver Bullets,100.0
-2009,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,110.5,Matt Brown,Matthew Brown,Major League Brown,90.0
-2009,14,Upper,False,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,103.0,Jimmy Crisan,James Crisan,Warren Brownies,94.0
-2009,14,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,143.0,BJ Funari,Bryan Funari,Greensburg N'@s,96.0
-2009,14,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,83.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,75.5
-2009,15,Upper,True,Semifinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,129.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,82.0
-2009,15,Upper,True,Semifinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,119.0,David Murello,David Murello,Kardiac Kids,79.0
-2009,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,112.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,85.0
-2009,15,Upper,False,Consolation,Sean Ritson,Sean Ritson,The Silver Bullets,113.0,Mike Murello,Michael Murello,Bad Attitude Gang,66.0
-2009,15,Upper,False,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,109.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,84.0
-2009,15,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,108.5,Matt Brown,Matthew Brown,Major League Brown,75.0
-2009,15,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,111.5,Jimmy Crisan,James Crisan,Warren Brownies,98.5
-2009,15,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,76.5,BJ Funari,Bryan Funari,Greensburg N'@s,73.0
+2009,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,110.5,Mike Murello,Michael Murello,Bad Attitude Gang,110.0
+2009,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,98.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,91.5
+2009,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,116.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,81.0
+2009,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,105.5,Sean Ritson,Sean Ritson,The Silver Bullets,100.0
+2009,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,110.5,Matt Brown,Matthew Brown,Major League Brown,90.0
+2009,14,Upper,True,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,103.0,Jimmy Crisan,James Crisan,Warren Brownies,94.0
+2009,14,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,143.0,BJ Funari,Bryan Funari,Greensburg N'@s,96.0
+2009,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,83.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,75.5
+2009,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,129.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,82.0
+2009,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,119.0,David Murello,David Murello,Kardiac Kids,79.0
+2009,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,112.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,85.0
+2009,15,Upper,True,Consolation,Sean Ritson,Sean Ritson,The Silver Bullets,113.0,Mike Murello,Michael Murello,Bad Attitude Gang,66.0
+2009,15,Upper,True,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,109.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,84.0
+2009,15,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,108.5,Matt Brown,Matthew Brown,Major League Brown,75.0
+2009,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,111.5,Jimmy Crisan,James Crisan,Warren Brownies,98.5
+2009,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,76.5,BJ Funari,Bryan Funari,Greensburg N'@s,73.0
 2009,16,Upper,True,Championship,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,89.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,85.0
 2009,16,Upper,True,ThirdPlace,David Murello,David Murello,Kardiac Kids,113.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,76.0
-2009,16,Upper,False,Consolation,Sean Ritson,Sean Ritson,The Silver Bullets,101.0,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,95.0
-2009,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,133.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,96.5
-2009,16,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,119.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,108.0
-2009,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,112.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,70.5
-2009,16,Upper,False,Consolation,Matt Brown,Matthew Brown,Major League Brown,105.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,72.5
-2009,16,Upper,False,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,86.5,BJ Funari,Bryan Funari,Greensburg N'@s,66.5
+2009,16,Upper,True,Consolation,Sean Ritson,Sean Ritson,The Silver Bullets,101.0,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,95.0
+2009,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,133.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,96.5
+2009,16,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,119.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,108.0
+2009,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,112.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,70.5
+2009,16,Upper,True,Consolation,Matt Brown,Matthew Brown,Major League Brown,105.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,72.5
+2009,16,Upper,True,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,86.5,BJ Funari,Bryan Funari,Greensburg N'@s,66.5
 2010,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,89.0,Mike Murello,Michael Murello,Bad Attitude Gang,83.0
 2010,1,Upper,False,Regular,Matt Brown,Matthew Brown,Major League Brown,112.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,78.5
 2010,1,Upper,False,Regular,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,87.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,64.5
@@ -709,30 +709,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2010,13,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,107.0,David Murello,David Murello,Kardiac Kids,99.5
 2010,13,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,136.0,Chris Johnson,Chris Johnson,The V-Unit,75.0
 2010,13,Upper,False,Regular,BJ Funari,Bryan Funari,Greensburg N'@s,125.5,Joni Murello,Joni Capelli,Powder Puffs,98.5
-2010,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,105.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,104.0
-2010,14,Upper,True,Quarterfinal,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,125.0,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,77.0
-2010,14,Upper,True,Quarterfinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,121.0,Jimmy Crisan,James Crisan,Warren Brownies,71.5
-2010,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,106.5,David Murello,David Murello,Kardiac Kids,60.0
-2010,14,Upper,False,Consolation,Joni Murello,Joni Capelli,Powder Puffs,102.0,Sean Ritson,Sean Ritson,Team Awesome!!!,94.0
-2010,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,69.5,Matt Brown,Matthew Brown,Major League Brown,67.0
-2010,14,Upper,False,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,77.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,69.5
-2010,14,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,99.0,Mike Murello,Michael Murello,Bad Attitude Gang,67.5
-2010,15,Upper,True,Semifinal,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,137.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,108.5
-2010,15,Upper,True,Semifinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,113.0,Chris Johnson,Chris Johnson,The V-Unit,108.5
-2010,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,103.5,Jimmy Crisan,James Crisan,Warren Brownies,72.5
-2010,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,89.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,82.0
-2010,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,115.0,Joni Murello,Joni Capelli,Powder Puffs,78.5
-2010,15,Upper,False,Consolation,Sean Ritson,Sean Ritson,Team Awesome!!!,132.0,BJ Funari,Bryan Funari,Greensburg N'@s,116.0
-2010,15,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,82.0,Matt Brown,Matthew Brown,Major League Brown,64.0
-2010,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,144.5,Mike Murello,Michael Murello,Bad Attitude Gang,141.0
+2010,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,105.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,104.0
+2010,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,125.0,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,77.0
+2010,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,121.0,Jimmy Crisan,James Crisan,Warren Brownies,71.5
+2010,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,106.5,David Murello,David Murello,Kardiac Kids,60.0
+2010,14,Upper,True,Consolation,Joni Murello,Joni Capelli,Powder Puffs,102.0,Sean Ritson,Sean Ritson,Team Awesome!!!,94.0
+2010,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,69.5,Matt Brown,Matthew Brown,Major League Brown,67.0
+2010,14,Upper,True,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,77.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,69.5
+2010,14,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,99.0,Mike Murello,Michael Murello,Bad Attitude Gang,67.5
+2010,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,137.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,108.5
+2010,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,113.0,Chris Johnson,Chris Johnson,The V-Unit,108.5
+2010,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,103.5,Jimmy Crisan,James Crisan,Warren Brownies,72.5
+2010,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,89.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,82.0
+2010,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,115.0,Joni Murello,Joni Capelli,Powder Puffs,78.5
+2010,15,Upper,True,Consolation,Sean Ritson,Sean Ritson,Team Awesome!!!,132.0,BJ Funari,Bryan Funari,Greensburg N'@s,116.0
+2010,15,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,82.0,Matt Brown,Matthew Brown,Major League Brown,64.0
+2010,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,144.5,Mike Murello,Michael Murello,Bad Attitude Gang,141.0
 2010,16,Upper,True,Championship,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,104.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,89.5
 2010,16,Upper,True,ThirdPlace,Brian Murello/ Ron Murello,Ron Murello,Swissvale GallopingGhosts,120.5,Chris Johnson,Chris Johnson,The V-Unit,67.0
-2010,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,113.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,107.0
-2010,16,Upper,False,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,108.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,96.5
-2010,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,84.5,Sean Ritson,Sean Ritson,Team Awesome!!!,80.5
-2010,16,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,94.5,Joni Murello,Joni Capelli,Powder Puffs,89.0
-2010,16,Upper,False,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,119.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,116.5
-2010,16,Upper,False,Consolation,Matt Brown,Matthew Brown,Major League Brown,103.0,Mike Murello,Michael Murello,Bad Attitude Gang,76.0
+2010,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,113.5,Jon Murello/ Rick Simmons,Richard Simmons,The Prodigal Sons,107.0
+2010,16,Upper,True,Consolation,Jimmy Crisan,James Crisan,Warren Brownies,108.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,96.5
+2010,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,84.5,Sean Ritson,Sean Ritson,Team Awesome!!!,80.5
+2010,16,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,94.5,Joni Murello,Joni Capelli,Powder Puffs,89.0
+2010,16,Upper,True,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,119.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,116.5
+2010,16,Upper,True,Consolation,Matt Brown,Matthew Brown,Major League Brown,103.0,Mike Murello,Michael Murello,Bad Attitude Gang,76.0
 2011,1,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,110.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,93.0
 2011,1,Upper,False,Regular,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,113.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,103.0
 2011,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,109.5,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,82.0
@@ -837,30 +837,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2011,13,Upper,False,Regular,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,121.0,David Murello,David Murello,Kardiac Kids,120.5
 2011,13,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,107.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,85.5
 2011,13,Upper,False,Regular,BJ Funari,Bryan Funari,Greensburg N'@s,121.5,Joni Murello,Joni Capelli,Powder Puffs,87.0
-2011,14,Upper,True,Quarterfinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,86.0
-2011,14,Upper,True,Quarterfinal,Mike Murello,Michael Murello,Bad Attitude Gang,100.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale Ghosts,81.0
-2011,14,Upper,True,Quarterfinal,Sean Ritson,Sean Ritson,Silver Bullets!!!,159.5,BJ Funari,Bryan Funari,Greensburg N'@s,95.5
-2011,14,Upper,True,Quarterfinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,132.5,David Murello,David Murello,Kardiac Kids,124.5
-2011,14,Upper,False,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,136.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,99.0
-2011,14,Upper,False,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,93.0,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,88.5
-2011,14,Upper,False,Consolation,Joni Murello,Joni Capelli,Powder Puffs,108.0,Chris Johnson,Chris Johnson,The V-Unit,87.5
-2011,14,Upper,False,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,123.5,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,95.0
-2011,15,Upper,True,Semifinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,141.0,Mike Murello,Michael Murello,Bad Attitude Gang,84.0
-2011,15,Upper,True,Semifinal,Sean Ritson,Sean Ritson,Silver Bullets!!!,121.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,119.5
-2011,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,102.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,102.0
-2011,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Ghosts,96.5,BJ Funari,Bryan Funari,Greensburg N'@s,91.0
-2011,15,Upper,False,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,109.5,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,108.0
-2011,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,123.0,Joni Murello,Joni Capelli,Powder Puffs,118.0
-2011,15,Upper,False,Consolation,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,81.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,64.5
-2011,15,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,92.0,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,76.0
+2011,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,86.0
+2011,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,100.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale Ghosts,81.0
+2011,14,Upper,True,Consolation,Sean Ritson,Sean Ritson,Silver Bullets!!!,159.5,BJ Funari,Bryan Funari,Greensburg N'@s,95.5
+2011,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,132.5,David Murello,David Murello,Kardiac Kids,124.5
+2011,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,136.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,99.0
+2011,14,Upper,True,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,93.0,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,88.5
+2011,14,Upper,True,Consolation,Joni Murello,Joni Capelli,Powder Puffs,108.0,Chris Johnson,Chris Johnson,The V-Unit,87.5
+2011,14,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,123.5,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,95.0
+2011,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,141.0,Mike Murello,Michael Murello,Bad Attitude Gang,84.0
+2011,15,Upper,True,Consolation,Sean Ritson,Sean Ritson,Silver Bullets!!!,121.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,119.5
+2011,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,102.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,102.0
+2011,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Ghosts,96.5,BJ Funari,Bryan Funari,Greensburg N'@s,91.0
+2011,15,Upper,True,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,109.5,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,108.0
+2011,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,123.0,Joni Murello,Joni Capelli,Powder Puffs,118.0
+2011,15,Upper,True,Consolation,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,81.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,64.5
+2011,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,92.0,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,76.0
 2011,16,Upper,True,Championship,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,107.0,Sean Ritson,Sean Ritson,Silver Bullets!!!,106.0
 2011,16,Upper,True,ThirdPlace,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,98.5,Mike Murello,Michael Murello,Bad Attitude Gang,63.5
-2011,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,154.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale Ghosts,130.5
-2011,16,Upper,False,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,109.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,89.0
-2011,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,121.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,73.5
-2011,16,Upper,False,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,106.0,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,84.5
-2011,16,Upper,False,Consolation,Joni Murello,Joni Capelli,Powder Puffs,107.5,Chris Johnson,Chris Johnson,The V-Unit,87.0
-2011,16,Upper,False,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,76.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,75.0
+2011,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,154.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale Ghosts,130.5
+2011,16,Upper,True,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,109.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,89.0
+2011,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,121.5,Marcus Ruby / Joe Ruby,Marcus Ruby,Tooth Fairies,73.5
+2011,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,106.0,Matt Brown,Jeff Ley / Matthew Brown,Major League Brown,84.5
+2011,16,Upper,True,Consolation,Joni Murello,Joni Capelli,Powder Puffs,107.5,Chris Johnson,Chris Johnson,The V-Unit,87.0
+2011,16,Upper,True,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,76.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,75.0
 2012,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,102.5,Mike Murello,Michael Murello,Bad Attitude Gang,100.0
 2012,1,Upper,False,Regular,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,104.0,Matt Brown,Matthew Brown,Major League Brown,99.0
 2012,1,Upper,False,Regular,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,130.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,115.5
@@ -965,30 +965,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2012,13,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,139.5,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,92.0
 2012,13,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,120.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,89.5
 2012,13,Upper,False,Regular,BJ Funari,Bryan Funari,Greensburg N'@s,102.0,Joni Murello,Joni Capelli,Powder Puffs,97.5
-2012,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale Griffins III,139.5,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,120.0
-2012,14,Upper,True,Quarterfinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,104.0,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,94.0
-2012,14,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,126.5,Sean Ritson,Sean Ritson,Silver Bullets!!!,81.0
-2012,14,Upper,True,Quarterfinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,107.0,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,103.0
-2012,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,90.0,Matt Brown,Matthew Brown,Major League Brown,73.0
-2012,14,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,98.5,BJ Funari,Bryan Funari,Greensburg N'@s,70.5
-2012,14,Upper,False,Consolation,Joni Murello,Joni Capelli,Powder Puffs,91.0,Chris Johnson,Chris Johnson,The V-Unit,85.0
-2012,14,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,129.5,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,45.5
-2012,15,Upper,True,Semifinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale Griffins III,130.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,92.0
-2012,15,Upper,True,Semifinal,David Murello,David Murello,Kardiac Kids,94.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,89.0
-2012,15,Upper,False,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,104.5,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,100.0
-2012,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,119.5,Sean Ritson,Sean Ritson,Silver Bullets!!!,111.5
-2012,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,125.0,Mike Murello,Michael Murello,Bad Attitude Gang,56.5
-2012,15,Upper,False,Consolation,Matt Brown,Matthew Brown,Major League Brown,103.0,Joni Murello,Joni Capelli,Powder Puffs,92.5
-2012,15,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,126.5,BJ Funari,Bryan Funari,Greensburg N'@s,46.0
-2012,15,Upper,False,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,121.5,Chris Johnson,Chris Johnson,The V-Unit,65.0
+2012,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Griffins III,139.5,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,120.0
+2012,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,104.0,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,94.0
+2012,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,126.5,Sean Ritson,Sean Ritson,Silver Bullets!!!,81.0
+2012,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,107.0,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,103.0
+2012,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,90.0,Matt Brown,Matthew Brown,Major League Brown,73.0
+2012,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,98.5,BJ Funari,Bryan Funari,Greensburg N'@s,70.5
+2012,14,Upper,True,Consolation,Joni Murello,Joni Capelli,Powder Puffs,91.0,Chris Johnson,Chris Johnson,The V-Unit,85.0
+2012,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,129.5,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,45.5
+2012,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Griffins III,130.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,92.0
+2012,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,94.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,89.0
+2012,15,Upper,True,Consolation,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,104.5,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,100.0
+2012,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,119.5,Sean Ritson,Sean Ritson,Silver Bullets!!!,111.5
+2012,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,125.0,Mike Murello,Michael Murello,Bad Attitude Gang,56.5
+2012,15,Upper,True,Consolation,Matt Brown,Matthew Brown,Major League Brown,103.0,Joni Murello,Joni Capelli,Powder Puffs,92.5
+2012,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,126.5,BJ Funari,Bryan Funari,Greensburg N'@s,46.0
+2012,15,Upper,True,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,121.5,Chris Johnson,Chris Johnson,The V-Unit,65.0
 2012,16,Upper,True,Championship,David Murello,David Murello,Kardiac Kids,132.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale Griffins III,113.0
 2012,16,Upper,True,ThirdPlace,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,115.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,98.5
-2012,16,Upper,False,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,112.5,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,84.5
-2012,16,Upper,False,Consolation,Sean Ritson,Sean Ritson,Silver Bullets!!!,116.5,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,111.0
-2012,16,Upper,False,Consolation,Matt Brown,Matthew Brown,Major League Brown,97.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,95.5
-2012,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,135.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,75.0
-2012,16,Upper,False,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,106.0,Joni Murello,Joni Capelli,Powder Puffs,79.0
-2012,16,Upper,False,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,82.0,Chris Johnson,Chris Johnson,The V-Unit,78.5
+2012,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Rick Simmons,The Prodigal Sons,112.5,Marcus Ruby / Joe Ruby,Marcus Ruby / Joe Ruby,Tooth Fairies,84.5
+2012,16,Upper,True,Consolation,Sean Ritson,Sean Ritson,Silver Bullets!!!,116.5,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,111.0
+2012,16,Upper,True,Consolation,Matt Brown,Matthew Brown,Major League Brown,97.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,95.5
+2012,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,135.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,75.0
+2012,16,Upper,True,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,106.0,Joni Murello,Joni Capelli,Powder Puffs,79.0
+2012,16,Upper,True,Consolation,BJ Funari,Bryan Funari,Greensburg N'@s,82.0,Chris Johnson,Chris Johnson,The V-Unit,78.5
 2013,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,146.78,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,133.58
 2013,1,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,105.0,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,93.4
 2013,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,127.32,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,82.82
@@ -1093,30 +1093,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2013,13,Upper,False,Regular,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,136.7,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,96.08
 2013,13,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,81.48,Chris Johnson,Chris Johnson,The V-Unit,73.5
 2013,13,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,119.8,Joni Murello,Joni Capelli,Pink Berets,118.0
-2013,14,Upper,True,Quarterfinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,125.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,108.48
-2013,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,116.16,Brian Murello/ Ron Murello,Ron Murello,Swissvale Real McCoy's,110.46
-2013,14,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,108.92,Dan Reilly,Daniel Reilly,The Big Bang Theory,97.6
-2013,14,Upper,True,Quarterfinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,134.76,Joni Murello,Joni Capelli,Pink Berets,130.04
-2013,14,Upper,False,Consolation,Kevin Radkowski,Kevin Radkowski,Mike Honcho,117.12,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,86.24
-2013,14,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,129.16,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,95.4
-2013,14,Upper,False,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,150.24,BJ Funari,Bryan Funari,Motown Moonshiners,89.56
-2013,14,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,111.54,Mike Murello,Michael Murello,Bad Attitude Gang,104.66
-2013,15,Upper,True,Semifinal,Chris Johnson,Chris Johnson,The V-Unit,97.32,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,96.46
-2013,15,Upper,True,Semifinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,122.54,David Murello,David Murello,Kardiac Kids,95.12
-2013,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Real McCoy's,151.78,Dan Reilly,Daniel Reilly,The Big Bang Theory,86.38
-2013,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,122.88,Joni Murello,Joni Capelli,Pink Berets,100.7
-2013,15,Upper,False,Consolation,Kevin Radkowski,Kevin Radkowski,Mike Honcho,110.56,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,99.64
-2013,15,Upper,False,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,148.42,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,141.42
-2013,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,110.0,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,102.72
-2013,15,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,126.98,BJ Funari,Bryan Funari,Motown Moonshiners,95.44
+2013,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,125.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,108.48
+2013,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,116.16,Brian Murello/ Ron Murello,Ron Murello,Swissvale Real McCoy's,110.46
+2013,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,108.92,Dan Reilly,Daniel Reilly,The Big Bang Theory,97.6
+2013,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,134.76,Joni Murello,Joni Capelli,Pink Berets,130.04
+2013,14,Upper,True,Consolation,Kevin Radkowski,Kevin Radkowski,Mike Honcho,117.12,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,86.24
+2013,14,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,129.16,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,95.4
+2013,14,Upper,True,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,150.24,BJ Funari,Bryan Funari,Motown Moonshiners,89.56
+2013,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,111.54,Mike Murello,Michael Murello,Bad Attitude Gang,104.66
+2013,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,97.32,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,96.46
+2013,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,122.54,David Murello,David Murello,Kardiac Kids,95.12
+2013,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Real McCoy's,151.78,Dan Reilly,Daniel Reilly,The Big Bang Theory,86.38
+2013,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,122.88,Joni Murello,Joni Capelli,Pink Berets,100.7
+2013,15,Upper,True,Consolation,Kevin Radkowski,Kevin Radkowski,Mike Honcho,110.56,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,99.64
+2013,15,Upper,True,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,148.42,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,141.42
+2013,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,110.0,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,102.72
+2013,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,126.98,BJ Funari,Bryan Funari,Motown Moonshiners,95.44
 2013,16,Upper,True,Championship,Chris Johnson,Chris Johnson,The V-Unit,107.44,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,102.68
 2013,16,Upper,True,ThirdPlace,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,149.2,David Murello,David Murello,Kardiac Kids,119.24
-2013,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Real McCoy's,112.68,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.24
-2013,16,Upper,False,Consolation,Joni Murello,Joni Capelli,Pink Berets,138.64,Dan Reilly,Daniel Reilly,The Big Bang Theory,68.32
-2013,16,Upper,False,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,108.22,Kevin Radkowski,Kevin Radkowski,Mike Honcho,80.08
-2013,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,99.42,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,80.74
-2013,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,104.4,Mike Murello,Michael Murello,Bad Attitude Gang,77.16
-2013,16,Upper,False,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,84.42,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,67.24
+2013,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Real McCoy's,112.68,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.24
+2013,16,Upper,True,Consolation,Joni Murello,Joni Capelli,Pink Berets,138.64,Dan Reilly,Daniel Reilly,The Big Bang Theory,68.32
+2013,16,Upper,True,Consolation,Vincent Cavalier / Dominic Nicastro,Vincent Cavalier / Dominic Nicastro,Warren Brownies,108.22,Kevin Radkowski,Kevin Radkowski,Mike Honcho,80.08
+2013,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,99.42,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,80.74
+2013,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,West Mafflin Maffldivers,104.4,Mike Murello,Michael Murello,Bad Attitude Gang,77.16
+2013,16,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,84.42,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,67.24
 2014,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,106.46,Chris Johnson,Chris Johnson,The V-Unit,97.36
 2014,1,Upper,False,Regular,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,130.08,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,102.36
 2014,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,95.72,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,82.14
@@ -1221,30 +1221,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2014,13,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,131.6,Bob Keslar,William Gaines 3rd,Camp Kes,127.44
 2014,13,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,95.28,BJ Funari,Bryan Funari,Motown Moonshiners,88.88
 2014,13,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,126.1,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,120.6
-2014,14,Upper,True,Quarterfinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,109.02,BJ Funari,Bryan Funari,Motown Moonshiners,93.46
-2014,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,153.14,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,118.26
-2014,14,Upper,True,Quarterfinal,Bob Keslar,William Gaines 3rd,Camp Kes,129.92,Jon Fetrow,John Fetrow,Johnny Incognito,93.28
-2014,14,Upper,True,Quarterfinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,129.8,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.78
-2014,14,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,104.64,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,89.24
-2014,14,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,143.9,David Murello,David Murello,Kardiac Kids,81.56
-2014,14,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,123.84,Mike Murello,Michael Murello,Bad Attitude Gang,111.2
-2014,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,107.68,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,80.3
-2014,15,Upper,True,Semifinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,123.42,Chris Johnson,Chris Johnson,The V-Unit,85.46
-2014,15,Upper,True,Semifinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,106.9,Bob Keslar,William Gaines 3rd,Camp Kes,100.02
-2014,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,122.78,Jon Fetrow,John Fetrow,Johnny Incognito,85.84
-2014,15,Upper,False,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,76.08,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,75.6
-2014,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,71.2,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,60.92
-2014,15,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,88.68,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,76.2
-2014,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.18,David Murello,David Murello,Kardiac Kids,64.92
-2014,15,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,114.4,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,105.9
+2014,14,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,109.02,BJ Funari,Bryan Funari,Motown Moonshiners,93.46
+2014,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,153.14,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,118.26
+2014,14,Upper,True,Consolation,Bob Keslar,William Gaines 3rd,Camp Kes,129.92,Jon Fetrow,John Fetrow,Johnny Incognito,93.28
+2014,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,129.8,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.78
+2014,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,104.64,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,89.24
+2014,14,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,143.9,David Murello,David Murello,Kardiac Kids,81.56
+2014,14,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,123.84,Mike Murello,Michael Murello,Bad Attitude Gang,111.2
+2014,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,107.68,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,80.3
+2014,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,123.42,Chris Johnson,Chris Johnson,The V-Unit,85.46
+2014,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,106.9,Bob Keslar,William Gaines 3rd,Camp Kes,100.02
+2014,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,122.78,Jon Fetrow,John Fetrow,Johnny Incognito,85.84
+2014,15,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,76.08,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,75.6
+2014,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,71.2,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,60.92
+2014,15,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,88.68,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,76.2
+2014,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.18,David Murello,David Murello,Kardiac Kids,64.92
+2014,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,114.4,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,105.9
 2014,16,Upper,True,Championship,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,89.8,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,82.08
 2014,16,Upper,True,ThirdPlace,Bob Keslar,William Gaines 3rd,Camp Kes,119.66,Chris Johnson,Chris Johnson,The V-Unit,96.7
-2014,16,Upper,False,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,112.04,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,110.56
-2014,16,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,117.54,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,101.02
-2014,16,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,110.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,82.5
-2014,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,91.48,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,80.42
-2014,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,121.82,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,95.86
-2014,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,129.56,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,84.42
+2014,16,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,112.04,Brian Murello/ Ron Murello,Ron Murello,Swissvale Lucky's,110.56
+2014,16,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,117.54,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,101.02
+2014,16,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,110.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,82.5
+2014,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,91.48,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,80.42
+2014,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,121.82,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,95.86
+2014,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,129.56,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,84.42
 2015,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,124.88,Chris Johnson,Chris Johnson,The V-Unit,70.82
 2015,1,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,124.76,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,98.74
 2015,1,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,110.62,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,103.92
@@ -1349,30 +1349,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2015,13,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,122.08,Bob Keslar,Bo Kes,Camp Kes,93.52
 2015,13,Upper,False,Regular,BJ Funari,Bryan Funari,Motown Moonshiners,137.06,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,121.98
 2015,13,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,119.48,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,81.96
-2015,14,Upper,True,Quarterfinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,129.24,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,92.56
-2015,14,Upper,True,Quarterfinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,111.7,BJ Funari,Bryan Funari,Motown Moonshiners,102.96
-2015,14,Upper,True,Quarterfinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,104.42,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,65.28
-2015,14,Upper,True,Quarterfinal,Mike Murello,Michael Murello,Bad Attitude Gang,112.7,Dan Reilly,Daniel Reilly,The Big Bang Theory,86.12
-2015,14,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,107.08,Bob Keslar,Bo Kes,Camp Kes,90.72
-2015,14,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,118.1,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,93.18
-2015,14,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,125.2,Chris Johnson,Chris Johnson,The V-Unit,117.8
-2015,14,Upper,False,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,109.88,David Murello,David Murello,Kardiac Kids,105.84
-2015,15,Upper,True,Semifinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,120.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.86
-2015,15,Upper,True,Semifinal,Mike Murello,Michael Murello,Bad Attitude Gang,141.1,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,122.56
-2015,15,Upper,False,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,111.98,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,81.9
-2015,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,150.24,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,104.02
-2015,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,108.34,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,93.1
-2015,15,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,128.16,Bob Keslar,Bo Kes,Camp Kes,60.46
-2015,15,Upper,False,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,103.56,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,96.2
-2015,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,128.12,Chris Johnson,Chris Johnson,The V-Unit,92.94
+2015,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,129.24,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,92.56
+2015,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,111.7,BJ Funari,Bryan Funari,Motown Moonshiners,102.96
+2015,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,104.42,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,65.28
+2015,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,112.7,Dan Reilly,Daniel Reilly,The Big Bang Theory,86.12
+2015,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,107.08,Bob Keslar,Bo Kes,Camp Kes,90.72
+2015,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,118.1,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,93.18
+2015,14,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,125.2,Chris Johnson,Chris Johnson,The V-Unit,117.8
+2015,14,Upper,True,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,109.88,David Murello,David Murello,Kardiac Kids,105.84
+2015,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,120.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.86
+2015,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,141.1,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,122.56
+2015,15,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,111.98,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,81.9
+2015,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,150.24,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,104.02
+2015,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,108.34,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,93.1
+2015,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,128.16,Bob Keslar,Bo Kes,Camp Kes,60.46
+2015,15,Upper,True,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,103.56,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,96.2
+2015,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,128.12,Chris Johnson,Chris Johnson,The V-Unit,92.94
 2015,16,Upper,True,Championship,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,128.82,Mike Murello,Michael Murello,Bad Attitude Gang,89.98
 2015,16,Upper,True,ThirdPlace,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,112.2,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,107.94
-2015,16,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,113.18,BJ Funari,Bryan Funari,Motown Moonshiners,80.94
-2015,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,107.3,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,98.9
-2015,16,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,124.2,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,112.22
-2015,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,121.66,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,67.26
-2015,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,93.06,Bob Keslar,Bo Kes,Camp Kes,75.04
-2015,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,71.86,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,65.2
+2015,16,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,113.18,BJ Funari,Bryan Funari,Motown Moonshiners,80.94
+2015,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,107.3,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,98.9
+2015,16,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,124.2,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,112.22
+2015,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,121.66,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,67.26
+2015,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,93.06,Bob Keslar,Bo Kes,Camp Kes,75.04
+2015,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,71.86,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,65.2
 2016,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,108.22,Chris Johnson,Chris Johnson,The V-Unit,67.06
 2016,1,Upper,False,Regular,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,105.5,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,98.62
 2016,1,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,149.2,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,94.76
@@ -1477,30 +1477,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2016,13,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,118.0,Bob Keslar,Bo Kes,Camp Kes,78.96
 2016,13,Upper,False,Regular,BJ Funari,Bryan Funari,Motown Moonshiners,118.8,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,96.46
 2016,13,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,131.32,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,57.3
-2016,14,Upper,True,Quarterfinal,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,101.54,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,95.24
-2016,14,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,Motown Moonshiners,104.74,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,53.2
-2016,14,Upper,True,Quarterfinal,Dan Reilly,Daniel Reilly,The Big Bang Theory,94.92,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,76.8
-2016,14,Upper,True,Quarterfinal,Mike Murello,Michael Murello,Bad Attitude Gang,132.58,Jon Fetrow,John Fetrow,Johnny Incognito,116.48
-2016,14,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,116.76,Bob Keslar,Bo Kes,Camp Kes,89.82
-2016,14,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,67.32,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,57.78
-2016,14,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,79.6,Chris Johnson,Chris Johnson,The V-Unit,60.36
-2016,14,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,75.78,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,72.96
-2016,15,Upper,True,Semifinal,BJ Funari,Bryan Funari,Motown Moonshiners,116.14,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,81.42
-2016,15,Upper,True,Semifinal,Mike Murello,Michael Murello,Bad Attitude Gang,114.92,Dan Reilly,Daniel Reilly,The Big Bang Theory,70.44
-2016,15,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,114.92,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,93.38
-2016,15,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,106.34,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,87.74
-2016,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,101.08,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,85.54
-2016,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,131.56,Bob Keslar,Bo Kes,Camp Kes,101.2
-2016,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,144.56,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,65.48
-2016,15,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,69.0,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,58.84
+2016,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,101.54,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,95.24
+2016,14,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,104.74,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,53.2
+2016,14,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,94.92,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,76.8
+2016,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,132.58,Jon Fetrow,John Fetrow,Johnny Incognito,116.48
+2016,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,116.76,Bob Keslar,Bo Kes,Camp Kes,89.82
+2016,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,67.32,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,57.78
+2016,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,79.6,Chris Johnson,Chris Johnson,The V-Unit,60.36
+2016,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,75.78,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,72.96
+2016,15,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,116.14,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,81.42
+2016,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,114.92,Dan Reilly,Daniel Reilly,The Big Bang Theory,70.44
+2016,15,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,114.92,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,93.38
+2016,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,106.34,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,87.74
+2016,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,101.08,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,85.54
+2016,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,131.56,Bob Keslar,Bo Kes,Camp Kes,101.2
+2016,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,144.56,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,65.48
+2016,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,69.0,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,58.84
 2016,16,Upper,True,Championship,Mike Murello,Michael Murello,Bad Attitude Gang,137.98,BJ Funari,Bryan Funari,Motown Moonshiners,131.08
 2016,16,Upper,True,ThirdPlace,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,101.16,Dan Reilly,Daniel Reilly,The Big Bang Theory,77.76
-2016,16,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,117.98,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,97.96
-2016,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,114.68,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,106.16
-2016,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,141.9,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,137.78
-2016,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,92.04,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,69.26
-2016,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,91.4,Bob Keslar,Bo Kes,Camp Kes,91.02
-2016,16,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,93.3,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,44.68
+2016,16,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,117.98,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,97.96
+2016,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,114.68,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,106.16
+2016,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,141.9,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,137.78
+2016,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Architects,92.04,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,69.26
+2016,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,91.4,Bob Keslar,Bo Kes,Camp Kes,91.02
+2016,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,93.3,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,44.68
 2017,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,135.44,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,98.68
 2017,1,Upper,False,Regular,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,67.84,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,36.6
 2017,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,111.44,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,82.58
@@ -1605,30 +1605,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2017,13,Upper,False,Regular,Bob Keslar,Bo Kes,Camp Kes,115.44,Dan Reilly,Daniel Reilly,The Big Bang Theory,96.8
 2017,13,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,143.5,BJ Funari,Bryan Funari,Motown Moonshiners,83.78
 2017,13,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,126.66,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,92.38
-2017,14,Upper,True,Quarterfinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,118.22,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,102.44
-2017,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,117.2,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,86.84
-2017,14,Upper,True,Quarterfinal,Bob Keslar,Bo Kes,Camp Kes,110.04,David Murello,David Murello,Kardiac Kids,98.56
-2017,14,Upper,True,Quarterfinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,140.36,Mike Murello,Michael Murello,Bad Attitude Gang,129.04
-2017,14,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,118.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,83.26
-2017,14,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,104.8,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,87.34
-2017,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,76.82,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,65.84
-2017,14,Upper,False,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,104.98,Jon Fetrow,John Fetrow,Johnny Incognito,97.34
-2017,15,Upper,True,Semifinal,Chris Johnson,Chris Johnson,The V-Unit,138.34,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,128.14
-2017,15,Upper,True,Semifinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,144.58,Bob Keslar,Bo Kes,Camp Kes,85.74
-2017,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,129.38,David Murello,David Murello,Kardiac Kids,91.44
-2017,15,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,93.28,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,73.94
-2017,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,115.28,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,68.78
-2017,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,108.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.62
-2017,15,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,100.04,BJ Funari,Bryan Funari,Motown Moonshiners,60.58
-2017,15,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,81.68,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,69.46
+2017,14,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,118.22,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,102.44
+2017,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,117.2,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,86.84
+2017,14,Upper,True,Consolation,Bob Keslar,Bo Kes,Camp Kes,110.04,David Murello,David Murello,Kardiac Kids,98.56
+2017,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,140.36,Mike Murello,Michael Murello,Bad Attitude Gang,129.04
+2017,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,118.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,83.26
+2017,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,104.8,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,87.34
+2017,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,76.82,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,65.84
+2017,14,Upper,True,Consolation,BJ Funari,Bryan Funari,Motown Moonshiners,104.98,Jon Fetrow,John Fetrow,Johnny Incognito,97.34
+2017,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,138.34,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,128.14
+2017,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,144.58,Bob Keslar,Bo Kes,Camp Kes,85.74
+2017,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,129.38,David Murello,David Murello,Kardiac Kids,91.44
+2017,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,93.28,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,73.94
+2017,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,115.28,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,68.78
+2017,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,108.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.62
+2017,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,100.04,BJ Funari,Bryan Funari,Motown Moonshiners,60.58
+2017,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,81.68,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,69.46
 2017,16,Upper,True,Championship,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,133.0,Chris Johnson,Chris Johnson,The V-Unit,69.26
 2017,16,Upper,True,ThirdPlace,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,90.96,Bob Keslar,Bo Kes,Camp Kes,85.06
-2017,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,102.6,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,85.32
-2017,16,Upper,False,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,80.06,David Murello,David Murello,Kardiac Kids,79.5
-2017,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,109.06,Dan Reilly,Daniel Reilly,The Big Bang Theory,86.64
-2017,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,108.14,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,88.22
-2017,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,66.96,Jon Fetrow,John Fetrow,Johnny Incognito,65.32
-2017,16,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,84.16,BJ Funari,Bryan Funari,Motown Moonshiners,70.84
+2017,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,102.6,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,85.32
+2017,16,Upper,True,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,80.06,David Murello,David Murello,Kardiac Kids,79.5
+2017,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,109.06,Dan Reilly,Daniel Reilly,The Big Bang Theory,86.64
+2017,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,108.14,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,88.22
+2017,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,66.96,Jon Fetrow,John Fetrow,Johnny Incognito,65.32
+2017,16,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,84.16,BJ Funari,Bryan Funari,Motown Moonshiners,70.84
 2018,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,125.8,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,123.56
 2018,1,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,137.34,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,71.82
 2018,1,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,131.32,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,95.48
@@ -1733,30 +1733,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2018,13,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,100.88,Bob Keslar,Bo Kes,Camp Kes,91.1
 2018,13,Upper,False,Regular,BJ Funari,Bryan Funari,Fort Myers Sunshiners,125.4,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,79.64
 2018,13,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,134.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,122.74
-2018,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,116.92,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,112.38
-2018,14,Upper,True,Quarterfinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,142.28,BJ Funari,Bryan Funari,Fort Myers Sunshiners,88.4
-2018,14,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,112.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,78.4
-2018,14,Upper,True,Quarterfinal,Mike Murello,Michael Murello,Bad Attitude Gang,141.76,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,107.2
-2018,14,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,112.38,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,82.48
-2018,14,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,89.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.94
-2018,14,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,95.98,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,88.7
-2018,14,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,102.42,Bob Keslar,Bo Kes,Camp Kes,96.54
-2018,15,Upper,True,Semifinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,130.36,Chris Johnson,Chris Johnson,The V-Unit,90.48
-2018,15,Upper,True,Semifinal,Mike Murello,Michael Murello,Bad Attitude Gang,90.48,David Murello,David Murello,Kardiac Kids,72.46
-2018,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,123.5,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,114.62
-2018,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,90.06,BJ Funari,Bryan Funari,Fort Myers Sunshiners,85.14
-2018,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,138.74,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,86.94
-2018,15,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,77.58,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,57.34
-2018,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,95.12,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,77.66
-2018,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,86.32,Bob Keslar,Bo Kes,Camp Kes,79.92
+2018,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,116.92,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,112.38
+2018,14,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,142.28,BJ Funari,Bryan Funari,Fort Myers Sunshiners,88.4
+2018,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,112.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,78.4
+2018,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,141.76,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,107.2
+2018,14,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,112.38,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,82.48
+2018,14,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,89.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,87.94
+2018,14,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,95.98,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,88.7
+2018,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,102.42,Bob Keslar,Bo Kes,Camp Kes,96.54
+2018,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,130.36,Chris Johnson,Chris Johnson,The V-Unit,90.48
+2018,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,90.48,David Murello,David Murello,Kardiac Kids,72.46
+2018,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,123.5,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,114.62
+2018,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,90.06,BJ Funari,Bryan Funari,Fort Myers Sunshiners,85.14
+2018,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,138.74,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,86.94
+2018,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,77.58,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,57.34
+2018,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,95.12,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,77.66
+2018,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,86.32,Bob Keslar,Bo Kes,Camp Kes,79.92
 2018,16,Upper,True,Championship,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,155.46,Mike Murello,Michael Murello,Bad Attitude Gang,120.48
 2018,16,Upper,True,ThirdPlace,David Murello,David Murello,Kardiac Kids,130.68,Chris Johnson,Chris Johnson,The V-Unit,112.94
-2018,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,116.64,Dan Reilly,Daniel Reilly,The Big Bang Theory,81.34
-2018,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,111.42,BJ Funari,Bryan Funari,Fort Myers Sunshiners,92.44
-2018,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,132.9,Jon Fetrow,John Fetrow,Johnny Incognito,72.74
-2018,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,116.04,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,75.56
-2018,16,Upper,False,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,73.76,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,72.44
-2018,16,Upper,False,Consolation,Bob Keslar,Bo Kes,Camp Kes,84.34,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,61.44
+2018,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,116.64,Dan Reilly,Daniel Reilly,The Big Bang Theory,81.34
+2018,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,111.42,BJ Funari,Bryan Funari,Fort Myers Sunshiners,92.44
+2018,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,132.9,Jon Fetrow,John Fetrow,Johnny Incognito,72.74
+2018,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,116.04,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,75.56
+2018,16,Upper,True,Consolation,Mike Licciardi,Michael Licciardi,So. U Shake 'n Bake,73.76,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,72.44
+2018,16,Upper,True,Consolation,Bob Keslar,Bo Kes,Camp Kes,84.34,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,61.44
 2019,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,141.92,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,98.0
 2019,1,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,129.96,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,83.14
 2019,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,150.7,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,116.76
@@ -1861,30 +1861,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2019,13,Upper,False,Regular,Bob Keslar,Bob Keslar,Camp Kes,102.04,Dan Reilly,Daniel Reilly,The Big Bang Theory,85.54
 2019,13,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,100.56,BJ Funari,Bryan Funari,Fort Myers Sunshiners,79.3
 2019,13,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,127.62,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,87.3
-2019,14,Upper,True,Quarterfinal,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,127.2,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,95.98
-2019,14,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,Fort Myers Sunshiners,130.1,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,103.04
-2019,14,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,162.04,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,115.82
-2019,14,Upper,True,Quarterfinal,Mike Murello,Michael Murello,Bad Attitude Gang,129.84,Bob Keslar,Bob Keslar,Camp Kes,88.88
-2019,14,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,104.82,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,83.46
-2019,14,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,110.4,Jon Fetrow,John Fetrow,Johnny Incognito,94.0
-2019,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.48,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,85.66
-2019,14,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,84.26,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,61.5
-2019,15,Upper,True,Semifinal,BJ Funari,Bryan Funari,Fort Myers Sunshiners,132.84,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,129.48
-2019,15,Upper,True,Semifinal,David Murello,David Murello,Kardiac Kids,133.12,Mike Murello,Michael Murello,Bad Attitude Gang,116.86
-2019,15,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,106.36,Bob Keslar,Bob Keslar,Camp Kes,72.98
-2019,15,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,111.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,83.02
-2019,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,85.42,Chris Johnson,Chris Johnson,The V-Unit,84.18
-2019,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,106.98,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,102.38
-2019,15,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,115.12,Dan Reilly,Daniel Reilly,The Big Bang Theory,81.68
-2019,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.8,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,50.0
+2019,14,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,127.2,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,95.98
+2019,14,Upper,True,Consolation,BJ Funari,Bryan Funari,Fort Myers Sunshiners,130.1,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,103.04
+2019,14,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,162.04,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,115.82
+2019,14,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,129.84,Bob Keslar,Bob Keslar,Camp Kes,88.88
+2019,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,104.82,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,83.46
+2019,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,110.4,Jon Fetrow,John Fetrow,Johnny Incognito,94.0
+2019,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.48,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,85.66
+2019,14,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,84.26,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,61.5
+2019,15,Upper,True,Consolation,BJ Funari,Bryan Funari,Fort Myers Sunshiners,132.84,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,129.48
+2019,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,133.12,Mike Murello,Michael Murello,Bad Attitude Gang,116.86
+2019,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,106.36,Bob Keslar,Bob Keslar,Camp Kes,72.98
+2019,15,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,111.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,83.02
+2019,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,85.42,Chris Johnson,Chris Johnson,The V-Unit,84.18
+2019,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,106.98,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,102.38
+2019,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,115.12,Dan Reilly,Daniel Reilly,The Big Bang Theory,81.68
+2019,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.8,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,50.0
 2019,16,Upper,True,Championship,BJ Funari,Bryan Funari,Fort Myers Sunshiners,143.46,David Murello,David Murello,Kardiac Kids,93.0
 2019,16,Upper,True,ThirdPlace,Mike Murello,Michael Murello,Bad Attitude Gang,125.38,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,112.92
-2019,16,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,122.64,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,101.42
-2019,16,Upper,False,Consolation,Bob Keslar,Bob Keslar,Camp Kes,81.48,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,75.16
-2019,16,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,131.66,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,100.26
-2019,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,89.04,Jon Fetrow,John Fetrow,Johnny Incognito,88.44
-2019,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,120.72,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,72.18
-2019,16,Upper,False,Consolation,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,92.0,Dan Reilly,Daniel Reilly,The Big Bang Theory,69.0
+2019,16,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,122.64,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,101.42
+2019,16,Upper,True,Consolation,Bob Keslar,Bob Keslar,Camp Kes,81.48,Brian Murello/ Ron Murello,Ron Murello,Swissvale Fire and Fury,75.16
+2019,16,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,131.66,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,100.26
+2019,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,89.04,Jon Fetrow,John Fetrow,Johnny Incognito,88.44
+2019,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,120.72,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,72.18
+2019,16,Upper,True,Consolation,Mike Licciardi,Michael Licciardi / Joni Murello,So. U Shake 'n Bake,92.0,Dan Reilly,Daniel Reilly,The Big Bang Theory,69.0
 2020,1,Upper,False,Regular,Josh Farber,Josh Farber,Farber's First Timers,129.08,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,87.64
 2020,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,97.2,Chris Johnson,Chris Johnson,The V-Unit,95.4
 2020,1,Upper,False,Regular,BJ Funari,Bryan Funari,SW Florida SunShiners,88.82,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,82.8
@@ -1989,30 +1989,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2020,13,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,97.84,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,86.72
 2020,13,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,79.22,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,63.66
 2020,13,Upper,False,Regular,BJ Funari,Bryan Funari,SW Florida SunShiners,106.4,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,90.0
-2020,14,Upper,True,Quarterfinal,Chris Johnson,Chris Johnson,The V-Unit,112.06,Josh Farber,Josh Farber,Farber's First Timers,90.32
-2020,14,Upper,True,Quarterfinal,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,90.38,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,89.54
-2020,14,Upper,True,Quarterfinal,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,118.7,David Murello,David Murello,Kardiac Kids,100.94
-2020,14,Upper,True,Quarterfinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,110.32,Jon Fetrow,John Fetrow,Johnny Incognito,93.74
-2020,14,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,149.38,Mike Murello,Michael Murello,Bad Attitude Gang,97.76
-2020,14,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,117.32,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,88.16
-2020,14,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,103.14,BJ Funari,Bryan Funari,SW Florida SunShiners,88.46
-2020,14,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,99.72,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,92.62
-2020,15,Upper,True,Semifinal,Chris Johnson,Chris Johnson,The V-Unit,128.04,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,82.2
-2020,15,Upper,True,Semifinal,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,130.46,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,114.52
-2020,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,114.84,Josh Farber,Josh Farber,Farber's First Timers,108.06
-2020,15,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,133.32,Jon Fetrow,John Fetrow,Johnny Incognito,74.9
-2020,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,128.56,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,123.08
-2020,15,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,114.92,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,100.12
-2020,15,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,114.52,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,94.38
-2020,15,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,95.66,BJ Funari,Bryan Funari,SW Florida SunShiners,78.62
+2020,14,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,112.06,Josh Farber,Josh Farber,Farber's First Timers,90.32
+2020,14,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,90.38,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,89.54
+2020,14,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,118.7,David Murello,David Murello,Kardiac Kids,100.94
+2020,14,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,110.32,Jon Fetrow,John Fetrow,Johnny Incognito,93.74
+2020,14,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,149.38,Mike Murello,Michael Murello,Bad Attitude Gang,97.76
+2020,14,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,117.32,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,88.16
+2020,14,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,103.14,BJ Funari,Bryan Funari,SW Florida SunShiners,88.46
+2020,14,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,99.72,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,92.62
+2020,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,128.04,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,82.2
+2020,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,130.46,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,114.52
+2020,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,114.84,Josh Farber,Josh Farber,Farber's First Timers,108.06
+2020,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,133.32,Jon Fetrow,John Fetrow,Johnny Incognito,74.9
+2020,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,128.56,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,123.08
+2020,15,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,114.92,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,100.12
+2020,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,114.52,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,94.38
+2020,15,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,95.66,BJ Funari,Bryan Funari,SW Florida SunShiners,78.62
 2020,16,Upper,True,Championship,Chris Johnson,Chris Johnson,The V-Unit,149.68,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,113.32
 2020,16,Upper,True,ThirdPlace,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,138.74,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,101.44
-2020,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,127.1,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,88.28
-2020,16,Upper,False,Consolation,Josh Farber,Josh Farber,Farber's First Timers,177.9,Jon Fetrow,John Fetrow,Johnny Incognito,120.82
-2020,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,125.86,Dan Reilly,Daniel Reilly,The Big Bang Theory,91.46
-2020,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,105.22,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,103.5
-2020,16,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,116.84,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,97.02
-2020,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,93.5,BJ Funari,Bryan Funari,SW Florida SunShiners,74.0
+2020,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,127.1,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,88.28
+2020,16,Upper,True,Consolation,Josh Farber,Josh Farber,Farber's First Timers,177.9,Jon Fetrow,John Fetrow,Johnny Incognito,120.82
+2020,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,125.86,Dan Reilly,Daniel Reilly,The Big Bang Theory,91.46
+2020,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,105.22,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,103.5
+2020,16,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,116.84,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,97.02
+2020,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,93.5,BJ Funari,Bryan Funari,SW Florida SunShiners,74.0
 2021,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,126.18,Tony Brooks,Tony Brooks,Number 2 Tony,117.42
 2021,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,131.9,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,74.26
 2021,1,Upper,False,Regular,BJ Funari,Bryan Funari,South Hills FunShiners,98.34,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,72.3
@@ -2125,30 +2125,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2021,14,Upper,False,Regular,Jon Fetrow,John Fetrow,Johnny Incognito,89.52,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,88.68
 2021,14,Upper,False,Regular,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,138.24,Dan Reilly,Daniel Reilly,The Big Bang Theory,85.82
 2021,14,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,147.2,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,130.02
-2021,15,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,South Hills FunShiners,117.18,Chris Johnson,Chris Johnson,The V-Unit,105.24
-2021,15,Upper,True,Quarterfinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,103.7,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,96.1
-2021,15,Upper,True,Quarterfinal,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,88.32,Mike Murello,Michael Murello,Bad Attitude Gang,77.64
-2021,15,Upper,True,Quarterfinal,David Murello,David Murello,Kardiac Kids,105.28,Jon Fetrow,John Fetrow,Johnny Incognito,102.56
-2021,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.24,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,98.46
-2021,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,92.06,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,59.18
-2021,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,87.04,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,63.78
-2021,15,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,78.14,Tony Brooks,Tony Brooks,Number 2 Tony,61.8
-2021,16,Upper,True,Semifinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,121.32,BJ Funari,Bryan Funari,South Hills FunShiners,106.2
-2021,16,Upper,True,Semifinal,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,130.78,David Murello,David Murello,Kardiac Kids,121.5
-2021,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,106.24,Jon Fetrow,John Fetrow,Johnny Incognito,51.48
-2021,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,114.96,Chris Johnson,Chris Johnson,The V-Unit,84.14
-2021,16,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,127.48,Dan Reilly,Daniel Reilly,The Big Bang Theory,110.36
-2021,16,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,68.9,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,58.46
-2021,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,128.5,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,120.8
-2021,16,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,78.3,Tony Brooks,Tony Brooks,Number 2 Tony,71.94
+2021,15,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,117.18,Chris Johnson,Chris Johnson,The V-Unit,105.24
+2021,15,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,103.7,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,96.1
+2021,15,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,88.32,Mike Murello,Michael Murello,Bad Attitude Gang,77.64
+2021,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,105.28,Jon Fetrow,John Fetrow,Johnny Incognito,102.56
+2021,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.24,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,98.46
+2021,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,92.06,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,59.18
+2021,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,87.04,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,63.78
+2021,15,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,78.14,Tony Brooks,Tony Brooks,Number 2 Tony,61.8
+2021,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,121.32,BJ Funari,Bryan Funari,South Hills FunShiners,106.2
+2021,16,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,130.78,David Murello,David Murello,Kardiac Kids,121.5
+2021,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,106.24,Jon Fetrow,John Fetrow,Johnny Incognito,51.48
+2021,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,114.96,Chris Johnson,Chris Johnson,The V-Unit,84.14
+2021,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,127.48,Dan Reilly,Daniel Reilly,The Big Bang Theory,110.36
+2021,16,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,68.9,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,58.46
+2021,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,128.5,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,120.8
+2021,16,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,78.3,Tony Brooks,Tony Brooks,Number 2 Tony,71.94
 2021,17,Upper,True,Championship,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,138.86,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,83.02
 2021,17,Upper,True,ThirdPlace,David Murello,David Murello,Kardiac Kids,157.24,BJ Funari,Bryan Funari,South Hills FunShiners,88.68
-2021,17,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,79.48,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,66.8
-2021,17,Upper,False,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,117.9,Chris Johnson,Chris Johnson,The V-Unit,103.44
-2021,17,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,110.26,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,108.56
-2021,17,Upper,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,174.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,98.7
-2021,17,Upper,False,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,107.62,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,91.16
-2021,17,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,106.1,Tony Brooks,Tony Brooks,Number 2 Tony,84.28
+2021,17,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,79.48,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,66.8
+2021,17,Upper,True,Consolation,Jon Fetrow,John Fetrow,Johnny Incognito,117.9,Chris Johnson,Chris Johnson,The V-Unit,103.44
+2021,17,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,110.26,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,108.56
+2021,17,Upper,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,174.14,Dan Reilly,Daniel Reilly,The Big Bang Theory,98.7
+2021,17,Upper,True,Consolation,Josh Lavrinc,Joshua Lavrinc,Bunch o' Bums,107.62,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,91.16
+2021,17,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,106.1,Tony Brooks,Tony Brooks,Number 2 Tony,84.28
 2022,1,Upper,False,Regular,Tony Brooks,Tony Brooks,Number 2 Tony,111.2,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,65.76
 2022,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,114.9,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,107.12
 2022,1,Upper,False,Regular,BJ Funari,Bryan Funari,South Hills FunShiners,108.9,Braiden Snyder,Braiden Snyder,Motown Ballers,103.1
@@ -2261,30 +2261,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2022,14,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,119.88,Jon Fetrow,John Fetrow,Southside Shooters,107.54
 2022,14,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,99.66,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,89.7
 2022,14,Upper,False,Regular,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,134.48,Mike Murello,Michael Murello,Bad Attitude Gang,81.06
-2022,15,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,128.6,Braiden Snyder,Braiden Snyder,Motown Ballers,127.44
-2022,15,Upper,True,Quarterfinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,136.84,BJ Funari,Bryan Funari,South Hills FunShiners,109.68
-2022,15,Upper,True,Quarterfinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,139.6,Mike Murello,Michael Murello,Bad Attitude Gang,109.46
-2022,15,Upper,True,Quarterfinal,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,126.16,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,75.92
-2022,15,Upper,False,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,92.34,Dan Reilly,Daniel Reilly,The Big Bang Theory,85.2
-2022,15,Upper,False,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,92.34,David Murello,David Murello,Kardiac Kids,76.22
-2022,15,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,94.18,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,88.26
-2022,15,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,147.3,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,95.94
-2022,16,Upper,True,Semifinal,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,112.8,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,105.3
-2022,16,Upper,True,Semifinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,108.2,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,89.88
-2022,16,Upper,False,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,92.9,BJ Funari,Bryan Funari,South Hills FunShiners,82.86
-2022,16,Upper,False,Consolation,Braiden Snyder,Braiden Snyder,Motown Ballers,111.46,Mike Murello,Michael Murello,Bad Attitude Gang,92.54
-2022,16,Upper,False,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,98.56,Jon Fetrow,John Fetrow,Southside Shooters,82.0
-2022,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,115.86,Dan Reilly,Daniel Reilly,The Big Bang Theory,103.9
-2022,16,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,108.56,David Murello,David Murello,Kardiac Kids,100.1
-2022,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,136.38,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,107.3
+2022,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,128.6,Braiden Snyder,Braiden Snyder,Motown Ballers,127.44
+2022,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,136.84,BJ Funari,Bryan Funari,South Hills FunShiners,109.68
+2022,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,139.6,Mike Murello,Michael Murello,Bad Attitude Gang,109.46
+2022,15,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,126.16,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,75.92
+2022,15,Upper,True,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,92.34,Dan Reilly,Daniel Reilly,The Big Bang Theory,85.2
+2022,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,92.34,David Murello,David Murello,Kardiac Kids,76.22
+2022,15,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,94.18,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,88.26
+2022,15,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,147.3,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,95.94
+2022,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,112.8,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,105.3
+2022,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,108.2,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,89.88
+2022,16,Upper,True,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,92.9,BJ Funari,Bryan Funari,South Hills FunShiners,82.86
+2022,16,Upper,True,Consolation,Braiden Snyder,Braiden Snyder,Motown Ballers,111.46,Mike Murello,Michael Murello,Bad Attitude Gang,92.54
+2022,16,Upper,True,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,98.56,Jon Fetrow,John Fetrow,Southside Shooters,82.0
+2022,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,115.86,Dan Reilly,Daniel Reilly,The Big Bang Theory,103.9
+2022,16,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,108.56,David Murello,David Murello,Kardiac Kids,100.1
+2022,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,136.38,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,107.3
 2022,17,Upper,True,Championship,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,140.4,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,93.46
 2022,17,Upper,True,ThirdPlace,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,68.4,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,48.8
-2022,17,Upper,False,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,99.18,Braiden Snyder,Braiden Snyder,Motown Ballers,77.52
-2022,17,Upper,False,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,90.8,Mike Murello,Michael Murello,Bad Attitude Gang,76.54
-2022,17,Upper,False,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,84.2,Chris Johnson,Chris Johnson,The V-Unit,76.16
-2022,17,Upper,False,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,108.96,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,99.3
-2022,17,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,138.84,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,72.58
-2022,17,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,121.02,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,114.18
+2022,17,Upper,True,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,99.18,Braiden Snyder,Braiden Snyder,Motown Ballers,77.52
+2022,17,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,90.8,Mike Murello,Michael Murello,Bad Attitude Gang,76.54
+2022,17,Upper,True,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,84.2,Chris Johnson,Chris Johnson,The V-Unit,76.16
+2022,17,Upper,True,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,108.96,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,99.3
+2022,17,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,138.84,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,72.58
+2022,17,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,121.02,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,114.18
 2023,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,97.96,Tony Brooks,Tony Brooks,Number 2 Tony,90.98
 2023,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,89.84,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,78.6
 2023,1,Upper,False,Regular,BJ Funari,Bryan Funari,South Hills FunShiners,131.68,Braiden Snyder,Braiden Snyder,Motown Ballers,71.08
@@ -2397,30 +2397,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2023,14,Upper,False,Regular,Jon Fetrow,John Fetrow,Southside Shooters,101.78,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,71.34
 2023,14,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,102.54,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,90.7
 2023,14,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,92.12,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,86.88
-2023,15,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,119.62,Chris Johnson,Chris Johnson,The V-Unit,84.3
-2023,15,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,South Hills FunShiners,106.02,Tony Brooks,Tony Brooks,Number 2 Tony,102.72
-2023,15,Upper,True,Quarterfinal,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,123.56,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,106.54
-2023,15,Upper,True,Quarterfinal,Dan Reilly,Daniel Reilly,The Big Bang Theory,81.56,Jon Fetrow,John Fetrow,Southside Shooters,79.34
-2023,15,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,130.88,Braiden Snyder,Braiden Snyder,Motown Ballers,93.36
-2023,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,125.52,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,56.7
-2023,15,Upper,False,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,80.42,Mike Murello,Michael Murello,Bad Attitude Gang,75.66
-2023,15,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,103.66,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,102.52
-2023,16,Upper,True,Semifinal,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,126.04,BJ Funari,Bryan Funari,South Hills FunShiners,112.82
-2023,16,Upper,True,Semifinal,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,121.62,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.12
-2023,16,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,145.76,Tony Brooks,Tony Brooks,Number 2 Tony,72.1
-2023,16,Upper,False,Consolation,Chris Johnson,Chris Johnson,The V-Unit,100.2,Jon Fetrow,John Fetrow,Southside Shooters,99.0
-2023,16,Upper,False,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,122.7,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,94.98
-2023,16,Upper,False,Consolation,Braiden Snyder,Braiden Snyder,Motown Ballers,86.4,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,77.24
-2023,16,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,117.96,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,73.84
-2023,16,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,112.82,Mike Murello,Michael Murello,Bad Attitude Gang,79.08
+2023,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,119.62,Chris Johnson,Chris Johnson,The V-Unit,84.3
+2023,15,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,106.02,Tony Brooks,Tony Brooks,Number 2 Tony,102.72
+2023,15,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,123.56,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,106.54
+2023,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,81.56,Jon Fetrow,John Fetrow,Southside Shooters,79.34
+2023,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,130.88,Braiden Snyder,Braiden Snyder,Motown Ballers,93.36
+2023,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,125.52,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,56.7
+2023,15,Upper,True,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,80.42,Mike Murello,Michael Murello,Bad Attitude Gang,75.66
+2023,15,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,103.66,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,102.52
+2023,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,126.04,BJ Funari,Bryan Funari,South Hills FunShiners,112.82
+2023,16,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,121.62,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.12
+2023,16,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,145.76,Tony Brooks,Tony Brooks,Number 2 Tony,72.1
+2023,16,Upper,True,Consolation,Chris Johnson,Chris Johnson,The V-Unit,100.2,Jon Fetrow,John Fetrow,Southside Shooters,99.0
+2023,16,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,122.7,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,94.98
+2023,16,Upper,True,Consolation,Braiden Snyder,Braiden Snyder,Motown Ballers,86.4,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,77.24
+2023,16,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,117.96,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,73.84
+2023,16,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,112.82,Mike Murello,Michael Murello,Bad Attitude Gang,79.08
 2023,17,Upper,True,Championship,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,121.32,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,88.86
 2023,17,Upper,True,ThirdPlace,BJ Funari,Bryan Funari,South Hills FunShiners,116.5,Dan Reilly,Daniel Reilly,The Big Bang Theory,101.3
-2023,17,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,111.54,Chris Johnson,Chris Johnson,The V-Unit,74.04
-2023,17,Upper,False,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,119.2,Jon Fetrow,John Fetrow,Southside Shooters,68.24
-2023,17,Upper,False,Consolation,Braiden Snyder,Braiden Snyder,Motown Ballers,146.08,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,124.7
-2023,17,Upper,False,Consolation,David Murello,David Murello,Kardiac Kids,109.94,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,95.44
-2023,17,Upper,False,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,111.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,104.68
-2023,17,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,85.66,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,84.96
+2023,17,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,111.54,Chris Johnson,Chris Johnson,The V-Unit,74.04
+2023,17,Upper,True,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,119.2,Jon Fetrow,John Fetrow,Southside Shooters,68.24
+2023,17,Upper,True,Consolation,Braiden Snyder,Braiden Snyder,Motown Ballers,146.08,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,124.7
+2023,17,Upper,True,Consolation,David Murello,David Murello,Kardiac Kids,109.94,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,95.44
+2023,17,Upper,True,Consolation,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,111.08,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,104.68
+2023,17,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,85.66,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,84.96
 2024,1,Upper,False,Regular,Tony Brooks,Tony Brooks,Number 2 Tony,145.28,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,101.16
 2024,1,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,111.26,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,78.98
 2024,1,Upper,False,Regular,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,113.74,BJ Funari,Bryan Funari,South Hills FunShiners,87.96
@@ -2533,30 +2533,30 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2024,14,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,118.7,Jon Fetrow,John Fetrow,Southside Shooters,117.86
 2024,14,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,130.94,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,91.62
 2024,14,Upper,False,Regular,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,111.26,Mike Murello,Michael Murello,Bad Attitude Gang,76.3
-2024,15,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,South Hills FunShiners,109.44,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,85.96
-2024,15,Upper,True,Quarterfinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,114.74,Chris Johnson,Chris Johnson,The V-Unit,75.22
-2024,15,Upper,True,Quarterfinal,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,158.86,David Murello,David Murello,Kids Mixon with Lamar,124.1
-2024,15,Upper,True,Quarterfinal,Jon Fetrow,John Fetrow,Southside Shooters,142.26,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.36
-2024,15,Upper,False,Consolation,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,106.0,Tony Brooks,Tony Brooks,Number 2 Tony,104.0
-2024,15,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,112.44,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,102.44
-2024,15,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,127.22,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,95.66
-2024,15,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,147.08,Mike Murello,Michael Murello,Bad Attitude Gang,81.88
-2024,16,Upper,True,Semifinal,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,129.9,BJ Funari,Bryan Funari,South Hills FunShiners,86.96
-2024,16,Upper,True,Semifinal,Jon Fetrow,John Fetrow,Southside Shooters,108.44,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,103.14
-2024,16,Upper,False,Consolation,David Murello,David Murello,Kids Mixon with Lamar,97.38,Dan Reilly,Daniel Reilly,The Big Bang Theory,94.98
-2024,16,Upper,False,Consolation,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,107.6,Chris Johnson,Chris Johnson,The V-Unit,98.18
-2024,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,139.62,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,111.64
-2024,16,Upper,False,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,127.92,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,112.98
-2024,16,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,164.62,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,122.06
-2024,16,Upper,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,117.32,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,95.88
+2024,15,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,109.44,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,85.96
+2024,15,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,114.74,Chris Johnson,Chris Johnson,The V-Unit,75.22
+2024,15,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,158.86,David Murello,David Murello,Kids Mixon with Lamar,124.1
+2024,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,142.26,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.36
+2024,15,Upper,True,Consolation,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,106.0,Tony Brooks,Tony Brooks,Number 2 Tony,104.0
+2024,15,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,112.44,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,102.44
+2024,15,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,127.22,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,95.66
+2024,15,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,147.08,Mike Murello,Michael Murello,Bad Attitude Gang,81.88
+2024,16,Upper,True,Consolation,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,129.9,BJ Funari,Bryan Funari,South Hills FunShiners,86.96
+2024,16,Upper,True,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,108.44,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,103.14
+2024,16,Upper,True,Consolation,David Murello,David Murello,Kids Mixon with Lamar,97.38,Dan Reilly,Daniel Reilly,The Big Bang Theory,94.98
+2024,16,Upper,True,Consolation,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,107.6,Chris Johnson,Chris Johnson,The V-Unit,98.18
+2024,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,139.62,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,111.64
+2024,16,Upper,True,Consolation,Tony Brooks,Tony Brooks,Number 2 Tony,127.92,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,112.98
+2024,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,164.62,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,122.06
+2024,16,Upper,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,117.32,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,95.88
 2024,17,Upper,True,Championship,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,129.66,Jon Fetrow,John Fetrow,Southside Shooters,81.88
 2024,17,Upper,True,ThirdPlace,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,109.42,BJ Funari,Bryan Funari,South Hills FunShiners,93.98
-2024,17,Upper,False,Consolation,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,123.6,David Murello,David Murello,Kids Mixon with Lamar,118.02
-2024,17,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,96.9,Chris Johnson,Chris Johnson,The V-Unit,82.1
-2024,17,Upper,False,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,139.66,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,115.98
-2024,17,Upper,False,Consolation,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,115.62,Tony Brooks,Tony Brooks,Number 2 Tony,109.86
-2024,17,Upper,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,121.28,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,78.64
-2024,17,Upper,False,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,119.58,Mike Murello,Michael Murello,Bad Attitude Gang,101.18
+2024,17,Upper,True,Consolation,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,123.6,David Murello,David Murello,Kids Mixon with Lamar,118.02
+2024,17,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,96.9,Chris Johnson,Chris Johnson,The V-Unit,82.1
+2024,17,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,139.66,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,115.98
+2024,17,Upper,True,Consolation,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,115.62,Tony Brooks,Tony Brooks,Number 2 Tony,109.86
+2024,17,Upper,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,121.28,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,78.64
+2024,17,Upper,True,Consolation,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,119.58,Mike Murello,Michael Murello,Bad Attitude Gang,101.18
 2025,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,138.56,Joe Reilly,Joseph Reilly,Reilly's Reindeer,134.74
 2025,1,Upper,False,Regular,Jon Fetrow,John Fetrow,Southside Shooters,160.9,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,137.32
 2025,1,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,149.5,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,129.24
@@ -2697,31 +2697,31 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2025,14,Lower,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,153.16,Tony Brooks,Tony Brooks,Tony's Talented Team,146.9
 2025,14,Lower,False,Regular,Nick Yankovich,Nick Yankovich,Sarge's Squad,162.68,Charles Lavrinc,Charlie Lavrinc,Portly Primates,133.12
 2025,14,Lower,False,Regular,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,209.24,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,125.3
-2025,15,Upper,True,Quarterfinal,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,208.08,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,147.54
-2025,15,Upper,True,Quarterfinal,Jon Fetrow,John Fetrow,Southside Shooters,160.14,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,141.84
-2025,15,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,221.24,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,115.56
-2025,15,Upper,False,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,164.52,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,135.02
-2025,15,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,142.0,Chris Johnson,Chris Johnson,The V-Unit,124.04
-2025,15,Lower,False,Consolation,Tony Brooks,Tony Brooks,Tony's Talented Team,209.7,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,150.02
-2025,15,Lower,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,197.76,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,139.9
-2025,15,Lower,False,Consolation,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,227.68,Charles Lavrinc,Charlie Lavrinc,Portly Primates,164.06
-2025,16,Upper,True,Semifinal,Joe Reilly,Joseph Reilly,Reilly's Reindeer,175.94,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,162.48
-2025,16,Upper,True,Semifinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,150.0,Jon Fetrow,John Fetrow,Southside Shooters,137.22
-2025,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,171.96,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,145.44
-2025,16,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,134.98,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,124.58
-2025,16,Upper,False,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,202.74,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,152.4
-2025,16,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,156.58,Chris Johnson,Chris Johnson,The V-Unit,133.46
-2025,16,Lower,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,185.52,Tony Brooks,Tony Brooks,Tony's Talented Team,124.14
-2025,16,Lower,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,156.74,Mike Murello,Michael Murello,Bad Attitude Gang,148.98
-2025,16,Lower,False,Consolation,Nick Yankovich,Nick Yankovich,Sarge's Squad,160.78,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,140.88
-2025,16,Lower,False,Consolation,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,220.54,Ben Funari,Benjamin Funari,The Best in The 'Burgh,135.32
+2025,15,Upper,True,Consolation,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,208.08,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,147.54
+2025,15,Upper,True,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,160.14,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,141.84
+2025,15,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,221.24,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,115.56
+2025,15,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,164.52,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,135.02
+2025,15,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,142.0,Chris Johnson,Chris Johnson,The V-Unit,124.04
+2025,15,Lower,True,Consolation,Tony Brooks,Tony Brooks,Tony's Talented Team,209.7,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,150.02
+2025,15,Lower,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,197.76,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,139.9
+2025,15,Lower,True,Consolation,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,227.68,Charles Lavrinc,Charlie Lavrinc,Portly Primates,164.06
+2025,16,Upper,True,Consolation,Joe Reilly,Joseph Reilly,Reilly's Reindeer,175.94,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,162.48
+2025,16,Upper,True,Consolation,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,150.0,Jon Fetrow,John Fetrow,Southside Shooters,137.22
+2025,16,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,171.96,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,145.44
+2025,16,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,134.98,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,124.58
+2025,16,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,202.74,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,152.4
+2025,16,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,156.58,Chris Johnson,Chris Johnson,The V-Unit,133.46
+2025,16,Lower,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,185.52,Tony Brooks,Tony Brooks,Tony's Talented Team,124.14
+2025,16,Lower,True,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,156.74,Mike Murello,Michael Murello,Bad Attitude Gang,148.98
+2025,16,Lower,True,Consolation,Nick Yankovich,Nick Yankovich,Sarge's Squad,160.78,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,140.88
+2025,16,Lower,True,Consolation,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,220.54,Ben Funari,Benjamin Funari,The Best in The 'Burgh,135.32
 2025,17,Upper,True,Championship,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,147.92,Joe Reilly,Joseph Reilly,Reilly's Reindeer,116.54
-2025,17,Upper,False,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,177.42,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,137.08
-2025,17,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,151.34,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,136.58
-2025,17,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,166.74,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,113.12
-2025,17,Upper,False,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,117.78,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,98.5
-2025,17,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,130.6,Chris Johnson,Chris Johnson,The V-Unit,130.38
-2025,17,Lower,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,183.46,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,140.6
-2025,17,Lower,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,175.86,Tony Brooks,Tony Brooks,Tony's Talented Team,139.58
-2025,17,Lower,False,Consolation,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,125.72,Nick Yankovich,Nick Yankovich,Sarge's Squad,94.54
-2025,17,Lower,False,Consolation,Charles Lavrinc,Charlie Lavrinc,Portly Primates,152.44,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,132.3
+2025,17,Upper,True,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,177.42,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,137.08
+2025,17,Upper,True,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,151.34,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,136.58
+2025,17,Upper,True,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,166.74,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,113.12
+2025,17,Upper,True,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,117.78,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,98.5
+2025,17,Upper,True,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,130.6,Chris Johnson,Chris Johnson,The V-Unit,130.38
+2025,17,Lower,True,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,183.46,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,140.6
+2025,17,Lower,True,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,175.86,Tony Brooks,Tony Brooks,Tony's Talented Team,139.58
+2025,17,Lower,True,Consolation,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,125.72,Nick Yankovich,Nick Yankovich,Sarge's Squad,94.54
+2025,17,Lower,True,Consolation,Charles Lavrinc,Charlie Lavrinc,Portly Primates,152.44,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,132.3
