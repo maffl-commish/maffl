@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -7960,6 +7960,75 @@ const uniqueTeams = Array.from(new Set(PICKS.map(p => p[F_T]))).sort();
 const uniqueYears = Array.from(new Set(PICKS.map(p => p[F_Y]))).sort((a,b)=>a-b);
 const uniquePlayers = new Set(PICKS.map(p => p[F_P]));
 
+/* ---------- Player identity: canonical position grouping ----------
+ * A few player NAMES are shared by two genuinely different people (Josh
+ * Allen the Buffalo QB vs. Josh Allen the Jacksonville edge rusher). Keying
+ * a profile by bare name merges them. But most names carrying >1 position
+ * label are a SINGLE player whose tag drifted across years (FLX vs. RB,
+ * etc.) and must stay one card. So we split only on incompatible *real*
+ * positions: FLX is merge-friendly (no group of its own, folds into the
+ * name's dominant group), and the defensive line (DL/DE/DT) and secondary
+ * (DB/S/CB) tags each collapse together.
+ */
+function canonPos(pos) {
+  switch (pos) {
+    case "QB": case "RB": case "WR": case "TE": case "K": case "LB":
+      return pos;
+    case "DL": case "DE": case "DT":
+      return "DL";
+    case "DB": case "S": case "CB":
+      return "DB";
+    case "FLX":
+    default:
+      return null; // flex / unknown — folds into the name's dominant group
+  }
+}
+
+// name -> { counts: Map(canonGroup -> n), dominant: canonGroup|null }
+const PLAYER_POS_INDEX = (function () {
+  const counts = new Map();
+  for (const p of PICKS) {
+    const c = canonPos(p[F_PS]);
+    if (c == null) continue; // FLX doesn't establish a group on its own
+    let g = counts.get(p[F_P]);
+    if (!g) { g = new Map(); counts.set(p[F_P], g); }
+    g.set(c, (g.get(c) || 0) + 1);
+  }
+  const dominant = new Map();
+  counts.forEach((g, name) => {
+    let best = null, bestN = -1;
+    g.forEach((n, c) => { if (n > bestN) { bestN = n; best = c; } });
+    dominant.set(name, best);
+  });
+  return { counts, dominant };
+})();
+
+const PLAYER_KEY_SEP = ""; // unit separator placeholder, never appears in a name
+
+// The canonical group a single pick belongs to: its real position, or the
+// name's dominant real position when the pick is FLX/unknown.
+function pickGroup(p) {
+  const c = canonPos(p[F_PS]);
+  return c != null ? c : PLAYER_POS_INDEX.dominant.get(p[F_P]);
+}
+
+// Composite profile identifier. `pos` is optional/raw; omitted or FLX
+// resolves the name to its dominant real position (its most-drafted card),
+// so a generic mention still opens the player's primary profile.
+function playerKey(name, pos) {
+  let c = pos ? canonPos(pos) : null;
+  if (c == null) c = PLAYER_POS_INDEX.dominant.get(name);
+  return c == null ? name : name + PLAYER_KEY_SEP + c;
+}
+
+// Split a composite key back into { name, group } for filtering/display.
+function parsePlayerKey(key) {
+  const i = key.indexOf(PLAYER_KEY_SEP);
+  return i === -1
+    ? { name: key, group: null }
+    : { name: key.slice(0, i), group: key.slice(i + 1) };
+}
+
 /* ---------- Headline stat strip ---------- */
 function fmtNum(n) { return n.toLocaleString("en-US"); }
 function fmtMoney(n) {
@@ -8523,8 +8592,10 @@ function buildOracleData() {
 
 function oraclePick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function tagPlayer(name) {
-  return '<span class="player-name" data-player="' + escapeHTML(name) + '">' + escapeHTML(name) + '</span>';
+function tagPlayer(name, pos) {
+  const canon = pos ? canonPos(pos) : null;
+  const posAttr = canon != null ? ' data-pos="' + escapeHTML(canon) + '"' : '';
+  return '<span class="player-name" data-player="' + escapeHTML(name) + '"' + posAttr + '>' + escapeHTML(name) + '</span>';
 }
 function tagOwner(name) {
   return '<span class="owner-name" data-owner="' + escapeHTML(name) + '">' + escapeHTML(name) + '</span>';
