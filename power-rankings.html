@@ -2361,15 +2361,11 @@ function tierBadgeHtml(owner) {
   return '<span class="card-tier-badges">' + parts.join("") + '</span>';
 }
 
-/* First season the owner actually played (W/L/T not all null). This is the
-   real "years of service" start — e.g. Joe Reilly lists 2002 with null records
-   but his first played season is 2005. */
+/* First season the owner appears in the timeline — the franchise's true first
+   season. Pre-2005 founding seasons are stored with null W/L/T, so we use the
+   first timeline row regardless of record (e.g. Mike Murello → 2002). */
 function memberSinceYear(owner) {
   var tl = owner.timeline || [];
-  for (var i = 0; i < tl.length; i++) {
-    var e = tl[i];
-    if (e[2] != null || e[3] != null || e[4] != null) return e[0];
-  }
   return tl.length ? tl[0][0] : null;
 }
 
