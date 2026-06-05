@@ -1,11 +1,11 @@
 Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,Winner_Score,Loser_Owner,Loser_Owner_ESPN,Loser_Team,Loser_Score
-2005,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,151.25,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,133.25
+2005,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,151.25,Mike Murello,Michael Murello,Bad Attitude Gang,133.25
 2005,1,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,98.75,Chris Johnson,Chris Johnson,The V-Unit,78.5
 2005,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,109.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,74.5
 2005,1,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,130.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,123.0
 2005,1,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,114.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,110.25
 2005,1,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,118.25,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,106.0
-2005,2,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,170.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,144.0
+2005,2,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,170.0,Mike Murello,Michael Murello,Bad Attitude Gang,144.0
 2005,2,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,129.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,91.25
 2005,2,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,88.0,Chris Johnson,Chris Johnson,The V-Unit,85.5
 2005,2,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,132.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,122.5
@@ -14,46 +14,46 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2005,3,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,136.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,123.0
 2005,3,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,158.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,143.25
 2005,3,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,151.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,139.0
-2005,3,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,114.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,96.0
+2005,3,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,114.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,96.0
 2005,3,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,117.5,Jimmy Crisan,James Crisan,Warren Brownies,87.0
 2005,3,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,196.0,David Murello,David Murello,Kardiac Kids,158.0
 2005,4,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,164.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,119.5
 2005,4,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,113.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,109.0
 2005,4,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,125.0,David Murello,David Murello,Kardiac Kids,95.0
-2005,4,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,151.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,119.0
+2005,4,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,151.0,Mike Murello,Michael Murello,Bad Attitude Gang,119.0
 2005,4,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,141.5,Chris Johnson,Chris Johnson,The V-Unit,94.0
 2005,4,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,159.0,Jimmy Crisan,James Crisan,Warren Brownies,112.75
-2005,5,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,130.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,129.0
+2005,5,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,130.5,Mike Murello,Michael Murello,Bad Attitude Gang,129.0
 2005,5,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,130.5,David Murello,David Murello,Kardiac Kids,86.5
 2005,5,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,150.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,99.5
 2005,5,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,90.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,83.25
 2005,5,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,129.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,120.75
 2005,5,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,142.0,Jimmy Crisan,James Crisan,Warren Brownies,115.5
-2005,6,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,131.0,Jimmy Crisan,James Crisan,Warren Brownies,92.0
+2005,6,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,131.0,Jimmy Crisan,James Crisan,Warren Brownies,92.0
 2005,6,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,169.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,150.5
 2005,6,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,147.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,78.75
 2005,6,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,133.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,119.0
 2005,6,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,158.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,120.75
 2005,6,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,131.0,David Murello,David Murello,Kardiac Kids,115.75
-2005,7,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,159.0,Chris Johnson,Chris Johnson,The V-Unit,129.75
+2005,7,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,159.0,Chris Johnson,Chris Johnson,The V-Unit,129.75
 2005,7,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,121.5,Jimmy Crisan,James Crisan,Warren Brownies,110.0
 2005,7,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,131.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,99.5
 2005,7,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,123.0,David Murello,David Murello,Kardiac Kids,90.5
 2005,7,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,135.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,88.5
 2005,7,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,125.0,Jeff Grace,Jeff Grace,. Pardon the Intoxication,83.0
-2005,8,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,122.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,92.25
+2005,8,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,122.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,92.25
 2005,8,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,137.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,111.0
 2005,8,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,140.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,128.5
 2005,8,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,163.0,David Murello,David Murello,Kardiac Kids,114.0
 2005,8,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,101.5,Jimmy Crisan,James Crisan,Warren Brownies,98.5
 2005,8,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,158.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,135.0
-2005,9,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,138.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,126.5
+2005,9,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,138.5,Mike Murello,Michael Murello,Bad Attitude Gang,126.5
 2005,9,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,164.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,135.5
 2005,9,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,108.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,86.5
 2005,9,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,100.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,98.5
 2005,9,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,97.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,91.5
 2005,9,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,118.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,111.0
-2005,10,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,139.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,130.75
+2005,10,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,139.5,Mike Murello,Michael Murello,Bad Attitude Gang,130.75
 2005,10,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,152.0,Jeff Grace,Jeff Grace,. Pardon the Intoxication,90.5
 2005,10,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,96.25,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,82.0
 2005,10,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,135.5,Jimmy Crisan,James Crisan,Warren Brownies,132.5
@@ -61,17 +61,17 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2005,10,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,157.25,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,117.5
 2005,11,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,139.25,Chris Johnson,Chris Johnson,The V-Unit,98.0
 2005,11,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,148.25,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,133.0
-2005,11,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,164.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,118.5
+2005,11,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,164.0,Mike Murello,Michael Murello,Bad Attitude Gang,118.5
 2005,11,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,154.0,Jimmy Crisan,James Crisan,Warren Brownies,126.5
 2005,11,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,111.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,75.5
 2005,11,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,131.0,Jeff Grace,Jeff Grace,. Pardon the Intoxication,124.0
 2005,12,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,172.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,118.0
 2005,12,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,159.5,Chris Johnson,Chris Johnson,The V-Unit,86.75
-2005,12,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,150.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,117.0
+2005,12,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,150.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,117.0
 2005,12,Upper,False,Regular,Jeff Grace,Jeff Grace,. Pardon the Intoxication,155.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,140.5
 2005,12,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,139.75,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,138.5
 2005,12,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,125.75,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,110.75
-2005,13,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,134.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,99.5
+2005,13,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,134.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,99.5
 2005,13,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,129.75,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,116.5
 2005,13,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,129.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,93.5
 2005,13,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,143.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,125.5
@@ -83,7 +83,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2005,15,Upper,True,Semifinal,David Murello,David Murello,Kardiac Kids,138.5,Jeff Grace,Jeff Grace,. Pardon the Intoxication,123.5
 2005,16,Upper,True,Championship,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,130.0,David Murello,David Murello,Kardiac Kids,122.0
 2005,16,Upper,True,ThirdPlace,Brian Murello/ Ron Murello,Ron Murello,Swissvale SkeeDaddies,147.5,Jeff Grace,Jeff Grace,. Pardon the Intoxication,96.0
-2006,1,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,105.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,101.0
+2006,1,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,105.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,101.0
 2006,1,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,131.0,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,77.0
 2006,1,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,119.0,BJ Funari,Bryan Funari,Wilkinsburg N'@s,106.0
 2006,1,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,108.5,Sean Ritson,Sean Ritson,Silver Bullets,55.5
@@ -91,7 +91,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,1,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,94.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,86.5
 2006,1,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,118.5,Chris Johnson,Chris Johnson,The V-Unit,87.0
 2006,1,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,108.5,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,87.0
-2006,2,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,110.5,Jimmy Crisan,James Crisan,Warren Brownies,89.5
+2006,2,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,110.5,Jimmy Crisan,James Crisan,Warren Brownies,89.5
 2006,2,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,107.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,98.5
 2006,2,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,100.5,Sean Ritson,Sean Ritson,Silver Bullets,81.5
 2006,2,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,107.0,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,95.0
@@ -102,7 +102,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,3,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,123.5,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,81.5
 2006,3,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,104.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,70.0
 2006,3,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,126.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,73.5
-2006,3,Upper,False,Regular,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,116.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,98.0
+2006,3,Upper,False,Regular,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,116.0,Mike Murello,Michael Murello,Bad Attitude Gang,98.0
 2006,3,Upper,False,Regular,Sean Ritson,Sean Ritson,Silver Bullets,84.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,73.5
 2006,3,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,79.0,Chris Johnson,Chris Johnson,The V-Unit,74.0
 2006,3,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,109.0,Jeff Grace,Jeff Grace,Pardon the Intoxication,100.5
@@ -112,7 +112,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,4,Upper,False,Regular,BJ Funari,Bryan Funari,Wilkinsburg N'@s,117.0,Chris Johnson,Chris Johnson,The V-Unit,109.5
 2006,4,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,121.5,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,118.0
 2006,4,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,110.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,106.0
-2006,4,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,128.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,95.5
+2006,4,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,128.0,Mike Murello,Michael Murello,Bad Attitude Gang,95.5
 2006,4,Upper,False,Regular,Sean Ritson,Sean Ritson,Silver Bullets,116.5,Jimmy Crisan,James Crisan,Warren Brownies,97.0
 2006,4,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,100.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,91.0
 2006,5,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,105.5,Sean Ritson,Sean Ritson,Silver Bullets,94.0
@@ -121,10 +121,10 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,5,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,125.0,David Murello,David Murello,Kardiac Kids,79.5
 2006,5,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,83.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,72.0
 2006,5,Upper,False,Regular,BJ Funari,Bryan Funari,Wilkinsburg N'@s,106.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,84.0
-2006,5,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,102.0,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,72.0
+2006,5,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,102.0,Mike Murello,Michael Murello,Bad Attitude Gang,72.0
 2006,5,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,92.0,Jimmy Crisan,James Crisan,Warren Brownies,78.5
 2006,6,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,112.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,104.5
-2006,6,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,146.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,90.5
+2006,6,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,146.0,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,90.5
 2006,6,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,168.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,130.0
 2006,6,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,106.5,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,94.0
 2006,6,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,127.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,73.0
@@ -138,8 +138,8 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,7,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,129.0,Jeff Grace,Jeff Grace,Pardon the Intoxication,81.5
 2006,7,Upper,False,Regular,BJ Funari,Bryan Funari,Wilkinsburg N'@s,142.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,109.5
 2006,7,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,151.5,David Murello,David Murello,Kardiac Kids,78.0
-2006,7,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,106.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,104.0
-2006,8,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,116.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,100.5
+2006,7,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,106.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,104.0
+2006,8,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,116.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,100.5
 2006,8,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,128.0,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,121.5
 2006,8,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,102.5,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,66.5
 2006,8,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,150.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,97.5
@@ -148,7 +148,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,8,Upper,False,Regular,BJ Funari,Bryan Funari,Wilkinsburg N'@s,89.0,Chris Johnson,Chris Johnson,The V-Unit,72.5
 2006,8,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,138.0,Sean Ritson,Sean Ritson,Silver Bullets,95.5
 2006,9,Upper,False,Regular,Sean Ritson,Sean Ritson,Silver Bullets,104.5,Chris Johnson,Chris Johnson,The V-Unit,92.0
-2006,9,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,164.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,108.5
+2006,9,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,164.0,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,108.5
 2006,9,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,98.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,90.5
 2006,9,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,106.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,63.0
 2006,9,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,132.0,David Murello,David Murello,Kardiac Kids,91.0
@@ -161,13 +161,13 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,10,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,89.5,Sean Ritson,Sean Ritson,Silver Bullets,60.0
 2006,10,Upper,False,Regular,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,102.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,82.5
 2006,10,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,132.5,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,99.0
-2006,10,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,127.5,BJ Funari,Bryan Funari,Wilkinsburg N'@s,111.5
+2006,10,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,127.5,BJ Funari,Bryan Funari,Wilkinsburg N'@s,111.5
 2006,10,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,133.5,Jimmy Crisan,James Crisan,Warren Brownies,106.0
 2006,11,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,82.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,82.0
 2006,11,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,85.5,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,78.5
 2006,11,Upper,False,Regular,BJ Funari,Bryan Funari,Wilkinsburg N'@s,115.5,Jeff Grace,Jeff Grace,Pardon the Intoxication,76.5
 2006,11,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,82.5,Chris Johnson,Chris Johnson,The V-Unit,63.0
-2006,11,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,156.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,79.5
+2006,11,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,156.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,79.5
 2006,11,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,114.5,Sean Ritson,Sean Ritson,Silver Bullets,83.5
 2006,11,Upper,False,Regular,Jimmy Crisan,James Crisan,Warren Brownies,101.5,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,69.5
 2006,11,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,139.5,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,130.5
@@ -175,7 +175,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,12,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,88.0,Chris Johnson,Chris Johnson,The V-Unit,75.0
 2006,12,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,99.0,Jimmy Crisan,James Crisan,Warren Brownies,82.5
 2006,12,Upper,False,Regular,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,103.5,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,76.0
-2006,12,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,165.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,151.5
+2006,12,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,165.0,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,151.5
 2006,12,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,151.0,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,93.5
 2006,12,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,123.0,Sean Ritson,Sean Ritson,Silver Bullets,86.0
 2006,12,Upper,False,Regular,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,105.0,Jon Murello/ Rick Simmons,Richard Simmons,Outlaw In-Law,97.0
@@ -186,8 +186,8 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2006,13,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,101.0,Craig Toth,Craig Toth,Moon Township Psycho Squirrels,97.0
 2006,13,Upper,False,Regular,Jeff Grace,Jeff Grace,Pardon the Intoxication,111.0,Chris Johnson,Chris Johnson,The V-Unit,67.5
 2006,13,Upper,False,Regular,Sean Ritson,Sean Ritson,Silver Bullets,103.0,Joe Reilly,Joseph Reilly,Reilly's RaMPagE,96.0
-2006,13,Upper,False,Regular,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,111.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,96.0
-2006,14,Upper,True,Quarterfinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,166.5,Mike Murello,Michael Murello,$Mike's Bad Attitude Gang,110.0
+2006,13,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,111.5,Marcus Ruby,Marcus Ruby,Daddy Fat Sacks,96.0
+2006,14,Upper,True,Quarterfinal,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,166.5,Mike Murello,Michael Murello,Bad Attitude Gang,110.0
 2006,14,Upper,True,Quarterfinal,Brian Murello/ Ron Murello,Ron Murello,Swissvale Flashes,112.5,Josh Lavrinc,Joshua Lavrinc,Jefferson Juggernauts,86.0
 2006,14,Upper,True,Quarterfinal,BJ Funari,Bryan Funari,Wilkinsburg N'@s,160.0,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,96.0
 2006,14,Upper,True,Quarterfinal,Jeff Grace,Jeff Grace,Pardon the Intoxication,109.5,David Murello,David Murello,Kardiac Kids,94.5
