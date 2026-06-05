@@ -1017,6 +1017,14 @@
     gap: 8px;
     margin-bottom: 12px;
   }
+  /* These boxes hold text (player names / positions), not numbers — shrink the
+     display size and allow wrapping so long names like "Christian McCaffrey"
+     stay inside the box on narrow phones instead of overflowing. */
+  .draft-stats .stat-num {
+    font-size: 15px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
   .draft-bypos {
     background: #f8f9fb;
     border-radius: 6px;
@@ -2516,13 +2524,14 @@ function renderDraftSummary(owner) {
     '</div>';
   }
   var boxes = [
-    { num: fmtMoney(d.spent), label: "Total Spent" },
-    { num: d.picks,           label: "Total Picks" }
+    { num: escHtml(d.mostPlayer || "—"), label: "Most-Drafted Player", sub: d.mostPlayer ? (d.mostPlayerCount + "× drafted") : "" },
+    { num: escHtml(d.favPos || "—"),     label: "Favorite Position",   sub: d.favPos ? (d.favPosPct + "% of spend") : "" }
   ];
   var boxesHtml = boxes.map(function (b) {
     return '<div class="stat-box">' +
       '<div class="stat-num">' + b.num + '</div>' +
       '<div class="stat-label">' + escHtml(b.label) + '</div>' +
+      (b.sub ? '<div class="stat-rank">' + escHtml(b.sub) + '</div>' : "") +
     '</div>';
   }).join("");
   // Biggest auction splash at each skill position (QB/RB/WR/TE), omitting any
