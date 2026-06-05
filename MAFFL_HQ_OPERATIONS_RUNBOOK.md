@@ -202,6 +202,22 @@ cannot). Patterns that have worked and are worth keeping:
 
 ---
 
+## 8. Points / Playoff Totals
+
+**RULE (2025 forward):** Playoff point totals (Post PF/PA, and the Total PF/PA derived from them)
+count **UPPER-TIER playoff games only**. Exclude the postseason 3-game-series and any
+consolation / ThirdPlace games. Seasons 2024 and earlier retain their existing NoConsolation-based
+figures.
+
+When regenerating `TOTAL_POINTS` in stats.html for 2025+, filter `MAFFL_Matchups_NoConsolation.csv`
+to `Tier == "Upper"` AND `Game_Type != "ThirdPlace"` for the playoff portion.
+
+Note: as of the 2025 data, this filter produces numbers identical to the current embedded values
+(2025 had no ThirdPlace game and all 2025 playoff games were Upper-tier), so no current values
+change — the rule governs 2026+.
+
+---
+
 ## Quick reference card
 
 **To change any number:** edit the CSV (§2) → `build.ps1` (check) → `build.ps1 -Write` → review →
