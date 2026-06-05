@@ -1017,21 +1017,6 @@
     gap: 8px;
     margin-bottom: 12px;
   }
-  .draft-priciest {
-    background: #f8f9fb;
-    border-radius: 6px;
-    padding: 10px 12px;
-    margin-bottom: 16px;
-  }
-  .draft-priciest .stat-label { margin-bottom: 4px; }
-  .draft-priciest-val {
-    font-family: var(--body);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--navy);
-    line-height: 1.3;
-  }
-  .draft-priciest-price { color: var(--gold-dark); }
   .draft-bypos {
     background: #f8f9fb;
     border-radius: 6px;
@@ -2540,12 +2525,6 @@ function renderDraftSummary(owner) {
       '<div class="stat-label">' + escHtml(b.label) + '</div>' +
     '</div>';
   }).join("");
-  var priciest =
-    '<div class="draft-priciest">' +
-      '<div class="stat-label">Priciest Pick</div>' +
-      '<div class="draft-priciest-val">' + escHtml(d.maxPlayer) +
-        ' <span class="draft-priciest-price">$' + escHtml(d.maxPrice) + '</span> (' + escHtml(d.maxYear) + ')</div>' +
-    '</div>';
   // Biggest auction splash at each skill position (QB/RB/WR/TE), omitting any
   // position the owner never drafted.
   var tbp = d.topByPos || {};
@@ -2567,7 +2546,6 @@ function renderDraftSummary(owner) {
     : "";
   return '<div class="draft-summary">' +
     '<div class="draft-stats">' + boxesHtml + '</div>' +
-    priciest +
     byPos +
     '<div class="draft-cta draft-cta--compact">' + cta + '</div>' +
   '</div>';
