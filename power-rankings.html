@@ -2205,7 +2205,7 @@ var DRAFT_BY_KEY = (function () {
    (none today for these metrics) are excluded from the ranking. */
 var STAT_RANKS = (function () {
   // Higher value = better rank.
-  var higher = ["rings", "runners", "divTitles", "playoffApps", "winPct", "years", "totalPF"];
+  var higher = ["rings", "runners", "divTitles", "playoffApps", "winPct", "years", "totalPF", "thirds"];
   // Lower value = better rank (fewest points against wins).
   var lower = ["totalPA"];
   var out = {};
@@ -2556,7 +2556,7 @@ function renderOwnerCard(owner, index) {
   var stats = [
     { label: "\u{1F3C6} Rings",      value: owner.rings,       rankKey: "rings", gold: true },
     { label: "\u{1F948} Runner-Ups", value: owner.runners,     rankKey: "runners" },
-    { label: "\u{1F949} 3rd Place",  value: owner.thirds },
+    { label: "\u{1F949} 3rd Place",  value: owner.thirds, rankKey: "thirds" },
     { label: "Div Titles",           value: owner.divTitles,   rankKey: "divTitles" },
     { label: "Playoff Apps",         value: owner.playoffApps, rankKey: "playoffApps" },
     { label: "Years",                value: owner.years,        rankKey: "years" },
