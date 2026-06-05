@@ -109,7 +109,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2005,Jacob Nickman,Doug Jolley,Doug Jolley,TE,BN,OAK,1.0
 2005,Mike Murello,Michael Clayton,Michael Clayton,WR,BN,TB,6.0
 2005,Craig Toth,Tebucky Jones,Tebucky Jones,S,BN,NO,1.0
-2005,Todd Trozzo,Eli Manning,Eli Manning,DB,BN,NYG,1.0
+2005,Todd Trozzo,Eli Manning,Eli Manning,QB,BN,NYG,1.0
 2005,Brian Murello / Ron Murello,Tyrone Calico,Tyrone Calico,WR,BN,TEN,1.0
 2005,Josh Lavrinc,Will Witherspoon,Will Witherspoon,LB,BN,CAR,1.0
 2005,Jacob Nickman,Joey Galloway,Joey Galloway,WR,BN,TB,1.0
@@ -275,7 +275,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2005,Tony Trozzo,Marcus Washington,Marcus Washington,LB,BN,WAS,2.0
 2005,Chris Johnson,Marcus Pollard,Marcus Pollard,TE,BN,DET,1.0
 2005,Jeff Grace,Domanic Rhodes,Domanic Rhodes,RB,BN,IND,1.0
-2005,Joe Reilly,Deion Branch,Deion Branch,DB,BN,NE,2.0
+2005,Joe Reilly,Deion Branch,Deion Branch,WR,BN,NE,2.0
 2005,Jimmy Crisan,Amani Toomer,Amani Toomer,WR,BN,NYG,1.0
 2005,David Murello,Mike Brown,Mike Brown,S,BN,CHI,1.0
 2005,Tony Trozzo,Marcell Shipp,Marcell Shipp,RB,BN,ARI,1.0
@@ -539,7 +539,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2006,Jeff Grace,M.Turner,Michael Turner,RB,BN,SD,1.0
 2006,BJ Funari,Phillip Rivers,Phillip Rivers,QB,BN,SD,1.0
 2006,Joe Reilly,Mike Clayton,Mike Clayton,WR,BN,TB,7.0
-2006,Jimmy Crisan,B.Edwards,Braylon Edwards,DL,BN,CLE,1.0
+2006,Jimmy Crisan,B.Edwards,Braylon Edwards,WR,BN,CLE,1.0
 2006,David Murello,M.Smith,Daryl Smith,LB,BN,JAX,1.0
 2006,Sean Ritson,Wes Welker,Wes Welker,WR,BN,MIA,1.0
 2006,Tony Trozzo,Frye,Charlie Frye,QB,BN,CLE,1.0
@@ -1038,7 +1038,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2008,Jimmy Crisan,Garrard,David Garrard,QB,BN,JAX,12.0
 2008,David Murello,JaMarcus Russell,JaMarcus Russell,QB,BN,OAK,1.0
 2008,Sean Ritson,Justin Gage,Justin Gage,WR,BN,TEN,3.0
-2008,Tony Trozzo,Ray Rice,Ray Rice,DL,BN,BAL,3.0
+2008,Tony Trozzo,Ray Rice,Ray Rice,RB,BN,BAL,3.0
 2008,Chris Johnson,Rudi Johnson,Rudi Johnson,RB,BN,CIN,2.0
 2008,Jeff Grace,DJ Hackett,DJ Hackett,WR,BN,CAR,1.0
 2008,BJ Funari,Deuce McAllister,Deuce McAllister,RB,BN,NO,4.0
@@ -1053,7 +1053,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2008,Joe Reilly,Jerious Norwood,Jerious Norwood,RB,BN,ATL,4.0
 2008,Jimmy Crisan,Atogwee,O.J. Atogwe,DB,BN,STL,1.0
 2008,David Murello,Tony Scheffler,Tony Scheffler,TE,BN,DEN,2.0
-2008,Sean Ritson,Devery Henderson,Devery Henderson,LB,BN,NO,1.0
+2008,Sean Ritson,Devery Henderson,Devery Henderson,WR,BN,NO,1.0
 2008,Tony Trozzo,Hightower,Tim Hightower,RB,BN,ARI,2.0
 2008,Chris Johnson,Pennington,Chad Pennington,QB,BN,MIA,1.0
 2008,Jeff Grace,Bradshaw,Ahmad Bradshaw,RB,BN,NYG,2.0
@@ -1153,7 +1153,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2009,Brian Murello / Ron Murello,A. Wilson,Adrian Wilson,DB,DB,ARI,2.0
 2009,Josh Lavrinc,Pollard,Bernard Pollard,DB,DB,HOU,1.0
 2009,Jacob Nickman,E. Coleman,Erik Coleman,DB,DB,ATL,1.0
-2009,Jon Murello / Rick Simmons,M. Lewis,Marcedes Lewis,DB,DB,JAX,1.0
+2009,Jon Murello / Rick Simmons,M. Lewis,Marcedes Lewis,TE,DB,JAX,1.0
 2009,Mike Murello,Stafford,Matthew Stafford,QB,BN,DET,1.0
 2009,Matt Brown,Santana Moss,Santana Moss,WR,BN,WAS,6.0
 2009,Todd Trozzo,M. Cassell,Matt Cassel,QB,BN,KC,13.0
@@ -1268,7 +1268,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2009,Joe Reilly,Urlacher,Brian Urlacher,LB,LB,CHI,1.0
 2009,Jimmy Crisan,Greenway,Chad Greenway,LB,LB,MIN,1.0
 2009,David Murello,Briggs,Lance Briggs,LB,LB,CHI,2.0
-2009,Sean Ritson,Henderson,Devery Henderson,LB,LB,NO,1.0
+2009,Sean Ritson,Henderson,Devery Henderson,WR,LB,NO,1.0
 2009,Tony Trozzo,Posluszny,Paul Posluszny,LB,LB,BUF,2.0
 2009,Chris Johnson,Julian Peterson,Julian Peterson,LB,LB,DET,1.0
 2009,Jeff Grace,D. Harris,David Harris,LB,LB,NYJ,1.0
@@ -1399,7 +1399,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,Brian Murello / Ron Murello,Justin Smith,Justin Smith,DL,DL,SF,1.0
 2010,Josh Lavrinc,Mario Williams,Mario Williams,DL,DL,HOU,4.0
 2010,Jacob Nickman,Dockett,Darnell Dockett,DL,DL,ARI,1.0
-2010,Jon Murello / Rick Simmons,Graham,Jimmy Graham,DL,DL,NO,1.0
+2010,Jon Murello / Rick Simmons,Graham,Jimmy Graham,TE,DL,NO,1.0
 2010,Mike Murello,DJ Williams,D.J. Williams,LB,LB,DEN,1.0
 2010,Matt Brown,Clay Matthews,Clay Matthews,LB,LB,GB,1.0
 2010,Todd Trozzo,Dqwell Jackson,D'Qwell Jackson,LB,LB,CLE,1.0
@@ -1432,7 +1432,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,Josh Lavrinc,Palmer,Carson Palmer,QB,BN,CIN,23.0
 2010,Jacob Nickman,Kevin Smith,Kevin Smith,RB,BN,DET,1.0
 2010,Jon Murello / Rick Simmons,Vince Young,Vince Young,QB,BN,TEN,3.0
-2010,Mike Murello,Josh Freeman,Josh Freeman,LB,BN,TB,2.0
+2010,Mike Murello,Josh Freeman,Josh Freeman,QB,BN,TB,2.0
 2010,Matt Brown,Bradford,Sam Bradford,QB,BN,STL,3.0
 2010,Todd Trozzo,Stafford,Matthew Stafford,QB,BN,DET,4.0
 2010,Marcus Ruby / Joe Ruby,Orton,Kyle Orton,QB,BN,DEN,5.0
@@ -1446,7 +1446,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,Marcus Ruby / Joe Ruby,Slaton,Steve Slaton,RB,BN,HOU,2.0
 2010,Brian Murello / Ron Murello,McFadden,Darren McFadden,RB,BN,OAK,6.0
 2010,Josh Lavrinc,Hightower,Tim Hightower,RB,BN,ARI,4.0
-2010,Jacob Nickman,Henderson,Devery Henderson,LB,BN,NO,1.0
+2010,Jacob Nickman,Henderson,Devery Henderson,WR,BN,NO,1.0
 2010,Jon Murello / Rick Simmons,J. Jones,Julius Jones,RB,BN,SEA,4.0
 2010,Mike Murello,Donald Brown,Donald Brown,RB,BN,IND,3.0
 2010,Matt Brown,Gaffney,Jabar Gaffney,WR,BN,WAS,1.0
@@ -1527,7 +1527,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,Chris Johnson,Hartley,Garrett Hartley,K,K,NO,3.0
 2010,Joni Murello,Crosby,Mason Crosby,K,K,GB,2.0
 2010,BJ Funari,Reed,Ed Reed,K,K,BAL,1.0
-2010,Joe Reilly,Edwards,Braylon Edwards,DL,DL,NYJ,1.0
+2010,Joe Reilly,Edwards,Braylon Edwards,WR,DL,NYJ,1.0
 2010,Jimmy Crisan,Peppers,Julius Peppers,DL,DL,CHI,2.0
 2010,David Murello,Osi,Osi Umenyiora,DL,DL,NYG,1.0
 2010,Sean Ritson,Tuck,Justin Tuck,DL,DL,NYG,2.0
@@ -1823,14 +1823,14 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2011,Jimmy Crisan,TJ WARD,Tj Ward,DB,DB,CLE,3.0
 2011,David Murello,Y. BELL,Yeremiah Bell,DB,DB,MIA,1.0
 2011,Sean Ritson,CHUNG,Patrick Chung,DB,DB,NE,1.0
-2011,Tony Trozzo,BRANCH,Deion Branch,DB,DB,NE,2.0
+2011,Tony Trozzo,BRANCH,Deion Branch,WR,DB,NE,2.0
 2011,Chris Johnson,JOE HADEN,Joe Haden,DB,DB,CLE,1.0
 2011,Joni Murello,BERRY,Eric Berry,DB,DB,KC,2.0
 2011,BJ Funari,REVIS,Darrelle Revis,DB,DB,NYJ,1.0
 2011,Joe Reilly,KARIM,Deji Karim,RB,BN,JAX,3.0
 2011,Jimmy Crisan,STEWART,Jonathan Stewart,RB,BN,CAR,8.0
 2011,David Murello,MEACHUM,Robert Meachem,WR,BN,NO,2.0
-2011,Sean Ritson,MARSHALL,Brandon Marshall,LB,BN,MIA,8.0
+2011,Sean Ritson,MARSHALL,Brandon Marshall,WR,BN,MIA,8.0
 2011,Tony Trozzo,AARON HERNANDEZ,Aaron Hernandez,TE,BN,NE,1.0
 2011,Chris Johnson,GARRARD,David Garrard,QB,BN,JAX,3.0
 2011,BJ Funari,JACOBY FORD,Jacoby Ford,WR,BN,OAK,1.0
@@ -1963,7 +1963,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2012,Mike Murello,Justin Blackmon,Justin Blackmon,WR,BN,JAX,3.0
 2012,Matt Brown,Sidney Rice,Sidney Rice,WR,BN,SEA,2.0
 2012,Todd Trozzo,Rivers,Philip Rivers,QB,BN,SD,38.0
-2012,Marcus Ruby / Joe Ruby,Marshall,Brandon Marshall,LB,BN,CHI,21.0
+2012,Marcus Ruby / Joe Ruby,Marshall,Brandon Marshall,WR,BN,CHI,21.0
 2012,Brian Murello / Ron Murello,Ponder,Christian Ponder,QB,BN,MIN,1.0
 2012,Josh Lavrinc,Romo,Tony Romo,QB,BN,DAL,7.0
 2012,Jacob Nickman,Sanchez,Mark Sanchez,QB,BN,NYJ,1.0
@@ -2088,7 +2088,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2012,BJ Funari,Fletcher,London Fletcher,LB,LB,WAS,2.0
 2012,Joe Reilly,George Wilson,George Wilson,DB,DB,BUF,2.0
 2012,Jimmy Crisan,Peterson,Patrick Peterson,DB,DB,ARI,10.0
-2012,David Murello,Branch,Deion Branch,DB,DB,NE,1.0
+2012,David Murello,Branch,Deion Branch,WR,DB,NE,1.0
 2012,Sean Ritson,Eric Berry,Eric Berry,DB,DB,KC,2.0
 2012,Tony Trozzo,Charles Woodson,Charles Woodson,DB,DB,GB,1.0
 2012,Chris Johnson,Webb,Lardarius Webb,DB,DB,BAL,1.0
@@ -2247,7 +2247,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2013,Brian Murello / Ron Murello,F JONES,Felix Jones,RB,BN,DAL,1.0
 2013,Chris Johnson,TY HILTON,Ty Hilton,WR,BN,IND,6.0
 2013,Joe Reilly,S GREENE,Shonn Greene,RB,BN,TEN,1.0
-2013,Kevin Radkowski,T SMITH,Torrey Smith,LB,BN,BAL,11.0
+2013,Kevin Radkowski,T SMITH,Torrey Smith,WR,BN,BAL,11.0
 2013,Jacob Nickman,PETTIGREW,Brandon Pettigrew,TE,BN,DET,1.0
 2013,BJ Funari,S SMITH,S Smith,WR,BN,BAL,4.0
 2013,Josh Lavrinc,K HUNTER,Kendall Hunter,RB,BN,SF,1.0
@@ -2268,10 +2268,10 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2013,BJ Funari,WOODHEAD,Danny Woodhead,RB,BN,SD,3.0
 2013,Josh Lavrinc,K THOMPKINS,Kenbrell Thompkins,WR,BN,NE,5.0
 2013,Todd Trozzo,MICHAEL FLOYD,Michael Floyd,WR,BN,ARI,3.0
-2013,Brian Murello / Ron Murello,M LEWIS,Marcedes Lewis,DB,BN,JAX,1.0
+2013,Brian Murello / Ron Murello,M LEWIS,Marcedes Lewis,TE,BN,JAX,1.0
 2013,Chris Johnson,LAFELL,Brandon LaFell,WR,BN,CAR,1.0
 2013,Joe Reilly,J THOMAS,Julius Thomas,TE,BN,DEN,1.0
-2013,Kevin Radkowski,S RICE,Ray Rice,DL,BN,BAL,3.0
+2013,Kevin Radkowski,S RICE,Ray Rice,RB,BN,BAL,3.0
 2013,Jacob Nickman,FORSETT,Justin Forsett,RB,BN,JAX,1.0
 2013,Josh Lavrinc,L MOORE,Lance Moore,WR,BN,NO,1.0
 2013,Todd Trozzo,Alshon Jeffery,Alshon Jeffery,WR,BN,CHI,3.0
@@ -2371,7 +2371,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2013,Joni Murello,TANNEHILL,Ryan Tannehill,QB,BN,MIA,10.0
 2013,Tony Trozzo,EJ MANUEL,Ej Manuel,QB,BN,BUF,1.0
 2013,Dan Reilly,BRADFORD,Sam Bradford,QB,BN,LAR,4.0
-2013,Mike Murello,RG3,Robert Griffin III,DB,BN,WAS,45.0
+2013,Mike Murello,RG3,Robert Griffin III,QB,BN,WAS,45.0
 2013,Ed Peters,T AUSTIN,Tavon Austin,WR,BN,STL,10.0
 2013,David Murello,PEAD,Isaiah Pead,RB,BN,LAR,1.0
 2013,Jimmy Crisan,J GORDON,Josh Gordon,WR,BN,CLE,2.0
@@ -2500,8 +2500,8 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2014,Chris Johnson,RASHAAD JENNINGS,Rashad Jennings,RB,BN,NYG,32.0
 2014,Joe Reilly,EIFERT,Tyler Eifert,TE,BN,CIN,2.0
 2014,Mike Licciardi,DEANGELO HALL,Deangelo Hall,CB,BN,WAS,2.0
-2014,Jacob Nickman,TORREY SMITH,Torrey Smith,LB,BN,BAL,12.0
-2014,BJ Funari,ELI MANNING,Eli Manning,DB,BN,NYG,2.0
+2014,Jacob Nickman,TORREY SMITH,Torrey Smith,WR,BN,BAL,12.0
+2014,BJ Funari,ELI MANNING,Eli Manning,QB,BN,NYG,2.0
 2014,Josh Lavrinc,MARK INGRAM,Mark Ingram,RB,BN,NO,4.0
 2014,Todd Trozzo,MCCOWN,Josh McCown,QB,BN,TB,2.0
 2014,Brian Murello / Ron Murello,FRANK  GORE,Frank  Gore,RB,BN,SF,23.0
@@ -3039,7 +3039,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2016,Jacob Nickman,Malcolm Jenkins,Malcolm Jenkins,DB,DB,PHI,1.0
 2016,BJ Funari,Viccaro,Kenny Vaccaro,DB,DB,NO,2.0
 2016,Josh Lavrinc,R Jones,Reshad Jones,DB,DB,MIA,4.0
-2016,Todd Trozzo,Terrence West,Terrence West,DB,DB,BAL,14.0
+2016,Todd Trozzo,Terrence West,Terrence West,RB,DB,BAL,14.0
 2016,Brian Murello / Ron Murello,TJ McDonald,TJ McDonald,DB,DB,LAR,1.0
 2016,Chris Johnson,Alex Smith,Alex Smith,QB,BN,KC,3.0
 2016,Joe Reilly,Ryan Mathews,Ryan Mathews,RB,BN,PHI,14.0
@@ -3060,7 +3060,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2016,Chris Johnson,Marcus Wheaton,Marcus Wheaton,WR,BN,PIT,3.0
 2016,Joe Reilly,Jordan Matthews,Jordan Matthews,WR,BN,PHI,4.0
 2016,Mike Licciardi,Jordan Howard,Jordan Howard,RB,BN,CHI,2.0
-2016,Jacob Nickman,RG3,Robert Griffin III,DB,BN,CLE,1.0
+2016,Jacob Nickman,RG3,Robert Griffin III,QB,BN,CLE,1.0
 2016,BJ Funari,Green Beckham,Green Beckham,WR,BN,CHI,1.0
 2016,Josh Lavrinc,K White,Kevin White,WR,BN,CHI,2.0
 2016,Todd Trozzo,K Benjamin,Kelvin Benjamin,WR,BN,CAR,16.0
@@ -3084,7 +3084,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2016,Jacob Nickman,DeVantae Parker,DeVante Parker,WR,BN,MIA,4.0
 2016,BJ Funari,A Ellington,Andre Ellington,RB,BN,ARI,1.0
 2016,Josh Lavrinc,B Powell,Bilal Powell,RB,BN,NYJ,1.0
-2016,Todd Trozzo,Torrey Smith,Torrey Smith,LB,BN,SF,8.0
+2016,Todd Trozzo,Torrey Smith,Torrey Smith,WR,BN,SF,8.0
 2016,Brian Murello / Ron Murello,Braxton Miller,Braxton Miller,WR,BN,HOU,1.0
 2016,Jon Murello / Rick Simmons,Bortles,Blake Bortles,QB,QB,JAX,31.0
 2016,Ed Peters,Carson Palmer,Carson Palmer,QB,QB,ARI,40.0
@@ -3154,7 +3154,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2016,Ed Peters,B Marshall,Brandon Marshall,LB,LB,NYJ,1.0
 2016,David Murello,Levy,DeAndre Levy,LB,LB,DET,2.0
 2016,Jon Fetrow,L David,Lavonte David,LB,LB,TB,10.0
-2016,Bob Keslar,Freeman,Devonta Freeman,LB,LB,ATL,1.0
+2016,Bob Keslar,Freeman,Devonta Freeman,RB,LB,ATL,1.0
 2016,Tony Trozzo,Keuchly,Luke Kuechly,LB,LB,CAR,11.0
 2016,Dan Reilly,Dqwell,D'Qwell Jackson,LB,LB,IND,3.0
 2016,Mike Murello,Bowman,NaVorro Bowman,LB,LB,SF,8.0
@@ -3210,7 +3210,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2016,David Murello,Alfred Morris,Alfred Morris,RB,BN,DAL,1.0
 2016,Jon Fetrow,Marcus Peters,Marcus Peters,CB,BN,KC,1.0
 2016,Tony Trozzo,Treadwell,Laquon Treadwell,WR,BN,MIN,1.0
-2016,Dan Reilly,Theo Riddick,Theo Riddick,DL,BN,DET,1.0
+2016,Dan Reilly,Theo Riddick,Theo Riddick,RB,BN,DET,1.0
 2016,Mike Murello,Spencer Ware,Spencer Ware,RB,BN,KC,11.0
 2016,Jon Murello / Rick Simmons,Tevin Coleman,Tevin Coleman,RB,BN,ATL,5.0
 2016,David Murello,Lafell,Brandon LaFell,WR,BN,CIN,1.0
@@ -3280,7 +3280,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2017,Jacob Nickman,Beasley,Vic Beasley,DL,DL,ATL,2.0
 2017,BJ Funari,KJ Wright,K.J. Wright,DL,DL,SEA,1.0
 2017,Josh Lavrinc,Chandler Jones,Chandler Jones,DL,DL,ARI,2.0
-2017,Todd Trozzo,Theo Riddick*,Theo Riddick,DL,DL,DET,49.0
+2017,Todd Trozzo,Theo Riddick*,Theo Riddick,RB,DL,DET,49.0
 2017,Brian Murello / Ron Murello,Houston,Justin Houston,DL,DL,KC,2.0
 2017,Chris Johnson,Jordan Hicks,Jordan Hicks,LB,LB,PHI,1.0
 2017,Joe Reilly,Kwon Alexander,Kwon Alexander,LB,LB,TB,5.0
@@ -3308,7 +3308,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2017,Brian Murello / Ron Murello,Julius Peppers,Julius Peppers,DB,DB,CAR,2.0
 2017,Chris Johnson,Bradford,Sam Bradford,QB,BN,ARI,3.0
 2017,Joe Reilly,Alex Smith,Alex Smith,QB,BN,KC,2.0
-2017,Mike Licciardi,Eli Manning,Eli Manning,DB,BN,NYG,7.0
+2017,Mike Licciardi,Eli Manning,Eli Manning,QB,BN,NYG,7.0
 2017,Jacob Nickman,Tyrod Taylor,Tyrod Taylor,QB,BN,BUF,7.0
 2017,BJ Funari,Rob Kelley,Rob Kelley,RB,BN,WAS,12.0
 2017,Josh Lavrinc,Roethlisberger,Ben Roethlisberger,QB,BN,PIT,21.0
@@ -3338,7 +3338,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2017,Josh Lavrinc,M. Bryant,Martavis Bryant,WR,BN,PIT,27.0
 2017,Todd Trozzo,Kelvin Benjamin,Kelvin Benjamin,WR,BN,CAR,11.0
 2017,Brian Murello / Ron Murello,Boyd,Tyler Boyd,WR,BN,CIN,1.0
-2017,Chris Johnson,M Mack,Marlon Mack,DL,BN,IND,1.0
+2017,Chris Johnson,M Mack,Marlon Mack,RB,BN,IND,1.0
 2017,Joe Reilly,D Washington,Daryl Washington,LB,BN,UNK,1.0
 2017,Mike Licciardi,Brate,Cameron Brate,TE,BN,TB,1.0
 2017,Jacob Nickman,Bernard,Giovani Bernard,RB,BN,CIN,1.0
@@ -3464,7 +3464,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2017,Jon Fetrow,Cobb,Randall Cobb,WR,BN,GB,14.0
 2017,Bob Keslar,Flacco,Joe Flacco,QB,BN,BAL,1.0
 2017,Tony Trozzo,McFadden,Darren McFadden,RB,BN,DAL,7.0
-2017,Dan Reilly,Jarvis Landry,Jarvis Landry,DB,BN,MIA,5.0
+2017,Dan Reilly,Jarvis Landry,Jarvis Landry,WR,BN,MIA,5.0
 2017,Mike Murello,Charcandrick West,Charcandrick West,RB,BN,KC,2.0
 2017,Jon Murello / Rick Simmons,Jordan Matthews,Jordan Matthews,WR,BN,BUF,1.0
 2017,Ed Peters,Agholor,Nelson Agholor,WR,BN,PHI,1.0
@@ -3477,7 +3477,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2017,Jon Murello / Rick Simmons,Gates,Antonio Gates,TE,BN,SD,1.0
 2017,Ed Peters,JuJu Smith-Schuster,JuJu Smith-Schuster,WR,BN,PIT,1.0
 2017,David Murello,Mike Wallace,Mike Wallace,WR,BN,BAL,3.0
-2017,Jon Fetrow,Torrey Smith,Torrey Smith,LB,BN,PHI,2.0
+2017,Jon Fetrow,Torrey Smith,Torrey Smith,WR,BN,PHI,2.0
 2017,Bob Keslar,Gabriel,Taylor Gabriel,WR,BN,ATL,1.0
 2017,Tony Trozzo,Corey Coleman,Corey Coleman,WR,BN,CLE,7.0
 2017,Dan Reilly,Kevin White,Kevin White,WR,BN,CHI,4.0
@@ -3547,7 +3547,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2018,Todd Trozzo,Gostkowski,Stephen Gostkowski,K,K,NE,2.0
 2018,Brian Murello / Ron Murello,J Elliott,Jake Elliott,K,K,PHI,1.0
 2018,Chris Johnson,Heyward,Cameron Heyward,DL,DL,PIT,1.0
-2018,Joe Reilly,Mack,Marlon Mack,DL,DL,IND,6.0
+2018,Joe Reilly,Mack,Marlon Mack,RB,DL,IND,6.0
 2018,Mike Licciardi,A Donald,Aaron Donald,DL,DL,LAR,3.0
 2018,Jacob Nickman,J Pierre Paul,Jason Pierre-Paul,DL,DL,TB,1.0
 2018,BJ Funari,T Flowers,Trey Flowers,DL,DL,NE,1.0
@@ -3563,7 +3563,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2018,Todd Trozzo,Kirksey,Christian Kirksey,LB,LB,CLE,3.0
 2018,Brian Murello / Ron Murello,Kuechly,Luke Kuechly,LB,LB,CAR,3.0
 2018,Chris Johnson,V Miller,Von Miller,LB,LB,DEN,2.0
-2018,Joe Reilly,T Smith,Torrey Smith,LB,LB,CAR,3.0
+2018,Joe Reilly,T Smith,Torrey Smith,WR,LB,CAR,3.0
 2018,Mike Licciardi,K Alonzo,Kiko Alonso,LB,LB,NO,1.0
 2018,Jacob Nickman,Woodyard,Wesley Woodyard,LB,LB,TEN,1.0
 2018,BJ Funari,D Perryman,Denzel Perryman,LB,LB,LAC,1.0
@@ -3720,12 +3720,12 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2018,Bob Keslar,J Allen,Josh Allen,DL,BN,BUF,1.0
 2018,Tony Trozzo,T Lockett,Tyler Lockett,WR,BN,SEA,2.0
 2018,Dan Reilly,Cousins,Kirk Cousins,QB,BN,MIN,16.0
-2018,Mike Murello,M Ingram,Mark Ingram II,DL,BN,NO,8.0
+2018,Mike Murello,M Ingram,Mark Ingram II,RB,BN,NO,8.0
 2018,Jon Murello / Rick Simmons,Dalton,Andy Dalton,QB,BN,CIN,1.0
 2018,Ed Peters,Mayfield,Baker Mayfield,QB,BN,CLE,1.0
 2018,David Murello,Mike Williams,Mike Williams,WR,BN,LAC,3.0
-2018,Jon Fetrow,Eli Manning,Eli Manning,DB,BN,NYG,2.0
-2018,Bob Keslar,Riddick,Theo Riddick,DL,BN,DET,2.0
+2018,Jon Fetrow,Eli Manning,Eli Manning,QB,BN,NYG,2.0
+2018,Bob Keslar,Riddick,Theo Riddick,RB,BN,DET,2.0
 2018,Tony Trozzo,M Trubisky,Mitchell Trubisky,QB,BN,CHI,2.0
 2018,Dan Reilly,J Cook,Jared Cook,TE,BN,OAK,2.0
 2018,Mike Murello,Crabtree,Michael Crabtree,WR,BN,OAK,11.0
@@ -3850,7 +3850,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2019,Todd Trozzo,J Adams,Jamal Adams,DB,DB,NYJ,5.0
 2019,Brian Murello / Ron Murello,B Baker,Budda Baker,DB,DB,ARI,3.0
 2019,Chris Johnson,Garropolo,Jimmy Garoppolo,QB,BN,SF,3.0
-2019,Joe Reilly,Pollard,Tony Pollard,DB,BN,DAL,15.0
+2019,Joe Reilly,Pollard,Tony Pollard,RB,BN,DAL,15.0
 2019,Mike Licciardi,Fitzpatrick,Ryan Fitzpatrick,QB,BN,MIA,1.0
 2019,Jacob Nickman,Dalton,Andy Dalton,QB,BN,CIN,1.0
 2019,BJ Funari,K Murray,Kyler Murray,QB,BN,ARI,10.0
@@ -3884,7 +3884,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2019,Chris Johnson,Darwin Thompson,Darwin Thompson,RB,BN,KC,1.0
 2019,Joe Reilly,L Murray,Latavius Murray,RB,BN,NO,4.0
 2019,Mike Licciardi,Malcolm Brown,Malcolm Brown,RB,BN,LAR,1.0
-2019,Jacob Nickman,T Riddick,Theo Riddick,DL,BN,DEN,1.0
+2019,Jacob Nickman,T Riddick,Theo Riddick,RB,BN,DEN,1.0
 2019,BJ Funari,Kupp,Cooper Kupp,WR,BN,LAR,12.0
 2019,Josh Lavrinc,C Davis,Corey Davis,WR,BN,TEN,2.0
 2019,Todd Trozzo,Ty Montgomery,Ty Montgomery,RB,BN,NE,1.0
@@ -4001,7 +4001,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2019,Tony Trozzo,Gallup,Michael Gallup,WR,BN,DAL,2.0
 2019,Dan Reilly,CJ Anderson,CJ Anderson,RB,BN,DET,1.0
 2019,Mike Murello,J Howard,Jordan Howard,RB,BN,PHI,4.0
-2019,Jon Murello / Rick Simmons,Eli Manning,Eli Manning,DB,BN,NYG,1.0
+2019,Jon Murello / Rick Simmons,Eli Manning,Eli Manning,QB,BN,NYG,1.0
 2019,Ed Peters,Tate,Golden Tate,WR,BN,NYG,1.0
 2019,David Murello,Dede Westbrook,Dede Westbrook,WR,BN,JAX,10.0
 2019,Jon Fetrow,Sanu,Mohamed Sanu,WR,BN,ATL,1.0
@@ -4022,7 +4022,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2019,David Murello,Brisett,Jacoby Brissett,QB,BN,IND,2.0
 2019,Jon Fetrow,Paul Richardson,Paul Richardson,WR,BN,WAS,1.0
 2019,Bob Keslar,D Walker,Delanie Walker,TE,BN,TEN,2.0
-2019,Tony Trozzo,Ronald Jones,Ronald Jones II,DB,BN,TB,2.0
+2019,Tony Trozzo,Ronald Jones,Ronald Jones II,RB,BN,TB,2.0
 2019,Dan Reilly,Fitzgerald,Larry Fitzgerald,WR,BN,ARI,1.0
 2019,Mike Murello,C Kirk,Christian Kirk,WR,BN,ARI,8.0
 2019,Jon Murello / Rick Simmons,Goedart,Dallas Goedert,TE,BN,PHI,1.0
@@ -4229,7 +4229,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2020,Dan Reilly,J.J. Watt,J.J. Watt,DL,BN,HOU,2.0
 2020,Jacob Nickman,Teddy Bridgewater,Teddy Bridgewater,QB,BN,CAR,1.0
 2020,Josh Lavrinc,Henry Ruggs III,Henry Ruggs III,WR,BN,LV,3.0
-2020,Brian Murello / Ron Murello,Devonta Freeman,Devonta Freeman,LB,BN,NYG,1.0
+2020,Brian Murello / Ron Murello,Devonta Freeman,Devonta Freeman,RB,BN,NYG,1.0
 2020,Bob Keslar,T.Y. Hilton,T.Y. Hilton,WR,BN,IND,10.0
 2020,Chris Johnson,Eric Ebron,Eric Ebron,TE,BN,PIT,4.0
 2020,Tony Trozzo,Ryan Tannehill,Ryan Tannehill,QB,BN,TEN,1.0
@@ -4246,7 +4246,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2020,Jacob Nickman,Chris Thompson,Chris Thompson,RB,BN,JAX,1.0
 2020,Josh Lavrinc,Carson Wentz,Carson Wentz,QB,BN,PHI,5.0
 2020,Brian Murello / Ron Murello,Breshad Perriman,Breshad Perriman,WR,BN,TB,1.0
-2020,Bob Keslar,Jarvis Landry,Jarvis Landry,DB,BN,CLE,9.0
+2020,Bob Keslar,Jarvis Landry,Jarvis Landry,WR,BN,CLE,9.0
 2020,Chris Johnson,Philip Rivers,Philip Rivers,QB,BN,IND,2.0
 2020,Tony Trozzo,Jonnu Smith,Jonnu Smith,TE,BN,TEN,1.0
 2020,Joe Reilly,Preston Williams,Preston Williams,WR,BN,MIA,1.0
@@ -4499,7 +4499,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2021,Mike Murello,Wayne Gallman II,Wayne Gallman II,RB,BN,SF,1.0
 2021,Todd Trozzo,Laviska Shenault Jr.,Laviska Shenault Jr.,WR,BN,JAX,3.0
 2021,Dan Reilly,Derek Carr,Derek Carr,QB,BN,LV,1.0
-2021,Jacob Nickman,Jarvis Landry,Jarvis Landry,DB,BN,CLE,1.0
+2021,Jacob Nickman,Jarvis Landry,Jarvis Landry,WR,BN,CLE,1.0
 2021,Josh Lavrinc,Phillip Lindsay,Phillip Lindsay,RB,BN,HOU,1.0
 2021,Brian Murello / Ron Murello,Zack Moss,Zack Moss,RB,BN,BUF,2.0
 2021,Bob Keslar,DJ Moore,DJ Moore,WR,BN,CAR,15.0
@@ -4802,7 +4802,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2022,Mike Murello,Nyheim Hines,Nyheim Hines,RB,BN,BUF,5.0
 2022,Todd Trozzo,James Cook,James Cook,RB,BN,BUF,1.0
 2022,Dan Reilly,Devin Duvernay,Devin Duvernay,WR,BN,BAL,1.0
-2022,Jacob Nickman,Jarvis Landry,Jarvis Landry,DB,BN,NO,1.0
+2022,Jacob Nickman,Jarvis Landry,Jarvis Landry,WR,BN,NO,1.0
 2022,Braiden Snyder,Trevon Diggs,Trevon Diggs,CB,BN,DAL,1.0
 2022,Brian Murello / Ron Murello,Mike Davis,Mike Davis,RB,BN,ATL,1.0
 2022,Bob Keslar,Zach Ertz,Zach Ertz,TE,BN,ARI,2.0

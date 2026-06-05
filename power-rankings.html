@@ -2534,10 +2534,10 @@ function renderDraftSummary(owner) {
       (b.sub ? '<div class="stat-rank">' + escHtml(b.sub) + '</div>' : "") +
     '</div>';
   }).join("");
-  // Biggest auction splash at each skill position (QB/RB/WR/TE), omitting any
-  // position the owner never drafted.
+  // Biggest auction splash at each position (QB/RB/WR/TE plus IDP for the top
+  // defensive pick), omitting any position the owner never drafted.
   var tbp = d.topByPos || {};
-  var posRows = ["QB", "RB", "WR", "TE"].filter(function (p) { return tbp[p]; })
+  var posRows = ["QB", "RB", "WR", "TE", "IDP"].filter(function (p) { return tbp[p]; })
     .map(function (p) {
       var x = tbp[p];
       return '<li class="draft-pos-row">' +
