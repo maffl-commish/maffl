@@ -595,8 +595,14 @@
     letter-spacing: 0.08em;
     margin: 0 0 8px;
   }
-  /* Rounds flow left-to-right; each round is a vertically-centered column */
+  /* Single scroll container: stacks the rounds row and the detached
+     3rd-place row so they share one horizontal scrollbar on mobile. */
   .bracket-rounds-flow {
+    display: flex;
+    flex-direction: column;
+  }
+  /* Rounds flow left-to-right; each round is a vertically-centered column */
+  .bracket-cols-row {
     display: flex;
     gap: 16px;
     align-items: stretch;
@@ -662,7 +668,12 @@
   .bracket-badge { flex: 0 0 auto; font-size: 12px; line-height: 1; }
 
   /* Detached 3rd-place game: dropped beneath the Championship column. */
-  .bracket-third-detached { margin-top: 12px; align-items: flex-start; }
+  .bracket-third-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-top: 12px;
+  }
   .bracket-round--spacer { visibility: hidden; }
 
   /* Full season schedule (reuses .lower-roster-toggle look) */
@@ -1141,11 +1152,17 @@
     .bracket-side .owner-name { font-size: 12px; }
     .bracket-score { font-size: 11px; }
     /* A 4-column bracket won't fit at 375px: scroll horizontally so the
-       left-to-right bracket metaphor survives instead of stacking. */
+       left-to-right bracket metaphor survives instead of stacking. The OUTER
+       wrapper is the single scroller; the two inner rows size to their content
+       (max-content) so they share one scrollbar and stay aligned in sync. */
     .bracket-rounds-flow {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+    }
+    .bracket-cols-row,
+    .bracket-third-row {
       gap: 12px;
+      width: max-content;
     }
     .bracket-round { flex: 0 0 auto; min-width: 150px; }
     /* Let the grid tile shrink to the viewport so the bracket scrolls
@@ -10942,16 +10959,19 @@ function renderBracket(b, year) {
       </div>`;
     }).join("");
     if (!cols) return "";
-    // Rounds flow left-to-right (QF -> SF -> Championship) as columns.
-    let html = `<div class="bracket-rounds-flow">${cols}</div>`;
-    // Detached 3rd-place game: invisible spacer columns push it under the
-    // Championship (rightmost) column regardless of how many rounds there are.
+    // Single scroll wrapper holding two stacked rows so there is only one
+    // horizontal scrollbar on mobile (the rounds and the 3rd-place game scroll
+    // together, keeping the 3rd-place game aligned under the Championship).
+    // Row 1: rounds flow left-to-right (QF -> SF -> Championship) as columns.
+    let inner = `<div class="bracket-cols-row">${cols}</div>`;
+    // Row 2 (detached 3rd-place game): invisible spacer columns push it under
+    // the Championship (rightmost) column regardless of how many rounds exist.
     if (byRound.ThirdPlace) {
       const tpRows = byRound.ThirdPlace.map(gameRowHTML).join("");
       const spacers = Array(Math.max(0, flowRounds.length - 1))
         .fill('<div class="bracket-round bracket-round--spacer" aria-hidden="true"></div>')
         .join("");
-      html += `<div class="bracket-rounds-flow bracket-third-detached">
+      inner += `<div class="bracket-third-row">
         ${spacers}
         <div class="bracket-round">
           <div class="bracket-round-head">${ROUND_LABELS.ThirdPlace}</div>
@@ -10959,7 +10979,7 @@ function renderBracket(b, year) {
         </div>
       </div>`;
     }
-    return html;
+    return `<div class="bracket-rounds-flow">${inner}</div>`;
   };
 
   // Modern 2-tier era (2025+): split into Upper/Lower when both tiers have games
