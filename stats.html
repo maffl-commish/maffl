@@ -572,7 +572,9 @@ const OWNERS = [
   { name: "Charles Lavrinc",                  active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 5,   losses: 7,   ties: 0, ovr: 9,  clutch: 0,  grind: 15, heat: 48 },
   { name: "Sam Lavrinc",                      active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 5,   losses: 8,   ties: 0, ovr: 8,  clutch: 0,  grind: 13, heat: 51 },
   { name: "Nick Yankovich",                   active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 5,   losses: 8,   ties: 0, ovr: 8,  clutch: 0,  grind: 13, heat: 47 },
-  { name: "Dominic Nicastro",                 active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 4,   losses: 8,   ties: 0, ovr: 7,  clutch: 0,  grind: 11, heat: 48 }
+  { name: "Dominic Nicastro",                 active: true,  years: 1,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 4,   losses: 8,   ties: 0, ovr: 7,  clutch: 0,  grind: 11, heat: 48 },
+  { name: "Vincent Cavalier / Dominic Nicastro", active: false, years: 3,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 11,  losses: 28,  ties: 0, ovr: 0,  clutch: 0,  grind: 0,  heat: 0  },
+  { name: "Marcus Ruby",                      active: false, years: 2,  champ: 0, runner: 0, third: 0, playoff: 0,  div: 0, wins: 11,  losses: 15,  ties: 0, ovr: 0,  clutch: 0,  grind: 0,  heat: 0  }
 ];
 
 /* Pre-compute Win % using W / (W + L + T) */
@@ -617,7 +619,9 @@ const TOTAL_POINTS = {
   "Charles Lavrinc":              [1762.46,  1863.84,  0.0,     0.0],
   "Sam Lavrinc":                  [1900.50,  2005.42,  0.0,     0.0],
   "Nick Yankovich":               [1941.46,  2032.84,  0.0,     0.0],
-  "Dominic Nicastro":             [1787.56,  1859.64,  0.0,     0.0]
+  "Dominic Nicastro":             [1787.56,  1859.64,  0.0,     0.0],
+  "Vincent Cavalier / Dominic Nicastro": [3654.30, 4095.92, 0.0, 0.0],
+  "Marcus Ruby":                  [2487.50,  2687.00,  0.0,     0.0]
 };
 OWNERS.forEach(o => {
   const pts = TOTAL_POINTS[o.name];
