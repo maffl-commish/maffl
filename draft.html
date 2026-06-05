@@ -403,6 +403,54 @@
   .fopt.active { background: var(--navy); border-color: var(--navy); color: #fff; }
   .fopt:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
+  /* Collapsible filter facets (Owner / NFL Team / Position / Tier) */
+  .filter-facet {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .filter-facet > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .filter-facet > summary::-webkit-details-marker { display: none; }
+  .filter-facet > summary:hover { color: var(--navy); }
+  .filter-facet > summary:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  .filter-facet > summary::after {
+    content: "\203A";
+    margin-left: auto;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  .filter-facet[open] > summary::after { transform: rotate(90deg); }
+  .filter-facet[open] > summary { border-bottom: 1px solid var(--border); }
+  .facet-count {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--gold-dark);
+  }
+  .facet-count:empty { display: none; }
+  .filter-facet .fopt-group { padding: 12px; }
+
   /* Year filter: era buttons + From/To dropdowns */
   .year-filter {
     display: flex;
@@ -1914,33 +1962,25 @@
 
     <div class="filter-panel" id="filterPanel" hidden>
       <div class="filter-grid">
-        <div class="filter-group">
-          <span class="filter-group-label">Owner</span>
-          <div class="field">
-            <select id="filterOwner" aria-label="Filter by owner">
-              <option value="">All Owners</option>
-            </select>
-          </div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group-label">NFL Team</span>
-          <div class="field">
-            <select id="filterTeam" aria-label="Filter by NFL team">
-              <option value="">All Teams</option>
-            </select>
-          </div>
-        </div>
-        <div class="filter-group filter-group-wide">
-          <span class="filter-group-label">Position <span class="filter-group-hint">— multi-select</span></span>
+        <details class="filter-facet filter-group-wide">
+          <summary>Owner <span class="facet-count" data-facet="owner"></span></summary>
+          <div class="fopt-group" id="ownerOptions" role="group" aria-label="Filter by owner"></div>
+        </details>
+        <details class="filter-facet filter-group-wide">
+          <summary>NFL Team <span class="facet-count" data-facet="team"></span></summary>
+          <div class="fopt-group" id="teamOptions" role="group" aria-label="Filter by NFL team"></div>
+        </details>
+        <details class="filter-facet filter-group-wide">
+          <summary>Position <span class="facet-count" data-facet="pos"></span></summary>
           <div class="fopt-group" id="posOptions" role="group" aria-label="Filter by position"></div>
-        </div>
-        <div class="filter-group filter-group-wide">
-          <span class="filter-group-label">Tier <span class="filter-group-hint">— 2025 only, multi-select</span></span>
+        </details>
+        <details class="filter-facet filter-group-wide">
+          <summary>Tier <span class="filter-group-hint">— 2025 only</span> <span class="facet-count" data-facet="tier"></span></summary>
           <div class="fopt-group" id="tierOptions" role="group" aria-label="Filter by tier">
             <button type="button" class="fopt" data-tier="UPPER">Upper-Tier</button>
             <button type="button" class="fopt" data-tier="LOWER">Lower-Tier</button>
           </div>
-        </div>
+        </details>
       </div>
 
       <div class="year-filter" id="yearFilter">
@@ -8083,21 +8123,25 @@ tabBtns.forEach(btn => {
 
 /* ---------- Populate filter dropdowns ---------- */
 (function populateFilters() {
-  const ownerSel = document.getElementById("filterOwner");
   const ownerProfileSel = document.getElementById("ownerSelect");
   const ownersSorted = OWNERS
     .map((name, idx) => ({ name, idx }))
     .sort((a, b) => a.name.localeCompare(b.name));
   ownersSorted.forEach(o => {
-    const opt = document.createElement("option");
-    opt.value = String(o.idx);
-    opt.textContent = o.name;
-    ownerSel.appendChild(opt);
-
     const opt2 = document.createElement("option");
     opt2.value = String(o.idx);
     opt2.textContent = o.name;
     ownerProfileSel.appendChild(opt2);
+  });
+
+  const ownerGroup = document.getElementById("ownerOptions");
+  ownersSorted.forEach(o => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "fopt";
+    btn.setAttribute("data-owner", String(o.idx));
+    btn.textContent = o.name;
+    ownerGroup.appendChild(btn);
   });
 
   const posGroup = document.getElementById("posOptions");
@@ -8110,12 +8154,14 @@ tabBtns.forEach(btn => {
     posGroup.appendChild(btn);
   });
 
-  const teamSel = document.getElementById("filterTeam");
+  const teamGroup = document.getElementById("teamOptions");
   uniqueTeams.forEach(t => {
-    const opt = document.createElement("option");
-    opt.value = t;
-    opt.textContent = t;
-    teamSel.appendChild(opt);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "fopt";
+    btn.setAttribute("data-team", t);
+    btn.textContent = t;
+    teamGroup.appendChild(btn);
   });
 })();
 
@@ -8211,14 +8257,14 @@ document.getElementById("moreFiltersBtn").addEventListener("click", function () 
 
 /* ---------- Search state + render ---------- */
 const filterPlayer = document.getElementById("filterPlayer");
-const filterOwner = document.getElementById("filterOwner");
-const filterTeam = document.getElementById("filterTeam");
 const resultsBody = document.getElementById("resultsBody");
 const activeFilters = document.getElementById("activeFilters");
 const emptyState = document.getElementById("emptyState");
 const tableEl = document.getElementById("resultsTable");
 
 // Multi-select state (empty set = no filter applied)
+const selectedOwners = new Set();
+const selectedTeams = new Set();
 const selectedPos = new Set();
 const selectedTiers = new Set();
 
@@ -8226,10 +8272,24 @@ let sortKey = "year";
 let sortDir = -1; // -1 = desc, 1 = asc
 
 filterPlayer.addEventListener("input", scheduleRender);
-filterOwner.addEventListener("change", scheduleRender);
-filterTeam.addEventListener("change", scheduleRender);
 
-// Multi-select chip toggles (Position + Tier)
+// Multi-select chip toggles (Owner + Team + Position + Tier)
+document.getElementById("ownerOptions").addEventListener("click", function (e) {
+  const btn = e.target.closest(".fopt");
+  if (!btn) return;
+  const v = btn.getAttribute("data-owner");
+  if (selectedOwners.has(v)) selectedOwners.delete(v); else selectedOwners.add(v);
+  btn.classList.toggle("active", selectedOwners.has(v));
+  scheduleRender();
+});
+document.getElementById("teamOptions").addEventListener("click", function (e) {
+  const btn = e.target.closest(".fopt");
+  if (!btn) return;
+  const v = btn.getAttribute("data-team");
+  if (selectedTeams.has(v)) selectedTeams.delete(v); else selectedTeams.add(v);
+  btn.classList.toggle("active", selectedTeams.has(v));
+  scheduleRender();
+});
 document.getElementById("posOptions").addEventListener("click", function (e) {
   const btn = e.target.closest(".fopt");
   if (!btn) return;
@@ -8248,6 +8308,12 @@ document.getElementById("tierOptions").addEventListener("click", function (e) {
 });
 
 function syncChipUI() {
+  document.querySelectorAll("#ownerOptions .fopt").forEach(b => {
+    b.classList.toggle("active", selectedOwners.has(b.getAttribute("data-owner")));
+  });
+  document.querySelectorAll("#teamOptions .fopt").forEach(b => {
+    b.classList.toggle("active", selectedTeams.has(b.getAttribute("data-team")));
+  });
   document.querySelectorAll("#posOptions .fopt").forEach(b => {
     b.classList.toggle("active", selectedPos.has(b.getAttribute("data-pos")));
   });
@@ -8288,10 +8354,10 @@ function getActiveFilters() {
   const r = getYearRange();
   return {
     player: filterPlayer.value.trim().toLowerCase(),
-    owner: filterOwner.value,
+    owners: Array.from(selectedOwners),
     pos: Array.from(selectedPos),
     tiers: Array.from(selectedTiers),
-    team: filterTeam.value,
+    teams: Array.from(selectedTeams),
     yearMin: r.min,
     yearMax: r.max
   };
@@ -8305,10 +8371,10 @@ function applyFilters() {
     const p = PICKS[i];
     const y = p[F_Y];
     if (y < yMin || y > yMax) continue;
-    if (f.owner !== "" && p[F_O] !== parseInt(f.owner, 10)) continue;
+    if (selectedOwners.size > 0 && !selectedOwners.has(String(p[F_O]))) continue;
     if (selectedPos.size > 0 && !selectedPos.has(p[F_PS])) continue;
     if (selectedTiers.size > 0 && !selectedTiers.has(pickTier(p))) continue;
-    if (f.team !== "" && p[F_T] !== f.team) continue;
+    if (selectedTeams.size > 0 && !selectedTeams.has(p[F_T])) continue;
     if (f.player !== "" && p[F_P].toLowerCase().indexOf(f.player) === -1) continue;
     out.push(p);
   }
@@ -8337,10 +8403,10 @@ function sortRows(rows) {
 function renderActiveChips(f) {
   const chips = [];
   if (f.player) chips.push({ k: "player", label: "Player: " + filterPlayer.value });
-  if (f.owner !== "") chips.push({ k: "owner", label: "Owner: " + OWNERS[parseInt(f.owner, 10)] });
+  f.owners.forEach(idx => chips.push({ k: "owner:" + idx, label: "Owner: " + OWNERS[parseInt(idx, 10)] }));
   f.pos.forEach(pos => chips.push({ k: "pos:" + pos, label: "Pos: " + pos }));
   f.tiers.forEach(t => chips.push({ k: "tier:" + t, label: "Tier: " + (t === "UPPER" ? "Upper" : "Lower") }));
-  if (f.team) chips.push({ k: "team", label: "Team: " + f.team });
+  f.teams.forEach(t => chips.push({ k: "team:" + t, label: "Team: " + t }));
   if (f.yearMin !== YEAR_MIN || f.yearMax !== YEAR_MAX) {
     const yLabel = (f.yearMin === f.yearMax)
       ? "Year: " + f.yearMin
@@ -8364,8 +8430,8 @@ function renderActiveChips(f) {
     b.addEventListener("click", () => {
       const k = b.dataset.clear;
       if (k === "player") { filterPlayer.value = ""; }
-      else if (k === "owner") { filterOwner.value = ""; }
-      else if (k === "team") { filterTeam.value = ""; }
+      else if (k.indexOf("owner:") === 0) { selectedOwners.delete(k.slice(6)); syncChipUI(); }
+      else if (k.indexOf("team:") === 0) { selectedTeams.delete(k.slice(5)); syncChipUI(); }
       else if (k.indexOf("pos:") === 0) { selectedPos.delete(k.slice(4)); syncChipUI(); }
       else if (k.indexOf("tier:") === 0) { selectedTiers.delete(k.slice(5)); syncChipUI(); }
       else if (k === "years") {
@@ -8381,8 +8447,8 @@ function renderActiveChips(f) {
 
 function clearAllFilters() {
   filterPlayer.value = "";
-  filterOwner.value = "";
-  filterTeam.value = "";
+  selectedOwners.clear();
+  selectedTeams.clear();
   selectedPos.clear();
   selectedTiers.clear();
   syncChipUI();
@@ -8397,9 +8463,23 @@ function escapeHTML(s) {
   });
 }
 
+function updateFacetCounts() {
+  const map = {
+    owner: selectedOwners,
+    team: selectedTeams,
+    pos: selectedPos,
+    tier: selectedTiers
+  };
+  document.querySelectorAll(".facet-count[data-facet]").forEach(el => {
+    const set = map[el.getAttribute("data-facet")];
+    el.textContent = (set && set.size > 0) ? "· " + set.size : "";
+  });
+}
+
 function renderSearch() {
   const f = getActiveFilters();
   renderActiveChips(f);
+  updateFacetCounts();
 
   let rows = applyFilters();
   const total = rows.length;
