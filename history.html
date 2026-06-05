@@ -10626,6 +10626,12 @@ SEASONS.forEach(r => {
   }
 });
 
+// 2002 co-champion display order: Mike Murello first, then Josh Lavrinc.
+if (byYear[2002] && byYear[2002].coChampions.length > 1) {
+  byYear[2002].coChampions.sort((a, b) =>
+    (a.owner === "Mike Murello" ? 0 : 1) - (b.owner === "Mike Murello" ? 0 : 1));
+}
+
 /* Pass 2: Division History — divisions winners + roster for 2005+ */
 DIVISIONS.forEach(r => {
   const yr = parseInt(r.Year, 10);
@@ -10754,9 +10760,9 @@ const ERAS = [
 
 const DRAFT_ERAS = [
   { short: "The Wild West Era",      emoji: "\u{1F920}", years: range(2010, 2005) }, // 🤠
-  { short: "The Golden Wiggins Era", emoji: "⭐",    years: range(2019, 2011) }, // ⭐
+  { short: "The Golden Wiggins Era", emoji: "\u{1F3E0}", years: range(2019, 2011) }, // 🏠
   { short: "The Remote/Online Era",  emoji: "\u{1F4BB}", years: range(2024, 2020) }, // 💻
-  { short: "Modern Superflex Era",   emoji: "\u{1F3C8}", years: range(2025, 2025) }, // 🏈
+  { short: "Modern Superflex Era",   emoji: "\u{1F680}", years: range(2025, 2025) }, // 🚀
   { short: "Snake Draft",            emoji: "\u{1F40D}", years: range(2004, 2002) }, // 🐍
 ];
 function draftEraFor(year) {
