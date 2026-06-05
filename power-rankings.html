@@ -761,30 +761,33 @@
 
   /* ---------- Owner Portal: section tabs ---------- */
   .portal-tabs {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     margin-bottom: 18px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
   }
   .portal-tab {
-    flex: 0 0 auto;
     font-family: var(--display);
     font-weight: 700;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     line-height: 1;
+    text-align: center;
     color: var(--muted);
     background: #f8f9fb;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--navy);
     border-radius: 6px;
-    padding: 9px 13px;
+    padding: 11px 8px;
     cursor: pointer;
     transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
   }
   .portal-tab:hover { color: var(--navy); }
+  @media (max-width: 400px) {
+    .portal-tab { font-size: 11px; }
+  }
   .portal-tab.active {
     background: var(--navy);
     color: #fff;
@@ -979,6 +982,14 @@
     line-height: 1.15;
     letter-spacing: 0.01em;
   }
+  .ov-current-years {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
   .ov-seemore {
     display: inline-flex;
     align-items: center;
@@ -1021,6 +1032,47 @@
     line-height: 1.3;
   }
   .draft-priciest-price { color: var(--gold-dark); }
+  .draft-bypos {
+    background: #f8f9fb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+  .draft-bypos .stat-label { margin-bottom: 4px; }
+  .draft-pos-list { list-style: none; margin: 0; padding: 0; }
+  .draft-pos-row {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .draft-pos-row:last-child { border-bottom: 0; }
+  .draft-pos-tag {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+  }
+  .draft-pos-player {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .draft-pos-meta {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .draft-pos-meta .draft-pos-price { color: var(--gold-dark); }
   .draft-cta--compact { background: none; padding: 0; text-align: left; }
 
   /* ---------- Rivals: RS / Playoff record cells ---------- */
@@ -1041,7 +1093,7 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
-  .rv-toggle {
+  .rv-toggle, .bg-toggle {
     display: inline-flex;
     align-items: center;
     margin: 4px 0 14px;
@@ -1057,8 +1109,8 @@
     min-height: 34px;
     cursor: pointer;
   }
-  .rv-toggle:hover { background: var(--navy-shadow); }
-  .rv-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .rv-toggle:hover, .bg-toggle:hover { background: var(--navy-shadow); }
+  .rv-toggle:focus-visible, .bg-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .rv-breakdown { margin-bottom: 18px; }
 
   /* ---------- Rivals: Big Game Matchups ---------- */
@@ -1151,7 +1203,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 3, 2026</span>
+      <span class="meta-pill">Last Updated June 4, 2026</span>
     </div>
   </header>
 
@@ -2062,9 +2114,26 @@ var TOTAL_PF_BY_KEY = {
   "matt-brown": 4819.5, "kevin-radkowski": 1287.06,
   "marcus-ruby": 2487.5, "cavalier-nicastro": 3654.3
 };
+/* Career total points-against (MAFFL_Points_AllTime.csv, Total_PA), keyed by
+   portal key — companion to TOTAL_PF_BY_KEY. Lower is better. */
+var TOTAL_PA_BY_KEY = {
+  "brian-ron-murello": 29699.06, "david-murello": 30134.58, "tony-trozzo": 29714.63,
+  "joe-reilly": 29427.64, "mike-murello": 30051.47, "todd-trozzo": 29998.92,
+  "jacob-nickman": 30178.04, "jon-rick": 28951.28, "bj-funari": 28429.46,
+  "chris-johnson": 29923.69, "josh-lavrinc": 23848.37, "dan-reilly": 18618.58,
+  "ed-peters": 18861.28, "bob-keslar": 18021.04, "jon-fetrow": 17524.88,
+  "sean-ritson": 9069.5, "tony-brooks": 7834.8, "jimmy-crisan": 7946.75,
+  "jeff-grace": 7224.25, "mike-licciardi": 8042.54, "marcus-joe-ruby": 6739.5,
+  "braiden-snyder": 6429.62, "craig-toth": 5718.25, "joni-murello": 5325.04,
+  "matt-brown": 5183, "cavalier-nicastro": 4095.92, "marcus-ruby": 2687,
+  "nick-yankovich": 2032.84, "sam-lavrinc": 2005.42, "dominic-nicastro": 1859.64,
+  "charles-lavrinc": 1863.84, "ben-funari": 1802.42, "josh-farber": 1268.78,
+  "kevin-radkowski": 1315.12
+};
 OWNERS_DATA.forEach(function (o) {
   o.thirds = THIRDS_BY_KEY[o.key] || 0;
   o.totalPF = (TOTAL_PF_BY_KEY[o.key] != null) ? TOTAL_PF_BY_KEY[o.key] : null;
+  o.totalPA = (TOTAL_PA_BY_KEY[o.key] != null) ? TOTAL_PA_BY_KEY[o.key] : null;
 });
 
 /* Normalize a gold owner name for cross-CSV matching: collapse runs of
@@ -2150,9 +2219,12 @@ var DRAFT_BY_KEY = (function () {
    values shared by 2+ owners are flagged as ties ("T-"). Owners with a null value
    (none today for these metrics) are excluded from the ranking. */
 var STAT_RANKS = (function () {
-  var metrics = ["rings", "runners", "divTitles", "playoffApps", "winPct"];
+  // Higher value = better rank.
+  var higher = ["rings", "runners", "divTitles", "playoffApps", "winPct", "years", "totalPF"];
+  // Lower value = better rank (fewest points against wins).
+  var lower = ["totalPA"];
   var out = {};
-  metrics.forEach(function (m) {
+  higher.forEach(function (m) {
     var vals = OWNERS_DATA.map(function (o) { return o[m]; })
                           .filter(function (v) { return v != null; });
     var map = {};
@@ -2161,6 +2233,18 @@ var STAT_RANKS = (function () {
       var greater = 0, same = 0;
       vals.forEach(function (x) { if (x > v) greater++; else if (x === v) same++; });
       map[v] = { rank: greater + 1, tie: same > 1 };
+    });
+    out[m] = map;
+  });
+  lower.forEach(function (m) {
+    var vals = OWNERS_DATA.map(function (o) { return o[m]; })
+                          .filter(function (v) { return v != null; });
+    var map = {};
+    vals.forEach(function (v) {
+      if (map[v]) return;
+      var fewer = 0, same = 0;
+      vals.forEach(function (x) { if (x < v) fewer++; else if (x === v) same++; });
+      map[v] = { rank: fewer + 1, tie: same > 1 };
     });
     out[m] = map;
   });
@@ -2289,6 +2373,17 @@ function memberSinceYear(owner) {
   return tl.length ? tl[0][0] : null;
 }
 
+/* Last season the owner actually played (W/L/T not all null). Used for the
+   tenure pill on inactive owners (e.g. "2008 – 2011"). */
+function lastPlayedYear(owner) {
+  var tl = owner.timeline || [];
+  for (var i = tl.length - 1; i >= 0; i--) {
+    var e = tl[i];
+    if (e[2] != null || e[3] != null || e[4] != null) return e[0];
+  }
+  return tl.length ? tl[tl.length - 1][0] : null;
+}
+
 /* Distinct, consecutive team names with the year range each spans. Uses the
    full timeline (incl. pre-2005 null-record seasons) so brand history is whole. */
 function teamProgression(owner) {
@@ -2334,7 +2429,7 @@ function renderBigGames(owner) {
     return '<div class="bg-empty">No playoff games on record.</div>';
   }
   games.sort(function (a, b) { return (b.year - a.year) || a.type.localeCompare(b.type); });
-  var items = games.map(function (g) {
+  function rowHtml(g) {
     var opp = KEY_TO_OWNER[g.oppKey];
     var oppName = opp ? opp.name : g.oppKey;
     var verb = g.won ? "def." : "lost to";
@@ -2346,8 +2441,17 @@ function renderBigGames(owner) {
         ' <span class="bg-score">' + escHtml(g.ownScore) + '–' + escHtml(g.oppScore) + '</span>' +
       '</span>' +
     '</li>';
-  }).join("");
-  return '<ul class="bg-list">' + items + '</ul>';
+  }
+  // Tease the 2 most recent, reveal the rest behind a "See more" toggle.
+  var visible = games.slice(0, 2).map(rowHtml).join("");
+  var rest = games.slice(2);
+  var html = '<ul class="bg-list">' + visible + '</ul>';
+  if (rest.length) {
+    html +=
+      '<button type="button" class="bg-toggle" aria-expanded="false">See more</button>' +
+      '<ul class="bg-list bg-rest" hidden>' + rest.map(rowHtml).join("") + '</ul>';
+  }
+  return html;
 }
 
 /* Rivals — head-to-head vs. every opponent, split into Regular Season (heat-map
@@ -2377,7 +2481,7 @@ function renderRivals(owner) {
     return (b.g - a.g) || (b.pct - a.pct) || a.name.localeCompare(b.name);
   });
   var totRsW = 0, totRsL = 0, totPoW = 0, totPoL = 0;
-  var items = rows.map(function (r) {
+  var rowsHtml = rows.map(function (r) {
     totRsW += r.rsW; totRsL += r.rsL; totPoW += r.poW; totPoL += r.poL;
     var poCell = r.poG
       ? '<span class="rv-rec rv-po">' + r.poW + '–' + r.poL + '</span>'
@@ -2387,22 +2491,27 @@ function renderRivals(owner) {
       '<span class="rv-rec rv-rs" style="background:' + winRateColor(r.pct) + '">' + r.rsW + '–' + r.rsL + '</span>' +
       poCell +
     '</li>';
-  }).join("");
+  });
+  var headerLi = '<li class="rv-row rv-head"><span class="rv-opp">Opponent</span><span class="rv-rec rv-rs">Reg. Szn</span><span class="rv-rec rv-po">Playoffs</span></li>';
   var rsTot = totRsW + totRsL, rsPct = rsTot ? Math.round(totRsW / rsTot * 100) : 0;
   var summary =
     '<div class="rv-summary">' +
       'Regular season: <strong>' + totRsW + '–' + totRsL + '</strong> (' + rsPct + '%)' +
       ' &middot; Playoffs: <strong>' + totPoW + '–' + totPoL + '</strong>' +
     '</div>';
+  // Tease the 2 most-played opponents; the toggle reveals the full list.
+  var teaser =
+    '<ul class="rv-list rv-teaser">' + headerLi + rowsHtml.slice(0, 2).join("") + '</ul>';
+  var fullToggle = rowsHtml.length > 2
+    ? '<button type="button" class="rv-toggle" aria-expanded="false">Show all opponents</button>' +
+      '<div class="rv-breakdown" hidden>' +
+        '<ul class="rv-list">' + headerLi + rowsHtml.join("") + '</ul>' +
+      '</div>'
+    : "";
   return '<div class="rivalry-wrap">' +
     summary +
-    '<button type="button" class="rv-toggle" aria-expanded="false">Show opponent-by-opponent breakdown</button>' +
-    '<div class="rv-breakdown" hidden>' +
-      '<ul class="rv-list">' +
-        '<li class="rv-row rv-head"><span class="rv-opp">Opponent</span><span class="rv-rec rv-rs">Reg. Szn</span><span class="rv-rec rv-po">Playoffs</span></li>' +
-        items +
-      '</ul>' +
-    '</div>' +
+    teaser +
+    fullToggle +
     bigGames +
   '</div>';
 }
@@ -2427,9 +2536,7 @@ function renderDraftSummary(owner) {
   }
   var boxes = [
     { num: fmtMoney(d.spent), label: "Total Spent" },
-    { num: "$" + d.avg,       label: "Avg / Pick" },
-    { num: d.picks,           label: "Total Picks" },
-    { num: escHtml(d.topPos), label: "Top Pos by Spend" }
+    { num: d.picks,           label: "Total Picks" }
   ];
   var boxesHtml = boxes.map(function (b) {
     return '<div class="stat-box">' +
@@ -2443,9 +2550,29 @@ function renderDraftSummary(owner) {
       '<div class="draft-priciest-val">' + escHtml(d.maxPlayer) +
         ' <span class="draft-priciest-price">$' + escHtml(d.maxPrice) + '</span> (' + escHtml(d.maxYear) + ')</div>' +
     '</div>';
+  // Biggest auction splash at each skill position (QB/RB/WR/TE), omitting any
+  // position the owner never drafted.
+  var tbp = d.topByPos || {};
+  var posRows = ["QB", "RB", "WR", "TE"].filter(function (p) { return tbp[p]; })
+    .map(function (p) {
+      var x = tbp[p];
+      return '<li class="draft-pos-row">' +
+        '<span class="draft-pos-tag">' + p + '</span>' +
+        '<span class="draft-pos-player">' + escHtml(x.player) + '</span>' +
+        '<span class="draft-pos-meta"><span class="draft-pos-price">$' + escHtml(x.price) +
+          '</span> (' + escHtml(x.year) + ')</span>' +
+      '</li>';
+    }).join("");
+  var byPos = posRows
+    ? '<div class="draft-bypos">' +
+        '<div class="stat-label">Biggest splash by position</div>' +
+        '<ul class="draft-pos-list">' + posRows + '</ul>' +
+      '</div>'
+    : "";
   return '<div class="draft-summary">' +
     '<div class="draft-stats">' + boxesHtml + '</div>' +
     priciest +
+    byPos +
     '<div class="draft-cta draft-cta--compact">' + cta + '</div>' +
   '</div>';
 }
@@ -2458,9 +2585,10 @@ function renderOwnerCard(owner, index) {
     { label: "\u{1F949} 3rd Place",  value: owner.thirds },
     { label: "Div Titles",           value: owner.divTitles,   rankKey: "divTitles" },
     { label: "Playoff Apps",         value: owner.playoffApps, rankKey: "playoffApps" },
-    { label: "Years",                value: owner.years },
+    { label: "Years",                value: owner.years,        rankKey: "years" },
     { label: "Career Win %",         value: owner.winPct + "%", rankKey: "winPct", rankVal: owner.winPct },
-    { label: "Total PF",             value: formatPF(owner.totalPF) }
+    { label: "Total PF",             value: formatPF(owner.totalPF), rankKey: "totalPF", rankVal: owner.totalPF },
+    { label: "Total PA",             value: formatPF(owner.totalPA), rankKey: "totalPA", rankVal: owner.totalPA }
   ];
 
   var statsHtml = stats.map(function (s) {
@@ -2517,34 +2645,38 @@ function renderOwnerCard(owner, index) {
 
   /* ---- Section 1 (Overview): team history, tenure, co-owners, timeline ---- */
   var since = memberSinceYear(owner);
+  var sincePillText = owner.active
+    ? "Since " + since
+    : since + " – " + lastPlayedYear(owner);
   var prog = teamProgression(owner);
-  var progItems = prog.map(function (g, i) {
-    var range = (g.start === g.end) ? String(g.start) : (g.start + "–" + g.end);
-    if (i === prog.length - 1 && owner.active) range = g.start + "–present";
+  function progRange(g, isLast) {
+    if (isLast && owner.active) return g.start + "–present";
+    return (g.start === g.end) ? String(g.start) : (g.start + "–" + g.end);
+  }
+  // Earlier brands (all but the current one) are revealed by "See more".
+  var earlierProg = prog.slice(0, -1);
+  var progItems = earlierProg.map(function (g) {
     return '<li class="prog-item">' +
       '<span class="prog-team">' + escHtml(g.team) + '</span>' +
-      '<span class="prog-years">' + escHtml(range) + '</span>' +
+      '<span class="prog-years">' + escHtml(progRange(g, false)) + '</span>' +
     '</li>';
   }).join("");
 
-  var currentTeam = owner.recentTeam || (prog.length ? prog[prog.length - 1].team : "");
-  var coownerFact = "";
-  if (String(owner.name).indexOf("/") !== -1) {
-    var members = owner.name.split("/").map(function (s) { return s.trim(); }).filter(Boolean).join(" & ");
-    coownerFact =
-      '<div class="ov-fact">' +
-        '<span class="ov-fact-label">Co-Owned Franchise</span>' +
-        '<span class="ov-fact-value">' + escHtml(members) + '</span>' +
-      '</div>';
-  }
+  var currentGroup = prog.length ? prog[prog.length - 1] : null;
+  var currentTeam = owner.recentTeam || (currentGroup ? currentGroup.team : "");
+  var currentYears = currentGroup ? progRange(currentGroup, true) : "";
+  var hasEarlier = earlierProg.length > 0;
 
   var overviewHtml =
     '<div class="ov-section ov-team-section">' +
-      '<div class="ov-current-team">' + escHtml(currentTeam) + '</div>' +
-      '<button type="button" class="ov-seemore" aria-expanded="false" aria-controls="prog-' + escHtml(owner.key) + '">See more</button>' +
-      '<ol class="prog-list" id="prog-' + escHtml(owner.key) + '" hidden>' + progItems + '</ol>' +
+      '<div class="ov-current-team">' + escHtml(currentTeam) +
+        (currentYears ? ' <span class="ov-current-years">' + escHtml(currentYears) + '</span>' : "") +
+      '</div>' +
+      (hasEarlier
+        ? '<button type="button" class="ov-seemore" aria-expanded="false" aria-controls="prog-' + escHtml(owner.key) + '">See more</button>' +
+          '<ol class="prog-list" id="prog-' + escHtml(owner.key) + '" hidden>' + progItems + '</ol>'
+        : "") +
     '</div>' +
-    (coownerFact ? '<div class="ov-facts">' + coownerFact + '</div>' : "") +
     '<div class="ov-section">' +
       '<div class="ov-head">Season Timeline</div>' +
       '<div class="timeline-section">' + timelineHtml + '</div>' +
@@ -2585,7 +2717,7 @@ function renderOwnerCard(owner, index) {
           '<h3 class="card-owner-name">' + escHtml(owner.name) + '</h3>' +
           tierPillHtml +
           '<span class="card-meta-row">' +
-            '<span class="card-since-pill">Member Since ' + escHtml(since) + '</span>' +
+            '<span class="card-since-pill">' + escHtml(sincePillText) + '</span>' +
             inactiveBadge +
           '</span>' +
         '</span>' +
@@ -2655,10 +2787,19 @@ function renderOwnerCard(owner, index) {
       var breakdown = rvToggle.nextElementSibling;
       var rvExpanded = rvToggle.getAttribute("aria-expanded") === "true";
       rvToggle.setAttribute("aria-expanded", rvExpanded ? "false" : "true");
-      rvToggle.textContent = rvExpanded
-        ? "Show opponent-by-opponent breakdown"
-        : "Hide opponent-by-opponent breakdown";
+      rvToggle.textContent = rvExpanded ? "Show all opponents" : "Hide opponents";
       if (breakdown) { if (rvExpanded) breakdown.setAttribute("hidden", ""); else breakdown.removeAttribute("hidden"); }
+      return;
+    }
+
+    // Big Game Matchups "See more" — reveal the remaining playoff games (tap-friendly)
+    var bgToggle = ev.target.closest(".bg-toggle");
+    if (bgToggle && grid.contains(bgToggle)) {
+      var bgRest = bgToggle.nextElementSibling;
+      var bgExpanded = bgToggle.getAttribute("aria-expanded") === "true";
+      bgToggle.setAttribute("aria-expanded", bgExpanded ? "false" : "true");
+      bgToggle.textContent = bgExpanded ? "See more" : "See less";
+      if (bgRest) { if (bgExpanded) bgRest.setAttribute("hidden", ""); else bgRest.removeAttribute("hidden"); }
       return;
     }
 
