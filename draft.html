@@ -8003,7 +8003,7 @@ const PLAYER_POS_INDEX = (function () {
   return { counts, dominant };
 })();
 
-const PLAYER_KEY_SEP = ""; // unit separator — never appears in a name
+const PLAYER_KEY_SEP = "\u001f"; // unit separator (never appears in a player name)
 
 // The canonical group a single pick belongs to: its real position, or the
 // name's dominant real position when the pick is FLX/unknown.
@@ -8427,7 +8427,7 @@ function renderSearch() {
       '<tr>' +
         '<td class="col-year">' + p[F_Y] + '</td>' +
         '<td class="col-owner">' + tagOwner(OWNERS[p[F_O]]) + '</td>' +
-        '<td class="col-player">' + tagPlayer(p[F_P]) + trophyHTML(p) + tierTag(p) + '</td>' +
+        '<td class="col-player">' + tagPlayer(p[F_P], p[F_PS]) + trophyHTML(p) + tierTag(p) + '</td>' +
         '<td class="col-team dp-hide-mobile">' + escapeHTML(p[F_T]) + '</td>' +
         '<td class="col-pos"><span class="pos-pill">' + escapeHTML(p[F_PS]) + '</span></td>' +
         '<td class="col-price ' + priceCls + '">' + fmtDollar(p[F_PR]) + '</td>' +
@@ -8969,7 +8969,7 @@ function renderOwnerProfile(ownerIdx) {
   } else {
     const rows = missedTop.map(m =>
       '<tr>' +
-        '<td>' + tagPlayer(m.low[F_P]) + (m.low[F_C] ? trophyHTML(m.low) : '') + (m.high[F_C] ? trophyHTML(m.high) : '') + '</td>' +
+        '<td>' + tagPlayer(m.low[F_P], m.low[F_PS]) + (m.low[F_C] ? trophyHTML(m.low) : '') + (m.high[F_C] ? trophyHTML(m.high) : '') + '</td>' +
         '<td><span class="meta">Got in early at </span><span class="price-low">' + fmtDollar(m.low[F_PR]) + '</span>' +
           '<span class="meta"> in ' + m.low[F_Y] + '</span></td>' +
         '<td>' + tagOwner(OWNERS[m.high[F_O]]) + '<span class="meta"> then paid </span>' +
@@ -8991,7 +8991,7 @@ function renderOwnerProfile(ownerIdx) {
     const badge = isChampYear ? '<span class="champ-badge">' + y + ' Champion 🏆</span>' : '';
     const rows = picksY.map(p =>
       '<tr>' +
-        '<td>' + tagPlayer(p[F_P]) + trophyHTML(p) + '</td>' +
+        '<td>' + tagPlayer(p[F_P], p[F_PS]) + trophyHTML(p) + '</td>' +
         '<td><span class="pos-pill">' + escapeHTML(p[F_PS]) + '</span></td>' +
         '<td class="dp-hide-mobile">' + escapeHTML(p[F_T]) + '</td>' +
         '<td class="num">' + fmtDollar(p[F_PR]) + '</td>' +
@@ -9097,8 +9097,9 @@ function renderOwnerProfile(ownerIdx) {
   }
 
   /* ---------- Player profile computation ---------- */
-  function computePlayer(name) {
-    const all = PICKS.filter(p => p[F_P] === name);
+  function computePlayer(key) {
+    const { name, group } = parsePlayerKey(key);
+    const all = PICKS.filter(p => p[F_P] === name && (group == null || pickGroup(p) === group));
     if (all.length === 0) return null;
     // Newest first
     const byYear = all.slice().sort((a, b) => b[F_Y] - a[F_Y]);
@@ -9124,10 +9125,11 @@ function renderOwnerProfile(ownerIdx) {
     };
   }
 
-  function renderPlayerProfile(name) {
-    const d = computePlayer(name);
+  function renderPlayerProfile(key) {
+    const d = computePlayer(key);
     if (!d) {
-      return '<div class="pp-header"><h2 class="pp-name">' + escapeHTML(name) + '</h2>' +
+      const nm = parsePlayerKey(key).name;
+      return '<div class="pp-header"><h2 class="pp-name">' + escapeHTML(nm) + '</h2>' +
         '<p class="pp-subtitle">No draft history found.</p></div>';
     }
     const champIndicator = d.anyChamp ? '<span class="pp-champ-indicator" title="Drafted by an eventual MAFFL champion">🏆</span>' : '';
@@ -9321,11 +9323,17 @@ function renderOwnerProfile(ownerIdx) {
     e.preventDefault();
 
     const isPlayer = nameEl.classList.contains("player-name");
-    const name = isPlayer
+    const rawName = isPlayer
       ? nameEl.getAttribute("data-player")
       : nameEl.getAttribute("data-owner");
-    if (!name) return;
+    if (!rawName) return;
     const type = isPlayer ? "player" : "owner";
+    // Players resolve to a composite identity (name + canonical position) so
+    // same-named different players get distinct cards; a missing data-pos
+    // falls back to the player's dominant profile. Owners pass through as-is.
+    const name = isPlayer
+      ? playerKey(rawName, nameEl.getAttribute("data-pos"))
+      : rawName;
 
     if (isOpen()) {
       const cur = stack[stack.length - 1];
