@@ -386,6 +386,19 @@
     font-size: 14px;
   }
 
+  /* ---------- Stats notes ---------- */
+  .stats-notes {
+    max-width: 760px;
+    margin: 20px auto 0;
+    font-family: var(--body);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .stats-notes p { margin: 0 0 8px; }
+  .stats-notes p:last-child { margin-bottom: 0; }
+  .stats-notes strong { color: var(--navy); }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -517,12 +530,25 @@
           <th class="col-regpa" data-sort="regPA" data-sort-default="desc" scope="col" title="Regular-Season Points Against">Reg PA<span class="sort-arrow"></span></th>
           <th class="col-postpf" data-sort="postPF" data-sort-default="desc" scope="col" title="Playoff Points For (full bracket, incl. 3rd-place game)">Post PF<span class="sort-arrow"></span></th>
           <th class="col-postpa" data-sort="postPA" data-sort-default="desc" scope="col" title="Playoff Points Against (full bracket, incl. 3rd-place game)">Post PA<span class="sort-arrow"></span></th>
+          <th class="col-totpf" data-sort="totPF" data-sort-default="desc" scope="col" title="Total Points For (Regular Season + Playoffs)">Total PF<span class="sort-arrow"></span></th>
+          <th class="col-totpa" data-sort="totPA" data-sort-default="desc" scope="col" title="Total Points Against (Regular Season + Playoffs)">Total PA<span class="sort-arrow"></span></th>
         </tr>
       </thead>
       <tbody id="statsBody"></tbody>
     </table>
     <div class="empty-state" id="emptyState" hidden>No owners match this filter.</div>
   </div>
+
+  <section class="stats-notes" aria-label="Stats notes">
+    <p><strong>About these numbers.</strong> Records and points span 2002–present;
+       co-owner pairs are treated as a single owner. Win % = W / (W + L + T).</p>
+    <p><strong>Points columns.</strong> Reg PF/PA cover the regular season. Post PF/PA
+       cover playoff games. Total PF/PA = Reg + Post.</p>
+    <p><strong>Playoff scope (2025 forward).</strong> Playoff point totals count
+       upper-tier playoff games only. The postseason 3-game-series / consolation
+       activity does not count toward these totals. Seasons through 2024 retain their
+       historical treatment.</p>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -629,6 +655,8 @@ OWNERS.forEach(o => {
   o.regPA = pts ? pts[1] : 0;
   o.postPF = pts ? pts[2] : 0;
   o.postPA = pts ? pts[3] : 0;
+  o.totPF = (pts ? pts[0] : 0) + (pts ? pts[2] : 0);
+  o.totPA = (pts ? pts[1] : 0) + (pts ? pts[3] : 0);
 });
 
 const COL_DEFS = [
@@ -649,7 +677,9 @@ const COL_DEFS = [
   { key: "regPF", type: "num" },
   { key: "regPA", type: "num" },
   { key: "postPF", type: "num" },
-  { key: "postPA", type: "num" }
+  { key: "postPA", type: "num" },
+  { key: "totPF", type: "num" },
+  { key: "totPA", type: "num" }
 ];
 const COL_MAP = Object.fromEntries(COL_DEFS.map(c => [c.key, c]));
 
@@ -734,6 +764,8 @@ function renderTable() {
         <td class="col-regpa">${fmtPoints(o.regPA)}</td>
         <td class="col-postpf">${fmtPoints(o.postPF)}</td>
         <td class="col-postpa">${fmtPoints(o.postPA)}</td>
+        <td class="col-totpf">${fmtPoints(o.totPF)}</td>
+        <td class="col-totpa">${fmtPoints(o.totPA)}</td>
       </tr>
     `;
   }).join("");
