@@ -252,6 +252,14 @@
     color: var(--muted);
     margin: 0;
   }
+  /* Era separators take the same color as their era pill. */
+  .era-section[data-era="era-2tier"]      .era-title { color: #0f766e; }
+  .era-section[data-era="era-cuoco"]      .era-title { color: #1d4ed8; }
+  .era-section[data-era="era-popstar"]    .era-title { color: #be185d; }
+  .era-section[data-era="era-kardashian"] .era-title { color: #6d28d9; }
+  .era-section[data-era="era-original"]   .era-title { color: #c2630a; }
+  .era-section[data-era="era-12team"]     .era-title { color: #b91c1c; }
+  .era-section[data-era="era-founding"]   .era-title { color: var(--gold-dark); }
 
   /* ---------- Year tile grid ---------- */
   .year-grid {
@@ -326,11 +334,12 @@
     line-height: 1;
   }
 
-  /* Era pills sit on the right-hand side of the year cell, stacked. */
+  /* Era pills sit on the right-hand side of the year cell, stacked,
+     offset left so they clear the drop-down chevron. */
   .year-collapsed-chips {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 24px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -745,6 +754,22 @@
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
+  .series-tag {
+    display: inline-block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 100px;
+    line-height: 1;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .series-tag--promotion { color: #0f766e; background: #d8f3ee; }
+  .series-tag--relegation { color: #b91c1c; background: #fbdcdc; }
+  .series-tag--default { color: var(--navy); background: var(--navy-soft); }
 
   /* Lower tier */
   .lower-grid {
@@ -10732,6 +10757,7 @@ const DRAFT_ERAS = [
   { short: "The Golden Wiggins Era", emoji: "⭐",    years: range(2019, 2011) }, // ⭐
   { short: "The Remote/Online Era",  emoji: "\u{1F4BB}", years: range(2024, 2020) }, // 💻
   { short: "Modern Superflex Era",   emoji: "\u{1F3C8}", years: range(2025, 2025) }, // 🏈
+  { short: "Snake Draft",            emoji: "\u{1F40D}", years: range(2004, 2002) }, // 🐍
 ];
 function draftEraFor(year) {
   return DRAFT_ERAS.find(d => d.years.includes(year)) || null;
@@ -11273,6 +11299,20 @@ function renderSeries(b, year) {
       </span>
     </div>`;
 
+  // Named showdowns, keyed by the sorted owner pair, per season.
+  const SERIES_TAGS = {
+    2025: {
+      "BJ Funari|Todd Trozzo": "Relegation Showdown",
+      "Tony Brooks|Tony Trozzo": "Promotion Showdown",
+    },
+  };
+  const tagFor = owners => (SERIES_TAGS[year] || {})[owners.slice().sort().join("|")] || "";
+  const tagHTML = t => {
+    if (!t) return "";
+    const slug = /promotion/i.test(t) ? "promotion" : /relegation/i.test(t) ? "relegation" : "default";
+    return `<span class="series-tag series-tag--${slug}">${t}</span>`;
+  };
+
   // Group games within a tier by the unordered pair of owners (sorted = stable key),
   // tally each owner's wins, then emit one block per pair.
   const buildTier = tierGames => {
@@ -11296,6 +11336,7 @@ function renderSeries(b, year) {
     return order.map(key => {
       const p = pairs[key];
       const owners = Object.keys(p.owners);
+      const tag = tagFor(owners);
       const rows = p.games.slice().sort((g1, g2) => wk(g1) - wk(g2)).map(gameRowHTML).join("");
       // Clean series verdict only for a 2-owner pair with 2+ games and a decided record.
       if (owners.length === 2) {
@@ -11306,7 +11347,7 @@ function renderSeries(b, year) {
           const hi = Math.min(2, Math.max(w0, w1));
           const lo = Math.min(w0, w1);
           return `<div class="series-group">
-            <div class="series-line"><strong>${esc(winner)}</strong> wins the series ${hi}&ndash;${lo}</div>
+            <div class="series-line">${tagHTML(tag)}<strong>${esc(winner)}</strong> wins the series ${hi}&ndash;${lo}</div>
             ${rows}
           </div>`;
         }
@@ -11316,7 +11357,7 @@ function renderSeries(b, year) {
         ? `${esc(owners.slice().sort()[0])} vs ${esc(owners.slice().sort()[1])}`
         : "Other games";
       return `<div class="series-group">
-        <div class="series-neutral-head">${head}</div>
+        <div class="series-neutral-head">${tagHTML(tag)}${head}</div>
         ${rows}
       </div>`;
     }).join("");
