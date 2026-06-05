@@ -1869,6 +1869,16 @@
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
+  .pp-chart-tier {
+    margin-top: 1px;
+    text-align: center;
+    font-family: var(--display);
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
 
   .pp-link {
     display: inline-block;
@@ -9271,13 +9281,22 @@ function renderOwnerProfile(ownerIdx) {
     const chrono = d.picksNewestFirst.slice().reverse();
     const peakPrice = d.peak[F_PR];
     const maxBar = Math.max(peakPrice, 1);
+    // Years that appear more than once (e.g. drafted in both Upper and Lower
+    // leagues the same season) get a tier sub-label to disambiguate the bars.
+    const yearCounts = {};
+    chrono.forEach(p => { yearCounts[p[F_Y]] = (yearCounts[p[F_Y]] || 0) + 1; });
     const cols = chrono.map(p => {
       const isPeak = p === d.peak || (p[F_Y] === d.peak[F_Y] && p[F_PR] === d.peak[F_PR] && p[F_O] === d.peak[F_O]);
       const h = Math.max(2, Math.round((p[F_PR] / maxBar) * 78));
+      const tier = pickTier(p);
+      const tierLabel = (yearCounts[p[F_Y]] > 1 && tier)
+        ? '<div class="pp-chart-tier">' + tier.charAt(0) + tier.slice(1).toLowerCase() + '</div>'
+        : '';
       return '<div class="pp-chart-col' + (isPeak ? ' peak' : '') + '">' +
         '<div class="pp-chart-price">' + fmtDollar(p[F_PR]) + '</div>' +
         '<div class="pp-chart-bar" style="height:' + h + 'px;"></div>' +
         '<div class="pp-chart-year">' + p[F_Y] + '</div>' +
+        tierLabel +
         '</div>';
     }).join("");
     return '<div class="pp-chart">' +
