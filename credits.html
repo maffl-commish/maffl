@@ -542,6 +542,24 @@
 
   .portal-panel[hidden] { display: none; }
 
+  /* ---------- Request Credits embed ---------- */
+  .request-note { margin-bottom: 16px; }
+  .request-embed {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .request-embed iframe {
+    display: block;
+    width: 100%;
+    min-height: 720px;
+    border: 0;
+  }
+  @media (max-width: 767px) {
+    .request-embed iframe { min-height: 640px; }
+  }
+
   /* ---------- Credit Registry ---------- */
   .registry-toolbar {
     display: flex;
@@ -770,7 +788,6 @@
 
     /* Portal header reflows; keep the inline rules button compact, not full-width. */
     .portal-head h2 { font-size: 20px; }
-    .portal-head__lead { width: 100%; }
     .rules-link--sm {
       display: inline-flex;
       width: auto;
@@ -854,7 +871,6 @@
            System section of the rulebook and auto-expands it (rules.html reads the
            #hash). The Request link mirrors the one on index.html. -->
       <div class="portal-head__actions">
-        <a class="rules-link rules-link--sm rules-link--request" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Credit Request &rarr;</a>
         <a class="rules-link rules-link--sm" href="rules.html#credit-system">Credit Ruleset &rarr;</a>
       </div>
     </div>
@@ -862,6 +878,7 @@
     <div class="portal-tabs" role="tablist" aria-label="Credit Portal sections">
       <button class="portal-tab active" id="tab-count" role="tab" aria-selected="true" aria-controls="panel-count" type="button">Current Credit Count</button>
       <button class="portal-tab" id="tab-registry" role="tab" aria-selected="false" aria-controls="panel-registry" type="button">Credit Registry</button>
+      <button class="portal-tab" id="tab-request" role="tab" aria-selected="false" aria-controls="panel-request" type="button">Request Form</button>
     </div>
 
     <!-- ===== Panel 1: Current Credit Count (landing tab) ===== -->
@@ -983,6 +1000,31 @@
         </table>
       </div>
     </div><!-- /panel-registry -->
+
+    <!-- ===== Panel 3: Request Credits =====
+         Embeds the league Google Form in a sandboxed iframe so owners can submit
+         a credit request without leaving the site. Submissions route privately to
+         the Commish's Google Sheet; the post-submit confirmation is Google's own
+         screen rendered inside the frame (cannot be styled — expected). New entries
+         appear in the Credit Registry on the next site build. -->
+    <div class="portal-panel" id="panel-request" role="tabpanel" aria-labelledby="tab-request" hidden>
+      <p class="snapshot-note request-note">
+        <strong>Google Form Below</strong> ⬇️
+      </p>
+      <div class="request-embed">
+        <!-- Using the full /viewform?embedded=true URL, NOT the forms.gle short
+             link: the short link (https://forms.gle/57KKnEta1wfjzDNy9) renders
+             blank in an iframe because Google refuses framing on it, while
+             ?embedded=true serves the frameable embedded view. Both point at the
+             same form. If the form is ever recreated, rebuild this URL as
+             https://docs.google.com/forms/d/e/<FORM_ID>/viewform?embedded=true. -->
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLScTeqP6qK8OpjGTXgekvw4t5aR7oIOKd2KrMGb7KQ3pomxRfw/viewform?embedded=true"
+          title="MAFFL Credit Request Form"
+          loading="lazy"
+          referrerpolicy="no-referrer">Loading…</iframe>
+      </div>
+    </div><!-- /panel-request -->
   </section>
 
 </main>
