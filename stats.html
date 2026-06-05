@@ -513,8 +513,10 @@
           <th class="col-clutch" data-sort="clutch" data-sort-default="desc" scope="col" title="&#x1F9CA; Clutch — postseason execution" aria-label="Clutch">&#x1F9CA;<span class="sort-arrow"></span></th>
           <th class="col-grind"  data-sort="grind"  data-sort-default="desc" scope="col" title="&#x1F69C; Grind — long-haul consistency" aria-label="Grind">&#x1F69C;<span class="sort-arrow"></span></th>
           <th class="col-heat"   data-sort="heat"   data-sort-default="desc" scope="col" title="&#x1F525; Heat — recent form" aria-label="Heat">&#x1F525;<span class="sort-arrow"></span></th>
-          <th class="col-pf"     data-sort="totalPF" data-sort-default="desc" scope="col" title="Total Points For — career (regular season + playoffs)">Total PF<span class="sort-arrow"></span></th>
-          <th class="col-pa"     data-sort="totalPA" data-sort-default="desc" scope="col" title="Total Points Against — career (regular season + playoffs)">Total PA<span class="sort-arrow"></span></th>
+          <th class="col-regpf" data-sort="regPF" data-sort-default="desc" scope="col" title="Regular-Season Points For">Reg PF<span class="sort-arrow"></span></th>
+          <th class="col-regpa" data-sort="regPA" data-sort-default="desc" scope="col" title="Regular-Season Points Against">Reg PA<span class="sort-arrow"></span></th>
+          <th class="col-postpf" data-sort="postPF" data-sort-default="desc" scope="col" title="Playoff Points For (full bracket, incl. 3rd-place game)">Post PF<span class="sort-arrow"></span></th>
+          <th class="col-postpa" data-sort="postPA" data-sort-default="desc" scope="col" title="Playoff Points Against (full bracket, incl. 3rd-place game)">Post PA<span class="sort-arrow"></span></th>
         </tr>
       </thead>
       <tbody id="statsBody"></tbody>
@@ -579,48 +581,50 @@ OWNERS.forEach(o => {
   o.winPct = denom > 0 ? (o.wins / denom) : 0;
 });
 
-/* Career Total Points For / Against, from MAFFL_Points_AllTime.csv
-   (Total_PF / Total_PA). Keyed by the gold owner name; all 32 owners resolve
-   cleanly (the two extra points-file rows are the historical Cavalier/Nicastro
-   and solo Marcus Ruby franchises, which are not listed on this page). */
+/* Career points split into regular season + playoffs, keyed by owner name.
+   Each value is [regPF, regPA, postPF, postPA]. Playoff figures derived from
+   MAFFL_Matchups_NoConsolation.csv (full bracket, incl. 3rd-place game);
+   regular-season figures are unchanged. Owners with no playoff games show 0.0. */
 const TOTAL_POINTS = {
-  "Joe Reilly":                   [30691.86, 29427.64],
-  "Brian Murello / Ron Murello":  [31481.62, 29699.06],
-  "Tony Trozzo":                  [30789.40, 29714.63],
-  "Josh Lavrinc":                 [23351.47, 23848.37],
-  "Jon Murello / Rick Simmons":   [29297.54, 28951.28],
-  "Mike Murello":                 [30564.14, 30051.47],
-  "David Murello":                [30943.57, 30134.58],
-  "Jeff Grace":                   [7411.00,  7224.25],
-  "Sean Ritson":                  [9513.00,  9069.50],
-  "Jimmy Crisan":                 [7616.75,  7946.75],
-  "Todd Trozzo":                  [30002.04, 29998.92],
-  "Chris Johnson":                [28474.94, 29923.69],
-  "Marcus Ruby / Joe Ruby":       [6593.00,  6739.50],
-  "Mike Licciardi":               [7253.26,  8042.54],
-  "Jacob Nickman":                [29607.75, 30178.04],
-  "Josh Farber":                  [1477.34,  1268.78],
-  "BJ Funari":                    [28820.70, 28429.46],
-  "Craig Toth":                   [5344.75,  5718.25],
-  "Bob Keslar":                   [17954.02, 18021.04],
-  "Dan Reilly":                   [19202.08, 18618.58],
-  "Joni Murello":                 [4942.40,  5325.04],
-  "Jon Fetrow":                   [16630.56, 17524.88],
-  "Matt Brown":                   [4819.50,  5183.00],
-  "Kevin Radkowski":              [1287.06,  1315.12],
-  "Ed Peters":                    [18247.98, 18861.28],
-  "Tony Brooks":                  [7719.24,  7834.80],
-  "Braiden Snyder":               [6496.80,  6429.62],
-  "Ben Funari":                   [1759.60,  1802.42],
-  "Charles Lavrinc":              [1762.46,  1863.84],
-  "Sam Lavrinc":                  [1900.50,  2005.42],
-  "Nick Yankovich":               [1941.46,  2032.84],
-  "Dominic Nicastro":             [1787.56,  1859.64]
+  "Joe Reilly":                   [30041.04, 28861.42, 2666.12, 2421.16],
+  "Brian Murello / Ron Murello":  [30584.30, 28821.34, 3531.96, 3435.64],
+  "Tony Trozzo":                  [30136.08, 29159.19, 2566.72, 2423.62],
+  "Josh Lavrinc":                 [23047.89, 23541.23, 1290.10, 1249.76],
+  "Jon Murello / Rick Simmons":   [28592.52, 28348.84, 2495.80, 2240.34],
+  "Mike Murello":                 [29923.32, 29341.69, 2576.20, 2583.32],
+  "David Murello":                [30075.91, 29321.30, 3446.90, 3367.90],
+  "Jeff Grace":                   [7002.50,  6746.25,  1255.50, 1304.50],
+  "Sean Ritson":                  [9324.00,  8838.50,  859.00,  864.00],
+  "Jimmy Crisan":                 [7616.75,  7946.75,  154.00,  256.00],
+  "Todd Trozzo":                  [29271.78, 29361.76, 2005.44, 1854.50],
+  "Chris Johnson":                [27788.92, 29100.35, 2512.90, 2618.22],
+  "Marcus Ruby / Joe Ruby":       [6460.50,  6596.50,  480.00,  585.00],
+  "Mike Licciardi":               [7253.26,  8042.54,  140.04,  221.94],
+  "Jacob Nickman":                [29162.19, 29790.58, 1747.62, 1733.38],
+  "Josh Farber":                  [1477.34,  1268.78,  90.32,   112.06],
+  "BJ Funari":                    [28118.50, 27683.02, 2776.64, 2853.10],
+  "Craig Toth":                   [5344.75,  5718.25,  76.00,   120.50],
+  "Bob Keslar":                   [17334.10, 17372.94, 2094.02, 2098.00],
+  "Dan Reilly":                   [19023.02, 18400.92, 902.58,  1086.36],
+  "Joni Murello":                 [4942.40,  5325.04,  130.04,  134.76],
+  "Jon Fetrow":                   [16548.68, 17395.22, 1115.34, 1191.66],
+  "Matt Brown":                   [4819.50,  5183.00,  0.0,     0.0],
+  "Kevin Radkowski":              [1287.06,  1315.12,  0.0,     0.0],
+  "Ed Peters":                    [18199.18, 18792.88, 711.54,  841.12],
+  "Tony Brooks":                  [7719.24,  7834.80,  102.72,  106.02],
+  "Braiden Snyder":               [6496.80,  6429.62,  213.40,  238.04],
+  "Ben Funari":                   [1759.60,  1802.42,  0.0,     0.0],
+  "Charles Lavrinc":              [1762.46,  1863.84,  0.0,     0.0],
+  "Sam Lavrinc":                  [1900.50,  2005.42,  0.0,     0.0],
+  "Nick Yankovich":               [1941.46,  2032.84,  0.0,     0.0],
+  "Dominic Nicastro":             [1787.56,  1859.64,  0.0,     0.0]
 };
 OWNERS.forEach(o => {
   const pts = TOTAL_POINTS[o.name];
-  o.totalPF = pts ? pts[0] : 0;
-  o.totalPA = pts ? pts[1] : 0;
+  o.regPF = pts ? pts[0] : 0;
+  o.regPA = pts ? pts[1] : 0;
+  o.postPF = pts ? pts[2] : 0;
+  o.postPA = pts ? pts[3] : 0;
 });
 
 const COL_DEFS = [
@@ -638,8 +642,10 @@ const COL_DEFS = [
   { key: "clutch",  type: "num", gold: v => v >= 90 },
   { key: "grind",   type: "num", gold: v => v >= 90 },
   { key: "heat",    type: "num", gold: v => v >= 90 },
-  { key: "totalPF", type: "num" },
-  { key: "totalPA", type: "num" }
+  { key: "regPF", type: "num" },
+  { key: "regPA", type: "num" },
+  { key: "postPF", type: "num" },
+  { key: "postPA", type: "num" }
 ];
 const COL_MAP = Object.fromEntries(COL_DEFS.map(c => [c.key, c]));
 
@@ -720,8 +726,10 @@ function renderTable() {
         <td class="col-clutch${goldCls("clutch", o.clutch)}">${o.clutch}</td>
         <td class="col-grind${goldCls("grind", o.grind)}">${o.grind}</td>
         <td class="col-heat${goldCls("heat", o.heat)}">${o.heat}</td>
-        <td class="col-pf">${fmtPoints(o.totalPF)}</td>
-        <td class="col-pa">${fmtPoints(o.totalPA)}</td>
+        <td class="col-regpf">${fmtPoints(o.regPF)}</td>
+        <td class="col-regpa">${fmtPoints(o.regPA)}</td>
+        <td class="col-postpf">${fmtPoints(o.postPF)}</td>
+        <td class="col-postpa">${fmtPoints(o.postPA)}</td>
       </tr>
     `;
   }).join("");
