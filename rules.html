@@ -761,6 +761,25 @@
     text-decoration-color: var(--gold);
   }
 
+  /* ---------- Credit shortcuts ---------- */
+  .credit-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 767px) {
+    .credit-links {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .credit-links .inline-link {
+      display: block;
+      min-height: 44px;
+      line-height: 44px;
+    }
+  }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -944,7 +963,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rulebook version metadata">
       <span class="meta-pill" id="versionChipVersion">v1.0</span>
-      <span class="meta-pill" id="versionChipUpdated">Last Updated May 31, 2026</span>
+      <span class="meta-pill" id="versionChipUpdated">Last Updated June 5, 2026</span>
     </div>
   </header>
 
@@ -1469,6 +1488,11 @@
       </button>
       <div class="rule-body" id="body-credits">
 
+        <div class="credit-links" role="group" aria-label="Credit shortcuts">
+          <a class="inline-link" href="credits.html#panel-count">View current season credit totals &rarr;</a>
+          <a class="inline-link" href="credits.html" target="_blank" rel="noopener">Open the Credit Portal (submit a request) &rarr;</a>
+        </div>
+
         <h3 class="subhead">Overview</h3>
         <ul>
           <li>The credit system creates a new league currency, issued to owners based on each team&rsquo;s performance over a season and across multiple seasons.</li>
@@ -1484,6 +1508,7 @@
           <li>All Credit transactions are logged on the <a class="inline-link" href="credits.html">Credits page</a>.</li>
           <li>All credits will be awarded at the end of the season.</li>
           <li>Each season&rsquo;s total (Outcome Credits + Bonus Credits) is added to a running cumulative credits total.</li>
+          <li>All credit transactions require commissioner approval.</li>
         </ul>
 
         <h3 class="subhead">Impact</h3>
@@ -1569,8 +1594,6 @@
           </tbody>
         </table>
         </div>
-
-        <p>To submit a credit request, use the official <a class="inline-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Credit Submission Form</a>. All transactions require commissioner approval.</p>
       </div>
     </section>
 
@@ -1674,7 +1697,7 @@
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
 const RULEBOOK_VERSION      = "v1.0";
-const RULEBOOK_LAST_UPDATED = "May 31, 2026";
+const RULEBOOK_LAST_UPDATED = "June 5, 2026";
 
 /* ---------------------------------------------------------------------
  * NEWS_FEED / COMING_SOON power the "News & Announcements" feed on the
