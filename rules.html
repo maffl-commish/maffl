@@ -1227,7 +1227,7 @@
     <!-- =========================================================
          SECTION 3 — Auction Draft
          ========================================================= -->
-    <section class="rule-section" data-section="auction">
+    <section class="rule-section" id="auction" data-section="auction">
       <button class="rule-head" aria-expanded="false" aria-controls="body-auction">
         <h2 class="rule-title">Auction Draft</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
@@ -1688,6 +1688,10 @@ const RULEBOOK_LAST_UPDATED = "May 31, 2026";
  * ------------------------------------------------------------------- */
 const NEWS_FEED = [
   {
+    date: "September 7, 2026",
+    note: "Auction Draft scheduled — Lower-Tier Labor Day 8:00 AM EST, Upper-Tier 8:30 AM EST. See <a class=\"inline-link\" href=\"#auction\">Auction Draft</a> for full details."
+  },
+  {
     date: "July 1, 2026",
     type: "ANNOUNCEMENT",
     note: "MAFFL HQ website is live."
@@ -1734,7 +1738,7 @@ function renderTag(type, year) {
     const tag = item.type ? renderTag(item.type) : "";
     return '' +
       '<div class="news-item' + (soon ? ' news-item--soon' : '') + '">' +
-        '<span class="news-note">' + tag + escHtml(item.note) + '</span>' +
+        '<span class="news-note">' + tag + item.note + '</span>' +
         '<span class="news-date">' + escHtml(item.date) + '</span>' +
       '</div>';
   }
