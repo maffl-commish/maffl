@@ -317,7 +317,7 @@
 
   .year-chevron {
     position: absolute;
-    top: 0;
+    bottom: 0;
     right: 0;
     font-family: var(--display);
     font-weight: 700;
@@ -326,25 +326,17 @@
     line-height: 1;
   }
 
-  .founding-pill {
-    display: inline-block;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 9px;
-    color: var(--gold-dark);
-    background: var(--gold-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    padding: 4px 8px;
-    border-radius: 100px;
-    margin-bottom: 12px;
-  }
-
+  /* Era pills sit on the right-hand side of the year cell, stacked. */
   .year-collapsed-chips {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-end;
     gap: 6px;
-    margin-bottom: 8px;
+    max-width: 62%;
+    z-index: 1;
   }
 
   /* ---------- Expanded view ---------- */
@@ -399,10 +391,23 @@
     border-radius: 100px;
     line-height: 1;
   }
+  /* Draft-era pills are white with the era's emoji. */
   .era-chip--draft {
     color: var(--navy);
-    background: var(--navy-soft);
+    background: #ffffff;
+    border: 1px solid var(--border);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-weight: 700;
   }
+  /* Each league era gets its own color. */
+  .era-chip--era-2tier      { color: #0f766e; background: #d8f3ee; }
+  .era-chip--era-cuoco      { color: #1d4ed8; background: #dde8fb; }
+  .era-chip--era-popstar    { color: #be185d; background: #fbdcec; }
+  .era-chip--era-kardashian { color: #6d28d9; background: #e9ddfb; }
+  .era-chip--era-original   { color: #c2630a; background: #fde6cf; }
+  .era-chip--era-12team     { color: #b91c1c; background: #fbdcdc; }
+  .era-chip--era-founding   { color: var(--gold-dark); background: var(--gold-soft); }
 
   .winners-row {
     display: grid;
@@ -646,6 +651,10 @@
   }
   .bracket-winner .bracket-score { color: var(--navy); font-weight: 700; }
   .bracket-badge { flex: 0 0 auto; font-size: 12px; line-height: 1; }
+
+  /* Detached 3rd-place game: dropped beneath the Championship column. */
+  .bracket-third-detached { margin-top: 12px; align-items: flex-start; }
+  .bracket-round--spacer { visibility: hidden; }
 
   /* Full season schedule (reuses .lower-roster-toggle look) */
   .schedule-toggle .lower-roster-body { padding: 4px 12px 12px; }
@@ -10460,27 +10469,16 @@ Tony Trozzo,2025,Happy Valley Hammer Time,7.0,5.0,0.0,1,0,0,0,0,0,0,1
 2025,15,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,142.0,Chris Johnson,Chris Johnson,The V-Unit,124.04
 2025,15,Lower,False,Consolation,Tony Brooks,Tony Brooks,Tony's Talented Team,209.7,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,150.02
 2025,15,Lower,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,197.76,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,139.9
-2025,15,Lower,False,Consolation,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,227.68,Charles Lavrinc,Charlie Lavrinc,Portly Primates,164.06
 2025,16,Upper,True,Semifinal,Joe Reilly,Joseph Reilly,Reilly's Reindeer,175.94,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,162.48
 2025,16,Upper,True,Semifinal,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,150.0,Jon Fetrow,John Fetrow,Southside Shooters,137.22
-2025,16,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,171.96,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,145.44
 2025,16,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,134.98,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,124.58
 2025,16,Upper,False,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,202.74,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,152.4
 2025,16,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,156.58,Chris Johnson,Chris Johnson,The V-Unit,133.46
 2025,16,Lower,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,185.52,Tony Brooks,Tony Brooks,Tony's Talented Team,124.14
 2025,16,Lower,False,Consolation,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,156.74,Mike Murello,Michael Murello,Bad Attitude Gang,148.98
-2025,16,Lower,False,Consolation,Nick Yankovich,Nick Yankovich,Sarge's Squad,160.78,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,140.88
-2025,16,Lower,False,Consolation,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,220.54,Ben Funari,Benjamin Funari,The Best in The 'Burgh,135.32
 2025,17,Upper,True,Championship,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,147.92,Joe Reilly,Joseph Reilly,Reilly's Reindeer,116.54
-2025,17,Upper,False,Consolation,Jon Fetrow,John Fetrow,Southside Shooters,177.42,David Murello,David Murello / Michael Murello,Kids BadBlood HighSchool,137.08
-2025,17,Upper,False,Consolation,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,151.34,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,136.58
-2025,17,Upper,False,Consolation,Dan Reilly,Daniel Reilly,The Big Bang Theory,166.74,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,113.12
-2025,17,Upper,False,Consolation,BJ Funari,Bryan Funari,South Hills FunShiners,117.78,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,98.5
-2025,17,Upper,False,Consolation,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,130.6,Chris Johnson,Chris Johnson,The V-Unit,130.38
 2025,17,Lower,False,Consolation,Mike Murello,Michael Murello,Bad Attitude Gang,183.46,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,140.6
 2025,17,Lower,False,Consolation,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,175.86,Tony Brooks,Tony Brooks,Tony's Talented Team,139.58
-2025,17,Lower,False,Consolation,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,125.72,Nick Yankovich,Nick Yankovich,Sarge's Squad,94.54
-2025,17,Lower,False,Consolation,Charles Lavrinc,Charlie Lavrinc,Portly Primates,152.44,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,132.3
 </script>
 
 <script>
@@ -10669,6 +10667,7 @@ MATCHUPS.forEach(r => {
     gameType,
     tier: (r.Tier || "").trim(),
     winner: normalizeOwner(r.Winner_Owner),
+    winnerTeam: (r.Winner_Team || "").trim(),
     winnerScore: parseFloat(r.Winner_Score),
     loser: normalizeOwner(r.Loser_Owner),
     loserScore: parseFloat(r.Loser_Score),
@@ -10729,14 +10728,22 @@ const ERAS = [
 ];
 
 const DRAFT_ERAS = [
-  // TODO: confirm draft-era names and year ranges with league owner
-  { short: "Wild West",       years: range(2009, 2002) },
-  { short: "Golden Wiggins",  years: range(2018, 2010) },
-  { short: "Modern",          years: range(2025, 2019) },
+  { short: "The Wild West Era",      emoji: "\u{1F920}", years: range(2010, 2005) }, // 🤠
+  { short: "The Golden Wiggins Era", emoji: "⭐",    years: range(2019, 2011) }, // ⭐
+  { short: "The Remote/Online Era",  emoji: "\u{1F4BB}", years: range(2024, 2020) }, // 💻
+  { short: "Modern Superflex Era",   emoji: "\u{1F3C8}", years: range(2025, 2025) }, // 🏈
 ];
 function draftEraFor(year) {
-  const e = DRAFT_ERAS.find(d => d.years.includes(year));
-  return e ? e.short : null;
+  return DRAFT_ERAS.find(d => d.years.includes(year)) || null;
+}
+function draftEraChip(year) {
+  const e = draftEraFor(year);
+  if (!e) return "";
+  return `<span class="era-chip era-chip--draft">${e.emoji} ${esc(e.short)}</span>`;
+}
+function leagueEraChip(era) {
+  if (!era || !era.short) return "";
+  return `<span class="era-chip era-chip--${era.id}">${esc(era.short)}</span>`;
 }
 
 function range(hi, lo) {
@@ -10765,9 +10772,8 @@ function formatPrice(p) {
   return "$" + (p | 0);
 }
 
-function renderCollapsedTile(year, eraShort) {
+function renderCollapsedTile(year, era) {
   const b = byYear[year];
-  const isFounding = year >= 2002 && year <= 2004;
   let champLine;
   if (year === 2002) {
     const names = b.coChampions.map(c => c.owner).join(" & ");
@@ -10778,15 +10784,12 @@ function renderCollapsedTile(year, eraShort) {
     champLine = `<span class="trophy">&#x1F3C6;</span> &mdash;`;
   }
 
-  const pill = isFounding ? `<div class="founding-pill">Founding Era</div>` : "";
-  const de = draftEraFor(year);
   const chips = `<div class="year-collapsed-chips">
-      ${eraShort ? `<span class="era-chip">${esc(eraShort)}</span>` : ""}
-      ${de ? `<span class="era-chip era-chip--draft">${esc(de)}</span>` : ""}
+      ${leagueEraChip(era)}
+      ${draftEraChip(year)}
     </div>`;
   return `
     <div class="year-collapsed">
-      ${pill}
       ${chips}
       <div class="year-num">${year}</div>
       <p class="year-champ-line">${champLine}</p>
@@ -10803,12 +10806,10 @@ function renderWinnerCard(label, person, icon, role) {
       <div class="winner-owner">${icon} &mdash;</div>
     </div>`;
   }
-  const rec = record(person);
   return `<div class="winner-card${roleClass}">
     <div class="winner-label">${label}</div>
     <div class="winner-owner">${icon} ${esc(person.owner)}</div>
     ${person.team ? `<div class="winner-team">${esc(person.team)}</div>` : ""}
-    ${rec ? `<div class="winner-record">${rec}</div>` : ""}
   </div>`;
 }
 
@@ -10821,13 +10822,19 @@ function renderWinnersRow(year, b) {
       ${renderWinnerCard("Co-Champion", co2, "&#x1F3C6;")}
     </div>`;
   }
-  // 3rd place = winner of the ThirdPlace bracket game (prefer Upper tier for 2025+).
-  // There is no team/record on bracketGames, so build a name-only person object.
+  // No 3rd-place game from 2025 on — just Champion + Runner-Up.
+  if (year >= 2025) {
+    return `<div class="winners-row">
+      ${renderWinnerCard("Champion", b.champion, "&#x1F3C6;", "champion")}
+      ${renderWinnerCard("Runner-Up", b.runnerUp, "&#x1F948;", "runnerup")}
+    </div>`;
+  }
+  // 3rd place = winner of the ThirdPlace bracket game; carry owner + team name.
   let thirdPerson = null;
   if (b.bracketGames && b.bracketGames.length) {
     const thirds = b.bracketGames.filter(g => g.gameType === "ThirdPlace");
     const g = thirds.find(x => x.tier === "Upper") || thirds[0];
-    if (g && g.winner) thirdPerson = { owner: g.winner };
+    if (g && g.winner) thirdPerson = { owner: g.winner, team: g.winnerTeam };
   }
   return `<div class="winners-row">
     ${renderWinnerCard("Champion", b.champion, "&#x1F3C6;", "champion")}
@@ -10892,7 +10899,10 @@ function renderBracket(b, year) {
     games.forEach(g => {
       (byRound[g.gameType] = byRound[g.gameType] || []).push(g);
     });
-    const cols = ROUND_ORDER.filter(rt => byRound[rt]).map(rt => {
+    // Third Place is detached from the bracket flow and dropped below the
+    // Championship column, so it is excluded from the left-to-right round columns.
+    const flowRounds = ROUND_ORDER.filter(rt => rt !== "ThirdPlace" && byRound[rt]);
+    const cols = flowRounds.map(rt => {
       const rows = byRound[rt].map(gameRowHTML).join("");
       return `<div class="bracket-round">
         <div class="bracket-round-head">${ROUND_LABELS[rt]}</div>
@@ -10900,8 +10910,24 @@ function renderBracket(b, year) {
       </div>`;
     }).join("");
     if (!cols) return "";
-    // Rounds flow left-to-right (QF -> SF -> Championship/3rd) as columns.
-    return `<div class="bracket-rounds-flow">${cols}</div>`;
+    // Rounds flow left-to-right (QF -> SF -> Championship) as columns.
+    let html = `<div class="bracket-rounds-flow">${cols}</div>`;
+    // Detached 3rd-place game: invisible spacer columns push it under the
+    // Championship (rightmost) column regardless of how many rounds there are.
+    if (byRound.ThirdPlace) {
+      const tpRows = byRound.ThirdPlace.map(gameRowHTML).join("");
+      const spacers = Array(Math.max(0, flowRounds.length - 1))
+        .fill('<div class="bracket-round bracket-round--spacer" aria-hidden="true"></div>')
+        .join("");
+      html += `<div class="bracket-rounds-flow bracket-third-detached">
+        ${spacers}
+        <div class="bracket-round">
+          <div class="bracket-round-head">${ROUND_LABELS.ThirdPlace}</div>
+          ${tpRows}
+        </div>
+      </div>`;
+    }
+    return html;
   };
 
   // Modern 2-tier era (2025+): split into Upper/Lower when both tiers have games
@@ -11052,7 +11078,7 @@ function renderRoster(b, year) {
     lowerHTML = `
       <div class="lower-roster-toggle" data-lower-roster-year="${year}">
         <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
-          <span>Lower-Tier</span>
+          <span>Lower-Tier Standings</span>
           <span class="chev">&#x25BC;</span>
         </button>
         <div class="lower-roster-body">${lowerRows}</div>
@@ -11063,7 +11089,7 @@ function renderRoster(b, year) {
   const upperHTML = upperGroupsHTML ? `
       <div class="lower-roster-toggle" data-upper-roster-year="${year}">
         <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
-          <span>Upper-Tier</span>
+          <span>${year >= 2025 ? "Upper-Tier Standings" : "Standings"}</span>
           <span class="chev">&#x25BC;</span>
         </button>
         <div class="lower-roster-body">${upperGroupsHTML}</div>
@@ -11276,8 +11302,11 @@ function renderSeries(b, year) {
         const w0 = p.wins[owners[0]], w1 = p.wins[owners[1]];
         if (p.games.length >= 2 && w0 !== w1) {
           const winner = w0 > w1 ? owners[0] : owners[1];
+          // Best-of-three: the clinching record caps at 2 wins (a sweep is 2-0).
+          const hi = Math.min(2, Math.max(w0, w1));
+          const lo = Math.min(w0, w1);
           return `<div class="series-group">
-            <div class="series-line"><strong>${esc(winner)}</strong> wins the series ${Math.max(w0, w1)}&ndash;${Math.min(w0, w1)}</div>
+            <div class="series-line"><strong>${esc(winner)}</strong> wins the series ${hi}&ndash;${lo}</div>
             ${rows}
           </div>`;
         }
@@ -11303,7 +11332,7 @@ function renderSeries(b, year) {
   return `<div class="exp-section">
     <div class="lower-roster-toggle series-toggle" data-series-year="${year}">
       <button type="button" class="lower-roster-toggle-btn" aria-expanded="false">
-        <span>3-Game Series</span>
+        <span>Postseason Series Play</span>
         <span class="chev">&#x25BC;</span>
       </button>
       <div class="lower-roster-body">${body}</div>
@@ -11311,13 +11340,13 @@ function renderSeries(b, year) {
   </div>`;
 }
 
-function renderExpanded(year, eraShort) {
+function renderExpanded(year, era) {
   const b = byYear[year];
   return `<div class="year-expanded">
     <div class="exp-header">
       <span class="exp-year">${year}</span>
-      <span class="era-chip">${esc(eraShort)}</span>
-      ${(() => { const de = draftEraFor(year); return de ? `<span class="era-chip era-chip--draft">${esc(de)}</span>` : ""; })()}
+      ${leagueEraChip(era)}
+      ${draftEraChip(year)}
       <button type="button" class="exp-collapse-chevron" data-collapse-year="${year}" aria-label="Collapse ${year}">&#x25B4;</button>
     </div>
     ${renderWinnersRow(year, b)}
@@ -11333,15 +11362,15 @@ function renderExpanded(year, eraShort) {
   </div>`;
 }
 
-function renderTile(year, eraShort) {
+function renderTile(year, era) {
   return `<div class="year-tile" data-year="${year}" role="button" tabindex="0" aria-expanded="false">
-    ${renderCollapsedTile(year, eraShort)}
-    ${renderExpanded(year, eraShort)}
+    ${renderCollapsedTile(year, era)}
+    ${renderExpanded(year, era)}
   </div>`;
 }
 
 function renderEra(era) {
-  const tiles = era.years.map(y => renderTile(y, era.short)).join("");
+  const tiles = era.years.map(y => renderTile(y, era)).join("");
   return `<section class="era-section" data-era="${era.id}">
     <header class="era-head">
       <h2 class="era-title">${esc(era.title)}</h2>
