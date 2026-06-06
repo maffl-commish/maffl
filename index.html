@@ -551,6 +551,50 @@
     outline-offset: 2px;
   }
 
+  /* ---------- Speak Up CTA (centered standalone button above the footer) ---------- */
+  .speakup-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .speakup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 999px;
+    padding: 12px 24px;
+    box-shadow: 0 4px 14px var(--navy-shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .speakup-btn:hover,
+  .speakup-btn:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px var(--navy-shadow-strong);
+  }
+  .speakup-btn:active { transform: translateY(0); }
+  .speakup-btn__icon { font-size: 22px; line-height: 1; }
+  .speakup-btn__text { display: flex; flex-direction: column; line-height: 1.15; }
+  .speakup-btn__title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .speakup-btn__tag {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  @media (max-width: 767px) {
+    .speakup-btn { padding: 11px 20px; }
+    .speakup-btn__title { font-size: 16px; }
+  }
+
   /* ---------- Universal Subpage Header (Launch Roster v1.0) ----------
      index.html uses identity only in the header (no meta pills); the
      version + date pills live at the bottom of the page (.footer-meta). */
@@ -709,6 +753,7 @@
       <a href="stats.html">Stats</a>
       <a href="history.html">History</a>
       <a href="prize.html">Prizes &amp; Dues</a>
+      <a href="speakup.html">Speak Up</a>
     </nav>
   </div>
 </header>
@@ -788,17 +833,11 @@
         <p class="card-tag">Official Rulebook</p>
       </a>
 
-      <!-- Credits: one Quick Access card holding two equal-weight links. -->
-      <div class="section-card credit-card" role="group" aria-label="Credits">
-        <div class="credit-head">
-          <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
-          <h3 class="card-title">Credits</h3>
-        </div>
-        <div class="credit-links">
-          <a class="credit-link" href="credits.html">Portal</a>
-          <a class="credit-link" href="https://forms.gle/57KKnEta1wfjzDNy9" target="_blank" rel="noopener">Request</a>
-        </div>
-      </div>
+      <a class="section-card" href="credits.html">
+        <span class="card-icon" aria-hidden="true">&#x1FA99;</span>
+        <h3 class="card-title">Credits</h3>
+        <p class="card-tag">Current + Requests</p>
+      </a>
 
       <a class="section-card" href="prize.html">
         <span class="card-icon" aria-hidden="true">&#x1F4B0;</span>
@@ -840,12 +879,24 @@
       </a>
     </div>
   </section>
+
+  <!-- Speak Up — standalone centered CTA, intentionally styled differently from
+       the 2-up Quick Access / League cards above. -->
+  <section class="speakup-cta" aria-label="Speak Up">
+    <a class="speakup-btn" href="speakup.html">
+      <span class="speakup-btn__icon" aria-hidden="true">🎤</span>
+      <span class="speakup-btn__text">
+        <span class="speakup-btn__title">Speak Up</span>
+        <span class="speakup-btn__tag">Polls &amp; Feedback</span>
+      </span>
+    </a>
+  </section>
 </main>
 
 <footer class="site-footer">
   <div class="footer-meta" aria-label="Site version metadata">
     <span class="meta-pill">v1.0</span>
-    <span class="meta-pill">Last Updated May 31, 2026</span>
+    <span class="meta-pill">Last Updated June 5, 2026</span>
   </div>
   <div>League Founded 2002 &middot; Site est. 2026</div>
   <div>Built by the Commish</div>
