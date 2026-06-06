@@ -296,16 +296,16 @@
   .col-toggle.active { background: var(--navy); color: #fff; border-color: var(--navy); }
   .col-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
-  /* Default = detail columns hidden. Shown only when table opts in. */
-  .stats-table th[data-group="rec-detail"],
-  .stats-table td.rec-detail-cell { display: none; }
-  .stats-table.show-rec-detail th[data-group="rec-detail"],
-  .stats-table.show-rec-detail td.rec-detail-cell { display: table-cell; }
-
-  .stats-table th[data-group="pts-detail"],
-  .stats-table td.pts-detail-cell { display: none; }
-  .stats-table.show-pts-detail th[data-group="pts-detail"],
-  .stats-table.show-pts-detail td.pts-detail-cell { display: table-cell; }
+  /* All grouped columns hidden by default; a class on the table opts each group in. */
+  .stats-table th[data-group], .stats-table td[data-group] { display: none; }
+  .stats-table.show-accolades th[data-group="accolades"],
+  .stats-table.show-accolades td[data-group="accolades"] { display: table-cell; }
+  .stats-table.show-power th[data-group="power"],
+  .stats-table.show-power td[data-group="power"] { display: table-cell; }
+  .stats-table.show-wl th[data-group="wl"],
+  .stats-table.show-wl td[data-group="wl"] { display: table-cell; }
+  .stats-table.show-pts th[data-group="pts"],
+  .stats-table.show-pts td[data-group="pts"] { display: table-cell; }
 
   /* ---------- Stats table ---------- */
   .table-wrap {
@@ -485,13 +485,15 @@
     main { padding: 24px 16px 40px; }
     .page-title { font-size: 24px; }
 
-    .filter-bar {
+    .filter-bar,
+    .col-toggle-bar {
       flex-wrap: nowrap;
       overflow-x: auto;
       padding-bottom: 4px;
       -webkit-overflow-scrolling: touch;
     }
-    .filter-pill { flex: 0 0 auto; }
+    .filter-pill,
+    .col-toggle { flex: 0 0 auto; }
 
     /* Mobile defaults to the compact Totals view; detail columns expand on demand
        via the toggles. Shrink padding so the visible columns fit with h-scroll. */
@@ -546,40 +548,43 @@
     <button class="filter-pill" data-filter="inactive" role="tab" aria-selected="false">Inactive <span class="pill-count" id="countInactive"></span></button>
   </div>
 
-  <div class="col-toggle-bar" aria-label="Column detail toggles">
-    <button class="col-toggle" id="toggleRecords" aria-pressed="false">+ Reg / Post Records</button>
-    <button class="col-toggle" id="togglePoints" aria-pressed="false">+ Reg / Post Points</button>
+  <div class="col-toggle-bar" aria-label="Column section toggles">
+    <button class="col-toggle active" id="grpAccolades" data-group="accolades" aria-pressed="true">Accolades</button>
+    <button class="col-toggle" id="grpPower" data-group="power" aria-pressed="false">Power Rating</button>
+    <button class="col-toggle" id="grpWl" data-group="wl" aria-pressed="false">W-L Splits</button>
+    <button class="col-toggle" id="grpPts" data-group="pts" aria-pressed="false">Points Splits</button>
   </div>
 
   <div class="table-wrap">
-    <table class="stats-table" id="statsTable" aria-label="All-time owner stats">
+    <table class="stats-table show-accolades" id="statsTable" aria-label="All-time owner stats">
       <thead>
         <tr>
           <th class="col-owner" data-sort="name" scope="col" title="Owner">Owner<span class="sort-arrow"></span></th>
-          <th class="col-regw"   data-sort="regWins"   data-sort-default="desc" data-group="rec-detail" scope="col" title="Regular-Season Wins">Reg W<span class="sort-arrow"></span></th>
-          <th class="col-regl"   data-sort="regLosses" data-sort-default="asc"  data-group="rec-detail" scope="col" title="Regular-Season Losses">Reg L<span class="sort-arrow"></span></th>
-          <th class="col-regpct" data-sort="regWinPct" data-sort-default="desc" data-group="rec-detail" scope="col" title="Regular-Season Win % — W/(W+L+T)">Reg %<span class="sort-arrow"></span></th>
-          <th class="col-postw"  data-sort="pWins"     data-sort-default="desc" data-group="rec-detail" scope="col" title="Playoff Wins (full bracket, incl. 3rd-place game)">Post W<span class="sort-arrow"></span></th>
-          <th class="col-postl"  data-sort="pLosses"   data-sort-default="asc"  data-group="rec-detail" scope="col" title="Playoff Losses (full bracket, incl. 3rd-place game)">Post L<span class="sort-arrow"></span></th>
-          <th class="col-postpct" data-sort="pWinPct"  data-sort-default="desc" data-group="rec-detail" scope="col" title="Playoff Win % — W/(W+L)">Post %<span class="sort-arrow"></span></th>
-          <th class="col-totw"   data-sort="totWins"   data-sort-default="desc" data-group="rec-total" scope="col" title="Total Wins (Regular Season + Playoffs)">Tot W<span class="sort-arrow"></span></th>
-          <th class="col-totl"   data-sort="totLosses" data-sort-default="asc"  data-group="rec-total" scope="col" title="Total Losses (Regular Season + Playoffs)">Tot L<span class="sort-arrow"></span></th>
-          <th class="col-totpct" data-sort="totWinPct" data-sort-default="desc" data-group="rec-total" scope="col" title="Total Win % — W/(W+L+T)">Tot %<span class="sort-arrow"></span></th>
-          <th class="col-champ"   data-sort="champ"   data-sort-default="desc" scope="col" title="&#x1F3C6; Championships" aria-label="Championships">&#x1F3C6;<span class="sort-arrow"></span></th>
-          <th class="col-runner"  data-sort="runner"  data-sort-default="desc" scope="col" title="&#x1F948; Runner-Ups" aria-label="Runner-Ups">&#x1F948;<span class="sort-arrow"></span></th>
-          <th class="col-third"   data-sort="third"   data-sort-default="desc" scope="col" title="&#x1F949; 3rd-Place Finishes" aria-label="3rd-Place Finishes">&#x1F949;<span class="sort-arrow"></span></th>
-          <th class="col-div"     data-sort="div"     data-sort-default="desc" scope="col" title="&#x1F451; Division Titles" aria-label="Division Titles">&#x1F451;<span class="sort-arrow"></span></th>
-          <th class="col-playoff" data-sort="playoff" data-sort-default="desc" scope="col" title="&#x1F39F; Playoff Appearances" aria-label="Playoff Appearances">&#x1F39F;<span class="sort-arrow"></span></th>
-          <th class="col-ovr"    data-sort="ovr"    data-sort-default="desc" scope="col" title="OVR — Overall Power Rankings rating">OVR<span class="sort-arrow"></span></th>
-          <th class="col-clutch" data-sort="clutch" data-sort-default="desc" scope="col" title="&#x1F9CA; Clutch — postseason execution" aria-label="Clutch">&#x1F9CA;<span class="sort-arrow"></span></th>
-          <th class="col-grind"  data-sort="grind"  data-sort-default="desc" scope="col" title="&#x1F69C; Grind — long-haul consistency" aria-label="Grind">&#x1F69C;<span class="sort-arrow"></span></th>
-          <th class="col-heat"   data-sort="heat"   data-sort-default="desc" scope="col" title="&#x1F525; Heat — recent form" aria-label="Heat">&#x1F525;<span class="sort-arrow"></span></th>
-          <th class="col-regpf" data-sort="regPF" data-sort-default="desc" data-group="pts-detail" scope="col" title="Regular-Season Points For">Reg PF<span class="sort-arrow"></span></th>
-          <th class="col-regpa" data-sort="regPA" data-sort-default="desc" data-group="pts-detail" scope="col" title="Regular-Season Points Against">Reg PA<span class="sort-arrow"></span></th>
-          <th class="col-postpf" data-sort="postPF" data-sort-default="desc" data-group="pts-detail" scope="col" title="Playoff Points For (full bracket, incl. 3rd-place game)">Post PF<span class="sort-arrow"></span></th>
-          <th class="col-postpa" data-sort="postPA" data-sort-default="desc" data-group="pts-detail" scope="col" title="Playoff Points Against (full bracket, incl. 3rd-place game)">Post PA<span class="sort-arrow"></span></th>
-          <th class="col-totpf" data-sort="totPF" data-sort-default="desc" data-group="pts-total" scope="col" title="Total Points For (Regular Season + Playoffs)">Total PF<span class="sort-arrow"></span></th>
-          <th class="col-totpa" data-sort="totPA" data-sort-default="desc" data-group="pts-total" scope="col" title="Total Points Against (Regular Season + Playoffs)">Total PA<span class="sort-arrow"></span></th>
+          <th class="col-years" data-sort="years" data-sort-default="desc" scope="col" title="Total Years in the League (since 2002)">Yrs<span class="sort-arrow"></span></th>
+          <th class="col-totw"   data-sort="totWins"   data-sort-default="desc" scope="col" title="Total Wins (Regular Season + Playoffs)">Tot W<span class="sort-arrow"></span></th>
+          <th class="col-totl"   data-sort="totLosses" data-sort-default="asc"  scope="col" title="Total Losses (Regular Season + Playoffs)">Tot L<span class="sort-arrow"></span></th>
+          <th class="col-totpct" data-sort="totWinPct" data-sort-default="desc" scope="col" title="Total Win % — W/(W+L+T)">Tot %<span class="sort-arrow"></span></th>
+          <th class="col-champ"   data-sort="champ"   data-sort-default="desc" data-group="accolades" scope="col" title="&#x1F3C6; Championships" aria-label="Championships">&#x1F3C6;<span class="sort-arrow"></span></th>
+          <th class="col-runner"  data-sort="runner"  data-sort-default="desc" data-group="accolades" scope="col" title="&#x1F948; Runner-Ups" aria-label="Runner-Ups">&#x1F948;<span class="sort-arrow"></span></th>
+          <th class="col-third"   data-sort="third"   data-sort-default="desc" data-group="accolades" scope="col" title="&#x1F949; 3rd-Place Finishes" aria-label="3rd-Place Finishes">&#x1F949;<span class="sort-arrow"></span></th>
+          <th class="col-div"     data-sort="div"     data-sort-default="desc" data-group="accolades" scope="col" title="&#x1F451; Division Titles" aria-label="Division Titles">&#x1F451;<span class="sort-arrow"></span></th>
+          <th class="col-playoff" data-sort="playoff" data-sort-default="desc" data-group="accolades" scope="col" title="&#x1F39F; Playoff Appearances" aria-label="Playoff Appearances">&#x1F39F;<span class="sort-arrow"></span></th>
+          <th class="col-ovr"    data-sort="ovr"    data-sort-default="desc" data-group="power" scope="col" title="OVR — Overall Power Rankings rating">OVR<span class="sort-arrow"></span></th>
+          <th class="col-clutch" data-sort="clutch" data-sort-default="desc" data-group="power" scope="col" title="&#x1F9CA; Clutch — postseason execution" aria-label="Clutch">&#x1F9CA;<span class="sort-arrow"></span></th>
+          <th class="col-grind"  data-sort="grind"  data-sort-default="desc" data-group="power" scope="col" title="&#x1F69C; Grind — long-haul consistency" aria-label="Grind">&#x1F69C;<span class="sort-arrow"></span></th>
+          <th class="col-heat"   data-sort="heat"   data-sort-default="desc" data-group="power" scope="col" title="&#x1F525; Heat — recent form" aria-label="Heat">&#x1F525;<span class="sort-arrow"></span></th>
+          <th class="col-regw"   data-sort="regWins"   data-sort-default="desc" data-group="wl" scope="col" title="Regular-Season Wins">Reg W<span class="sort-arrow"></span></th>
+          <th class="col-regl"   data-sort="regLosses" data-sort-default="asc"  data-group="wl" scope="col" title="Regular-Season Losses">Reg L<span class="sort-arrow"></span></th>
+          <th class="col-regpct" data-sort="regWinPct" data-sort-default="desc" data-group="wl" scope="col" title="Regular-Season Win % — W/(W+L+T)">Reg %<span class="sort-arrow"></span></th>
+          <th class="col-postw"  data-sort="pWins"     data-sort-default="desc" data-group="wl" scope="col" title="Playoff Wins (full bracket, incl. 3rd-place game)">Post W<span class="sort-arrow"></span></th>
+          <th class="col-postl"  data-sort="pLosses"   data-sort-default="asc"  data-group="wl" scope="col" title="Playoff Losses (full bracket, incl. 3rd-place game)">Post L<span class="sort-arrow"></span></th>
+          <th class="col-postpct" data-sort="pWinPct"  data-sort-default="desc" data-group="wl" scope="col" title="Playoff Win % — W/(W+L)">Post %<span class="sort-arrow"></span></th>
+          <th class="col-regpf" data-sort="regPF" data-sort-default="desc" data-group="pts" scope="col" title="Regular-Season Points For">Reg PF<span class="sort-arrow"></span></th>
+          <th class="col-regpa" data-sort="regPA" data-sort-default="desc" data-group="pts" scope="col" title="Regular-Season Points Against">Reg PA<span class="sort-arrow"></span></th>
+          <th class="col-postpf" data-sort="postPF" data-sort-default="desc" data-group="pts" scope="col" title="Playoff Points For (full bracket, incl. 3rd-place game)">Post PF<span class="sort-arrow"></span></th>
+          <th class="col-postpa" data-sort="postPA" data-sort-default="desc" data-group="pts" scope="col" title="Playoff Points Against (full bracket, incl. 3rd-place game)">Post PA<span class="sort-arrow"></span></th>
+          <th class="col-totpf" data-sort="totPF" data-sort-default="desc" data-group="pts" scope="col" title="Total Points For (Regular Season + Playoffs)">Total PF<span class="sort-arrow"></span></th>
+          <th class="col-totpa" data-sort="totPA" data-sort-default="desc" data-group="pts" scope="col" title="Total Points Against (Regular Season + Playoffs)">Total PA<span class="sort-arrow"></span></th>
         </tr>
       </thead>
       <tbody id="statsBody"></tbody>
@@ -588,18 +593,20 @@
   </div>
 
   <section class="stats-notes" aria-label="Stats notes">
-    <p><strong>About these numbers.</strong> Records and points span 2002–present;
-       co-owner pairs are treated as a single owner. Win % = W / (W + L + T).</p>
-    <p><strong>Records.</strong> Each record shows as Total by default. Tap
-       “Reg / Post Records” to expand regular-season and playoff splits. Reg Win % = W/(W+L+T);
-       Post Win % = W/(W+L) (no playoff ties); Total combines both.</p>
-    <p><strong>Points.</strong> Total PF/PA shown by default. Tap “Reg / Post Points” to
-       expand the regular-season and playoff splits. Playoff figures use the full bracket
-       incl. the 3rd-place game.</p>
-    <p><strong>Playoff scope (2025 forward).</strong> Playoff point totals count
-       upper-tier playoff games only. The postseason 3-game-series / consolation
-       activity does not count toward these totals. Seasons through 2024 retain their
-       historical treatment.</p>
+    <p><strong>Coverage.</strong> Win-loss records and points run 2005–present.
+    Championships and years in the league go back to 2002; division titles begin 2013.
+    Co-owner pairs count as one owner.</p>
+
+    <p><strong>Records &amp; points.</strong> Totals show by default. Tap “W-L Splits” or
+    “Points Splits” for regular-season and playoff breakdowns. Reg Win % = W/(W+L+T);
+    Post Win % = W/(W+L), no playoff ties. Playoff figures use the full bracket incl. the
+    3rd-place game.</p>
+
+    <p><strong>Sections.</strong> Use the pills to show or hide Accolades, Power Rating,
+    W-L Splits, and Points Splits.</p>
+
+    <p><strong>Gold highlight.</strong> A value turns gold when it’s elite for that stat:
+    Win % 55%+, 2+ championships, OVR 80+, and Clutch / Grind / Heat each 90+.</p>
   </section>
 </main>
 
@@ -726,6 +733,7 @@ OWNERS.forEach(o => {
 
 const COL_DEFS = [
   { key: "name",    type: "string" },
+  { key: "years",   type: "num" },
   { key: "wins",    type: "num" },
   { key: "losses",  type: "num" },
   { key: "ties",    type: "num" },
@@ -812,6 +820,15 @@ function goldCls(key, val) {
 }
 
 function renderTable() {
+  const table = document.getElementById("statsTable");
+
+  // If the active sort column's group is hidden, fall back to an anchor column.
+  const HIDDEN_GROUPS = ["accolades","power","wl","pts"].filter(g => !table.classList.contains("show-"+g));
+  const sortCol = document.querySelector(`#statsTable th[data-sort="${state.sortKey}"]`);
+  if (sortCol && HIDDEN_GROUPS.includes(sortCol.getAttribute("data-group"))) {
+    state.sortKey = "totWins"; state.sortDir = "desc";
+  }
+
   const rows = visibleOwners().slice().sort((a, b) => compare(a, b, state.sortKey, state.sortDir));
   const body = document.getElementById("statsBody");
 
@@ -820,30 +837,31 @@ function renderTable() {
     return `
       <tr>
         <td class="col-owner">${o.name}${inactiveChip}</td>
-        <td class="col-regw rec-detail-cell${goldCls("regWins", o.regWins)}">${o.regWins}</td>
-        <td class="col-regl rec-detail-cell${goldCls("regLosses", o.regLosses)}">${o.regLosses}</td>
-        <td class="col-regpct rec-detail-cell${goldCls("regWinPct", o.regWinPct)}">${formatPct(o.regWinPct)}</td>
-        <td class="col-postw rec-detail-cell${goldCls("pWins", o.pWins)}">${o.pWins}</td>
-        <td class="col-postl rec-detail-cell${goldCls("pLosses", o.pLosses)}">${o.pLosses}</td>
-        <td class="col-postpct rec-detail-cell${goldCls("pWinPct", o.pWinPct)}">${formatPct(o.pWinPct)}</td>
-        <td class="col-totw rec-total-cell${goldCls("totWins", o.totWins)}">${o.totWins}</td>
-        <td class="col-totl rec-total-cell${goldCls("totLosses", o.totLosses)}">${o.totLosses}</td>
-        <td class="col-totpct rec-total-cell${goldCls("totWinPct", o.totWinPct)}">${formatPct(o.totWinPct)}</td>
-        <td class="col-champ${goldCls("champ", o.champ)}">${o.champ}</td>
-        <td class="col-runner${goldCls("runner", o.runner)}">${o.runner}</td>
-        <td class="col-third${goldCls("third", o.third)}">${o.third}</td>
-        <td class="col-div${goldCls("div", o.div)}">${o.div}</td>
-        <td class="col-playoff${goldCls("playoff", o.playoff)}">${o.playoff}</td>
-        <td class="col-ovr${goldCls("ovr", o.ovr)}">${o.ovr}</td>
-        <td class="col-clutch${goldCls("clutch", o.clutch)}">${o.clutch}</td>
-        <td class="col-grind${goldCls("grind", o.grind)}">${o.grind}</td>
-        <td class="col-heat${goldCls("heat", o.heat)}">${o.heat}</td>
-        <td class="col-regpf pts-detail-cell">${fmtPoints(o.regPF)}</td>
-        <td class="col-regpa pts-detail-cell">${fmtPoints(o.regPA)}</td>
-        <td class="col-postpf pts-detail-cell">${fmtPoints(o.postPF)}</td>
-        <td class="col-postpa pts-detail-cell">${fmtPoints(o.postPA)}</td>
-        <td class="col-totpf pts-total-cell">${fmtPoints(o.totPF)}</td>
-        <td class="col-totpa pts-total-cell">${fmtPoints(o.totPA)}</td>
+        <td class="col-years">${o.years}</td>
+        <td class="col-totw${goldCls("totWins", o.totWins)}">${o.totWins}</td>
+        <td class="col-totl${goldCls("totLosses", o.totLosses)}">${o.totLosses}</td>
+        <td class="col-totpct${goldCls("totWinPct", o.totWinPct)}">${formatPct(o.totWinPct)}</td>
+        <td class="col-champ${goldCls("champ", o.champ)}" data-group="accolades">${o.champ}</td>
+        <td class="col-runner" data-group="accolades">${o.runner}</td>
+        <td class="col-third" data-group="accolades">${o.third}</td>
+        <td class="col-div" data-group="accolades">${o.div}</td>
+        <td class="col-playoff" data-group="accolades">${o.playoff}</td>
+        <td class="col-ovr${goldCls("ovr", o.ovr)}" data-group="power">${o.ovr}</td>
+        <td class="col-clutch${goldCls("clutch", o.clutch)}" data-group="power">${o.clutch}</td>
+        <td class="col-grind${goldCls("grind", o.grind)}" data-group="power">${o.grind}</td>
+        <td class="col-heat${goldCls("heat", o.heat)}" data-group="power">${o.heat}</td>
+        <td class="col-regw${goldCls("regWins", o.regWins)}" data-group="wl">${o.regWins}</td>
+        <td class="col-regl${goldCls("regLosses", o.regLosses)}" data-group="wl">${o.regLosses}</td>
+        <td class="col-regpct${goldCls("regWinPct", o.regWinPct)}" data-group="wl">${formatPct(o.regWinPct)}</td>
+        <td class="col-postw${goldCls("pWins", o.pWins)}" data-group="wl">${o.pWins}</td>
+        <td class="col-postl${goldCls("pLosses", o.pLosses)}" data-group="wl">${o.pLosses}</td>
+        <td class="col-postpct${goldCls("pWinPct", o.pWinPct)}" data-group="wl">${formatPct(o.pWinPct)}</td>
+        <td class="col-regpf" data-group="pts">${fmtPoints(o.regPF)}</td>
+        <td class="col-regpa" data-group="pts">${fmtPoints(o.regPA)}</td>
+        <td class="col-postpf" data-group="pts">${fmtPoints(o.postPF)}</td>
+        <td class="col-postpa" data-group="pts">${fmtPoints(o.postPA)}</td>
+        <td class="col-totpf" data-group="pts">${fmtPoints(o.totPF)}</td>
+        <td class="col-totpa" data-group="pts">${fmtPoints(o.totPA)}</td>
       </tr>
     `;
   }).join("");
@@ -900,17 +918,13 @@ function wireSort() {
 
 function wireColumnToggles() {
   const table = document.getElementById("statsTable");
-  const map = [
-    { btn: "toggleRecords", cls: "show-rec-detail" },
-    { btn: "togglePoints",  cls: "show-pts-detail" }
-  ];
-  map.forEach(({btn, cls}) => {
-    const b = document.getElementById(btn);
-    b.addEventListener("click", () => {
-      const on = table.classList.toggle(cls);
-      b.classList.toggle("active", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-      b.textContent = (on ? "− " : "+ ") + b.textContent.slice(2);
+  document.querySelectorAll(".col-toggle").forEach(btn => {
+    const grp = btn.getAttribute("data-group");
+    btn.addEventListener("click", () => {
+      const on = table.classList.toggle("show-" + grp);
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      renderTable();
     });
   });
 }
