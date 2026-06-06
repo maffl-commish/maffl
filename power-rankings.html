@@ -534,38 +534,6 @@
 
   /* Timeline */
   .timeline-section { margin-top: 4px; }
-  .timeline-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 10px;
-    margin-bottom: 10px;
-  }
-  .timeline-head-label {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-right: 4px;
-  }
-  .legend-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--body);
-    font-size: 11px;
-    color: var(--navy);
-    line-height: 1;
-  }
-  .legend-swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    flex: 0 0 auto;
-  }
-
   .timeline-scroll {
     overflow: visible;
     padding: 4px 0 6px;
@@ -899,10 +867,14 @@
     grid-template-columns: minmax(0, 1fr) 58px 58px;
     align-items: center;
     gap: 10px;
-    padding: 7px 0;
+    padding: 8px 0;
     border-bottom: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    padding-left: 10px;
   }
   .rv-row:last-child { border-bottom: 0; }
+  .rv-row.rv-win  { border-left-color: var(--win); }
+  .rv-row.rv-loss { border-left-color: var(--loss); }
   .rv-head {
     font-family: var(--display);
     font-weight: 700;
@@ -1068,72 +1040,6 @@
   .draft-pos-meta .draft-pos-price { color: var(--gold-dark); }
   .draft-cta--compact { background: none; padding: 0; text-align: left; }
 
-  /* ---------- Rivals: career W/L + PF/PA stat blocks ---------- */
-  .rv-statblocks { margin-bottom: 22px; }
-  /* Prominent row: Championships / Total Wins / Total PF / OVR — full-width,
-     bigger type. Reuses the Power-tab .stat-box look at a larger scale. */
-  .rv-prom {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-  .rv-prom-box { padding: 13px 10px; }
-  .rv-prom-box .stat-num { font-size: 27px; margin-bottom: 5px; }
-  .rv-prom-box .stat-label { margin-bottom: 4px; }
-  /* Inline rank chip (reuses .stat-rank); sits beside the value on stat rows. */
-  .rv-chip { margin-top: 0; }
-  .rv-block { margin-bottom: 18px; }
-  .rv-block:last-child { margin-bottom: 0; }
-  /* Two-column secondary stat rows on desktop; collapses to one column ≤767px. */
-  .rv-statgrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0 16px;
-  }
-  .rv-statrow {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--border);
-    min-width: 0;
-  }
-  .rv-statrow-label {
-    font-family: var(--body);
-    font-size: 13px;
-    color: var(--navy);
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  /* Value + rank chip pinned together on one line — never wraps or overflows. */
-  .rv-statrow-val {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
-    flex: 0 0 auto;
-    white-space: nowrap;
-  }
-  .rv-statrow-num {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--navy);
-    font-variant-numeric: tabular-nums;
-  }
-  /* Mobile: prominent row → 2×2, secondary rows → single column so each
-     label + value + chip stays on one line with no horizontal overflow.
-     Placed AFTER the base rules above so it wins the cascade (the page's
-     earlier @media block precedes these definitions). */
-  @media (max-width: 767px) {
-    .rv-prom { grid-template-columns: repeat(2, 1fr); }
-    .rv-prom-box .stat-num { font-size: 23px; }
-    .rv-statgrid { grid-template-columns: 1fr; gap: 0; }
-  }
-
   /* ---------- Rivals: RS / Playoff record cells ---------- */
   .rv-rec.rv-rs, .rv-rec.rv-po {
     font-family: var(--display);
@@ -1173,7 +1079,7 @@
   .rv-breakdown { margin-bottom: 18px; }
 
   /* ---------- Rivals: Big Game Matchups ---------- */
-  .bg-head { margin-top: 4px; }
+  /* Header matches the Head-to-Head .ov-head exactly (no extra top margin). */
   .bg-list { list-style: none; margin: 0; padding: 0; }
   .bg-row {
     display: grid;
@@ -1263,7 +1169,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 5, 2026</span>
+      <span class="meta-pill">Last Updated June 6, 2026</span>
     </div>
   </header>
 
@@ -2551,85 +2457,12 @@ function renderBigGames(owner) {
    colored by win rate) and Playoffs. The full breakdown is collapsible; the Big
    Game Matchups block sits below it. Stacks vertically so it never overflows a
    ~390px card. */
-/* League-rank chip, reusing the Power-tab `.stat-rank` component for consistent
-   styling. For lower-is-better metrics (losses / points-against) STAT_RANKS already
-   ranks ascending, so rank 1 == fewest; we append "fewest" so the chip reads
-   unambiguously (e.g. "1st fewest"). Returns "" when the value isn't ranked. */
-function rankChipHtml(metric, value, lowerBetter) {
-  var rk = rankLabel(metric, value);
-  if (!rk) return "";
-  var txt = lowerBetter ? (rk + " fewest") : rk;
-  var title = lowerBetter ? (rk + " — fewest is best (lower wins)") : (rk + " in league");
-  return '<span class="stat-rank rv-chip" title="' + escHtml(title) + '">(' + escHtml(txt) + ')</span>';
-}
-
-/* Career W/L + PF/PA splits shown atop the Rivals view. Three prominent metrics
-   (Championships, Total Wins, Total PF) plus OVR sit full-width above two
-   responsive 2-col blocks: a Record block (W/L splits) and a Points block (PF/PA
-   splits), each row carrying its league-rank chip. */
-function renderStatBlocks(owner) {
-  function promBox(label, valueText, metric, rankVal, gold) {
-    var chip = metric ? rankChipHtml(metric, rankVal, false) : "";
-    return '<div class="stat-box rv-prom-box">' +
-      '<div class="stat-num' + (gold ? ' gold' : '') + '">' + escHtml(valueText) + '</div>' +
-      '<div class="stat-label">' + escHtml(label) + '</div>' +
-      chip +
-    '</div>';
-  }
-  function statRow(label, valueText, metric, rankVal, lowerBetter) {
-    var chip = rankChipHtml(metric, rankVal, lowerBetter);
-    return '<div class="rv-statrow">' +
-      '<span class="rv-statrow-label">' + escHtml(label) + '</span>' +
-      '<span class="rv-statrow-val">' +
-        '<span class="rv-statrow-num">' + escHtml(valueText) + '</span>' + chip +
-      '</span>' +
-    '</div>';
-  }
-  function n(v) { return (v == null) ? "–" : v; }
-
-  var prom =
-    '<div class="rv-prom">' +
-      promBox("\u{1F3C6} Championships", n(owner.rings), "rings", owner.rings, true) +
-      promBox("Total Wins", n(owner.totW), "totW", owner.totW, false) +
-      promBox("Total PF", formatPF(owner.totalPF), "totalPF", owner.totalPF, false) +
-      promBox("OVR", (owner.ovr != null ? owner.ovr : "–"), null, null, false) +
-    '</div>';
-
-  var recordRows =
-    statRow("Reg Season W", n(owner.regW), "regW", owner.regW, false) +
-    statRow("Reg Season L", n(owner.regL), "regL", owner.regL, true) +
-    statRow("Playoff W",    n(owner.poW),  "poW",  owner.poW,  false) +
-    statRow("Playoff L",    n(owner.poL),  "poL",  owner.poL,  true) +
-    statRow("Total L",      n(owner.totL), "totL", owner.totL, true);
-
-  var pointRows =
-    statRow("Reg Season PF", formatPF(owner.regPF), "regPF", owner.regPF, false) +
-    statRow("Reg Season PA", formatPF(owner.regPA), "regPA", owner.regPA, true) +
-    statRow("Playoff PF",    formatPF(owner.poPF),  "poPF",  owner.poPF,  false) +
-    statRow("Playoff PA",    formatPF(owner.poPA),  "poPA",  owner.poPA,  true) +
-    statRow("Total PA",      formatPF(owner.totalPA), "totalPA", owner.totalPA, true);
-
-  return '<div class="rv-statblocks">' +
-    prom +
-    '<div class="rv-block">' +
-      '<div class="ov-head">Record — W/L Splits</div>' +
-      '<div class="rv-statgrid">' + recordRows + '</div>' +
-    '</div>' +
-    '<div class="rv-block">' +
-      '<div class="ov-head">Points — PF / PA Splits</div>' +
-      '<div class="rv-statgrid">' + pointRows + '</div>' +
-    '</div>' +
-  '</div>';
-}
-
 function renderRivals(owner) {
-  var statBlocks = renderStatBlocks(owner);
   var bigGames =
     '<div class="ov-head bg-head">Big Game Matchups</div>' + renderBigGames(owner);
   var opp = H2H_INDEX[owner.key];
   if (!opp || !Object.keys(opp).length) {
     return '<div class="rivalry-wrap">' +
-      statBlocks +
       '<div class="ov-head">Head-to-Head</div>' +
       '<div class="rivalry-empty">No head-to-head games on record.</div>' +
       bigGames +
@@ -2653,7 +2486,9 @@ function renderRivals(owner) {
     var poCell = r.poG
       ? '<span class="rv-rec rv-po">' + r.poW + '–' + r.poL + '</span>'
       : '<span class="rv-rec rv-po rv-empty">—</span>';
-    return '<li class="rv-row">' +
+    // Left-accent by regular-season result, mirroring .bg-row.bg-win/.bg-loss.
+    var rsCls = r.rsW > r.rsL ? " rv-win" : (r.rsW < r.rsL ? " rv-loss" : "");
+    return '<li class="rv-row' + rsCls + '">' +
       '<span class="rv-opp">' + escHtml(r.name) + '</span>' +
       '<span class="rv-rec rv-rs" style="background:' + winRateColor(r.pct) + '">' + r.rsW + '–' + r.rsL + '</span>' +
       poCell +
@@ -2672,11 +2507,10 @@ function renderRivals(owner) {
   var fullToggle = rowsHtml.length > 2
     ? '<button type="button" class="rv-toggle" aria-expanded="false">Show all opponents</button>' +
       '<div class="rv-breakdown" hidden>' +
-        '<ul class="rv-list">' + headerLi + rowsHtml.join("") + '</ul>' +
+        '<ul class="rv-list">' + headerLi + rowsHtml.slice(2).join("") + '</ul>' +
       '</div>'
     : "";
   return '<div class="rivalry-wrap">' +
-    statBlocks +
     '<div class="ov-head">Head-to-Head</div>' +
     summary +
     teaser +
@@ -2750,8 +2584,8 @@ function renderOwnerCard(owner, index) {
     { label: "Playoff Apps",         value: owner.playoffApps, rankKey: "playoffApps" },
     { label: "Years",                value: owner.years,        rankKey: "years" },
     { label: "Career Win %",         value: owner.winPct + "%", rankKey: "winPct", rankVal: owner.winPct },
-    { label: "Total PF",             value: formatPF(owner.totalPF), rankKey: "totalPF", rankVal: owner.totalPF },
-    { label: "Total PA",             value: formatPF(owner.totalPA), rankKey: "totalPA", rankVal: owner.totalPA }
+    { label: "Total Wins",           value: owner.totW, rankKey: "totW" },
+    { label: "Total PF",             value: formatPF(owner.totalPF), rankKey: "totalPF", rankVal: owner.totalPF }
   ];
 
   var statsHtml = stats.map(function (s) {
@@ -2789,19 +2623,7 @@ function renderOwnerCard(owner, index) {
     '<div class="scout-report"><p>' + escHtml(owner.scout) + '</p></div>';
 
   /* ---- Season timeline (moved into Overview) ---- */
-  var legend =
-    '<div class="timeline-head">' +
-      '<span class="timeline-head-label">Season Legend</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#f5a623"></span>Champ</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#c7c9d1"></span>Runner-Up</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#1a2e50"></span>Division</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#e1f5ee"></span>Playoff</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#fde9c7"></span>LT 1st</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#fef4e1"></span>LT Runner / Promo</span>' +
-      '<span class="legend-chip"><span class="legend-swatch" style="background:#f0f2f5"></span>Regular</span>' +
-    '</div>';
   var timelineHtml =
-    legend +
     '<div class="timeline-scroll">' +
       '<div class="timeline-row">' + renderTimelineCells(owner.timeline) + '</div>' +
     '</div>';
@@ -2893,7 +2715,7 @@ function renderOwnerCard(owner, index) {
       '<div class="card-body" id="body-' + escHtml(owner.key) + '">' +
         '<div class="portal-tabs" role="tablist" aria-label="Owner sections">' +
           tabBtn("overview", "Overview", true) +
-          tabBtn("power", "Power", false) +
+          tabBtn("power", "Rank", false) +
           tabBtn("rivalry", "Rivals", false) +
           tabBtn("draft", "Draft", false) +
         '</div>' +
