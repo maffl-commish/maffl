@@ -230,6 +230,39 @@
   }
 
   /* ---------- Filter pills ---------- */
+  .filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 24px 0 18px;
+    height: 36px;
+    padding: 0 16px;
+    background: transparent;
+    color: var(--navy);
+    border: 1px solid var(--navy);
+    border-radius: 6px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .filter-toggle-btn:hover { background: var(--navy-soft); }
+  .filter-toggle-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .filter-toggle-btn .ft-chev {
+    font-size: 11px;
+    transition: transform 0.15s ease;
+  }
+  .filter-toggle-btn[aria-expanded="true"] .ft-chev { transform: rotate(180deg); }
+
+  .filter-panel[hidden] { display: none; }
+  .filter-panel .filter-bar { margin-top: 0; }
   .filter-bar {
     display: flex;
     flex-wrap: wrap;
@@ -485,6 +518,8 @@
     main { padding: 24px 16px 40px; }
     .page-title { font-size: 24px; }
 
+    .filter-toggle-btn { min-height: 44px; }
+
     .filter-bar,
     .col-toggle-bar {
       flex-wrap: nowrap;
@@ -542,17 +577,25 @@
     </div>
   </header>
 
-  <div class="filter-bar" role="tablist" aria-label="Filter owners by status">
-    <button class="filter-pill" data-filter="all" role="tab" aria-selected="false">All Owners <span class="pill-count" id="countAll"></span></button>
-    <button class="filter-pill active" data-filter="active" role="tab" aria-selected="true">Active <span class="pill-count" id="countActive"></span></button>
-    <button class="filter-pill" data-filter="inactive" role="tab" aria-selected="false">Inactive <span class="pill-count" id="countInactive"></span></button>
-  </div>
+  <button class="filter-toggle-btn" id="filterToggle" aria-expanded="false"
+          aria-controls="filterPanel" type="button">
+    Filter <span class="ft-chev" aria-hidden="true">▾</span>
+  </button>
 
-  <div class="col-toggle-bar" aria-label="Column section toggles">
-    <button class="col-toggle active" id="grpAccolades" data-group="accolades" aria-pressed="true">Accolades</button>
-    <button class="col-toggle" id="grpPower" data-group="power" aria-pressed="false">Power Rating</button>
-    <button class="col-toggle" id="grpWl" data-group="wl" aria-pressed="false">W-L Splits</button>
-    <button class="col-toggle" id="grpPts" data-group="pts" aria-pressed="false">Points Splits</button>
+  <div class="filter-panel" id="filterPanel" hidden>
+    <div class="filter-bar" id="filterBar" role="tablist"
+         aria-label="Filter owners by status">
+      <button class="filter-pill" data-filter="all" role="tab" aria-selected="false">All Owners <span class="pill-count" id="countAll"></span></button>
+      <button class="filter-pill active" data-filter="active" role="tab" aria-selected="true">Active <span class="pill-count" id="countActive"></span></button>
+      <button class="filter-pill" data-filter="inactive" role="tab" aria-selected="false">Inactive <span class="pill-count" id="countInactive"></span></button>
+    </div>
+
+    <div class="col-toggle-bar" aria-label="Column section toggles">
+      <button class="col-toggle active" id="grpAccolades" data-group="accolades" aria-pressed="true">Accolades</button>
+      <button class="col-toggle" id="grpPower" data-group="power" aria-pressed="false">Power Rating</button>
+      <button class="col-toggle" id="grpWl" data-group="wl" aria-pressed="false">W-L Splits</button>
+      <button class="col-toggle" id="grpPts" data-group="pts" aria-pressed="false">Points Splits</button>
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -885,6 +928,17 @@ function renderTable() {
 
 /* ---------- Wire up interactions ---------- */
 function wireFilters() {
+  const FILTER_LABELS = { all: "All", active: "Active", inactive: "Inactive" };
+  const ft = document.getElementById("filterToggle");
+  const fb = document.getElementById("filterPanel");
+  const setToggleLabel = f => { ft.firstChild.textContent = "Filter: " + FILTER_LABELS[f] + " "; };
+
+  ft.addEventListener("click", () => {
+    const open = fb.hidden;
+    fb.hidden = !open;
+    ft.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
   document.querySelectorAll(".filter-pill").forEach(pill => {
     pill.addEventListener("click", () => {
       const f = pill.getAttribute("data-filter");
@@ -895,9 +949,13 @@ function wireFilters() {
         p.classList.toggle("active", isActive);
         p.setAttribute("aria-selected", isActive ? "true" : "false");
       });
+      setToggleLabel(f);
       renderTable();
     });
   });
+
+  // Initial label matches the default state (Active).
+  setToggleLabel(state.filter);
 }
 
 function wireSort() {
