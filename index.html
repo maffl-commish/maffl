@@ -563,16 +563,16 @@
     gap: 12px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--gold);
     border-radius: 999px;
     padding: 12px 24px;
-    box-shadow: 0 4px 14px var(--navy-shadow);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(26, 46, 80, 0.06);
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .speakup-btn:hover,
   .speakup-btn:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px var(--navy-shadow-strong);
+    transform: translateY(-1px);
+    border-color: var(--navy);
+    box-shadow: 0 6px 16px var(--navy-shadow);
   }
   .speakup-btn:active { transform: translateY(0); }
   .speakup-btn__icon { font-size: 22px; line-height: 1; }
@@ -896,7 +896,7 @@
 <footer class="site-footer">
   <div class="footer-meta" aria-label="Site version metadata">
     <span class="meta-pill">v1.0</span>
-    <span class="meta-pill">Last Updated June 5, 2026</span>
+    <span class="meta-pill">Last Updated June 6, 2026</span>
   </div>
   <div>League Founded 2002 &middot; Site est. 2026</div>
   <div>Built by the Commish</div>
