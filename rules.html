@@ -885,6 +885,21 @@
   }
   .news-item.news-item--soon { border-style: dashed; }
   .news-item.news-item--soon .news-date { color: var(--muted); }
+  a.news-item--link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  }
+  a.news-item--link:hover {
+    background: var(--gold-soft);
+    border-color: var(--gold);
+  }
+  a.news-item--link:active { transform: translateY(1px); }
+  a.news-item--link:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
 
   /* ---------- Static (non-collapsible) section head ---------- */
   .rule-head.is-static { cursor: default; }
@@ -1124,10 +1139,10 @@
             <tr><td>Divisions</td><td>4</td><td>None</td></tr>
             <tr><td>Regular Season</td><td>NFL Wks 1&ndash;14</td><td>NFL Wks 1&ndash;14</td></tr>
             <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
-            <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>Promotion Showdown</td></tr>
+            <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>No</td></tr>
             <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
             <tr><td>MAFFL Ghost</td><td>No</td><td>Yes, if odd-numbered</td></tr>
-            <tr><td>Draft Slot</td><td>Labor Day 8:30 AM EST</td><td>Labor Day 8:00 AM EST</td></tr>
+            <tr><td>Draft Slot</td><td>Labor Day 9:00 AM EST</td><td>Labor Day 8:00 AM EST</td></tr>
             <tr><td>Promotion</td><td>&mdash;</td><td>Top 3 Up</td></tr>
             <tr><td>Relegation</td><td>Bottom 3 Down</td><td>&mdash;</td></tr>
             <tr><td>Credits</td><td>Earn &amp; Spend</td><td>Earn &amp; Spend</td></tr>
@@ -1270,7 +1285,7 @@
           </thead>
           <tbody>
             <tr><td class="row-label">Slot 1</td><td>Lower-Tier</td><td>Labor Day, 8:00&ndash;10:00 AM EST</td></tr>
-            <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 8:30&ndash;10:30 AM EST</td></tr>
+            <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 9:00&ndash;11:00 AM EST</td></tr>
           </tbody>
         </table>
       </div>
@@ -1614,7 +1629,7 @@
         <ul>
           <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
           <li>A placeholder team called &ldquo;MAFFL Ghost&rdquo; is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.</li>
-          <li>Each week, the commissioner totals all real teams&rsquo; scores, divides by the number of real teams, and applies that average to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.</li>
+          <li>Each week, the commissioner drops the single highest real-team score, totals the remaining real teams&rsquo; scores, divides by that remaining count, and applies the result to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.</li>
           <li>The real team matched up against MAFFL Ghost that week wins if they beat the average and loses if they don&rsquo;t.</li>
           <li>MAFFL Ghost does not draft, earn credits, win prizes, or affect promotion/relegation.</li>
           <li>All real teams remain eligible for weekly high score prizes every week, including the team facing MAFFL Ghost.</li>
@@ -1622,7 +1637,7 @@
 
         <div class="callout">
           <span class="callout-label">Example</span>
-          <p>Nine Lower-Tier teams score a combined 1,038 points in a given week. MAFFL Ghost score = 1,038 / 9 = 115.3. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
+          <p>Nine Lower-Tier teams play in a given week. The single highest score is dropped, leaving eight teams that scored a combined 920 points. MAFFL Ghost score = 920 / 8 = 115.0. The team facing MAFFL Ghost that scored 119 wins. A team that scored 108 would have lost.</p>
         </div>
       </div>
     </section>
@@ -1711,25 +1726,29 @@ const RULEBOOK_LAST_UPDATED = "June 5, 2026";
  * ------------------------------------------------------------------- */
 const NEWS_FEED = [
   {
-    date: "September 7, 2026",
-    note: "Auction Draft scheduled — Lower-Tier Labor Day 8:00 AM EST, Upper-Tier 8:30 AM EST. See <a class=\"inline-link\" href=\"#auction\">Auction Draft</a> for full details."
-  },
-  {
     date: "July 1, 2026",
     type: "ANNOUNCEMENT",
-    note: "MAFFL HQ website is live."
+    note: "MAFFL HQ website is live.",
+    href: "index.html"
   },
   {
     date: "July 1, 2026",
     type: "NEW",
-    note: "MAFFL Ghost rule introduced — a scoring-average placeholder team keeps the Lower-Tier schedule even when it has an odd number of teams."
+    note: "MAFFL Ghost rule introduced — a scoring-average placeholder team keeps the Lower-Tier schedule even when it has an odd number of teams. Tap for the full rule.",
+    href: "#maffl-ghost"
   }
 ];
 
 const COMING_SOON = [
   {
+    date: "September 7, 2026",
+    note: "Auction Draft scheduled — Lower-Tier Labor Day 8:00 AM EST, Upper-Tier 9:00 AM EST. See Auction Draft for details.",
+    href: "#auction"
+  },
+  {
     date: "August 1, 2026",
-    note: "2026 Division Alignment to be set."
+    note: "2026 Division Alignment to be set.",
+    href: "#alignment"
   }
 ];
 
@@ -1759,11 +1778,16 @@ function renderTag(type, year) {
 (function renderNews() {
   function newsRow(item, soon) {
     const tag = item.type ? renderTag(item.type) : "";
-    return '' +
-      '<div class="news-item' + (soon ? ' news-item--soon' : '') + '">' +
-        '<span class="news-note">' + tag + item.note + '</span>' +
-        '<span class="news-date">' + escHtml(item.date) + '</span>' +
-      '</div>';
+    const inner =
+      '<span class="news-note">' + tag + escHtml(item.note) + '</span>' +
+      '<span class="news-date">' + escHtml(item.date) + '</span>';
+    const cls = "news-item" + (soon ? " news-item--soon" : "") +
+                (item.href ? " news-item--link" : "");
+    if (item.href) {
+      return '<a class="' + cls + '" href="' + escHtml(item.href) + '">' +
+             inner + '</a>';
+    }
+    return '<div class="' + cls + '">' + inner + '</div>';
   }
   const feed = document.getElementById("newsFeed");
   if (feed) {
@@ -1894,6 +1918,10 @@ function renderTag(type, year) {
     target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   }
   window.addEventListener("hashchange", openSectionFromHash);
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('.news-item--link[href^="#"]');
+    if (a) { setTimeout(openSectionFromHash, 0); }
+  });
   openSectionFromHash();
 
   updateExpandBtn();
