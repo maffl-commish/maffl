@@ -1068,6 +1068,72 @@
   .draft-pos-meta .draft-pos-price { color: var(--gold-dark); }
   .draft-cta--compact { background: none; padding: 0; text-align: left; }
 
+  /* ---------- Rivals: career W/L + PF/PA stat blocks ---------- */
+  .rv-statblocks { margin-bottom: 22px; }
+  /* Prominent row: Championships / Total Wins / Total PF / OVR — full-width,
+     bigger type. Reuses the Power-tab .stat-box look at a larger scale. */
+  .rv-prom {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .rv-prom-box { padding: 13px 10px; }
+  .rv-prom-box .stat-num { font-size: 27px; margin-bottom: 5px; }
+  .rv-prom-box .stat-label { margin-bottom: 4px; }
+  /* Inline rank chip (reuses .stat-rank); sits beside the value on stat rows. */
+  .rv-chip { margin-top: 0; }
+  .rv-block { margin-bottom: 18px; }
+  .rv-block:last-child { margin-bottom: 0; }
+  /* Two-column secondary stat rows on desktop; collapses to one column ≤767px. */
+  .rv-statgrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 16px;
+  }
+  .rv-statrow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+    min-width: 0;
+  }
+  .rv-statrow-label {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--navy);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* Value + rank chip pinned together on one line — never wraps or overflows. */
+  .rv-statrow-val {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .rv-statrow-num {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Mobile: prominent row → 2×2, secondary rows → single column so each
+     label + value + chip stays on one line with no horizontal overflow.
+     Placed AFTER the base rules above so it wins the cascade (the page's
+     earlier @media block precedes these definitions). */
+  @media (max-width: 767px) {
+    .rv-prom { grid-template-columns: repeat(2, 1fr); }
+    .rv-prom-box .stat-num { font-size: 23px; }
+    .rv-statgrid { grid-template-columns: 1fr; gap: 0; }
+  }
+
   /* ---------- Rivals: RS / Playoff record cells ---------- */
   .rv-rec.rv-rs, .rv-rec.rv-po {
     font-family: var(--display);
@@ -1196,7 +1262,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 4, 2026</span>
+      <span class="meta-pill">Last Updated June 5, 2026</span>
     </div>
   </header>
 
@@ -2085,7 +2151,8 @@ const OWNERS_DATA = [
  * values, keyed by the stable portal `key` (avoids the gold-name spacing
  * mismatches between CSVs):
  *   - thirds  : 3rd-place finishes      (MAFFL_Placements_AllTime.csv)
- *   - totalPF : career total points-for (MAFFL_Points_AllTime.csv, Total_PF)
+ *   - W/L + PF/PA splits and corrected career totalPF/totalPA are wired from
+ *     RECORD_POINTS_BY_KEY just below (see its header for the playoff rule).
  * Owners absent from the placements file get thirds: 0.
  * ===================================================================== */
 var THIRDS_BY_KEY = {
@@ -2093,40 +2160,75 @@ var THIRDS_BY_KEY = {
   "david-murello": 3, "mike-murello": 2, "bj-funari": 1, "bob-keslar": 2,
   "jeff-grace": 2, "josh-lavrinc": 1, "jacob-nickman": 1
 };
-var TOTAL_PF_BY_KEY = {
-  "joe-reilly": 30691.86, "brian-ron-murello": 31481.62, "tony-trozzo": 30789.4,
-  "jon-rick": 29297.54, "mike-murello": 30564.14, "david-murello": 30943.57,
-  "todd-trozzo": 30002.04, "chris-johnson": 28474.94, "jacob-nickman": 29607.75,
-  "bj-funari": 28820.7, "bob-keslar": 17954.02, "dan-reilly": 19202.08,
-  "jon-fetrow": 16630.56, "ed-peters": 18247.98, "tony-brooks": 7719.24,
-  "braiden-snyder": 6496.8, "ben-funari": 1759.6, "charles-lavrinc": 1762.46,
-  "sam-lavrinc": 1900.5, "nick-yankovich": 1941.46, "dominic-nicastro": 1787.56,
-  "josh-lavrinc": 23351.47, "jeff-grace": 7411.0, "sean-ritson": 9513.0,
-  "jimmy-crisan": 7616.75, "marcus-joe-ruby": 6593.0, "mike-licciardi": 7253.26,
-  "josh-farber": 1477.34, "craig-toth": 5344.75, "joni-murello": 4942.4,
-  "matt-brown": 4819.5, "kevin-radkowski": 1287.06,
-  "marcus-ruby": 2487.5, "cavalier-nicastro": 3654.3
+/* Authoritative per-owner WIN/LOSS and POINTS-FOR/AGAINST splits, keyed by the
+   stable portal `key`. Summed per game from data/MAFFL_Matchups_NoConsolation.csv
+   under the project 2025-forward playoff rule:
+     - Regular  = Game_Type == "Regular" (all tiers). Matches Reg_PF/Reg_PA in
+                  MAFFL_Points_AllTime.csv exactly (verified).
+     - Playoff  = the full NoConsolation playoff set (Quarterfinal + Semifinal +
+                  Championship + ThirdPlace) for seasons <= 2024; for 2025+ only
+                  Upper-tier, non-ThirdPlace games (Tier == "Upper" &&
+                  Game_Type != "ThirdPlace"). (No behavioral change for 2025 yet —
+                  it has no ThirdPlace/Lower playoff games — but the filter holds
+                  for 2026+.)
+   NOTE: because the Playoff split uses the full anchored-bracket set, the DERIVED
+   career totals (reg+post) INTENTIONALLY differ from MAFFL_Points_AllTime.csv's
+   Post_ and Total_ columns, which are on a stale/narrow playoff definition that
+   predates the 2026-06-03 bracket reclassification. We treat the matchup-derived
+   figures as authoritative so W/L and PF/PA stay coherent (same game sets).
+   PF/PA are points (2-dp); totals are derived in the wiring loop below. */
+var RECORD_POINTS_BY_KEY = {
+  "joe-reilly": { regW:152, regL:126, poW:14, poL:9, regPF:30041.04, regPA:28861.42, poPF:2666.12, poPA:2421.16 },
+  "brian-ron-murello": { regW:165, regL:113, poW:17, poL:14, regPF:30584.3, regPA:28821.34, poPF:3531.96, poPA:3435.64 },
+  "tony-trozzo": { regW:149, regL:127, poW:15, poL:8, regPF:30136.08, regPA:29159.19, poPF:2566.72, poPA:2423.62 },
+  "jon-rick": { regW:131, regL:134, poW:13, poL:8, regPF:28592.52, regPA:28348.84, poPF:2495.8, poPA:2240.34 },
+  "mike-murello": { regW:145, regL:132, poW:12, poL:11, regPF:29923.32, regPA:29341.69, poPF:2576.2, poPA:2583.32 },
+  "david-murello": { regW:151, regL:127, poW:15, poL:14, regPF:30075.91, regPA:29321.3, poPF:3446.9, poPA:3367.9 },
+  "todd-trozzo": { regW:131, regL:147, poW:12, poL:6, regPF:29271.78, regPA:29361.76, poPF:2005.44, poPA:1854.5 },
+  "chris-johnson": { regW:119, regL:159, poW:12, poL:12, regPF:27788.92, regPA:29100.35, poPF:2512.9, poPA:2618.22 },
+  "jacob-nickman": { regW:131, regL:146, poW:9, poL:7, regPF:29162.19, regPA:29790.58, poPF:1747.62, poPA:1733.38 },
+  "bj-funari": { regW:146, regL:119, poW:11, poL:14, regPF:28118.5, regPA:27683.02, poPF:2776.64, poPA:2853.1 },
+  "bob-keslar": { regW:84, regL:77, poW:11, poL:8, regPF:17334.1, regPA:17372.94, poPF:2094.02, poPA:2098 },
+  "dan-reilly": { regW:96, regL:78, poW:2, poL:8, regPF:19023.02, regPA:18400.92, poPF:902.58, poPA:1086.36 },
+  "jon-fetrow": { regW:72, regL:89, poW:3, poL:7, regPF:16548.68, regPA:17395.22, poPF:1115.34, poPA:1191.66 },
+  "ed-peters": { regW:76, regL:98, poW:1, poL:6, regPF:18199.18, regPA:18792.88, poPF:711.54, poPA:841.12 },
+  "tony-brooks": { regW:31, regL:37, poW:0, poL:1, regPF:7719.24, regPA:7834.8, poPF:102.72, poPA:106.02 },
+  "braiden-snyder": { regW:31, regL:25, poW:0, poL:2, regPF:6496.8, regPA:6429.62, poPF:213.4, poPA:238.04 },
+  "ben-funari": { regW:6, regL:6, poW:0, poL:0, regPF:1759.6, regPA:1802.42, poPF:0, poPA:0 },
+  "charles-lavrinc": { regW:5, regL:7, poW:0, poL:0, regPF:1762.46, regPA:1863.84, poPF:0, poPA:0 },
+  "sam-lavrinc": { regW:5, regL:8, poW:0, poL:0, regPF:1900.5, regPA:2005.42, poPF:0, poPA:0 },
+  "nick-yankovich": { regW:5, regL:8, poW:0, poL:0, regPF:1941.46, regPA:2032.84, poPF:0, poPA:0 },
+  "dominic-nicastro": { regW:4, regL:8, poW:0, poL:0, regPF:1787.56, regPA:1859.64, poPF:0, poPA:0 },
+  "josh-lavrinc": { regW:104, regL:118, poW:5, poL:7, regPF:23047.89, regPA:23541.23, poPF:1290.1, poPA:1249.76 },
+  "jeff-grace": { regW:40, regL:25, poW:6, poL:6, regPF:7002.5, regPA:6746.25, poPF:1255.5, poPA:1304.5 },
+  "sean-ritson": { regW:52, regL:39, poW:4, poL:4, regPF:9324, regPA:8838.5, poPF:859, poPA:864 },
+  "jimmy-crisan": { regW:31, regL:47, poW:0, poL:2, regPF:7616.75, regPA:7946.75, poPF:154, poPA:256 },
+  "marcus-joe-ruby": { regW:30, regL:35, poW:1, poL:4, regPF:6460.5, regPA:6596.5, poPF:480, poPA:585 },
+  "mike-licciardi": { regW:29, regL:49, poW:0, poL:2, regPF:7253.26, regPA:8042.54, poPF:140.04, poPA:221.94 },
+  "josh-farber": { regW:9, regL:4, poW:0, poL:1, regPF:1477.34, regPA:1268.78, poPF:90.32, poPA:112.06 },
+  "craig-toth": { regW:23, regL:29, poW:0, poL:1, regPF:5344.75, regPA:5718.25, poPF:76, poPA:120.5 },
+  "joni-murello": { regW:21, regL:31, poW:0, poL:1, regPF:4942.4, regPA:5325.04, poPF:130.04, poPA:134.76 },
+  "matt-brown": { regW:23, regL:29, poW:0, poL:0, regPF:4819.5, regPA:5183, poPF:0, poPA:0 },
+  "kevin-radkowski": { regW:7, regL:6, poW:0, poL:0, regPF:1287.06, regPA:1315.12, poPF:0, poPA:0 },
+  "marcus-ruby": { regW:11, regL:15, poW:0, poL:0, regPF:2487.5, regPA:2687, poPF:0, poPA:0 },
+  "cavalier-nicastro": { regW:11, regL:28, poW:0, poL:0, regPF:3654.3, regPA:4095.92, poPF:0, poPA:0 }
 };
-/* Career total points-against (MAFFL_Points_AllTime.csv, Total_PA), keyed by
-   portal key — companion to TOTAL_PF_BY_KEY. Lower is better. */
-var TOTAL_PA_BY_KEY = {
-  "brian-ron-murello": 29699.06, "david-murello": 30134.58, "tony-trozzo": 29714.63,
-  "joe-reilly": 29427.64, "mike-murello": 30051.47, "todd-trozzo": 29998.92,
-  "jacob-nickman": 30178.04, "jon-rick": 28951.28, "bj-funari": 28429.46,
-  "chris-johnson": 29923.69, "josh-lavrinc": 23848.37, "dan-reilly": 18618.58,
-  "ed-peters": 18861.28, "bob-keslar": 18021.04, "jon-fetrow": 17524.88,
-  "sean-ritson": 9069.5, "tony-brooks": 7834.8, "jimmy-crisan": 7946.75,
-  "jeff-grace": 7224.25, "mike-licciardi": 8042.54, "marcus-joe-ruby": 6739.5,
-  "braiden-snyder": 6429.62, "craig-toth": 5718.25, "joni-murello": 5325.04,
-  "matt-brown": 5183, "cavalier-nicastro": 4095.92, "marcus-ruby": 2687,
-  "nick-yankovich": 2032.84, "sam-lavrinc": 2005.42, "dominic-nicastro": 1859.64,
-  "charles-lavrinc": 1863.84, "ben-funari": 1802.42, "josh-farber": 1268.78,
-  "kevin-radkowski": 1315.12
-};
+function _round2(v) { return Math.round(v * 100) / 100; }
 OWNERS_DATA.forEach(function (o) {
   o.thirds = THIRDS_BY_KEY[o.key] || 0;
-  o.totalPF = (TOTAL_PF_BY_KEY[o.key] != null) ? TOTAL_PF_BY_KEY[o.key] : null;
-  o.totalPA = (TOTAL_PA_BY_KEY[o.key] != null) ? TOTAL_PA_BY_KEY[o.key] : null;
+  var rp = RECORD_POINTS_BY_KEY[o.key];
+  if (rp) {
+    o.regW = rp.regW; o.regL = rp.regL; o.poW = rp.poW; o.poL = rp.poL;
+    o.totW = rp.regW + rp.poW; o.totL = rp.regL + rp.poL;
+    o.regPF = rp.regPF; o.regPA = rp.regPA;
+    o.poPF = rp.poPF; o.poPA = rp.poPA;
+    // Corrected career totals (used by BOTH the Power tab and the Rivals prominent row).
+    o.totalPF = _round2(rp.regPF + rp.poPF);
+    o.totalPA = _round2(rp.regPA + rp.poPA);
+  } else {
+    o.regW = o.regL = o.poW = o.poL = o.totW = o.totL = null;
+    o.regPF = o.regPA = o.poPF = o.poPA = o.totalPF = o.totalPA = null;
+  }
 });
 
 /* Normalize a gold owner name for cross-CSV matching: collapse runs of
@@ -2213,9 +2315,10 @@ var DRAFT_BY_KEY = (function () {
    (none today for these metrics) are excluded from the ranking. */
 var STAT_RANKS = (function () {
   // Higher value = better rank.
-  var higher = ["rings", "runners", "divTitles", "playoffApps", "winPct", "years", "totalPF", "thirds"];
-  // Lower value = better rank (fewest points against wins).
-  var lower = ["totalPA"];
+  var higher = ["rings", "runners", "divTitles", "playoffApps", "winPct", "years", "totalPF", "thirds",
+                "regW", "poW", "totW", "regPF", "poPF"];
+  // Lower value = better rank (fewest losses / points-against wins).
+  var lower = ["totalPA", "regL", "poL", "totL", "regPA", "poPA"];
   var out = {};
   higher.forEach(function (m) {
     var vals = OWNERS_DATA.map(function (o) { return o[m]; })
@@ -2447,12 +2550,86 @@ function renderBigGames(owner) {
    colored by win rate) and Playoffs. The full breakdown is collapsible; the Big
    Game Matchups block sits below it. Stacks vertically so it never overflows a
    ~390px card. */
+/* League-rank chip, reusing the Power-tab `.stat-rank` component for consistent
+   styling. For lower-is-better metrics (losses / points-against) STAT_RANKS already
+   ranks ascending, so rank 1 == fewest; we append "fewest" so the chip reads
+   unambiguously (e.g. "1st fewest"). Returns "" when the value isn't ranked. */
+function rankChipHtml(metric, value, lowerBetter) {
+  var rk = rankLabel(metric, value);
+  if (!rk) return "";
+  var txt = lowerBetter ? (rk + " fewest") : rk;
+  var title = lowerBetter ? (rk + " — fewest is best (lower wins)") : (rk + " in league");
+  return '<span class="stat-rank rv-chip" title="' + escHtml(title) + '">(' + escHtml(txt) + ')</span>';
+}
+
+/* Career W/L + PF/PA splits shown atop the Rivals view. Three prominent metrics
+   (Championships, Total Wins, Total PF) plus OVR sit full-width above two
+   responsive 2-col blocks: a Record block (W/L splits) and a Points block (PF/PA
+   splits), each row carrying its league-rank chip. */
+function renderStatBlocks(owner) {
+  function promBox(label, valueText, metric, rankVal, gold) {
+    var chip = metric ? rankChipHtml(metric, rankVal, false) : "";
+    return '<div class="stat-box rv-prom-box">' +
+      '<div class="stat-num' + (gold ? ' gold' : '') + '">' + escHtml(valueText) + '</div>' +
+      '<div class="stat-label">' + escHtml(label) + '</div>' +
+      chip +
+    '</div>';
+  }
+  function statRow(label, valueText, metric, rankVal, lowerBetter) {
+    var chip = rankChipHtml(metric, rankVal, lowerBetter);
+    return '<div class="rv-statrow">' +
+      '<span class="rv-statrow-label">' + escHtml(label) + '</span>' +
+      '<span class="rv-statrow-val">' +
+        '<span class="rv-statrow-num">' + escHtml(valueText) + '</span>' + chip +
+      '</span>' +
+    '</div>';
+  }
+  function n(v) { return (v == null) ? "–" : v; }
+
+  var prom =
+    '<div class="rv-prom">' +
+      promBox("\u{1F3C6} Championships", n(owner.rings), "rings", owner.rings, true) +
+      promBox("Total Wins", n(owner.totW), "totW", owner.totW, false) +
+      promBox("Total PF", formatPF(owner.totalPF), "totalPF", owner.totalPF, false) +
+      promBox("OVR", (owner.ovr != null ? owner.ovr : "–"), null, null, false) +
+    '</div>';
+
+  var recordRows =
+    statRow("Reg Season W", n(owner.regW), "regW", owner.regW, false) +
+    statRow("Reg Season L", n(owner.regL), "regL", owner.regL, true) +
+    statRow("Playoff W",    n(owner.poW),  "poW",  owner.poW,  false) +
+    statRow("Playoff L",    n(owner.poL),  "poL",  owner.poL,  true) +
+    statRow("Total L",      n(owner.totL), "totL", owner.totL, true);
+
+  var pointRows =
+    statRow("Reg Season PF", formatPF(owner.regPF), "regPF", owner.regPF, false) +
+    statRow("Reg Season PA", formatPF(owner.regPA), "regPA", owner.regPA, true) +
+    statRow("Playoff PF",    formatPF(owner.poPF),  "poPF",  owner.poPF,  false) +
+    statRow("Playoff PA",    formatPF(owner.poPA),  "poPA",  owner.poPA,  true) +
+    statRow("Total PA",      formatPF(owner.totalPA), "totalPA", owner.totalPA, true);
+
+  return '<div class="rv-statblocks">' +
+    prom +
+    '<div class="rv-block">' +
+      '<div class="ov-head">Record — W/L Splits</div>' +
+      '<div class="rv-statgrid">' + recordRows + '</div>' +
+    '</div>' +
+    '<div class="rv-block">' +
+      '<div class="ov-head">Points — PF / PA Splits</div>' +
+      '<div class="rv-statgrid">' + pointRows + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
 function renderRivals(owner) {
+  var statBlocks = renderStatBlocks(owner);
   var bigGames =
     '<div class="ov-head bg-head">Big Game Matchups</div>' + renderBigGames(owner);
   var opp = H2H_INDEX[owner.key];
   if (!opp || !Object.keys(opp).length) {
     return '<div class="rivalry-wrap">' +
+      statBlocks +
+      '<div class="ov-head">Head-to-Head</div>' +
       '<div class="rivalry-empty">No head-to-head games on record.</div>' +
       bigGames +
     '</div>';
@@ -2498,6 +2675,8 @@ function renderRivals(owner) {
       '</div>'
     : "";
   return '<div class="rivalry-wrap">' +
+    statBlocks +
+    '<div class="ov-head">Head-to-Head</div>' +
     summary +
     teaser +
     fullToggle +
