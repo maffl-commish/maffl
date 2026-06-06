@@ -415,6 +415,85 @@
     line-height: 1;
   }
 
+  /* ---------- Rulebook search ----------
+     Live search over the rule sections; modeled on draft.html's
+     #filterPlayer field (full-width, rounded, var(--body)). The dropdown is
+     absolutely positioned within the .rules-search relative wrapper so it
+     overlays content instead of pushing layout. */
+  .rules-search {
+    position: relative;
+    margin: 20px 0 0 0;
+  }
+  .rules-search input[type="search"] {
+    width: 100%;
+    height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--navy);
+    border-radius: 6px;
+    padding: 0 14px;
+    font-family: var(--body);
+    /* 16px+ keeps iOS from zooming the viewport when the field is focused. */
+    font-size: 16px;
+    color: var(--navy);
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+  }
+  .rules-search input[type="search"]::placeholder { color: var(--muted); }
+  .rules-search input[type="search"]:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-soft);
+  }
+  .rules-search-results {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    width: 100%;            /* never wider than the input (mobile overflow) */
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px var(--navy-soft);
+    max-height: 50vh;
+    overflow-y: auto;       /* scroll internally, don't push layout */
+    -webkit-overflow-scrolling: touch;
+    z-index: 50;
+  }
+  .rules-search-results[hidden] { display: none; }
+  .rules-search-results li {
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .rules-search-results li + li { margin-top: 2px; }
+  .rules-search-results li:hover,
+  .rules-search-results li.active {
+    background: var(--navy-soft);
+  }
+  .rules-search-result-title {
+    display: block;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .rules-search-result-snippet {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   /* ---------- Accordion sections ---------- */
   .rules-list {
     display: flex;
@@ -979,7 +1058,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rulebook version metadata">
       <span class="meta-pill" id="versionChipVersion">v1.0</span>
-      <span class="meta-pill" id="versionChipUpdated">Last Updated June 5, 2026</span>
+      <span class="meta-pill" id="versionChipUpdated">Last Updated June 6, 2026</span>
     </div>
   </header>
 
@@ -1159,6 +1238,14 @@
        RULEBOOK TAB — the full ruleset.
        ========================================================= -->
   <div class="tab-panel" id="tab-rulebook" data-tab-panel="rulebook" role="tabpanel" aria-labelledby="tabBtnRulebook" hidden>
+
+  <!-- Live search over every rule section (see wireRulesSearch() below). -->
+  <div class="rules-search">
+    <input type="search" id="rulesSearch" autocomplete="off"
+           placeholder="Search the rulebook…" aria-label="Search the rulebook"
+           aria-expanded="false" aria-controls="rulesSearchResults" role="combobox">
+    <ul class="rules-search-results" id="rulesSearchResults" role="listbox" hidden></ul>
+  </div>
 
   <!-- Expand / Collapse All lives only on the Rulebook tab. -->
   <div class="rules-controls">
@@ -1940,6 +2027,153 @@ function renderTag(type, year) {
     if (a) { setTimeout(openSectionFromHash, 0); }
   });
   openSectionFromHash();
+
+  /* ---------- Rulebook search ----------
+     Indexes every .rule-section (across BOTH tabs — Info matches resolve too)
+     and filters it live. Selecting a result reuses the existing
+     openSectionFromHash() open+scroll path, which already switches to the
+     section's tab when it lives in a hidden panel. Lives inside this IIFE so
+     openSectionFromHash is in scope. */
+  (function wireRulesSearch() {
+    const input = document.getElementById("rulesSearch");
+    const list = document.getElementById("rulesSearchResults");
+    if (!input || !list) return;
+
+    /* Build the index once at load. Each entry needs a stable id for the
+       hash/scroll path; sections that only carry data-section are assigned
+       "sec-<data-section>". The News feed (dataset.static) is skipped. */
+    const index = Array.from(document.querySelectorAll(".rule-section"))
+      .filter(function (s) { return !s.dataset.static; })
+      .map(function (section) {
+        let id = section.id;
+        if (!id && section.dataset.section) {
+          id = "sec-" + section.dataset.section;
+          section.id = id;
+        }
+        const titleEl = section.querySelector(".rule-title");
+        const panel = section.closest(".tab-panel");
+        return {
+          section: section,
+          id: id,
+          title: titleEl ? titleEl.textContent.trim() : "",
+          panel: panel ? panel.dataset.tabPanel : "", // kept for tab-switch confirmation
+          text: section.textContent.toLowerCase()
+        };
+      })
+      .filter(function (entry) { return entry.id && entry.title; });
+
+    let activeIdx = -1;
+    let debounce;
+
+    function closeList() {
+      list.hidden = true;
+      list.innerHTML = "";
+      activeIdx = -1;
+      input.setAttribute("aria-expanded", "false");
+    }
+
+    /* A short bit of surrounding copy around the first query hit, for context. */
+    function snippetFor(entry, q) {
+      const pos = entry.text.indexOf(q);
+      if (pos === -1) return ""; // title-only match
+      const start = Math.max(0, pos - 30);
+      let snip = entry.section.textContent
+        .slice(start, pos + q.length + 40)
+        .replace(/\s+/g, " ")
+        .trim();
+      if (start > 0) snip = "…" + snip;
+      return snip;
+    }
+
+    function render(matches, q) {
+      if (!matches.length) { closeList(); return; }
+      list.innerHTML = "";
+      matches.forEach(function (entry) {
+        const li = document.createElement("li");
+        li.setAttribute("role", "option");
+        li.setAttribute("data-id", entry.id);
+        const titleEl = document.createElement("span");
+        titleEl.className = "rules-search-result-title";
+        titleEl.textContent = entry.title;
+        li.appendChild(titleEl);
+        const snip = snippetFor(entry, q);
+        if (snip) {
+          const snipEl = document.createElement("span");
+          snipEl.className = "rules-search-result-snippet";
+          snipEl.textContent = snip;
+          li.appendChild(snipEl);
+        }
+        list.appendChild(li);
+      });
+      activeIdx = -1;
+      list.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+    }
+
+    function runSearch() {
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2) { closeList(); return; }
+      const matches = index.filter(function (entry) {
+        return entry.title.toLowerCase().includes(q) || entry.text.includes(q);
+      }).slice(0, 8);
+      render(matches, q);
+    }
+
+    function select(li) {
+      if (!li) return;
+      const id = li.getAttribute("data-id");
+      if (!id) return;
+      /* Reuse the deep-link path: set the hash, then trigger the same
+         open + tab-switch + scroll behavior used for #-links elsewhere. */
+      window.location.hash = "#" + id;
+      openSectionFromHash();
+      input.value = "";
+      closeList();
+      input.blur(); // dismiss the iOS keyboard
+    }
+
+    function highlight(i) {
+      const items = Array.from(list.children);
+      items.forEach(function (li, idx) { li.classList.toggle("active", idx === i); });
+      activeIdx = i;
+      if (items[i]) items[i].scrollIntoView({ block: "nearest" });
+    }
+
+    input.addEventListener("input", function () {
+      clearTimeout(debounce);
+      debounce = setTimeout(runSearch, 120);
+    });
+
+    input.addEventListener("keydown", function (e) {
+      const items = Array.from(list.children);
+      if (e.key === "ArrowDown") {
+        if (list.hidden || !items.length) return;
+        e.preventDefault();
+        highlight((activeIdx + 1) % items.length);
+      } else if (e.key === "ArrowUp") {
+        if (list.hidden || !items.length) return;
+        e.preventDefault();
+        highlight((activeIdx - 1 + items.length) % items.length);
+      } else if (e.key === "Enter") {
+        if (!list.hidden && items.length) {
+          e.preventDefault();
+          select(items[activeIdx >= 0 ? activeIdx : 0]);
+        }
+      } else if (e.key === "Escape") {
+        closeList();
+      }
+    });
+
+    list.addEventListener("click", function (e) {
+      const li = e.target.closest("li[data-id]");
+      if (li) select(li);
+    });
+
+    /* Clicking anywhere outside the search wrapper closes the dropdown. */
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest(".rules-search")) closeList();
+    });
+  })();
 
   updateExpandBtn();
 })();
