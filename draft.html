@@ -577,6 +577,12 @@
     margin-bottom: 12px;
     min-height: 26px;
   }
+  .results-count {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    margin: 4px 0 8px;
+  }
   .filter-chip {
     display: inline-flex;
     align-items: center;
@@ -1952,7 +1958,7 @@
     </div>
     <div class="page-header__meta" aria-label="Auction Draft version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 5, 2026</span>
+      <span class="meta-pill">Last Updated June 6, 2026</span>
     </div>
   </header>
 
@@ -2033,6 +2039,8 @@
     </div>
 
     <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+
+    <p class="results-count" id="resultsCount" aria-live="polite"></p>
 
     <div class="table-wrap">
       <table class="dp-table" id="resultsTable">
@@ -8496,10 +8504,13 @@ function renderSearch() {
   const total = rows.length;
   sortRows(rows);
 
+  const countEl = document.getElementById("resultsCount");
+
   if (total === 0) {
     resultsBody.innerHTML = "";
     tableEl.style.display = "none";
     emptyState.style.display = "block";
+    countEl.textContent = "";
     return;
   }
 
@@ -8508,6 +8519,15 @@ function renderSearch() {
 
   if (rows.length > RESULT_CAP) {
     rows = rows.slice(0, RESULT_CAP);
+  }
+
+  const shown = Math.min(total, RESULT_CAP);
+  if (total > RESULT_CAP) {
+    countEl.textContent = "Showing " + shown.toLocaleString() + " of " +
+      total.toLocaleString() + " picks";
+  } else {
+    countEl.textContent = "Showing " + total.toLocaleString() +
+      " of " + PICKS.length.toLocaleString() + " picks";
   }
 
   const html = new Array(rows.length);
