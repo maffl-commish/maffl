@@ -497,6 +497,31 @@
     font-size: 13px;
   }
 
+  /* Subtle inline text link — a convenience deep-link that must NOT outrank the
+     .portal-tabs below it, so no fill/border/shadow. */
+  .ruleset-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    color: var(--muted);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .ruleset-link:hover {
+    color: var(--gold-dark);
+  }
+  .ruleset-link:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
   /* Credit Request — gold fill / navy text so it reads as a distinct action from
      the navy Credit Ruleset button beside it. */
   .rules-link--request {
@@ -851,7 +876,7 @@
     </div>
     <div class="page-header__meta" aria-label="Credits version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 5, 2026</span>
+      <span class="meta-pill">Last Updated June 6, 2026</span>
     </div>
   </header>
 
@@ -872,7 +897,7 @@
            System section of the rulebook and auto-expands it (rules.html reads the
            #hash). The Request link mirrors the one on index.html. -->
       <div class="portal-head__actions">
-        <a class="rules-link rules-link--sm" href="rules.html#credit-system">Credit Ruleset &rarr;</a>
+        <a class="ruleset-link" href="rules.html#credit-system">Credit Ruleset &rarr;</a>
       </div>
     </div>
 
