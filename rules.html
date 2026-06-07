@@ -996,6 +996,35 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
+
+  /* ---------- Tier two-column list (Info tab) ---------- */
+  .tier-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .tier-col h3.subhead { margin-top: 0; }
+  ul.owner-tier-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.9;
+  }
+  ul.owner-tier-list li { margin: 0; }
+  ul.owner-tier-list a {
+    color: var(--navy);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+  }
+  ul.owner-tier-list a:hover { border-bottom-color: var(--gold); }
+  @media (max-width: 767px) {
+    .tier-columns { grid-template-columns: 1fr; }
+  }
+
   .division-card {
     background: var(--page-bg);
     border: 1px solid var(--border);
@@ -1100,66 +1129,88 @@
     </section>
 
     <!-- =========================================================
-         2026 Upper-Tier & Lower-Tier Assignments — per-owner tier only.
-         Division detail lives in "2026 Upper-Tier Division Alignment".
+         League Info
          ========================================================= -->
-    <section class="rule-section" id="assignments" data-section="assignments">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-assignments">
-        <h2 class="rule-title">2026 Upper-Tier &amp; Lower-Tier Assignments</h2>
+    <section class="rule-section" data-section="overview">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-overview">
+        <h2 class="rule-title">League Info</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
-      <div class="rule-body" id="body-assignments">
-        <!-- DATA INTEGRITY: Verify tier assignments against the Owners Sheet each offseason.
-             Promotions/relegations can leave stale tier labels in one source while another is
-             correct. 2026: Mike Murello, Tony Trozzo, Jacob Nickman were promoted to Upper-Tier;
-             the alignment sheet's "Lower-Tier" label for them is a known anomaly — Upper-Tier is correct. -->
-        <table class="data-table">
+      <div class="rule-body" id="body-overview">
+        <table class="overview-table">
           <thead>
             <tr>
-              <th scope="col">Owner</th>
-              <th scope="col">Tier</th>
+              <th scope="col">Attribute</th>
+              <th scope="col">Upper-Tier</th>
+              <th scope="col">Lower-Tier</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td class="row-label">David Murello</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">BJ Funari</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Mike Murello</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Jon Murello / Rick Simmons</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Jacob Nickman</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Braiden Snyder</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Joe Reilly</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Dan Reilly</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Tony Trozzo</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Brian Murello / Ron Murello</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Ed Peters</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Jon Fetrow</td><td>Upper-Tier</td></tr>
-            <tr><td class="row-label">Tony Brooks</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Sam Lavrinc</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Ben Funari</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Charles Lavrinc</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Dominic Nicastro</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Nick Yankovich</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Todd Trozzo</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Bob Keslar</td><td>Lower-Tier</td></tr>
-            <tr><td class="row-label">Chris Johnson</td><td>Lower-Tier</td></tr>
+            <tr><td>Entry Fee</td><td>$100</td><td>$100</td></tr>
+            <tr><td>League Size</td><td>12 Teams</td><td>Min 6</td></tr>
+            <tr><td>Divisions</td><td>4</td><td>None</td></tr>
+            <tr><td>Regular Season</td><td>NFL Wks 1&ndash;14</td><td>NFL Wks 1&ndash;14</td></tr>
+            <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
+            <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>No</td></tr>
+            <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
+            <tr><td>MAFFL Ghost</td><td>No</td><td>Yes, if odd-numbered</td></tr>
+            <tr><td>Draft Slot</td><td>Labor Day 9:00 AM EST</td><td>Labor Day 8:00 AM EST</td></tr>
+            <tr><td>Promotion</td><td>&mdash;</td><td>Top 3 Up</td></tr>
+            <tr><td>Relegation</td><td>Bottom 3 Down</td><td>&mdash;</td></tr>
+            <tr><td>Credits</td><td>Earn &amp; Spend</td><td>Earn &amp; Spend</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <!-- =========================================================
-         2026 Upper-Tier Division Alignment — the season's division
-         announcement: the twelve Upper-Tier teams grouped A–D. The
-         "how it's set" rules live in the Rulebook's Division Alignment.
+         2026 Tier & Division Alignment — merged view of tier
+         assignments and Upper-Tier division groupings, with
+         email links per owner. Lower-Tier has no divisions.
          ========================================================= -->
     <section class="rule-section" id="alignment" data-section="alignment">
       <button class="rule-head" aria-expanded="false" aria-controls="body-alignment">
-        <h2 class="rule-title">2026 Upper-Tier Division Alignment</h2>
+        <h2 class="rule-title">2026 Tier &amp; Division Alignment</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="rule-body" id="body-alignment">
-        <p>The twelve Upper-Tier teams for 2026, grouped into Divisions A&ndash;D. Alignment locks August 1, 2026. For how divisions are determined, see <strong>Division Alignment</strong> in the Rulebook.</p>
+        <p>The 2026 season roster — 12 Upper-Tier and 9 Lower-Tier. Upper-Tier teams are grouped into Divisions A&ndash;D. For how divisions are determined, see <strong>Division Alignment</strong> in the Rulebook.</p>
 
+        <div class="tier-columns">
+          <div class="tier-col">
+            <h3 class="subhead">Upper-Tier</h3>
+            <ul class="owner-tier-list">
+              <li><a href="mailto:dmurello@atlanticbb.net">David Murello</a> &mdash; Div A</li>
+              <li><a href="mailto:bryan.funari@gmail.com">BJ Funari</a> &mdash; Div A</li>
+              <li><a href="mailto:michael.murello@gmail.com">Mike Murello</a> &mdash; Div A</li>
+              <li><a href="mailto:jonathan.murello@gmail.com">Jon Murello / Rick Simmons</a> &mdash; Div B</li>
+              <li><a href="mailto:jacob.nickman@gmail.com">Jacob Nickman</a> &mdash; Div B</li>
+              <li><a href="mailto:braidenanthony2007@gmail.com">Braiden Snyder</a> &mdash; Div B</li>
+              <li><a href="mailto:joereilly5@gmail.com">Joe Reilly</a> &mdash; Div C</li>
+              <li><a href="mailto:reilly.dp@gmail.com">Dan Reilly</a> &mdash; Div C</li>
+              <li><a href="mailto:tonytroz@gmail.com">Tony Trozzo</a> &mdash; Div C</li>
+              <li><a href="mailto:murellb1@gmail.com">Brian Murello / Ron Murello</a> &mdash; Div D</li>
+              <li><a href="mailto:edpeters1982@yahoo.com">Ed Peters</a> &mdash; Div D</li>
+              <li><a href="mailto:fetrow530@gmail.com">Jon Fetrow</a> &mdash; Div D</li>
+            </ul>
+          </div>
+          <div class="tier-col">
+            <h3 class="subhead">Lower-Tier</h3>
+            <ul class="owner-tier-list">
+              <li><a href="mailto:anthonywilliambrooks@gmail.com">Tony Brooks</a></li>
+              <li><a href="mailto:samlavrinc@icloud.com">Sam Lavrinc</a></li>
+              <li><a href="mailto:benjamin.funari27@gmail.com">Ben Funari</a></li>
+              <li><a href="mailto:cdlavrinc@icloud.com">Charles Lavrinc</a></li>
+              <li><a href="mailto:djnicastro3@gmail.com">Dominic Nicastro</a></li>
+              <li><a href="mailto:nyankovich@gmail.com">Nick Yankovich</a></li>
+              <li><a href="mailto:tatroz@gmail.com">Todd Trozzo</a></li>
+              <li><a href="mailto:rkeslar@ccac.edu">Bob Keslar</a></li>
+              <li><a href="mailto:johnson9382@gmail.com">Chris Johnson</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="subhead" style="margin-top:20px">Upper-Tier Division Groupings</h3>
         <div class="division-grid">
           <div class="division-card">
             <h4>Division A</h4>
@@ -1195,42 +1246,61 @@
           </div>
         </div>
 
-        <p>Full year-by-year division history lives on the <a class="inline-link" href="history.html">History page</a>.</p>
+        <p style="margin-top:12px">Full year-by-year division history lives on the <a class="inline-link" href="history.html">History page</a>.</p>
       </div>
     </section>
 
     <!-- =========================================================
-         League Info
+         Annual Milestones — moved to Info tab so the league
+         calendar lives alongside the season roster, not buried
+         in the Rulebook.
          ========================================================= -->
-    <section class="rule-section" data-section="overview">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-overview">
-        <h2 class="rule-title">League Info</h2>
+    <section class="rule-section" data-section="milestones">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-milestones">
+        <h2 class="rule-title">Annual Milestones</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
-      <div class="rule-body" id="body-overview">
-        <table class="overview-table">
-          <thead>
-            <tr>
-              <th scope="col">Attribute</th>
-              <th scope="col">Upper-Tier</th>
-              <th scope="col">Lower-Tier</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Entry Fee</td><td>$100</td><td>$100</td></tr>
-            <tr><td>League Size</td><td>12 Teams</td><td>Min 6</td></tr>
-            <tr><td>Divisions</td><td>4</td><td>None</td></tr>
-            <tr><td>Regular Season</td><td>NFL Wks 1&ndash;14</td><td>NFL Wks 1&ndash;14</td></tr>
-            <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
-            <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>No</td></tr>
-            <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
-            <tr><td>MAFFL Ghost</td><td>No</td><td>Yes, if odd-numbered</td></tr>
-            <tr><td>Draft Slot</td><td>Labor Day 9:00 AM EST</td><td>Labor Day 8:00 AM EST</td></tr>
-            <tr><td>Promotion</td><td>&mdash;</td><td>Top 3 Up</td></tr>
-            <tr><td>Relegation</td><td>Bottom 3 Down</td><td>&mdash;</td></tr>
-            <tr><td>Credits</td><td>Earn &amp; Spend</td><td>Earn &amp; Spend</td></tr>
-          </tbody>
-        </table>
+      <div class="rule-body" id="body-milestones">
+
+        <div>
+          <h3 class="subhead">In-Season</h3>
+          <table class="data-table" style="margin-top:8px">
+            <thead>
+              <tr>
+                <th scope="col">Milestone</th>
+                <th scope="col">Timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">FAAB Budget Set</td><td>Prior to Wk 1 kickoff</td></tr>
+              <tr><td class="row-label">First Weekly FAA Processes</td><td>Prior to Wk 1 kickoff</td></tr>
+              <tr><td class="row-label">Regular Season</td><td>NFL Wks 1&ndash;14</td></tr>
+              <tr><td class="row-label">FAAB Reset ($100)</td><td>Prior to Wk 15 kickoff</td></tr>
+              <tr><td class="row-label">Post Season</td><td>NFL Wks 15&ndash;17</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 class="subhead">Off-Season</h3>
+          <table class="data-table" style="margin-top:8px">
+            <thead>
+              <tr>
+                <th scope="col">Milestone</th>
+                <th scope="col">Timing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">Season Prizes Awarded</td><td>Following NFL Wk 17</td></tr>
+              <tr><td class="row-label">Season Credits Issued</td><td>Offseason</td></tr>
+              <tr><td class="row-label">Promotions / Relegations Determined</td><td>Offseason</td></tr>
+              <tr><td class="row-label">MAFFL HQ Updated</td><td>Offseason</td></tr>
+              <tr><td class="row-label">Tier &amp; Division Alignment Established</td><td>Offseason</td></tr>
+              <tr><td class="row-label">Window to Spend Credits on Division Swap</td><td>August 1st &ndash; Labor Day</td></tr>
+              <tr><td class="row-label">Draft</td><td>Labor Day</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1550,57 +1620,6 @@
     </section>
 
     <!-- =========================================================
-         SECTION 6 — Annual Milestones
-         ========================================================= -->
-    <section class="rule-section" data-section="milestones">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-milestones">
-        <h2 class="rule-title">Annual Milestones</h2>
-        <span class="rule-chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="rule-body" id="body-milestones">
-
-        <div>
-          <h3 class="subhead">In-Season</h3>
-          <table class="data-table" style="margin-top:8px">
-            <thead>
-              <tr>
-                <th scope="col">Milestone</th>
-                <th scope="col">Timing</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="row-label">FAAB Budget Set</td><td>Prior to Wk 1 kickoff</td></tr>
-              <tr><td class="row-label">First Weekly FAA Processes</td><td>Prior to Wk 1 kickoff</td></tr>
-              <tr><td class="row-label">Regular Season</td><td>NFL Wks 1&ndash;14</td></tr>
-              <tr><td class="row-label">FAAB Reset ($100)</td><td>Prior to Wk 15 kickoff</td></tr>
-              <tr><td class="row-label">Post Season</td><td>NFL Wks 15&ndash;17</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div>
-          <h3 class="subhead">Off-Season</h3>
-          <table class="data-table" style="margin-top:8px">
-            <thead>
-              <tr>
-                <th scope="col">Milestone</th>
-                <th scope="col">Timing</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="row-label">Season Prizes Awarded / Season Credits Issued</td><td>Following NFL Wk 17</td></tr>
-              <tr><td class="row-label">Promotions/Relegations Issued</td><td>Following NFL Wk 17</td></tr>
-              <tr><td class="row-label">New Season Begins 20##&ndash;20##</td><td>August 1st</td></tr>
-              <tr><td class="row-label">Seasonal Divisions Established (Upper-Tier Only)</td><td>August 1st</td></tr>
-              <tr><td class="row-label">Window to spend credits on division realignment</td><td>August 1st &ndash; Labor Day</td></tr>
-              <tr><td class="row-label">Draft</td><td>Labor Day</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
          SECTION 7 — Credit System
          ========================================================= -->
     <section class="rule-section" id="credit-system" data-section="credits">
@@ -1777,17 +1796,17 @@
  *      so the change is live as soon as the push lands.
  *   4. To update the league assignments mid-cycle, edit both the owner
  *      CSV (./data/MAFFL_Owners_Sheet_revised.csv, "2026 League" column)
- *      AND the Owner | Tier | Division table in the "2026 League
- *      Assignments" section (data-section="assignments") of this file.
+ *      AND the per-owner tier/division lists in the "2026 Tier &
+ *      Division Alignment" section (data-section="alignment") of this file.
  *      DATA-INTEGRITY: reconcile tiers against the Owners Sheet each
  *      offseason — promotions/relegations can leave a stale "Lower-Tier"
  *      label on a promoted owner in one source while another is correct.
  *
  * PAGE LAYOUT: this page has two top-level tabs (.portal-tab) wrapping the
- * accordion sections — an "Info" tab (the always-open News & Announcements
- * feed plus the 2026 Upper-Tier & Lower-Tier Assignments and 2026 Upper-Tier
- * Division Alignment sections) and a "Rulebook" tab (the full ruleset, which
- * also owns the Expand/Collapse All control). Info is the landing tab. Each
+ * accordion sections — an "Info" tab (sections in order: News & Announcements,
+ * League Info, 2026 Tier & Division Alignment, Annual Milestones) and a
+ * "Rulebook" tab (the full ruleset, which also owns the Expand/Collapse All
+ * control). Info is the landing tab. Each
  * tab's sections live in a .tab-panel > .rules-list; add new sections inside
  * the appropriate panel.
  *
@@ -1839,16 +1858,16 @@ const NEWS_FEED = [
     href: "index.html"
   },
   {
-    date: "July 1, 2026",
+    date: "Offseason",
     type: "NEW",
-    note: "MAFFL Ghost rule introduced — a scoring-average placeholder team keeps the Lower-Tier schedule even when it has an odd number of teams. Tap for more.",
+    note: "The MAFFL Ghost rule is a best-in-class approach to keep scheduling even with odd-numbered teams. Lower-Tier only. Tap for more.",
     href: "#maffl-ghost"
   }
 ];
 
 const COMING_SOON = [
   {
-    date: "August 1, 2026",
+    date: "Offseason",
     note: "2026 Division Alignment Established.",
     href: "#alignment"
   },
