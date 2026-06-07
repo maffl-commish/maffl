@@ -1964,7 +1964,7 @@
 
   <nav class="subtabs" role="tablist" aria-label="Draft portal sections">
     <button class="subtab-btn active" role="tab" aria-selected="true" data-target="tabSearch" id="btnSearch">Search</button>
-    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">The Oracle</button>
+    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">The 8 Ball</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOwners" id="btnOwners">Owner Profiles</button>
   </nav>
 
@@ -2068,16 +2068,16 @@
   <section class="subtab-panel" id="tabOracle" role="tabpanel" aria-labelledby="btnOracle">
     <div class="oracle-stage">
       <div class="oracle-header">
-        <div class="oracle-emoji" aria-hidden="true">🔮</div>
-        <h2 class="oracle-title">The Oracle</h2>
-        <p class="oracle-subtitle">Ask and the auction history shall answer. Roll for a random nugget of MAFFL draft lore.</p>
+        <div class="oracle-emoji" aria-hidden="true">🎱</div>
+        <h2 class="oracle-title">MAFFL 8 Ball</h2>
+        <p class="oracle-subtitle">Ask and the auction history shall answer. Give it a shake for a random nugget of MAFFL draft lore.</p>
       </div>
       <button type="button" class="oracle-roll-btn" id="oracleRollBtn">
-        <span aria-hidden="true">🔮</span> Roll the Oracle
+        <span aria-hidden="true">🎱</span> Shake the 8 Ball
       </button>
       <div class="oracle-fact" id="oracleFact" hidden aria-live="polite">
         <p class="oracle-fact-text" id="oracleFactText"></p>
-        <button type="button" class="oracle-roll-again" id="oracleRollAgain">Roll Again →</button>
+        <button type="button" class="oracle-roll-again" id="oracleRollAgain">Shake Again →</button>
       </div>
     </div>
   </section>
@@ -8606,6 +8606,8 @@ renderSearch();
  * ===================================================================== */
 let oracleData = null;
 let oracleLastKey = null;
+let oracleRecentKeys = [];
+const ORACLE_RECENT_MAX = 8; // remember last 8 facts to avoid repeats
 
 function renderOracle() {
   if (oracleData) return;
@@ -8892,7 +8894,7 @@ function rollCurated() {
   if (!ORACLE_TIDBITS.length) return null;
   for (let i = 0; i < 12; i++) {
     const t = pickWeightedTidbit();
-    if (t && t.key !== oracleLastKey) return t;
+    if (t && !oracleSeenRecently(t.key)) return t;
   }
   return null; // only candidate matches oracleLastKey — caller falls through
 }
@@ -8905,15 +8907,20 @@ function rollGenerator() {
     const f = gen();
     if (!f) continue;
     if (!fallback) fallback = f;
-    if (f.key !== oracleLastKey) return f;
+    if (!oracleSeenRecently(f.key)) return f;
   }
   return fallback;
 }
 
+function oracleSeenRecently(key) { return oracleRecentKeys.indexOf(key) !== -1; }
+
 function rollOracle() {
   let fact = null;
-  // ~70% curated tidbits, ~30% procedural generators.
-  if (ORACLE_TIDBITS.length && Math.random() < 0.7) {
+  // Curated tidbits are a rare treat: their odds scale with how many exist
+  // (~6% per tidbit, capped at 40%), so a tiny curated pool can't dominate.
+  // As the curated library grows later, this naturally gives them more airtime.
+  var curatedChance = Math.min(0.40, ORACLE_TIDBITS.length * 0.06);
+  if (ORACLE_TIDBITS.length && Math.random() < curatedChance) {
     fact = rollCurated();
     if (!fact) fact = rollGenerator(); // single tidbit just shown — fall through
   } else {
@@ -8922,6 +8929,8 @@ function rollOracle() {
   }
   if (!fact) return;
   oracleLastKey = fact.key;
+  oracleRecentKeys.push(fact.key);
+  if (oracleRecentKeys.length > ORACLE_RECENT_MAX) oracleRecentKeys.shift();
   displayOracleFact(fact.html);
 }
 
