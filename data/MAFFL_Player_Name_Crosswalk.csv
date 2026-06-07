@@ -1,0 +1,65 @@
+old_name,canonical_name,category,picks_affected,note
+Aj Green,A.J. Green,SAFE_AUTO,4,
+CJ Anderson,C.J. Anderson,SAFE_AUTO,3,
+CJ Mosely,C.J. Mosely,SAFE_AUTO,2,
+CJ Mosley,C.J. Mosley,SAFE_AUTO,1,
+CJ Spiller,C.J. Spiller,SAFE_AUTO,3,
+Cj Anderson,C.J. Anderson,SAFE_AUTO,3,
+Cj Mosely,C.J. Mosely,SAFE_AUTO,1,
+Cj Spiller,C.J. Spiller,SAFE_AUTO,2,
+D'onta Foreman,D'Onta Foreman,SAFE_AUTO,1,
+DJ Hackett,D.J. Hackett,SAFE_AUTO,1,
+Darren Mcfadden,Darren McFadden,SAFE_AUTO,1,
+Deandre Hopkins,DeAndre Hopkins,SAFE_AUTO,2,
+Deangelo Hall,DeAngelo Hall,SAFE_AUTO,1,
+Deangelo Williams,DeAngelo Williams,SAFE_AUTO,4,
+Demarco Murray,DeMarco Murray,SAFE_AUTO,3,
+Demeco Ryans,DeMeco Ryans,SAFE_AUTO,2,
+Desean Jackson,DeSean Jackson,SAFE_AUTO,9,
+EJ Henderson,E.J. Henderson,SAFE_AUTO,1,
+Ej Henderson,E.J. Henderson,SAFE_AUTO,1,
+Frank  Gore,Frank Gore,SAFE_AUTO,1,
+JJ Watt,J.J. Watt,SAFE_AUTO,4,
+JP Losman,J.P. Losman,SAFE_AUTO,1,
+Jj Watt,J.J. Watt,SAFE_AUTO,3,
+LJ Smith,L.J. Smith,SAFE_AUTO,2,
+Lamont Jordan,LaMont Jordan,SAFE_AUTO,1,
+OJ Howard,O.J. Howard,SAFE_AUTO,2,
+TJ Duckett,T.J. Duckett,SAFE_AUTO,1,
+TJ McDonald,T.J. McDonald,SAFE_AUTO,1,
+TJ Ward,T.J. Ward,SAFE_AUTO,1,
+TJ Watt,T.J. Watt,SAFE_AUTO,2,
+TJ Yeldon,T.J. Yeldon,SAFE_AUTO,1,
+TY Hilton,T.Y. Hilton,SAFE_AUTO,4,
+Tj Mcdonald,T.J. McDonald,SAFE_AUTO,1,
+Tj Ward,T.J. Ward,SAFE_AUTO,3,
+Ty Hilton,T.Y. Hilton,SAFE_AUTO,3,
+Allen Robinson,Allen Robinson II,SAME_PERSON_MERGE,6,same player; canonical = suffixed form
+Brian Robinson,Brian Robinson Jr.,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Cecil Shorts,Cecil Shorts III,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+DJ Chark,DJ Chark Jr.,SAME_PERSON_MERGE,2,same player; canonical = suffixed form
+Darrell Henderson,Darrell Henderson Jr.,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Derwin James,Derwin James Jr.,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Desmond King,Desmond King II,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Duke Johnson Jr,Duke Johnson Jr.,SAME_PERSON_MERGE,2,normalize suffix punctuation only
+Ernest Jones,Ernest Jones IV,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Gardner Minshew,Gardner Minshew II,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Jamie Collins,Jamie Collins Sr.,SAME_PERSON_MERGE,5,same player; canonical = suffixed form
+Kenneth Murray,Kenneth Murray Jr.,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Kevin Byard,Kevin Byard III,SAME_PERSON_MERGE,2,same player; canonical = suffixed form
+Marion Barber,Marion Barber III,SAME_PERSON_MERGE,5,same player; canonical = suffixed form
+Mark Ingram,Mark Ingram II,SAME_PERSON_MERGE,2,same player; canonical = suffixed form
+Marvin Jones,Marvin Jones Jr.,SAME_PERSON_MERGE,4,same player; canonical = suffixed form
+Mecole Hardman,Mecole Hardman Jr.,SAME_PERSON_MERGE,3,same player; canonical = suffixed form
+Melvin Gordon,Melvin Gordon III,SAME_PERSON_MERGE,6,same player; canonical = suffixed form
+Melvin Ingram,Melvin Ingram III,SAME_PERSON_MERGE,3,same player; canonical = suffixed form
+Todd Gurley,Todd Gurley II,SAME_PERSON_MERGE,5,same player; canonical = suffixed form
+Tracy Walker,Tracy Walker III,SAME_PERSON_MERGE,1,same player; canonical = suffixed form
+Antoine Winfield,Antoine Winfield,DO_NOT_MERGE,3,"father/son - keep separate, do NOT merge"
+Antoine Winfield Jr.,Antoine Winfield Jr.,DO_NOT_MERGE,4,"father/son - keep separate, do NOT merge"
+Joey Porter,Joey Porter,DO_NOT_MERGE,1,"father/son - keep separate, do NOT merge"
+Joey Porter Jr.,Joey Porter Jr.,DO_NOT_MERGE,1,"father/son - keep separate, do NOT merge"
+Marvin Harrison,Marvin Harrison,DO_NOT_MERGE,4,"father/son - keep separate, do NOT merge"
+Marvin Harrison Jr.,Marvin Harrison Jr.,DO_NOT_MERGE,3,"father/son - keep separate, do NOT merge"
+Michael Pittman,Michael Pittman,DO_NOT_MERGE,3,"father/son - keep separate, do NOT merge"
+Michael Pittman Jr.,Michael Pittman Jr.,DO_NOT_MERGE,7,"father/son - keep separate, do NOT merge"
