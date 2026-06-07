@@ -1050,6 +1050,40 @@
     line-height: 1.7;
   }
   .division-card ul.division-teams li { margin: 0; }
+  /* Owner name that copies the owner's email to the clipboard on click. */
+  .owner-copy {
+    font: inherit;
+    color: var(--navy);
+    background: none;
+    border: 0;
+    border-bottom: 1px dashed var(--border);
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    text-align: left;
+  }
+  .owner-copy:hover,
+  .owner-copy:focus-visible { border-bottom-color: var(--gold); outline: none; }
+  .owner-copy::after {
+    content: attr(data-feedback);
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    margin-bottom: 4px;
+    background: var(--navy);
+    color: #fff;
+    font-family: var(--body);
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity .12s ease, transform .12s ease;
+  }
+  .owner-copy.copied::after { opacity: 1; transform: translateY(0); }
   @media (max-width: 767px) {
     .division-grid { grid-template-columns: 1fr; }
   }
@@ -1090,7 +1124,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rulebook version metadata">
       <span class="meta-pill" id="versionChipVersion">v1.0</span>
-      <span class="meta-pill" id="versionChipUpdated">Last Updated June 6, 2026</span>
+      <span class="meta-pill" id="versionChipUpdated">Last Updated June 7, 2026</span>
     </div>
   </header>
 
@@ -1164,94 +1198,7 @@
     </section>
 
     <!-- =========================================================
-         2026 Tier & Division Alignment — merged view of tier
-         assignments and Upper-Tier division groupings, with
-         email links per owner. Lower-Tier has no divisions.
-         ========================================================= -->
-    <section class="rule-section" id="alignment" data-section="alignment">
-      <button class="rule-head" aria-expanded="false" aria-controls="body-alignment">
-        <h2 class="rule-title">2026 Tier &amp; Division Alignment</h2>
-        <span class="rule-chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="rule-body" id="body-alignment">
-        <p>The 2026 season roster — 12 Upper-Tier and 9 Lower-Tier. Upper-Tier teams are grouped into Divisions A&ndash;D. For how divisions are determined, see <strong>Division Alignment</strong> in the Rulebook.</p>
-
-        <div class="tier-columns">
-          <div class="tier-col">
-            <h3 class="subhead">Upper-Tier</h3>
-            <ul class="owner-tier-list">
-              <li><a href="mailto:dmurello@atlanticbb.net">David Murello</a> &mdash; Div A</li>
-              <li><a href="mailto:bryan.funari@gmail.com">BJ Funari</a> &mdash; Div A</li>
-              <li><a href="mailto:michael.murello@gmail.com">Mike Murello</a> &mdash; Div A</li>
-              <li><a href="mailto:jonathan.murello@gmail.com">Jon Murello / Rick Simmons</a> &mdash; Div B</li>
-              <li><a href="mailto:jacob.nickman@gmail.com">Jacob Nickman</a> &mdash; Div B</li>
-              <li><a href="mailto:braidenanthony2007@gmail.com">Braiden Snyder</a> &mdash; Div B</li>
-              <li><a href="mailto:joereilly5@gmail.com">Joe Reilly</a> &mdash; Div C</li>
-              <li><a href="mailto:reilly.dp@gmail.com">Dan Reilly</a> &mdash; Div C</li>
-              <li><a href="mailto:tonytroz@gmail.com">Tony Trozzo</a> &mdash; Div C</li>
-              <li><a href="mailto:murellb1@gmail.com">Brian Murello / Ron Murello</a> &mdash; Div D</li>
-              <li><a href="mailto:edpeters1982@yahoo.com">Ed Peters</a> &mdash; Div D</li>
-              <li><a href="mailto:fetrow530@gmail.com">Jon Fetrow</a> &mdash; Div D</li>
-            </ul>
-          </div>
-          <div class="tier-col">
-            <h3 class="subhead">Lower-Tier</h3>
-            <ul class="owner-tier-list">
-              <li><a href="mailto:anthonywilliambrooks@gmail.com">Tony Brooks</a></li>
-              <li><a href="mailto:samlavrinc@icloud.com">Sam Lavrinc</a></li>
-              <li><a href="mailto:benjamin.funari27@gmail.com">Ben Funari</a></li>
-              <li><a href="mailto:cdlavrinc@icloud.com">Charles Lavrinc</a></li>
-              <li><a href="mailto:djnicastro3@gmail.com">Dominic Nicastro</a></li>
-              <li><a href="mailto:nyankovich@gmail.com">Nick Yankovich</a></li>
-              <li><a href="mailto:tatroz@gmail.com">Todd Trozzo</a></li>
-              <li><a href="mailto:rkeslar@ccac.edu">Bob Keslar</a></li>
-              <li><a href="mailto:johnson9382@gmail.com">Chris Johnson</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <h3 class="subhead" style="margin-top:20px">Upper-Tier Division Groupings</h3>
-        <div class="division-grid">
-          <div class="division-card">
-            <h4>Division A</h4>
-            <ul class="division-teams">
-              <li>David Murello</li>
-              <li>BJ Funari</li>
-              <li>Mike Murello</li>
-            </ul>
-          </div>
-          <div class="division-card">
-            <h4>Division B</h4>
-            <ul class="division-teams">
-              <li>Jon Murello / Rick Simmons</li>
-              <li>Jacob Nickman</li>
-              <li>Braiden Snyder</li>
-            </ul>
-          </div>
-          <div class="division-card">
-            <h4>Division C</h4>
-            <ul class="division-teams">
-              <li>Joe Reilly</li>
-              <li>Dan Reilly</li>
-              <li>Tony Trozzo</li>
-            </ul>
-          </div>
-          <div class="division-card">
-            <h4>Division D</h4>
-            <ul class="division-teams">
-              <li>Brian Murello / Ron Murello</li>
-              <li>Ed Peters</li>
-              <li>Jon Fetrow</li>
-            </ul>
-          </div>
-        </div>
-
-        <p style="margin-top:12px">Full year-by-year division history lives on the <a class="inline-link" href="history.html">History page</a>.</p>
-      </div>
-    </section>
-
-    <!-- =========================================================
-         Annual Milestones — moved to Info tab so the league
+         Annual Milestones — placed on the Info tab so the league
          calendar lives alongside the season roster, not buried
          in the Rulebook.
          ========================================================= -->
@@ -1296,10 +1243,74 @@
               <tr><td class="row-label">Promotions / Relegations Determined</td><td>Offseason</td></tr>
               <tr><td class="row-label">MAFFL HQ Updated</td><td>Offseason</td></tr>
               <tr><td class="row-label">Tier &amp; Division Alignment Established</td><td>Offseason</td></tr>
-              <tr><td class="row-label">Window to Spend Credits on Division Swap</td><td>August 1st &ndash; Labor Day</td></tr>
+              <tr><td class="row-label">Deadline for Division Swap</td><td>Labor Day Eve</td></tr>
               <tr><td class="row-label">Draft</td><td>Labor Day</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         2026 Tier & Division Alignment — division-grouped cells
+         (Upper-Tier Divisions A–D plus a Lower-Tier cell). Each
+         owner name copies the owner's email on click.
+         ========================================================= -->
+    <section class="rule-section" id="alignment" data-section="alignment">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-alignment">
+        <h2 class="rule-title">2026 Tier &amp; Division Alignment</h2>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-alignment">
+        <p><a class="inline-link" href="#division-alignment">Division Alignment Rules</a></p>
+
+        <div class="division-grid">
+          <div class="division-card">
+            <h4>Division A</h4>
+            <ul class="division-teams">
+              <li><button type="button" class="owner-copy" data-email="dmurello@atlanticbb.net">David Murello</button></li>
+              <li><button type="button" class="owner-copy" data-email="bryan.funari@gmail.com">BJ Funari</button></li>
+              <li><button type="button" class="owner-copy" data-email="michael.murello@gmail.com">Mike Murello</button></li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Division B</h4>
+            <ul class="division-teams">
+              <li><button type="button" class="owner-copy" data-email="jonathan.murello@gmail.com">Jon Murello / Rick Simmons</button></li>
+              <li><button type="button" class="owner-copy" data-email="jacob.nickman@gmail.com">Jacob Nickman</button></li>
+              <li><button type="button" class="owner-copy" data-email="braidenanthony2007@gmail.com">Braiden Snyder</button></li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Division C</h4>
+            <ul class="division-teams">
+              <li><button type="button" class="owner-copy" data-email="joereilly5@gmail.com">Joe Reilly</button></li>
+              <li><button type="button" class="owner-copy" data-email="reilly.dp@gmail.com">Dan Reilly</button></li>
+              <li><button type="button" class="owner-copy" data-email="tonytroz@gmail.com">Tony Trozzo</button></li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Division D</h4>
+            <ul class="division-teams">
+              <li><button type="button" class="owner-copy" data-email="murellb1@gmail.com">Brian Murello / Ron Murello</button></li>
+              <li><button type="button" class="owner-copy" data-email="edpeters1982@yahoo.com">Ed Peters</button></li>
+              <li><button type="button" class="owner-copy" data-email="fetrow530@gmail.com">Jon Fetrow</button></li>
+            </ul>
+          </div>
+          <div class="division-card">
+            <h4>Lower-Tier</h4>
+            <ul class="division-teams">
+              <li><button type="button" class="owner-copy" data-email="anthonywilliambrooks@gmail.com">Tony Brooks</button></li>
+              <li><button type="button" class="owner-copy" data-email="samlavrinc@icloud.com">Sam Lavrinc</button></li>
+              <li><button type="button" class="owner-copy" data-email="benjamin.funari27@gmail.com">Ben Funari</button></li>
+              <li><button type="button" class="owner-copy" data-email="cdlavrinc@icloud.com">Charles Lavrinc</button></li>
+              <li><button type="button" class="owner-copy" data-email="djnicastro3@gmail.com">Dominic Nicastro</button></li>
+              <li><button type="button" class="owner-copy" data-email="nyankovich@gmail.com">Nick Yankovich</button></li>
+              <li><button type="button" class="owner-copy" data-email="tatroz@gmail.com">Todd Trozzo</button></li>
+              <li><button type="button" class="owner-copy" data-email="rkeslar@ccac.edu">Bob Keslar</button></li>
+              <li><button type="button" class="owner-copy" data-email="johnson9382@gmail.com">Chris Johnson</button></li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -1860,17 +1871,19 @@ const NEWS_FEED = [
   {
     date: "Offseason",
     type: "NEW",
-    note: "The MAFFL Ghost rule is a best-in-class approach to keep scheduling even with odd-numbered teams. Lower-Tier only. Tap for more.",
+    label: "New Rule",
+    note: "The MAFFL Ghost rule is a best-in-class approach to keep scheduling even with odd-numbered teams. Tap for more.",
     href: "#maffl-ghost"
+  },
+  {
+    date: "Offseason",
+    type: "ANNOUNCEMENT",
+    note: "2026 Division Alignment Established.",
+    href: "#alignment"
   }
 ];
 
 const COMING_SOON = [
-  {
-    date: "Offseason",
-    note: "2026 Division Alignment Established.",
-    href: "#alignment"
-  },
   {
     date: "September 7, 2026",
     note: "Auction Draft Time! Tap for more.",
@@ -1884,12 +1897,12 @@ function escHtml(s) {
     return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
   });
 }
-function renderTag(type, year) {
+function renderTag(type, year, label) {
   const cls = String(type || "").toLowerCase();
   const yearPart = year
     ? '<span class="tag-sep">&middot;</span>' + escHtml(year)
     : '';
-  return '<span class="rule-tag ' + cls + '">' + escHtml(type) + yearPart + '</span>';
+  return '<span class="rule-tag ' + cls + '">' + escHtml(label || type) + yearPart + '</span>';
 }
 
 /* --------- RENDER: VERSION CHIPS --------- */
@@ -1903,7 +1916,7 @@ function renderTag(type, year) {
 /* --------- RENDER: NEWS & ANNOUNCEMENTS --------- */
 (function renderNews() {
   function newsRow(item, soon) {
-    const tag = item.type ? renderTag(item.type) : "";
+    const tag = item.type ? renderTag(item.type, null, item.label) : "";
     const inner =
       '<span class="news-note">' + tag + escHtml(item.note) + '</span>' +
       '<span class="news-date">' + escHtml(item.date) + '</span>';
@@ -1927,6 +1940,55 @@ function renderTag(type, year) {
       ? COMING_SOON.map(function (n) { return newsRow(n, true); }).join("")
       : '<p style="color:var(--muted);font-style:italic;margin:0;">Nothing on deck right now.</p>';
   }
+})();
+
+/* --------- OWNER EMAIL COPY (2026 Tier & Division Alignment) ---------
+ * Each owner name is a button; clicking copies the owner's email to the
+ * clipboard and shows a brief "Copied!" tooltip. Hover hints at the action. */
+(function wireOwnerCopy() {
+  const btns = document.querySelectorAll(".owner-copy");
+  if (!btns.length) return;
+
+  function fallbackCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  btns.forEach(function (btn) {
+    btn.title = "Click to copy email";
+    btn.setAttribute("aria-label", btn.textContent.trim() + " — click to copy email");
+    btn.setAttribute("data-feedback", "Click to copy email");
+
+    let timer = null;
+    btn.addEventListener("click", function () {
+      const email = btn.getAttribute("data-email") || "";
+      const show = function () {
+        btn.setAttribute("data-feedback", "Copied!");
+        btn.title = "Copied!";
+        btn.classList.add("copied");
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(function () {
+          btn.classList.remove("copied");
+          btn.title = "Click to copy email";
+          btn.setAttribute("data-feedback", "Click to copy email");
+        }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(show, function () {
+          fallbackCopy(email); show();
+        });
+      } else {
+        fallbackCopy(email); show();
+      }
+    });
+  });
 })();
 
 (function wireHamburger() {
