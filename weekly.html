@@ -566,6 +566,20 @@
     color: var(--muted);
     letter-spacing: 0.02em;
   }
+  .pool-head-left { display: flex; align-items: center; gap: 8px; }
+  .credit-pill {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--gold-dark);
+    background: var(--gold-soft);
+    border: 1px solid var(--gold);
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    text-transform: none;
+  }
   .pool-list li {
     display: flex;
     align-items: center;
@@ -625,6 +639,29 @@
     text-transform: uppercase;
     letter-spacing: 0.12em;
   }
+
+  /* ---------- Credit Tracker ---------- */
+  .ct-list { display: flex; flex-direction: column; gap: 10px; }
+  .ct-row {
+    padding: 12px;
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .ct-main { display: flex; flex-direction: column; gap: 4px; }
+  .ct-award {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+  }
+  .ct-leader { font-family: var(--body); font-size: 13px; color: var(--navy); }
+  .ct-value { font-family: var(--body); font-size: 12px; color: var(--gold-dark); font-weight: 700; }
+  .ct-note { font-family: var(--body); font-size: 12px; color: var(--muted); line-height: 1.4; }
 
   /* ---------- Elite 5 ---------- */
   .elite-list { display: flex; flex-direction: column; gap: 10px; }
@@ -884,7 +921,7 @@
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 5, 2026</span>
+      <span class="meta-pill">Last Updated June 7, 2026</span>
     </div>
   </header>
 </div>
@@ -996,6 +1033,32 @@ const WEEKS = [
       lowerConcluded: false,
       lowerWinner: null
     },
+    creditTracker: [
+      {
+        award: "Most Team Points Scored",
+        credits: 5,
+        leaderTeam: "Reilly's Reindeer",
+        leaderOwner: "Joe Reilly",
+        value: "142.8 total",
+        note: "Season-long cumulative leader — moves as totals climb. [PLACEHOLDER]"
+      },
+      {
+        award: "Largest Blowout Victory",
+        credits: 3,
+        leaderTeam: "Reilly's Reindeer",
+        leaderOwner: "Joe Reilly",
+        value: "+47.7 margin (Wk 1)",
+        note: "Regular season only — biggest single-week margin so far. [PLACEHOLDER]"
+      },
+      {
+        award: "Individual High Score (Wkly Total)",
+        credits: 3,
+        leaderTeam: "The Prodigal Sons",
+        leaderOwner: "Jon Murello/Rick Simmons",
+        value: "38.4 — single player (Wk 1)",
+        note: "Top single-player week, any tier. [PLACEHOLDER]"
+      }
+    ],
     elite5: [
       { rank: 1, team: "Reilly's Reindeer",        owner: "Joe Reilly",                 tier: "U", note: "League-high 142.8 — the first Elite eyebrow-raiser of 2026. [PLACEHOLDER]" },
       { rank: 2, team: "The Prodigal Sons",        owner: "Jon Murello/Rick Simmons",   tier: "U", note: "134.6 in a Div B opener — the WR room showed up to work. [PLACEHOLDER]" },
@@ -1054,6 +1117,7 @@ function renderPage(week) {
     <section class="card-grid" id="cardGrid" aria-label="Pulse sections">
       ${renderStandingsCard(week)}
       ${renderSurvivorCard(week)}
+      ${renderCreditTrackerCard(week)}
       ${renderElite5Card(week)}
       ${renderNewsCard(week)}
     </section>
@@ -1177,8 +1241,8 @@ function renderSurvivorCard(week) {
 
   const body = `
     <div class="survivor-grid">
-      ${survivorPool("Upper Pool", s.upperActive, s.upperEliminated, s.upperConcluded, s.upperWinner)}
-      ${survivorPool("Lower Pool", s.lowerActive, s.lowerEliminated, s.lowerConcluded, s.lowerWinner)}
+      ${survivorPool("Upper-Tier", s.upperActive, s.upperEliminated, s.upperConcluded, s.upperWinner)}
+      ${survivorPool("Lower-Tier", s.lowerActive, s.lowerEliminated, s.lowerConcluded, s.lowerWinner)}
     </div>
   `;
 
@@ -1211,7 +1275,10 @@ function survivorPool(title, active, eliminated, concluded, winner) {
   return `
     <div class="survivor-pool">
       <div class="pool-head">
-        <span>${esc(title)}</span>
+        <span class="pool-head-left">
+          <span>${esc(title)}</span>
+          <span class="credit-pill">+5 credits</span>
+        </span>
         <span class="pool-count">${active.length} alive</span>
       </div>
       <ul class="pool-list">
@@ -1220,6 +1287,35 @@ function survivorPool(title, active, eliminated, concluded, winner) {
       </ul>
     </div>
   `;
+}
+
+/* --------- CREDIT TRACKER CARD --------- */
+function renderCreditTrackerCard(week) {
+  const items = week.creditTracker || [];
+  if (!items.length) return "";
+  const totalOnLine = items.reduce((sum, i) => sum + (i.credits || 0), 0);
+  const preview = `
+    <div><span class="strong">${items.length} season-long award${items.length === 1 ? "" : "s"}</span> in play</div>
+    <div class="muted-line">${totalOnLine} credits on the line — leaders shift week to week.</div>
+  `;
+  const body = `
+    <ul class="ct-list">
+      ${items.map(i => `
+        <li class="ct-row">
+          <div class="ct-main">
+            <div class="ct-award">
+              <span>${esc(i.award)}</span>
+              <span class="credit-pill">+${i.credits} credits</span>
+            </div>
+            <div class="ct-leader"><span class="strong">${esc(i.leaderTeam)}</span> · ${esc(i.leaderOwner)}</div>
+            <div class="ct-value">${esc(i.value)}</div>
+            <div class="ct-note">${esc(i.note)}</div>
+          </div>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+  return cardShell("credittracker", "🪙", "Credit Tracker", preview, body);
 }
 
 /* --------- ELITE 5 / BRACKET CARD --------- */
