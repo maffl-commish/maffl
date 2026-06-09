@@ -905,7 +905,7 @@
 
     .survivor-grid { grid-template-columns: 1fr; }
 
-    .ct-split { grid-template-columns: 1fr; }
+    .ct-split { gap: 8px; }
 
     .row { grid-template-columns: 48px 1fr auto; }
     .row .pts { display: none; }
@@ -1007,8 +1007,8 @@ const WEEKS = [
   {
     weekNumber: 6,
     dateString: "Oct 18, 2026",
-    headline: "Mike Murello's Bad Attitude Gang torches the league for 148.6 — his Upper-Tier return is officially paying off as Week 6 reshuffles the credit board.",
-    latestChange: "Mike Murello's Bad Attitude Gang dropped a +52.4 blowout in Week 6 — seizing the Largest Blowout (Upper) lead.",
+    headline: "Blockbuster! Ed Peters and Jake Nickman swing a Week 6 megadeal — Aaron Rodgers and Mike Evans switch sides in the trade that shook the league.",
+    latestChange: "Dan Reilly's Big Bang Theory dropped a +52.4 blowout in Week 6 — seizing the Largest Blowout (Upper) lead.",
     upperTier: {
       divA: [
         { team: "Bad Attitude Gang",         owner: "Mike Murello",  w: 5, l: 1, points: 742.5, streak:  3, credits: 31 },
@@ -1040,6 +1040,7 @@ const WEEKS = [
       { team: "Tommy Phamclub",           owner: "Sam Lavrinc",      w: 3, l: 3, points: 619.5, streak: -2, credits:  8 },
       { team: "Portly Primates",          owner: "Charles Lavrinc",  w: 2, l: 4, points: 588.3, streak: -1, credits:  6 },
       { team: "Steel City Champyinz",     owner: "Dominic Nicastro", w: 2, l: 4, points: 571.9, streak: -3, credits:  3 },
+      { team: "MAFFL Ghost",              owner: "—",                w: 2, l: 4, points: 604.5, streak: -1, credits:  0 },
       { team: "Sarge's Squad",            owner: "Nick Yankovich",   w: 1, l: 5, points: 542.6, streak: -4, credits:  2 }
     ],
     survivor: {
@@ -1088,8 +1089,8 @@ const WEEKS = [
       {
         award: "Largest Blowout Victory — Upper",
         credits: 3,
-        leaderTeam: "Bad Attitude Gang",
-        leaderOwner: "Mike Murello",
+        leaderTeam: "The Big Bang Theory",
+        leaderOwner: "Dan Reilly",
         value: "+52.4 margin (Wk 6)"
       },
       {
@@ -1117,7 +1118,7 @@ const WEEKS = [
     highestWeekly: {
       credits: 1,
       weeks: [
-        { week: 6, upper: { team: "Bad Attitude Gang",  owner: "Mike Murello",              score: 148.6 }, lower: { team: "Camp Kes",               owner: "Bob Keslar",   score: 131.2 } },
+        { week: 6, upper: { team: "The Big Bang Theory", owner: "Dan Reilly",               score: 148.6 }, lower: { team: "Camp Kes",               owner: "Bob Keslar",   score: 131.2 } },
         { week: 5, upper: { team: "Reilly's Reindeer",  owner: "Joe Reilly",                score: 141.3 }, lower: { team: "U-Town Fightin Ferrets", owner: "Todd Trozzo",  score: 128.7 } },
         { week: 4, upper: { team: "The Prodigal Sons",  owner: "Jon Murello/Rick Simmons",  score: 138.9 }, lower: { team: "The V-Unit",             owner: "Chris Johnson", score: 122.4 } },
         { week: 3, upper: { team: "The Big Bang Theory", owner: "Dan Reilly",               score: 144.1 }, lower: { team: "Camp Kes",               owner: "Bob Keslar",   score: 134.6 } },
@@ -1126,18 +1127,18 @@ const WEEKS = [
       ]
     },
     elite5: [
-      { rank: 1, team: "Bad Attitude Gang",        owner: "Mike Murello",               tier: "U", note: "League-best 148.6 — doubled his bonus on credits and cashed it for a +52.4 demolition." },
+      { rank: 1, team: "The Big Bang Theory",      owner: "Dan Reilly",                 tier: "U", note: "League-best 148.6 — doubled his bonus on credits and cashed it for a +52.4 demolition." },
       { rank: 2, team: "Camp Kes",                 owner: "Bob Keslar",                 tier: "L", note: "131.2 to pace the Lower-Tier and grab the top seed at 5-1." },
       { rank: 3, team: "Reilly's Reindeer",        owner: "Joe Reilly",                 tier: "U", note: "Still the season points king at 781.6 — a quiet 5-1 that won't go away." },
       { rank: 4, team: "The Prodigal Sons",        owner: "Jon Murello/Rick Simmons",   tier: "U", note: "5-1 and right on Reilly's heels in Div B — the WR room keeps humming." },
       { rank: 5, team: "U-Town Fightin Ferrets",   owner: "Todd Trozzo",                tier: "L", note: "Matched Camp Kes at 5-1 — the Lower-Tier promotion race is a dead heat." }
     ],
     newsReel: [
-      "Trade alert: Jon Fetrow ships a WR to Dan Reilly for a RB-and-pick package — both Div hopefuls reload for the stretch run.",
+      "Blockbuster fallout: Ed Peters ships Aaron Rodgers to Jake Nickman for Mike Evans — both owners gambling big on the stretch run.",
       "Waiver wire shocker: Bob Keslar lands the week's hottest breakout RB, fueling Camp Kes to the Lower-Tier's best record at 5-1.",
       "Survivor claims two more: Braiden Snyder (Upper) and Tony Brooks (Lower) are out after Week 6 — pools down to 7 and 4.",
-      "Mike Murello cashed credits to double his player bonus this week — and Bad Attitude Gang answered with a league-best 148.6.",
-      "Reilly's Reindeer stay perfect-ish at 5-1, but Mike Murello's surge has Div A and the credit board buzzing."
+      "Dan Reilly cashed credits to double his player bonus this week — and The Big Bang Theory erupted for a league-best 148.6.",
+      "Reilly's Reindeer stay perfect-ish at 5-1 atop Div C, and an upset-filled Week 6 has the league buzzing."
     ]
   }
 ];
@@ -1202,10 +1203,8 @@ function renderStandingsCard(week) {
   const lowerLeader = week.lowerTier.slice().sort(tierSort)[0];
 
   const preview = `
-    ${topTwoUpper.map((t, i) => `
-      <div${i ? ' style="margin-top:4px"' : ""}><span class="strong">Upper ${i + 1}:</span> ${esc(t.team)} <span>${t.w}-${t.l}</span></div>
-    `).join("")}
-    <div style="margin-top:4px"><span class="strong">Lower:</span> ${esc(lowerLeader.team)} <span>${lowerLeader.w}-${lowerLeader.l}</span></div>
+    <div><span class="strong">Upper:</span> ${topTwoUpper.map(t => `${esc(t.team)} ${t.w}-${t.l}`).join(", ")}</div>
+    <div style="margin-top:4px"><span class="strong">Lower:</span> ${esc(lowerLeader.team)} ${lowerLeader.w}-${lowerLeader.l}</div>
     <div class="muted-line">Tap for full standings.</div>
   `;
 
