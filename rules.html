@@ -1243,6 +1243,7 @@
               <tr><td class="row-label">Promotions / Relegations Determined</td><td>Offseason</td></tr>
               <tr><td class="row-label">MAFFL HQ Updated</td><td>Offseason</td></tr>
               <tr><td class="row-label">Tier &amp; Division Alignment Established</td><td>Offseason</td></tr>
+              <tr><td class="row-label">ESPN.com Adjustments (Tiers and Divisions)</td><td>Offseason</td></tr>
               <tr><td class="row-label">Deadline for Division Swap</td><td>Labor Day Eve</td></tr>
               <tr><td class="row-label">Draft</td><td>Labor Day</td></tr>
             </tbody>
@@ -1626,6 +1627,16 @@
               <li>Highest single-game score by any one starter across the two teams</li>
             </ol>
           </div>
+          <div class="tiebreaker-col">
+            <h4>Credit-Earning Awards</h4>
+            <p style="margin:0 0 6px;font-size:0.85rem;color:var(--muted)">Season-long awards (Survivor pool, season-long credit categories, etc.) use the standard order below:</p>
+            <ol>
+              <li>Record (W/L %)</li>
+              <li>Credit Balance</li>
+              <li>Total Points For</li>
+            </ol>
+            <p style="margin:10px 0 0;font-size:0.85rem;color:var(--muted)">Weekly High Score is broken by the highest single-game score by any one starter on the tied teams.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -1764,12 +1775,14 @@
       <div class="rule-body" id="body-ghost">
         <h3 class="subhead">Lower-Tier Odd-Team Rule<span class="rule-tag new">NEW<span class="tag-sep">&middot;</span>2026</span></h3>
         <ul>
+          <li>MAFFL Ghost exists to solve the bye-week problem: a 14-week regular season cannot schedule an odd number of teams evenly (the lone exception being a 15-team league, where everyone plays each other exactly once).</li>
           <li>Applies only when the Lower-Tier has an odd number of teams. Upper-Tier is fixed at 12 teams and is unaffected.</li>
           <li>A placeholder team called &ldquo;MAFFL Ghost&rdquo; is added to the Lower-Tier ESPN league to create an even schedule. MAFFL Ghost carries no roster.</li>
           <li>Each week, the commissioner drops the single highest real-team score, totals the remaining real teams&rsquo; scores, divides by that remaining count, and applies the result to MAFFL Ghost as a scoring adjustment in ESPN LM Tools.</li>
           <li>The real team matched up against MAFFL Ghost that week wins if they beat the average and loses if they don&rsquo;t.</li>
-          <li>MAFFL Ghost does not draft, earn credits, win prizes, or affect promotion/relegation.</li>
+          <li>MAFFL Ghost does not earn credits, win prizes, or affect promotion/relegation.</li>
           <li>All real teams remain eligible for weekly high score prizes every week, including the team facing MAFFL Ghost.</li>
+          <li>On Draft Day, MAFFL Ghost &ldquo;drafts&rdquo; a full, non-consequential 22-player roster like any other team; that roster is abruptly dropped to the waiver wire immediately following the draft.</li>
         </ul>
 
         <div class="callout">
@@ -1849,7 +1862,7 @@
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
 const RULEBOOK_VERSION      = "v1.0";
-const RULEBOOK_LAST_UPDATED = "June 7, 2026";
+const RULEBOOK_LAST_UPDATED = "June 9, 2026";
 
 /* ---------------------------------------------------------------------
  * NEWS_FEED / COMING_SOON power the "News & Announcements" feed on the

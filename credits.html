@@ -620,6 +620,37 @@
     outline-offset: 2px;
   }
 
+  /* Single button below the search box that collapses the facet stack. */
+  .registry-filter-toggle {
+    color: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 9px 16px;
+    min-height: 40px;
+    background: var(--surface);
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  .registry-filter-toggle:hover { border-color: var(--gold); }
+  .registry-filter-toggle:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .registry-filter-toggle::after {
+    content: "\203A";                 /* › chevron, rotates when expanded */
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  .registry-filter-toggle[aria-expanded="true"]::after { transform: rotate(90deg); }
+
   /* Collapsible multi-select pill facets (owner / credit type / category).
      Each <details> facet is collapsed by default and toggles independently. */
   .registry-filters {
@@ -628,6 +659,9 @@
     gap: 10px;
     margin-bottom: 16px;
   }
+  /* The author display:flex above outranks the UA [hidden] rule, so re-assert
+     it — without this the facet stack shows even though it starts collapsed. */
+  .registry-filters[hidden] { display: none; }
   .registry-facet {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -730,6 +764,8 @@
   }
   .registry-table tbody tr:last-child td { border-bottom: 0; }
 
+  .registry-date { white-space: nowrap; font-weight: 500; color: var(--muted); }
+  .registry-category { font-weight: 500; white-space: nowrap; }
   .registry-owner { font-weight: 700; white-space: nowrap; }
   .registry-team {
     display: block;
@@ -822,6 +858,7 @@
     .portal-tab { font-size: 14px; padding: 10px 12px; }
 
     .registry-search { flex-basis: 100%; max-width: none; width: 100%; }
+    .registry-filter-toggle { width: 100%; justify-content: center; display: flex; align-items: center; gap: 8px; }
     .registry-table { font-size: 13px; }
     .registry-table th, .registry-table td { padding: 8px; }
     .registry-notes { min-width: 180px; }
@@ -833,7 +870,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .rules-link, .dues-venmo, .site-nav a, .dues-table td a, .pill,
-    .registry-facet > summary::after { transition: none; }
+    .registry-facet > summary::after, .registry-filter-toggle::after { transition: none; }
     .rules-link:hover, .dues-venmo:hover { transform: none; }
   }
 </style>
@@ -876,7 +913,7 @@
     </div>
     <div class="page-header__meta" aria-label="Credits version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 7, 2026</span>
+      <span class="meta-pill">Last Updated June 9, 2026</span>
     </div>
   </header>
 
@@ -993,12 +1030,18 @@
           <input type="search" id="registrySearch" placeholder="Search owner, team, type, notes…" aria-label="Search the credit registry">
         </div>
       </div>
+      <!-- Single toggle that collapses the whole facet stack below it. The
+           ·N count mirrors total active selections so activity stays visible
+           while the panel is closed. Wired in wireRegistry() below. -->
+      <button type="button" class="registry-filter-toggle" id="filterToggle" aria-expanded="false" aria-controls="registryFilters">
+        Filters <span class="facet-count facet-count--all" data-facet="all"></span>
+      </button>
       <!-- Multi-select pill facets. Owner + Credit Type are derived from
            REGISTRY_DATA; Credit Category is a fixed Earn/Spend/Trade set
            ("Trade" is future-ready even with no matching rows yet). Within a
            facet, active pills OR together; across facets they AND; the search
            box ANDs on top. All wired in wireRegistry() below. -->
-      <div class="registry-filters">
+      <div class="registry-filters" id="registryFilters" hidden>
         <details class="registry-facet">
           <summary id="facet-owner">Owner <span class="facet-count" data-facet="owner"></span></summary>
           <div class="pill-row" id="ownerPills" role="group" aria-labelledby="facet-owner"></div>
@@ -1016,7 +1059,9 @@
         <table class="registry-table">
           <thead>
             <tr>
+              <th scope="col">Date</th>
               <th scope="col">Owner</th>
+              <th scope="col">Category</th>
               <th scope="col">Credit Type</th>
               <th scope="col" class="num">Credits</th>
               <th scope="col">Notes</th>
@@ -1155,6 +1200,16 @@
     const categoryPills = document.getElementById("categoryPills");
     if (!body || !summary || !search || !ownerPills || !typePills || !categoryPills) return;
 
+    // Collapse/expand the whole facet stack from the single Filters button.
+    const filterToggle = document.getElementById("filterToggle");
+    const registryFilters = document.getElementById("registryFilters");
+    if (filterToggle && registryFilters) {
+      filterToggle.addEventListener("click", function () {
+        registryFilters.hidden = !registryFilters.hidden;
+        filterToggle.setAttribute("aria-expanded", registryFilters.hidden ? "false" : "true");
+      });
+    }
+
     function esc(s) {
       return String(s).replace(/[&<>"]/g, function (c) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -1167,9 +1222,15 @@
     // Reflect each facet's active count in its (possibly collapsed) summary.
     function updateCounts() {
       Array.from(document.querySelectorAll(".facet-count")).forEach(function (el) {
-        const n = active[el.getAttribute("data-facet")].size;
+        const facet = el.getAttribute("data-facet");
+        if (facet === "all") return;
+        const n = active[facet].size;
         el.textContent = n ? "· " + n : "";
       });
+      // Total active selections across all three facets, shown on the toggle.
+      const all = active.owner.size + active.type.size + active.category.size;
+      const allEl = document.querySelector('[data-facet="all"]');
+      if (allEl) allEl.textContent = all ? "· " + all : "";
     }
 
     // Render a pill group into `container`, toggling membership of active[key].
@@ -1225,15 +1286,17 @@
         .sort(function (a, b) { return a.owner.localeCompare(b.owner) || b.amount - a.amount; });
 
       if (!rows.length) {
-        body.innerHTML = '<tr class="registry-empty"><td colspan="4">No credits match these filters.</td></tr>';
+        body.innerHTML = '<tr class="registry-empty"><td colspan="6">No credits match these filters.</td></tr>';
       } else {
         body.innerHTML = rows.map(function (r) {
           const spend = r.creditCategory === "Spend";
           const sign = spend ? "−" : "+";
           const cls = spend ? "registry-spend" : "registry-amount";
           return "<tr>" +
+            '<td class="registry-date">2026 Offseason</td>' +
             '<td><span class="registry-owner">' + esc(r.owner) + "</span>" +
             '<span class="registry-team">' + esc(r.team) + "</span></td>" +
+            '<td class="registry-category">' + esc(r.creditCategory) + "</td>" +
             '<td class="registry-type">' + esc(r.creditType) + "</td>" +
             '<td class="num ' + cls + '">' + sign + r.amount + "</td>" +
             '<td class="registry-notes">' + esc(r.notes) + "</td>" +
