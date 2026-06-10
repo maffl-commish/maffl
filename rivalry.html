@@ -385,6 +385,17 @@
   .owner-pill[data-state="b"] .op-badge { background: rgba(255, 255, 255, 0.22); }
   .owner-empty { font-family: var(--body); font-size: 13px; color: var(--muted); padding: 8px 2px; }
 
+  /* Pill record-preview chips (shown vs Owner 1) */
+  .owner-pill .op-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .op-rec {
+    flex: 0 0 auto;
+    font-size: 11px; font-weight: 700;
+    border-radius: 999px; padding: 2px 7px; margin-left: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .owner-pill.never-met { opacity: 0.45; }
+  .owner-pill.never-met .op-rec { background: var(--navy-soft); color: var(--muted); }
+
   /* ---------- VS Explorer ---------- */
   .vs-explorer {
     background: var(--surface);
@@ -400,6 +411,42 @@
     color: var(--muted);
     padding: 22px 12px;
   }
+
+  /* ---------- VS-the-field view (Owner 1 picked, Owner 2 empty) ---------- */
+  .field-head {
+    font-family: var(--display); font-weight: 700; font-size: 18px;
+    text-align: center; color: var(--navy); margin-bottom: 4px;
+  }
+  .field-sub {
+    font-family: var(--body); font-size: 13px; color: var(--muted);
+    text-align: center; margin-bottom: 10px;
+  }
+  .field-sort { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+  .field-list { display: flex; flex-direction: column; }
+  .field-row {
+    width: 100%;
+    display: flex; align-items: center; gap: 8px; justify-content: space-between;
+    padding: 10px 4px; min-height: 44px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; text-align: left;
+    transition: background 0.12s ease;
+  }
+  .field-row:last-child { border-bottom: 0; }
+  .field-row:hover, .field-row:active { background: var(--gold-soft); }
+  .field-row:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .field-name {
+    flex: 1 1 auto; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: var(--body); font-weight: 700; color: var(--navy);
+  }
+  .field-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .field-emoji { font-size: 13px; white-space: nowrap; }
+  .field-rec {
+    font-family: var(--display); font-weight: 700; font-size: 13px;
+    color: var(--navy); border-radius: 999px; padding: 2px 8px;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .field-last { font-size: 11px; color: var(--muted); white-space: nowrap; }
 
   /* Prominent VS header — overall record is the centerpiece */
   .vs-head {
@@ -713,6 +760,7 @@
 
     .owner-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     .lb-grid { grid-template-columns: 1fr; }
+    .lb-row__val { font-size: 14px; }
   }
 </style>
 </head>
@@ -1545,6 +1593,7 @@ function resolveKey(raw) {
  * RENDER STATE + LABELS
  * ===================================================================== */
 var filterMode = "active";   // "active" | "all"
+var fieldSort = "games";     // vs-the-field sort: "games" | "winpct" | "lastmet"
 var sel1 = null, sel2 = null; // selected owner keys (Owner 1, Owner 2)
 var vsResult = document.getElementById("vsResult");
 var tlTitles = [];            // current timeline bar caption strings (index = data-i)
@@ -1567,6 +1616,7 @@ function setFilter(mode) {
   document.getElementById("filterActive").setAttribute("aria-pressed", mode === "active" ? "true" : "false");
   document.getElementById("filterAll").setAttribute("aria-pressed", mode === "all" ? "true" : "false");
   renderPills();
+  renderVS();          // keep the field view (Owner 1 set, Owner 2 empty) filter-aware
   renderLeaderboards();
 }
 
@@ -1581,10 +1631,29 @@ function renderPills() {
     var state = o.key === sel1 ? "a" : (o.key === sel2 ? "b" : "");
     var tag = state === "a" ? '<span class="op-badge">1</span>'
             : state === "b" ? '<span class="op-badge">2</span>' : "";
-    return '<button type="button" class="owner-pill" data-key="' + escHtml(o.key) + '"' +
+    // Record chip vs Owner 1 — shown on every pill except Owner 1's own.
+    var hasChip = !!(sel1 && o.key !== sel1);
+    var chip = "", neverMet = false;
+    if (hasChip) {
+      var pp = PAIR_INDEX[pairId(sel1, o.key)];
+      if (pp) {
+        var oneIsA = (pp.aKey === sel1);
+        var w = oneIsA ? pp.aW : pp.bW, l = oneIsA ? pp.bW : pp.aW;
+        var pct = (w + l) ? w / (w + l) : 0;
+        chip = '<span class="op-rec" style="background:' + winRateColor(pct) +
+          ';color:var(--navy)">' + w + "–" + l + '</span>';
+      } else {
+        neverMet = true;
+        chip = '<span class="op-rec">—</span>';
+      }
+    }
+    var nameSpan = hasChip ? '<span class="op-name">' + escHtml(o.name) + '</span>'
+                           : '<span>' + escHtml(o.name) + '</span>';
+    return '<button type="button" class="owner-pill' + (neverMet ? " never-met" : "") +
+      '" data-key="' + escHtml(o.key) + '"' +
       (state ? ' data-state="' + state + '"' : "") +
       ' aria-pressed="' + (state ? "true" : "false") + '">' +
-      '<span>' + escHtml(o.name) + '</span>' + tag +
+      nameSpan + tag + chip +
     '</button>';
   }).join("");
   grid.querySelectorAll(".owner-pill").forEach(function (btn) {
@@ -1595,16 +1664,18 @@ function renderPills() {
 
 function renderStatus() {
   var s = document.getElementById("ownerStatus");
-  function slot(tag, key, cls) {
+  function slot(tag, key, cls, emptyTxt) {
     return '<span class="os-slot"><span class="os-tag">' + tag + '</span>' +
       (key
         ? '<span class="os-name ' + cls + '">' + escHtml(ROSTER_BY_KEY[key].name) + '</span>'
-        : '<span class="os-empty">tap a pill</span>') +
+        : '<span class="os-empty">' + emptyTxt + '</span>') +
     '</span>';
   }
-  s.innerHTML = slot("Owner 1", sel1, "os-name-1") +
+  // With Owner 1 set, opponents can also be picked from the field rows.
+  var o2Empty = sel1 ? "tap a pill or a row below" : "tap a pill";
+  s.innerHTML = slot("Owner 1", sel1, "os-name-1", "tap a pill") +
     '<span class="os-vs">VS</span>' +
-    slot("Owner 2", sel2, "os-name-2");
+    slot("Owner 2", sel2, "os-name-2", o2Empty);
 }
 
 function tapOwner(key) {
@@ -1808,12 +1879,81 @@ function renderTimeline(p, k1, k2) {
   '</div>';
 }
 
+/* =====================================================================
+ * VS-THE-FIELD — Owner 1 picked, Owner 2 empty: list every opponent met,
+ * filter-aware, sortable, each row tappable into the full rivalry.
+ * ===================================================================== */
+function fieldSortBtn(mode, label) {
+  return '<button type="button" class="filter-pill field-sort-btn" data-sort="' + mode +
+    '" aria-pressed="' + (fieldSort === mode ? "true" : "false") + '">' + label + '</button>';
+}
+
+function renderField(k1) {
+  var o1 = ROSTER_BY_KEY[k1];
+  var opps = ALL_PAIRS.filter(function (p) { return p.aKey === k1 || p.bKey === k1; })
+    .map(function (p) {
+      var oneIsA = (p.aKey === k1);
+      var oppKey = oneIsA ? p.bKey : p.aKey;
+      var w = oneIsA ? p.aW : p.bW, l = oneIsA ? p.bW : p.aW;
+      return { p: p, oppKey: oppKey, oppName: ROSTER_BY_KEY[oppKey].name,
+        w: w, l: l, pct: (w + l) ? w / (w + l) : 0 };
+    })
+    .filter(function (e) { return filterMode === "all" || isActive(e.oppKey); });
+
+  if (fieldSort === "winpct") {
+    opps.sort(function (a, b) { return (b.pct - a.pct) || (b.p.meetings - a.p.meetings); });
+  } else if (fieldSort === "lastmet") {
+    opps.sort(function (a, b) { return (b.p.lastYear - a.p.lastYear) || (b.p.meetings - a.p.meetings); });
+  } else {
+    opps.sort(function (a, b) { return (b.p.meetings - a.p.meetings) || a.oppName.localeCompare(b.oppName); });
+  }
+
+  var head = '<div class="field-head">' + escHtml(o1.name) + ' vs the Field</div>' +
+    '<div class="field-sub">Tap an opponent for the full rivalry.</div>';
+  var sortRow = '<div class="field-sort" role="group" aria-label="Sort opponents">' +
+    fieldSortBtn("games", "Games") + fieldSortBtn("winpct", "Win %") + fieldSortBtn("lastmet", "Last Met") +
+    '</div>';
+
+  var listHtml;
+  if (!opps.length) {
+    listHtml = '<div class="vs-msg">No opponents to show under this filter.</div>';
+  } else {
+    listHtml = '<div class="field-list">' + opps.map(function (e) {
+      var emojis = badgeEmojis(e.p);
+      var yy = "'" + String(e.p.lastYear).slice(-2);
+      return '<button type="button" class="field-row" data-opp="' + escHtml(e.oppKey) + '">' +
+        '<span class="field-name">' + escHtml(e.oppName) + '</span>' +
+        '<span class="field-right">' +
+          (emojis ? '<span class="field-emoji">' + emojis + '</span>' : "") +
+          '<span class="field-rec" style="background:' + winRateColor(e.pct) + '">' + e.w + "–" + e.l + '</span>' +
+          '<span class="field-last">last ' + yy + '</span>' +
+        '</span>' +
+      '</button>';
+    }).join("") + '</div>';
+  }
+
+  vsResult.innerHTML = head + sortRow + listHtml;
+
+  // Sort toggles re-render the field in place.
+  vsResult.querySelectorAll(".field-sort-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      fieldSort = btn.getAttribute("data-sort");
+      renderField(k1);
+    });
+  });
+  // Row tap fills Owner 2 -> existing full-VS render + hash + scroll.
+  vsResult.querySelectorAll(".field-row").forEach(function (btn) {
+    btn.addEventListener("click", function () { tapOwner(btn.getAttribute("data-opp")); });
+  });
+}
+
 function renderVS() {
   var k1 = sel1, k2 = sel2;
-  if (!k1 || !k2) {
+  if (!k1) {
     vsResult.innerHTML = '<div class="vs-msg">Pick two owners above to see their all-time rivalry.</div>';
     return;
   }
+  if (!k2) { renderField(k1); return; }   // Owner 1 set, Owner 2 empty -> vs-the-field
   if (k1 === k2) {
     vsResult.innerHTML = '<div class="vs-msg">Pick two different owners.</div>';
     return;
@@ -2057,12 +2197,40 @@ function renderLeaderboards() {
     .slice(0, 10)
     .map(function (p) { return { p: p, val: p.nailbiters + " game" + (p.nailbiters === 1 ? "" : "s") }; });
 
+  // Featured: highest Rivalry Ratings (min 3 meetings).
+  var topRated = pairs.filter(function (p) { return p.meetings >= 3; })
+    .sort(function (a, b) { return (b.rating - a.rating) || (b.meetings - a.meetings); })
+    .slice(0, 10)
+    .map(function (p) { return { p: p, val: String(p.rating) }; });
+
+  var longStreaks = pairs.filter(function (p) { return p.curStreakLen >= 3; })
+    .sort(function (a, b) { return (b.curStreakLen - a.curStreakLen) || (b.meetings - a.meetings); })
+    .slice(0, 10)
+    .map(function (p) {
+      var firstName = ROSTER_BY_KEY[p.curStreakKey].name.split(/\s+/)[0];
+      return { p: p, val: p.curStreakLen + " straight (" + firstName + ")" };
+    });
+
+  var highScoring = pairs.filter(function (p) { return p.meetings >= MIN; })
+    .sort(function (a, b) { return (b.avgCombined - a.avgCombined) || (b.meetings - a.meetings); })
+    .slice(0, 10)
+    .map(function (p) { return { p: p, val: fmtPts(p.avgCombined) + " ppg" }; });
+
+  var bigBlowouts = pairs.slice()
+    .sort(function (a, b) { return (b.blowout.margin - a.blowout.margin) || (b.meetings - a.meetings); })
+    .slice(0, 10)
+    .map(function (p) { return { p: p, val: "+" + fmtPts(p.blowout.margin) }; });
+
   var cards = [
+    { title: "Top Rivalry Ratings", note: "Our hottest head-to-heads &middot; 0–100", rows: topRated },
     { title: "Most-Played Rivalries", note: "By total meetings", rows: mostPlayed },
     { title: "Most Postseason Clashes", note: "Quarterfinal through Championship", rows: mostPost },
     { title: "Closest Rivalries", note: "Tightest split &middot; min. 5 meetings", rows: closest },
     { title: "Most Lopsided", note: "One side dominates &middot; min. 5 meetings", rows: lopsided },
-    { title: "Most Nail-Biters", note: "Games decided by ≤ 3.0 pts", rows: nailbiters }
+    { title: "Most Nail-Biters", note: "Games decided by ≤ 3.0 pts", rows: nailbiters },
+    { title: "Longest Active Streaks", note: "Current head-to-head runs", rows: longStreaks },
+    { title: "Highest-Scoring Rivalries", note: "Avg combined points &middot; min. 5 meetings", rows: highScoring },
+    { title: "Biggest Single-Game Blowouts", note: "Largest margin in one meeting", rows: bigBlowouts }
   ];
 
   grid.innerHTML = cards.map(function (c) {
@@ -2070,7 +2238,7 @@ function renderLeaderboards() {
     if (c.rows.length) {
       var lis = c.rows.map(function (e, i) {
         var emojis = badgeEmojis(e.p);
-        return '<li><button type="button" class="lb-row' + (i >= 3 ? " hidden-row" : "") + '" ' +
+        return '<li><button type="button" class="lb-row' + (i >= 2 ? " hidden-row" : "") + '" ' +
           'data-a="' + escHtml(e.p.aKey) + '" data-b="' + escHtml(e.p.bKey) + '">' +
           '<span class="lb-row__names">' + escHtml(e.p.aName) +
             '<span class="lb-vs">vs</span>' + escHtml(e.p.bName) + '</span>' +
@@ -2081,7 +2249,7 @@ function renderLeaderboards() {
         '</button></li>';
       }).join("");
       body = '<ul class="lb-list">' + lis + '</ul>' +
-        (c.rows.length > 3 ? '<button type="button" class="lb-more" data-expanded="0">Show more</button>' : "");
+        (c.rows.length > 2 ? '<button type="button" class="lb-more" data-expanded="0">Show more</button>' : "");
     } else {
       body = '<div class="lb-empty">Not enough data yet.</div>';
     }
@@ -2104,7 +2272,7 @@ function renderLeaderboards() {
       var ul = btn.previousElementSibling;
       var expanded = btn.getAttribute("data-expanded") === "1";
       ul.querySelectorAll(".lb-row").forEach(function (r, idx) {
-        if (idx >= 3) r.classList.toggle("hidden-row", expanded);
+        if (idx >= 2) r.classList.toggle("hidden-row", expanded);
       });
       btn.setAttribute("data-expanded", expanded ? "0" : "1");
       btn.textContent = expanded ? "Show more" : "Show less";
