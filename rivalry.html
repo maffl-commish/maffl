@@ -392,33 +392,51 @@
     padding: 22px 12px;
   }
 
-  /* Slim VS header */
+  /* Prominent VS header — overall record is the centerpiece */
   .vs-head {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    padding: 12px 10px;
+    gap: 8px;
+    padding: 14px 10px 16px;
     border-radius: 10px;
     margin-bottom: 14px;
+  }
+  .vs-head-names {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
   .vs-head-name {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 19px;
-    color: var(--navy);
+    font-size: 18px;
     line-height: 1.1;
   }
+  .vs-head-name-1 { color: var(--gold-dark); }
+  .vs-head-name-2 { color: var(--navy); }
   .vs-head-rec {
     font-family: var(--display);
     font-weight: 700;
-    font-size: 22px;
+    font-size: 30px;
     color: var(--navy);
-    border-radius: 8px;
-    padding: 6px 14px;
+    border-radius: 10px;
+    padding: 8px 20px;
     white-space: nowrap;
+    text-align: center;
+    line-height: 1.1;
   }
+  .vs-head-split {
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .vs-head-split strong { color: var(--navy); font-weight: 700; }
   .vs-head-vs {
     font-family: var(--display);
     font-weight: 700;
@@ -468,10 +486,12 @@
   .vs-stat__sub { color: var(--muted); font-size: 13px; }
 
   /* Postseason-by-round vertical list */
-  .po-list { display: flex; flex-direction: column; gap: 4px; }
-  .po-line { display: flex; align-items: baseline; gap: 8px; }
-  .po-line .po-name { min-width: 92px; font-weight: 700; }
+  .po-list { display: flex; flex-direction: column; gap: 5px; }
+  .po-line { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+  .po-line .po-name { min-width: 96px; font-family: var(--display); font-weight: 700; }
+  .po-line .po-dash { color: var(--muted); }
   .po-line .po-rec { font-family: var(--display); font-weight: 700; font-size: 15px; }
+  .po-line .po-rec .po-who { color: var(--gold-dark); }
   .po-line .po-years { color: var(--muted); font-size: 13px; }
 
   /* ---------- Head-to-head margin timeline ---------- */
@@ -705,7 +725,7 @@
           <li><span class="legend-emoji">🩸</span><span><strong>Blood Feud</strong> — 3+ playoff meetings.</span></li>
           <li><span class="legend-emoji">🔨🪵</span><span><strong>The Hammer / The Nail</strong> — one owner wins ≥75% (min 8 games); Hammer dominates, Nail gets dominated.</span></li>
           <li><span class="legend-emoji">⚖️</span><span><strong>The Dead Heat</strong> — record tied or within 1 game (min 10 games).</span></li>
-          <li><span class="legend-emoji">👻</span><span><strong>The Curse</strong> — one owner on an active 5+ game win streak.</span></li>
+          <li><span class="legend-emoji">🪦</span><span><strong>The Curse</strong> — one owner on an active 5+ game win streak.</span></li>
           <li><span class="legend-emoji">🏎️</span><span><strong>The Track Meet</strong> — top-10% highest-scoring rivalry (min 3 games).</span></li>
           <li><span class="legend-emoji">💓</span><span><strong>The Heart Murmur</strong> — average margin under 5 points (min 5 games).</span></li>
         </ul>
@@ -1169,11 +1189,29 @@ var DIVISION_DATA = [
 [2025,"L","N/A","Lower Tier","Sam Lavrinc"],
 [2025,"L","N/A","Lower Tier","Dominic Nicastro"]
 ];
+/* Division-file owner names don't all match the gold matchup names. Apply this
+ * small fixup map BEFORE normalizeName when resolving DIVISION_DATA names to
+ * roster keys. Slash-spacing variants already resolve via normalizeName(); this
+ * catches the hard mismatches (e.g. "Michael Murello" -> "Mike Murello"). Names
+ * that still fail to resolve to a roster key are warned once so future division
+ * drift gets caught instead of silently dropping a same-division match.
+ * Applies ONLY to division-data name resolution — not to matchup names. */
+var DIVISION_NAME_FIXUP = { "Michael Murello": "Mike Murello" };
+var DIV_WARNED = {};
+function divNameKey(rawName) {
+  var key = normalizeName(DIVISION_NAME_FIXUP[rawName] || rawName);
+  if (key && !ROSTER_BY_KEY[key] && !DIV_WARNED[key]) {
+    DIV_WARNED[key] = true;
+    console.warn("[rivalry] division-data name did not resolve to a roster key:", rawName);
+  }
+  return key;
+}
+
 // group key ("year|tier|conf|div") -> [{ year, key }]
 var DIV_GROUPS = {};
 DIVISION_DATA.forEach(function (r) {
   var gk = r[0] + "|" + r[1] + "|" + r[2] + "|" + r[3];
-  var key = normalizeName(r[4]);
+  var key = divNameKey(r[4]);
   if (!key) return;
   (DIV_GROUPS[gk] || (DIV_GROUPS[gk] = [])).push({ year: r[0], key: key });
 });
@@ -1203,12 +1241,20 @@ var OWNER_YEARS = {}; // key -> { year: true }
     (OWNER_YEARS[key] || (OWNER_YEARS[key] = {}))[yr] = true;
   }
   (window.MATCHUPS_DATA || []).forEach(function (r) { add(r[3], r[0]); add(r[5], r[0]); });
-  DIVISION_DATA.forEach(function (r) { add(r[4], r[0]); });
+  DIVISION_DATA.forEach(function (r) { add(DIVISION_NAME_FIXUP[r[4]] || r[4], r[0]); });
 })();
-function overlappingSeasons(k1, k2) {
-  var y1 = OWNER_YEARS[k1] || {}, y2 = OWNER_YEARS[k2] || {}, count = 0;
-  Object.keys(y1).forEach(function (y) { if (y2[y]) count++; });
-  return count;
+/* Latest season present in the data — its upper bound renders as "present". */
+var DATA_MAX_YEAR = (function () {
+  var mx = 0;
+  (window.MATCHUPS_DATA || []).forEach(function (r) { if (r[0] > mx) mx = r[0]; });
+  DIVISION_DATA.forEach(function (r) { if (r[0] > mx) mx = r[0]; });
+  return mx;
+})();
+/* Distinct years BOTH owners were active in MAFFL (matchups OR division data). */
+function overlapYears(k1, k2) {
+  var y1 = OWNER_YEARS[k1] || {}, y2 = OWNER_YEARS[k2] || {}, out = [];
+  Object.keys(y1).forEach(function (y) { if (y2[y]) out.push(Number(y)); });
+  return out.sort(function (a, b) { return a - b; });
 }
 
 /* =====================================================================
@@ -1338,7 +1384,7 @@ function computeBadges(p) {
   // The Dead Heat — record tied or within 1 game, min 10 games.
   if (n >= 10 && Math.abs(p.aW - p.bW) <= 1) b.push({ emoji: "⚖️", name: "The Dead Heat" });
   // The Curse — current 5+ game win streak.
-  if (p.curStreakLen >= 5) b.push({ emoji: "👻", name: "The Curse", who: p.curStreakKey });
+  if (p.curStreakLen >= 5) b.push({ emoji: "🪦", name: "The Curse", who: p.curStreakKey });
   // The Track Meet — avg combined score in top 10% of all pairs, min 3 games.
   if (n >= 3 && p.avgCombined >= TRACK_THRESHOLD) b.push({ emoji: "🏎️", name: "The Track Meet" });
   // The Heart Murmur — avg margin < 5 pts, min 5 games.
@@ -1480,7 +1526,7 @@ function renderBadgeRow(p) {
   }).join("") + '</div>';
 }
 
-function postseasonHtml(p, oneIsA) {
+function postseasonHtml(p, oneIsA, o1Name, o2Name) {
   var rounds = {};
   p.games.forEach(function (g) {
     if (g.type === "R" || !p.po[g.type]) return;
@@ -1494,9 +1540,15 @@ function postseasonHtml(p, oneIsA) {
     if (!r) return;
     var o1w = oneIsA ? r.aw : r.bw, o1l = oneIsA ? r.bw : r.aw;
     var ys = Object.keys(r.years).map(Number).sort(function (a, b) { return a - b; });
+    // Name the round holder from Owner 1's perspective; "Even" when tied.
+    var rec;
+    if (o1w > o1l) rec = '<span class="po-who">' + escHtml(o1Name) + '</span> ' + o1w + "–" + o1l;
+    else if (o1l > o1w) rec = '<span class="po-who">' + escHtml(o2Name) + '</span> ' + o1l + "–" + o1w;
+    else rec = '<span class="po-who">Even</span> ' + o1w + "–" + o1l;
     lines.push('<div class="po-line">' +
       '<span class="po-name">' + ROUND_NAME[t] + '</span>' +
-      '<span class="po-rec">' + o1w + "–" + o1l + '</span>' +
+      '<span class="po-dash">—</span>' +
+      '<span class="po-rec">' + rec + '</span>' +
       '<span class="po-years">(' + ys.join(", ") + ')</span>' +
     '</div>');
   });
@@ -1574,23 +1626,37 @@ function renderVS() {
   var o2Pts = oneIsA ? p.bPts : p.aPts;
   var o1Pct = (o1W + o1L) ? o1W / (o1W + o1L) : 0;
 
+  // Regular-season vs postseason split (Owner 1 perspective): type "R" = regular,
+  // Q/S/C/T = postseason.
+  var rsAw = 0, rsBw = 0, poAw = 0, poBw = 0;
+  p.games.forEach(function (g) {
+    var aWon = (g.winnerKey === p.aKey);
+    if (g.type === "R") { if (aWon) rsAw++; else rsBw++; }
+    else { if (aWon) poAw++; else poBw++; }
+  });
+  var rsW = oneIsA ? rsAw : rsBw, rsL = oneIsA ? rsBw : rsAw;
+  var poW = oneIsA ? poAw : poBw, poL = oneIsA ? poBw : poAw;
+
+  // Prominent overall record (Owner 1 perspective) is the centerpiece; the
+  // smaller RS/PO split sits beneath it. The All-Time Record stat block is
+  // intentionally folded in here, so it is not repeated below.
   var head =
     '<div class="vs-head">' +
-      '<span class="vs-head-name">' + escHtml(o1.name) + '</span>' +
-      '<span class="vs-head-rec" style="background:' + winRateColor(o1Pct) + '">' + o1W + "–" + o1L + '</span>' +
-      '<span class="vs-head-vs">VS</span>' +
-      '<span class="vs-head-name">' + escHtml(o2.name) + '</span>' +
+      '<div class="vs-head-names">' +
+        '<span class="vs-head-name vs-head-name-1">' + escHtml(o1.name) + '</span>' +
+        '<span class="vs-head-vs">VS</span>' +
+        '<span class="vs-head-name vs-head-name-2">' + escHtml(o2.name) + '</span>' +
+      '</div>' +
+      '<div class="vs-head-rec" style="background:' + winRateColor(o1Pct) + '">' +
+        escHtml(o1.name) + ' ' + o1W + "–" + o1L + '</div>' +
+      '<div class="vs-head-split">Regular Season: <strong>' + rsW + "–" + rsL + '</strong>' +
+        ' &middot; Postseason: <strong>' + poW + "–" + poL + '</strong></div>' +
     '</div>';
 
   var stats = [];
 
-  // 1) All-time record (owner1 perspective).
-  stats.push(statBlock("All-Time Record",
-    '<strong>' + escHtml(o1.name) + ' ' + o1W + "–" + o1L + '</strong> ' +
-    '<span class="vs-stat__sub">over ' + p.meetings + ' meeting' + (p.meetings === 1 ? "" : "s") + '</span>'));
-
-  // 2) Postseason by round (vertical, with years).
-  stats.push(statBlock("Postseason by Round", postseasonHtml(p, oneIsA)));
+  // Postseason by round (vertical, leader named, with years).
+  stats.push(statBlock("Postseason by Round", postseasonHtml(p, oneIsA, o1.name, o2.name)));
 
   // 3) Streaks.
   var curName = ROSTER_BY_KEY[p.curStreakKey].name;
@@ -1624,11 +1690,22 @@ function renderVS() {
     '<strong>' + escHtml(o2.name) + ' ' + fmtPts(o2Pts) + '</strong><br>' +
     '<span class="vs-stat__sub">Average margin ' + fmtPts(p.avgMargin) + '</span>'));
 
-  // 7) Shared history — overlapping seasons + same-division years.
-  var overlap = overlappingSeasons(p.aKey, p.bKey);
+  // 7) Shared history — (a) seasons together as count + range, (b) same-division years.
+  var ovYears = overlapYears(p.aKey, p.bKey);
+  var ovCount = ovYears.length;
+  var togetherTxt;
+  if (ovCount === 0) {
+    togetherTxt = "No overlapping seasons";
+  } else if (ovCount === 1) {
+    togetherTxt = "1 season together (" + ovYears[0] + ")";
+  } else {
+    var lo = ovYears[0], hi = ovYears[ovCount - 1];
+    var hiTxt = (hi === DATA_MAX_YEAR) ? "present" : String(hi);
+    togetherTxt = ovCount + " seasons together (" + lo + "–" + hiTxt + ")";
+  }
   var divYears = sameDivisionYears(p.aKey, p.bKey);
   stats.push(statBlock("Shared History",
-    '<strong>' + overlap + ' season' + (overlap === 1 ? "" : "s") + ' in MAFFL together</strong> &middot; ' +
+    '<strong>' + togetherTxt + '</strong><br>' +
     '<span class="vs-stat__sub">Same division: ' +
     (divYears.length ? divYears.join(", ") : "never") + '</span>'));
 
