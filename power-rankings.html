@@ -854,6 +854,9 @@
   }
   .draft-cta-btn:hover { background: var(--gold-dark); }
 
+  /* Rivals tab → full Rivalry Engine deep-link (reuses .draft-cta-btn styling). */
+  .rivalry-cta { margin-top: 16px; text-align: center; }
+
   /* ---------- Rivalry (heat-map-colored H2H list) ---------- */
   .rv-summary {
     font-family: var(--body);
@@ -1169,7 +1172,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 6, 2026</span>
+      <span class="meta-pill">Last Updated June 9, 2026</span>
     </div>
   </header>
 
@@ -2157,10 +2160,12 @@ var KEY_TO_OWNER = (function () {
 })();
 
 /* Head-to-head + big-game index from window.MATCHUPS_DATA (consolation already
-   removed). Each row is [year, winnerName, winnerScore, loserName, loserScore,
-   type] where type is "R" (regular season), "Q" (quarterfinal), "S"
-   (semifinal), "C" (championship), or "T" (3rd-place game). Every non-"R"
-   type is a playoff (Big Game) matchup.
+   removed). Each row has 8 fields:
+     [year, week, tier, winnerName, winnerScore, loserName, loserScore, type]
+   where type is "R" (regular season), "Q" (quarterfinal), "S" (semifinal),
+   "C" (championship), or "T" (3rd-place game). Every non-"R" type is a playoff
+   (Big Game) matchup. week (r[1]) and tier (r[2]) exist in the row but are
+   unused on this page.
    Builds two indexes:
      H2H_INDEX[ownerKey][oppKey] = { rsW, rsL, poW, poL }
      BIG_GAMES_BY_KEY[ownerKey]  = [ { year, type, oppKey, won, ownScore, oppScore } ]
@@ -2181,8 +2186,8 @@ var BIG_GAMES_BY_KEY = {};
     return k || null;
   }
   rows.forEach(function (r) {
-    var year = r[0], wk = keyFor(r[1]), ws = r[2], lk = keyFor(r[3]), ls = r[4];
-    var type = r[5] || "R";
+    var year = r[0], wk = keyFor(r[3]), ws = r[4], lk = keyFor(r[5]), ls = r[6];
+    var type = r[7] || "R";
     if (!wk || !lk || wk === lk) return;
     var po = (type !== "R");
     H2H_INDEX[wk] = H2H_INDEX[wk] || {};
@@ -2510,12 +2515,16 @@ function renderRivals(owner) {
         '<ul class="rv-list">' + headerLi + rowsHtml.slice(2).join("") + '</ul>' +
       '</div>'
     : "";
+  var rivalryCta =
+    '<a class="draft-cta-btn rivalry-cta-btn" href="rivalry.html#owner=' + escHtml(owner.key) +
+    '">View full rivalry breakdown →</a>';
   return '<div class="rivalry-wrap">' +
     '<div class="ov-head">Head-to-Head</div>' +
     summary +
     teaser +
     fullToggle +
     bigGames +
+    '<div class="rivalry-cta">' + rivalryCta + '</div>' +
   '</div>';
 }
 
