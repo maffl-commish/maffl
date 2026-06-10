@@ -371,7 +371,7 @@
     letter-spacing: 0.02em;
   }
   .card-preview .strong { font-weight: 700; }
-  .card-preview .danger { color: var(--loss); font-weight: 700; }
+  .card-preview .danger { color: var(--navy); font-weight: 700; }
 
   .card-body {
     display: none;
@@ -477,6 +477,11 @@
     color: var(--muted);
     min-width: 44px;
     text-align: right;
+  }
+  .row .pts .pts-label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 2px;
   }
   .streak {
     display: inline-flex;
@@ -1269,7 +1274,7 @@ function row(t) {
         <span class="owner">${esc(t.owner)}</span>
       </div>
       <div class="meta">
-        <span class="pts">${t.points.toFixed(1)}</span>
+        <span class="pts">${t.points.toFixed(1)}<span class="pts-label">PF</span></span>
         <span class="streak ${streakClass(t.streak)}">${streakLabel(t.streak)}</span>
         <span class="cr">${t.credits}<span class="cr-label">CR</span></span>
       </div>
