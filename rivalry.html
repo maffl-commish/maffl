@@ -210,6 +210,172 @@
     margin: 0 0 12px;
   }
 
+  /* ---------- Page tabs (mirrors rules.html) ---------- */
+  .portal-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .portal-tab {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    flex: 1 1 auto;
+    text-align: center;
+    min-height: 44px;
+    padding: 10px 16px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .portal-tab:hover { color: var(--navy); }
+  .portal-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  .portal-tab:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .tab-panel[hidden] { display: none; }
+
+  /* ---------- Emoji legend (Discovery tab, collapsible) ---------- */
+  .legend-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--navy-soft);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .legend-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    text-align: left;
+  }
+  .legend-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .legend-chev { font-size: 11px; color: var(--muted); transition: transform 0.15s ease; }
+  .legend-toggle[aria-expanded="true"] .legend-chev { transform: rotate(180deg); }
+  .legend-body { padding: 0 16px 14px; }
+  .legend-list { list-style: none; margin: 0; padding: 0; }
+  .legend-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-top: 1px solid var(--border);
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.45;
+  }
+  .legend-list li:first-child { border-top: 0; }
+  .legend-emoji { flex: 0 0 auto; font-size: 17px; min-width: 30px; }
+  .legend-list strong { font-weight: 700; }
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 26px; }
+  .filter-pill {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 40px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-family: var(--display);
+    font-weight: 700; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--muted);
+    transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  }
+  .filter-pill[aria-pressed="true"] {
+    background: var(--navy); color: #fff; border-color: var(--navy);
+  }
+  .filter-pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .filter-count { font-weight: 500; font-size: 11px; opacity: 0.85; }
+
+  /* ---------- Owner pills ---------- */
+  .owner-pillbox {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 8px var(--navy-soft);
+    margin-bottom: 32px;
+  }
+  .owner-status {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; flex-wrap: wrap;
+    padding: 2px 2px 14px;
+    text-align: center;
+  }
+  .owner-status .os-slot { display: inline-flex; align-items: baseline; gap: 6px; }
+  .owner-status .os-tag {
+    font-family: var(--display); font-weight: 700;
+    font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .owner-status .os-name {
+    font-family: var(--display); font-weight: 700; font-size: 16px;
+  }
+  .owner-status .os-name-1 { color: var(--gold-dark); }
+  .owner-status .os-name-2 { color: var(--navy); }
+  .owner-status .os-empty { font-family: var(--body); color: var(--muted); font-weight: 500; font-size: 13px; }
+  .owner-status .os-vs {
+    font-family: var(--display); font-weight: 700;
+    font-size: 12px; letter-spacing: 0.1em; color: var(--muted);
+  }
+  .owner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+  }
+  .owner-pill {
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    width: 100%; text-align: left;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--page-bg);
+    font-family: var(--body); font-weight: 700; font-size: 13.5px;
+    color: var(--navy);
+    line-height: 1.15;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+  .owner-pill:hover { border-color: var(--gold); }
+  .owner-pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .owner-pill[data-state="a"] {
+    background: var(--gold); border-color: var(--gold-dark); color: var(--navy);
+  }
+  .owner-pill[data-state="b"] {
+    background: var(--navy); border-color: var(--navy); color: #fff;
+  }
+  .owner-pill .op-badge {
+    flex: 0 0 auto;
+    font-family: var(--display); font-weight: 700; font-size: 11px;
+    border-radius: 999px; padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .owner-pill[data-state="b"] .op-badge { background: rgba(255, 255, 255, 0.22); }
+  .owner-empty { font-family: var(--body); font-size: 13px; color: var(--muted); padding: 8px 2px; }
+
   /* ---------- VS Explorer ---------- */
   .vs-explorer {
     background: var(--surface);
@@ -217,47 +383,7 @@
     border-radius: 12px;
     padding: 18px 16px;
     box-shadow: 0 2px 10px var(--navy-soft);
-    margin-bottom: 32px;
   }
-  .vs-selects { display: flex; flex-direction: column; gap: 10px; }
-  .vs-field { display: flex; flex-direction: column; gap: 5px; }
-  .vs-field label {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--muted);
-  }
-  .vs-select {
-    width: 100%;
-    min-height: 46px;
-    font-family: var(--body);
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--navy);
-    background: var(--page-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    -webkit-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a9ab5' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-  }
-  .vs-select:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
-  .vs-divider {
-    text-align: center;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    color: var(--gold-dark);
-    margin: 2px 0;
-  }
-
-  .vs-result { margin-top: 18px; }
   .vs-msg {
     text-align: center;
     font-family: var(--body);
@@ -275,7 +401,7 @@
     flex-wrap: wrap;
     padding: 12px 10px;
     border-radius: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
   .vs-head-name {
     font-family: var(--display);
@@ -300,6 +426,21 @@
     letter-spacing: 0.12em;
     color: var(--muted);
   }
+
+  /* ---------- Rivalry tier badges ---------- */
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px; }
+  .badge-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    border: 1px solid var(--gold);
+    font-family: var(--display); font-weight: 700; font-size: 12.5px;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .badge-chip .bc-emoji { font-size: 14px; }
+  .badge-chip .bc-who { color: var(--gold-dark); font-weight: 700; }
 
   .vs-stats { display: flex; flex-direction: column; gap: 0; }
   .vs-stat {
@@ -326,11 +467,35 @@
   .vs-stat__value strong { font-weight: 700; }
   .vs-stat__sub { color: var(--muted); font-size: 13px; }
 
+  /* Postseason-by-round vertical list */
+  .po-list { display: flex; flex-direction: column; gap: 4px; }
+  .po-line { display: flex; align-items: baseline; gap: 8px; }
+  .po-line .po-name { min-width: 92px; font-weight: 700; }
+  .po-line .po-rec { font-family: var(--display); font-weight: 700; font-size: 15px; }
+  .po-line .po-years { color: var(--muted); font-size: 13px; }
+
+  /* ---------- Head-to-head margin timeline ---------- */
+  .h2h-chart { margin-top: 4px; }
+  .h2h-chart svg { width: 100%; height: auto; display: block; }
+  .h2h-axis {
+    display: flex; justify-content: space-between;
+    font-family: var(--display); font-weight: 700; font-size: 11px;
+    color: var(--muted); margin-top: 2px;
+  }
+  .h2h-legend {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px;
+    font-family: var(--body); font-size: 11px; color: var(--muted);
+    margin-top: 6px;
+  }
+  .h2h-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .h2h-legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: 0 0 auto; }
+
   /* ---------- Discovery Leaderboards ---------- */
   .lb-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    margin-bottom: 32px;
   }
   .lb-card {
     background: var(--surface);
@@ -368,6 +533,7 @@
   }
   .lb-row:last-child { border-bottom: 0; }
   .lb-row:hover, .lb-row:active { background: var(--gold-soft); }
+  .lb-row.hidden-row { display: none; }
   .lb-row__names {
     font-family: var(--body);
     font-weight: 700;
@@ -377,15 +543,26 @@
     min-width: 0;
   }
   .lb-row__names .lb-vs { color: var(--muted); font-weight: 500; font-size: 11px; padding: 0 3px; }
+  .lb-row__right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .lb-emoji { font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
   .lb-row__val {
     font-family: var(--display);
     font-weight: 700;
     font-size: 15px;
     color: var(--navy);
-    flex: 0 0 auto;
     white-space: nowrap;
   }
   .lb-empty { font-family: var(--body); font-size: 13px; color: var(--muted); padding: 8px 6px; }
+  .lb-more {
+    display: block; width: 100%;
+    margin-top: 4px;
+    padding: 10px;
+    font-family: var(--display); font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--gold-dark);
+    border-top: 1px solid var(--border);
+  }
+  .lb-more:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 
   /* ---------- Footer ---------- */
   .site-footer {
@@ -437,6 +614,7 @@
     .page-header__title { font-size: 24px; }
     .page-header__meta { flex-direction: column; align-items: flex-end; gap: 6px; }
 
+    .owner-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     .lb-grid { grid-template-columns: 1fr; }
   }
 </style>
@@ -477,30 +655,69 @@
   </header>
   <hr class="gold-rule">
 
-  <!-- SECTION 1 — VS EXPLORER -->
-  <section aria-label="Versus explorer">
-    <p class="section-label">Vs. Explorer</p>
-    <div class="vs-explorer">
-      <div class="vs-selects">
-        <div class="vs-field">
-          <label for="owner1Select">Owner 1</label>
-          <select class="vs-select" id="owner1Select" aria-label="Owner 1"></select>
-        </div>
-        <div class="vs-divider">VS</div>
-        <div class="vs-field">
-          <label for="owner2Select">Owner 2</label>
-          <select class="vs-select" id="owner2Select" aria-label="Owner 2"></select>
-        </div>
-      </div>
-      <div class="vs-result" id="vsResult" aria-live="polite"></div>
-    </div>
-  </section>
+  <!-- PAGE TABS (mirrors rules.html) -->
+  <div class="portal-tabs" role="tablist" aria-label="Rivalry sections">
+    <button class="portal-tab active" id="tabBtnH2H" role="tab" aria-selected="true" aria-controls="tab-h2h" data-tab="h2h" type="button">Head-to-Head</button>
+    <button class="portal-tab" id="tabBtnDiscovery" role="tab" aria-selected="false" aria-controls="tab-discovery" data-tab="discovery" type="button">Discovery</button>
+  </div>
 
-  <!-- SECTION 2 — DISCOVERY LEADERBOARDS -->
-  <section aria-label="Discovery leaderboards">
-    <p class="section-label">Discovery Leaderboards</p>
-    <div class="lb-grid" id="lbGrid"></div>
-  </section>
+  <!-- TAB 1 — HEAD-TO-HEAD (default active) -->
+  <div class="tab-panel" id="tab-h2h" data-tab-panel="h2h" role="tabpanel" aria-labelledby="tabBtnH2H">
+
+    <!-- 1) FILTER BAR -->
+    <section aria-label="Owner filter">
+      <p class="section-label">Show</p>
+      <div class="filter-bar" id="filterBar" role="group" aria-label="Active or all owners">
+        <button type="button" class="filter-pill" id="filterActive" aria-pressed="true">Active <span class="filter-count" id="countActive"></span></button>
+        <button type="button" class="filter-pill" id="filterAll" aria-pressed="false">All <span class="filter-count" id="countAll"></span></button>
+      </div>
+    </section>
+
+    <!-- 2) OWNER PILLS -->
+    <section aria-label="Owner selection">
+      <p class="section-label">Pick Two Owners</p>
+      <div class="owner-pillbox">
+        <div class="owner-status" id="ownerStatus" aria-live="polite"></div>
+        <div class="owner-grid" id="ownerGrid"></div>
+      </div>
+    </section>
+
+    <!-- 3) VS RESULT -->
+    <section aria-label="Head to head result">
+      <p class="section-label">Head to Head</p>
+      <div class="vs-explorer">
+        <div class="vs-result" id="vsResult" aria-live="polite"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- TAB 2 — DISCOVERY -->
+  <div class="tab-panel" id="tab-discovery" data-tab-panel="discovery" role="tabpanel" aria-labelledby="tabBtnDiscovery" hidden>
+
+    <!-- EMOJI KEY / LEGEND (collapsible, default collapsed) -->
+    <div class="legend-box">
+      <button type="button" class="legend-toggle" id="legendToggle" aria-expanded="false" aria-controls="legendBody">
+        <span>What do these mean?</span>
+        <span class="legend-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="legend-body" id="legendBody" hidden>
+        <ul class="legend-list">
+          <li><span class="legend-emoji">🩸</span><span><strong>Blood Feud</strong> — 3+ playoff meetings.</span></li>
+          <li><span class="legend-emoji">🔨🪵</span><span><strong>The Hammer / The Nail</strong> — one owner wins ≥75% (min 8 games); Hammer dominates, Nail gets dominated.</span></li>
+          <li><span class="legend-emoji">⚖️</span><span><strong>The Dead Heat</strong> — record tied or within 1 game (min 10 games).</span></li>
+          <li><span class="legend-emoji">👻</span><span><strong>The Curse</strong> — one owner on an active 5+ game win streak.</span></li>
+          <li><span class="legend-emoji">🏎️</span><span><strong>The Track Meet</strong> — top-10% highest-scoring rivalry (min 3 games).</span></li>
+          <li><span class="legend-emoji">💓</span><span><strong>The Heart Murmur</strong> — average margin under 5 points (min 5 games).</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- DISCOVERY LEADERBOARDS -->
+    <section aria-label="Discovery leaderboards">
+      <p class="section-label">Discovery Leaderboards</p>
+      <div class="lb-grid" id="lbGrid"></div>
+    </section>
+  </div>
 </main>
 
 <footer class="site-footer">
@@ -518,7 +735,13 @@
  *   [year, week, tier, winnerName, winnerScore, loserName, loserScore, type]
  *   tier "U"/"L"   type "R"/"Q"/"S"/"C"/"T"  (Q/S/C/T = playoffs)
  * Builds a meeting-derived owner roster + a per-pair head-to-head index,
- * then renders the VS explorer and five discovery leaderboards.
+ * then renders: filter bar, tappable owner pills, discovery leaderboards,
+ * and the anchored VS result (badges + stats + margin timeline).
+ *
+ * Two embedded data sources (no fetches):
+ *   ACTIVE_NAMES  — owners with Active? == "Y" in MAFFL_Owners_Sheet_revised.csv
+ *   DIVISION_DATA — [year, tier, conf, div, ownerName] from
+ *                   MAFFL_Division_History_2005_2025.csv (same-division detection)
  * ===================================================================== */
 
 /* ---- Helpers copied VERBATIM from power-rankings.html ---- */
@@ -550,8 +773,6 @@ function winRateColor(pct) {
 
 /* =====================================================================
  * OWNER ROSTER — derived from the names that appear in MATCHUPS_DATA.
- * Each distinct raw name keeps its verbatim display form; the key is the
- * normalizeName() value (so "Brian Murello/ Ron Murello" stays consistent).
  * ===================================================================== */
 var ROSTER = [];          // [{ key, name }] sorted by display name
 var ROSTER_BY_KEY = {};   // key -> { key, name }
@@ -570,9 +791,428 @@ var ROSTER_BY_KEY = {};   // key -> { key, name }
 })();
 
 /* =====================================================================
+ * ACTIVE OWNERS — embedded from MAFFL_Owners_Sheet_revised.csv (Active? == "Y").
+ * Display names use the gold forms from the matchup data so normalizeName()
+ * resolves them to the same roster keys.
+ * ===================================================================== */
+var ACTIVE_NAMES = [
+  "Joe Reilly",
+  "Brian Murello/ Ron Murello",
+  "Tony Trozzo",
+  "Jon Murello/ Rick Simmons",
+  "Mike Murello",
+  "David Murello",
+  "Todd Trozzo",
+  "Chris Johnson",
+  "Jacob Nickman",
+  "BJ Funari",
+  "Bob Keslar",
+  "Dan Reilly",
+  "Jon Fetrow",
+  "Ed Peters",
+  "Tony Brooks",
+  "Braiden Snyder",
+  "Ben Funari",
+  "Charles Lavrinc",
+  "Sam Lavrinc",
+  "Nick Yankovich",
+  "Dominic Nicastro"
+];
+var ACTIVE_KEYS = {};
+ACTIVE_NAMES.forEach(function (nm) {
+  var k = normalizeName(nm);
+  if (ROSTER_BY_KEY[k]) ACTIVE_KEYS[k] = true; // only count owners that actually played
+});
+
+/* =====================================================================
+ * SAME-DIVISION HISTORY — embedded from MAFFL_Division_History_2005_2025.csv.
+ * Each row: [year, tier ("U"/"L"), conference, division, ownerName].
+ * We detect, per owner pair, the YEARS in which BOTH owners shared the same
+ * (year + tier + conference + division) group.
+ * ===================================================================== */
+var DIVISION_DATA = [
+[2005,"U","TFC","Lohan","Todd Trozzo"],
+[2005,"U","TFC","Lohan","Mike Murello"],
+[2005,"U","TFC","Lohan","Craig Toth"],
+[2005,"U","TFC","Simpson","Jacob Nickman"],
+[2005,"U","TFC","Simpson","Brian Murello/Ron Murello"],
+[2005,"U","TFC","Simpson","Josh Lavrinc"],
+[2005,"U","AFC","Jolie","David Murello"],
+[2005,"U","AFC","Jolie","Joe Reilly"],
+[2005,"U","AFC","Jolie","Jimmy Crisan"],
+[2005,"U","AFC","Aniston","Jeff Grace"],
+[2005,"U","AFC","Aniston","Tony Trozzo"],
+[2005,"U","AFC","Aniston","Chris Johnson"],
+[2006,"U","TFC","Lohan","Mike Murello"],
+[2006,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2006,"U","TFC","Lohan","Todd Trozzo"],
+[2006,"U","TFC","Lohan","Craig Toth"],
+[2006,"U","TFC","Simpson","Josh Lavrinc"],
+[2006,"U","TFC","Simpson","Brian Murello/Ron Murello"],
+[2006,"U","TFC","Simpson","Jacob Nickman"],
+[2006,"U","TFC","Simpson","Jon Murello/Rick Simmons"],
+[2006,"U","AFC","Jolie","David Murello"],
+[2006,"U","AFC","Jolie","Jimmy Crisan"],
+[2006,"U","AFC","Jolie","Sean Ritson"],
+[2006,"U","AFC","Jolie","Joe Reilly"],
+[2006,"U","AFC","Aniston","Tony Trozzo"],
+[2006,"U","AFC","Aniston","BJ Funari"],
+[2006,"U","AFC","Aniston","Jeff Grace"],
+[2006,"U","AFC","Aniston","Chris Johnson"],
+[2007,"U","TFC","Lohan","Mike Murello"],
+[2007,"U","TFC","Lohan","Craig Toth"],
+[2007,"U","TFC","Lohan","Todd Trozzo"],
+[2007,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2007,"U","TFC","Simpson","Brian Murello/Ron Murello"],
+[2007,"U","TFC","Simpson","Jacob Nickman"],
+[2007,"U","TFC","Simpson","Jon Murello/Rick Simmons"],
+[2007,"U","TFC","Simpson","Josh Lavrinc"],
+[2007,"U","AFC","Jolie","Jimmy Crisan"],
+[2007,"U","AFC","Jolie","David Murello"],
+[2007,"U","AFC","Jolie","Sean Ritson"],
+[2007,"U","AFC","Jolie","Joe Reilly"],
+[2007,"U","AFC","Aniston","BJ Funari"],
+[2007,"U","AFC","Aniston","Jeff Grace"],
+[2007,"U","AFC","Aniston","Chris Johnson"],
+[2007,"U","AFC","Aniston","Tony Trozzo"],
+[2008,"U","TFC","Lohan","Craig Toth"],
+[2008,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2008,"U","TFC","Lohan","Todd Trozzo"],
+[2008,"U","TFC","Lohan","Mike Murello"],
+[2008,"U","TFC","Simpson","Jacob Nickman"],
+[2008,"U","TFC","Simpson","Brian Murello/Ron Murello"],
+[2008,"U","TFC","Simpson","Jon Murello/Rick Simmons"],
+[2008,"U","TFC","Simpson","Josh Lavrinc"],
+[2008,"U","AFC","Jolie","Joe Reilly"],
+[2008,"U","AFC","Jolie","Sean Ritson"],
+[2008,"U","AFC","Jolie","David Murello"],
+[2008,"U","AFC","Jolie","Jimmy Crisan"],
+[2008,"U","AFC","Aniston","BJ Funari"],
+[2008,"U","AFC","Aniston","Jeff Grace"],
+[2008,"U","AFC","Aniston","Tony Trozzo"],
+[2008,"U","AFC","Aniston","Chris Johnson"],
+[2009,"U","TFC","Lohan","Todd Trozzo"],
+[2009,"U","TFC","Lohan","Mike Murello"],
+[2009,"U","TFC","Lohan","Matt Brown"],
+[2009,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2009,"U","TFC","Simpson","Brian Murello/Ron Murello"],
+[2009,"U","TFC","Simpson","Jon Murello/Rick Simmons"],
+[2009,"U","TFC","Simpson","Jacob Nickman"],
+[2009,"U","TFC","Simpson","Josh Lavrinc"],
+[2009,"U","AFC","Jolie","David Murello"],
+[2009,"U","AFC","Jolie","Sean Ritson"],
+[2009,"U","AFC","Jolie","Jimmy Crisan"],
+[2009,"U","AFC","Jolie","Joe Reilly"],
+[2009,"U","AFC","Aniston","Jeff Grace"],
+[2009,"U","AFC","Aniston","Tony Trozzo"],
+[2009,"U","AFC","Aniston","BJ Funari"],
+[2009,"U","AFC","Aniston","Chris Johnson"],
+[2010,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2010,"U","TFC","Lohan","Matt Brown"],
+[2010,"U","TFC","Lohan","Todd Trozzo"],
+[2010,"U","TFC","Lohan","Mike Murello"],
+[2010,"U","TFC","Kardashian","Jon Murello/Rick Simmons"],
+[2010,"U","TFC","Kardashian","Josh Lavrinc"],
+[2010,"U","TFC","Kardashian","Brian Murello/Ron Murello"],
+[2010,"U","TFC","Kardashian","Jacob Nickman"],
+[2010,"U","AFC","Jolie","Jimmy Crisan"],
+[2010,"U","AFC","Jolie","David Murello"],
+[2010,"U","AFC","Jolie","Sean Ritson"],
+[2010,"U","AFC","Jolie","Joe Reilly"],
+[2010,"U","AFC","Lautner","Chris Johnson"],
+[2010,"U","AFC","Lautner","Tony Trozzo"],
+[2010,"U","AFC","Lautner","Joni Murello"],
+[2010,"U","AFC","Lautner","BJ Funari"],
+[2011,"U","TFC","Lohan","Mike Murello"],
+[2011,"U","TFC","Lohan","Todd Trozzo"],
+[2011,"U","TFC","Lohan","Matt Brown"],
+[2011,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2011,"U","TFC","Kardashian","Josh Lavrinc"],
+[2011,"U","TFC","Kardashian","Brian Murello/Ron Murello"],
+[2011,"U","TFC","Kardashian","Jacob Nickman"],
+[2011,"U","TFC","Kardashian","Jon Murello/Rick Simmons"],
+[2011,"U","AFC","Jolie","Sean Ritson"],
+[2011,"U","AFC","Jolie","David Murello"],
+[2011,"U","AFC","Jolie","Joe Reilly"],
+[2011,"U","AFC","Jolie","Jimmy Crisan"],
+[2011,"U","AFC","Lautner","Tony Trozzo"],
+[2011,"U","AFC","Lautner","BJ Funari"],
+[2011,"U","AFC","Lautner","Chris Johnson"],
+[2011,"U","AFC","Lautner","Joni Murello"],
+[2012,"U","TFC","Lohan","Marcus Ruby/Joe Ruby"],
+[2012,"U","TFC","Lohan","Todd Trozzo"],
+[2012,"U","TFC","Lohan","Matt Brown"],
+[2012,"U","TFC","Lohan","Mike Murello"],
+[2012,"U","TFC","Kardashian","Brian Murello/Ron Murello"],
+[2012,"U","TFC","Kardashian","Jacob Nickman"],
+[2012,"U","TFC","Kardashian","Jon Murello/Rick Simmons"],
+[2012,"U","TFC","Kardashian","Josh Lavrinc"],
+[2012,"U","AFC","Jolie","David Murello"],
+[2012,"U","AFC","Jolie","Joe Reilly"],
+[2012,"U","AFC","Jolie","Sean Ritson"],
+[2012,"U","AFC","Jolie","Jimmy Crisan"],
+[2012,"U","AFC","Lautner","Tony Trozzo"],
+[2012,"U","AFC","Lautner","BJ Funari"],
+[2012,"U","AFC","Lautner","Chris Johnson"],
+[2012,"U","AFC","Lautner","Joni Murello"],
+[2013,"U","AFC","Kunis","Chris Johnson"],
+[2013,"U","AFC","Kunis","Jacob Nickman"],
+[2013,"U","AFC","Kunis","Kevin Radkowski"],
+[2013,"U","AFC","Kunis","Joe Reilly"],
+[2013,"U","AFC","Stone","Todd Trozzo"],
+[2013,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2013,"U","AFC","Stone","Josh Lavrinc"],
+[2013,"U","AFC","Stone","BJ Funari"],
+[2013,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2013,"U","TFC","Upton","David Murello"],
+[2013,"U","TFC","Upton","Ed Peters"],
+[2013,"U","TFC","Upton","Jimmy Crisan"],
+[2013,"U","TFC","EB","Dan Reilly"],
+[2013,"U","TFC","EB","Joni Murello"],
+[2013,"U","TFC","EB","Tony Trozzo"],
+[2013,"U","TFC","EB","Mike Murello"],
+[2014,"U","AFC","Kunis","Joe Reilly"],
+[2014,"U","AFC","Kunis","Chris Johnson"],
+[2014,"U","AFC","Kunis","Jacob Nickman"],
+[2014,"U","AFC","Kunis","Mike Licciardi"],
+[2014,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2014,"U","AFC","Stone","BJ Funari"],
+[2014,"U","AFC","Stone","Josh Lavrinc"],
+[2014,"U","AFC","Stone","Todd Trozzo"],
+[2014,"U","TFC","Upton","Jon Fetrow"],
+[2014,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2014,"U","TFC","Upton","David Murello"],
+[2014,"U","TFC","Upton","Ed Peters"],
+[2014,"U","TFC","Cuoco","Bob Keslar"],
+[2014,"U","TFC","Cuoco","Tony Trozzo"],
+[2014,"U","TFC","Cuoco","Dan Reilly"],
+[2014,"U","TFC","Cuoco","Mike Murello"],
+[2015,"U","AFC","Kunis","Joe Reilly"],
+[2015,"U","AFC","Kunis","Jacob Nickman"],
+[2015,"U","AFC","Kunis","Chris Johnson"],
+[2015,"U","AFC","Kunis","Mike Licciardi"],
+[2015,"U","AFC","Stone","BJ Funari"],
+[2015,"U","AFC","Stone","Todd Trozzo"],
+[2015,"U","AFC","Stone","Josh Lavrinc"],
+[2015,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2015,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2015,"U","TFC","Upton","Ed Peters"],
+[2015,"U","TFC","Upton","Jon Fetrow"],
+[2015,"U","TFC","Upton","David Murello"],
+[2015,"U","TFC","Cuoco","Dan Reilly"],
+[2015,"U","TFC","Cuoco","Mike Murello"],
+[2015,"U","TFC","Cuoco","Tony Trozzo"],
+[2015,"U","TFC","Cuoco","Bob Keslar"],
+[2016,"U","AFC","Kunis","Mike Licciardi"],
+[2016,"U","AFC","Kunis","Jacob Nickman"],
+[2016,"U","AFC","Kunis","Chris Johnson"],
+[2016,"U","AFC","Kunis","Joe Reilly"],
+[2016,"U","AFC","Stone","Todd Trozzo"],
+[2016,"U","AFC","Stone","BJ Funari"],
+[2016,"U","AFC","Stone","Josh Lavrinc"],
+[2016,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2016,"U","TFC","Upton","Ed Peters"],
+[2016,"U","TFC","Upton","Jon Fetrow"],
+[2016,"U","TFC","Upton","David Murello"],
+[2016,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2016,"U","TFC","Cuoco","Mike Murello"],
+[2016,"U","TFC","Cuoco","Dan Reilly"],
+[2016,"U","TFC","Cuoco","Tony Trozzo"],
+[2016,"U","TFC","Cuoco","Bob Keslar"],
+[2017,"U","AFC","Kunis","Chris Johnson"],
+[2017,"U","AFC","Kunis","Mike Licciardi"],
+[2017,"U","AFC","Kunis","Joe Reilly"],
+[2017,"U","AFC","Kunis","Jacob Nickman"],
+[2017,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2017,"U","AFC","Stone","Todd Trozzo"],
+[2017,"U","AFC","Stone","Josh Lavrinc"],
+[2017,"U","AFC","Stone","BJ Funari"],
+[2017,"U","TFC","Upton","David Murello"],
+[2017,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2017,"U","TFC","Upton","Ed Peters"],
+[2017,"U","TFC","Upton","Jon Fetrow"],
+[2017,"U","TFC","Cuoco","Tony Trozzo"],
+[2017,"U","TFC","Cuoco","Mike Murello"],
+[2017,"U","TFC","Cuoco","Bob Keslar"],
+[2017,"U","TFC","Cuoco","Dan Reilly"],
+[2018,"U","AFC","Kunis","Joe Reilly"],
+[2018,"U","AFC","Kunis","Chris Johnson"],
+[2018,"U","AFC","Kunis","Mike Licciardi"],
+[2018,"U","AFC","Kunis","Jacob Nickman"],
+[2018,"U","AFC","Stone","Josh Lavrinc"],
+[2018,"U","AFC","Stone","BJ Funari"],
+[2018,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2018,"U","AFC","Stone","Todd Trozzo"],
+[2018,"U","TFC","Upton","David Murello"],
+[2018,"U","TFC","Upton","Ed Peters"],
+[2018,"U","TFC","Upton","Jon Fetrow"],
+[2018,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2018,"U","TFC","Cuoco","Tony Trozzo"],
+[2018,"U","TFC","Cuoco","Dan Reilly"],
+[2018,"U","TFC","Cuoco","Mike Murello"],
+[2018,"U","TFC","Cuoco","Bob Keslar"],
+[2019,"U","AFC","Kunis","Joe Reilly"],
+[2019,"U","AFC","Kunis","Chris Johnson"],
+[2019,"U","AFC","Kunis","Jacob Nickman"],
+[2019,"U","AFC","Kunis","Mike Licciardi"],
+[2019,"U","AFC","Stone","Josh Lavrinc"],
+[2019,"U","AFC","Stone","BJ Funari"],
+[2019,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2019,"U","AFC","Stone","Todd Trozzo"],
+[2019,"U","TFC","Upton","David Murello"],
+[2019,"U","TFC","Upton","Ed Peters"],
+[2019,"U","TFC","Upton","Jon Fetrow"],
+[2019,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2019,"U","TFC","Cuoco","Bob Keslar"],
+[2019,"U","TFC","Cuoco","Mike Murello"],
+[2019,"U","TFC","Cuoco","Tony Trozzo"],
+[2019,"U","TFC","Cuoco","Dan Reilly"],
+[2020,"U","AFC","Kunis","Josh Farber"],
+[2020,"U","AFC","Kunis","Chris Johnson"],
+[2020,"U","AFC","Kunis","Joe Reilly"],
+[2020,"U","AFC","Kunis","Jacob Nickman"],
+[2020,"U","AFC","Stone","Todd Trozzo"],
+[2020,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2020,"U","AFC","Stone","BJ Funari"],
+[2020,"U","AFC","Stone","Josh Lavrinc"],
+[2020,"U","TFC","Upton","David Murello"],
+[2020,"U","TFC","Upton","Jon Fetrow"],
+[2020,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2020,"U","TFC","Upton","Ed Peters"],
+[2020,"U","TFC","Cuoco","Tony Trozzo"],
+[2020,"U","TFC","Cuoco","Bob Keslar"],
+[2020,"U","TFC","Cuoco","Mike Murello"],
+[2020,"U","TFC","Cuoco","Dan Reilly"],
+[2021,"U","AFC","Kunis","Jacob Nickman"],
+[2021,"U","AFC","Kunis","Joe Reilly"],
+[2021,"U","AFC","Kunis","Chris Johnson"],
+[2021,"U","AFC","Kunis","Tony Brooks"],
+[2021,"U","AFC","Stone","BJ Funari"],
+[2021,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2021,"U","AFC","Stone","Josh Lavrinc"],
+[2021,"U","AFC","Stone","Todd Trozzo"],
+[2021,"U","TFC","Upton","David Murello"],
+[2021,"U","TFC","Upton","Jon Fetrow"],
+[2021,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2021,"U","TFC","Upton","Ed Peters"],
+[2021,"U","TFC","Cuoco","Mike Murello"],
+[2021,"U","TFC","Cuoco","Bob Keslar"],
+[2021,"U","TFC","Cuoco","Dan Reilly"],
+[2021,"U","TFC","Cuoco","Tony Trozzo"],
+[2022,"U","AFC","Kunis","Joe Reilly"],
+[2022,"U","AFC","Kunis","Tony Brooks"],
+[2022,"U","AFC","Kunis","Chris Johnson"],
+[2022,"U","AFC","Kunis","Jacob Nickman"],
+[2022,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2022,"U","AFC","Stone","BJ Funari"],
+[2022,"U","AFC","Stone","Braiden Snyder"],
+[2022,"U","AFC","Stone","Todd Trozzo"],
+[2022,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2022,"U","TFC","Upton","Ed Peters"],
+[2022,"U","TFC","Upton","David Murello"],
+[2022,"U","TFC","Upton","Jon Fetrow"],
+[2022,"U","TFC","Cuoco","Tony Trozzo"],
+[2022,"U","TFC","Cuoco","Mike Murello"],
+[2022,"U","TFC","Cuoco","Dan Reilly"],
+[2022,"U","TFC","Cuoco","Bob Keslar"],
+[2023,"U","AFC","Kunis","Tony Brooks"],
+[2023,"U","AFC","Kunis","Chris Johnson"],
+[2023,"U","AFC","Kunis","Joe Reilly"],
+[2023,"U","AFC","Kunis","Jacob Nickman"],
+[2023,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2023,"U","AFC","Stone","BJ Funari"],
+[2023,"U","AFC","Stone","Braiden Snyder"],
+[2023,"U","AFC","Stone","Todd Trozzo"],
+[2023,"U","TFC","Upton","Ed Peters"],
+[2023,"U","TFC","Upton","Jon Fetrow"],
+[2023,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2023,"U","TFC","Upton","David Murello"],
+[2023,"U","TFC","Cuoco","Dan Reilly"],
+[2023,"U","TFC","Cuoco","Bob Keslar"],
+[2023,"U","TFC","Cuoco","Tony Trozzo"],
+[2023,"U","TFC","Cuoco","Mike Murello"],
+[2024,"U","AFC","Kunis","Joe Reilly"],
+[2024,"U","AFC","Kunis","Chris Johnson"],
+[2024,"U","AFC","Kunis","Tony Brooks"],
+[2024,"U","AFC","Kunis","Jacob Nickman"],
+[2024,"U","AFC","Stone","BJ Funari"],
+[2024,"U","AFC","Stone","Braiden Snyder"],
+[2024,"U","AFC","Stone","Brian Murello/Ron Murello"],
+[2024,"U","AFC","Stone","Todd Trozzo"],
+[2024,"U","TFC","Upton","David Murello"],
+[2024,"U","TFC","Upton","Ed Peters"],
+[2024,"U","TFC","Upton","Jon Fetrow"],
+[2024,"U","TFC","Upton","Jon Murello/Rick Simmons"],
+[2024,"U","TFC","Cuoco","Dan Reilly"],
+[2024,"U","TFC","Cuoco","Bob Keslar"],
+[2024,"U","TFC","Cuoco","Tony Trozzo"],
+[2024,"U","TFC","Cuoco","Mike Murello"],
+[2025,"U","N/A","Division A","Joe Reilly"],
+[2025,"U","N/A","Division A","David Murello"],
+[2025,"U","N/A","Division A","Todd Trozzo"],
+[2025,"U","N/A","Division B","Jon Fetrow"],
+[2025,"U","N/A","Division B","Dan Reilly"],
+[2025,"U","N/A","Division B","Brian Murello/Ron Murello"],
+[2025,"U","N/A","Division C","Jon Murello/Rick Simmons"],
+[2025,"U","N/A","Division C","BJ Funari"],
+[2025,"U","N/A","Division C","Bob Keslar"],
+[2025,"U","N/A","Division D","Ed Peters"],
+[2025,"U","N/A","Division D","Braiden Snyder"],
+[2025,"U","N/A","Division D","Chris Johnson"],
+[2025,"L","N/A","Lower Tier","Jacob Nickman"],
+[2025,"L","N/A","Lower Tier","Mike Murello"],
+[2025,"L","N/A","Lower Tier","Tony Trozzo"],
+[2025,"L","N/A","Lower Tier","Tony Brooks"],
+[2025,"L","N/A","Lower Tier","Ben Funari"],
+[2025,"L","N/A","Lower Tier","Charles Lavrinc"],
+[2025,"L","N/A","Lower Tier","Nick Yankovich"],
+[2025,"L","N/A","Lower Tier","Sam Lavrinc"],
+[2025,"L","N/A","Lower Tier","Dominic Nicastro"]
+];
+// group key ("year|tier|conf|div") -> [{ year, key }]
+var DIV_GROUPS = {};
+DIVISION_DATA.forEach(function (r) {
+  var gk = r[0] + "|" + r[1] + "|" + r[2] + "|" + r[3];
+  var key = normalizeName(r[4]);
+  if (!key) return;
+  (DIV_GROUPS[gk] || (DIV_GROUPS[gk] = [])).push({ year: r[0], key: key });
+});
+function sameDivisionYears(k1, k2) {
+  var years = {};
+  Object.keys(DIV_GROUPS).forEach(function (gk) {
+    var arr = DIV_GROUPS[gk], has1 = false, has2 = false;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].key === k1) has1 = true;
+      if (arr[i].key === k2) has2 = true;
+    }
+    if (has1 && has2) years[arr[0].year] = true;
+  });
+  return Object.keys(years).map(Number).sort(function (a, b) { return a - b; });
+}
+
+/* =====================================================================
+ * OWNER ACTIVE-YEARS — an owner is "active in year Y" if they appear that
+ * year in EITHER MATCHUPS_DATA (winner or loser) OR DIVISION_DATA. Used by
+ * Shared History to count seasons two owners were both in MAFFL.
+ * ===================================================================== */
+var OWNER_YEARS = {}; // key -> { year: true }
+(function buildOwnerYears() {
+  function add(name, yr) {
+    var key = normalizeName(name);
+    if (!key) return;
+    (OWNER_YEARS[key] || (OWNER_YEARS[key] = {}))[yr] = true;
+  }
+  (window.MATCHUPS_DATA || []).forEach(function (r) { add(r[3], r[0]); add(r[5], r[0]); });
+  DIVISION_DATA.forEach(function (r) { add(r[4], r[0]); });
+})();
+function overlappingSeasons(k1, k2) {
+  var y1 = OWNER_YEARS[k1] || {}, y2 = OWNER_YEARS[k2] || {}, count = 0;
+  Object.keys(y1).forEach(function (y) { if (y2[y]) count++; });
+  return count;
+}
+
+/* =====================================================================
  * PAIR INDEX — one entry per unordered pair of owners that has met.
- * Keyed by the two normalized names sorted + joined. Stores the full game
- * list (a/b perspective fixed to the sorted keys) plus aggregates.
  * ===================================================================== */
 function pairId(k1, k2) { return [k1, k2].sort().join("||"); }
 
@@ -612,7 +1252,7 @@ var PAIR_INDEX = {};
 
 /* Compute all-time + postseason + streak + blowout/heartbreaker aggregates. */
 function aggregatePair(p) {
-  // Chronological order: year then week (no ties; equal-score games keep a winner).
+  // Chronological order: year then week.
   p.games.sort(function (g1, g2) { return (g1.year - g2.year) || (g1.week - g2.week); });
 
   var aW = 0, bW = 0, aPts = 0, bPts = 0, marginSum = 0;
@@ -647,7 +1287,6 @@ function aggregatePair(p) {
                 aScore: g.aScore, bScore: g.bScore };
     }
   });
-  // Fallback if every meeting was an exact tie in score (none today, but be safe).
   if (!heart) heart = blowout;
 
   var n = p.games.length;
@@ -662,14 +1301,59 @@ function aggregatePair(p) {
   p.poCount = p.games.filter(function (g) { return g.type !== "R"; }).length;
   p.nailbiters = p.games.filter(function (g) { return Math.abs(g.aScore - g.bScore) <= 3.0; }).length;
   p.avgMargin = n ? marginSum / n : 0;
+  p.avgCombined = n ? (aPts + bPts) / n : 0;
   p.aPct = (aW + bW) ? aW / (aW + bW) : 0;
+}
+
+var ALL_PAIRS = Object.keys(PAIR_INDEX).map(function (id) { return PAIR_INDEX[id]; });
+
+/* Track Meet threshold: 90th percentile of avg combined score across ALL pairs. */
+var TRACK_THRESHOLD = (function () {
+  var vals = ALL_PAIRS.map(function (p) { return p.avgCombined; })
+    .sort(function (a, b) { return a - b; });
+  if (!vals.length) return Infinity;
+  var idx = Math.ceil(vals.length * 0.9) - 1;
+  if (idx < 0) idx = 0;
+  return vals[idx];
+})();
+
+/* =====================================================================
+ * RIVALRY TIER BADGES — a pair may earn multiple. Directional badges carry
+ * a `who` owner key (Hammer = dominator, Nail = other, Curse = streak holder).
+ * ===================================================================== */
+function computeBadges(p) {
+  var b = [], n = p.meetings;
+  // Blood Feud — 3+ playoff meetings.
+  if (p.poCount >= 3) b.push({ emoji: "🩸", name: "Blood Feud" });
+  // The Hammer / The Nail — one owner >=75% win rate, min 8 games.
+  if (n >= 8) {
+    if (p.aPct >= 0.75) {
+      b.push({ emoji: "🔨", name: "The Hammer", who: p.aKey });
+      b.push({ emoji: "🪵", name: "The Nail", who: p.bKey });
+    } else if (p.aPct <= 0.25) {
+      b.push({ emoji: "🔨", name: "The Hammer", who: p.bKey });
+      b.push({ emoji: "🪵", name: "The Nail", who: p.aKey });
+    }
+  }
+  // The Dead Heat — record tied or within 1 game, min 10 games.
+  if (n >= 10 && Math.abs(p.aW - p.bW) <= 1) b.push({ emoji: "⚖️", name: "The Dead Heat" });
+  // The Curse — current 5+ game win streak.
+  if (p.curStreakLen >= 5) b.push({ emoji: "👻", name: "The Curse", who: p.curStreakKey });
+  // The Track Meet — avg combined score in top 10% of all pairs, min 3 games.
+  if (n >= 3 && p.avgCombined >= TRACK_THRESHOLD) b.push({ emoji: "🏎️", name: "The Track Meet" });
+  // The Heart Murmur — avg margin < 5 pts, min 5 games.
+  if (n >= 5 && p.avgMargin < 5) b.push({ emoji: "💓", name: "The Heart Murmur" });
+  return b;
+}
+function badgeEmojis(p) {
+  var seen = {}, out = [];
+  computeBadges(p).forEach(function (x) { if (!seen[x.emoji]) { seen[x.emoji] = 1; out.push(x.emoji); } });
+  return out.join("");
 }
 
 /* =====================================================================
  * KEY RESOLUTION — leaderboard/#vs hashes use normalizeName() keys, but the
- * power-rankings Rivals deep-link arrives as a portal SLUG (e.g.
- * "todd-trozzo", "brian-ron-murello"). Resolve any of those forms back to a
- * roster key.
+ * power-rankings Rivals deep-link arrives as a portal SLUG.
  * ===================================================================== */
 function slugify(s) {
   return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -679,7 +1363,6 @@ var SLUG_TO_KEY = (function () {
   ROSTER.forEach(function (o) { m[slugify(o.name)] = o.key; });
   return m;
 })();
-// Co-owned franchises whose portal slug differs from a plain slug of the name.
 var PORTAL_ALIASES = {
   "brian-ron-murello": "brian murello / ron murello",
   "jon-rick": "jon murello / rick simmons",
@@ -690,7 +1373,7 @@ function resolveKey(raw) {
   var k = String(raw);
   try { k = decodeURIComponent(k); } catch (_) {}
   k = k.trim().toLowerCase();
-  if (ROSTER_BY_KEY[k]) return k;                 // already a normalizeName key
+  if (ROSTER_BY_KEY[k]) return k;
   var nk = normalizeName(k);
   if (ROSTER_BY_KEY[nk]) return nk;
   if (PORTAL_ALIASES[k] && ROSTER_BY_KEY[PORTAL_ALIASES[k]]) return PORTAL_ALIASES[k];
@@ -702,33 +1385,174 @@ function resolveKey(raw) {
 }
 
 /* =====================================================================
- * RENDER — populate dropdowns.
+ * RENDER STATE + LABELS
  * ===================================================================== */
-var sel1 = document.getElementById("owner1Select");
-var sel2 = document.getElementById("owner2Select");
+var filterMode = "active";   // "active" | "all"
+var sel1 = null, sel2 = null; // selected owner keys (Owner 1, Owner 2)
 var vsResult = document.getElementById("vsResult");
 
-(function populateSelects() {
-  var opts = '<option value="">— Select —</option>' +
-    ROSTER.map(function (o) {
-      return '<option value="' + escHtml(o.key) + '">' + escHtml(o.name) + '</option>';
-    }).join("");
-  sel1.innerHTML = opts;
-  sel2.innerHTML = opts;
-})();
-
 var TIER_LABEL = { U: "Upper", L: "Lower" };
-var ROUND_NAME = { C: "Championship", S: "Semi", Q: "QF", T: "3rd" };
+var ROUND_NAME = { C: "Championship", S: "Semi", Q: "Quarter", T: "3rd" };
 var ROUND_ORDER = ["C", "S", "Q", "T"];
 
 function gameContext(g) { return "(" + g.year + ", Week " + g.week + ")"; }
 function fmtPts(v) { return (Math.round(v * 100) / 100).toFixed(2).replace(/\.00$/, ""); }
+function isActive(key) { return !!ACTIVE_KEYS[key]; }
+function pairVisible(p) { return filterMode === "all" || (isActive(p.aKey) && isActive(p.bKey)); }
 
-/* Build the VS view for owner1 (k1) vs owner2 (k2). */
+/* =====================================================================
+ * FILTER BAR
+ * ===================================================================== */
+function setFilter(mode) {
+  if (mode === filterMode) return;
+  filterMode = mode;
+  document.getElementById("filterActive").setAttribute("aria-pressed", mode === "active" ? "true" : "false");
+  document.getElementById("filterAll").setAttribute("aria-pressed", mode === "all" ? "true" : "false");
+  renderPills();
+  renderLeaderboards();
+}
+
+/* =====================================================================
+ * OWNER PILLS
+ * ===================================================================== */
+function renderPills() {
+  var grid = document.getElementById("ownerGrid");
+  var list = ROSTER.filter(function (o) { return filterMode === "all" || isActive(o.key); });
+  if (!list.length) { grid.innerHTML = '<div class="owner-empty">No owners to show.</div>'; renderStatus(); return; }
+  grid.innerHTML = list.map(function (o) {
+    var state = o.key === sel1 ? "a" : (o.key === sel2 ? "b" : "");
+    var tag = state === "a" ? '<span class="op-badge">1</span>'
+            : state === "b" ? '<span class="op-badge">2</span>' : "";
+    return '<button type="button" class="owner-pill" data-key="' + escHtml(o.key) + '"' +
+      (state ? ' data-state="' + state + '"' : "") +
+      ' aria-pressed="' + (state ? "true" : "false") + '">' +
+      '<span>' + escHtml(o.name) + '</span>' + tag +
+    '</button>';
+  }).join("");
+  grid.querySelectorAll(".owner-pill").forEach(function (btn) {
+    btn.addEventListener("click", function () { tapOwner(btn.getAttribute("data-key")); });
+  });
+  renderStatus();
+}
+
+function renderStatus() {
+  var s = document.getElementById("ownerStatus");
+  function slot(tag, key, cls) {
+    return '<span class="os-slot"><span class="os-tag">' + tag + '</span>' +
+      (key
+        ? '<span class="os-name ' + cls + '">' + escHtml(ROSTER_BY_KEY[key].name) + '</span>'
+        : '<span class="os-empty">tap a pill</span>') +
+    '</span>';
+  }
+  s.innerHTML = slot("Owner 1", sel1, "os-name-1") +
+    '<span class="os-vs">VS</span>' +
+    slot("Owner 2", sel2, "os-name-2");
+}
+
+function tapOwner(key) {
+  if (key === sel1) { sel1 = sel2; sel2 = null; }        // deselect Owner 1 (promote Owner 2)
+  else if (key === sel2) { sel2 = null; }                 // deselect Owner 2
+  else if (!sel1) { sel1 = key; }                         // fill Owner 1
+  else if (!sel2) { sel2 = key; }                         // fill Owner 2
+  else { sel1 = key; sel2 = null; }                       // both full -> fresh start
+  renderPills();
+  renderVS();
+  syncHash();
+  if (sel1 && sel2) scrollToVs();
+}
+
+/* =====================================================================
+ * VS RESULT
+ * ===================================================================== */
+function statBlock(label, valueHtml) {
+  return '<div class="vs-stat">' +
+    '<div class="vs-stat__label">' + label + '</div>' +
+    '<div class="vs-stat__value">' + valueHtml + '</div>' +
+  '</div>';
+}
+
+function renderBadgeRow(p) {
+  var b = computeBadges(p);
+  if (!b.length) return "";
+  return '<div class="badge-row">' + b.map(function (x) {
+    var who = x.who ? ' <span class="bc-who">' + escHtml(ROSTER_BY_KEY[x.who].name) + '</span>' : "";
+    return '<span class="badge-chip"><span class="bc-emoji">' + x.emoji + '</span>' + x.name + who + '</span>';
+  }).join("") + '</div>';
+}
+
+function postseasonHtml(p, oneIsA) {
+  var rounds = {};
+  p.games.forEach(function (g) {
+    if (g.type === "R" || !p.po[g.type]) return;
+    var r = rounds[g.type] || (rounds[g.type] = { aw: 0, bw: 0, years: {} });
+    if (g.winnerKey === p.aKey) r.aw++; else r.bw++;
+    r.years[g.year] = true;
+  });
+  var lines = [];
+  ROUND_ORDER.forEach(function (t) {
+    var r = rounds[t];
+    if (!r) return;
+    var o1w = oneIsA ? r.aw : r.bw, o1l = oneIsA ? r.bw : r.aw;
+    var ys = Object.keys(r.years).map(Number).sort(function (a, b) { return a - b; });
+    lines.push('<div class="po-line">' +
+      '<span class="po-name">' + ROUND_NAME[t] + '</span>' +
+      '<span class="po-rec">' + o1w + "–" + o1l + '</span>' +
+      '<span class="po-years">(' + ys.join(", ") + ')</span>' +
+    '</div>');
+  });
+  return lines.length ? '<div class="po-list">' + lines.join("") + '</div>' : "No playoff meetings.";
+}
+
+/* Inline SVG margin timeline: above the zero line = Owner 1 win, below = Owner 2. */
+function renderTimeline(p, k1, k2) {
+  var games = p.games;
+  if (!games.length) return "";
+  var W = 340, H = 132, padX = 8, midY = 62, maxBar = 48;
+  var maxMargin = 0;
+  games.forEach(function (g) { var m = Math.abs(g.aScore - g.bScore); if (m > maxMargin) maxMargin = m; });
+  if (maxMargin <= 0) maxMargin = 1;
+  var n = games.length;
+  var step = (W - padX * 2) / n;
+  var bw = Math.max(2, Math.min(step * 0.6, 16));
+  function f(v) { return Math.round(v * 10) / 10; }
+
+  var bars = games.map(function (g, i) {
+    var m = Math.abs(g.aScore - g.bScore);
+    var h = Math.max(2, m / maxMargin * maxBar);
+    var o1won = (g.winnerKey === k1);
+    var x = padX + i * step + step / 2 - bw / 2;
+    var y = o1won ? midY - h : midY;
+    var color = o1won ? "var(--win)" : "var(--loss)";
+    var hi = Math.max(g.aScore, g.bScore), lo = Math.min(g.aScore, g.bScore);
+    var rnd = (g.type !== "R" && ROUND_NAME[g.type]) ? " " + ROUND_NAME[g.type] : "";
+    var title = g.year + " Wk" + g.week + rnd + " · " + fmtPts(hi) + "–" + fmtPts(lo) + " (+" + fmtPts(m) + ")";
+    return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(bw) + '" height="' + f(h) + '" rx="1.5" fill="' + color + '">' +
+      '<title>' + escHtml(title) + '</title></rect>';
+  }).join("");
+
+  var zero = '<line x1="' + padX + '" y1="' + midY + '" x2="' + (W - padX) + '" y2="' + midY +
+    '" stroke="var(--border)" stroke-width="1"/>';
+  var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" role="img" ' +
+    'aria-label="Head-to-head margin timeline, ' + escHtml(ROSTER_BY_KEY[k1].name) +
+    ' wins above the line">' + zero + bars + '</svg>';
+
+  var firstY = games[0].year, lastY = games[n - 1].year;
+  return '<div class="vs-stat">' +
+    '<div class="vs-stat__label">Margin Timeline</div>' +
+    '<div class="h2h-chart">' + svg +
+      '<div class="h2h-axis"><span>' + firstY + '</span><span>' + lastY + '</span></div>' +
+      '<div class="h2h-legend">' +
+        '<span><i style="background:var(--win)"></i>' + escHtml(ROSTER_BY_KEY[k1].name) + ' win</span>' +
+        '<span><i style="background:var(--loss)"></i>' + escHtml(ROSTER_BY_KEY[k2].name) + ' win</span>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
 function renderVS() {
-  var k1 = sel1.value, k2 = sel2.value;
+  var k1 = sel1, k2 = sel2;
   if (!k1 || !k2) {
-    vsResult.innerHTML = '<div class="vs-msg">Pick two owners to see their all-time rivalry.</div>';
+    vsResult.innerHTML = '<div class="vs-msg">Pick two owners above to see their all-time rivalry.</div>';
     return;
   }
   if (k1 === k2) {
@@ -737,7 +1561,8 @@ function renderVS() {
   }
   var p = PAIR_INDEX[pairId(k1, k2)];
   if (!p) {
-    vsResult.innerHTML = '<div class="vs-msg">These two have never met.</div>';
+    vsResult.innerHTML = '<div class="vs-msg">' + escHtml(ROSTER_BY_KEY[k1].name) +
+      ' and ' + escHtml(ROSTER_BY_KEY[k2].name) + ' have never met.</div>';
     return;
   }
 
@@ -749,11 +1574,10 @@ function renderVS() {
   var o2Pts = oneIsA ? p.bPts : p.aPts;
   var o1Pct = (o1W + o1L) ? o1W / (o1W + o1L) : 0;
 
-  // Slim VS header with heat-mapped record (owner1 perspective).
   var head =
     '<div class="vs-head">' +
       '<span class="vs-head-name">' + escHtml(o1.name) + '</span>' +
-      '<span class="vs-head-rec" style="background:' + winRateColor(o1Pct) + '">' + o1W + '–' + o1L + '</span>' +
+      '<span class="vs-head-rec" style="background:' + winRateColor(o1Pct) + '">' + o1W + "–" + o1L + '</span>' +
       '<span class="vs-head-vs">VS</span>' +
       '<span class="vs-head-name">' + escHtml(o2.name) + '</span>' +
     '</div>';
@@ -762,25 +1586,17 @@ function renderVS() {
 
   // 1) All-time record (owner1 perspective).
   stats.push(statBlock("All-Time Record",
-    '<strong>' + escHtml(o1.name) + ' ' + o1W + '–' + o1L + '</strong> ' +
-    '<span class="vs-stat__sub">over ' + p.meetings + ' meeting' + (p.meetings === 1 ? '' : 's') + '</span>'));
+    '<strong>' + escHtml(o1.name) + ' ' + o1W + "–" + o1L + '</strong> ' +
+    '<span class="vs-stat__sub">over ' + p.meetings + ' meeting' + (p.meetings === 1 ? "" : "s") + '</span>'));
 
-  // 2) Postseason by round (owner1 perspective).
-  var poParts = [];
-  ROUND_ORDER.forEach(function (t) {
-    var aw = p.po[t][0], bw = p.po[t][1];
-    if (aw + bw === 0) return;
-    var o1w = oneIsA ? aw : bw, o1l = oneIsA ? bw : aw;
-    poParts.push(ROUND_NAME[t] + ' ' + o1w + '-' + o1l);
-  });
-  stats.push(statBlock("Postseason by Round",
-    poParts.length ? poParts.join(' &middot; ') : 'No playoff meetings.'));
+  // 2) Postseason by round (vertical, with years).
+  stats.push(statBlock("Postseason by Round", postseasonHtml(p, oneIsA)));
 
   // 3) Streaks.
   var curName = ROSTER_BY_KEY[p.curStreakKey].name;
   var curTxt = p.curStreakLen === 1
-    ? escHtml(curName) + ' won the most recent meeting'
-    : escHtml(curName) + ' has won the last ' + p.curStreakLen;
+    ? escHtml(curName) + " won the most recent meeting"
+    : escHtml(curName) + " has won the last " + p.curStreakLen;
   var o1Long = oneIsA ? p.longA : p.longB;
   var o2Long = oneIsA ? p.longB : p.longA;
   stats.push(statBlock("Streaks",
@@ -792,14 +1608,14 @@ function renderVS() {
   var bl = p.blowout;
   stats.push(statBlock("Biggest Blowout",
     '<strong>' + escHtml(ROSTER_BY_KEY[bl.winnerKey].name) + ' by ' + fmtPts(bl.margin) + '</strong> ' +
-    '<span class="vs-stat__sub">' + fmtPts(Math.max(bl.aScore, bl.bScore)) + '–' + fmtPts(Math.min(bl.aScore, bl.bScore)) +
+    '<span class="vs-stat__sub">' + fmtPts(Math.max(bl.aScore, bl.bScore)) + "–" + fmtPts(Math.min(bl.aScore, bl.bScore)) +
     ' ' + gameContext(bl) + '</span>'));
 
   // 5) Heartbreaker.
   var ht = p.heart;
   stats.push(statBlock("Heartbreaker",
     '<strong>' + escHtml(ROSTER_BY_KEY[ht.winnerKey].name) + ' by ' + fmtPts(ht.margin) + '</strong> ' +
-    '<span class="vs-stat__sub">' + fmtPts(Math.max(ht.aScore, ht.bScore)) + '–' + fmtPts(Math.min(ht.aScore, ht.bScore)) +
+    '<span class="vs-stat__sub">' + fmtPts(Math.max(ht.aScore, ht.bScore)) + "–" + fmtPts(Math.min(ht.aScore, ht.bScore)) +
     ' ' + gameContext(ht) + '</span>'));
 
   // 6) Total points + average margin.
@@ -808,58 +1624,57 @@ function renderVS() {
     '<strong>' + escHtml(o2.name) + ' ' + fmtPts(o2Pts) + '</strong><br>' +
     '<span class="vs-stat__sub">Average margin ' + fmtPts(p.avgMargin) + '</span>'));
 
-  // 7) Shared history (tiers).
-  var tierNames = Object.keys(p.tiers).map(function (t) { return TIER_LABEL[t] || t; });
-  tierNames.sort();
+  // 7) Shared history — overlapping seasons + same-division years.
+  var overlap = overlappingSeasons(p.aKey, p.bKey);
+  var divYears = sameDivisionYears(p.aKey, p.bKey);
   stats.push(statBlock("Shared History",
-    'Met in: <strong>' + tierNames.join(', ') + '</strong>'));
+    '<strong>' + overlap + ' season' + (overlap === 1 ? "" : "s") + ' in MAFFL together</strong> &middot; ' +
+    '<span class="vs-stat__sub">Same division: ' +
+    (divYears.length ? divYears.join(", ") : "never") + '</span>'));
 
-  vsResult.innerHTML = head + '<div class="vs-stats">' + stats.join("") + '</div>';
-}
+  // 8) Margin timeline.
+  stats.push("");
+  var chart = renderTimeline(p, k1, k2);
 
-function statBlock(label, valueHtml) {
-  return '<div class="vs-stat">' +
-    '<div class="vs-stat__label">' + label + '</div>' +
-    '<div class="vs-stat__value">' + valueHtml + '</div>' +
-  '</div>';
+  vsResult.innerHTML = head + renderBadgeRow(p) +
+    '<div class="vs-stats">' + stats.join("") + chart + '</div>';
 }
 
 /* =====================================================================
- * DISCOVERY LEADERBOARDS
+ * DISCOVERY LEADERBOARDS — teaser (3 rows) + Show more, filter-aware.
  * ===================================================================== */
-var ALL_PAIRS = Object.keys(PAIR_INDEX).map(function (id) { return PAIR_INDEX[id]; });
-
 function renderLeaderboards() {
   var grid = document.getElementById("lbGrid");
   var MIN = 5;
+  var pairs = ALL_PAIRS.filter(pairVisible);
 
-  var mostPlayed = ALL_PAIRS.slice()
+  var mostPlayed = pairs.slice()
     .sort(function (a, b) { return (b.meetings - a.meetings) || a.aName.localeCompare(b.aName); })
     .slice(0, 10)
-    .map(function (p) { return { p: p, val: p.meetings + ' games' }; });
+    .map(function (p) { return { p: p, val: p.meetings + " games" }; });
 
-  var mostPost = ALL_PAIRS.filter(function (p) { return p.poCount > 0; })
+  var mostPost = pairs.filter(function (p) { return p.poCount > 0; })
     .sort(function (a, b) { return (b.poCount - a.poCount) || (b.meetings - a.meetings); })
     .slice(0, 10)
-    .map(function (p) { return { p: p, val: p.poCount + ' clash' + (p.poCount === 1 ? '' : 'es') }; });
+    .map(function (p) { return { p: p, val: p.poCount + " clash" + (p.poCount === 1 ? "" : "es") }; });
 
-  var closest = ALL_PAIRS.filter(function (p) { return p.meetings >= MIN; })
+  var closest = pairs.filter(function (p) { return p.meetings >= MIN; })
     .sort(function (a, b) { return Math.abs(a.aPct - 0.5) - Math.abs(b.aPct - 0.5) || (b.meetings - a.meetings); })
     .slice(0, 10)
-    .map(function (p) { return { p: p, val: p.aW + '–' + p.bW }; });
+    .map(function (p) { return { p: p, val: p.aW + "–" + p.bW }; });
 
-  var lopsided = ALL_PAIRS.filter(function (p) { return p.meetings >= MIN; })
+  var lopsided = pairs.filter(function (p) { return p.meetings >= MIN; })
     .sort(function (a, b) { return Math.abs(b.aPct - 0.5) - Math.abs(a.aPct - 0.5) || (b.meetings - a.meetings); })
     .slice(0, 10)
     .map(function (p) {
       var hi = Math.max(p.aW, p.bW), lo = Math.min(p.aW, p.bW);
-      return { p: p, val: hi + '–' + lo };
+      return { p: p, val: hi + "–" + lo };
     });
 
-  var nailbiters = ALL_PAIRS.filter(function (p) { return p.nailbiters > 0; })
+  var nailbiters = pairs.filter(function (p) { return p.nailbiters > 0; })
     .sort(function (a, b) { return (b.nailbiters - a.nailbiters) || (b.meetings - a.meetings); })
     .slice(0, 10)
-    .map(function (p) { return { p: p, val: p.nailbiters + ' game' + (p.nailbiters === 1 ? '' : 's') }; });
+    .map(function (p) { return { p: p, val: p.nailbiters + " game" + (p.nailbiters === 1 ? "" : "s") }; });
 
   var cards = [
     { title: "Most-Played Rivalries", note: "By total meetings", rows: mostPlayed },
@@ -870,57 +1685,91 @@ function renderLeaderboards() {
   ];
 
   grid.innerHTML = cards.map(function (c) {
-    var rowsHtml = c.rows.length
-      ? '<ul class="lb-list">' + c.rows.map(function (e) {
-          return '<li><button type="button" class="lb-row" ' +
-            'data-a="' + escHtml(e.p.aKey) + '" data-b="' + escHtml(e.p.bKey) + '">' +
-            '<span class="lb-row__names">' + escHtml(e.p.aName) +
-              '<span class="lb-vs">vs</span>' + escHtml(e.p.bName) + '</span>' +
+    var body;
+    if (c.rows.length) {
+      var lis = c.rows.map(function (e, i) {
+        var emojis = badgeEmojis(e.p);
+        return '<li><button type="button" class="lb-row' + (i >= 3 ? " hidden-row" : "") + '" ' +
+          'data-a="' + escHtml(e.p.aKey) + '" data-b="' + escHtml(e.p.bKey) + '">' +
+          '<span class="lb-row__names">' + escHtml(e.p.aName) +
+            '<span class="lb-vs">vs</span>' + escHtml(e.p.bName) + '</span>' +
+          '<span class="lb-row__right">' +
+            (emojis ? '<span class="lb-emoji">' + emojis + '</span>' : "") +
             '<span class="lb-row__val">' + e.val + '</span>' +
-          '</button></li>';
-        }).join("") + '</ul>'
-      : '<div class="lb-empty">Not enough data yet.</div>';
+          '</span>' +
+        '</button></li>';
+      }).join("");
+      body = '<ul class="lb-list">' + lis + '</ul>' +
+        (c.rows.length > 3 ? '<button type="button" class="lb-more" data-expanded="0">Show more</button>' : "");
+    } else {
+      body = '<div class="lb-empty">Not enough data yet.</div>';
+    }
     return '<div class="lb-card">' +
       '<h2 class="lb-title">' + c.title + '</h2>' +
       '<p class="lb-note">' + c.note + '</p>' +
-      rowsHtml +
+      body +
     '</div>';
   }).join("");
 
-  // Row tap → load that pair into the VS explorer + update the hash (shareable).
+  // Row tap -> load that pair into the VS result + update the hash (shareable).
   grid.querySelectorAll(".lb-row").forEach(function (btn) {
     btn.addEventListener("click", function () {
       loadPair(btn.getAttribute("data-a"), btn.getAttribute("data-b"));
     });
   });
+  // Show more / Show less per board.
+  grid.querySelectorAll(".lb-more").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var ul = btn.previousElementSibling;
+      var expanded = btn.getAttribute("data-expanded") === "1";
+      ul.querySelectorAll(".lb-row").forEach(function (r, idx) {
+        if (idx >= 3) r.classList.toggle("hidden-row", expanded);
+      });
+      btn.setAttribute("data-expanded", expanded ? "0" : "1");
+      btn.textContent = expanded ? "Show more" : "Show less";
+    });
+  });
+}
+
+/* =====================================================================
+ * PAGE TABS (Head-to-Head / Discovery) — mirrors rules.html behavior:
+ * toggle [hidden] on the matching .tab-panel + aria-selected + .active.
+ * ===================================================================== */
+function activateTab(name) {
+  document.querySelectorAll(".portal-tab").forEach(function (t) {
+    var selected = t.getAttribute("data-tab") === name;
+    t.classList.toggle("active", selected);
+    t.setAttribute("aria-selected", selected ? "true" : "false");
+    var panel = document.getElementById(t.getAttribute("aria-controls"));
+    if (panel) panel.hidden = !selected;
+  });
 }
 
 /* =====================================================================
  * DEEP-LINKING (URL hash)
- *   rivalry.html#vs=keyA,keyB  → preselect both dropdowns, render the VS view
- *   rivalry.html#owner=keyA    → preselect Owner 1 only
- * Keys are normalizeName() values; the power-rankings Rivals deep-link sends a
- * portal slug, which resolveKey() also handles.
+ *   rivalry.html#vs=keyA,keyB  → Head-to-Head tab, preselect both + render
+ *   rivalry.html#owner=keyA    → Head-to-Head tab, preselect Owner 1 only
  * ===================================================================== */
-function scrollToExplorer() {
-  try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) { window.scrollTo(0, 0); }
+function scrollToVs() {
+  var el = document.getElementById("vsResult");
+  if (!el) return;
+  try { el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  catch (_) { el.scrollIntoView(); }
 }
 
-/* Leaderboard tap: push a #vs hash (back-button friendly) then scroll up.
-   The hashchange listener re-applies and renders. */
 function loadPair(aKey, bKey) {
+  activateTab("h2h"); // cross-tab jump from a Discovery row
   var newHash = "#vs=" + encodeURIComponent(aKey) + "," + encodeURIComponent(bKey);
   if (location.hash === newHash) { applyHash(); } else { location.hash = newHash; }
-  scrollToExplorer();
+  scrollToVs();
 }
 
-/* Mirror the current selects into the URL without triggering a navigation. */
-function syncHashFromSelects() {
-  var k1 = sel1.value, k2 = sel2.value, h = "";
-  if (k1 && k2 && k1 !== k2) {
-    h = "#vs=" + encodeURIComponent(k1) + "," + encodeURIComponent(k2);
-  } else if (k1) {
-    h = "#owner=" + encodeURIComponent(k1);
+function syncHash() {
+  var h = "";
+  if (sel1 && sel2 && sel1 !== sel2) {
+    h = "#vs=" + encodeURIComponent(sel1) + "," + encodeURIComponent(sel2);
+  } else if (sel1) {
+    h = "#owner=" + encodeURIComponent(sel1);
   }
   try { history.replaceState(null, "", location.pathname + location.search + h); }
   catch (_) { /* ignore */ }
@@ -932,25 +1781,53 @@ function applyHash() {
   var mo = /(?:^|[#&])owner=([^&]+)/.exec(h);
   if (mv) {
     var parts = mv[1].split(",");
-    var a = resolveKey(parts[0]), b = resolveKey(parts[1]);
-    sel1.value = a || "";
-    sel2.value = b || "";
+    sel1 = resolveKey(parts[0]);
+    sel2 = resolveKey(parts[1]);
+    activateTab("h2h");
   } else if (mo) {
-    sel1.value = resolveKey(mo[1]) || "";
-    sel2.value = "";
+    sel1 = resolveKey(mo[1]);
+    sel2 = null;
+    activateTab("h2h");
   }
+  renderPills();
   renderVS();
 }
 
-sel1.addEventListener("change", function () { renderVS(); syncHashFromSelects(); });
-sel2.addEventListener("change", function () { renderVS(); syncHashFromSelects(); });
-window.addEventListener("hashchange", applyHash);
-
 /* ---- Boot ---- */
-renderLeaderboards();
-applyHash();
+(function boot() {
+  var activeResolved = ROSTER.filter(function (o) { return isActive(o.key); }).length;
+  document.getElementById("countActive").textContent = "(" + activeResolved + ")";
+  document.getElementById("countAll").textContent = "(" + ROSTER.length + ")";
 
-console.log("[rivalry] roster owners:", ROSTER.length, "| pairs indexed:", ALL_PAIRS.length);
+  document.getElementById("filterActive").addEventListener("click", function () { setFilter("active"); });
+  document.getElementById("filterAll").addEventListener("click", function () { setFilter("all"); });
+  window.addEventListener("hashchange", applyHash);
+
+  // Page tabs (Head-to-Head / Discovery).
+  document.querySelectorAll(".portal-tab").forEach(function (t) {
+    t.addEventListener("click", function () { activateTab(t.getAttribute("data-tab")); });
+  });
+
+  // Collapsible emoji legend (default collapsed).
+  var legendToggle = document.getElementById("legendToggle");
+  if (legendToggle) {
+    legendToggle.addEventListener("click", function () {
+      var body = document.getElementById("legendBody");
+      var open = legendToggle.getAttribute("aria-expanded") === "true";
+      legendToggle.setAttribute("aria-expanded", open ? "false" : "true");
+      if (body) body.hidden = open;
+    });
+  }
+
+  renderLeaderboards();
+  applyHash(); // renders pills + VS (and applies any incoming #vs / #owner)
+
+  var activePairs = ALL_PAIRS.filter(function (p) { return isActive(p.aKey) && isActive(p.bKey); }).length;
+  console.log("[rivalry] active owners resolved:", activeResolved,
+    "| pills (active):", activeResolved, "| pills (all):", ROSTER.length,
+    "| pairs indexed:", ALL_PAIRS.length, "| active pairs:", activePairs,
+    "| track-meet threshold:", Math.round(TRACK_THRESHOLD * 10) / 10);
+})();
 </script>
 </body>
 </html>
