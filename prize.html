@@ -747,7 +747,7 @@
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 10, 2026</span>
+      <span class="meta-pill">Last Updated June 11, 2026</span>
     </div>
   </header>
 
@@ -1191,6 +1191,25 @@ const YEARS = (function () {
 })();
 const usd = n => "$" + Number(n).toLocaleString("en-US");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+/* Canonical owner short names — keyed by normalizeName() of the data display
+   form (e.g. "Jon Murello/Rick Simmons" → "jon murello / rick simmons").
+   This page is owner-specific throughout, so short names are used for every
+   owner render. Falls back to the full name when unmapped. */
+function normalizeName(s) {
+  return String(s == null ? "" : s)
+    .replace(/\s+/g, " ").replace(/\s*\/\s*/g, " / ").trim().toLowerCase();
+}
+const SHORT_NAMES = {
+  "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+  "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+  "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+  "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+  "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "braiden snyder":"Braiden","charles lavrinc":"Char","sam lavrinc":"Sam",
+  "nick yankovich":"Nick","dominic nicastro":"Dom"
+};
+const shortName = fullName => SHORT_NAMES[normalizeName(fullName)] || fullName;
 const MEDAL = {1:"🥇", 2:"🥈", 3:"🥉"};
 const tierOf = era => era === "Upper-Tier" ? "Upper" : era === "Lower-Tier" ? "Lower" : "";
 
@@ -1266,7 +1285,7 @@ function chipHTML(e) {
   const medal = (e.prize_type === "Placement" && e.place) ? `<span class="medal">${MEDAL[e.place] || ""}</span>` : "";
   const cnt = e.count ? `<span class="cnt">&times;${e.count}</span>` : "";
   const champ = (e.prize_type === "Placement" && e.place === 1) ? " is-champ" : "";
-  return `<span class="chip${champ}">${medal}<span class="who">${esc(e.owner)}</span>${tierBadge}<span class="amt">${usd(e.amount)}</span>${cnt}</span>`;
+  return `<span class="chip${champ}">${medal}<span class="who">${esc(shortName(e.owner))}</span>${tierBadge}<span class="amt">${usd(e.amount)}</span>${cnt}</span>`;
 }
 
 function renderTimeline(evs) {
@@ -1382,7 +1401,7 @@ function ownerCardHTML(o, rank, maxTotal) {
       <summary>
         <span class="lb-rank">${rank}</span>
         <span class="lb-main">
-          <span class="lb-name">${esc(o.owner)}</span>
+          <span class="lb-name">${esc(shortName(o.owner))}</span>
           <span class="lb-bar-track"><span class="lb-bar-fill" style="width:${pct}%"></span></span>
         </span>
         <span class="lb-total">${usd(o.total)}</span>
@@ -1426,7 +1445,7 @@ function renderDues() {
     const pill = d.status === "PAID"
       ? `<span class="status-pill status-pill--paid">Paid</span>`
       : `<span class="status-pill status-pill--unpaid">Unpaid</span>`;
-    return `<tr><td class="owner">${esc(d.owner)}</td><td class="num">${usd(d.owed)}</td><td>${pill}</td></tr>`;
+    return `<tr><td class="owner">${esc(shortName(d.owner))}</td><td class="num">${usd(d.owed)}</td><td>${pill}</td></tr>`;
   }).join("");
 }
 

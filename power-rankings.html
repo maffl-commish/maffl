@@ -1172,7 +1172,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 10, 2026</span>
+      <span class="meta-pill">Last Updated June 11, 2026</span>
     </div>
   </header>
 
@@ -2281,6 +2281,24 @@ function escHtml(s) {
     return ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" })[c];
   });
 }
+/* Canonical owner short names — keyed by normalizeName() of the data display
+   form. Falls back to the full name when unmapped. Used in dense repeating
+   opponent contexts (Rivals lists, Big Game rows); the card header keeps the
+   full owner name. */
+var SHORT_NAMES = {
+  "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+  "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+  "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+  "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+  "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "braiden snyder":"Braiden","charles lavrinc":"Char","sam lavrinc":"Sam",
+  "nick yankovich":"Nick","dominic nicastro":"Dom"
+};
+function shortName(fullName) {
+  var k = normalizeName(fullName);
+  return SHORT_NAMES[k] || fullName;   // fall back to full name if unmapped
+}
 
 /* Decide the priority class for a year cell based on flags. */
 function yearCellTheme(entry) {
@@ -2441,7 +2459,7 @@ function renderBigGames(owner) {
       '<span class="bg-meta"><span class="bg-year">' + escHtml(g.year) + '</span>' +
         '<span class="bg-round">' + escHtml(roundLabel(g.type)) + '</span></span>' +
       '<span class="bg-result">' +
-        '<span class="bg-verb">' + verb + '</span> ' + escHtml(oppName) +
+        '<span class="bg-verb">' + verb + '</span> ' + escHtml(shortName(oppName)) +
         ' <span class="bg-score">' + escHtml(g.ownScore) + '–' + escHtml(g.oppScore) + '</span>' +
       '</span>' +
     '</li>';
@@ -2494,7 +2512,7 @@ function renderRivals(owner) {
     // Left-accent by regular-season result, mirroring .bg-row.bg-win/.bg-loss.
     var rsCls = r.rsW > r.rsL ? " rv-win" : (r.rsW < r.rsL ? " rv-loss" : "");
     return '<li class="rv-row' + rsCls + '">' +
-      '<span class="rv-opp">' + escHtml(r.name) + '</span>' +
+      '<span class="rv-opp">' + escHtml(shortName(r.name)) + '</span>' +
       '<span class="rv-rec rv-rs" style="background:' + winRateColor(r.pct) + '">' + r.rsW + '–' + r.rsL + '</span>' +
       poCell +
     '</li>';

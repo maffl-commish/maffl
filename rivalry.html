@@ -795,7 +795,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 10, 2026</span>
+      <span class="meta-pill">Last Updated June 11, 2026</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -886,6 +886,24 @@ function escHtml(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
     return ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" })[c];
   });
+}
+/* Canonical owner short names — keyed by normalizeName() of the data display
+   form (NOT legal names). Falls back to the full name when unmapped (inactive
+   owners). Used in dense, repeating owner-only contexts; the owner-pill
+   selector and the big VS header keep full names so picks stay confirmable. */
+var SHORT_NAMES = {
+  "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+  "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+  "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+  "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+  "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "braiden snyder":"Braiden","charles lavrinc":"Char","sam lavrinc":"Sam",
+  "nick yankovich":"Nick","dominic nicastro":"Dom"
+};
+function shortName(fullName) {
+  var k = normalizeName(fullName);
+  return SHORT_NAMES[k] || fullName;   // fall back to full name if unmapped
 }
 function winRateColor(pct) {
   var hue = Math.round(Math.max(0, Math.min(1, pct)) * 125); // 0=red, 125=green
@@ -1704,7 +1722,7 @@ function renderBadgeRow(p) {
   var b = computeBadges(p);
   if (!b.length) return "";
   return '<div class="badge-row">' + b.map(function (x) {
-    var who = x.who ? ' <span class="bc-who">' + escHtml(ROSTER_BY_KEY[x.who].name) + '</span>' : "";
+    var who = x.who ? ' <span class="bc-who">' + escHtml(shortName(ROSTER_BY_KEY[x.who].name)) + '</span>' : "";
     return '<button type="button" class="badge-chip" data-badge="' + escHtml(x.name) +
       '" aria-expanded="false"><span class="bc-emoji">' + x.emoji + '</span>' + x.name + who + '</button>';
   }).join("") + '</div>' +
@@ -1726,11 +1744,11 @@ function champCalloutHtml(p) {
 function rivalryBlurb(p, k1, k2) {
   var n = p.meetings;
   var firstYear = n ? p.games[0].year : "";
-  var streakName = p.curStreakKey ? escHtml(ROSTER_BY_KEY[p.curStreakKey].name) : "";
+  var streakName = p.curStreakKey ? escHtml(shortName(ROSTER_BY_KEY[p.curStreakKey].name)) : "";
   var otherKey = (p.curStreakKey === p.aKey) ? p.bKey : p.aKey;
-  var otherName = escHtml(ROSTER_BY_KEY[otherKey].name);
+  var otherName = escHtml(shortName(ROSTER_BY_KEY[otherKey].name));
   var hammerKey = p.aPct >= 0.5 ? p.aKey : p.bKey;
-  var hammerName = escHtml(ROSTER_BY_KEY[hammerKey].name);
+  var hammerName = escHtml(shortName(ROSTER_BY_KEY[hammerKey].name));
   var hammerW = Math.max(p.aW, p.bW), hammerL = Math.min(p.aW, p.bW);
 
   if (p.champMeetings > 0 && p.curStreakLen >= 3)
@@ -1872,8 +1890,8 @@ function renderTimeline(p, k1, k2) {
       '<div class="tl-caption" hidden></div>' +
       '<div class="h2h-axis"><span>' + firstY + '</span><span>' + lastY + '</span></div>' +
       '<div class="h2h-legend">' +
-        '<span><i style="background:var(--win)"></i>' + escHtml(ROSTER_BY_KEY[k1].name) + ' win</span>' +
-        '<span><i style="background:var(--loss)"></i>' + escHtml(ROSTER_BY_KEY[k2].name) + ' win</span>' +
+        '<span><i style="background:var(--win)"></i>' + escHtml(shortName(ROSTER_BY_KEY[k1].name)) + ' win</span>' +
+        '<span><i style="background:var(--loss)"></i>' + escHtml(shortName(ROSTER_BY_KEY[k2].name)) + ' win</span>' +
       '</div>' +
     '</div>' +
   '</div>';
@@ -1922,7 +1940,7 @@ function renderField(k1) {
       var emojis = badgeEmojis(e.p);
       var yy = "'" + String(e.p.lastYear).slice(-2);
       return '<button type="button" class="field-row" data-opp="' + escHtml(e.oppKey) + '">' +
-        '<span class="field-name">' + escHtml(e.oppName) + '</span>' +
+        '<span class="field-name">' + escHtml(shortName(e.oppName)) + '</span>' +
         '<span class="field-right">' +
           (emojis ? '<span class="field-emoji">' + emojis + '</span>' : "") +
           '<span class="field-rec" style="background:' + winRateColor(e.pct) + '">' + e.w + "–" + e.l + '</span>' +
@@ -2004,7 +2022,7 @@ function renderVS() {
         '<span class="vs-head-name vs-head-name-2">' + escHtml(o2.name) + '</span>' +
       '</div>' +
       '<div class="vs-head-rec" style="background:' + winRateColor(o1Pct) + '">' +
-        escHtml(o1.name) + ' ' + o1W + "–" + o1L + '</div>' +
+        escHtml(shortName(o1.name)) + ' ' + o1W + "–" + o1L + '</div>' +
       '<div class="vs-head-split">Regular Season: <strong>' + rsW + "–" + rsL + '</strong>' +
         ' &middot; Postseason: <strong>' + poW + "–" + poL + '</strong>' + tierLine + '</div>' +
       '<div class="vs-rating">Rivalry Rating <strong>' + p.rating + '</strong>' +
@@ -2015,10 +2033,10 @@ function renderVS() {
   var stats = [];
 
   // Postseason by round (vertical, leader named, with years).
-  stats.push(statBlock("Postseason by Round", postseasonHtml(p, oneIsA, o1.name, o2.name)));
+  stats.push(statBlock("Postseason by Round", postseasonHtml(p, oneIsA, shortName(o1.name), shortName(o2.name))));
 
   // 3) Streaks.
-  var curName = ROSTER_BY_KEY[p.curStreakKey].name;
+  var curName = shortName(ROSTER_BY_KEY[p.curStreakKey].name);
   var curTxt = p.curStreakLen === 1
     ? escHtml(curName) + " won the most recent meeting"
     : escHtml(curName) + " has won the last " + p.curStreakLen;
@@ -2026,27 +2044,27 @@ function renderVS() {
   var o2Long = oneIsA ? p.longB : p.longA;
   stats.push(statBlock("Streaks",
     '<strong>' + curTxt + '.</strong><br>' +
-    '<span class="vs-stat__sub">Longest: ' + escHtml(o1.name) + ' ' + o1Long +
-    ' &middot; ' + escHtml(o2.name) + ' ' + o2Long + '</span>'));
+    '<span class="vs-stat__sub">Longest: ' + escHtml(shortName(o1.name)) + ' ' + o1Long +
+    ' &middot; ' + escHtml(shortName(o2.name)) + ' ' + o2Long + '</span>'));
 
   // 4) Biggest blowout.
   var bl = p.blowout;
   stats.push(statBlock("Biggest Blowout",
-    '<strong>' + escHtml(ROSTER_BY_KEY[bl.winnerKey].name) + ' by ' + fmtPts(bl.margin) + '</strong> ' +
+    '<strong>' + escHtml(shortName(ROSTER_BY_KEY[bl.winnerKey].name)) + ' by ' + fmtPts(bl.margin) + '</strong> ' +
     '<span class="vs-stat__sub">' + fmtPts(Math.max(bl.aScore, bl.bScore)) + "–" + fmtPts(Math.min(bl.aScore, bl.bScore)) +
     ' ' + gameContext(bl) + '</span>'));
 
   // 5) Heartbreaker.
   var ht = p.heart;
   stats.push(statBlock("Heartbreaker",
-    '<strong>' + escHtml(ROSTER_BY_KEY[ht.winnerKey].name) + ' by ' + fmtPts(ht.margin) + '</strong> ' +
+    '<strong>' + escHtml(shortName(ROSTER_BY_KEY[ht.winnerKey].name)) + ' by ' + fmtPts(ht.margin) + '</strong> ' +
     '<span class="vs-stat__sub">' + fmtPts(Math.max(ht.aScore, ht.bScore)) + "–" + fmtPts(Math.min(ht.aScore, ht.bScore)) +
     ' ' + gameContext(ht) + '</span>'));
 
   // 6) Total points + average margin.
   stats.push(statBlock("Total Points",
-    '<strong>' + escHtml(o1.name) + ' ' + fmtPts(o1Pts) + '</strong> &middot; ' +
-    '<strong>' + escHtml(o2.name) + ' ' + fmtPts(o2Pts) + '</strong><br>' +
+    '<strong>' + escHtml(shortName(o1.name)) + ' ' + fmtPts(o1Pts) + '</strong> &middot; ' +
+    '<strong>' + escHtml(shortName(o2.name)) + ' ' + fmtPts(o2Pts) + '</strong><br>' +
     '<span class="vs-stat__sub">Average margin ' + fmtPts(p.avgMargin) + '</span>'));
 
   // 7) Shared history — (a) seasons together as count + range, (b) same-division years.
@@ -2240,8 +2258,8 @@ function renderLeaderboards() {
         var emojis = badgeEmojis(e.p);
         return '<li><button type="button" class="lb-row' + (i >= 2 ? " hidden-row" : "") + '" ' +
           'data-a="' + escHtml(e.p.aKey) + '" data-b="' + escHtml(e.p.bKey) + '">' +
-          '<span class="lb-row__names">' + escHtml(e.p.aName) +
-            '<span class="lb-vs">vs</span>' + escHtml(e.p.bName) + '</span>' +
+          '<span class="lb-row__names">' + escHtml(shortName(e.p.aName)) +
+            '<span class="lb-vs">vs</span>' + escHtml(shortName(e.p.bName)) + '</span>' +
           '<span class="lb-row__right">' +
             (emojis ? '<span class="lb-emoji">' + emojis + '</span>' : "") +
             '<span class="lb-row__val">' + e.val + '</span>' +
