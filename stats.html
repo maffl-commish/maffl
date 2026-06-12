@@ -573,7 +573,7 @@
     </div>
     <div class="page-header__meta" aria-label="Stats version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 10, 2026</span>
+      <span class="meta-pill">Last Updated June 11, 2026</span>
     </div>
   </header>
 
@@ -851,6 +851,23 @@ function compare(a, b, key, dir) {
   return a.name.localeCompare(b.name);
 }
 
+/* Canonical owner short names — keyed by normalizeName() of the data display
+   form. Falls back to the full name when unmapped (inactive owners). Applied to
+   the dense owner column; sorting is unaffected (compare() keys off o.name).
+   Names here are trusted constants, so no HTML escape wrapper is needed. */
+function normalizeName(s){return String(s==null?"":s).replace(/\s+/g," ").replace(/\s*\/\s*/g," / ").trim().toLowerCase();}
+const SHORT_NAMES = {
+  "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+  "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+  "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+  "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+  "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "braiden snyder":"Braiden","charles lavrinc":"Charlie","sam lavrinc":"Sam",
+  "nick yankovich":"Nick","dominic nicastro":"Dom"
+};
+function shortName(full){return SHORT_NAMES[normalizeName(full)]||full;}
+
 function visibleOwners() {
   if (state.filter === "active") return OWNERS.filter(o => o.active);
   if (state.filter === "inactive") return OWNERS.filter(o => !o.active);
@@ -879,7 +896,7 @@ function renderTable() {
     const inactiveChip = !o.active ? '<span class="inactive-chip">Inactive</span>' : "";
     return `
       <tr>
-        <td class="col-owner">${o.name}${inactiveChip}</td>
+        <td class="col-owner">${shortName(o.name)}${inactiveChip}</td>
         <td class="col-years">${o.years}</td>
         <td class="col-totw${goldCls("totWins", o.totWins)}">${o.totWins}</td>
         <td class="col-totl${goldCls("totLosses", o.totLosses)}">${o.totLosses}</td>

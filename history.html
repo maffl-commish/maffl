@@ -1517,7 +1517,7 @@
     </div>
     <div class="page-header__meta" aria-label="History &amp; Stats version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 10, 2026</span>
+      <span class="meta-pill">Last Updated June 11, 2026</span>
     </div>
   </header>
 
@@ -11197,6 +11197,28 @@ function esc(s) {
     .replace(/"/g, "&quot;");
 }
 
+/* Canonical owner short names — keyed by normalizeName() of the data display
+   form. Falls back to the full name when unmapped (inactive owners). Used in
+   dense, repeating rows (brackets, schedule, standings, rosters). data-owner
+   stays the FULL name so click/tooltip lookups resolve. teamLabel() is
+   team-forward for roster rows that already carry a (historical) team string —
+   the passed team is preserved as-is, never swapped for the current one. */
+function normalizeName(s){return String(s==null?"":s).replace(/\s+/g," ").replace(/\s*\/\s*/g," / ").trim().toLowerCase();}
+const SHORT_NAMES = {
+  "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+  "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+  "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+  "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+  "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "braiden snyder":"Braiden","charles lavrinc":"Charlie","sam lavrinc":"Sam",
+  "nick yankovich":"Nick","dominic nicastro":"Dom"
+};
+function shortName(full){return SHORT_NAMES[normalizeName(full)]||full;}
+function teamLabel(owner, team){
+  return team ? `${esc(team)} (${esc(shortName(owner))})` : esc(shortName(owner));
+}
+
 function record(p) {
   if (p == null) return "";
   if (p.w == null) return "";
@@ -11311,7 +11333,7 @@ function renderBracket(b, year) {
 
   const fmtScore = s => isNaN(s) ? "" : (Number.isInteger(s) ? String(s) : s.toFixed(1));
   const ownerSpan = name =>
-    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(name)}</span>`;
+    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(shortName(name))}</span>`;
 
   const gameRowHTML = g => {
     let badge = "";
@@ -11438,11 +11460,11 @@ function placeLabel(r, year) {
 }
 
 function ownerRowHTML(r) {
-  const team = r.team ? `<span class="owner-team">${esc(r.team)}</span>` : "";
+  // Team-forward: show the season-stamped team (preserved as-is) with the short
+  // owner in parens. data-owner keeps the full name for click/tooltip lookups.
   return `
     <div class="roster-owner-row">
-      <span class="owner-name" data-owner="${esc(r.owner)}" data-team="${esc(r.team || "")}" data-year="${esc(r.year || "")}">${esc(r.owner)}</span>
-      ${team}
+      <span class="owner-name" data-owner="${esc(r.owner)}" data-team="${esc(r.team || "")}" data-year="${esc(r.year || "")}">${teamLabel(r.owner, r.team)}</span>
     </div>`;
 }
 
@@ -11453,7 +11475,7 @@ function standingsRowHTML(r) {
   return `
     <div class="standings-row">
       ${crown}
-      <span class="owner-name" data-owner="${esc(r.owner)}" data-team="${esc(r.team || "")}" data-year="${esc(r.year || "")}">${esc(r.owner)}</span>
+      <span class="owner-name" data-owner="${esc(r.owner)}" data-team="${esc(r.team || "")}" data-year="${esc(r.year || "")}">${esc(shortName(r.owner))}</span>
       ${recHTML}
     </div>`;
 }
@@ -11608,7 +11630,7 @@ function renderSchedule(b, year) {
 
   const fmtScore = s => isNaN(s) ? "" : (Number.isInteger(s) ? String(s) : s.toFixed(1));
   const ownerSpan = name =>
-    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(name)}</span>`;
+    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(shortName(name))}</span>`;
 
   // Postseason weeks head under their round name; regular weeks under "Week N"
   const ROUND_LABELS = {
@@ -11697,7 +11719,7 @@ function renderSeries(b, year) {
 
   const fmtScore = s => isNaN(s) ? "" : (Number.isInteger(s) ? String(s) : s.toFixed(1));
   const ownerSpan = name =>
-    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(name)}</span>`;
+    `<span class="owner-name" data-owner="${esc(name)}" data-team="" data-year="${esc(year)}">${esc(shortName(name))}</span>`;
 
   const wk = g => isNaN(g.week) ? Infinity : g.week;
   const gameRowHTML = g => `

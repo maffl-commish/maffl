@@ -842,6 +842,21 @@ const pulseArchive = [
 /* --------- HELPERS --------- */
 function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* Canonical owner short names — keyed by normalizeName() of the data display
+   form. Standings rows already show the team prominently; the owner renders
+   short beneath it. Elite-5 owner callout also goes short. */
+function normalizeName(s){return String(s==null?"":s).replace(/\s+/g," ").replace(/\s*\/\s*/g," / ").trim().toLowerCase();}
+const SHORT_NAMES = {
+  "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+  "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+  "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+  "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+  "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "braiden snyder":"Braiden","charles lavrinc":"Charlie","sam lavrinc":"Sam",
+  "nick yankovich":"Nick","dominic nicastro":"Dom"
+};
+function shortName(full){return SHORT_NAMES[normalizeName(full)]||full;}
 function streakClass(s){ return s && s[0]==='W' ? 'w' : 'l'; }
 
 /* --------- RENDER: STANDINGS --------- */
@@ -857,7 +872,7 @@ function renderStandings(data){
   const renderRow = (t) => `
     <div class="row">
       <span class="rec num">${t.w}-${t.l}</span>
-      <span class="team">${escapeHtml(t.team)}<span class="own">${escapeHtml(t.owner)}</span></span>
+      <span class="team">${escapeHtml(t.team)}<span class="own">${escapeHtml(shortName(t.owner))}</span></span>
       <span class="pts num">${t.points.toFixed(1)}</span>
       <span class="streak ${streakClass(t.streak)}">${escapeHtml(t.streak)}</span>
       <span class="cr"><span class="lbl">CR</span><span class="num">${t.credits}</span></span>
@@ -966,7 +981,7 @@ function renderElite5(data){
       <div>
         <div class="elite-team">${escapeHtml(e.team)}</div>
         <div class="elite-meta">
-          <span>${escapeHtml(e.owner)}</span>
+          <span>${escapeHtml(shortName(e.owner))}</span>
           <span class="tier-badge ${e.tier==='U'?'u':'l'}">${e.tier==='U'?'Upper':'Lower'}</span>
         </div>
         <div class="elite-note">"${escapeHtml(e.note)}"</div>

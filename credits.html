@@ -913,7 +913,7 @@
     </div>
     <div class="page-header__meta" aria-label="Credits version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 10, 2026</span>
+      <span class="meta-pill">Last Updated June 11, 2026</span>
     </div>
   </header>
 
@@ -1216,6 +1216,23 @@
       });
     }
 
+    /* Canonical owner short names — keyed by normalizeName() of the data display
+       form. Falls back to the full name when unmapped. Applied to the dense
+       registry rows; the owner filter-facet list keeps full names so filtering
+       stays unambiguous. */
+    function normalizeName(s){return String(s==null?"":s).replace(/\s+/g," ").replace(/\s*\/\s*/g," / ").trim().toLowerCase();}
+    var SHORT_NAMES = {
+      "joe reilly":"Joe","brian murello / ron murello":"Brian/Ron",
+      "jon murello / rick simmons":"Jon/Rick","mike murello":"Mike",
+      "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
+      "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
+      "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
+      "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+      "braiden snyder":"Braiden","charles lavrinc":"Charlie","sam lavrinc":"Sam",
+      "nick yankovich":"Nick","dominic nicastro":"Dom"
+    };
+    function shortName(full){return SHORT_NAMES[normalizeName(full)]||full;}
+
     // Active selections per facet. OR within a facet; AND across facets.
     const active = { owner: new Set(), type: new Set(), category: new Set() };
 
@@ -1294,7 +1311,7 @@
           const cls = spend ? "registry-spend" : "registry-amount";
           return "<tr>" +
             '<td class="registry-date">2026 Offseason</td>' +
-            '<td><span class="registry-owner">' + esc(r.owner) + "</span>" +
+            '<td><span class="registry-owner">' + esc(shortName(r.owner)) + "</span>" +
             '<span class="registry-team">' + esc(r.team) + "</span></td>" +
             '<td class="registry-category">' + esc(r.creditCategory) + "</td>" +
             '<td class="registry-type">' + esc(r.creditType) + "</td>" +
