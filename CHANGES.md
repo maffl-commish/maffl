@@ -1,3 +1,58 @@
+# MAFFL HQ — 2026 Rule Clarification Pass — CHANGES
+
+**Branch:** `rules/2026-clarifications` (create off current; do NOT push or merge without commissioner sign-off)
+**Date:** 2026-06-13
+**Scope:** Commissioner-approved rule clarifications surfaced in the rules audit. No new rules — wording/logic clarifications only, plus presentation and a CSV re-sync. Source-of-truth ordering honored: `rules.html` (authoritative) edited first, `data/MAFFL_Rules_revised.csv` re-synced to match afterward.
+
+**Files touched:**
+- `rules.html`
+- `data/MAFFL_Rules_revised.csv`
+- `CHANGES.md`
+
+---
+
+## Change 1 — Tiebreakers section reorganized
+Collapsed the scattered tiebreaker columns into three clean columns: General/Wildcard (standings + season-long credit-earning awards use Record → Credit Balance → Total Points For), Division (Record → Credit Balance → Division Record → Total Points For), and a single merged "Playoff Game & Weekly High Score Prize" column that resolves both the same way — highest single-game score by any one starter across the tied teams, then second-highest, then third, and so on. Removed the redundant standalone "Credit-Earning Awards" column (its content folded into General/Wildcard) and unified two previously inconsistent wordings of the single-game-score method. CSV synced.
+
+## Change 2 — Weekly High Score: cash + credit clarified
+Clarified that the weekly high score earns BOTH a cash payout (share of 20% pool) AND a +1 credit; 14 fixed payouts; ties never create extra dollars; weekly tie broken by highest individual starter score on either tied team (now stated once, in the merged Tiebreakers column). New callout in Prize Schedule; CSV synced.
+
+## Change 3 — Relegation Insurance: 3-per-season cap + displacement
+Limited to 3 purchases per season, first come first served. Elevating an insured team to Seed #7 shifts teams ordinarily ahead down accordingly. Added to Spending Credits Notes; cross-link added between the Promotion/Relegation "How the 3rd spots are decided" callout and the Credit System section. CSV synced.
+
+## Change 4 — Double Player Bonus eligibility
+Eligible in Consolation series but NOT in Promotion/Relegation Showdowns; stackable with Matchup Swap; both owners in a matchup may declare the same week; an owner may declare twice in a week but not on the same player (no 4× on one player). Spending Credits Notes updated; CSV synced.
+
+## Change 5 — Matchup Swap notification + neutrality
+"Declare to all parties" = affected owners are notified directly (not left to find out via ESPN results); commish approval required; affected-owner approval NOT required. A swap does not change weekly high-score, Survivor, or other awards for the games involved. Spending Credits Notes updated; CSV synced.
+
+## Change 6 — 3-game series format
+All Showdowns and Consolations (3-game series) are first-to-2 wins, not aggregate points. Added to Promotion & Relegation intro; CSV synced.
+
+## Change 7 — Survivor Pool expanded definition + large-tier overflow
+Regular season only (Wks 1–14), run per tier; lowest weekly score eliminated each week; a team facing MAFFL Ghost is scored on its own real score (Ghost does not affect Survivor); last team standing earns +5; simultaneous-low ties eliminate both. Added overflow handling: with more than 15 teams in a tier, extra eliminations are front-loaded in the earliest weeks (then one per week) so a winner still emerges by Week 14 (e.g., 16 teams → 2 out in Wk 1; 17 teams → 2 out in Wks 1–2). New callout in Credit System (Bonus area); CSV synced.
+
+## Change 8 — MAFFL Cup defined
+The MAFFL Cup is the league championship trophy, awarded to the Upper-Tier Champion; the reigning champion keeps it and ships it to the next champion. Added to General Rules; CSV synced.
+
+## Change 9 — MAFFL Ghost scoring re-synced (CSV → HTML)
+CSV brought in line with HTML: Ghost score = DROP the single highest real-team score, then average the remaining real teams (CSV previously averaged all teams). Ghost draft behavior and draft-window times also re-synced. HTML unchanged (already correct).
+
+## Change 10 — Presentation
+Rulebook search bar made sticky beneath the site header. Critical spending-perk restrictions surfaced as inline badges (No Playoffs / By Wk 4 · Limit 3 / Reg. Season Only) in the Option cells. Example prize calculation labeled illustrative.
+
+## Change 11 — Deep-link / navigation fixes
+Fixed the News & Announcements "Clarified" item so it now jumps to the Rulebook tab and opens Tiebreakers (href `#tiebreakers`); hardened the news-link click handler so a click whose hash already equals the current location still re-triggers the section jump. Fixed a broken Division Alignment reference on the Info tab so it links to the "2026 Tier & Division Alignment" section (`#alignment`).
+
+## Change 12 — Owner-facing flags
+"Clarified · 2026" pills (`.rule-tag.amended`) added to each clarified line item (Tiebreakers merged column, Survivor pool, Double Player Bonus, Matchup Swap, Relegation Insurance, MAFFL Cup, Weekly High Score). NEWS_FEED entry added to the Info tab — positioned below the MAFFL Ghost "New Rule" item — linking owners to the Rulebook.
+
+**Note — reverted during review:** A "prizes stack" clarification was drafted and then removed at commissioner direction; prize stacking has never been in question and the added line read as confusing. No prize-stacking language ships in `rules.html` or the Info tab.
+
+**Verification:** Confirmed `rules.html` and `data/MAFFL_Rules_revised.csv` agree on every clarified rule; AMENDED pills render distinct from gold New pills; sticky search and perk badges hold at 390px; Tiebreakers grid renders 3 columns at 390px; the Clarified news item switches to the Rulebook tab and opens Tiebreakers; the Division Alignment link resolves. "Last Updated" date pill bumped; version held at v1.0 (pre-go-live).
+
+---
+
 # MAFFL HQ — Post-Audit Defect Fix Pass — CHANGES
 
 **Branch:** `fix/post-audit-defects` (created off a pre-edit snapshot commit; NOT pushed, NOT merged)
