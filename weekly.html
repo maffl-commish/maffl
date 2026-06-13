@@ -548,9 +548,9 @@
     font-family: var(--body);
     font-weight: 700;
     font-size: 10px;
-    color: var(--gold-dark);
-    background: var(--gold-soft);
-    border: 1px solid var(--gold);
+    color: #ffffff;
+    background: var(--win);
+    border: 1px solid var(--win);
     padding: 2px 7px;
     border-radius: 999px;
     letter-spacing: 0.02em;
@@ -956,7 +956,7 @@
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 11, 2026</span>
+      <span class="meta-pill">Last Updated June 12, 2026</span>
     </div>
   </header>
 </div>
@@ -1171,6 +1171,7 @@ const SHORT_NAMES = {
   "nick yankovich":"Nick","dominic nicastro":"Dom"
 };
 const shortName = fullName => SHORT_NAMES[normalizeName(fullName)] || fullName;
+const teamOwner = t => `${esc(t.team)} (${esc(shortName(t.owner))})`;
 function streakLabel(n) {
   if (n > 0) return "W" + n;
   if (n < 0) return "L" + Math.abs(n);
@@ -1227,8 +1228,8 @@ function renderStandingsCard(week) {
   const lowerLeader = week.lowerTier.slice().sort(tierSort)[0];
 
   const preview = `
-    <div><span class="strong">Upper:</span> ${topTwoUpper.map(t => `${esc(t.team)} ${t.w}-${t.l}`).join(", ")}</div>
-    <div style="margin-top:4px"><span class="strong">Lower:</span> ${esc(lowerLeader.team)} ${lowerLeader.w}-${lowerLeader.l}</div>
+    <div><span class="strong">Upper:</span> ${topTwoUpper.map(t => `${teamOwner(t)} ${t.w}-${t.l}`).join(", ")}</div>
+    <div style="margin-top:4px"><span class="strong">Lower:</span> ${teamOwner(lowerLeader)} ${lowerLeader.w}-${lowerLeader.l}</div>
     <div class="muted-line">Tap for full standings.</div>
   `;
 
@@ -1387,7 +1388,7 @@ function ctCell(item) {
   return `
     <div class="ct-col">
       <span class="tier-badge ${tier}">${tier === "U" ? "Upper" : "Lower"}</span>
-      <div class="ct-leader"><span class="strong">${esc(item.leaderTeam)}</span> · ${esc(shortName(item.leaderOwner))}</div>
+      <div class="ct-leader"><span class="strong">${esc(item.leaderTeam)}</span> (${esc(shortName(item.leaderOwner))})</div>
       <div class="ct-value">${esc(item.value)}</div>
       <span class="credit-pill">+${item.credits} credits</span>
     </div>
@@ -1398,7 +1399,7 @@ function hwCell(side, tier) {
   return `
     <div class="ct-col">
       <span class="tier-badge ${tier}">${tier === "U" ? "Upper" : "Lower"}</span>
-      <div class="ct-leader"><span class="strong">${esc(side.team)}</span> · ${esc(shortName(side.owner))}</div>
+      <div class="ct-leader"><span class="strong">${esc(side.team)}</span> (${esc(shortName(side.owner))})</div>
       <div class="ct-value">${side.score.toFixed(1)}</div>
     </div>
   `;
