@@ -689,6 +689,22 @@
   .lb-row__names .lb-vs { color: var(--muted); font-weight: 500; font-size: 11px; padding: 0 3px; }
   .lb-row__right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
   .lb-emoji { font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+  .lb-rating-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--navy);
+    color: #fff;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12.5px;
+    line-height: 1;
+    flex: 0 0 auto;
+  }
   .lb-row__val {
     font-family: var(--display);
     font-weight: 700;
@@ -795,7 +811,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 11, 2026</span>
+      <span class="meta-pill">Last Updated June 12, 2026</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -1490,11 +1506,13 @@ function aggregatePair(p) {
     if (g.winnerKey === p.aKey) tierRec[g.tier][0]++; else tierRec[g.tier][1]++;
   });
   p.tierRec = tierRec;
-  p.rating = ratingScore(p);
+  p.ratingRaw = ratingRaw(p);
 }
 
-/* Rivalry Rating (0–100): volume + closeness + postseason + recency + drama. */
-function ratingScore(p) {
+/* Rivalry Rating (0–100): volume + closeness + postseason + recency + drama.
+ * ratingRaw() produces the uncurved component sum; the final curved p.rating is
+ * assigned by the curveRatings() block after ALL_PAIRS is built. */
+function ratingRaw(p) {
   var volume = Math.min(p.meetings, 30) / 30 * 25;
   var close = (1 - Math.abs(p.aPct - 0.5) * 2) * 15
             + Math.max(0, 20 - p.avgMargin) / 20 * 10;
@@ -1504,10 +1522,22 @@ function ratingScore(p) {
               : p.lastYear >= DATA_MAX_YEAR - 3 ? 5 : 0;
   var drama = (p.meetings ? p.nailbiters / p.meetings : 0) * 10
             + (p.curStreakLen >= 3 ? 5 : 0);
-  return Math.round(volume + close + postszn + recency + drama);
+  return volume + close + postszn + recency + drama;
 }
 
 var ALL_PAIRS = Object.keys(PAIR_INDEX).map(function (id) { return PAIR_INDEX[id]; });
+
+(function curveRatings() {
+  // Anchor the top of the field to ~98 and stretch the scale.
+  var maxRaw = 0;
+  ALL_PAIRS.forEach(function (p) { if (p.ratingRaw > maxRaw) maxRaw = p.ratingRaw; });
+  if (maxRaw <= 0) maxRaw = 1;
+  ALL_PAIRS.forEach(function (p) {
+    // Linear stretch so the strongest rivalry maps to 98, gentle floor so low ones aren't all zero.
+    var scaled = (p.ratingRaw / maxRaw) * 98;
+    p.rating = Math.max(0, Math.min(100, Math.round(scaled)));
+  });
+})();
 
 /* Track Meet threshold: 90th percentile of avg combined score across ALL pairs. */
 var TRACK_THRESHOLD = (function () {
@@ -1753,7 +1783,7 @@ function rivalryBlurb(p, k1, k2) {
 
   if (p.champMeetings > 0 && p.curStreakLen >= 3)
     return streakName + " has won " + p.curStreakLen + " straight, but the title-game history is what stings most here.";
-  if ((p.aPct >= 0.75 || p.aPct <= 0.25) && n >= 8)
+  if ((p.aPct >= 0.75 || p.aPct <= 0.25) && n >= 5)
     return hammerName + " owns this one — " + hammerW + "–" + hammerL + " all time and showing no mercy.";
   if (p.curStreakLen >= 5)
     return streakName + " has haunted " + otherName + " for " + p.curStreakLen + " straight meetings.";
@@ -1765,7 +1795,15 @@ function rivalryBlurb(p, k1, k2) {
     return p.poCount + " playoff collisions and counting. This one matters in December.";
   if (p.curStreakLen >= 3)
     return streakName + " has taken " + p.curStreakLen + " in a row and the pressure is building.";
-  return n + " meetings since " + firstYear + ". The book on this one is still being written.";
+  var closers = [
+    n + " meetings since " + firstYear + ". The book on this one is still being written.",
+    n + " meetings since " + firstYear + " — this one's still finding its rhythm.",
+    "Since " + firstYear + ", " + n + " meetings in and the story's just getting started.",
+    n + " head-to-heads since " + firstYear + ". Plenty of chapters left to write.",
+    "First met in " + firstYear + " · " + n + " meetings and counting."
+  ];
+  var pick = (n + (firstYear || 0)) % closers.length;
+  return closers[pick];
 }
 
 /* Collapsible "All Meetings (N)" game log — newest first, Owner-1 perspective. */
@@ -1807,7 +1845,7 @@ function explainerHtml(idSuffix) {
   }).join("");
   return '<div class="explain-box">' +
     '<button type="button" class="explain-toggle" aria-expanded="false" aria-controls="' + bodyId + '">' +
-      '<span>How ratings &amp; badges work</span>' +
+      '<span>Ratings &amp; Badges Key</span>' +
       '<span class="explain-chev" aria-hidden="true">&#9662;</span>' +
     '</button>' +
     '<div class="explain-body" id="' + bodyId + '" hidden>' +
@@ -2187,11 +2225,6 @@ function renderLeaderboards() {
   var MIN = 5;
   var pairs = ALL_PAIRS.filter(pairVisible);
 
-  var mostPlayed = pairs.slice()
-    .sort(function (a, b) { return (b.meetings - a.meetings) || a.aName.localeCompare(b.aName); })
-    .slice(0, 10)
-    .map(function (p) { return { p: p, val: p.meetings + " games" }; });
-
   var mostPost = pairs.filter(function (p) { return p.poCount > 0; })
     .sort(function (a, b) { return (b.poCount - a.poCount) || (b.meetings - a.meetings); })
     .slice(0, 10)
@@ -2239,14 +2272,29 @@ function renderLeaderboards() {
     .slice(0, 10)
     .map(function (p) { return { p: p, val: "+" + fmtPts(p.blowout.margin) }; });
 
+  var budding = pairs.filter(function (p) {
+      if (p.meetings < 2) return false;
+      var firstY = p.games[0].year;
+      // First met within the last 3 seasons, still a young series (<= 5 meetings).
+      return firstY >= DATA_MAX_YEAR - 2 && p.meetings <= 5;
+    })
+    .sort(function (a, b) {
+      // Newest first-meeting first, then more meetings = more developed.
+      return (b.games[0].year - a.games[0].year) || (b.meetings - a.meetings);
+    })
+    .slice(0, 10)
+    .map(function (p) {
+      return { p: p, val: p.meetings + " game" + (p.meetings === 1 ? "" : "s") + " · since " + p.games[0].year };
+    });
+
   var cards = [
     { title: "Top Rivalry Ratings", note: "Our hottest head-to-heads &middot; 0–100", rows: topRated },
-    { title: "Most-Played Rivalries", note: "By total meetings", rows: mostPlayed },
     { title: "Most Postseason Clashes", note: "Quarterfinal through Championship", rows: mostPost },
     { title: "Closest Rivalries", note: "Tightest split &middot; min. 5 meetings", rows: closest },
     { title: "Most Lopsided", note: "One side dominates &middot; min. 5 meetings", rows: lopsided },
     { title: "Most Nail-Biters", note: "Games decided by ≤ 3.0 pts", rows: nailbiters },
     { title: "Longest Active Streaks", note: "Current head-to-head runs", rows: longStreaks },
+    { title: "Budding Rivalries", note: "Fresh matchups still taking shape", rows: budding },
     { title: "Highest-Scoring Rivalries", note: "Avg combined points &middot; min. 5 meetings", rows: highScoring },
     { title: "Biggest Single-Game Blowouts", note: "Largest margin in one meeting", rows: bigBlowouts }
   ];
@@ -2261,6 +2309,7 @@ function renderLeaderboards() {
           '<span class="lb-row__names">' + escHtml(shortName(e.p.aName)) +
             '<span class="lb-vs">vs</span>' + escHtml(shortName(e.p.bName)) + '</span>' +
           '<span class="lb-row__right">' +
+            '<span class="lb-rating-chip" title="Rivalry Rating">' + e.p.rating + '</span>' +
             (emojis ? '<span class="lb-emoji">' + emojis + '</span>' : "") +
             '<span class="lb-row__val">' + e.val + '</span>' +
           '</span>' +
