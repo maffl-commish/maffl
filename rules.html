@@ -60,6 +60,7 @@
     --loss: #c04a4a;
     --display: "Barlow Condensed", system-ui, sans-serif;
     --body: "Barlow", system-ui, sans-serif;
+    --header-h: 77px;   /* sticky site-header height (logo 48 + 14*2 pad + 1 border) */
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -280,6 +281,7 @@
   .rule-tag.amended      { background: #dde7f2;     color: var(--navy); }
   .rule-tag.deprecated   { background: #f0f2f5;     color: #5a6478; }
   .rule-tag.announcement { background: var(--navy); color: #fff; }
+  .rule-tag.restrict     { background: #f5dada;     color: var(--loss); }
   .rule-tag .tag-sep {
     display: inline-block;
     margin: 0 5px;
@@ -424,8 +426,12 @@
      absolutely positioned within the .rules-search relative wrapper so it
      overlays content instead of pushing layout. */
   .rules-search {
-    position: relative;
-    margin: 20px 0 0 0;
+    position: sticky;
+    top: var(--header-h);       /* sits flush under the sticky site header */
+    z-index: 40;                /* below header (50), above rule sections */
+    margin: 0 0 4px 0;
+    padding: 12px 0;
+    background: var(--page-bg); /* opaque so rules don't show through on scroll */
   }
   .rules-search input[type="search"] {
     width: 100%;
@@ -882,6 +888,7 @@
   }
 
   @media (max-width: 767px) {
+    :root { --header-h: 65px; }   /* header shrinks: logo 40 + 12*2 pad + 1 border */
     .header-inner { padding: 12px 18px; }
     .brand-logo { height: 40px; }
     .brand-wordmark { font-size: 20px; }
@@ -1763,10 +1770,10 @@
           </thead>
           <tbody>
             <tr><td class="row-label">Each</td><td>Purchase additional FAAB $</td><td>$20 added to your Free Agent Auction Budget (FAAB) balance</td><td class="num">&minus;1</td><td>Can be used anytime in-season. These dollars will follow normal &lsquo;reset&rsquo; league settings once added to the owner&rsquo;s FAAB balance.</td></tr>
-            <tr><td class="row-label">Each</td><td>Double Player Bonus</td><td>Double your point total for one position for one week</td><td class="num">&minus;10</td><td>Must be declared to commish and opponent before 1st game of the week kickoff. NOT ELIGIBLE for MAFFL Upper-Tier playoffs. Eligible in Consolation series but NOT in Promotion/Relegation Showdowns. May be stacked with a Matchup Swap. Both owners in a matchup may declare the same week. An owner may declare twice in one week but not on the same player (no 4&times; on one player).</td></tr>
-            <tr><td class="row-label">Each</td><td>Matchup Swap</td><td>Make a regular season swap of opponents. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Regular season only. Division matchups are not eligible. Must be declared to commish (commish approval required) AND all affected owners before 1st game of the week kickoff — &ldquo;declare to all parties&rdquo; means owners are notified directly, not left to discover the swap via ESPN results; affected owners&rsquo; approval is NOT required. A swap does not change weekly high-score prizes, the Survivor pool, or any other award for the games involved.</td></tr>
+            <tr><td class="row-label">Each</td><td>Double Player Bonus<span class="rule-tag restrict">No Playoffs</span></td><td>Double your point total for one position for one week</td><td class="num">&minus;10</td><td>Must be declared to commish and opponent before 1st game of the week kickoff. NOT ELIGIBLE for MAFFL Upper-Tier playoffs. Eligible in Consolation series but NOT in Promotion/Relegation Showdowns. May be stacked with a Matchup Swap. Both owners in a matchup may declare the same week. An owner may declare twice in one week but not on the same player (no 4&times; on one player).</td></tr>
+            <tr><td class="row-label">Each</td><td>Matchup Swap<span class="rule-tag restrict">Reg. Season Only</span></td><td>Make a regular season swap of opponents. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Regular season only. Division matchups are not eligible. Must be declared to commish (commish approval required) AND all affected owners before 1st game of the week kickoff — &ldquo;declare to all parties&rdquo; means owners are notified directly, not left to discover the swap via ESPN results; affected owners&rsquo; approval is NOT required. A swap does not change weekly high-score prizes, the Survivor pool, or any other award for the games involved.</td></tr>
             <tr><td class="row-label">Each</td><td>Division Swap</td><td>Make a pre-season swap of divisional alignment. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Must be declared in off-season prior to MAFFL draft, following division alignment on 8/1.</td></tr>
-            <tr><td class="row-label">Each</td><td>Relegation Insurance</td><td>Guarantee your safety from relegation for the current season regardless of your final standing.</td><td class="num">&minus;25</td><td>Must be declared before Regular Season Week 4 (1st game of the week kickoff). Ensures tiebreaker elevation to Seed #7 if owner is unable to make Playoffs. Limited to <strong>3 purchases per season, first come first served</strong>. Elevating an insured team shifts the teams ordinarily ahead of them down accordingly.</td></tr>
+            <tr><td class="row-label">Each</td><td>Relegation Insurance<span class="rule-tag restrict">By Wk 4 &middot; Limit 3</span></td><td>Guarantee your safety from relegation for the current season regardless of your final standing.</td><td class="num">&minus;25</td><td>Must be declared before Regular Season Week 4 (1st game of the week kickoff). Ensures tiebreaker elevation to Seed #7 if owner is unable to make Playoffs. Limited to <strong>3 purchases per season, first come first served</strong>. Elevating an insured team shifts the teams ordinarily ahead of them down accordingly.</td></tr>
           </tbody>
         </table>
         </div>
