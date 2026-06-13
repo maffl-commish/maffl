@@ -1958,13 +1958,13 @@
     </div>
     <div class="page-header__meta" aria-label="Auction Draft version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 11, 2026</span>
+      <span class="meta-pill">Last Updated June 12, 2026</span>
     </div>
   </header>
 
   <nav class="subtabs" role="tablist" aria-label="Draft portal sections">
     <button class="subtab-btn active" role="tab" aria-selected="true" data-target="tabSearch" id="btnSearch">Search</button>
-    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">The 8 Ball</button>
+    <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOracle" id="btnOracle">8 Ball</button>
     <button class="subtab-btn" role="tab" aria-selected="false" data-target="tabOwners" id="btnOwners">Owner Profiles</button>
   </nav>
 
@@ -2077,7 +2077,6 @@
       </button>
       <div class="oracle-fact" id="oracleFact" hidden aria-live="polite">
         <p class="oracle-fact-text" id="oracleFactText"></p>
-        <button type="button" class="oracle-roll-again" id="oracleRollAgain">Shake Again →</button>
       </div>
     </div>
   </section>
@@ -8635,7 +8634,6 @@ function renderOracle() {
   if (oracleData) return;
   oracleData = buildOracleData();
   document.getElementById("oracleRollBtn").addEventListener("click", rollOracle);
-  document.getElementById("oracleRollAgain").addEventListener("click", rollOracle);
 }
 
 function buildOracleData() {
