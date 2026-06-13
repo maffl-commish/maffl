@@ -608,6 +608,8 @@
   }
   .vs-stat__value strong { font-weight: 700; }
   .vs-stat__sub { color: var(--muted); font-size: 13px; }
+  .vs-shared__row { margin-top: 2px; }
+  .vs-shared__row:first-child { margin-top: 0; }
 
   /* Postseason-by-round vertical list */
   .po-list { display: flex; flex-direction: column; gap: 5px; }
@@ -2105,24 +2107,25 @@ function renderVS() {
     '<strong>' + escHtml(shortName(o2.name)) + ' ' + fmtPts(o2Pts) + '</strong><br>' +
     '<span class="vs-stat__sub">Average margin ' + fmtPts(p.avgMargin) + '</span>'));
 
-  // 7) Shared history — (a) seasons together as count + range, (b) same-division years.
-  var ovYears = overlapYears(p.aKey, p.bKey);
-  var ovCount = ovYears.length;
-  var togetherTxt;
-  if (ovCount === 0) {
-    togetherTxt = "No overlapping seasons";
-  } else if (ovCount === 1) {
-    togetherTxt = "1 season together (" + ovYears[0] + ")";
-  } else {
-    var lo = ovYears[0], hi = ovYears[ovCount - 1];
+  // Format a sorted year array as "N seasons (lo–hi)", using "present" for the
+  // latest data year. nounSingular/nounPlural label the count.
+  function sharedYearsTxt(years, nounSingular, nounPlural, emptyTxt) {
+    var n = years.length;
+    if (n === 0) return emptyTxt;
+    if (n === 1) return "1 " + nounSingular + " (" + years[0] + ")";
+    var lo = years[0], hi = years[n - 1];
     var hiTxt = (hi === DATA_MAX_YEAR) ? "present" : String(hi);
-    togetherTxt = ovCount + " seasons together (" + lo + "–" + hiTxt + ")";
+    return n + " " + nounPlural + " (" + lo + "–" + hiTxt + ")";
   }
+
+  // 7) Shared history — two equal lines: seasons together, and same-division years.
+  var ovYears  = overlapYears(p.aKey, p.bKey);
   var divYears = sameDivisionYears(p.aKey, p.bKey);
+  var togetherTxt = sharedYearsTxt(ovYears, "season together", "seasons together", "No overlapping seasons");
+  var divTxt      = sharedYearsTxt(divYears, "season same division", "seasons same division", "Never in same division");
   stats.push(statBlock("Shared History",
-    '<strong>' + togetherTxt + '</strong><br>' +
-    '<span class="vs-stat__sub">Same division: ' +
-    (divYears.length ? divYears.join(", ") : "never") + '</span>'));
+    '<div class="vs-shared__row">' + escHtml(togetherTxt) + '</div>' +
+    '<div class="vs-shared__row">' + escHtml(divTxt) + '</div>'));
 
   // 8) Margin timeline.
   stats.push("");
