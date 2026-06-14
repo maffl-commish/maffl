@@ -810,6 +810,24 @@
     line-height: 1.6;
   }
   .tiebreaker-col ol li + li { margin-top: 4px; }
+  .tiebreaker-note {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--page-bg);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .tiebreaker-applies {
+    margin: 0 0 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .tiebreaker-applies strong { color: var(--navy); }
 
   /* ---------- Owner lists ---------- */
   .owner-block + .owner-block { margin-top: 18px; }
@@ -1131,7 +1149,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rulebook version metadata">
       <span class="meta-pill" id="versionChipVersion">v1.0</span>
-      <span class="meta-pill" id="versionChipUpdated">Last Updated June 13, 2026</span>
+      <span class="meta-pill" id="versionChipUpdated">Last Updated June 14, 2026</span>
     </div>
   </header>
 
@@ -1617,10 +1635,11 @@
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="rule-body" id="body-tiebreakers">
+        <p class="tiebreaker-note"><strong>MAFFL regular-season games can end in a tie.</strong> A regular-season tie is a legitimate result and is recorded as a tie &mdash; no tiebreaker is applied. Every other tie in the league is resolved using the tiebreakers below, grouped by the type of decision.</p>
         <div class="tiebreaker-grid">
           <div class="tiebreaker-col">
-            <h4>General / Wildcard</h4>
-            <p style="margin:0 0 6px;font-size:0.85rem;color:var(--muted)">Standings, season-long credit-earning awards (Survivor pool, etc.), and other general ties use this order:</p>
+            <h4>General</h4>
+            <p class="tiebreaker-applies"><strong>Applies to:</strong> final regular-season standings &amp; overall seeding, Wildcard playoff berth, Survivor Pool, Most Team Points Scored.</p>
             <ol>
               <li>Record (W/L %)</li>
               <li>Credit Balance</li>
@@ -1629,6 +1648,7 @@
           </div>
           <div class="tiebreaker-col">
             <h4>Division</h4>
+            <p class="tiebreaker-applies"><strong>Applies to:</strong> division title and division standing/seeding.</p>
             <ol>
               <li>Record (W/L %)</li>
               <li>Credit Balance</li>
@@ -1637,7 +1657,8 @@
             </ol>
           </div>
           <div class="tiebreaker-col">
-            <h4>Playoff Game &amp; Weekly High Score Prize <span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></h4>
+            <h4>Game <span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></h4>
+            <p class="tiebreaker-applies"><strong>Applies to:</strong> MAFFL Playoff game, Weekly High Score Prize (cash), Weekly High Score Credit Award (+1).</p>
             <ol>
               <li>Highest single-game score by any one starter across the tied teams</li>
               <li>If still tied, the second-highest single starter score; then third, and so on</li>
@@ -1744,7 +1765,7 @@
 
         <div class="callout">
           <span class="callout-label">Survivor Pool — How It Works <span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></span>
-          <p>Survivor runs the <strong>regular season only</strong> (NFL Wks 1&ndash;14), separately within each tier. Each week, the team with the <strong>lowest score</strong> in that tier is eliminated from the pool. A team facing MAFFL Ghost is scored on its <strong>own real score</strong>, exactly like any team facing a real opponent — the Ghost result does not affect Survivor. The last team standing earns the <strong>+5 Survivor Bonus</strong>. If two teams tie for the lowest score in a week, both are eliminated. With more than 15 teams in a tier, extra eliminations are front-loaded so a winner still emerges within the regular season: enough teams are eliminated in the earliest weeks (and then one per week thereafter) to finish by Week 14. Example: 16 teams &rarr; 2 eliminated in Week 1, then 1/week; 17 teams &rarr; 2 eliminated in each of Weeks 1&ndash;2, then 1/week; and so on.</p>
+          <p>Survivor runs the <strong>regular season only</strong> (NFL Wks 1&ndash;14), separately within each tier. Each week, the team with the <strong>lowest score</strong> in that tier is eliminated from the pool. MAFFL Ghost results do not affect Survivor. The last team standing earns the <strong>+5 Survivor Bonus</strong>. If two teams tie for the lowest score in a week, see <a class="inline-link" href="#tiebreakers">Tiebreakers</a>. <em>(Note: If Lower-Tier would ever have 15+ owners, extra survivor eliminations are front-loaded so a winner still emerges within the regular season.)</em></p>
         </div>
 
         <h3 class="subhead">Spending Credits</h3>
@@ -1873,7 +1894,7 @@
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
 const RULEBOOK_VERSION      = "v1.0";
-const RULEBOOK_LAST_UPDATED = "June 13, 2026";
+const RULEBOOK_LAST_UPDATED = "June 14, 2026";
 
 /* ---------------------------------------------------------------------
  * NEWS_FEED / COMING_SOON power the "News & Announcements" feed on the
