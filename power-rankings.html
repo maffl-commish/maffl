@@ -1167,6 +1167,10 @@
 
 /* OWNERS_DATA — sorted by 2026 Power Ranking ascending (active first),
    then inactive owners by historical rank. */
+/* Team-name fields (recentTeam + timeline[*][1]) are sourced from
+   MAFFL_Team_History.csv via MAFFL_Owner_Registry.csv — regenerate from
+   gold, do NOT hand-edit these fields. Ratings, rank, finish flags, W/L,
+   and scout text remain hand-authored. Last name sync: 2026-06-14. */
 const OWNERS_DATA = [
   /* ============================================================
      ACTIVE OWNERS — sorted by 2026 Power Ranking
@@ -1355,7 +1359,7 @@ const OWNERS_DATA = [
   {
     key: "david-murello",
     name: "David Murello",
-    recentTeam: "Kardiac Kids",
+    recentTeam: "Kids BadBlood HighSchool",
     active: true,
     league2026: "Upper-Tier",
     rank: 6,
@@ -1384,8 +1388,8 @@ const OWNERS_DATA = [
       [2021,"Kardiac Kids",11,3,0,0,0,1,1,0,0,0,"A"],
       [2022,"Kardiac Kids",6,8,0,0,0,0,0,0,0,0,"A"],
       [2023,"Kardiac Kids",4,10,0,0,0,0,0,0,0,0,"A"],
-      [2024,"Kardiac Kids",8,6,0,0,0,1,1,0,0,0,"A"],
-      [2025,"Kardiac Kids",9,5,0,0,0,0,1,0,0,0,"U"]
+      [2024,"Kids Mixon with Lamar",8,6,0,0,0,1,1,0,0,0,"A"],
+      [2025,"Kids BadBlood HighSchool",9,5,0,0,0,0,1,0,0,0,"U"]
     ]
   },
   {
@@ -1506,7 +1510,7 @@ const OWNERS_DATA = [
     rank: 10,
     ovr: 61, clutch: 39, grind: 77, heat: 65,
     rings: 1, runners: 2, divTitles: 3, playoffApps: 13, years: 20, winPct: 55,
-    scout: "Running an incredibly efficient regular-season operation that has racked up 115 wins and a 58% career win rate, this franchise is constantly pushing the group at the top in its 20 years of action. However, the owners above him on this ranking have more deep post-season runs. A 2026 championship run could propel BJ into the Elite.",
+    scout: "Running an incredibly efficient regular-season operation that has racked up 146 wins and a 55% career win rate, this franchise is constantly pushing the group at the top in its 20 years of action. However, the owners above him on this ranking have more deep post-season runs. A 2026 championship run could propel BJ into the Elite.",
     timeline: [
       [2006,"Wilkinsburg N'@s",7,6,0,0,1,0,1,0,0,0,"A"],
       [2007,"Greensburg N'@s",8,5,0,0,0,0,1,0,0,0,"A"],
@@ -1635,7 +1639,7 @@ const OWNERS_DATA = [
   {
     key: "tony-brooks",
     name: "Tony Brooks",
-    recentTeam: "Number 2 Tony",
+    recentTeam: "Tony's Talented Team",
     active: true,
     league2026: "Lower-Tier",
     rank: 19,
@@ -1647,7 +1651,7 @@ const OWNERS_DATA = [
       [2022,"Number 2 Tony",6,8,0,0,0,0,0,0,0,0,"A"],
       [2023,"Number 2 Tony",8,6,0,0,0,1,1,0,0,0,"A"],
       [2024,"Number 2 Tony",7,7,0,0,0,0,0,0,0,0,"A"],
-      [2025,"Number 2 Tony",7,5,0,0,0,0,0,0,0,0,"L"]
+      [2025,"Tony's Talented Team",7,5,0,0,0,0,0,0,0,0,"L"]
     ]
   },
   {
@@ -1663,7 +1667,7 @@ const OWNERS_DATA = [
     timeline: [
       [2022,"Motown Ballers",9,5,0,0,0,0,1,0,0,0,"A"],
       [2023,"Motown Ballers",8,6,0,0,0,0,0,0,0,0,"A"],
-      [2024,"Motown Ballers",8,6,0,0,0,0,1,0,0,0,"A"],
+      [2024,"Mike Vicks Dog Sitting Co.",8,6,0,0,0,0,1,0,0,0,"A"],
       [2025,"Mike Vicks Dog Sitting Co.",6,8,0,0,0,0,0,0,0,0,"U"]
     ]
   },
@@ -1823,7 +1827,7 @@ const OWNERS_DATA = [
     league2026: null,
     rank: 18,
     ovr: 21, clutch: 20, grind: 30, heat: 0,
-    rings: 1, runners: 0, divTitles: 0, playoffApps: 2, years: 11, winPct: 36,
+    rings: 1, runners: 0, divTitles: 0, playoffApps: 2, years: 11, winPct: 40,
     scout: "He got his ring, but holding the lowest win percentage of any MAFFL champion at a brutal 36% across 11 years tells the real story of this franchise's fantasy football suffering.",
     timeline: [
       [2003,"Warren Brownies",null,null,null,0,0,0,0,0,0,0,"A"],
