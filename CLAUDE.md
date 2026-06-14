@@ -28,3 +28,27 @@ Each subpage (`credits.html`, `draft.html`, `history.html`, `power-rankings.html
 4. If a page is missing a meta pill, add it following the existing pattern before stamping.
 
 **A stamp update is part of the SAME commit as the change, not a separate pass.**
+
+## Data Governance
+
+Standing reference: **`MAFFL_HQ_DATA_GOVERNANCE.md`** (repo root) — the full data model,
+source-of-truth registry, chain-event matrix, and gotcha register. Read it before any
+data-layer change.
+
+Two binding rules:
+
+1. **Owner identity is canonical via `data/MAFFL_Owner_Registry.csv`** (one row per
+   `owner_id` + a pipe-delimited `aliases` list of every spelling in the wild, ESPN
+   variants included). Resolve any owner name by looking it up against the registry's
+   alias list — do NOT fuzzy-match ad hoc. Any new owner-name spelling encountered must
+   be ADDED to the registry, not matched on the fly. The 34 `owner_id` slugs are the
+   `key:` values in `power-rankings.html` OWNERS_DATA; never invent a new slug for an
+   owner that already has one. (Rationale: governance §7.1; the join key had 6+
+   spellings — gotcha G-2.)
+
+2. **Derived data is GENERATED from gold CSVs and must never be hand-edited.** This
+   covers every `.js` data file (e.g. `matchups-data.js`, `draft-summary-data.js`) and
+   every in-page embedded data array (e.g. the `OWNERS_DATA` / `timeline` blocks in
+   `power-rankings.html`). Edit the gold source, then regenerate. The authoritative gold
+   sources for each fact are listed in `MAFFL_HQ_DATA_GOVERNANCE.md` §2
+   (Source-of-Truth Registry).
