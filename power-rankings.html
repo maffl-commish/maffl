@@ -857,69 +857,31 @@
   /* Rivals tab → full Rivalry Engine deep-link (reuses .draft-cta-btn styling). */
   .rivalry-cta { margin-top: 16px; text-align: center; }
 
-  /* ---------- Rivalry (heat-map-colored H2H list) ---------- */
-  .rv-summary {
-    font-family: var(--body);
-    font-size: 13px;
-    color: var(--navy);
-    margin-bottom: 12px;
+  /* ---------- Rivals: Top Rivalries tease (mirrors rivalry.html leaderboard rows) ---------- */
+  .rvt-list { list-style: none; margin: 0 0 4px; padding: 0; }
+  .rvt-list li { margin: 0; }
+  .rvt-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; text-decoration: none; min-height: 44px; padding: 8px 6px;
+    border-bottom: 1px solid var(--border); border-radius: 6px; transition: background 0.12s ease;
   }
-  .rv-list { list-style: none; margin: 0; padding: 0; }
-  .rv-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 58px 58px;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    border-left: 3px solid transparent;
-    padding-left: 10px;
+  .rvt-list li:last-child .rvt-row { border-bottom: 0; }
+  .rvt-row:hover, .rvt-row:active { background: var(--gold-soft); }
+  .rvt-opp {
+    font-family: var(--body); font-weight: 700; font-size: 14px; color: var(--navy);
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .rv-row:last-child { border-bottom: 0; }
-  .rv-row.rv-win  { border-left-color: var(--win); }
-  .rv-row.rv-loss { border-left-color: var(--loss); }
-  .rv-head {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-bottom: 2px solid var(--border);
-  }
-  .rv-opp {
-    font-family: var(--body);
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--navy);
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .rv-rec {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--navy);
-    text-align: right;
+  .rvt-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .rvt-rating {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 24px;
+    height: 24px; padding: 0 5px; border-radius: 999px; background: var(--navy); color: #fff;
+    font-family: var(--display); font-weight: 700; font-size: 12.5px; line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-  .rv-pct {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    color: var(--navy);
-    text-align: center;
-    border-radius: 4px;
-    padding: 4px 0;
-  }
-  .rv-head .rv-pct { background: transparent !important; color: var(--muted); }
-  .rv-note {
-    font-family: var(--body);
-    font-size: 11px;
-    color: var(--muted);
-    margin: 12px 0 0;
+  .rvt-badges { font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+  .rvt-rec {
+    font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--navy);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .rivalry-empty {
     font-family: var(--body);
@@ -1043,25 +1005,7 @@
   .draft-pos-meta .draft-pos-price { color: var(--gold-dark); }
   .draft-cta--compact { background: none; padding: 0; text-align: left; }
 
-  /* ---------- Rivals: RS / Playoff record cells ---------- */
-  .rv-rec.rv-rs, .rv-rec.rv-po {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    text-align: center;
-    border-radius: 4px;
-    padding: 4px 0;
-  }
-  .rv-rec.rv-po { background: #eef0f4; color: var(--navy); }
-  .rv-rec.rv-po.rv-empty { background: transparent; color: var(--muted); }
-  .rv-head .rv-rs, .rv-head .rv-po {
-    background: transparent !important;
-    color: var(--muted);
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .rv-toggle, .bg-toggle {
+  .bg-toggle {
     display: inline-flex;
     align-items: center;
     margin: 4px 0 14px;
@@ -1077,9 +1021,8 @@
     min-height: 34px;
     cursor: pointer;
   }
-  .rv-toggle:hover, .bg-toggle:hover { background: var(--navy-shadow); }
-  .rv-toggle:focus-visible, .bg-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .rv-breakdown { margin-bottom: 18px; }
+  .bg-toggle:hover { background: var(--navy-shadow); }
+  .bg-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
   /* ---------- Rivals: Big Game Matchups ---------- */
   /* Header matches the Head-to-Head .ov-head exactly (no extra top margin). */
@@ -1172,7 +1115,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 11, 2026</span>
+      <span class="meta-pill">Last Updated June 14, 2026</span>
     </div>
   </header>
 
@@ -2209,6 +2152,105 @@ var BIG_GAMES_BY_KEY = {};
   }
 })();
 
+/* =====================================================================
+ * RIVALRY RATING — ported VERBATIM from rivalry.html (KEEP IN SYNC).
+ * Builds every owner pair from window.MATCHUPS_DATA in normalizeName-key space
+ * (identical universe → identical curve → ratings MATCH rivalry.html), then
+ * exposes the top-3-rated rivalries per PORTAL key for the Rivals tab.
+ *   RIVALRY_TOP_BY_KEY[portalKey] = [{ oppKey, rating, w, l, m, badges }, …≤3]
+ * ===================================================================== */
+var RIVALRY_TOP_BY_KEY = (function () {
+  var rows = window.MATCHUPS_DATA || [];
+  if (!rows.length) return {};
+  var DATA_MAX_YEAR = 0;
+  rows.forEach(function (r) { if (r[0] > DATA_MAX_YEAR) DATA_MAX_YEAR = r[0]; });
+
+  function pairId(k1, k2) { return [k1, k2].sort().join("||"); }
+  var PAIR_INDEX = {};
+  rows.forEach(function (r) {
+    var year = r[0], week = r[1], tier = r[2], ws = r[4], ls = r[6], type = r[7] || "R";
+    var wk = normalizeName(r[3]), lk = normalizeName(r[5]);
+    if (!wk || !lk || wk === lk) return;
+    var id = pairId(wk, lk), p = PAIR_INDEX[id];
+    if (!p) { var s = [wk, lk].sort(); p = PAIR_INDEX[id] = { aKey: s[0], bKey: s[1], games: [] }; }
+    var aIsWinner = (p.aKey === wk);
+    p.games.push({ year: year, week: week, tier: tier, type: type,
+      aScore: aIsWinner ? ws : ls, bScore: aIsWinner ? ls : ws, winnerKey: wk });
+  });
+
+  function ratingRaw(p) {
+    var volume = Math.min(p.meetings, 30) / 30 * 25;
+    var close = (1 - Math.abs(p.aPct - 0.5) * 2) * 15 + Math.max(0, 20 - p.avgMargin) / 20 * 10;
+    var postszn = Math.min(p.poCount, 4) / 4 * 15 + (p.champMeetings > 0 ? 5 : 0);
+    var recency = p.lastYear >= DATA_MAX_YEAR ? 15
+                : p.lastYear >= DATA_MAX_YEAR - 1 ? 10
+                : p.lastYear >= DATA_MAX_YEAR - 3 ? 5 : 0;
+    var drama = (p.meetings ? p.nailbiters / p.meetings : 0) * 10 + (p.curStreakLen >= 3 ? 5 : 0);
+    return volume + close + postszn + recency + drama;
+  }
+  function aggregatePair(p) {
+    p.games.sort(function (a, b) { return (a.year - b.year) || (a.week - b.week); });
+    var aW = 0, bW = 0, aPts = 0, bPts = 0, marginSum = 0;
+    var po = { Q:[0,0], S:[0,0], C:[0,0], T:[0,0] }, runKey = null, runLen = 0;
+    p.games.forEach(function (g) {
+      aPts += g.aScore; bPts += g.bScore; marginSum += Math.abs(g.aScore - g.bScore);
+      var aWon = (g.winnerKey === p.aKey);
+      if (aWon) aW++; else bW++;
+      if (g.type !== "R" && po[g.type]) { if (aWon) po[g.type][0]++; else po[g.type][1]++; }
+      if (runKey === g.winnerKey) { runLen++; } else { runKey = g.winnerKey; runLen = 1; }
+    });
+    var n = p.games.length;
+    p.aW = aW; p.bW = bW; p.curStreakKey = runKey; p.curStreakLen = runLen; p.meetings = n;
+    p.poCount = p.games.filter(function (g) { return g.type !== "R"; }).length;
+    p.nailbiters = p.games.filter(function (g) { return Math.abs(g.aScore - g.bScore) <= 3.0; }).length;
+    p.avgMargin = n ? marginSum / n : 0;
+    p.avgCombined = n ? (aPts + bPts) / n : 0;
+    p.aPct = (aW + bW) ? aW / (aW + bW) : 0;
+    p.lastYear = n ? p.games[n - 1].year : 0;
+    p.champMeetings = po.C[0] + po.C[1];
+    p.ratingRaw = ratingRaw(p);
+  }
+  Object.keys(PAIR_INDEX).forEach(function (id) { aggregatePair(PAIR_INDEX[id]); });
+  var ALL = Object.keys(PAIR_INDEX).map(function (id) { return PAIR_INDEX[id]; });
+
+  var maxRaw = 0;
+  ALL.forEach(function (p) { if (p.ratingRaw > maxRaw) maxRaw = p.ratingRaw; });
+  if (maxRaw <= 0) maxRaw = 1;
+  ALL.forEach(function (p) { p.rating = Math.max(0, Math.min(100, Math.round(p.ratingRaw / maxRaw * 98))); });
+
+  var TRACK_THRESHOLD = (function () {
+    var v = ALL.map(function (p) { return p.avgCombined; }).sort(function (a, b) { return a - b; });
+    if (!v.length) return Infinity;
+    var i = Math.ceil(v.length * 0.9) - 1; if (i < 0) i = 0; return v[i];
+  })();
+
+  function badgeEmojis(p) {
+    var out = [], seen = {}, n = p.meetings;
+    function add(e) { if (!seen[e]) { seen[e] = 1; out.push(e); } }
+    if (p.poCount >= 3) add("🩸");
+    if (n >= 8 && (p.aPct >= 0.75 || p.aPct <= 0.25)) { add("🔨"); add("🪵"); }
+    if (n >= 10 && Math.abs(p.aW - p.bW) <= 1) add("⚖️");
+    if (p.curStreakLen >= 5) add("🪦");
+    if (n >= 3 && p.avgCombined >= TRACK_THRESHOLD) add("🏎️");
+    if (n >= 5 && p.avgMargin < 5) add("💓");
+    return out.join("");
+  }
+
+  var byOwner = {};
+  ALL.forEach(function (p) {
+    var pa = NAME_TO_KEY[p.aKey], pb = NAME_TO_KEY[p.bKey];
+    if (!pa || !pb) return; // owner not on this page — skip (matches H2H behavior)
+    var badges = badgeEmojis(p);
+    (byOwner[pa] = byOwner[pa] || []).push({ oppKey: pb, rating: p.rating, w: p.aW, l: p.bW, m: p.meetings, badges: badges });
+    (byOwner[pb] = byOwner[pb] || []).push({ oppKey: pa, rating: p.rating, w: p.bW, l: p.aW, m: p.meetings, badges: badges });
+  });
+  Object.keys(byOwner).forEach(function (k) {
+    byOwner[k].sort(function (a, b) { return (b.rating - a.rating) || (b.m - a.m); });
+    byOwner[k] = byOwner[k].slice(0, 3);
+  });
+  return byOwner;
+})();
+
 /* Draft summary index (compact per-owner auction rollup; full history lives in
    draft.html). Resolves gold names → portal key the same way as matchups. */
 var DRAFT_BY_KEY = (function () {
@@ -2425,13 +2467,6 @@ function formatPF(v) {
   return Math.round(v).toLocaleString("en-US");
 }
 
-/* Light heat-map background scaled from red (0%) through amber to green (100%)
-   win rate. Kept light (high lightness) so navy text stays readable. */
-function winRateColor(pct) {
-  var hue = Math.round(Math.max(0, Math.min(1, pct)) * 125); // 0=red, 125=green
-  return "hsl(" + hue + ", 70%, 86%)";
-}
-
 /* Round label for a playoff game type. */
 function roundLabel(type) {
   if (type === "C") return "Championship";
@@ -2476,74 +2511,41 @@ function renderBigGames(owner) {
   return html;
 }
 
-/* Rivals — head-to-head vs. every opponent, split into Regular Season (heat-map
-   colored by win rate) and Playoffs. The full breakdown is collapsible; the Big
-   Game Matchups block sits below it. Stacks vertically so it never overflows a
-   ~390px card. */
+/* Rivals — top-3-rated rivalries (rating from RIVALRY_TOP_BY_KEY), each row
+   deep-links into rivalry.html with both owners preselected at the H2H result.
+   Big Game Matchups + the full-breakdown CTA sit below. */
 function renderRivals(owner) {
   var bigGames =
     '<div class="ov-head bg-head">Big Game Matchups</div>' + renderBigGames(owner);
-  var opp = H2H_INDEX[owner.key];
-  if (!opp || !Object.keys(opp).length) {
-    return '<div class="rivalry-wrap">' +
-      '<div class="ov-head">Head-to-Head</div>' +
-      '<div class="rivalry-empty">No head-to-head games on record.</div>' +
-      bigGames +
-    '</div>';
-  }
-  var rows = Object.keys(opp).map(function (k) {
-    var rec = opp[k], oo = KEY_TO_OWNER[k];
-    var rsG = rec.rsW + rec.rsL, poG = rec.poW + rec.poL;
-    return {
-      name: oo ? oo.name : k,
-      rsW: rec.rsW, rsL: rec.rsL, poW: rec.poW, poL: rec.poL,
-      rsG: rsG, poG: poG, g: rsG + poG, pct: rsG ? rec.rsW / rsG : 0
-    };
-  });
-  rows.sort(function (a, b) {
-    return (b.g - a.g) || (b.pct - a.pct) || a.name.localeCompare(b.name);
-  });
-  var totRsW = 0, totRsL = 0, totPoW = 0, totPoL = 0;
-  var rowsHtml = rows.map(function (r) {
-    totRsW += r.rsW; totRsL += r.rsL; totPoW += r.poW; totPoL += r.poL;
-    var poCell = r.poG
-      ? '<span class="rv-rec rv-po">' + r.poW + '–' + r.poL + '</span>'
-      : '<span class="rv-rec rv-po rv-empty">—</span>';
-    // Left-accent by regular-season result, mirroring .bg-row.bg-win/.bg-loss.
-    var rsCls = r.rsW > r.rsL ? " rv-win" : (r.rsW < r.rsL ? " rv-loss" : "");
-    return '<li class="rv-row' + rsCls + '">' +
-      '<span class="rv-opp">' + escHtml(shortName(r.name)) + '</span>' +
-      '<span class="rv-rec rv-rs" style="background:' + winRateColor(r.pct) + '">' + r.rsW + '–' + r.rsL + '</span>' +
-      poCell +
-    '</li>';
-  });
-  var headerLi = '<li class="rv-row rv-head"><span class="rv-opp">Opponent</span><span class="rv-rec rv-rs">Reg. Szn</span><span class="rv-rec rv-po">Playoffs</span></li>';
-  var rsTot = totRsW + totRsL, rsPct = rsTot ? Math.round(totRsW / rsTot * 100) : 0;
-  var summary =
-    '<div class="rv-summary">' +
-      'Regular season: <strong>' + totRsW + '–' + totRsL + '</strong> (' + rsPct + '%)' +
-      ' &middot; Playoffs: <strong>' + totPoW + '–' + totPoL + '</strong>' +
-    '</div>';
-  // Tease the 2 most-played opponents; the toggle reveals the full list.
-  var teaser =
-    '<ul class="rv-list rv-teaser">' + headerLi + rowsHtml.slice(0, 2).join("") + '</ul>';
-  var fullToggle = rowsHtml.length > 2
-    ? '<button type="button" class="rv-toggle" aria-expanded="false">Show all opponents</button>' +
-      '<div class="rv-breakdown" hidden>' +
-        '<ul class="rv-list">' + headerLi + rowsHtml.slice(2).join("") + '</ul>' +
-      '</div>'
-    : "";
   var rivalryCta =
     '<a class="draft-cta-btn rivalry-cta-btn" href="rivalry.html#owner=' + escHtml(owner.key) +
     '">View full rivalry breakdown →</a>';
-  return '<div class="rivalry-wrap">' +
-    '<div class="ov-head">Head-to-Head</div>' +
-    summary +
-    teaser +
-    fullToggle +
-    bigGames +
-    '<div class="rivalry-cta">' + rivalryCta + '</div>' +
-  '</div>';
+
+  var tops = RIVALRY_TOP_BY_KEY[owner.key] || [];
+  var teaser;
+  if (!tops.length) {
+    teaser = '<div class="ov-head">Top Rivalries</div>' +
+      '<div class="rivalry-empty">No rivalries on record yet.</div>';
+  } else {
+    var rows = tops.map(function (t) {
+      var oo = KEY_TO_OWNER[t.oppKey], oppName = oo ? oo.name : t.oppKey;
+      var badges = t.badges ? '<span class="rvt-badges">' + t.badges + '</span>' : "";
+      return '<li>' +
+        '<a class="rvt-row" href="rivalry.html#vs=' + escHtml(owner.key) + ',' + escHtml(t.oppKey) + '">' +
+          '<span class="rvt-opp">' + escHtml(shortName(oppName)) + '</span>' +
+          '<span class="rvt-right">' +
+            '<span class="rvt-rating" title="Rivalry Rating">' + t.rating + '</span>' +
+            badges +
+            '<span class="rvt-rec">' + t.w + '–' + t.l + '</span>' +
+          '</span>' +
+        '</a>' +
+      '</li>';
+    }).join("");
+    teaser = '<div class="ov-head">Top Rivalries</div><ul class="rvt-list">' + rows + '</ul>';
+  }
+
+  return '<div class="rivalry-wrap">' + teaser + bigGames +
+    '<div class="rivalry-cta">' + rivalryCta + '</div>' + '</div>';
 }
 
 function fmtMoney(v) {
@@ -2790,17 +2792,6 @@ function renderOwnerCard(owner, index) {
       seemore.setAttribute("aria-expanded", expanded ? "false" : "true");
       seemore.textContent = expanded ? "See more" : "See less";
       if (list) { if (expanded) list.setAttribute("hidden", ""); else list.removeAttribute("hidden"); }
-      return;
-    }
-
-    // Rivals opponent-by-opponent breakdown — collapsible (tap-friendly)
-    var rvToggle = ev.target.closest(".rv-toggle");
-    if (rvToggle && grid.contains(rvToggle)) {
-      var breakdown = rvToggle.nextElementSibling;
-      var rvExpanded = rvToggle.getAttribute("aria-expanded") === "true";
-      rvToggle.setAttribute("aria-expanded", rvExpanded ? "false" : "true");
-      rvToggle.textContent = rvExpanded ? "Show all opponents" : "Hide opponents";
-      if (breakdown) { if (rvExpanded) breakdown.setAttribute("hidden", ""); else breakdown.removeAttribute("hidden"); }
       return;
     }
 
