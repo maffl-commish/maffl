@@ -133,8 +133,8 @@ In-Season,FAAB Budget Set,,Prior to Wk 1 kickoff
 Off-Season,Season Prizes Awarded / Season Credits Issued,,Following NFL Wk 17
 ,Promotions/Relegations Issued,,Following NFL Wk 17
 ,New Season Begins 20##-20##,,August 1st
-,Seasonal Divisions Established (Upper-Tier Only),,August 1st
-,Window to spend credits on division realignment,,August 1st - Labor Day
+,Seasonal Divisions Established (Upper-Tier Only),,"Offseason (provisional alignment posted, often early)"
+,Window to spend credits on division realignment,,Offseason (when alignment posted) through Labor Day Eve freeze
 ,Draft,,Labor Day
 ,,,
 Credit System,,,
@@ -182,7 +182,7 @@ Each,Survivor Bonus,Avoiding the lowest weekly score all season (awarded once; S
 Spending Credits,,,
 League,Option,Perk Description,Credit Cost
 Each,Purchase additional FAAB $,$20 added to your Free Agent Auction Budget (FAAB) balance (anytime in-season; follows normal 'reset' league settings once added),-1
-Each,Double Player Bonus,"Double your point total for one position for one week (declare to commish and opponent before 1st game of the week kickoff; NOT ELIGIBLE for MAFFL Upper-Tier playoffs; eligible in Consolation series but NOT Promotion/Relegation Showdowns; stackable with a Matchup Swap; both owners in a matchup may declare the same week; an owner may declare twice in one week but not on the same player)",-10
-Each,Matchup Swap,"Make a regular season swap of opponents - a 1-for-1 swap of teams (regular season only; division matchups not eligible; commish approval required; declare to commish AND all affected owners before 1st game of the week kickoff; 'declare to all parties' means owners are notified directly and their approval is NOT required; does not change weekly high-score prizes, the Survivor pool, or any other award for the games involved)",-10
-Each,Division Swap,Make a pre-season swap of divisional alignment - a 1-for-1 swap of teams (declare in off-season prior to MAFFL draft following division alignment on 8/1),-10
+Each,Double Player Bonus,"Double your point total for one position for one week (declare to commish and opponent by Thursday 6:00 PM ET (or 1 hour before the week's first kickoff if earlier than Thursday); NOT ELIGIBLE for MAFFL Upper-Tier playoffs; eligible in Consolation series but NOT Promotion/Relegation Showdowns; stackable with a Matchup Swap; both owners in a matchup may declare the same week; an owner may declare twice in one week but not on the same player)",-10
+Each,Matchup Swap,"Make a regular season swap of opponents - a 1-for-1 swap of teams (regular season only; division matchups not eligible; commish approval required; declare to commish AND all affected owners by Thursday 6:00 PM ET, or 1 hour before the week's first kickoff if earlier than Thursday; 'declare to all parties' means owners are notified directly and their approval is NOT required; one swap per owner per week and once approved it locks for the week with no reversals; does not change weekly high-score prizes, the Survivor pool, or any other award for the games involved)",-10
+Each,Division Swap,"Make a pre-season swap of divisional alignment - a 1-for-1 swap of teams (off-season only prior to the MAFFL draft; commissioner posts provisional alignment in the offseason; one swap per owner, provisional and changeable at no cost until the Labor Day Eve freeze, when alignment is final and the -10 is charged on the committed swap; affected owners notified, approval not required, commish approval required)",-10
 Each,Relegation Insurance,"Guarantee your safety from relegation for the current season regardless of final standing (declare before Regular Season Week 4 1st game kickoff; ensures tiebreaker elevation to Seed #7 if unable to make Playoffs; limited to 3 purchases per season, first come first served; elevating an insured team shifts the teams ordinarily ahead of them down accordingly)",-25

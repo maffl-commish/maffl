@@ -1,3 +1,32 @@
+# MAFFL HQ — 2026 Credit-Swap Rule Revision — CHANGES
+
+**Branch:** `rules/2026-credit-swap-revision` (create off current; do NOT push or merge without commissioner sign-off)
+**Date:** 2026-06-14
+**Scope:** Commissioner-approved rule CHANGES (not clarifications) to the credit-swap perks. Source-of-truth ordering honored: `rules.html` (authoritative) edited first, `data/MAFFL_Rules_revised.csv` re-synced to match afterward. No table structure, classes, `.table-scroll` wrappers, or CSS touched — text-cell edits only.
+
+**Files touched:**
+- `rules.html`
+- `data/MAFFL_Rules_revised.csv`
+- `CHANGES.md`
+
+---
+
+## Change 1 — Matchup Swap: hard deadline + one-and-done lock
+New deadline: declare to commish AND all affected owners by **Thursday 6:00 PM ET** (or one hour before that week's first kickoff if earlier than Thursday), replacing the old "before 1st game of the week kickoff." Added a one-swap-per-owner-per-week cap and a **no-reversal lock**: once a swap is approved, the teams involved are locked for that week — no reversing or re-swapping. New `No Reversal` restrict pill added beside `Reg. Season Only`. Swaps remain unilateral with commish approval as the only gate; affected-owner approval is NOT required. Existing "declare to all parties = notified, approval not required" and "does not change weekly high-score prizes / Survivor pool / other awards" clauses preserved. CSV synced.
+
+## Change 2 — Double Player Bonus: hard deadline
+Deadline changed to declare to commish and opponent by **Thursday 6:00 PM ET** (or one hour before that week's first kickoff if earlier than Thursday), replacing "before 1st game of the week kickoff." All other eligibility/stacking terms unchanged. CSV synced.
+
+## Change 3 — Division Swap: Model B (provisional until Labor Day Eve freeze)
+Alignment no longer "locks on August 1." The commissioner posts **provisional** alignment in the offseason (often early); from posting until the **Labor Day Eve freeze**, an owner may make a 1-for-1 division swap. Swaps are provisional and changeable/withdrawable at no cost until the freeze; each owner may have **one** swap committed at the freeze, and only the swap in effect at the freeze is charged (−10), at which point alignment becomes final. Affected owners notified; approval NOT required; commish approval required. Division Alignment paragraph rewritten; off-season milestone row relabeled "Division Swap Window Freezes (alignment final)"; Division Swap perk row fully rewritten with `Off-Season · Limit 1` pill. CSV synced (milestone rows + perk parenthetical).
+
+## Change 4 — Owner-facing flag
+NEWS_FEED "Amended" entry added to the Info tab (above the existing "Clarified" item), linking to the Credit System section (`#credit-system`), summarizing the swap deadline/lock and the division-swap freeze.
+
+**Verification:** `git diff` confirmed `rules.html` and `data/MAFFL_Rules_revised.csv` agree on every revised rule; comma-bearing CSV fields quoted per file convention (no spurious columns); table structure/CSS untouched. Version held at **v1.0** (pre-go-live); "Last Updated" pill already read June 14, 2026 (today) — no date change needed.
+
+---
+
 # MAFFL HQ — 2026 Rule Clarification Pass — CHANGES
 
 **Branch:** `rules/2026-clarifications` (create off current; do NOT push or merge without commissioner sign-off)
