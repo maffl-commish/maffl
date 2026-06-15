@@ -621,6 +621,7 @@
     display: block;
     margin-bottom: 6px;
   }
+  .perk-stack { display: flex; flex-direction: column; gap: 14px; }
 
   /* ---------- Tables ---------- */
   .data-table {
@@ -1769,26 +1770,65 @@
         </div>
 
         <h3 class="subhead">Spending Credits</h3>
-        <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">League</th>
-              <th scope="col">Option</th>
-              <th scope="col">Perk Description</th>
-              <th scope="col" class="num">Credit Cost</th>
-              <th scope="col">Notes / Restrictions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td class="row-label">Each</td><td>Purchase additional FAAB $</td><td>$20 added to your Free Agent Auction Budget (FAAB) balance</td><td class="num">&minus;1</td><td>Can be used anytime in-season. These dollars will follow normal &lsquo;reset&rsquo; league settings once added to the owner&rsquo;s FAAB balance.</td></tr>
-            <tr><td class="row-label">Each</td><td>Double Player Bonus<span class="rule-tag restrict">No Playoffs</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></td><td>Double your point total for one position for one week</td><td class="num">&minus;10</td><td>Must be declared to commish and opponent by Thursday 6:00 PM ET (or, in any week whose first game is earlier than Thursday, one hour before that first kickoff). NOT ELIGIBLE for MAFFL Upper-Tier playoffs. Eligible in Consolation series but NOT in Promotion/Relegation Showdowns. May be stacked with a Matchup Swap. Both owners in a matchup may declare the same week. An owner may declare twice in one week but not on the same player (no 4&times; on one player).</td></tr>
-            <tr><td class="row-label">Each</td><td>Matchup Swap<span class="rule-tag restrict">Reg. Season Only</span><span class="rule-tag restrict">No Reversal</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></td><td>Make a regular season swap of opponents. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Regular season only. Division matchups are not eligible. Must be declared to commish (commish approval required) AND all affected owners by Thursday 6:00 PM ET (or, in any week whose first game is earlier than Thursday, one hour before that first kickoff) — &ldquo;declare to all parties&rdquo; means affected owners are notified directly, not left to discover the swap via ESPN results; affected owners&rsquo; approval is NOT required. Each owner may initiate at most one matchup swap per week, and once a swap is approved the teams involved are locked for that week — a swap may not be reversed or re-swapped. A swap does not change weekly high-score prizes, the Survivor pool, or any other award for the games involved.</td></tr>
-            <tr><td class="row-label">Each</td><td>Division Swap<span class="rule-tag restrict">Off-Season &middot; Limit 1</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></td><td>Make a pre-season swap of divisional alignment. A 1-for-1 swap of teams.</td><td class="num">&minus;10</td><td>Off-season only, prior to the MAFFL draft. The commissioner posts the provisional division alignment in the offseason; from posting until the freeze on Labor Day Eve, an owner may swap divisional alignment (a 1-for-1 swap of teams). Each owner may have <strong>one</strong> division swap committed at the freeze. Swaps are provisional &mdash; an owner may change or withdraw a pending swap at no cost any time before the freeze; only the swap in effect at the Labor Day Eve freeze is charged (&minus;10), at which point alignment becomes final. Affected owners are notified; their approval is NOT required; commish approval is required.</td></tr>
-            <tr><td class="row-label">Each</td><td>Relegation Insurance<span class="rule-tag restrict">By Wk 4 &middot; Limit 3</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></td><td>Guarantee your safety from relegation for the current season regardless of your final standing.</td><td class="num">&minus;25</td><td>Must be declared before Regular Season Week 4 (1st game of the week kickoff). Ensures tiebreaker elevation to Seed #7 if owner is unable to make Playoffs. Limited to <strong>3 purchases per season, first come first served</strong>. Elevating an insured team shifts the teams ordinarily ahead of them down accordingly.</td></tr>
-          </tbody>
-        </table>
-        </div>
+<div class="perk-stack">
+
+  <div class="callout">
+    <span class="callout-label">Purchase Additional FAAB (+$20)</span>
+    <p><strong>Cost:</strong> 1 Credit</p>
+    <ul>
+      <li><strong>Timing:</strong> Available anytime in-season.</li>
+      <li><strong>Rule:</strong> Funds follow standard league FAAB reset rules once added.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <span class="callout-label">Double Player Bonus<span class="rule-tag restrict">No Playoffs</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></span>
+    <p><strong>Cost:</strong> 10 Credits</p>
+    <ul>
+      <li><strong>Mechanic:</strong> Double your point total for one position for one week.</li>
+      <li><strong>Deadline:</strong> Declare to commish and opponent by Thursday 6:00 PM ET (or 1 hour before the week&rsquo;s first game, if earlier).</li>
+      <li><strong>Eligibility:</strong> Regular season and Consolation playoffs only. Not valid in Upper-Tier playoffs or Promo/Relegation Showdowns.</li>
+      <li><strong>Limits:</strong> Max 2 per week per owner (must be applied to different players).</li>
+      <li><strong>Stacking:</strong> Can be combined with a Matchup Swap. Both opponents in a matchup can use this perk the same week.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <span class="callout-label">Matchup Swap<span class="rule-tag restrict">Reg. Season Only</span><span class="rule-tag restrict">No Reversal</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></span>
+    <p><strong>Cost:</strong> 10 Credits</p>
+    <ul>
+      <li><strong>Mechanic:</strong> 1-for-1 swap of regular-season opponents.</li>
+      <li><strong>Deadline:</strong> Notify commish and affected owners by Thursday 6:00 PM ET (or 1 hour before the week&rsquo;s first game, if earlier).</li>
+      <li><strong>Approvals:</strong> Commish approval required. Affected owners&rsquo; approval is not required.</li>
+      <li><strong>Restrictions:</strong> Regular season only. Cannot impact a division matchup. Limit 1 swap per owner per week.</li>
+      <li><strong>Locking:</strong> Final once approved (no reversals or secondary swaps).</li>
+      <li><strong>Prizes:</strong> Does not affect the Survivor pool or weekly high-score awards.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <span class="callout-label">Division Swap<span class="rule-tag restrict">Off-Season &middot; Limit 1</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></span>
+    <p><strong>Cost:</strong> 10 Credits</p>
+    <ul>
+      <li><strong>Mechanic:</strong> 1-for-1 pre-season swap of divisional alignment.</li>
+      <li><strong>Timing:</strong> Off-season only. Opens when provisional divisions are posted; locks on Labor Day Eve.</li>
+      <li><strong>Process:</strong> Swaps are provisional and can be canceled or changed for free until the deadline. The 10-credit fee is charged at the final freeze.</li>
+      <li><strong>Approvals:</strong> Commish approval required. Affected owners&rsquo; approval is not required.</li>
+      <li><strong>Limits:</strong> Max 1 committed swap per owner at the freeze.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <span class="callout-label">Relegation Insurance<span class="rule-tag restrict">By Wk 4 &middot; Limit 3</span><span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></span>
+    <p><strong>Cost:</strong> 25 Credits</p>
+    <ul>
+      <li><strong>Mechanic:</strong> Guarantees safety from relegation. If you miss the playoffs, you automatically secure the #7 Seed tiebreaker, shifting non-insured teams down.</li>
+      <li><strong>Deadline:</strong> Must declare before Week 4&rsquo;s first kickoff.</li>
+      <li><strong>Limits:</strong> Only 3 available league-wide per season (first-come, first-served).</li>
+    </ul>
+  </div>
+
+</div>
       </div>
     </section>
 

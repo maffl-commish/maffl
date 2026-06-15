@@ -2,7 +2,7 @@
 
 **Branch:** `rules/2026-credit-swap-revision` (create off current; do NOT push or merge without commissioner sign-off)
 **Date:** 2026-06-14
-**Scope:** Commissioner-approved rule CHANGES (not clarifications) to the credit-swap perks. Source-of-truth ordering honored: `rules.html` (authoritative) edited first, `data/MAFFL_Rules_revised.csv` re-synced to match afterward. No table structure, classes, `.table-scroll` wrappers, or CSS touched — text-cell edits only.
+**Scope:** Commissioner-approved rule CHANGES (not clarifications) to the credit-swap perks, plus a presentation change converting the Spending Credits table to stacked perk cards. Source-of-truth ordering honored: `rules.html` (authoritative) edited first, `data/MAFFL_Rules_revised.csv` re-synced to match afterward. One new CSS rule added (`.perk-stack`); `.callout`, `.rule-tag`, and table styles untouched.
 
 **Files touched:**
 - `rules.html`
@@ -22,6 +22,9 @@ Alignment no longer "locks on August 1." The commissioner posts **provisional** 
 
 ## Change 4 — Owner-facing flag
 NEWS_FEED "Amended" entry added to the Info tab (above the existing "Clarified" item), linking to the Credit System section (`#credit-system`), summarizing the swap deadline/lock and the division-swap freeze.
+
+## Change 5 — Spending Credits: table → stacked perk cards
+Replaced the 5-column Spending Credits `<table>` (inside its `.table-scroll` wrapper) with a `.perk-stack` of five `.callout` cards (one per perk: Purchase Additional FAAB, Double Player Bonus, Matchup Swap, Division Swap, Relegation Insurance), reusing the existing `.callout` / `.callout-label` pattern. Each card carries its restrict/`Clarified · 2026` pills in the label and breaks the perk into labeled `Cost` / `Mechanic` / `Deadline` / `Eligibility` / `Limits` / etc. bullets — same rule content as the swap revision above, just restructured for mobile readability (no horizontal scroll). One new CSS rule added: `.perk-stack { display: flex; flex-direction: column; gap: 14px; }`. The Earning-credits table above and the `<h3>Spending Credits</h3>` heading were left untouched.
 
 **Verification:** `git diff` confirmed `rules.html` and `data/MAFFL_Rules_revised.csv` agree on every revised rule; comma-bearing CSV fields quoted per file convention (no spurious columns); table structure/CSS untouched. Version held at **v1.0** (pre-go-live); "Last Updated" pill already read June 14, 2026 (today) — no date change needed.
 

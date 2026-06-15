@@ -51,4 +51,7 @@ Two binding rules:
    every in-page embedded data array (e.g. the `OWNERS_DATA` / `timeline` blocks in
    `power-rankings.html`). Edit the gold source, then regenerate. The authoritative gold
    sources for each fact are listed in `MAFFL_HQ_DATA_GOVERNANCE.md` §2
-   (Source-of-Truth Registry).
+   (Source-of-Truth Registry). Additionally: `MAFFL_Owners_Sheet_revised.csv`
+   cols 9–12 (regular-season W/L/T + Career Win %) and `Power_Rankings.csv` `Win_Pct`
+   are DERIVED from `MAFFL_Matchups_NoConsolation.csv` — regenerate from gold, never
+   hand-edit.
