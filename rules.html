@@ -674,6 +674,11 @@
     -webkit-overflow-scrolling: touch;
   }
   .table-scroll .data-table { min-width: 640px; }
+  /* Spending Credits perks: bulleted Notes need room so the table doesn't
+     sprawl vertically on mobile. Widen the table and pin a roomy Notes column. */
+  .table-scroll .data-table.perks-table { min-width: 880px; }
+  .perks-table th:last-child,
+  .perks-table td:last-child { width: 360px; }
 
   /* ---------- Leagues Overview compact matrix ---------- */
   .overview-table {
@@ -1773,7 +1778,7 @@
 
         <h3 class="subhead">Spending Credits</h3>
 <div class="table-scroll">
-<table class="data-table">
+<table class="data-table perks-table">
   <thead>
     <tr>
       <th scope="col">League</th>
