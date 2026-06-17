@@ -54,4 +54,7 @@ Two binding rules:
    (Source-of-Truth Registry). Additionally: `MAFFL_Owners_Sheet_revised.csv`
    cols 9–12 (regular-season W/L/T + Career Win %) and `Power_Rankings.csv` `Win_Pct`
    are DERIVED from `MAFFL_Matchups_NoConsolation.csv` — regenerate from gold, never
-   hand-edit.
+   hand-edit. Likewise: Owners_Sheet col 8 (Division Titles) and Power_Rankings.csv
+   Runner_Ups / Playoff_Apps / Division_Titles are DERIVED — Division Titles from
+   Division_History (Tier=Upper, Rank=1, Year>=2013); Runner_Ups / Playoff_Apps from
+   MAFFL_Matchups_NoConsolation.csv. Regenerate from gold, never hand-edit.
