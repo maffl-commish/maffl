@@ -813,7 +813,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 12, 2026</span>
+      <span class="meta-pill">Last Updated June 19, 2026</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -1541,12 +1541,14 @@ var ALL_PAIRS = Object.keys(PAIR_INDEX).map(function (id) { return PAIR_INDEX[id
   });
 })();
 
-/* Track Meet threshold: 90th percentile of avg combined score across ALL pairs. */
+/* Track Meet threshold: top ~19% of avg combined score among pairs with 5+ meetings
+   (filtering out tiny-sample flukes that inflated the old all-pairs 90th-pct cutoff). */
 var TRACK_THRESHOLD = (function () {
-  var vals = ALL_PAIRS.map(function (p) { return p.avgCombined; })
+  var vals = ALL_PAIRS.filter(function (p) { return p.meetings >= 5; })
+    .map(function (p) { return p.avgCombined; })
     .sort(function (a, b) { return a - b; });
   if (!vals.length) return Infinity;
-  var idx = Math.ceil(vals.length * 0.9) - 1;
+  var idx = Math.ceil(vals.length * 0.81) - 1;
   if (idx < 0) idx = 0;
   return vals[idx];
 })();
@@ -1574,9 +1576,9 @@ function computeBadges(p) {
   // The Curse — current 5+ game win streak.
   if (p.curStreakLen >= 5) b.push({ emoji: "🪦", name: "The Curse", who: p.curStreakKey });
   // The Track Meet — avg combined score in top 10% of all pairs, min 3 games.
-  if (n >= 3 && p.avgCombined >= TRACK_THRESHOLD) b.push({ emoji: "🏎️", name: "The Track Meet" });
-  // The Heart Murmur — avg margin < 5 pts, min 5 games.
-  if (n >= 5 && p.avgMargin < 5) b.push({ emoji: "💓", name: "The Heart Murmur" });
+  if (n >= 5 && p.avgCombined >= TRACK_THRESHOLD) b.push({ emoji: "🏎️", name: "The Track Meet" });
+  // The Heart Murmur — avg margin < 14 pts, min 5 games.
+  if (n >= 5 && p.avgMargin < 14) b.push({ emoji: "💓", name: "The Heart Murmur" });
   return b;
 }
 function badgeEmojis(p) {
@@ -1592,8 +1594,8 @@ var BADGE_INFO = {
   "The Nail": "loses ≥75% of the series (min 8 games).",
   "The Dead Heat": "record tied or within 1 game (min 10 games).",
   "The Curse": "on an active 5+ game win streak.",
-  "The Track Meet": "top-10% highest-scoring rivalry (min 3 games).",
-  "The Heart Murmur": "average margin under 5 points (min 5 games)."
+  "The Track Meet": "top highest-scoring rivalries (min 5 games).",
+  "The Heart Murmur": "average margin under 14 points (min 5 games)."
 };
 /* Display order + emoji for the Badge Guide in the explainer. */
 var BADGE_ORDER = [
@@ -1791,7 +1793,7 @@ function rivalryBlurb(p, k1, k2) {
     return streakName + " has haunted " + otherName + " for " + p.curStreakLen + " straight meetings.";
   if (n >= 10 && Math.abs(p.aW - p.bW) <= 1)
     return "Dead even after " + n + " meetings — somebody has to blink.";
-  if (p.avgMargin < 5 && n >= 5)
+  if (p.avgMargin < 14 && n >= 5)
     return "Every meeting is a coin flip — average margin just " + fmtPts(p.avgMargin) + " points.";
   if (p.poCount >= 3)
     return p.poCount + " playoff collisions and counting. This one matters in December.";
