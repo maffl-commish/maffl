@@ -909,23 +909,33 @@
     line-height: 1;
   }
 
-  /* ---------- Rank tab: featured-3 row + compact stat list ---------- */
+  /* ---------- Rank tab: featured-3 row + sectioned 2-col stat list ---------- */
   .career-stats.featured3 { grid-template-columns: repeat(3, 1fr); }
-  .rank-list { list-style: none; margin: 0 0 20px; padding: 0; }
-  .rank-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 2px; border-bottom: 1px solid #eef0f3; gap: 12px;
+  .rank-section { margin-bottom: 16px; }
+  .rank-section:last-of-type { margin-bottom: 20px; }
+  .rank-section__head {
+    font-family: var(--display); font-weight: 700; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+    padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #eef0f3;
   }
-  .rank-row:last-child { border-bottom: none; }
-  .rank-row__label {
-    font-family: var(--display); font-weight: 700; font-size: 12px;
+  .rank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .rank-cell {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 8px; padding: 4px 2px; min-width: 0;
+  }
+  .rank-cell--wide { grid-column: 1 / -1; }
+  .rank-cell.is-featured { background: var(--gold-soft); border-radius: 5px; padding: 4px 6px; }
+  .rank-cell__label {
+    font-family: var(--display); font-weight: 700; font-size: 11px;
     color: var(--navy); letter-spacing: 0.02em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .rank-row__value {
-    font-family: var(--display); font-weight: 700; font-size: 14px;
+  .rank-cell__star { color: var(--gold-dark); font-size: 9px; margin-left: 3px; vertical-align: 1px; }
+  .rank-cell__value {
+    font-family: var(--display); font-weight: 700; font-size: 13px;
     color: var(--navy); white-space: nowrap;
   }
-  .rank-row__chip { font-size: 10px; color: var(--muted); font-weight: 700; margin-left: 4px; }
+  .rank-cell__chip { font-size: 9px; color: var(--muted); font-weight: 700; }
 
   /* ---------- Overview: prominent current team + "See more" ---------- */
   .ov-team-section { margin-bottom: 20px; }
@@ -2637,27 +2647,38 @@ function renderDraftSummary(owner) {
 }
 
 function renderOwnerCard(owner, index) {
-  /* ---- Rank tab: featured 3 + compact stat list + Madden ratings + scout ---- */
-  /* Full stat catalog. PF/PA/Diff use formatPF() for display but rank on the raw
-     numeric (rankVal). Prestige entries are eligible to lead the featured row. */
-  var allStats = [
-    { label: "\u{1F3C6} Rings",        value: owner.rings,                rankKey: "rings", gold: true, prestige: true },
-    { label: "\u{1F948} Runner-Ups",   value: owner.runners,              rankKey: "runners", prestige: true },
-    { label: "\u{1F451} Div Titles",   value: owner.divTitles,            rankKey: "divTitles", prestige: true },
-    { label: "\u{1F949} 3rd Place",    value: owner.thirds,               rankKey: "thirds", prestige: true },
-    { label: "\u{1F3DF}️ Playoff Apps", value: owner.playoffApps,    rankKey: "playoffApps", prestige: true },
-    { label: "\u{1F4CA} Win %",        value: owner.winPct + "%",         rankKey: "winPct", rankVal: owner.winPct },
-    { label: "✅ Reg Wins",        value: owner.regW,                 rankKey: "regW" },
-    { label: "❌ Reg Losses",      value: owner.regL,                 rankKey: "regL" },
-    { label: "Total Wins",             value: owner.totW,                 rankKey: "totW" },
-    { label: "\u{1F480} Total Losses", value: owner.totL,                 rankKey: "totL" },
-    { label: "\u{1F3AE} Total Games",  value: owner.totGames,             rankKey: "totGames" },
-    { label: "\u{1F522} PPG",          value: owner.ppg,                  rankKey: "ppg", rankVal: owner.ppg },
-    { label: "\u{1F4C8} Point Diff",   value: formatPF(owner.pointDiff),  rankKey: "pointDiff", rankVal: owner.pointDiff },
-    { label: "Total PF",               value: formatPF(owner.totalPF),    rankKey: "totalPF", rankVal: owner.totalPF },
-    { label: "\u{1F6E1}️ Total PA", value: formatPF(owner.totalPA),  rankKey: "totalPA", rankVal: owner.totalPA },
-    { label: "\u{1F5D3}️ Years",  value: owner.years,                rankKey: "years" }
+  /* ---- Rank tab: featured 3 + sectioned stat list + Madden ratings + scout ---- */
+  /* Sectioned stat catalog. Accolades keep their emoji; Record/Points are plain
+     text. PF/PA/Diff use formatPF() for display but rank on the raw numeric
+     (rankVal). Prestige entries are eligible to lead the featured row. */
+  var SECTIONS = [
+    { title: "Accolades", stats: [
+      { label: "\u{1F3C6} Rings",        value: owner.rings,       rankKey: "rings", gold: true, prestige: true },
+      { label: "\u{1F948} Runner-Ups",   value: owner.runners,     rankKey: "runners", prestige: true },
+      { label: "\u{1F451} Div Titles",   value: owner.divTitles,   rankKey: "divTitles", prestige: true },
+      { label: "\u{1F949} 3rd Place",    value: owner.thirds,      rankKey: "thirds", prestige: true },
+      { label: "\u{1F3DF}️ Playoff Apps", value: owner.playoffApps, rankKey: "playoffApps", prestige: true }
+    ]},
+    { title: "Record", stats: [
+      { label: "Reg Wins",     value: owner.regW,        rankKey: "regW" },
+      { label: "Reg Losses",   value: owner.regL,        rankKey: "regL" },
+      { label: "Total Wins",   value: owner.totW,        rankKey: "totW" },
+      { label: "Total Losses", value: owner.totL,        rankKey: "totL" },
+      { label: "Total Games",  value: owner.totGames,    rankKey: "totGames" },
+      { label: "Win %",        value: owner.winPct + "%", rankKey: "winPct", rankVal: owner.winPct },
+      { label: "Years",        value: owner.years,       rankKey: "years" }
+    ]},
+    { title: "Points", stats: [
+      { label: "Total PF",   value: formatPF(owner.totalPF),   rankKey: "totalPF",   rankVal: owner.totalPF },
+      { label: "Total PA",   value: formatPF(owner.totalPA),   rankKey: "totalPA",   rankVal: owner.totalPA },
+      { label: "Point Diff", value: formatPF(owner.pointDiff), rankKey: "pointDiff", rankVal: owner.pointDiff },
+      { label: "PPG",        value: owner.ppg,                 rankKey: "ppg",       rankVal: owner.ppg }
+    ]}
   ];
+
+  // Flat catalog derived from SECTIONS so the featured-3 selection code below
+  // keeps working unchanged.
+  var allStats = SECTIONS.reduce(function (acc, sec) { return acc.concat(sec.stats); }, []);
 
   // Drop null-valued stats (the two N/A-record owners) so cards show fewer rows,
   // not blanks. Stamp each entry with its catalog order (for stable tie-breaks)
@@ -2704,15 +2725,35 @@ function renderOwnerCard(owner, index) {
     );
   }).join("");
 
-  var listHtml = rest.map(function (c) {
-    var s = c.s;
-    var rk = rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value);
-    var chip = rk ? ' <span class="rank-row__chip">(' + escHtml(rk) + ')</span>' : "";
+  // Featured lookup by rankKey (stable id) so list rows can tie back to the cubes.
+  var featuredKeys = {};
+  featured.forEach(function (c) { featuredKeys[c.s.rankKey] = true; });
+
+  var sectionsHtml = SECTIONS.map(function (sec) {
+    var rows = sec.stats.filter(function (s) {
+      return s.value != null && ("rankVal" in s ? s.rankVal != null : true);
+    });
+    if (!rows.length) return "";
+    var odd = rows.length % 2 === 1;
+    var cells = rows.map(function (s, i) {
+      var rk = rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value);
+      var chip = rk ? ' <span class="rank-cell__chip">(' + escHtml(rk) + ')</span>' : "";
+      var isFeat = featuredKeys[s.rankKey] === true;
+      var isWide = odd && i === rows.length - 1;
+      return (
+        '<div class="rank-cell' + (isFeat ? ' is-featured' : '') + (isWide ? ' rank-cell--wide' : '') + '">' +
+          '<span class="rank-cell__label">' + escHtml(s.label) +
+            (isFeat ? '<span class="rank-cell__star">★</span>' : '') +
+          '</span>' +
+          '<span class="rank-cell__value">' + escHtml(s.value) + chip + '</span>' +
+        '</div>'
+      );
+    }).join("");
     return (
-      '<li class="rank-row">' +
-        '<span class="rank-row__label">' + escHtml(s.label) + '</span>' +
-        '<span class="rank-row__value">' + escHtml(s.value) + chip + '</span>' +
-      '</li>'
+      '<div class="rank-section">' +
+        '<div class="rank-section__head">' + escHtml(sec.title) + '</div>' +
+        '<div class="rank-grid">' + cells + '</div>' +
+      '</div>'
     );
   }).join("");
 
@@ -2735,7 +2776,7 @@ function renderOwnerCard(owner, index) {
 
   var powerHtml =
     '<div class="career-stats featured3">' + featuredHtml + '</div>' +
-    '<ul class="rank-list">' + listHtml + '</ul>' +
+    sectionsHtml +
     '<div class="madden-bars">' + ratingsHtml + '</div>' +
     '<div class="scout-report"><p>' + escHtml(owner.scout) + '</p></div>';
 
