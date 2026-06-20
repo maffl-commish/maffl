@@ -923,7 +923,6 @@
     display: flex; justify-content: space-between; align-items: baseline;
     gap: 8px; padding: 4px 2px; min-width: 0;
   }
-  .rank-cell--wide { grid-column: 1 / -1; }
   .rank-cell.is-featured { background: var(--gold-soft); border-radius: 5px; padding: 4px 6px; }
   .rank-cell__label {
     font-family: var(--display); font-weight: 700; font-size: 11px;
@@ -2657,7 +2656,7 @@ function renderOwnerCard(owner, index) {
       { label: "\u{1F948} Runner-Ups",   value: owner.runners,     rankKey: "runners", prestige: true },
       { label: "\u{1F451} Div Titles",   value: owner.divTitles,   rankKey: "divTitles", prestige: true },
       { label: "\u{1F949} 3rd Place",    value: owner.thirds,      rankKey: "thirds", prestige: true },
-      { label: "\u{1F3DF}️ Playoff Apps", value: owner.playoffApps, rankKey: "playoffApps", prestige: true }
+      { label: "\u{1F39F}️ Playoff Apps", value: owner.playoffApps, rankKey: "playoffApps", prestige: true }
     ]},
     { title: "Record", stats: [
       { label: "Reg Wins",     value: owner.regW,        rankKey: "regW" },
@@ -2734,14 +2733,12 @@ function renderOwnerCard(owner, index) {
       return s.value != null && ("rankVal" in s ? s.rankVal != null : true);
     });
     if (!rows.length) return "";
-    var odd = rows.length % 2 === 1;
     var cells = rows.map(function (s, i) {
       var rk = rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value);
       var chip = rk ? ' <span class="rank-cell__chip">(' + escHtml(rk) + ')</span>' : "";
       var isFeat = featuredKeys[s.rankKey] === true;
-      var isWide = odd && i === rows.length - 1;
       return (
-        '<div class="rank-cell' + (isFeat ? ' is-featured' : '') + (isWide ? ' rank-cell--wide' : '') + '">' +
+        '<div class="rank-cell' + (isFeat ? ' is-featured' : '') + '">' +
           '<span class="rank-cell__label">' + escHtml(s.label) +
             (isFeat ? '<span class="rank-cell__star">★</span>' : '') +
           '</span>' +
