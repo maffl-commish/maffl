@@ -243,6 +243,8 @@
     outline-offset: 2px;
     border-radius: 4px;
   }
+  .tab-with-logo { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .tab-logo { height: 18px; width: auto; display: block; flex: 0 0 auto; }
   .tab-panel[hidden] { display: none; }
 
   /* ---------- VS head scroll offset (clears the sticky site-header) ---------- */
@@ -813,7 +815,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 19, 2026</span>
+      <span class="meta-pill">Last Updated June 20, 2026</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -821,7 +823,7 @@
   <!-- PAGE TABS (mirrors rules.html) -->
   <div class="portal-tabs" role="tablist" aria-label="Rivalry sections">
     <button class="portal-tab active" id="tabBtnH2H" role="tab" aria-selected="true" aria-controls="tab-h2h" data-tab="h2h" type="button">Head-to-Head</button>
-    <button class="portal-tab" id="tabBtnDiscovery" role="tab" aria-selected="false" aria-controls="tab-discovery" data-tab="discovery" type="button">Suggestions</button>
+    <button class="portal-tab tab-with-logo" id="tabBtnDiscovery" role="tab" aria-selected="false" aria-controls="tab-discovery" data-tab="discovery" type="button"><img src="maffl-logo.png" alt="" class="tab-logo" aria-hidden="true"><span>MAFFL's Best</span></button>
   </div>
 
   <!-- TAB 1 — HEAD-TO-HEAD (default active) -->
@@ -862,7 +864,7 @@
 
     <!-- SUGGESTION BOARDS -->
     <section aria-label="Suggestion boards">
-      <p class="section-label">Suggestion Boards</p>
+      <p class="section-label">MAFFL's Best</p>
       <div class="lb-grid" id="lbGrid"></div>
     </section>
 
