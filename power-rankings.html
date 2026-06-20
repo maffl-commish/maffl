@@ -909,6 +909,24 @@
     line-height: 1;
   }
 
+  /* ---------- Rank tab: featured-3 row + compact stat list ---------- */
+  .career-stats.featured3 { grid-template-columns: repeat(3, 1fr); }
+  .rank-list { list-style: none; margin: 0 0 20px; padding: 0; }
+  .rank-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 2px; border-bottom: 1px solid #eef0f3; gap: 12px;
+  }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-row__label {
+    font-family: var(--display); font-weight: 700; font-size: 12px;
+    color: var(--navy); letter-spacing: 0.02em;
+  }
+  .rank-row__value {
+    font-family: var(--display); font-weight: 700; font-size: 14px;
+    color: var(--navy); white-space: nowrap;
+  }
+  .rank-row__chip { font-size: 10px; color: var(--muted); font-weight: 700; margin-left: 4px; }
+
   /* ---------- Overview: prominent current team + "See more" ---------- */
   .ov-team-section { margin-bottom: 20px; }
   .ov-current-team {
@@ -1115,7 +1133,7 @@
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 14, 2026</span>
+      <span class="meta-pill">Last Updated June 20, 2026</span>
     </div>
   </header>
 
@@ -2082,9 +2100,14 @@ OWNERS_DATA.forEach(function (o) {
     // Corrected career totals (used by BOTH the Power tab and the Rivals prominent row).
     o.totalPF = _round2(rp.regPF + rp.poPF);
     o.totalPA = _round2(rp.regPA + rp.poPA);
+    // Derived career splits for the Rank-tab stat catalog.
+    o.totGames = o.totW + o.totL;                                  // Total Games
+    o.pointDiff = _round2(o.totalPF - o.totalPA);                  // career Point Differential
+    o.ppg = o.totGames > 0 ? _round2(o.totalPF / o.totGames) : null; // Points Per Game
   } else {
     o.regW = o.regL = o.poW = o.poL = o.totW = o.totL = null;
     o.regPF = o.regPA = o.poPF = o.poPA = o.totalPF = o.totalPA = null;
+    o.totGames = o.pointDiff = o.ppg = null;
   }
 });
 
@@ -2274,7 +2297,7 @@ var DRAFT_BY_KEY = (function () {
 var STAT_RANKS = (function () {
   // Higher value = better rank.
   var higher = ["rings", "runners", "divTitles", "playoffApps", "winPct", "years", "totalPF", "thirds",
-                "regW", "poW", "totW", "regPF", "poPF"];
+                "regW", "poW", "totW", "regPF", "poPF", "pointDiff", "ppg", "totGames"];
   // Lower value = better rank (fewest losses / points-against wins).
   var lower = ["totalPA", "regL", "poL", "totL", "regPA", "poPA"];
   var out = {};
@@ -2316,6 +2339,12 @@ function rankLabel(metric, value) {
   var e = STAT_RANKS[metric] && STAT_RANKS[metric][value];
   if (!e) return "";
   return (e.tie ? "T-" : "") + ordinal(e.rank);
+}
+
+/* Numeric league rank (not the label) for a metric + value; 9999 when absent. */
+function statRankNum(metric, value) {
+  var e = STAT_RANKS[metric] && STAT_RANKS[metric][value];
+  return e ? e.rank : 9999;
 }
 
 /* =====================================================================
@@ -2608,21 +2637,63 @@ function renderDraftSummary(owner) {
 }
 
 function renderOwnerCard(owner, index) {
-  /* ---- Power tab: career stats (+ league rank) + Madden ratings + scout ---- */
-  var stats = [
-    { label: "\u{1F3C6} Rings",      value: owner.rings,       rankKey: "rings", gold: true },
-    { label: "\u{1F948} Runner-Ups", value: owner.runners,     rankKey: "runners" },
-    { label: "\u{1F949} 3rd Place",  value: owner.thirds, rankKey: "thirds" },
-    { label: "Div Titles",           value: owner.divTitles,   rankKey: "divTitles" },
-    { label: "Playoff Apps",         value: owner.playoffApps, rankKey: "playoffApps" },
-    { label: "Years",                value: owner.years,        rankKey: "years" },
-    { label: "Career Win %",         value: owner.winPct + "%", rankKey: "winPct", rankVal: owner.winPct },
-    { label: "Total Wins",           value: owner.totW, rankKey: "totW" },
-    { label: "Total PF",             value: formatPF(owner.totalPF), rankKey: "totalPF", rankVal: owner.totalPF }
+  /* ---- Rank tab: featured 3 + compact stat list + Madden ratings + scout ---- */
+  /* Full stat catalog. PF/PA/Diff use formatPF() for display but rank on the raw
+     numeric (rankVal). Prestige entries are eligible to lead the featured row. */
+  var allStats = [
+    { label: "\u{1F3C6} Rings",        value: owner.rings,                rankKey: "rings", gold: true, prestige: true },
+    { label: "\u{1F948} Runner-Ups",   value: owner.runners,              rankKey: "runners", prestige: true },
+    { label: "\u{1F451} Div Titles",   value: owner.divTitles,            rankKey: "divTitles", prestige: true },
+    { label: "\u{1F949} 3rd Place",    value: owner.thirds,               rankKey: "thirds", prestige: true },
+    { label: "\u{1F3DF}️ Playoff Apps", value: owner.playoffApps,    rankKey: "playoffApps", prestige: true },
+    { label: "\u{1F4CA} Win %",        value: owner.winPct + "%",         rankKey: "winPct", rankVal: owner.winPct },
+    { label: "✅ Reg Wins",        value: owner.regW,                 rankKey: "regW" },
+    { label: "❌ Reg Losses",      value: owner.regL,                 rankKey: "regL" },
+    { label: "Total Wins",             value: owner.totW,                 rankKey: "totW" },
+    { label: "\u{1F480} Total Losses", value: owner.totL,                 rankKey: "totL" },
+    { label: "\u{1F3AE} Total Games",  value: owner.totGames,             rankKey: "totGames" },
+    { label: "\u{1F522} PPG",          value: owner.ppg,                  rankKey: "ppg", rankVal: owner.ppg },
+    { label: "\u{1F4C8} Point Diff",   value: formatPF(owner.pointDiff),  rankKey: "pointDiff", rankVal: owner.pointDiff },
+    { label: "Total PF",               value: formatPF(owner.totalPF),    rankKey: "totalPF", rankVal: owner.totalPF },
+    { label: "\u{1F6E1}️ Total PA", value: formatPF(owner.totalPA),  rankKey: "totalPA", rankVal: owner.totalPA },
+    { label: "\u{1F5D3}️ Years",  value: owner.years,                rankKey: "years" }
   ];
 
-  var statsHtml = stats.map(function (s) {
-    var rk = s.rankKey ? rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value) : "";
+  // Drop null-valued stats (the two N/A-record owners) so cards show fewer rows,
+  // not blanks. Stamp each entry with its catalog order (for stable tie-breaks)
+  // and its numeric league rank (mirrors the rankLabel value-vs-rankVal logic).
+  var statCatalog = allStats
+    .filter(function (s) { return s.value != null && ("rankVal" in s ? s.rankVal != null : true); })
+    .map(function (s, i) {
+      var rv = ("rankVal" in s) ? s.rankVal : s.value;
+      return { s: s, order: i, rank: statRankNum(s.rankKey, rv) };
+    });
+
+  // Featured 3: prestige with a positive value first (best rank), then fill from
+  // any remaining entries by best rank. Stable on catalog order for ties.
+  function byRankThenOrder(a, b) { return (a.rank - b.rank) || (a.order - b.order); }
+  var featured = statCatalog
+    .filter(function (c) { return c.s.prestige === true && c.rank !== 9999 && Number(c.s.rankVal != null ? c.s.rankVal : c.s.value) > 0; })
+    .sort(byRankThenOrder)
+    .slice(0, 3);
+  var chosen = {};
+  featured.forEach(function (c) { chosen[c.order] = true; });
+  if (featured.length < 3) {
+    statCatalog
+      .filter(function (c) { return !chosen[c.order]; })
+      .sort(byRankThenOrder)
+      .slice(0, 3 - featured.length)
+      .forEach(function (c) { featured.push(c); chosen[c.order] = true; });
+  }
+
+  // Remaining entries form the compact list, best rank first.
+  var rest = statCatalog
+    .filter(function (c) { return !chosen[c.order]; })
+    .sort(byRankThenOrder);
+
+  var featuredHtml = featured.map(function (c) {
+    var s = c.s;
+    var rk = rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value);
     var rankHtml = rk ? '<div class="stat-rank">(' + escHtml(rk) + ')</div>' : "";
     return (
       '<div class="stat-box">' +
@@ -2630,6 +2701,18 @@ function renderOwnerCard(owner, index) {
         '<div class="stat-label">' + escHtml(s.label) + '</div>' +
         rankHtml +
       '</div>'
+    );
+  }).join("");
+
+  var listHtml = rest.map(function (c) {
+    var s = c.s;
+    var rk = rankLabel(s.rankKey, ("rankVal" in s) ? s.rankVal : s.value);
+    var chip = rk ? ' <span class="rank-row__chip">(' + escHtml(rk) + ')</span>' : "";
+    return (
+      '<li class="rank-row">' +
+        '<span class="rank-row__label">' + escHtml(s.label) + '</span>' +
+        '<span class="rank-row__value">' + escHtml(s.value) + chip + '</span>' +
+      '</li>'
     );
   }).join("");
 
@@ -2651,7 +2734,8 @@ function renderOwnerCard(owner, index) {
   }).join("");
 
   var powerHtml =
-    '<div class="career-stats">' + statsHtml + '</div>' +
+    '<div class="career-stats featured3">' + featuredHtml + '</div>' +
+    '<ul class="rank-list">' + listHtml + '</ul>' +
     '<div class="madden-bars">' + ratingsHtml + '</div>' +
     '<div class="scout-report"><p>' + escHtml(owner.scout) + '</p></div>';
 
