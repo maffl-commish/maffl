@@ -56,5 +56,8 @@ Two binding rules:
    are DERIVED from `MAFFL_Matchups_NoConsolation.csv` — regenerate from gold, never
    hand-edit. Likewise: Owners_Sheet col 8 (Division Titles) and Power_Rankings.csv
    Runner_Ups / Playoff_Apps / Division_Titles are DERIVED — Division Titles from
-   Division_History (Tier=Upper, Rank=1, Year>=2013); Runner_Ups / Playoff_Apps from
+   Division_History (Tier=Upper, Rank=1, **Year>=2005** — all years, NOT 2013+); Runner_Ups / Playoff_Apps from
    MAFFL_Matchups_NoConsolation.csv. Regenerate from gold, never hand-edit.
+   NOTE: `cleaned_maffl_revised.csv` is CORRUPTED and must never be used to derive finish
+   flags — it carried wrong division/lower-tier values into the HTML embeds. Use
+   Division_History (divisions) + prize.csv (champ/RU/lower-tier) instead.

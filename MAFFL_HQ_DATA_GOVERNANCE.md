@@ -70,7 +70,9 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 | Game result (W/L, scores) | `MAFFL_Matchups_Clean.csv` | `MAFFL_Matchups_NoConsolation.csv`, `matchups-data.js`, embedded standings/records in history/stats/power-rankings/rivalry/weekly | Weekly (in season) |
 | Team name by owner×year | `MAFFL_Team_History.csv` | Owners_Sheet "Current Team", **power-rankings.html `recentTeam`+`timeline`**, Matchups Winner/Loser_Team, Division_History "Team", embeds in history/draft/prize | Seasonal (+ ad-hoc renames) |
 | Owner W/L/T per season | `MAFFL_Matchups_Clean.csv` (derive) | `cleaned_maffl_revised.csv`, Division_History, power-rankings.html `timeline` | Weekly |
-| Finish flags (champ/RU/div/playoff) | `cleaned_maffl_revised.csv` | Placements_AllTime, ThirdPlace_ByYear, Power_Rankings, power-rankings embed, prize.csv | Seasonal |
+| Finish flags — Division Titles | `MAFFL_Division_History_2005_2025.csv` (Tier=Upper, Division_Rank=1, **all years 2005+**) | power-rankings `timeline`+`divTitles`, history.html STATS_DATA `div:` + csv-seasons, Owners_Sheet col 8, Power_Rankings.csv | Seasonal |
+| Finish flags — Champ / Runner-Up / Lower-Tier 1st & RU | `prize.csv` (Placement rows) | power-rankings `timeline`, history STATS_DATA, Placements_AllTime, ThirdPlace_ByYear | Seasonal |
+| Finish flags — Playoff (made Upper-Tier championship bracket) | `MAFFL_Matchups_NoConsolation.csv` (distinct Upper-Tier `Is_Playoffs=true` participants per year) | power-rankings `timeline` index 8, Power_Rankings.csv | Seasonal |
 | Draft picks | `MAFFL_Draft_History_Clean_v3.csv` | `MAFFL_Draft_Summary_ByOwner.csv`, `draft-summary-data.js`, draft.html embed | Seasonal |
 | Credit balance | `Credit_Log.csv` (sum of entries) | Owners_Sheet "Current Credit Balance", 2025_League_Status balance, credits.html embed | Weekly/ad-hoc |
 | Power ratings (OVR/Clutch/Grind/Heat) + rank | `Power_Rankings.csv` | Owners_Sheet power cols, power-rankings.html embed | Seasonal (you set these) |
@@ -182,7 +184,8 @@ brian-ron-murello, Brian Murello / Ron Murello, Brian/Ron, Y, Co-Owner, ...,
 `aliases` captures every spelling currently in the wild, so `normalizeName()` becomes a **lookup against a declared list** instead of fuzzy guessing. New file? Reject it at audit time until its name is registered.
 
 ### 7.2 Tier the data explicitly: GOLD vs DERIVED
-- **GOLD** (hand-edited): Matchups_Clean, Draft_History_v3, Credit_Log, prize.csv, cleaned_maffl (finish flags), Team_History, Owners_Sheet/Registry, Rules, Power_Rankings (your scores).
+- **GOLD** (hand-edited): Matchups_Clean, Draft_History_v3, Credit_Log, prize.csv, Division_History_2005_2025 (division titles), Team_History, Owners_Sheet/Registry, Rules, Power_Rankings (your scores).
+- **CORRUPTED — DO NOT USE:** `cleaned_maffl_revised.csv`. It was formerly treated as the finish-flag gold source and carried wrong values (e.g. Mike Murello 2021 division title, 2025 Lower-Tier 1st) into multiple HTML embeds. Derive finish flags from Division_History + prize.csv instead. Quarantine, do not regenerate from it.
 - **DERIVED** (generated, never hand-edited): every `.js` file, every HTML embed, NoConsolation, Points_*, Placements, ThirdPlace, Draft_Summary, Owners_Sheet's computed columns (credit balance, career totals).
 
 ### 7.3 Generation pipeline (extend what already works)
@@ -195,6 +198,13 @@ Your `.js` files prove the pattern. Extend it so **`power-rankings.html`'s `time
 
 ### 7.4 Provenance headers everywhere
 Every embedded data block and every derived CSV gets a header: source file(s), regenerated date, "DO NOT HAND-EDIT." This single convention is what makes G-1/G-6 stop recurring.
+
+### 7.5 Finish-flag derivation rules (canonical)
+These flags are DERIVED — never hand-typed in any HTML embed:
+- **Division Title** = `MAFFL_Division_History_2005_2025.csv` where `Tier == "Upper"` AND `Division_Rank == 1`, for **all years 2005+** (NOT 2013+ — that earlier scope was wrong). Divisions exist ONLY in the Upper-Tier; Lower-Tier "division" rows are never titles.
+- **Playoff flag** = made the **Upper-Tier championship playoff bracket** that season. Derive per year from `MAFFL_Matchups_NoConsolation.csv`: any owner appearing in an `Is_Playoffs == true`, `Tier == "Upper"` row made the playoffs. The file's playoff rows are championship-bracket only (Quarterfinal / Semifinal / Championship / ThirdPlace) — consolation is already excluded, so the distinct-participant set is exactly the field. **Bracket size varies by era and the flag does NOT encode a fixed top-N:** 6 teams in 2005, **8 teams 2006–2024**, 6 teams from 2025 forward (top-2 seeds bye). Playoffs are Upper-Tier only; Lower-Tier rows never carry this flag. Promotion/relegation series are not playoff games.
+- **Lower-Tier finishes** = `prize.csv` Placement rows: Lower-Tier 1st and Lower-Tier Runner-Up only. Lower-Tier top-4 postseason and Upper-Tier non-championship postseason get NO separate timeline marker.
+- **Per-owner division-title COUNTS** (`divTitles:` in power-rankings, `div:` in history STATS_DATA) must equal the count of that owner's Upper rank-1 rows in Division_History. They are currently hand-maintained and WILL drift — generate them, don't type them. Until generated, any flag change requires the matching count to be recomputed in the same commit.
 
 ---
 
