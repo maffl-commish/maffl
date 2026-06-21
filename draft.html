@@ -1958,7 +1958,7 @@
     </div>
     <div class="page-header__meta" aria-label="Auction Draft version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated June 12, 2026</span>
+      <span class="meta-pill">Last Updated June 21, 2026</span>
     </div>
   </header>
 
@@ -8017,6 +8017,9 @@ const OWNER_TIER_BY_YEAR = {
     "Sam Lavrinc": "LOWER", "Tony Brooks": "LOWER", "Tony Trozzo": "LOWER"
   }
 };
+// Active franchises = those present in the most recent 2-tier era (2025).
+const ACTIVE_OWNERS = new Set(Object.keys(OWNER_TIER_BY_YEAR[2025] || {}));
+function isActiveOwnerIdx(idx) { return ACTIVE_OWNERS.has(OWNERS[idx]); }
 function pickTier(p) {
   const yr = p[F_Y];
   if (yr < TIER_ERA_START) return null;
@@ -8681,7 +8684,7 @@ function buildOracleData() {
     if (!cur || p[F_PR] > cur[F_PR]) posTop.set(p[F_PS], p);
   });
 
-  const dollarPicks = PICKS.filter(p => p[F_PR] === 1);
+  const dollarPicks = PICKS.filter(p => p[F_PR] === 1 && isActiveOwnerIdx(p[F_O]));
   const playerList = [...players.values()];
 
   const byPY = new Map();
@@ -8694,11 +8697,7 @@ function buildOracleData() {
     if (hi[F_PR] - lo[F_PR] >= 25) priceJumps.push({ lo, hi, jump: hi[F_PR] - lo[F_PR] });
   });
   const seenJ = new Set();
-  const breakouts = priceJumps.filter(j => { const k = j.lo[F_P] + j.lo[F_Y]; if (seenJ.has(k)) return false; seenJ.add(k); return true; });
-  const loyalty = owners.filter(o => o.favPlayer && o.favPlayer.count >= 3);
-  const oySpend = new Map();
-  PICKS.forEach(p => { const k = p[F_O] + '|' + p[F_Y]; oySpend.set(k, (oySpend.get(k) || 0) + p[F_PR]); });
-  const bigAuctions = [...oySpend.entries()].map(([k, total]) => { const [o, y] = k.split('|'); return { o: +o, y: +y, total }; }).filter(e => e.total >= 200).sort((a, b) => b.total - a.total).slice(0, 25);
+  const breakouts = priceJumps.filter(j => { const k = j.lo[F_P] + j.lo[F_Y]; if (seenJ.has(k)) return false; seenJ.add(k); return true; }).filter(j => isActiveOwnerIdx(j.lo[F_O]));
   const splitPlayers2025 = [];
   const p25 = new Map();
   PICKS.filter(p => p[F_Y] === 2025).forEach(p => { if (!p25.has(p[F_P])) p25.set(p[F_P], []); p25.get(p[F_P]).push(p); });
@@ -8711,14 +8710,13 @@ function buildOracleData() {
     posTop,
     dollarPicks,
     multiDraftedVar: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] > e.minPick[F_PR]),
-    oneTimeBig: playerList.filter(e => e.count === 1 && e.picks[0][F_PR] >= 35),
-    expensivePlayers: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] >= 40),
+    oneTimeBig: playerList.filter(e => e.count === 1 && e.picks[0][F_PR] >= 35 && isActiveOwnerIdx(e.picks[0][F_O])),
+    expensivePlayers: playerList.filter(e => e.count >= 2 && e.maxPick[F_PR] >= 40 && isActiveOwnerIdx(e.maxPick[F_O])),
     champPlayers: playerList.filter(e => e.champPicks.length > 0),
-    ownersWithFav: owners.filter(o => o.favPlayer),
-    ownersWithBigPick: owners.filter(o => o.maxPick && o.maxPick[F_PR] >= 20),
+    ownersWithFav: owners.filter(o => o.favPlayer && isActiveOwnerIdx(o.idx)),
+    ownersWithBigPick: owners.filter(o => o.maxPick && o.maxPick[F_PR] >= 20 && isActiveOwnerIdx(o.idx)),
     breakouts,
-    loyalty,
-    bigAuctions,
+    loyalty: owners.filter(o => o.favPlayer && o.favPlayer.count >= 3 && isActiveOwnerIdx(o.idx)),
     splitPlayers2025
   };
 }
@@ -8792,6 +8790,7 @@ const FACT_GENERATORS = [
     if (!e) return null;
     const c = e.champPicks.length;
     const ex = oraclePick(e.champPicks);
+    if (!isActiveOwnerIdx(ex[F_O])) return null;
     const word = c === 1 ? 'time' : 'times';
     return {
       key: "champPed:" + e.name,
@@ -8820,23 +8819,13 @@ const FACT_GENERATORS = [
         tagPlayer(o.favPlayer.name) + ' — ' + tagNum(o.favPlayer.count) + ' times and counting.'
     };
   },
-  // 7: Owner big spending year
-  function () {
-    const o = oraclePick(oracleData.ownersWithBigPick);
-    if (!o) return null;
-    const p = o.maxPick;
-    return {
-      key: "ownerBigYr:" + o.name,
-      html: 'Back in ' + tagYear(p[F_Y]) + ', ' + tagOwner(o.name) + ' decided ' + tagPlayer(p[F_P]) +
-        ' was worth a cool ' + tagAmt(p[F_PR]) + ' — all on a single nameplate.'
-    };
-  },
   // 8: Year superlative
   function () {
     const years = [...oracleData.yearTop.keys()];
     if (!years.length) return null;
     const y = oraclePick(years);
     const p = oracleData.yearTop.get(y);
+    if (!isActiveOwnerIdx(p[F_O])) return null;
     return {
       key: "yearTop:" + y,
       html: 'No pick stung the wallet more in ' + tagYear(y) + ' than ' + tagPlayer(p[F_P]) +
@@ -8849,6 +8838,7 @@ const FACT_GENERATORS = [
     if (!positions.length) return null;
     const pos = oraclePick(positions);
     const p = oracleData.posTop.get(pos);
+    if (!isActiveOwnerIdx(p[F_O])) return null;
     return {
       key: "posTop:" + pos,
       html: 'No ' + tagPos(pos) + ' has ever commanded more than ' + tagPlayer(p[F_P]) +
@@ -8878,20 +8868,9 @@ const FACT_GENERATORS = [
       html: 'Talk about loyalty — ' + tagOwner(o.name) + ' has rostered ' + tagPlayer(o.favPlayer.name) + ' a staggering ' + tagNum(o.favPlayer.count) + ' times across the years.' };
   },
   function () {
-    const e = oraclePick(oracleData.bigAuctions); if (!e) return null;
-    return { key: "bigAuction:" + e.o + ':' + e.y,
-      html: 'In the ' + tagYear(e.y) + ' auction, ' + tagOwner(OWNERS[e.o]) + ' threw down ' + tagAmt(e.total) + ' across the whole draft — one of the heaviest auction nights on record.' };
-  },
-  function () {
     const s = oraclePick(oracleData.splitPlayers2025); if (!s) return null;
     return { key: "split25:" + s.name,
       html: 'A 2-Tier first: in ' + tagYear(2025) + ', ' + tagPlayer(s.name) + ' was drafted in BOTH leagues — ' + tagAmt(s.up[F_PR]) + ' by ' + tagOwner(OWNERS[s.up[F_O]]) + ' (Upper) and ' + tagAmt(s.lo[F_PR]) + ' by ' + tagOwner(OWNERS[s.lo[F_O]]) + ' (Lower).' };
-  },
-  function () {
-    const e = oraclePick(oracleData.multiDraftedVar); if (!e) return null;
-    const spread = e.maxPick[F_PR] - e.minPick[F_PR]; if (spread < 20) return null;
-    return { key: "spread:" + e.name,
-      html: 'The market never agreed on ' + tagPlayer(e.name) + ': as cheap as ' + tagAmt(e.minPick[F_PR]) + ' (' + tagYear(e.minPick[F_Y]) + ') and as steep as ' + tagAmt(e.maxPick[F_PR]) + ' (' + tagYear(e.maxPick[F_Y]) + ') — a ' + tagAmt(spread) + ' swing.' };
   }
 ];
 
