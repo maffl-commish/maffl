@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Credit Portal — MAFFL HQ</title>
 <meta name="description" content="MAFFL HQ — every owner's current credit balance at a glance. A hand-updated snapshot so owners never have to open the Google Sheet.">
 
@@ -90,12 +90,15 @@
     position: sticky;
     top: 0;
     z-index: 50;
+    padding-top: env(safe-area-inset-top);
   }
 
   .header-inner {
     max-width: 1200px;
     margin: 0 auto;
     padding: 10px 24px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -167,6 +170,8 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px 24px 20px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
   }
 
   .stack > * + * { margin-top: 20px; }
@@ -793,6 +798,7 @@
   .site-footer {
     border-top: 1px solid var(--border);
     padding: 16px 24px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
     text-align: center;
     font-family: var(--body);
     font-weight: 500;
