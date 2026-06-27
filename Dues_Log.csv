@@ -1,14 +1,14 @@
 Season,Owner,Entry Type,Amount,Date,Method,Approved?,Notes
-2026,Mike Murello,Obligation,80,2026-06-01,,Y,2026 dues assessed
+2026,Mike Murello,Obligation,100,2026-06-01,,Y,2026 dues assessed
 2026,Todd Trozzo,Obligation,100,2026-06-01,,Y,2026 dues assessed
 2026,Brian Murello/Ron Murello,Obligation,80,2026-06-01,,Y,2026 dues assessed
 2026,Braiden Snyder,Obligation,80,2026-06-01,,Y,2026 dues assessed
-2026,Jacob Nickman,Obligation,80,2026-06-01,,Y,2026 dues assessed
-2026,Jon Murello/Rick Simmons,Obligation,80,2026-06-01,,Y,2026 dues assessed
-2026,Joe Reilly,Obligation,80,2026-06-01,,Y,2026 dues assessed
+2026,Jacob Nickman,Obligation,100,2026-06-01,,Y,2026 dues assessed
+2026,Jon Murello/Rick Simmons,Obligation,100,2026-06-01,,Y,2026 dues assessed
+2026,Joe Reilly,Obligation,100,2026-06-01,,Y,2026 dues assessed
 2026,Tony Brooks,Obligation,80,2026-06-01,,Y,2026 dues assessed
 2026,David Murello,Obligation,60,2026-06-01,,Y,2026 dues assessed
-2026,Tony Trozzo,Obligation,80,2026-06-01,,Y,2026 dues assessed
+2026,Tony Trozzo,Obligation,100,2026-06-01,,Y,2026 dues assessed
 2026,Chris Johnson,Obligation,100,2026-06-01,,Y,2026 dues assessed
 2026,Jon Fetrow,Obligation,47,2026-06-01,,Y,2026 dues assessed
 2026,BJ Funari,Obligation,80,2026-06-01,,Y,2026 dues assessed
@@ -20,9 +20,9 @@ Season,Owner,Entry Type,Amount,Date,Method,Approved?,Notes
 2026,Nick Yankovich,Obligation,100,2026-06-01,,Y,2026 dues assessed
 2026,Dominic Nicastro,Obligation,90,2026-06-01,,Y,2026 dues assessed
 2026,Bob Keslar,Obligation,100,2026-06-01,,Y,2026 dues assessed
-2026,Mike Murello,Payment,80,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
-2026,Jacob Nickman,Payment,80,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
-2026,Jon Murello/Rick Simmons,Payment,80,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
-2026,Joe Reilly,Payment,80,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
-2026,Tony Trozzo,Payment,80,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
+2026,Mike Murello,Payment,100,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
+2026,Jacob Nickman,Payment,100,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
+2026,Jon Murello/Rick Simmons,Payment,100,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
+2026,Joe Reilly,Payment,100,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
+2026,Tony Trozzo,Payment,100,2026-06-01,Credit-offset,Y,2026 dues covered by 2025 prize earnings
 2026,Braiden Snyder,Payment,80,2026-06-27,Unknown,Y,Paid in full — official books update
