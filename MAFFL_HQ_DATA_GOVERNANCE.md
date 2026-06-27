@@ -137,7 +137,13 @@ This is the table you asked for. Read it as: *trigger → propagate in this orde
 → touches EVERYTHING (it's the dimension). New owner must be seeded into Team_History, Power_Rankings, power-rankings embed (`key`, `name`, `recentTeam`, `timeline`), and every page's owner list.
 → *This is the highest-blast-radius change and the one most needing a stable ID.*
 
-### CE-7 — Power re-rank (you re-score the league)
+### CE-7 — Dues paid / adjusted
+`Dues_Log.csv` (append a Payment row, Approved?=Y; or an Obligation row if the assessment changes)
+→ re-bake `prize.html` dues_2026 array (owed = Obligation − Payments; status = PAID when owed ≤ 0)
+→ this is the ONLY place dues_2026 should be edited — never hand-edit the array directly
+→ keep `2025_League_Status` / Owners_Sheet 2026 columns in sync manually (parallel, non-runtime sources)
+
+### CE-8 — Power re-rank (you re-score the league)
 `Power_Rankings.csv`
 → power-rankings.html embed (rank, ovr/clutch/grind/heat, scout/highlight)
 → Owners_Sheet power cols + "2026 Power Ranking"
@@ -149,7 +155,7 @@ This is the table you asked for. Read it as: *trigger → propagate in this orde
 | Cadence | Data | Implication |
 |---|---|---|
 | **Weekly (in season)** | Matchups, Points, Credits, weekly scores/standings | Needs a fast, low-error pipeline. This is where your Fable screenshot→CSV flow lives. Automate hard. |
-| **Seasonal** | Team names, Division, Drafts, Placements, Prizes, Power Rankings, career totals | Batch once; high blast radius (CE-2/3/5/6/7). Run audit after. |
+| **Seasonal** | Team names, Division, Drafts, Placements, Prizes, Power Rankings, career totals | Batch once; high blast radius (CE-2/3/5/6/8). Run audit after. |
 | **Rare** | Owner roster, Rules, aliases | Manual, but each change is a CE-6 (big ripple). |
 
 ---
@@ -184,7 +190,7 @@ brian-ron-murello, Brian Murello / Ron Murello, Brian/Ron, Y, Co-Owner, ...,
 `aliases` captures every spelling currently in the wild, so `normalizeName()` becomes a **lookup against a declared list** instead of fuzzy guessing. New file? Reject it at audit time until its name is registered.
 
 ### 7.2 Tier the data explicitly: GOLD vs DERIVED
-- **GOLD** (hand-edited): Matchups_Clean, Draft_History_v3, Credit_Log, prize.csv, Division_History_2005_2025 (division titles), Team_History, Owners_Sheet/Registry, Rules, Power_Rankings (your scores).
+- **GOLD** (hand-edited): Matchups_Clean, Draft_History_v3, Credit_Log, Dues_Log, prize.csv, Division_History_2005_2025 (division titles), Team_History, Owners_Sheet/Registry, Rules, Power_Rankings (your scores).
 - **CORRUPTED — DO NOT USE:** `cleaned_maffl_revised.csv`. It was formerly treated as the finish-flag gold source and carried wrong values (e.g. Mike Murello 2021 division title, 2025 Lower-Tier 1st) into multiple HTML embeds. Derive finish flags from Division_History + prize.csv instead. Quarantine, do not regenerate from it.
 - **DERIVED** (generated, never hand-edited): every `.js` file, every HTML embed, NoConsolation, Points_*, Placements, ThirdPlace, Draft_Summary, Owners_Sheet's computed columns (credit balance, career totals).
 
