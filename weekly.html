@@ -431,12 +431,22 @@
   .div-head[aria-expanded="true"] { color: var(--navy); }
   .div-body { display: none; }
   .div-head[aria-expanded="true"] + .div-body { display: block; }
+  .div-label {
+    padding: 8px 4px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .div-body--static { display: block; }
 
   .row {
     display: grid;
-    grid-template-columns: 56px 1fr auto;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     min-height: 44px;
     padding: 6px 4px;
     border-top: 1px solid var(--border);
@@ -472,7 +482,7 @@
   .row .meta {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex: 0 0 auto;
   }
   .row .pts {
@@ -480,7 +490,7 @@
     font-weight: 500;
     font-size: 12px;
     color: var(--muted);
-    min-width: 44px;
+    min-width: 38px;
     text-align: right;
   }
   .row .pts .pts-label {
@@ -918,12 +928,18 @@
 
     .ct-split { gap: 8px; }
 
-    .row { grid-template-columns: 48px 1fr auto; }
-    .row .pts { display: none; }
+    .row { grid-template-columns: 48px minmax(0, 1fr) auto; }
     .row .team-name { font-size: 13px; }
 
     .offseason-card { padding: 32px 22px; }
     .offseason-head { font-size: 22px; }
+  }
+
+  @media (max-width: 420px) {
+    .row .pts .pts-label,
+    .cr .cr-label { display: none; }
+    .row .pts { min-width: 34px; }
+    .cr { min-width: 28px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1243,18 +1259,18 @@ function renderStandingsCard(week) {
 
   const upperBody = `
     <div class="tier-block">
-      <button class="tier-head" data-toggle="tier" aria-expanded="true">
+      <button class="tier-head" data-toggle="tier" aria-expanded="false">
         <span>Upper-Tier</span><span class="chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="tier-body">
-        ${renderDiv("Division A", week.upperTier.divA, true)}
-        ${renderDiv("Division B", week.upperTier.divB, false)}
-        ${renderDiv("Division C", week.upperTier.divC, false)}
-        ${renderDiv("Division D", week.upperTier.divD, false)}
+        ${renderDivStatic("Division A", week.upperTier.divA)}
+        ${renderDivStatic("Division B", week.upperTier.divB)}
+        ${renderDivStatic("Division C", week.upperTier.divC)}
+        ${renderDivStatic("Division D", week.upperTier.divD)}
       </div>
     </div>
     <div class="tier-block">
-      <button class="tier-head" data-toggle="tier" aria-expanded="true">
+      <button class="tier-head" data-toggle="tier" aria-expanded="false">
         <span>Lower-Tier</span><span class="chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="tier-body">
@@ -1278,6 +1294,22 @@ function renderDiv(name, teams, openByDefault) {
         <span>${esc(name)}</span><span class="chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="div-body">
+        ${sorted.map(t => row(t)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderDivStatic(name, teams) {
+  const sorted = teams.slice().sort((a, b) => {
+    if (b.w !== a.w) return b.w - a.w;
+    if (a.l !== b.l) return a.l - b.l;
+    return b.points - a.points;
+  });
+  return `
+    <div class="div-block">
+      <div class="div-label">${esc(name)}</div>
+      <div class="div-body div-body--static">
         ${sorted.map(t => row(t)).join("")}
       </div>
     </div>
