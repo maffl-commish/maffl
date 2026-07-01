@@ -672,6 +672,18 @@
   .bracket-winner .bracket-score { color: var(--navy); font-weight: 700; }
   .bracket-badge { flex: 0 0 auto; font-size: 12px; line-height: 1; }
 
+  /* Relegation bracket (2024 only): invert the emphasis — the team sent DOWN is
+     highlighted in relegation-red instead of the gold winner treatment. */
+  .bracket-relegated { background: #fbdcdc; }              /* mirrors .series-tag--relegation bg */
+  .bracket-relegated .owner-name { font-weight: 700; color: #b91c1c; }
+  .releg-note {
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0 0 12px;
+  }
+
   /* Detached 3rd-place game: dropped beneath the Championship column. */
   .bracket-third-row {
     display: flex;
@@ -1525,7 +1537,7 @@
     </div>
     <div class="page-header__meta" aria-label="History &amp; Stats version metadata">
       <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated July 1, 2026</span>
+      <span class="meta-pill">Last Updated June 30, 2026</span>
     </div>
   </header>
 
@@ -11450,6 +11462,74 @@ function renderLowerTier(b, year) {
   </div>`;
 }
 
+// One-time 2024 relegation bracket (loser's bracket). Purely additive; hardcoded
+// from the commissioner's bracket image (a fixed historical event, NOT derived
+// from b or any CSV). Emphasis is INVERTED vs. the playoff bracket: the team sent
+// DOWN is highlighted in relegation-red, and there is no winner (gold) treatment.
+function renderRelegation2024(b, year) {
+  if (year !== 2024) return "";
+
+  // Teams as they appeared in the bracket image (short forms). Owner full names
+  // supplied only for the four relegated teams (the 2025 lower-tier seeds).
+  const T = {
+    turkey:  { team: "Turkey Hat" },
+    bag:     { team: "BAG",             owner: "Michael Murello" },
+    sons:    { team: "Sons" },
+    hvht:    { team: "HVHT",            owner: "Tony Trozzo" },
+    comets:  { team: "Hadley's Comets" },
+    jagoffs: { team: "Jagoffs",         owner: "Jacob Nickman" },
+    ferrets: { team: "Ferrets" },
+    tony2:   { team: "Tony #2",         owner: "Tony Brooks" },
+  };
+
+  // Each game: winner side (plain) + loser side. `releg: true` marks the loser as
+  // relegated (Wk 16 & Wk 17 deciding games). No scores exist for this event.
+  const rounds = [
+    { head: "Wk 15", games: [
+      { winner: T.turkey,  loser: T.bag,     releg: false },
+      { winner: T.sons,    loser: T.hvht,    releg: false },
+      { winner: T.comets,  loser: T.jagoffs, releg: false },
+      { winner: T.ferrets, loser: T.tony2,   releg: false },
+    ] },
+    { head: "Wk 16", games: [
+      { winner: T.sons,    loser: T.turkey,  releg: false }, // G7 survivor: Sons safe, Turkey Hat drops to Wk17
+      { winner: T.comets,  loser: T.ferrets, releg: false }, // G8 survivor: Hadley's safe, Ferrets drops to Wk17
+      { winner: T.bag,     loser: T.hvht,    releg: true },  // G5 HVHT relegated
+      { winner: T.tony2,   loser: T.jagoffs, releg: true },  // G6 Jagoffs relegated
+    ] },
+    { head: "Wk 17", games: [
+      { winner: T.turkey,  loser: T.bag,     releg: true },  // BAG relegated
+      { winner: T.ferrets, loser: T.tony2,   releg: true },  // Tony #2 relegated
+    ] },
+  ];
+
+  const sideHTML = (t, releg) => {
+    const badge = releg ? `<span class="bracket-badge">&#x2B07;&#xFE0F;</span>` : "";
+    const disp = t.owner ? teamLabel(t.owner, t.team) : esc(t.team);
+    return `<div class="bracket-side${releg ? " bracket-relegated" : ""}">
+      ${badge}<span class="owner-name" data-owner="${esc(t.owner || "")}" data-team="${esc(t.team)}" data-year="2024">${disp}</span>
+    </div>`;
+  };
+
+  const gameHTML = g => `<div class="bracket-game">
+    ${sideHTML(g.winner, false)}
+    ${sideHTML(g.loser, g.releg === true)}
+  </div>`;
+
+  const cols = rounds.map(r => `<div class="bracket-round">
+    <div class="bracket-round-head">${r.head}</div>
+    ${r.games.map(gameHTML).join("")}
+  </div>`).join("");
+
+  return `<div class="exp-section">
+    <h3 class="exp-section-head">Relegation Bracket</h3>
+    <p class="releg-note">After 2024, MAFFL ran its first and only relegation bracket &mdash; a one-time double-elimination gauntlet among the bottom eight teams. The four teams that lost their way out dropped down to seed the new lower tier for 2025, launching the league's permanent promotion/relegation system.</p>
+    <div class="bracket-rounds-flow">
+      <div class="bracket-cols-row">${cols}</div>
+    </div>
+  </div>`;
+}
+
 function placeLabel(r, year) {
   if (year <= 2004) return "Founding Era";
   if (year >= 2025) {
@@ -11835,6 +11915,7 @@ function renderExpanded(year, era) {
     </div>
     ${renderWinnersRow(year, b)}
     ${renderBracket(b, year)}
+    ${renderRelegation2024(b, year)}
     ${renderSeries(b, year)}
     ${renderLowerTier(b, year)}
     ${renderRoster(b, year)}
