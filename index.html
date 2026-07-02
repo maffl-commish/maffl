@@ -473,14 +473,20 @@
     margin: 0;
     line-height: 1.35;
   }
+  /* Welcome slide only: crest sits inline, left of the text — no extra row. */
+  .slide-welcome {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
   .slide-crest {
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
     object-fit: contain;
-    display: block;
-    margin: 0 0 8px;
     filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
   }
+  .slide-text { min-width: 0; }
 
   /* Dot indicators below the carousel. */
   .carousel-dots {
@@ -809,11 +815,13 @@
 
     <div class="carousel">
       <div class="carousel-track" id="newsTrack" tabindex="0" aria-label="What's New, swipe to browse">
-        <a class="slide" href="overview.html">
+        <a class="slide slide-welcome" href="overview.html">
           <img src="maffl-logo.png" alt="MAFFL crest" class="slide-crest">
-          <p class="slide-eyebrow">👋 Start here</p>
-          <p class="slide-headline">Welcome to MAFFL HQ!</p>
-          <p class="slide-body">Take the quick tour of every page and what's inside.</p>
+          <div class="slide-text">
+            <p class="slide-eyebrow">👋 Start here</p>
+            <p class="slide-headline">Welcome to MAFFL HQ!</p>
+            <p class="slide-body">Take the quick tour of every page and what's inside.</p>
+          </div>
         </a>
 
         <a class="slide" href="draft.html">
@@ -931,7 +939,7 @@
 
 <footer class="site-footer">
   <div class="footer-meta" aria-label="Site version metadata">
-    <span class="meta-pill">v1.0</span>
+    <span class="meta-pill">v1.1</span>
     <span class="meta-pill">Last Updated July 1, 2026</span>
   </div>
   <div>League Founded 2002 &middot; Site est. 2026</div>
