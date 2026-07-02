@@ -515,6 +515,26 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* Non-selectable "no results" row. Reuses --muted; default cursor so it
+     never looks clickable. Kept ≥44px tall for touch parity with real rows. */
+  .rules-search-empty {
+    padding: 12px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    color: var(--muted);
+    font-family: var(--body);
+    font-size: 14px;
+    cursor: default;
+  }
+  .rules-search-empty:hover { background: transparent; }
+  /* Transient flash on the matched element after a deep-scroll. Background
+     only (no border/margin) so nothing shifts. Reuses --gold-soft, the same
+     token as the input focus glow; fades back to transparent over ~1.6s. */
+  .rules-search-hit {
+    background: var(--gold-soft);
+    transition: background-color 1.6s ease-out;
+  }
 
   /* ---------- Accordion sections ---------- */
   .rules-list {
@@ -1970,6 +1990,11 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
+const PAGE_BUILD = "1.0.1"; // internal page build — NOT user-facing; bump for behind-
+                            // the-scenes/functional changes. Rulebook (RULEBOOK_VERSION)
+                            // and rules content are versioned separately above.
+// Build 1.0.1 (2026-07-01): rulebook search — relevance ranking, deep-scroll to match,
+//   match highlight, no-results state. No rule content changed.
 const RULEBOOK_VERSION      = "v1.0";
 const RULEBOOK_LAST_UPDATED = "July 1, 2026";
 
@@ -2273,6 +2298,7 @@ function renderTag(type, year, label) {
 
     let activeIdx = -1;
     let debounce;
+    let activeQuery = ""; // last query that produced a selection; read by select()
 
     function closeList() {
       list.hidden = true;
@@ -2294,8 +2320,22 @@ function renderTag(type, year, label) {
       return snip;
     }
 
+    /* Visible "no results" state — a single non-selectable row (no data-id,
+       so keyboard nav and the click handler both skip it). */
+    function renderEmpty() {
+      list.innerHTML = "";
+      const li = document.createElement("li");
+      li.className = "rules-search-empty";
+      li.setAttribute("aria-disabled", "true");
+      li.textContent = "No matching rules";
+      list.appendChild(li);
+      activeIdx = -1;
+      list.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+    }
+
     function render(matches, q) {
-      if (!matches.length) { closeList(); return; }
+      if (!matches.length) { renderEmpty(); return; }
       list.innerHTML = "";
       matches.forEach(function (entry) {
         const li = document.createElement("li");
@@ -2319,12 +2359,36 @@ function renderTag(type, year, label) {
       input.setAttribute("aria-expanded", "true");
     }
 
+    /* Relevance score for one entry against query q (already lowercased).
+       Title hits dominate body hits; extra body occurrences add a small,
+       capped bonus. Returns 0 for non-matches (excluded upstream). */
+    function scoreEntry(entry, q) {
+      const title = entry.title.toLowerCase();
+      let score = 0;
+      if (title === q) score += 100;
+      else if (title.indexOf(q) === 0) score += 50;
+      else if (title.includes(q)) score += 25;
+      const bodyPos = entry.text.indexOf(q);
+      if (bodyPos !== -1) {
+        score += 10;
+        let extra = 0, from = entry.text.indexOf(q, bodyPos + q.length);
+        while (from !== -1) { extra += 2; from = entry.text.indexOf(q, from + q.length); }
+        score += Math.min(extra, 20);
+      }
+      return score;
+    }
+
     function runSearch() {
       const q = input.value.trim().toLowerCase();
       if (q.length < 2) { closeList(); return; }
-      const matches = index.filter(function (entry) {
-        return entry.title.toLowerCase().includes(q) || entry.text.includes(q);
-      }).slice(0, 8);
+      /* Score every entry, drop zeros, sort best-first. Original index order
+         is the stable tie-breaker (entries carry their build-order position). */
+      const matches = index
+        .map(function (entry, i) { return { entry: entry, score: scoreEntry(entry, q), i: i }; })
+        .filter(function (m) { return m.score > 0; })
+        .sort(function (a, b) { return b.score - a.score || a.i - b.i; })
+        .slice(0, 8)
+        .map(function (m) { return m.entry; });
       render(matches, q);
     }
 
@@ -2332,10 +2396,34 @@ function renderTag(type, year, label) {
       if (!li) return;
       const id = li.getAttribute("data-id");
       if (!id) return;
+      /* Capture the query before clearing the field so we can deep-scroll to
+         the specific hit inside the section. */
+      activeQuery = input.value.trim().toLowerCase();
       /* Reuse the deep-link path: set the hash, then trigger the same
          open + tab-switch + scroll behavior used for #-links elsewhere. */
       window.location.hash = "#" + id;
       openSectionFromHash();
+      /* Deep-scroll: inside the section just opened, find the first leaf
+         element (row/list-item/paragraph/strong — not the title) whose text
+         contains the query, center it, and flash it. Falls back to the
+         section-top scroll openSectionFromHash() already performed. */
+      const section = document.getElementById(id);
+      if (section && activeQuery) {
+        const leaves = section.querySelectorAll("td, li, p, strong");
+        let hit = null;
+        for (let n = 0; n < leaves.length; n++) {
+          const el = leaves[n];
+          if (el.closest(".rule-title")) continue;
+          if (el.textContent.toLowerCase().includes(activeQuery)) { hit = el; break; }
+        }
+        if (hit) {
+          const reduce = window.matchMedia
+            && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          hit.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+          hit.classList.add("rules-search-hit");
+          setTimeout(function () { hit.classList.remove("rules-search-hit"); }, 1600);
+        }
+      }
       input.value = "";
       closeList();
       input.blur(); // dismiss the iOS keyboard
@@ -2354,7 +2442,8 @@ function renderTag(type, year, label) {
     });
 
     input.addEventListener("keydown", function (e) {
-      const items = Array.from(list.children);
+      // Only real results are navigable; the "no results" row has no data-id.
+      const items = Array.from(list.querySelectorAll("li[data-id]"));
       if (e.key === "ArrowDown") {
         if (list.hidden || !items.length) return;
         e.preventDefault();
