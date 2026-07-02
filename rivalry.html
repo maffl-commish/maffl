@@ -830,8 +830,8 @@
       <p class="page-header__subtitle">Head to Head, All Time</p>
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
-      <span class="meta-pill">v1.0</span>
-      <span class="meta-pill">Last Updated July 1, 2026</span>
+      <span class="meta-pill">v2.0</span>
+      <span class="meta-pill">Last Updated July 2, 2026</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -1377,22 +1377,71 @@ function divNameKey(rawName) {
 // group key ("year|tier|conf|div") -> [{ year, key }]
 var DIV_GROUPS = {};
 DIVISION_DATA.forEach(function (r) {
+  if (r[1] !== "U") return; // divisions exist only in the upper tier
   var gk = r[0] + "|" + r[1] + "|" + r[2] + "|" + r[3];
   var key = divNameKey(r[4]);
   if (!key) return;
-  (DIV_GROUPS[gk] || (DIV_GROUPS[gk] = [])).push({ year: r[0], key: key });
+  (DIV_GROUPS[gk] || (DIV_GROUPS[gk] = [])).push({ year: r[0], key: key, div: r[3] });
 });
 function sameDivisionYears(k1, k2) {
-  var years = {};
+  var byYear = {}; // year -> division name
   Object.keys(DIV_GROUPS).forEach(function (gk) {
     var arr = DIV_GROUPS[gk], has1 = false, has2 = false;
     for (var i = 0; i < arr.length; i++) {
       if (arr[i].key === k1) has1 = true;
       if (arr[i].key === k2) has2 = true;
     }
-    if (has1 && has2) years[arr[0].year] = true;
+    if (has1 && has2) byYear[arr[0].year] = arr[0].div;
   });
-  return Object.keys(years).map(Number).sort(function (a, b) { return a - b; });
+  return Object.keys(byYear).map(Number).sort(function (a, b) { return a - b; })
+    .map(function (y) { return { year: y, div: byYear[y] }; });
+}
+
+/* The two-tier (Upper/Lower) system did not exist before this season. Rows in
+ * DIVISION_DATA for 2005–2024 carry "U" only as a placeholder — treating that
+ * as a real tier would falsely credit every pre-2025 pair with "same tier".
+ * So all tier logic is gated to TIER_ERA_START and later. */
+var TIER_ERA_START = 2025;
+
+/* Years both owners appeared in the SAME tier ("U"/"L"), from DIVISION_DATA,
+ * restricted to the tier era (>= TIER_ERA_START). Returns sorted { year, tier }. */
+function sameTierYears(k1, k2) {
+  var byYearTier = {}; // "year|tier" -> { a, b, year, tier }
+  DIVISION_DATA.forEach(function (r) {
+    if (r[0] < TIER_ERA_START) return; // tiers only exist from 2025 on
+    var key = divNameKey(r[4]);
+    if (!key) return;
+    var yt = r[0] + "|" + r[1];
+    var slot = byYearTier[yt] || (byYearTier[yt] = { a: false, b: false, year: r[0], tier: r[1] });
+    if (key === k1) slot.a = true;
+    if (key === k2) slot.b = true;
+  });
+  var out = [];
+  Object.keys(byYearTier).forEach(function (yt) {
+    var s = byYearTier[yt];
+    if (s.a && s.b) out.push({ year: s.year, tier: s.tier });
+  });
+  return out.sort(function (a, b) { return a.year - b.year; });
+}
+
+/* Tier-era years (>= TIER_ERA_START) where BOTH owners hold a tier assignment
+ * in DIVISION_DATA, regardless of which tier. Empty means the tier question is
+ * simply "n/a" for this pair — they were never both placed under the two-tier
+ * system (e.g. a rivalry that pre-dates 2025). Distinguishes "different tiers"
+ * (era overlap exists, tiers differ) from "n/a" (no era overlap at all). */
+function tierEraYears(k1, k2) {
+  var byYear = {}; // year -> { a, b }
+  DIVISION_DATA.forEach(function (r) {
+    if (r[0] < TIER_ERA_START) return;
+    var key = divNameKey(r[4]);
+    if (!key) return;
+    var slot = byYear[r[0]] || (byYear[r[0]] = { a: false, b: false });
+    if (key === k1) slot.a = true;
+    if (key === k2) slot.b = true;
+  });
+  var out = [];
+  Object.keys(byYear).forEach(function (y) { if (byYear[y].a && byYear[y].b) out.push(Number(y)); });
+  return out.sort(function (a, b) { return a - b; });
 }
 
 /* =====================================================================
@@ -1400,6 +1449,18 @@ function sameDivisionYears(k1, k2) {
  * year in EITHER MATCHUPS_DATA (winner or loser) OR DIVISION_DATA. Used by
  * Shared History to count seasons two owners were both in MAFFL.
  * ===================================================================== */
+/* Pre-2005 season participation (2002–2004). Game-level, division, and team
+ * data all begin in 2005; the league's first three seasons (founded 2002)
+ * survive only as participation records. Source: data/cleaned_maffl_revised.csv
+ * Season=1 rows for 2002–2004 — participation ONLY, NOT that file's corrupted
+ * finish-flag columns. Feeding these into OWNER_YEARS lets "seasons together"
+ * reach back to the founding (e.g. Mike/Todd start 2003, not 2005). Regenerate
+ * from that gold source; do not hand-edit. */
+var PRE2005_OWNER_YEARS = [
+  [2002, ["Brian Murello/ Ron Murello", "Jacob Nickman", "Jeff Grace", "Joe Reilly", "Josh Lavrinc", "Mike Murello", "Tony Trozzo"]],
+  [2003, ["Brian Murello/ Ron Murello", "Chris Johnson", "David Murello", "Jacob Nickman", "Jeff Grace", "Jimmy Crisan", "Joe Reilly", "Josh Lavrinc", "Mike Murello", "Todd Trozzo", "Tony Trozzo"]],
+  [2004, ["Brian Murello/ Ron Murello", "Chris Johnson", "David Murello", "Jacob Nickman", "Jeff Grace", "Jimmy Crisan", "Joe Reilly", "Josh Lavrinc", "Mike Murello", "Todd Trozzo", "Tony Trozzo"]]
+];
 var OWNER_YEARS = {}; // key -> { year: true }
 (function buildOwnerYears() {
   function add(name, yr) {
@@ -1409,6 +1470,9 @@ var OWNER_YEARS = {}; // key -> { year: true }
   }
   (window.MATCHUPS_DATA || []).forEach(function (r) { add(r[3], r[0]); add(r[5], r[0]); });
   DIVISION_DATA.forEach(function (r) { add(DIVISION_NAME_FIXUP[r[4]] || r[4], r[0]); });
+  PRE2005_OWNER_YEARS.forEach(function (r) {
+    r[1].forEach(function (name) { add(name, r[0]); });
+  });
 })();
 /* Latest season present in the data — its upper bound renders as "present". */
 var DATA_MAX_YEAR = (function () {
@@ -2138,13 +2202,47 @@ function renderVS() {
     return n + " " + nounPlural + " (" + lo + "–" + hiTxt + ")";
   }
 
-  // 7) Shared history — two equal lines: seasons together, and same-division years.
-  var ovYears  = overlapYears(p.aKey, p.bKey);
-  var divYears = sameDivisionYears(p.aKey, p.bKey);
+  // 7) Shared history — three lines: seasons together, same tier (Upper/Lower),
+  //    and same division (upper-tier only), naming the division(s) since the
+  //    division names changed year to year (Cuoco, Aniston, Lautner, etc.).
+  var ovYears   = overlapYears(p.aKey, p.bKey);
+  var tierEra   = tierEraYears(p.aKey, p.bKey);   // years both placed under tiers (>=2025)
+  var tierYears = sameTierYears(p.aKey, p.bKey);  // shared-tier years (>=2025)
+  var divYears  = sameDivisionYears(p.aKey, p.bKey); // [{ year, div }]
+
   var togetherTxt = sharedYearsTxt(ovYears, "season together", "seasons together", "No overlapping seasons");
-  var divTxt      = sharedYearsTxt(divYears, "season same division", "seasons same division", "Never in same division");
+
+  // Same-tier line: tiers only exist from 2025 on. If the pair were never both
+  // placed under the two-tier system, the question is n/a; otherwise label the
+  // span and, when a single shared tier applies, name it (Upper/Lower).
+  var tierTxt;
+  if (!tierEra.length) {
+    tierTxt = "Same tier: n/a — tiers began in 2025";
+  } else {
+    var tierYearNums = tierYears.map(function (t) { return t.year; });
+    var distinctTiers = {};
+    tierYears.forEach(function (t) { distinctTiers[t.tier] = true; });
+    var tierNames = Object.keys(distinctTiers).map(function (t) { return t === "L" ? "Lower" : "Upper"; });
+    var tierBase = sharedYearsTxt(tierYearNums, "season same tier", "seasons same tier", "Never in same tier");
+    tierTxt = (tierYearNums.length && tierNames.length)
+      ? tierBase + " (" + tierNames.join(" & ") + ")"
+      : tierBase;
+  }
+
+  // Same-division line: span text plus the distinct division name(s) shared.
+  var divYearNums = divYears.map(function (d) { return d.year; });
+  var divBase = sharedYearsTxt(divYearNums, "season same division", "seasons same division", "Never in same division");
+  var divNamesSeen = [], divNameSet = {};
+  divYears.forEach(function (d) {
+    if (d.div && !divNameSet[d.div]) { divNameSet[d.div] = true; divNamesSeen.push(d.div); }
+  });
+  var divTxt = (divYearNums.length && divNamesSeen.length)
+    ? divBase + " (" + divNamesSeen.join(", ") + ")"
+    : divBase;
+
   stats.push(statBlock("Shared History",
     '<div class="vs-shared__row">' + escHtml(togetherTxt) + '</div>' +
+    '<div class="vs-shared__row">' + escHtml(tierTxt) + '</div>' +
     '<div class="vs-shared__row">' + escHtml(divTxt) + '</div>'));
 
   // 8) Margin timeline.
