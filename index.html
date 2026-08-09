@@ -474,6 +474,8 @@
     line-height: 1.35;
   }
   /* Welcome slide only: crest sits inline, left of the text — no extra row. */
+  /* Reserved: crest-inline slide layout. Unused since the welcome slide was
+     retired 2026-08-09; kept for future image-bearing slides. */
   .slide-welcome {
     display: flex;
     align-items: center;
@@ -815,19 +817,17 @@
 
     <div class="carousel">
       <div class="carousel-track" id="newsTrack" tabindex="0" aria-label="What's New, swipe to browse">
-        <a class="slide slide-welcome" href="overview.html">
-          <img src="maffl-logo.png" alt="MAFFL crest" class="slide-crest">
-          <div class="slide-text">
-            <p class="slide-eyebrow">👋 Start here</p>
-            <p class="slide-headline">Welcome to MAFFL HQ!</p>
-            <p class="slide-body">A quick tour of every page.</p>
-          </div>
+        <a class="slide" href="https://meet.google.com/epn-mopm-jnf"
+           target="_blank" rel="noopener noreferrer">
+          <p class="slide-eyebrow">Labor Day · Mon, Sept 7</p>
+          <p class="slide-headline">🏈 The Draft Is Here</p>
+          <p class="slide-body">Lower 8AM, Upper 9AM ET. Tap to join the league Meet.</p>
         </a>
 
-        <a class="slide" href="speakup.html">
-          <p class="slide-eyebrow">🗣️ Open mic</p>
-          <p class="slide-headline">How's the New Site Treating You?</p>
-          <p class="slide-body">Take 5 seconds and let the Commish know.</p>
+        <a class="slide" href="prize.html">
+          <p class="slide-eyebrow">Money matters</p>
+          <p class="slide-headline">💰 2026 League Dues</p>
+          <p class="slide-body">Click here to see what you owe.</p>
         </a>
 
         <a class="slide" href="rules.html">
@@ -836,10 +836,10 @@
           <p class="slide-body">Click here to learn about the latest rule update.</p>
         </a>
 
-        <a class="slide" href="prize.html">
-          <p class="slide-eyebrow">Money matters</p>
-          <p class="slide-headline">💰 2026 League Dues</p>
-          <p class="slide-body">Click here to see what you owe.</p>
+        <a class="slide" href="speakup.html">
+          <p class="slide-eyebrow">🗣️ Open mic</p>
+          <p class="slide-headline">How's the New Site Treating You?</p>
+          <p class="slide-body">Take 5 seconds and let the Commish know.</p>
         </a>
       </div>
       <div class="carousel-dots" id="newsDots" aria-hidden="true"></div>
@@ -927,8 +927,8 @@
 
 <footer class="site-footer">
   <div class="footer-meta" aria-label="Site version metadata">
-    <span class="meta-pill">v1.3</span>
-    <span class="meta-pill">Last Updated July 8, 2026</span>
+    <span class="meta-pill">v1.4</span>
+    <span class="meta-pill">Last Updated August 9, 2026</span>
   </div>
   <div>League Founded 2002 &middot; Site est. 2026</div>
   <div>Built by the Commish</div>
