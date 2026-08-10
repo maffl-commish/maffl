@@ -855,6 +855,31 @@
     letter-spacing: 0.02em;
   }
 
+  /* ---------- Draft Day action buttons (page-specific) ----------
+     Compact by design, but min-height 44px holds the touch-target floor.
+     Colors are brand-matched and all clear 4.5:1 against white text. */
+  .dd-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: #fff;
+    box-shadow: 0 2px 8px var(--navy-shadow);
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  .dd-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .dd-btn:active { transform: translateY(0); }
+  .dd-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  .dd-btn--espn { background: #d00000; }
+  .dd-btn--meet { background: #00832d; }
+  .dd-btn--dues { background: #b35300; }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -945,9 +970,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rules-link, .dues-venmo, .site-nav a, .dues-table td a, .pill,
+    .rules-link, .dues-venmo, .dd-btn, .site-nav a, .dues-table td a, .pill,
     .registry-facet > summary::after, .registry-filter-toggle::after { transition: none; }
-    .rules-link:hover, .dues-venmo:hover { transform: none; }
+    .rules-link:hover, .dues-venmo:hover, .dd-btn:hover { transform: none; }
   }
 </style>
 </head>
@@ -982,32 +1007,30 @@
 <main class="stack">
 
   <!-- ============================================================
-       BLOCK 1 — DRAFT DAY HERO. Same navy/gold treatment as the
-       overview.html launch hero. The gold dateline is the draft date.
+       BLOCK 1 — COMPACT HERO. Same navy/gold treatment as the
+       overview.html launch hero, but left-aligned and tightened for
+       mobile density: the crest sits inline with the title instead of
+       stacked above it. The gold dateline is the draft date.
        ============================================================ -->
   <section aria-labelledby="draftDayHeading"
-           style="background:var(--navy);color:#fff;border-top:4px solid var(--gold);border-radius:10px;padding:36px 22px;text-align:center;box-shadow:0 4px 14px var(--navy-shadow);">
-    <div style="font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">Monday, September 7, 2026</div>
-    <img src="maffl-logo.png" alt="MAFFL shield logo" width="88" height="88"
-         style="height:88px;width:auto;display:block;margin:0 auto 16px;">
-    <h1 id="draftDayHeading" style="font-family:var(--display);font-weight:700;font-size:36px;line-height:1.05;margin:0 0 12px;letter-spacing:0.01em;">&#x1F3C8; Draft Day</h1>
-    <p style="font-family:var(--body);font-size:15px;line-height:1.55;color:#dfe5f0;max-width:560px;margin:0 auto;">
+           style="background:var(--navy);color:#fff;border-top:4px solid var(--gold);border-radius:10px;padding:18px 20px;box-shadow:0 4px 14px var(--navy-shadow);">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <img src="maffl-logo.png" alt="MAFFL shield logo" width="52" height="52"
+           style="height:52px;width:auto;display:block;flex:0 0 auto;">
+      <div style="min-width:0;">
+        <h1 id="draftDayHeading" style="font-family:var(--display);font-weight:700;font-size:28px;line-height:1.05;margin:0;letter-spacing:0.01em;">&#x1F3C8; Draft Day</h1>
+        <div style="font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-top:6px;">Monday, September 7, 2026</div>
+      </div>
+    </div>
+    <p style="font-family:var(--body);font-size:13px;line-height:1.5;color:#dfe5f0;margin:12px 0 0;">
       Two auctions, one morning, one Meet. Here's everything you need.
     </p>
   </section>
 
-  <!-- ===== BLOCK 2 — Commish note. Gold left border so it reads as an alert. ===== -->
-  <section class="dues-section" aria-labelledby="commishHeading" style="border-left:4px solid var(--gold);">
-    <div class="dues-head">
-      <h2 id="commishHeading">A Note From the Commish</h2>
-    </div>
-    <p class="snapshot-note" style="margin:0;">
-      Virtual attendance is assumed for every team. If you have any challenges making
-      your draft — or need to arrange a proxy — alert the Commish.
-    </p>
-  </section>
-
-  <!-- ===== BLOCK 3 — Countdown to the Meet opening (7:30 AM ET, Sept 7 2026). ===== -->
+  <!-- ===== BLOCK 2 — Countdown to the Meet opening (7:30 AM ET, Sept 7 2026),
+       with the Meet join button folded into the same card. The #countdownBody /
+       #cdDays / #cdHours / #cdMinutes / #cdSeconds IDs are wired to the script
+       at the bottom of the page — do not rename. ===== -->
   <section class="dues-section" aria-labelledby="countdownHeading">
     <h2 id="countdownHeading" class="countdown-lede">Until the Meet Opens</h2>
     <div id="countdownBody">
@@ -1030,58 +1053,49 @@
         </div>
       </div>
     </div>
+    <div style="text-align:center;margin-top:18px;">
+      <a class="dd-btn dd-btn--meet" href="https://meet.google.com/epn-mopm-jnf"
+         target="_blank" rel="noopener noreferrer">Join the Draft Meet</a>
+      <p class="dues-note" style="margin-top:8px;">Room opens 7:30 AM, open until noon.</p>
+    </div>
   </section>
 
-  <!-- ===== BLOCK 4 — The two drafts. Cards STACK at every width (never a
-       two-up grid) so 390px reads cleanly. ===== -->
-  <section class="dues-section" aria-labelledby="draftsHeading">
+  <!-- ===== BLOCK 3 — From the Commish. Gold left border so it reads as an
+       alert. Internal links carry no target so the standalone shim keeps them
+       in-app. ===== -->
+  <section class="dues-section" aria-labelledby="commishHeading" style="border-left:4px solid var(--gold);">
     <div class="dues-head">
-      <h2 id="draftsHeading">The Two Drafts</h2>
+      <h2 id="commishHeading">From the Commish</h2>
     </div>
 
-    <div style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
-      <h3 style="font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 6px;">Lower-Tier</h3>
-      <p style="font-family:var(--display);font-weight:700;font-size:22px;color:var(--navy);margin:0 0 4px;letter-spacing:0.02em;">8:00 &ndash; 10:00 AM ET</p>
-      <p style="font-family:var(--body);font-size:13px;color:var(--muted);margin:0 0 14px;">9 owners</p>
-      <a class="dues-venmo" href="https://fantasy.espn.com/football/league?leagueId=1587593698"
-         target="_blank" rel="noopener noreferrer"
-         style="display:flex;width:100%;padding:14px 16px;font-size:14px;margin-bottom:12px;">Open Lower-Tier on ESPN</a>
-      <p class="dues-note" style="line-height:1.5;">
-        Lower-Tier has an odd number of teams, so MAFFL Ghost drafts a full 22-man
-        roster alongside you — it's waived immediately after.
-      </p>
-    </div>
+    <ul style="margin:0;padding-left:20px;font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.6;">
+      <li style="margin-bottom:8px;">
+        <strong>Virtual attendance is assumed.</strong>
+        <span style="color:var(--muted);">Any conflict or proxy — tell the Commish.</span>
+      </li>
+      <li style="margin-bottom:8px;">
+        <strong>Division swaps freeze Sunday, Sept 6.</strong>
+        <span style="color:var(--muted);">Last call to spend credits.</span>
+        <a href="credits.html" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Credits &rsaquo;</a>
+      </li>
+      <li style="margin-bottom:8px;">
+        <strong>Dues are due before Draft Day.</strong>
+      </li>
+      <li>
+        <strong>Full auction rules in the Rulebook.</strong>
+        <a href="rules.html#auction" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Rulebook &rsaquo;</a>
+      </li>
+    </ul>
 
-    <div style="border:1px solid var(--border);border-radius:10px;padding:16px;">
-      <h3 style="font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 6px;">Upper-Tier</h3>
-      <p style="font-family:var(--display);font-weight:700;font-size:22px;color:var(--navy);margin:0 0 4px;letter-spacing:0.02em;">9:00 &ndash; 11:00 AM ET</p>
-      <p style="font-family:var(--body);font-size:13px;color:var(--muted);margin:0 0 14px;">12 owners</p>
-      <a class="dues-venmo" href="https://fantasy.espn.com/football/league?leagueId=34467"
-         target="_blank" rel="noopener noreferrer"
-         style="display:flex;width:100%;padding:14px 16px;font-size:14px;margin-bottom:0;">Open Upper-Tier on ESPN</a>
+    <div style="margin-top:14px;">
+      <a class="dd-btn dd-btn--dues" href="prize.html">Pay 2026 Dues</a>
     </div>
-
-    <p class="dues-note" style="margin-top:16px;">ESPN will ask you to sign in — that's expected.</p>
   </section>
 
-  <!-- ===== BLOCK 5 — One Meet, both drafts. ===== -->
-  <section class="dues-section" aria-labelledby="meetHeading">
-    <div class="dues-head">
-      <h2 id="meetHeading">One Meet, Both Drafts</h2>
-    </div>
-    <p class="snapshot-note">
-      The auctions happen on ESPN. The Google Meet is where we all hang out and talk
-      through it — one room for both tiers, open all morning.
-    </p>
-    <a class="dues-venmo" href="https://meet.google.com/epn-mopm-jnf"
-       target="_blank" rel="noopener noreferrer"
-       style="display:flex;width:100%;padding:14px 16px;font-size:14px;margin-bottom:12px;">Join the MAFFL Draft Meet</a>
-    <p class="dues-note">Room opens 7:30 AM and stays open until noon.</p>
-  </section>
-
-  <!-- ===== BLOCK 6 — How the morning runs. Two-column time/event rows; the
-       time column is fixed so long events wrap under themselves, not under
-       the time. ===== -->
+  <!-- ===== BLOCK 4 — How the morning runs. Two-column time/event rows; the
+       time column is fixed so the event text sits on its own column. Two rows
+       share 9:00 AM — the draft start and the league welcome — intentionally.
+       ===== -->
   <section class="dues-section" aria-labelledby="runOfShowHeading">
     <div class="dues-head">
       <h2 id="runOfShowHeading">How the Morning Runs</h2>
@@ -1090,19 +1104,23 @@
     <div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">7:30 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Google Meet opens</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Meet opens</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">8:00 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Lower-Tier auction begins on ESPN</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Lower-Tier draft starts</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">9:00 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Upper-Tier auction begins — Commish pauses BOTH drafts for a 5-minute all-league welcome</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Upper-Tier draft starts</span>
+      </div>
+      <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
+        <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">9:00 AM</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Both drafts pause &middot; league welcome</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">9:05 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Both drafts resume</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Bidding resumes</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">10:00 AM</span>
@@ -1117,83 +1135,63 @@
         <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Meet closes</span>
       </div>
     </div>
-
-    <p class="dues-note" style="margin-top:14px;">
-      The 9:00 pause is brief — five minutes, then straight back to bidding.
-    </p>
   </section>
 
-  <!-- ===== BLOCK 7 — Who's drafting where.
-       GENERATED from data/MAFFL_Owners_Sheet_revised.csv, column "2026 League"
-       (Upper-Tier = 12, Lower-Tier = 9). Co-owner cells carry an embedded
-       newline in the gold source and are rendered "A / B" on one line.
-       Static markup — no runtime fetch (Self-Contained Output Rule). ===== -->
-  <section class="dues-section" aria-labelledby="whoHeading">
+  <!-- ===== BLOCK 5 — The two drafts, Lower-Tier first to match the timeline.
+       Cards STACK at every width. Owner names are GENERATED from
+       data/MAFFL_Owners_Sheet_revised.csv, column "2026 League" (Upper-Tier =
+       12, Lower-Tier = 9); co-owner cells carry an embedded newline in the gold
+       source and are rendered "A / B" on one line. Static markup — no runtime
+       fetch (Self-Contained Output Rule). ===== -->
+  <section class="dues-section" aria-labelledby="draftsHeading">
     <div class="dues-head">
-      <h2 id="whoHeading">Who's Drafting Where</h2>
-      <p class="dues-note">21 teams across the two tiers</p>
+      <h2 id="draftsHeading">The Two Drafts</h2>
     </div>
 
-    <div class="dues-tiers">
-      <div class="dues-tier">
-        <h3>Upper-Tier &middot; 12</h3>
-        <ul style="margin:0;padding-left:20px;font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.9;">
-          <li>Joe Reilly</li>
-          <li>Brian Murello / Ron Murello</li>
-          <li>Tony Trozzo</li>
-          <li>Jon Murello / Rick Simmons</li>
-          <li>Mike Murello</li>
-          <li>David Murello</li>
-          <li>Jacob Nickman</li>
-          <li>BJ Funari</li>
-          <li>Dan Reilly</li>
-          <li>Jon Fetrow</li>
-          <li>Ed Peters</li>
-          <li>Braiden Snyder</li>
-        </ul>
-      </div>
-
-      <div class="dues-tier">
-        <h3>Lower-Tier &middot; 9</h3>
-        <ul style="margin:0;padding-left:20px;font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.9;">
-          <li>Todd Trozzo</li>
-          <li>Chris Johnson</li>
-          <li>Bob Keslar</li>
-          <li>Tony Brooks</li>
-          <li>Ben Funari</li>
-          <li>Charles Lavrinc</li>
-          <li>Sam Lavrinc</li>
-          <li>Nick Yankovich</li>
-          <li>Dominic Nicastro</li>
-        </ul>
+    <div style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+      <h3 style="font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 6px;">Lower-Tier</h3>
+      <p style="font-family:var(--display);font-weight:700;font-size:22px;color:var(--navy);margin:0 0 4px;letter-spacing:0.02em;">8:00 &ndash; 10:00 AM ET</p>
+      <p style="font-family:var(--body);font-size:13px;color:var(--muted);margin:0 0 12px;">9 owners</p>
+      <a class="dd-btn dd-btn--espn" href="https://fantasy.espn.com/football/league?leagueId=1587593698"
+         target="_blank" rel="noopener noreferrer">Open on ESPN</a>
+      <div style="border-top:1px solid var(--border);margin:14px 0;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-family:var(--body);font-size:13px;color:var(--navy);line-height:1.5;">
+        <span>Todd Trozzo</span>
+        <span>Chris Johnson</span>
+        <span>Bob Keslar</span>
+        <span>Tony Brooks</span>
+        <span>Ben Funari</span>
+        <span>Charles Lavrinc</span>
+        <span>Sam Lavrinc</span>
+        <span>Nick Yankovich</span>
+        <span>Dominic Nicastro</span>
       </div>
     </div>
-  </section>
 
-  <!-- ===== BLOCK 8 — Before you bid. Internal links stay WITHOUT target=_blank
-       so the standalone shim keeps them in-app. ===== -->
-  <section class="dues-section" aria-labelledby="beforeHeading">
-    <div class="dues-head">
-      <h2 id="beforeHeading">Before You Bid</h2>
+    <div style="border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <h3 style="font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 6px;">Upper-Tier</h3>
+      <p style="font-family:var(--display);font-weight:700;font-size:22px;color:var(--navy);margin:0 0 4px;letter-spacing:0.02em;">9:00 &ndash; 11:00 AM ET</p>
+      <p style="font-family:var(--body);font-size:13px;color:var(--muted);margin:0 0 12px;">12 owners</p>
+      <a class="dd-btn dd-btn--espn" href="https://fantasy.espn.com/football/league?leagueId=34467"
+         target="_blank" rel="noopener noreferrer">Open on ESPN</a>
+      <div style="border-top:1px solid var(--border);margin:14px 0;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-family:var(--body);font-size:13px;color:var(--navy);line-height:1.5;">
+        <span>Joe Reilly</span>
+        <span>Brian Murello / Ron Murello</span>
+        <span>Tony Trozzo</span>
+        <span>Jon Murello / Rick Simmons</span>
+        <span>Mike Murello</span>
+        <span>David Murello</span>
+        <span>Jacob Nickman</span>
+        <span>BJ Funari</span>
+        <span>Dan Reilly</span>
+        <span>Jon Fetrow</span>
+        <span>Ed Peters</span>
+        <span>Braiden Snyder</span>
+      </div>
     </div>
 
-    <ul style="margin:0;padding-left:20px;font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.6;">
-      <li style="margin-bottom:10px;">
-        <strong>$200 budget &middot; $1 minimum bid &middot; 22 roster spots</strong>
-      </li>
-      <li style="margin-bottom:10px;">
-        <strong>Max bid = ($200 &minus; spent) &minus; (roster spots left)</strong>
-      </li>
-      <li style="margin-bottom:10px;">
-        <strong>Division swaps freeze Sunday, September 6</strong>
-        <span style="color:var(--muted);">— the night before. Last call to spend credits on a swap.</span>
-        <a href="credits.html" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Credits &rsaquo;</a>
-      </li>
-      <li>
-        <span style="color:var(--muted);">Full auction rules</span>
-        <a href="rules.html#auction" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Rulebook &rsaquo;</a>
-      </li>
-    </ul>
+    <p class="dues-note" style="margin-top:16px;">ESPN will ask you to sign in — that's expected.</p>
   </section>
 
 </main>
