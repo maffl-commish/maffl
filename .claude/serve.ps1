@@ -1,4 +1,4 @@
-param([int]$Port = 8777)
+param([int]$Port = $(if ($env:PORT) { [int]$env:PORT } else { 8777 }))
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $listener = New-Object System.Net.HttpListener
