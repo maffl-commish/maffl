@@ -1023,7 +1023,7 @@
       </div>
     </div>
     <p style="font-family:var(--body);font-size:13px;line-height:1.5;color:#dfe5f0;margin:12px 0 0;">
-      Two auctions, one morning, one Meet. Here's everything you need.
+      Two auctions, one morning, one Meet.
     </p>
   </section>
 
@@ -1031,8 +1031,7 @@
        with the Meet join button folded into the same card. The #countdownBody /
        #cdDays / #cdHours / #cdMinutes / #cdSeconds IDs are wired to the script
        at the bottom of the page — do not rename. ===== -->
-  <section class="dues-section" aria-labelledby="countdownHeading">
-    <h2 id="countdownHeading" class="countdown-lede">Until the Meet Opens</h2>
+  <section class="dues-section" aria-label="Countdown to Draft Day">
     <div id="countdownBody">
       <div class="countdown-grid" role="timer" aria-live="off">
         <div class="countdown-unit">
@@ -1056,7 +1055,11 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;">
       <a class="dd-btn dd-btn--meet" href="https://meet.google.com/epn-mopm-jnf"
          target="_blank" rel="noopener noreferrer">Join the Google Meet</a>
-      <a class="dd-btn dd-btn--dues" href="prize.html">Pay 2026 Dues</a>
+      <a class="dd-btn dd-btn--dues" href="prize.html"
+         style="flex-direction:column;gap:1px;line-height:1.15;">
+        <span>2026 Dues</span>
+        <span style="font-size:11px;font-weight:500;letter-spacing:0.02em;opacity:0.92;">Due by Draft Day</span>
+      </a>
     </div>
   </section>
 
@@ -1065,32 +1068,26 @@
        in-app. ===== -->
   <section class="dues-section" aria-labelledby="commishHeading" style="border-left:4px solid var(--gold);">
     <div class="dues-head">
-      <h2 id="commishHeading">From the Commish</h2>
+      <h2 id="commishHeading">Commish Notes</h2>
     </div>
 
     <ul style="margin:0;padding-left:20px;font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.6;">
       <li style="margin-bottom:8px;">
-        <strong>Virtual attendance is assumed.</strong>
-        <span style="color:var(--muted);">Any conflict or proxy — tell the Commish.</span>
+        <strong>Draft Day conflicts? Alert the Commish.</strong>
       </li>
       <li style="margin-bottom:8px;">
         <strong>Division swaps freeze Sunday, Sept 6.</strong>
-        <span style="color:var(--muted);">Last call to spend credits.</span>
         <a href="credits.html" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Credits &rsaquo;</a>
       </li>
-      <li style="margin-bottom:8px;">
-        <strong>Dues are due by Draft Day.</strong>
-      </li>
       <li>
-        <strong>Full auction rules in the Rulebook.</strong>
-        <a href="rules.html#auction" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Rulebook &rsaquo;</a>
+        <strong>Full auction rules in the <a href="rules.html#auction" style="color:var(--gold-dark);font-weight:700;border-bottom:1px solid var(--gold);">Rulebook</a>.</strong>
       </li>
     </ul>
   </section>
 
   <!-- ===== BLOCK 4 — How the morning runs. Two-column time/event rows; the
-       time column is fixed so the event text sits on its own column. Two rows
-       share 9:00 AM — the draft start and the league welcome — intentionally.
+       time column is fixed so the event text sits on its own column. The 9:05
+       row carries both drafts — Lower resuming and Upper starting.
        ===== -->
   <section class="dues-section" aria-labelledby="runOfShowHeading">
     <div class="dues-head">
@@ -1108,23 +1105,19 @@
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">9:00 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Upper-Tier draft starts</span>
-      </div>
-      <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
-        <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">9:00 AM</span>
         <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Both drafts pause &middot; league welcome</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">9:05 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Bidding resumes</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Lower resumes &middot; Upper begins</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">10:00 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Lower-Tier wraps</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Lower-Tier wraps (est.)</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--border);">
-        <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">11:00 AM</span>
-        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Upper-Tier wraps</span>
+        <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">11:30 AM</span>
+        <span style="font-family:var(--body);font-size:14px;color:var(--navy);line-height:1.5;">Upper-Tier wraps (est.)</span>
       </div>
       <div style="display:grid;grid-template-columns:78px 1fr;gap:10px 12px;align-items:start;padding:10px 0;">
         <span style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--gold);letter-spacing:0.04em;white-space:nowrap;">12:00 PM</span>
@@ -1147,7 +1140,10 @@
     <div style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
       <h3 style="font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 6px;">Lower-Tier &middot; 9 Owners</h3>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 0;">
-        <p style="font-family:var(--display);font-weight:700;font-size:18px;color:var(--navy);margin:0;letter-spacing:0.02em;white-space:nowrap;">8:00 &ndash; 10:00 AM ET</p>
+        <div style="flex:0 1 auto;min-width:0;">
+          <p style="font-family:var(--display);font-weight:700;font-size:18px;color:var(--navy);margin:0;letter-spacing:0.02em;white-space:nowrap;">8:00 &ndash; 10:00 AM</p>
+          <span style="font-family:var(--body);font-size:11px;color:var(--muted);display:block;margin-top:2px;">end time estimated</span>
+        </div>
         <a class="dd-btn dd-btn--espn" style="flex:0 0 auto;max-width:150px;text-align:center;line-height:1.2;"
            href="https://fantasy.espn.com/football/league?leagueId=1587593698"
            target="_blank" rel="noopener noreferrer">ESPN Lower-Tier League Page</a>
@@ -1169,7 +1165,10 @@
     <div style="border:1px solid var(--border);border-radius:10px;padding:16px;">
       <h3 style="font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 6px;">Upper-Tier &middot; 12 Owners</h3>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 0;">
-        <p style="font-family:var(--display);font-weight:700;font-size:18px;color:var(--navy);margin:0;letter-spacing:0.02em;white-space:nowrap;">9:00 &ndash; 11:00 AM ET</p>
+        <div style="flex:0 1 auto;min-width:0;">
+          <p style="font-family:var(--display);font-weight:700;font-size:18px;color:var(--navy);margin:0;letter-spacing:0.02em;white-space:nowrap;">9:00 &ndash; 11:30 AM</p>
+          <span style="font-family:var(--body);font-size:11px;color:var(--muted);display:block;margin-top:2px;">end time estimated</span>
+        </div>
         <a class="dd-btn dd-btn--espn" style="flex:0 0 auto;max-width:150px;text-align:center;line-height:1.2;"
            href="https://fantasy.espn.com/football/league?leagueId=34467"
            target="_blank" rel="noopener noreferrer">ESPN Upper-Tier League Page</a>
@@ -1191,7 +1190,6 @@
       </div>
     </div>
 
-    <p class="dues-note" style="margin-top:16px;">ESPN will ask you to sign in — that's expected.</p>
   </section>
 
 </main>
@@ -1199,7 +1197,7 @@
 <footer class="site-footer">
   <div class="footer-meta" aria-label="Page version metadata">
     <span class="meta-pill">v1.0</span>
-    <span class="meta-pill">Last Updated August 9, 2026</span>
+    <span class="meta-pill">Last Updated August 10, 2026</span>
   </div>
   <div>League Founded 2002 &middot; Site est. 2026</div>
   <div>Built by the Commish</div>
