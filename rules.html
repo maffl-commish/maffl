@@ -1050,6 +1050,22 @@
     outline-offset: 2px;
   }
 
+  /* Pre-draft CTA row — the Draft Day link is the one thing that must pop.
+     Written as a.news-item.news-item--cta so it outranks the 0,2,0
+     .news-item.news-item--soon dashed-border rule above. */
+  a.news-item.news-item--cta {
+    background: var(--gold-soft);
+    border-color: var(--gold);
+    border-style: solid;
+    border-left-width: 4px;
+    align-items: center;
+    min-height: 48px;          /* keeps the tap target over 44px on mobile */
+    padding: 12px 14px;
+  }
+  a.news-item.news-item--cta .news-note { font-weight: 600; }
+  a.news-item.news-item--cta .news-date { color: var(--gold-dark); }
+  a.news-item.news-item--cta:hover { background: #ffe4bf; }
+
   /* ---------- Static (non-collapsible) section head ---------- */
   .rule-head.is-static { cursor: default; }
   .rule-head-titlewrap { display: flex; align-items: center; min-width: 0; }
@@ -1214,7 +1230,7 @@
          News & Announcements — non-collapsible league feed, always
          open and shown first so owners land on the latest league news.
          Quick-hitting one-line notes with date stamps (newest first),
-         plus a "Coming Soon" subsection. Powered by NEWS_FEED /
+         plus an "On Deck" subsection (pre-draft items, newest/soonest first). Powered by NEWS_FEED /
          COMING_SOON in the script below.
          ========================================================= -->
     <section class="rule-section open" id="news" data-section="news">
@@ -1226,7 +1242,7 @@
       </button>
       <div class="rule-body" id="body-news">
         <div class="news-list" id="newsFeed"></div>
-        <h3 class="subhead">Coming Soon</h3>
+        <h3 class="subhead">On Deck</h3>
         <div class="news-list" id="comingSoonFeed"></div>
       </div>
     </section>
@@ -1990,11 +2006,15 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
-const PAGE_BUILD = "1.0.1"; // internal page build — NOT user-facing; bump for behind-
+const PAGE_BUILD = "1.0.3"; // internal page build — NOT user-facing; bump for behind-
                             // the-scenes/functional changes. Rulebook (RULEBOOK_VERSION)
                             // and rules content are versioned separately above.
 // Build 1.0.1 (2026-07-01): rulebook search — relevance ranking, deep-scroll to match,
 //   match highlight, no-results state. No rule content changed.
+// Build 1.0.2 (2026-08-12): pre-draft mode — "On Deck" feed, Draft Day CTA row
+//   linking to draftday.html. No rule content changed.
+// Build 1.0.3 (2026-08-12): dropped the "Before you bid" auction row from On Deck.
+//   No rule content changed.
 const RULEBOOK_VERSION      = "v1.0";
 const RULEBOOK_LAST_UPDATED = "July 1, 2026";
 
@@ -2005,8 +2025,11 @@ const RULEBOOK_LAST_UPDATED = "July 1, 2026";
  * things that have happened; COMING_SOON holds upcoming items. Add a new
  * entry to the top of NEWS_FEED whenever something noteworthy happens;
  * bump RULEBOOK_VERSION / RULEBOOK_LAST_UPDATED for actual rule changes.
- * Each entry: { date, note, type? }.
+ * Each entry: { date, note, type?, label?, href?, cta? }.
  * Valid type values: "NEW", "AMENDED", "DEPRECATED", "ANNOUNCEMENT".
+ * href may be an in-page hash (e.g. "#auction") or another page
+ * (e.g. "draftday.html"); only hash links get the open+scroll treatment.
+ * cta:true renders the row as a gold call-out — use sparingly, one at a time.
  * ------------------------------------------------------------------- */
 const NEWS_FEED = [
   {
@@ -2033,9 +2056,15 @@ const NEWS_FEED = [
 
 const COMING_SOON = [
   {
-    date: "September 7, 2026",
-    note: "Auction Draft Time! Tap for more.",
-    href: "#auction"
+    date: "Mon, Sept 7",
+    note: "Draft Day HQ is live — start times, ESPN links, the league Meet, and how the morning runs. Tap for everything.",
+    href: "draftday.html",
+    cta: true
+  },
+  {
+    date: "Open now",
+    note: "2026 league and Draft Day dues are posted. Tap to check what you owe.",
+    href: "prize.html"
   }
 ];
 
@@ -2069,7 +2098,8 @@ function renderTag(type, year, label) {
       '<span class="news-note">' + tag + escHtml(item.note) + '</span>' +
       '<span class="news-date">' + escHtml(item.date) + '</span>';
     const cls = "news-item" + (soon ? " news-item--soon" : "") +
-                (item.href ? " news-item--link" : "");
+                (item.href ? " news-item--link" : "") +
+                (item.cta ? " news-item--cta" : "");
     if (item.href) {
       return '<a class="' + cls + '" href="' + escHtml(item.href) + '">' +
              inner + '</a>';
