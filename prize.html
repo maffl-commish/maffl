@@ -640,6 +640,31 @@
   .status-pill--paid { background: var(--win-soft); color: var(--win); }
   .status-pill--unpaid { background: var(--gold-soft); color: var(--gold-dark); }
 
+  /* ---------- Payment method + date stamp ---------- */
+  .pay-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 6px;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .pay-mark {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    flex: 0 0 auto;
+    display: block;
+  }
+  .pay-stamp--prize { color: var(--gold-dark); }
+  .pay-stamp--commish { color: var(--navy); }
+  .dues-table td.status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; }
+
   /* ---------- Pay Commish button ---------- */
   .pay-btn {
     display: inline-flex;
@@ -755,8 +780,8 @@
       <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
-      <span class="meta-pill">v1.2</span>
-      <span class="meta-pill">Last Updated August 15, 2026</span>
+      <span class="meta-pill">v2.0</span>
+      <span class="meta-pill">Last Updated August 16, 2026</span>
     </div>
   </header>
 
@@ -803,7 +828,7 @@
       <div class="card-head">
         <div>
           <h2>2026 Dues Status</h2>
-          <p class="card-note">Current owner status</p>
+          <p class="card-note">Current owner status &middot; when and how they paid</p>
         </div>
         <a class="pay-btn" href="https://venmo.com/u/mmurello" target="_blank" rel="noopener noreferrer" aria-label="Pay the Commish on Venmo at @mmurello">
           <span aria-hidden="true">&#128176;</span> Pay Commish
@@ -1153,25 +1178,25 @@ const MAFFL = {
   {"year":2025,"owner":"Dominic Nicastro","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1}
  ],
  "dues_2026": [
-  {"owner":"Mike Murello","owed":0,"status":"PAID"},
+  {"owner":"Mike Murello","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
   {"owner":"Todd Trozzo","owed":100,"status":"UNPAID"},
   {"owner":"Brian Murello/Ron Murello","owed":80,"status":"UNPAID"},
-  {"owner":"Braiden Snyder","owed":0,"status":"PAID"},
-  {"owner":"Jacob Nickman","owed":0,"status":"PAID"},
-  {"owner":"Jon Murello/Rick Simmons","owed":0,"status":"PAID"},
-  {"owner":"Joe Reilly","owed":0,"status":"PAID"},
+  {"owner":"Braiden Snyder","owed":0,"status":"PAID","paid_date":"2026-06-27","method":"Commish"},
+  {"owner":"Jacob Nickman","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+  {"owner":"Jon Murello/Rick Simmons","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+  {"owner":"Joe Reilly","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
   {"owner":"Tony Brooks","owed":80,"status":"UNPAID"},
-  {"owner":"David Murello","owed":0,"status":"PAID"},
-  {"owner":"Tony Trozzo","owed":0,"status":"PAID"},
+  {"owner":"David Murello","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+  {"owner":"Tony Trozzo","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
   {"owner":"Chris Johnson","owed":100,"status":"UNPAID"},
   {"owner":"Jon Fetrow","owed":47,"status":"UNPAID"},
   {"owner":"BJ Funari","owed":80,"status":"UNPAID"},
   {"owner":"Ed Peters","owed":27,"status":"UNPAID"},
   {"owner":"Dan Reilly","owed":80,"status":"UNPAID"},
-  {"owner":"Charles Lavrinc","owed":0,"status":"PAID"},
-  {"owner":"Sam Lavrinc","owed":0,"status":"PAID"},
-  {"owner":"Ben Funari","owed":0,"status":"PAID"},
-  {"owner":"Nick Yankovich","owed":0,"status":"PAID"},
+  {"owner":"Charles Lavrinc","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+  {"owner":"Sam Lavrinc","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+  {"owner":"Ben Funari","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+  {"owner":"Nick Yankovich","owed":0,"status":"PAID","paid_date":"2026-08-12","method":"Venmo"},
   {"owner":"Dominic Nicastro","owed":90,"status":"UNPAID"},
   {"owner":"Bob Keslar","owed":100,"status":"UNPAID"}
  ],
@@ -1440,6 +1465,17 @@ function renderLens2() {
 }
 
 /* ===================== 2026 Dues ===================== */
+const VENMO_MARK = `<svg class="pay-mark" viewBox="0 0 16 16" role="img" aria-label="Venmo"><rect width="16" height="16" rx="3.5" fill="#3D95CE"/><path d="M11.1 4.1c.4.7.6 1.5.6 2.4 0 3-2.5 6.9-4.6 8.1H4.4L2.6 4.2l2.6-.25 1 8.3c1-1.6 2.2-4.2 2.2-6 0-1-.2-1.7-.4-2.2z" fill="#fff"/></svg>`;
+function payStamp(d) {
+  if (d.status !== "PAID" || !d.paid_date) return "";
+  const dt = new Date(d.paid_date + "T12:00:00");
+  const when = dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const m = (d.method || "").toLowerCase();
+  if (m === "venmo") return `<span class="pay-stamp">${VENMO_MARK}${esc(when)}</span>`;
+  if (m === "prize-2025") return `<span class="pay-stamp pay-stamp--prize">2025 Prize &middot; ${esc(when)}</span>`;
+  if (m === "commish") return `<span class="pay-stamp pay-stamp--commish">Commish &middot; ${esc(when)}</span>`;
+  return `<span class="pay-stamp">${esc(when)}</span>`;
+}
 function renderDues() {
   const dues = MAFFL.dues_2026.slice().sort((a,b) => a.owner.localeCompare(b.owner));
   const paid = dues.filter(d => d.status === "PAID").length;
@@ -1454,7 +1490,7 @@ function renderDues() {
     const pill = d.status === "PAID"
       ? `<span class="status-pill status-pill--paid">Paid</span>`
       : `<span class="status-pill status-pill--unpaid">Unpaid</span>`;
-    return `<tr><td class="owner">${esc(shortName(d.owner))}</td><td class="num">${usd(d.owed)}</td><td>${pill}</td></tr>`;
+    return `<tr><td class="owner">${esc(shortName(d.owner))}</td><td class="num">${usd(d.owed)}</td><td class="status">${pill}${payStamp(d)}</td></tr>`;
   }).join("");
 }
 
