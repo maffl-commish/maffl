@@ -607,7 +607,7 @@
   .dues-chip--unpaid { background: var(--gold-soft); color: var(--gold-dark); }
   .dues-chip--owed { background: var(--navy); color: #fff; }
 
-  .dues-table { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--navy); }
+  .dues-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 14px; color: var(--navy); }
   .dues-table th, .dues-table td {
     text-align: left;
     padding: 8px 8px;
@@ -645,7 +645,6 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    margin-left: 6px;
     font-family: var(--display);
     font-weight: 600;
     font-size: 11px;
@@ -661,9 +660,15 @@
     flex: 0 0 auto;
     display: block;
   }
-  .pay-stamp--prize { color: var(--gold-dark); }
+  .pay-stamp--prize { color: var(--navy); }
   .pay-stamp--commish { color: var(--navy); }
-  .dues-table td.status { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; }
+  .dues-table td.status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 8px;
+  }
 
   /* ---------- Pay Commish button ---------- */
   .pay-btn {
@@ -690,6 +695,7 @@
   .pay-btn:hover { background: #178a64; color: #fff; transform: translateY(-1px); }
   .pay-btn:active { transform: translateY(0); }
   .pay-btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+  .pay-btn .pay-mark { width: 16px; height: 16px; border-radius: 4px; }
 
   /* ---------- Footer ---------- */
   .site-footer {
@@ -780,7 +786,7 @@
       <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
-      <span class="meta-pill">v2.0</span>
+      <span class="meta-pill">v2.2</span>
       <span class="meta-pill">Last Updated August 16, 2026</span>
     </div>
   </header>
@@ -832,10 +838,16 @@
         </div>
         <a class="pay-btn" href="https://venmo.com/u/mmurello" target="_blank" rel="noopener noreferrer" aria-label="Pay the Commish on Venmo at @mmurello">
           <span aria-hidden="true">&#128176;</span> Pay Commish
+          <svg class="pay-mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect width="16" height="16" rx="3.5" fill="#fff"/><path d="M11.1 4.1c.4.7.6 1.5.6 2.4 0 3-2.5 6.9-4.6 8.1H4.4L2.6 4.2l2.6-.25 1 8.3c1-1.6 2.2-4.2 2.2-6 0-1-.2-1.7-.4-2.2z" fill="#3D95CE"/></svg>
         </a>
       </div>
       <div class="dues-summary" id="duesSummary"></div>
       <table class="dues-table">
+        <colgroup>
+          <col style="width:34%">
+          <col style="width:20%">
+          <col style="width:46%">
+        </colgroup>
         <thead>
           <tr>
             <th scope="col">Owner</th>
@@ -1472,7 +1484,7 @@ function payStamp(d) {
   const when = dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const m = (d.method || "").toLowerCase();
   if (m === "venmo") return `<span class="pay-stamp">${VENMO_MARK}${esc(when)}</span>`;
-  if (m === "prize-2025") return `<span class="pay-stamp pay-stamp--prize">2025 Prize &middot; ${esc(when)}</span>`;
+  if (m === "prize-2025") return `<span class="pay-stamp pay-stamp--prize">2025 Prize</span>`;
   if (m === "commish") return `<span class="pay-stamp pay-stamp--commish">Commish &middot; ${esc(when)}</span>`;
   return `<span class="pay-stamp">${esc(when)}</span>`;
 }
