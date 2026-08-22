@@ -1307,6 +1307,7 @@
               <tr><td class="row-label">FAAB Budget Set</td><td>Prior to Wk 1 kickoff</td></tr>
               <tr><td class="row-label">First Weekly FAA Processes</td><td>Prior to Wk 1 kickoff</td></tr>
               <tr><td class="row-label">Regular Season</td><td>NFL Wks 1&ndash;14</td></tr>
+              <tr><td class="row-label">Trade Deadline</td><td>Wed. after Wk 12 &mdash; Dec. 2, 12:00 PM ET</td></tr>
               <tr><td class="row-label">FAAB Reset ($100)</td><td>Prior to Wk 15 kickoff</td></tr>
               <tr><td class="row-label">Post Season</td><td>NFL Wks 15&ndash;17</td></tr>
             </tbody>
@@ -1430,7 +1431,7 @@
     <!-- =========================================================
          SECTION 1 — General Rules
          ========================================================= -->
-    <section class="rule-section" data-section="general">
+    <section class="rule-section" id="general" data-section="general">
       <button class="rule-head" aria-expanded="false" aria-controls="body-general">
         <h2 class="rule-title">General Rules</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
@@ -1547,6 +1548,69 @@
             <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 9:00&ndash;11:00 AM EST</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 3b — Trades. Player execution stays on ESPN; this
+         section covers what MAFFL layers on top (cross-tier ban,
+         credit legs, veto standard). Carries a "New 2026" pill on
+         the head while collapsed, same pattern as MAFFL Ghost.
+         ========================================================= -->
+    <section class="rule-section" id="trades" data-section="trades">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-trades">
+        <span class="rule-head-titlewrap">
+          <h2 class="rule-title">Trades</h2>
+          <span class="rule-tag new head-pill">New<span class="tag-sep">&middot;</span>2026</span>
+        </span>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-trades">
+        <p>Trades are encouraged in MAFFL. The league doesn&rsquo;t cap trade volume and doesn&rsquo;t second-guess trade value. Execution runs on ESPN under the ESPN League Settings; this section covers what MAFFL adds on top.</p>
+
+        <h3 class="subhead">The Basics</h3>
+        <ul>
+          <li><strong>No trade limit.</strong></li>
+          <li><strong>Deadline:</strong> 12:00 PM ET on the Wednesday after Week 12 concludes (<strong>Dec. 2, 2026</strong>). No trades in the postseason (NFL Wks 15&ndash;17), so playoff, Showdown, and consolation rosters are frozen.</li>
+          <li><strong>Review period:</strong> 1 day. A trade is pending &mdash; not final &mdash; for 24 hours after acceptance, and the players involved are locked.</li>
+          <li><strong>Vetoes:</strong> Commissioner only.</li>
+        </ul>
+
+        <h3 class="subhead">What Can Be Traded</h3>
+        <ul>
+          <li><strong>Players</strong>, within your own tier&rsquo;s ESPN league.</li>
+          <li><strong>Credits</strong>, within your own tier &mdash; as all or part of what a side sends in a player trade.</li>
+        </ul>
+
+        <h3 class="subhead">What Cannot Be Traded</h3>
+        <ul>
+          <li><strong>Anything across tiers.</strong> Upper and Lower are separate ESPN leagues with separate player pools, and MAFFL treats them as separate trade markets &mdash; no player or credit trades between an Upper-Tier and a Lower-Tier owner.</li>
+          <li><strong>Credits alone.</strong> Every trade must move at least one player.</li>
+          <li><strong>FAAB budget.</strong></li>
+          <li><strong>League dues or prize money.</strong></li>
+          <li><strong>Auction nomination order</strong>, or any portion of a future auction budget.</li>
+          <li><strong>Future considerations</strong> of any kind.</li>
+        </ul>
+
+        <h3 class="subhead">Credit-Involved Trades</h3>
+        <p>A credit trade has two legs: players on ESPN, credits on MAFFL HQ. <strong>The commissioner&rsquo;s job is to make those feel like one trade.</strong></p>
+        <ul>
+          <li>Submit the credit leg through the <strong>Credit Request form</strong> on the <a class="inline-link" href="credits.html">Credits page</a>. Either owner may file it; both confirm the terms.</li>
+          <li>The player leg processes on ESPN and doesn&rsquo;t wait on the commissioner. Credit legs are normally resolved within 24 hours and always before the next week&rsquo;s first kickoff.</li>
+          <li><strong>Balance must cover the trade at approval.</strong> No negative balances, and credits committed to a purchased perk aren&rsquo;t available to trade.</li>
+          <li>Credit legs are subject to the same trade deadline as player trades.</li>
+          <li><strong>A credit trade is approved or negated as a whole.</strong> If the commissioner negates it, both legs come back &mdash; the ESPN side is reversed along with the credit side. One half never stands without the other.</li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-label">Vetoes</span>
+          <p><strong>MAFFL does not veto lopsided trades.</strong> Bad trades are part of the game. The commissioner won&rsquo;t intervene because a deal looks unbalanced.</p>
+          <p><strong>MAFFL does veto collusion</strong> &mdash; roster dumping by an owner with nothing left to play for, arrangements made outside the trade itself, or two rosters steered toward one owner&rsquo;s outcome.</p>
+          <p><strong>Any owner may raise a concern</strong> with the commissioner &mdash; no standing or stake required. <strong>There are no league votes.</strong> The commissioner decides alone and, per <a class="inline-link" href="#general">General Rules</a>, has final say.</p>
+        </div>
+
+        <h3 class="subhead">Finality</h3>
+        <p>Player-only trades are final once ESPN processes them. Credit-involved trades are final once both legs clear.</p>
       </div>
     </section>
 
@@ -1767,7 +1831,7 @@
           <li>Determines annual division alignment for the Upper-Tier League (1/6/12; 2/5/11; 3/4/10; 7/8/9). Tiebreakers determined by previous season W/L%, then total points.</li>
           <li>Determines Upper-Tier placement if unexpected openings occur.</li>
           <li>Credits are earned and can be spent (see options below).</li>
-          <li>Credits can be traded directly or packaged with players. (These trades adhere to the normal trade policy and deadlines.)</li>
+          <li>Credits can be traded as all or part of what an owner sends in a player trade. (These trades adhere to the normal trade policy and deadlines &mdash; see <a class="inline-link" href="#trades">Trades</a>.) <span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></li>
         </ul>
 
         <h3 class="subhead">Earning Credits &mdash; Outcome</h3>
@@ -2015,8 +2079,8 @@ const PAGE_BUILD = "1.0.3"; // internal page build — NOT user-facing; bump for
 //   linking to draftday.html. No rule content changed.
 // Build 1.0.3 (2026-08-12): dropped the "Before you bid" auction row from On Deck.
 //   No rule content changed.
-const RULEBOOK_VERSION      = "v1.1";
-const RULEBOOK_LAST_UPDATED = "August 12, 2026";
+const RULEBOOK_VERSION      = "v1.2";
+const RULEBOOK_LAST_UPDATED = "August 22, 2026";
 
 /* ---------------------------------------------------------------------
  * NEWS_FEED / COMING_SOON power the "News & Announcements" feed on the
@@ -2032,6 +2096,13 @@ const RULEBOOK_LAST_UPDATED = "August 12, 2026";
  * cta:true renders the row as a gold call-out — use sparingly, one at a time.
  * ------------------------------------------------------------------- */
 const NEWS_FEED = [
+  {
+    date: "Offseason",
+    type: "NEW",
+    label: "New Rule",
+    note: "Trades now have their own section — deadline, what can and can't be traded, credit trades, and the veto standard. Tap for more.",
+    href: "#trades"
+  },
   {
     date: "Offseason",
     type: "NEW",
