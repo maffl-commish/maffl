@@ -1066,6 +1066,51 @@
   a.news-item.news-item--cta .news-date { color: var(--gold-dark); }
   a.news-item.news-item--cta:hover { background: #ffe4bf; }
 
+  /* ---------- Compact rulebook-update rows (Info tab, seasonal) ----------
+     Lighter sibling of .news-item: no border, tighter padding, ~1/3 the
+     vertical height. Used for the "New in the Rulebook" block, which is a
+     start-of-season orientation aid and gets retired mid-season by emptying
+     RULE_UPDATES. */
+  .rule-update-list { display: flex; flex-direction: column; gap: 2px; }
+  a.rule-update-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 4px;
+    min-height: 44px;              /* tap target on mobile */
+    box-sizing: border-box;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  a.rule-update-item:last-child { border-bottom: none; }
+  a.rule-update-item:hover { background: var(--gold-soft); }
+  a.rule-update-item:active { transform: translateY(1px); }
+  a.rule-update-item:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+  .rule-update-item .ru-note {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.45;
+    min-width: 0;
+  }
+  .rule-update-item .ru-note .rule-tag { margin-left: 0; margin-right: 6px; }
+  .rule-update-item .ru-date {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
   /* ---------- Static (non-collapsible) section head ---------- */
   .rule-head.is-static { cursor: default; }
   .rule-head-titlewrap { display: flex; align-items: center; min-width: 0; }
@@ -1229,9 +1274,9 @@
     <!-- =========================================================
          News & Announcements — non-collapsible league feed, always
          open and shown first so owners land on the latest league news.
-         Quick-hitting one-line notes with date stamps (newest first),
-         plus an "On Deck" subsection (pre-draft items, newest/soonest first). Powered by NEWS_FEED /
-         COMING_SOON in the script below.
+         Quick-hitting one-line notes with date stamps, timely items first.
+         Powered by NEWS_FEED (timely) plus the seasonal RULE_UPDATES list
+         in the script below.
          ========================================================= -->
     <section class="rule-section open" id="news" data-section="news">
       <button class="rule-head" aria-expanded="true" aria-controls="body-news">
@@ -1242,8 +1287,10 @@
       </button>
       <div class="rule-body" id="body-news">
         <div class="news-list" id="newsFeed"></div>
-        <h3 class="subhead">On Deck</h3>
-        <div class="news-list" id="comingSoonFeed"></div>
+        <div id="ruleUpdatesBlock" hidden>
+          <h3 class="subhead">New in the Rulebook</h3>
+          <div class="rule-update-list" id="ruleUpdatesFeed"></div>
+        </div>
       </div>
     </section>
 
@@ -1307,6 +1354,7 @@
               <tr><td class="row-label">FAAB Budget Set</td><td>Prior to Wk 1 kickoff</td></tr>
               <tr><td class="row-label">First Weekly FAA Processes</td><td>Prior to Wk 1 kickoff</td></tr>
               <tr><td class="row-label">Regular Season</td><td>NFL Wks 1&ndash;14</td></tr>
+              <tr><td class="row-label">Trade Deadline</td><td>Wed. after Wk 12 &mdash; Dec. 2, 12:00 PM ET</td></tr>
               <tr><td class="row-label">FAAB Reset ($100)</td><td>Prior to Wk 15 kickoff</td></tr>
               <tr><td class="row-label">Post Season</td><td>NFL Wks 15&ndash;17</td></tr>
             </tbody>
@@ -1430,7 +1478,7 @@
     <!-- =========================================================
          SECTION 1 — General Rules
          ========================================================= -->
-    <section class="rule-section" data-section="general">
+    <section class="rule-section" id="general" data-section="general">
       <button class="rule-head" aria-expanded="false" aria-controls="body-general">
         <h2 class="rule-title">General Rules</h2>
         <span class="rule-chev" aria-hidden="true">&#9662;</span>
@@ -1547,6 +1595,69 @@
             <tr><td class="row-label">Slot 2</td><td>Upper-Tier</td><td>Labor Day, 9:00&ndash;11:00 AM EST</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SECTION 3b — Trades. Player execution stays on ESPN; this
+         section covers what MAFFL layers on top (cross-tier ban,
+         credit legs, veto standard). Carries a "New 2026" pill on
+         the head while collapsed, same pattern as MAFFL Ghost.
+         ========================================================= -->
+    <section class="rule-section" id="trades" data-section="trades">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-trades">
+        <span class="rule-head-titlewrap">
+          <h2 class="rule-title">Trades</h2>
+          <span class="rule-tag new head-pill">New<span class="tag-sep">&middot;</span>2026</span>
+        </span>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-trades">
+        <p>Trades are encouraged in MAFFL. The league doesn&rsquo;t cap trade volume and doesn&rsquo;t second-guess trade value. Execution runs on ESPN under the ESPN League Settings; this section covers what MAFFL adds on top.</p>
+
+        <h3 class="subhead">The Basics</h3>
+        <ul>
+          <li><strong>No trade limit.</strong></li>
+          <li><strong>Deadline:</strong> 12:00 PM ET on the Wednesday after Week 12 concludes (<strong>Dec. 2, 2026</strong>). No trades in the postseason (NFL Wks 15&ndash;17). Waivers and free agency continue as normal.</li>
+          <li><strong>Review period:</strong> 1 day. A trade is pending &mdash; not final &mdash; for 24 hours after acceptance, and the players involved are locked.</li>
+          <li><strong>Vetoes:</strong> Commissioner only.</li>
+        </ul>
+
+        <h3 class="subhead">What Can Be Traded</h3>
+        <ul>
+          <li><strong>Players</strong>, within your own tier&rsquo;s ESPN league.</li>
+          <li><strong>Credits</strong>, within your own tier &mdash; as all or part of what a side sends in a player trade.</li>
+        </ul>
+
+        <h3 class="subhead">What Cannot Be Traded</h3>
+        <ul>
+          <li><strong>Anything across tiers.</strong> Upper and Lower are separate ESPN leagues with separate player pools, and MAFFL treats them as separate trade markets &mdash; no player or credit trades between an Upper-Tier and a Lower-Tier owner.</li>
+          <li><strong>Credits alone.</strong> Every trade must move at least one player.</li>
+          <li><strong>FAAB budget.</strong></li>
+          <li><strong>League dues or prize money.</strong></li>
+          <li><strong>Auction nomination order</strong>, or any portion of a future auction budget.</li>
+          <li><strong>Future considerations</strong> of any kind.</li>
+        </ul>
+
+        <h3 class="subhead">Credit-Involved Trades</h3>
+        <p>A credit trade has two legs: players on ESPN, credits on MAFFL HQ. <strong>The commissioner&rsquo;s job is to make those feel like one trade.</strong></p>
+        <ul>
+          <li>Submit the credit leg through the <strong>Credit Request form</strong> on the <a class="inline-link" href="credits.html">Credits page</a>. Either owner may file it; both confirm the terms.</li>
+          <li>The player leg processes on ESPN and doesn&rsquo;t wait on the commissioner. Credit legs are normally resolved within 24 hours and always before the next week&rsquo;s first kickoff.</li>
+          <li><strong>Balance must cover the trade at approval.</strong> No negative balances, and credits committed to a purchased perk aren&rsquo;t available to trade.</li>
+          <li>Credit legs are subject to the same trade deadline as player trades.</li>
+          <li><strong>A credit trade is approved or negated as a whole.</strong> If the commissioner negates it, both legs come back &mdash; the ESPN side is reversed along with the credit side. One half never stands without the other.</li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-label">Vetoes</span>
+          <p><strong>MAFFL does not veto lopsided trades.</strong> Bad trades are part of the game. The commissioner won&rsquo;t intervene because a deal looks unbalanced.</p>
+          <p><strong>MAFFL does veto collusion</strong> &mdash; roster dumping by an owner with nothing left to play for, arrangements made outside the trade itself, or two rosters steered toward one owner&rsquo;s outcome.</p>
+          <p><strong>Any owner may raise a concern</strong> with the commissioner &mdash; no standing or stake required. <strong>There are no league votes.</strong> The commissioner decides alone and, per <a class="inline-link" href="#general">General Rules</a>, has final say.</p>
+        </div>
+
+        <h3 class="subhead">Finality</h3>
+        <p>Player-only trades are final once ESPN processes them. Credit-involved trades are final once both legs clear.</p>
       </div>
     </section>
 
@@ -1767,7 +1878,7 @@
           <li>Determines annual division alignment for the Upper-Tier League (1/6/12; 2/5/11; 3/4/10; 7/8/9). Tiebreakers determined by previous season W/L%, then total points.</li>
           <li>Determines Upper-Tier placement if unexpected openings occur.</li>
           <li>Credits are earned and can be spent (see options below).</li>
-          <li>Credits can be traded directly or packaged with players. (These trades adhere to the normal trade policy and deadlines.)</li>
+          <li>Credits can be traded as all or part of what an owner sends in a player trade. (These trades adhere to the normal trade policy and deadlines &mdash; see <a class="inline-link" href="#trades">Trades</a>.) <span class="rule-tag amended">Clarified<span class="tag-sep">&middot;</span>2026</span></li>
         </ul>
 
         <h3 class="subhead">Earning Credits &mdash; Outcome</h3>
@@ -2006,7 +2117,7 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
-const PAGE_BUILD = "1.0.3"; // internal page build — NOT user-facing; bump for behind-
+const PAGE_BUILD = "1.1.0"; // internal page build — NOT user-facing; bump for behind-
                             // the-scenes/functional changes. Rulebook (RULEBOOK_VERSION)
                             // and rules content are versioned separately above.
 // Build 1.0.1 (2026-07-01): rulebook search — relevance ranking, deep-scroll to match,
@@ -2015,46 +2126,18 @@ const PAGE_BUILD = "1.0.3"; // internal page build — NOT user-facing; bump for
 //   linking to draftday.html. No rule content changed.
 // Build 1.0.3 (2026-08-12): dropped the "Before you bid" auction row from On Deck.
 //   No rule content changed.
-const RULEBOOK_VERSION      = "v1.1";
-const RULEBOOK_LAST_UPDATED = "August 12, 2026";
+// Build 1.1.0 (2026-08-22): News section condensed — timely feed + seasonal
+//   RULE_UPDATES compact list. No rule content changed.
+const RULEBOOK_VERSION      = "v1.2";
+const RULEBOOK_LAST_UPDATED = "August 22, 2026";
 
 /* ---------------------------------------------------------------------
- * NEWS_FEED / COMING_SOON power the "News & Announcements" feed on the
- * Info tab — the league's running, quick-hitting headline log. Each entry
- * is a one-line note with a clear date stamp, newest first. NEWS_FEED holds
- * things that have happened; COMING_SOON holds upcoming items. Add a new
- * entry to the top of NEWS_FEED whenever something noteworthy happens;
- * bump RULEBOOK_VERSION / RULEBOOK_LAST_UPDATED for actual rule changes.
- * Each entry: { date, note, type?, label?, href?, cta? }.
- * Valid type values: "NEW", "AMENDED", "DEPRECATED", "ANNOUNCEMENT".
- * href may be an in-page hash (e.g. "#auction") or another page
- * (e.g. "draftday.html"); only hash links get the open+scroll treatment.
- * cta:true renders the row as a gold call-out — use sparingly, one at a time.
+ * NEWS_FEED — timely, time-sensitive items only. Full-weight rows at the
+ * top of the Info tab. Dates here are free-text event labels ("Mon, Sept 7",
+ * "Open now"), NOT change stamps — do not convert these to ISO.
+ * The Draft Day row uses cta:true for the gold highlight treatment.
  * ------------------------------------------------------------------- */
 const NEWS_FEED = [
-  {
-    date: "Offseason",
-    type: "NEW",
-    label: "New Rule",
-    note: "The MAFFL Ghost rule is a best-in-class approach to keep scheduling even with odd-numbered teams. Tap for more.",
-    href: "#maffl-ghost"
-  },
-  {
-    date: "Offseason",
-    type: "AMENDED",
-    label: "Rule Updates",
-    note: "Several rules amended and clarified for 2026 — credit swaps, tiebreakers, survivor pool, and more. Tap to open the Rulebook.",
-    href: "#credit-system"
-  },
-  {
-    date: "Offseason",
-    type: "ANNOUNCEMENT",
-    note: "2026 Division Alignment Established.",
-    href: "#alignment"
-  }
-];
-
-const COMING_SOON = [
   {
     date: "Mon, Sept 7",
     note: "Draft Day HQ is live — start times, ESPN links, the league Meet, and how the morning runs. Tap for everything.",
@@ -2065,6 +2148,43 @@ const COMING_SOON = [
     date: "Open now",
     note: "2026 league and Draft Day dues are posted. Tap to check what you owe.",
     href: "prize.html"
+  }
+];
+
+/* ---------------------------------------------------------------------
+ * RULE_UPDATES — SEASONAL. A short orientation list of what changed in the
+ * rulebook for 2026, shown as compact rows under "New in the Rulebook".
+ *
+ * TO RETIRE: set this to [] — the subhead and list both disappear. No markup
+ * or CSS edits required. Expected to come down once the season is underway.
+ *
+ * Hard cap of 3 entries. Anything new folds into the "2026 Rule Updates"
+ * roll-up row rather than earning its own line, so this block cannot re-clutter.
+ *
+ * date MUST be ISO "YYYY-MM-DD" — fmtRuleDate() renders it and the list
+ * auto-sorts newest-first, so array order here does not matter.
+ * ------------------------------------------------------------------- */
+const RULE_UPDATES = [
+  {
+    date: "2026-08-22",
+    type: "NEW",
+    label: "New",
+    note: "Trades — deadline, what can and can't be traded, and the veto standard.",
+    href: "#trades"
+  },
+  {
+    date: "2026-07-01",
+    type: "NEW",
+    label: "New",
+    note: "MAFFL Ghost — how odd-numbered Lower-Tier scheduling works.",
+    href: "#maffl-ghost"
+  },
+  {
+    date: "2026-07-01",
+    type: "AMENDED",
+    label: "Updated",
+    note: "2026 rule updates — credit swaps, tiebreakers, and the Survivor Pool.",
+    href: "#credit-system"
   }
 ];
 
@@ -2106,17 +2226,51 @@ function renderTag(type, year, label) {
     }
     return '<div class="' + cls + '">' + inner + '</div>';
   }
+
+  /* Renders an ISO date as a change stamp that ages correctly:
+     current season  -> "Aug 22"
+     prior seasons   -> "Jul 2026"
+     A MAFFL season is treated as starting in July of its year, so anything
+     from July of the current calendar year forward counts as this season. */
+  function fmtRuleDate(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ""));
+    if (!m) return String(iso || "");
+    const y = +m[1], mo = +m[2], d = +m[3];
+    const MON = ["Jan","Feb","Mar","Apr","May","Jun",
+                 "Jul","Aug","Sep","Oct","Nov","Dec"];
+    const now = new Date();
+    const seasonYear = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
+    const itemSeason = mo >= 7 ? y : y - 1;
+    return itemSeason === seasonYear
+      ? MON[mo - 1] + " " + d
+      : MON[mo - 1] + " " + y;
+  }
+
+  function ruleUpdateRow(item) {
+    const tag = item.type ? renderTag(item.type, null, item.label) : "";
+    return '<a class="rule-update-item" href="' + escHtml(item.href) + '">' +
+           '<span class="ru-note">' + tag + escHtml(item.note) + '</span>' +
+           '<span class="ru-date">' + escHtml(fmtRuleDate(item.date)) + '</span>' +
+           '</a>';
+  }
   const feed = document.getElementById("newsFeed");
   if (feed) {
     feed.innerHTML = NEWS_FEED.length
       ? NEWS_FEED.map(function (n) { return newsRow(n, false); }).join("")
       : '<p style="color:var(--muted);font-style:italic;margin:0;">No announcements yet.</p>';
   }
-  const soon = document.getElementById("comingSoonFeed");
-  if (soon) {
-    soon.innerHTML = COMING_SOON.length
-      ? COMING_SOON.map(function (n) { return newsRow(n, true); }).join("")
-      : '<p style="color:var(--muted);font-style:italic;margin:0;">Nothing on deck right now.</p>';
+  const ruBlock = document.getElementById("ruleUpdatesBlock");
+  const ruFeed  = document.getElementById("ruleUpdatesFeed");
+  if (ruBlock && ruFeed) {
+    if (RULE_UPDATES.length) {
+      const sorted = RULE_UPDATES.slice().sort(function (a, b) {
+        return String(b.date).localeCompare(String(a.date));
+      });
+      ruFeed.innerHTML = sorted.map(ruleUpdateRow).join("");
+      ruBlock.hidden = false;
+    } else {
+      ruBlock.hidden = true;
+    }
   }
 })();
 
