@@ -662,6 +662,7 @@
   }
   .pay-stamp--prize { color: var(--navy); }
   .pay-stamp--commish { color: var(--navy); }
+  .pay-stamp--check { color: var(--navy); }
   .dues-table td.status {
     display: flex;
     flex-wrap: wrap;
@@ -786,8 +787,8 @@
       <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
-      <span class="meta-pill">v2.4</span>
-      <span class="meta-pill">Last Updated August 23, 2026</span>
+      <span class="meta-pill">v2.5</span>
+      <span class="meta-pill">Last Updated August 28, 2026</span>
     </div>
   </header>
 
@@ -1189,7 +1190,7 @@ const MAFFL = {
  "dues_2026": [
   {"owner":"Mike Murello","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
   {"owner":"Todd Trozzo","owed":100,"status":"UNPAID"},
-  {"owner":"Brian Murello/Ron Murello","owed":80,"status":"UNPAID"},
+  {"owner":"Brian Murello/Ron Murello","owed":0,"status":"PAID","paid_date":"2026-08-28","method":"Check"},
   {"owner":"Braiden Snyder","owed":0,"status":"PAID","paid_date":"2026-06-27","method":"Commish"},
   {"owner":"Jacob Nickman","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
   {"owner":"Jon Murello/Rick Simmons","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
@@ -1199,7 +1200,7 @@ const MAFFL = {
   {"owner":"Tony Trozzo","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
   {"owner":"Chris Johnson","owed":100,"status":"UNPAID"},
   {"owner":"Jon Fetrow","owed":0,"status":"PAID","paid_date":"2026-08-23","method":"Venmo"},
-  {"owner":"BJ Funari","owed":80,"status":"UNPAID"},
+  {"owner":"BJ Funari","owed":0,"status":"PAID","paid_date":"2026-08-26","method":"Venmo"},
   {"owner":"Ed Peters","owed":0,"status":"PAID","paid_date":"2026-08-23","method":"Venmo"},
   {"owner":"Dan Reilly","owed":80,"status":"UNPAID"},
   {"owner":"Charles Lavrinc","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
@@ -1483,6 +1484,7 @@ function payStamp(d) {
   if (m === "venmo") return `<span class="pay-stamp">${VENMO_MARK}${esc(when)}</span>`;
   if (m === "prize-2025") return `<span class="pay-stamp pay-stamp--prize">2025 Prize</span>`;
   if (m === "commish") return `<span class="pay-stamp pay-stamp--commish">Commish &middot; ${esc(when)}</span>`;
+  if (m === "check") return `<span class="pay-stamp pay-stamp--check">Check &middot; ${esc(when)}</span>`;
   return `<span class="pay-stamp">${esc(when)}</span>`;
 }
 function renderDues() {
