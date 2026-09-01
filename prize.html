@@ -662,6 +662,7 @@
   }
   .pay-stamp--prize { color: var(--navy); }
   .pay-stamp--commish { color: var(--navy); }
+  .pay-stamp--zelle { color: #6D1ED4; }
   .pay-stamp--check { color: var(--navy); }
   .dues-table td.status {
     display: flex;
@@ -787,8 +788,8 @@
       <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
-      <span class="meta-pill">v2.5</span>
-      <span class="meta-pill">Last Updated August 28, 2026</span>
+      <span class="meta-pill">v2.6</span>
+      <span class="meta-pill">Last Updated August 31, 2026</span>
     </div>
   </header>
 
@@ -1208,7 +1209,7 @@ const MAFFL = {
   {"owner":"Ben Funari","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
   {"owner":"Nick Yankovich","owed":0,"status":"PAID","paid_date":"2026-08-12","method":"Venmo"},
   {"owner":"Dominic Nicastro","owed":90,"status":"UNPAID"},
-  {"owner":"Bob Keslar","owed":100,"status":"UNPAID"}
+  {"owner":"Bob Keslar","owed":0,"status":"PAID","paid_date":"2026-08-31","method":"Zelle"}
  ],
  "meta": {
   "data_start": 2013,
@@ -1484,6 +1485,7 @@ function payStamp(d) {
   if (m === "venmo") return `<span class="pay-stamp">${VENMO_MARK}${esc(when)}</span>`;
   if (m === "prize-2025") return `<span class="pay-stamp pay-stamp--prize">2025 Prize</span>`;
   if (m === "commish") return `<span class="pay-stamp pay-stamp--commish">Commish &middot; ${esc(when)}</span>`;
+  if (m === "zelle") return `<span class="pay-stamp pay-stamp--zelle">Zelle &middot; ${esc(when)}</span>`;
   if (m === "check") return `<span class="pay-stamp pay-stamp--check">Check &middot; ${esc(when)}</span>`;
   return `<span class="pay-stamp">${esc(when)}</span>`;
 }
