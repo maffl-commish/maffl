@@ -788,8 +788,8 @@
       <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
-      <span class="meta-pill">v2.6</span>
-      <span class="meta-pill">Last Updated August 31, 2026</span>
+      <span class="meta-pill">v2.7</span>
+      <span class="meta-pill">Last Updated September 3, 2026</span>
     </div>
   </header>
 
@@ -1188,9 +1188,17 @@ const MAFFL = {
   {"year":2025,"owner":"Ben Funari","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1},
   {"year":2025,"owner":"Dominic Nicastro","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1}
  ],
+ /* HAND-MAINTAINED from Dues_Log.csv (repo root). owed = Obligation - approved
+    Payments; status = PAID when owed <= 0; paid_date/method from the latest
+    approved Payment row.
+    DO NOT run build\gen-prize.ps1 (or build\build.ps1 -Write) against this array
+    until the generator is repointed: it reads "MAFFL League Packet - 2025
+    Prizes.csv", whose 2026 Pay Status column is stale, and it emits only
+    owner/owed/status -- a -Write strips every paid_date/method (killing the
+    pay stamps) and reverts already-paid owners to UNPAID. */
  "dues_2026": [
   {"owner":"Mike Murello","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
-  {"owner":"Todd Trozzo","owed":100,"status":"UNPAID"},
+  {"owner":"Todd Trozzo","owed":0,"status":"PAID","paid_date":"2026-09-03","method":"Venmo"},
   {"owner":"Brian Murello/Ron Murello","owed":0,"status":"PAID","paid_date":"2026-08-28","method":"Check"},
   {"owner":"Braiden Snyder","owed":0,"status":"PAID","paid_date":"2026-06-27","method":"Commish"},
   {"owner":"Jacob Nickman","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
