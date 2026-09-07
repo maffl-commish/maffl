@@ -699,6 +699,128 @@
   .pay-btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
   .pay-btn .pay-mark { width: 16px; height: 16px; border-radius: 4px; }
 
+  /* ---------- Open season with no amounts set yet ---------- */
+  .dues-empty {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    background: var(--page-bg);
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .de-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    margin: 0;
+  }
+  .de-note { font-family: var(--body); font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+
+  /* ---------- Settled-season dues ledger ---------- */
+  .ledger { margin-top: 24px; }
+  .ledger-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .ledger-head h3 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+    white-space: nowrap;
+  }
+  .ledger-rule { flex: 1 1 auto; height: 1px; background: var(--border); }
+
+  .led-list { display: flex; flex-direction: column; gap: 8px; }
+  .led-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .led-item > summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    min-height: 44px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .led-item > summary::-webkit-details-marker { display: none; }
+  .led-item > summary:hover { background: var(--navy-soft); }
+  .led-item > summary:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .led-year {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+    flex: 0 0 auto;
+  }
+  .led-main { flex: 1 1 auto; min-width: 0; }
+  .led-badge {
+    display: inline-block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--win-soft);
+    color: var(--win);
+  }
+  .led-meta {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .led-arrow { flex: 0 0 auto; color: var(--muted); font-size: 12px; transition: transform 0.15s ease; }
+  .led-item[open] .led-arrow { transform: rotate(90deg); }
+  .led-item[open] > summary { border-bottom: 1px solid var(--border); background: var(--page-bg); }
+
+  .led-body { padding: 2px 14px 12px; }
+  .led-foot {
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    justify-content: space-between;
+    margin-top: 2px;
+    padding-top: 9px;
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .led-foot b {
+    font-family: var(--display);
+    font-size: 14px;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
+  }
+  .led-empty {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    background: var(--page-bg);
+    padding: 14px;
+    font-family: var(--body);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+
   /* ---------- Footer ---------- */
   .site-footer {
     border-top: 1px solid var(--border);
@@ -746,10 +868,17 @@
     .page-title { font-size: 24px; }
     .card, .dues-card { padding: 14px; }
     .gt-value { font-size: 34px; }
+
+    .card-head h2 { font-size: 18px; }
+    .pay-btn { font-size: 13px; padding: 10px 14px; gap: 6px; }
+    .led-item > summary { gap: 8px; padding: 11px 12px; }
+    .led-year { font-size: 18px; }
+    .led-meta { font-size: 11px; }
+    .led-body { padding: 2px 10px 12px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .site-nav a, .lens-tab, .pill, .lb-item > summary, .lb-arrow, .pay-btn { transition: none; }
+    .site-nav a, .lens-tab, .pill, .lb-item > summary, .lb-arrow, .led-item > summary, .led-arrow, .pay-btn { transition: none; }
     .pay-btn:hover { transform: none; }
   }
 </style>
@@ -788,8 +917,8 @@
       <p class="page-header__subtitle">Everything Prize Money</p>
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
-      <span class="meta-pill">v2.8</span>
-      <span class="meta-pill">Last Updated September 6, 2026</span>
+      <span class="meta-pill">v2.9</span>
+      <span class="meta-pill">Last Updated September 7, 2026</span>
     </div>
   </header>
 
@@ -831,31 +960,9 @@
     </div>
     </div><!-- /#group-prizes -->
 
-    <!-- ===== Dues: 2026 roster status ===== -->
+    <!-- ===== Dues: open-season tracker + settled-season ledger ===== -->
     <div class="lens-panel" id="panel-dues" role="tabpanel" aria-labelledby="tab-dues">
-      <div class="card-head">
-        <h2>2026 Dues Status</h2>
-        <a class="pay-btn" href="https://venmo.com/u/mmurello" target="_blank" rel="noopener noreferrer" aria-label="Pay the Commish on Venmo at @mmurello">
-          <span aria-hidden="true">&#128176;</span> Pay Commish
-          <svg class="pay-mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect width="16" height="16" rx="3.5" fill="#fff"/><path d="M11.1 4.1c.4.7.6 1.5.6 2.4 0 3-2.5 6.9-4.6 8.1H4.4L2.6 4.2l2.6-.25 1 8.3c1-1.6 2.2-4.2 2.2-6 0-1-.2-1.7-.4-2.2z" fill="#3D95CE"/></svg>
-        </a>
-      </div>
-      <div class="dues-summary" id="duesSummary"></div>
-      <table class="dues-table">
-        <colgroup>
-          <col style="width:34%">
-          <col style="width:20%">
-          <col style="width:46%">
-        </colgroup>
-        <thead>
-          <tr>
-            <th scope="col">Owner</th>
-            <th scope="col" class="num">Owed</th>
-            <th scope="col">Status</th>
-          </tr>
-        </thead>
-        <tbody id="duesBody"></tbody>
-      </table>
+      <div id="duesPanel"></div>
     </div>
   </section>
 
@@ -1188,36 +1295,54 @@ const MAFFL = {
   {"year":2025,"owner":"Ben Funari","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1},
   {"year":2025,"owner":"Dominic Nicastro","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1}
  ],
- /* HAND-MAINTAINED from Dues_Log.csv (repo root). owed = Obligation - approved
-    Payments; status = PAID when owed <= 0; paid_date/method from the latest
-    approved Payment row.
+ /* HAND-MAINTAINED from Dues_Log.csv (repo root). One entry per season, newest
+    first. amount = the season's Obligation row for that owner; owed = Obligation
+    - approved Payments; status = PAID when owed <= 0; paid_date/method from the
+    latest approved Payment row.
+
+    SEASON ROLLOVER PROCEDURE -- when a season's last dues clear:
+      1. Set that season's "status" to "SETTLED" and add "closed_date" (the date
+         the final payment cleared, YYYY-MM-DD).
+      2. Prepend the next season:
+         {"year":N,"status":"OPEN","rows":[],
+          "note":"Amounts TBD following the N-1 season."}
+    No markup changes are required. renderDues() picks the highest-year OPEN
+    season for the live tracker and drops every SETTLED season into the ledger.
+    When the new season's amounts are set, fill its "rows" and the same code
+    renders the live tracker exactly as before.
+
     DO NOT run build\gen-prize.ps1 (or build\build.ps1 -Write) against this array
-    until the generator is repointed: it reads "MAFFL League Packet - 2025
-    Prizes.csv", whose 2026 Pay Status column is stale, and it emits only
-    owner/owed/status -- a -Write strips every paid_date/method (killing the
-    pay stamps) and reverts already-paid owners to UNPAID. */
- "dues_2026": [
-  {"owner":"Mike Murello","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
-  {"owner":"Todd Trozzo","owed":0,"status":"PAID","paid_date":"2026-09-03","method":"Venmo"},
-  {"owner":"Brian Murello/Ron Murello","owed":0,"status":"PAID","paid_date":"2026-08-28","method":"Check"},
-  {"owner":"Braiden Snyder","owed":0,"status":"PAID","paid_date":"2026-06-27","method":"Commish"},
-  {"owner":"Jacob Nickman","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
-  {"owner":"Jon Murello/Rick Simmons","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
-  {"owner":"Joe Reilly","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
-  {"owner":"Tony Brooks","owed":0,"status":"PAID","paid_date":"2026-09-06","method":"Venmo"},
-  {"owner":"David Murello","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
-  {"owner":"Tony Trozzo","owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
-  {"owner":"Chris Johnson","owed":100,"status":"UNPAID"},
-  {"owner":"Jon Fetrow","owed":0,"status":"PAID","paid_date":"2026-08-23","method":"Venmo"},
-  {"owner":"BJ Funari","owed":0,"status":"PAID","paid_date":"2026-08-26","method":"Venmo"},
-  {"owner":"Ed Peters","owed":0,"status":"PAID","paid_date":"2026-08-23","method":"Venmo"},
-  {"owner":"Dan Reilly","owed":80,"status":"UNPAID"},
-  {"owner":"Charles Lavrinc","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
-  {"owner":"Sam Lavrinc","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
-  {"owner":"Ben Funari","owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
-  {"owner":"Nick Yankovich","owed":0,"status":"PAID","paid_date":"2026-08-12","method":"Venmo"},
-  {"owner":"Dominic Nicastro","owed":0,"status":"PAID","paid_date":"2026-09-06","method":"Venmo"},
-  {"owner":"Bob Keslar","owed":0,"status":"PAID","paid_date":"2026-08-31","method":"Zelle"}
+    until the generator is repointed: it still emits the old flat "dues_2026"
+    shape from "MAFFL League Packet - 2025 Prizes.csv", whose 2026 Pay Status
+    column is stale, and it emits only owner/owed/status -- a -Write would
+    clobber this structure, strip every amount/paid_date/method (killing the pay
+    stamps) and revert already-paid owners to UNPAID. */
+ "dues_seasons": [
+  {"year":2027,"status":"OPEN","rows":[],
+   "note":"Amounts TBD following the 2026 season."},
+  {"year":2026,"status":"SETTLED","closed_date":"2026-09-07","rows":[
+    {"owner":"Mike Murello","amount":100,"owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+    {"owner":"Todd Trozzo","amount":100,"owed":0,"status":"PAID","paid_date":"2026-09-03","method":"Venmo"},
+    {"owner":"Brian Murello/Ron Murello","amount":80,"owed":0,"status":"PAID","paid_date":"2026-08-28","method":"Check"},
+    {"owner":"Braiden Snyder","amount":80,"owed":0,"status":"PAID","paid_date":"2026-06-27","method":"Commish"},
+    {"owner":"Jacob Nickman","amount":100,"owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+    {"owner":"Jon Murello/Rick Simmons","amount":100,"owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+    {"owner":"Joe Reilly","amount":100,"owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+    {"owner":"Tony Brooks","amount":80,"owed":0,"status":"PAID","paid_date":"2026-09-06","method":"Venmo"},
+    {"owner":"David Murello","amount":60,"owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+    {"owner":"Tony Trozzo","amount":100,"owed":0,"status":"PAID","paid_date":"2026-06-01","method":"Prize-2025"},
+    {"owner":"Chris Johnson","amount":100,"owed":0,"status":"PAID","paid_date":"2026-09-07","method":"Venmo"},
+    {"owner":"Jon Fetrow","amount":47,"owed":0,"status":"PAID","paid_date":"2026-08-23","method":"Venmo"},
+    {"owner":"BJ Funari","amount":80,"owed":0,"status":"PAID","paid_date":"2026-08-26","method":"Venmo"},
+    {"owner":"Ed Peters","amount":27,"owed":0,"status":"PAID","paid_date":"2026-08-23","method":"Venmo"},
+    {"owner":"Dan Reilly","amount":80,"owed":0,"status":"PAID","paid_date":"2026-09-07","method":"Venmo"},
+    {"owner":"Charles Lavrinc","amount":90,"owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+    {"owner":"Sam Lavrinc","amount":70,"owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+    {"owner":"Ben Funari","amount":90,"owed":0,"status":"PAID","paid_date":"2026-08-15","method":"Venmo"},
+    {"owner":"Nick Yankovich","amount":100,"owed":0,"status":"PAID","paid_date":"2026-08-12","method":"Venmo"},
+    {"owner":"Dominic Nicastro","amount":90,"owed":0,"status":"PAID","paid_date":"2026-09-06","method":"Venmo"},
+    {"owner":"Bob Keslar","amount":100,"owed":0,"status":"PAID","paid_date":"2026-08-31","method":"Zelle"}
+  ]}
  ],
  "meta": {
   "data_start": 2013,
@@ -1483,12 +1608,18 @@ function renderLens2() {
   document.getElementById("gtValue").textContent = usd(MAFFL.meta.grand_total);
 }
 
-/* ===================== 2026 Dues ===================== */
+/* ===================== Dues ===================== */
 const VENMO_MARK = `<svg class="pay-mark" viewBox="0 0 16 16" role="img" aria-label="Venmo"><rect width="16" height="16" rx="3.5" fill="#3D95CE"/><path d="M11.1 4.1c.4.7.6 1.5.6 2.4 0 3-2.5 6.9-4.6 8.1H4.4L2.6 4.2l2.6-.25 1 8.3c1-1.6 2.2-4.2 2.2-6 0-1-.2-1.7-.4-2.2z" fill="#fff"/></svg>`;
-function payStamp(d) {
+const PAY_BTN = `<a class="pay-btn" href="https://venmo.com/u/mmurello" target="_blank" rel="noopener noreferrer" aria-label="Pay the Commish on Venmo at @mmurello">
+          <span aria-hidden="true">&#128176;</span> Pay Commish
+          <svg class="pay-mark" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect width="16" height="16" rx="3.5" fill="#fff"/><path d="M11.1 4.1c.4.7.6 1.5.6 2.4 0 3-2.5 6.9-4.6 8.1H4.4L2.6 4.2l2.6-.25 1 8.3c1-1.6 2.2-4.2 2.2-6 0-1-.2-1.7-.4-2.2z" fill="#3D95CE"/></svg>
+        </a>`;
+function payStamp(d, withYear) {
   if (d.status !== "PAID" || !d.paid_date) return "";
   const dt = new Date(d.paid_date + "T12:00:00");
-  const when = dt.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const when = dt.toLocaleDateString("en-US", withYear
+    ? { month: "short", day: "numeric", year: "numeric" }
+    : { month: "short", day: "numeric" });
   const m = (d.method || "").toLowerCase();
   if (m === "venmo") return `<span class="pay-stamp">${VENMO_MARK}${esc(when)}</span>`;
   if (m === "prize-2025") return `<span class="pay-stamp pay-stamp--prize">2025 Prize</span>`;
@@ -1497,22 +1628,113 @@ function payStamp(d) {
   if (m === "check") return `<span class="pay-stamp pay-stamp--check">Check &middot; ${esc(when)}</span>`;
   return `<span class="pay-stamp">${esc(when)}</span>`;
 }
-function renderDues() {
-  const dues = MAFFL.dues_2026.slice().sort((a,b) => a.owner.localeCompare(b.owner));
-  const paid = dues.filter(d => d.status === "PAID").length;
-  const unpaid = dues.length - paid;
-  const owed = dues.reduce((s,d) => s + d.owed, 0);
-  document.getElementById("duesSummary").innerHTML = `
-    <span class="dues-chip dues-chip--owed">${usd(owed)} outstanding</span>
-    <span class="dues-chip dues-chip--unpaid">${unpaid} unpaid</span>
-    <span class="dues-chip dues-chip--paid">${paid} paid</span>
-  `;
-  document.getElementById("duesBody").innerHTML = dues.map(d => {
+function seasonStats(s) {
+  const rows = (s.rows || []).slice().sort((a,b) => a.owner.localeCompare(b.owner));
+  const n = rows.length;
+  const paid = rows.filter(d => d.status === "PAID").length;
+  const assessed = rows.reduce((t,d) => t + (d.amount || 0), 0);
+  const owed = rows.reduce((t,d) => t + d.owed, 0);
+  return { rows, n, paid, unpaid: n - paid, assessed, owed, collected: assessed - owed };
+}
+function renderOpenSeason(s) {
+  const head = `<div class="card-head">
+        <h2>${s.year} Dues Status</h2>
+        ${PAY_BTN}
+      </div>`;
+  const st = seasonStats(s);
+  if (!st.n) {
+    return head + `<div class="dues-empty">
+        <p class="de-title">Not open yet</p>
+        <p class="de-note">${esc(s.note || "")}</p>
+      </div>`;
+  }
+  const body = st.rows.map(d => {
     const pill = d.status === "PAID"
       ? `<span class="status-pill status-pill--paid">Paid</span>`
       : `<span class="status-pill status-pill--unpaid">Unpaid</span>`;
-    return `<tr><td class="owner">${esc(shortName(d.owner))}</td><td class="num">${usd(d.owed)}</td><td class="status">${pill}${payStamp(d)}</td></tr>`;
+    return `<tr><td class="owner">${esc(shortName(d.owner))}</td><td class="num">${usd(d.owed)}</td><td class="status">${pill}${payStamp(d, false)}</td></tr>`;
   }).join("");
+  return head + `<div class="dues-summary">
+        <span class="dues-chip dues-chip--owed">${usd(st.owed)} outstanding</span>
+        <span class="dues-chip dues-chip--unpaid">${st.unpaid} unpaid</span>
+        <span class="dues-chip dues-chip--paid">${st.paid} paid</span>
+      </div>
+      <table class="dues-table">
+        <colgroup>
+          <col style="width:34%">
+          <col style="width:20%">
+          <col style="width:46%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Owner</th>
+            <th scope="col" class="num">Owed</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>${body}</tbody>
+      </table>`;
+}
+function ledgerRowHTML(s) {
+  const st = seasonStats(s);
+  const closed = s.closed_date
+    ? new Date(s.closed_date + "T12:00:00").toLocaleDateString("en-US", { month: "short", year: "numeric" })
+    : "";
+  const meta = `${st.paid} of ${st.n} paid &middot; ${usd(st.collected)} collected`
+    + (closed ? ` &middot; closed ${esc(closed)}` : "");
+  const body = st.rows.map(d =>
+    `<tr><td class="owner">${esc(shortName(d.owner))}</td><td class="num">${usd(d.amount || 0)}</td><td class="status">${payStamp(d, true)}</td></tr>`
+  ).join("");
+  return `<details class="led-item">
+      <summary>
+        <span class="led-year">${s.year}</span>
+        <span class="led-main">
+          <span class="led-badge">Settled</span>
+          <span class="led-meta">${meta}</span>
+        </span>
+        <span class="led-arrow" aria-hidden="true">&#9656;</span>
+      </summary>
+      <div class="led-body">
+        <table class="dues-table">
+          <colgroup>
+            <col style="width:34%">
+            <col style="width:20%">
+            <col style="width:46%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">Owner</th>
+              <th scope="col" class="num">Dues</th>
+              <th scope="col">Paid</th>
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+        <div class="led-foot">
+          <span>${s.year} season total</span>
+          <span><b>${usd(st.collected)}</b> of <b>${usd(st.assessed)}</b></span>
+        </div>
+      </div>
+    </details>`;
+}
+function renderLedger(seasons) {
+  const settled = seasons.filter(s => s.status === "SETTLED").sort((a,b) => b.year - a.year);
+  const list = settled.length
+    ? `<div class="led-list">${settled.map(ledgerRowHTML).join("")}</div>`
+    : `<div class="led-empty">No settled seasons yet.</div>`;
+  return `<div class="ledger">
+      <div class="ledger-head">
+        <h3>Dues Ledger</h3>
+        <span class="ledger-rule" aria-hidden="true"></span>
+      </div>
+      ${list}
+    </div>`;
+}
+function renderDues() {
+  const seasons = MAFFL.dues_seasons || [];
+  const open = seasons.filter(s => s.status === "OPEN").sort((a,b) => b.year - a.year)[0];
+  document.getElementById("duesPanel").innerHTML =
+    (open ? renderOpenSeason(open) : "") + renderLedger(seasons);
 }
 
 /* ===================== Tabs ===================== */
