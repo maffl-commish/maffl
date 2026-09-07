@@ -403,6 +403,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 0;
+    /* iOS minimum tap target — matches the .ct-weekly .tier-head rule below. */
+    min-height: 44px;
     font-family: var(--display);
     font-weight: 700;
     font-size: 13px;
@@ -882,6 +884,199 @@
   .site-footer > div + div { margin-top: 4px; }
 
   /* ---------- Responsive ---------- */
+  /* ---------- Week 0: neutral streak ---------- */
+  .streak.none { background: #eceff4; color: var(--muted); }
+
+  /* ---------- Draft Recap ---------- */
+  .recap-method {
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--navy);
+    margin: 0 0 14px;
+  }
+  .recap-chars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0 0 18px;
+  }
+  .recap-chars li {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 10px 12px;
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .recap-chars .cnum {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--gold-dark);
+    flex: 0 0 auto;
+    min-width: 42px;
+  }
+  .recap-chars .ctxt { font-family: var(--body); font-size: 12px; line-height: 1.45; color: var(--navy); }
+
+  .sup-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 10px 0 16px;
+  }
+  .sup {
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 0;
+  }
+  .sup-label {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .sup.buy .sup-label { color: var(--gold-dark); }
+  .sup.value .sup-label { color: var(--win); }
+  .sup.reach .sup-label { color: var(--loss); }
+  .sup-subject {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    margin-top: 6px;
+    line-height: 1.2;
+  }
+  .sup-value {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.1;
+    color: var(--navy);
+    margin: 2px 0 2px;
+  }
+  .sup.buy .sup-value { color: var(--gold-dark); }
+  .sup.value .sup-value { color: var(--win); }
+  .sup.reach .sup-value { color: var(--loss); }
+  .sup-team { font-family: var(--body); font-size: 11px; color: var(--muted); }
+  .sup-note {
+    font-family: var(--body);
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--navy);
+    margin: 9px 0 0;
+    padding-top: 9px;
+    border-top: 1px solid var(--border);
+  }
+
+  .grade-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 0 4px 8px;
+    font-family: var(--body);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .grade-legend .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+  .grade-legend .sw.under { background: var(--win); }
+  .grade-legend .sw.over { background: var(--loss); }
+  .grade-legend-note { font-style: italic; }
+
+  .grade-row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 140px;
+    gap: 10px;
+    align-items: start;
+    padding: 10px 4px;
+    border-top: 1px solid var(--border);
+  }
+  /* No :first-of-type reset — the legend sits directly above, so the first row's
+     top border reads as the divider under it. Intentional. */
+  .grade {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    text-align: center;
+    padding: 3px 0;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .gA { background: rgba(29, 158, 117, 0.14); color: var(--win); }
+  .gB { background: #eceff4; color: var(--navy); }
+  .gC { background: rgba(192, 74, 74, 0.12); color: var(--loss); }
+  .grade-team { font-family: var(--body); font-weight: 700; font-size: 14px; color: var(--navy); }
+  .grade-owner { font-weight: 500; font-size: 11px; color: var(--muted); margin-left: 4px; }
+  .grade-note { font-family: var(--body); font-size: 12px; line-height: 1.45; color: var(--navy); margin-top: 3px; }
+  .grade-mkt { display: flex; align-items: center; gap: 8px; justify-content: flex-end; padding-top: 4px; }
+  .track { position: relative; display: block; flex: 1 1 auto; min-width: 60px; height: 8px; background: #eceff4; border-radius: 2px; }
+  .zero { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--border); }
+  .bar { position: absolute; top: 0; height: 8px; border-radius: 2px; }
+  .bar.under { background: var(--win); }
+  .bar.over { background: var(--loss); }
+  .vm { font-family: var(--display); font-weight: 700; font-size: 13px; flex: 0 0 auto; min-width: 46px; text-align: right; }
+  .vm.under { color: var(--win); }
+  .vm.over { color: var(--loss); }
+
+  /* ---------- Week 1 Preview ---------- */
+  .mu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .mu {
+    background: var(--page-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 0;
+  }
+  .mu.ghost { border-color: var(--gold); border-left: 3px solid var(--gold); }
+  .mu-teams { display: flex; align-items: flex-start; gap: 10px; }
+  .mu-side { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .mu-side.right { text-align: right; }
+  .mu-team {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mu-owner { font-family: var(--body); font-size: 11px; color: var(--muted); }
+  .mu-vs {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    flex: 0 0 auto;
+    padding-top: 2px;
+  }
+  .mu-note {
+    font-family: var(--body);
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--navy);
+    margin: 10px 0 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ---------- Week 0 misc ---------- */
+  .survivor-note {
+    font-family: var(--body);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--navy);
+    font-style: italic;
+    margin: 0 0 14px;
+  }
+  .ct-unclaimed { font-family: var(--body); font-size: 13px; color: var(--muted); font-style: italic; }
+
   @media (max-width: 1024px) {
     .site-nav { gap: 16px; }
     .site-nav a { font-size: 12px; }
@@ -939,6 +1134,13 @@
     .row { grid-template-columns: 48px minmax(0, 1fr) auto; }
     .row .team-name { font-size: 13px; }
 
+    .recap-chars { grid-template-columns: 1fr; }
+    .sup-grid { grid-template-columns: 1fr 1fr; }
+    .mu-grid { grid-template-columns: 1fr; }
+    .grade-row { grid-template-columns: 36px minmax(0, 1fr); row-gap: 8px; }
+    .grade-mkt { grid-column: 2 / -1; justify-content: flex-start; padding-top: 0; }
+    .track { max-width: 160px; }
+
     .offseason-card { padding: 32px 22px; }
     .offseason-head { font-size: 22px; }
   }
@@ -948,6 +1150,8 @@
     .cr .cr-label { display: none; }
     .row .pts { min-width: 34px; }
     .cr { min-width: 28px; }
+
+    .sup-grid { grid-template-columns: 1fr; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -987,8 +1191,8 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v2.0</span>
-      <span class="meta-pill">Last Updated August 24, 2026</span>
+      <span class="meta-pill">v3.0</span>
+      <span class="meta-pill">Last Updated September 7, 2026</span>
     </div>
   </header>
 </div>
@@ -1047,66 +1251,217 @@ const SEASON = 2026;
      "preseason" — pre-draft / pre-kickoff placeholder
      "live"      — normal weekly cards (requires a populated WEEKS array)
      "offseason" — season over, year-end placeholder                      */
-const PULSE_STATE = "preseason";
+const PULSE_STATE = "live";
 
 /* ---------------------------------------------------------------------
- * WEEK 0 — post-draft snapshot. Everyone opens 0-0; Upper divisions and
- * Lower ordering are seeded by offseason credit balance.
+ * WEEK 0 — post-draft snapshot. Both auctions are complete; no games have
+ * been played, so every team carries w:0, l:0, points:0, streak:0.
+ * Week 0 is DISPLAY-ONLY — no rows are appended to any gold CSV, because
+ * no games exist to record. Standings rank by credit balance (pulseSort).
  * Source: MAFFL_Owners_Sheet_revised.csv (Current Team, Current Credit
  * Balance) + MAFFL_League_Packet__Division_History.csv (2026 Division).
- * VERIFY after the Labor Day Eve Division Swap freeze — a swap changes
- * both alignment and balances (-10 credits).
- *
- * TO GO LIVE after Draft Day:
- *   1. Fill in headline + newsReel below.
- *   2. const WEEKS = [WEEK_ZERO];
- *   3. const PULSE_STATE = "live";
  * ------------------------------------------------------------------- */
-const WEEK_ZERO = {
-  weekNumber: 0,
-  label: "Post-Draft",
-  dateString: "Sep 8, 2026",
-  headline: "TODO — post-draft headline.",
-  newsReel: [
-    "TODO — draft bullet one.",
-    "TODO — draft bullet two."
-  ],
-  upperTier: {
-    divA: [
-      { team: "Bad Attitude Gang",          owner: "Mike Murello",   w: 0, l: 0, points: 0, streak: 0, credits: 27 },
-      { team: "Kids BadBlood HighSchool",   owner: "David Murello",  w: 0, l: 0, points: 0, streak: 0, credits: 12 },
-      { team: "South Hills FunShiners",     owner: "BJ Funari",      w: 0, l: 0, points: 0, streak: 0, credits:  4 }
-    ],
-    divB: [
-      { team: "The Prodigal Sons",          owner: "Jon Murello/Rick Simmons", w: 0, l: 0, points: 0, streak: 0, credits: 24 },
-      { team: "Jake's Jagoffs",             owner: "Jacob Nickman",  w: 0, l: 0, points: 0, streak: 0, credits: 15 },
-      { team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder", w: 0, l: 0, points: 0, streak: 0, credits:  5 }
-    ],
-    divC: [
-      { team: "Reilly's Reindeer",          owner: "Joe Reilly",     w: 0, l: 0, points: 0, streak: 0, credits: 23 },
-      { team: "Happy Valley Hammer Time",   owner: "Tony Trozzo",    w: 0, l: 0, points: 0, streak: 0, credits: 17 },
-      { team: "The Big Bang Theory",        owner: "Dan Reilly",     w: 0, l: 0, points: 0, streak: 0, credits:  6 }
-    ],
-    divD: [
-      { team: "Hadley's Comets",            owner: "Brian Murello/Ron Murello", w: 0, l: 0, points: 0, streak: 0, credits: 7 },
-      { team: "Turkey Hat Conglomerate",    owner: "Ed Peters",      w: 0, l: 0, points: 0, streak: 0, credits:  7 },
-      { team: "Southside Shooters",         owner: "Jon Fetrow",     w: 0, l: 0, points: 0, streak: 0, credits:  7 }
-    ]
-  },
-  lowerTier: [
-    { team: "Tony's Talented Team",     owner: "Tony Brooks",      w: 0, l: 0, points: 0, streak: 0, credits: 10 },
-    { team: "Tommy Phamclub",           owner: "Sam Lavrinc",      w: 0, l: 0, points: 0, streak: 0, credits:  8 },
-    { team: "The Best in The 'Burgh",   owner: "Ben Funari",       w: 0, l: 0, points: 0, streak: 0, credits:  6 },
-    { team: "Portly Primates",          owner: "Charles Lavrinc",  w: 0, l: 0, points: 0, streak: 0, credits:  6 },
-    { team: "Steel City Champyinz",     owner: "Dominic Nicastro", w: 0, l: 0, points: 0, streak: 0, credits:  6 },
-    { team: "Sarge's Squad",            owner: "Nick Yankovich",   w: 0, l: 0, points: 0, streak: 0, credits:  5 },
-    { team: "U-Town Fightin Ferrets",   owner: "Todd Trozzo",      w: 0, l: 0, points: 0, streak: 0, credits:  1 },
-    { team: "Camp Kes",                 owner: "Bob Keslar",       w: 0, l: 0, points: 0, streak: 0, credits:  1 },
-    { team: "The V-Unit",               owner: "Chris Johnson",    w: 0, l: 0, points: 0, streak: 0, credits:  0 }
-  ]
-};
+const WEEKS = [
+  {
+    weekNumber: 0,
+    dateString: "Sep 7, 2026",
+    headline: "Both auctions are in the books, the 2026 rosters are set, and 👻 has a schedule. Nothing counts until Sunday.",
+    latestChange: "Every award is unclaimed and every balance is exactly what you walked out of the auction holding. The tracker starts moving Sunday.",
 
-const WEEKS = [];
+    /* Standings are pre-sorted credits-descending, ties alphabetical, MAFFL Ghost last.
+       The renderer re-sorts with the same rule for weekNumber === 0 — see pulseSort. */
+    upperTier: {
+      divA: [
+        { team: "Bad Attitude Gang",          owner: "Mike Murello",  w: 0, l: 0, points: 0, streak: 0, credits: 27 },
+        { team: "Marco Clair Kardiac Attack", owner: "David Murello", w: 0, l: 0, points: 0, streak: 0, credits: 12 },
+        { team: "South Hills FunShiners",     owner: "BJ Funari",     w: 0, l: 0, points: 0, streak: 0, credits:  4 }
+      ],
+      divB: [
+        { team: "The Prodigal Sons",          owner: "Jon Murello/Rick Simmons", w: 0, l: 0, points: 0, streak: 0, credits: 24 },
+        { team: "Jake's Jagoffs",             owner: "Jacob Nickman",            w: 0, l: 0, points: 0, streak: 0, credits: 15 },
+        { team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder",           w: 0, l: 0, points: 0, streak: 0, credits:  5 }
+      ],
+      divC: [
+        { team: "Reilly's Reindeer",          owner: "Joe Reilly",  w: 0, l: 0, points: 0, streak: 0, credits: 23 },
+        { team: "Happy Valley Hammer Time",   owner: "Tony Trozzo", w: 0, l: 0, points: 0, streak: 0, credits: 17 },
+        { team: "The Big Bang Theory",        owner: "Dan Reilly",  w: 0, l: 0, points: 0, streak: 0, credits:  6 }
+      ],
+      divD: [
+        { team: "Hadley's Comets",            owner: "Brian Murello/Ron Murello", w: 0, l: 0, points: 0, streak: 0, credits: 7 },
+        { team: "Southside Shooters",         owner: "Jon Fetrow/Casey Trozzo",   w: 0, l: 0, points: 0, streak: 0, credits: 7 },
+        { team: "Turkey Hat Conglomerate",    owner: "Ed Peters",                 w: 0, l: 0, points: 0, streak: 0, credits: 7 }
+      ]
+    },
+    lowerTier: [
+      { team: "Tony's Talented Team",   owner: "Tony Brooks",      w: 0, l: 0, points: 0, streak: 0, credits: 10 },
+      { team: "Tommy Phamclub",         owner: "Sam Lavrinc",      w: 0, l: 0, points: 0, streak: 0, credits:  8 },
+      { team: "Portly Primates",        owner: "Charles Lavrinc",  w: 0, l: 0, points: 0, streak: 0, credits:  6 },
+      { team: "Steel City Champyinz",   owner: "Dominic Nicastro", w: 0, l: 0, points: 0, streak: 0, credits:  6 },
+      { team: "The Best in The 'Burgh", owner: "Ben Funari",       w: 0, l: 0, points: 0, streak: 0, credits:  6 },
+      { team: "Sarge's Squad",          owner: "Nick Yankovich",   w: 0, l: 0, points: 0, streak: 0, credits:  5 },
+      { team: "Camp Kes",               owner: "Bob Keslar",       w: 0, l: 0, points: 0, streak: 0, credits:  1 },
+      { team: "Fightin Ferrets",        owner: "Todd Trozzo",      w: 0, l: 0, points: 0, streak: 0, credits:  1 },
+      { team: "The V-Unit",             owner: "Chris Johnson",    w: 0, l: 0, points: 0, streak: 0, credits:  0 },
+      { team: "MAFFL Ghost",            owner: "—",                w: 0, l: 0, points: 0, streak: 0, credits:  0 }
+    ],
+
+    /* 21 real teams in the pool. The Ghost is NOT in survivor — 9 entries in lowerActive, not 10. */
+    survivor: {
+      upperActive: [
+        "Bad Attitude Gang", "The Prodigal Sons", "Reilly's Reindeer",
+        "Happy Valley Hammer Time", "Jake's Jagoffs", "Marco Clair Kardiac Attack",
+        "Hadley's Comets", "Southside Shooters", "Turkey Hat Conglomerate",
+        "The Big Bang Theory", "Mike Vicks Dog Sitting Co.", "South Hills FunShiners"
+      ],
+      upperEliminated: [],
+      upperConcluded: false,
+      upperWinner: null,
+      lowerActive: [
+        "Tony's Talented Team", "Tommy Phamclub", "Portly Primates",
+        "Steel City Champyinz", "The Best in The 'Burgh", "Sarge's Squad",
+        "Camp Kes", "Fightin Ferrets", "The V-Unit"
+      ],
+      lowerEliminated: [],
+      lowerConcluded: false,
+      lowerWinner: null
+    },
+    survivorNote: "Twenty-one teams in the pool and nobody out. The lowest score in each tier gets the hook every week — and 👻 results do not count, so whoever draws the Ghost is safe from elimination that week no matter what they score.",
+
+    creditTracker: [
+      { award: "Most Team Points Scored — Upper",       credits: 5, leaderTeam: "—", leaderOwner: "—", value: "Not yet awarded" },
+      { award: "Most Team Points Scored — Lower",       credits: 5, leaderTeam: "—", leaderOwner: "—", value: "Not yet awarded" },
+      { award: "Largest Blowout Victory — Upper",       credits: 3, leaderTeam: "—", leaderOwner: "—", value: "Not yet awarded" },
+      { award: "Largest Blowout Victory — Lower",       credits: 3, leaderTeam: "—", leaderOwner: "—", value: "Not yet awarded" },
+      { award: "Individual High Score (Wkly) — Upper",  credits: 3, leaderTeam: "—", leaderOwner: "—", value: "Not yet awarded" },
+      { award: "Individual High Score (Wkly) — Lower",  credits: 3, leaderTeam: "—", leaderOwner: "—", value: "Not yet awarded" }
+    ],
+    highestWeekly: { credits: 1, weeks: [] },
+
+    /* MUST stay empty. The renderer swaps this slot for draftRecap when weekNumber === 0. */
+    elite5: [],
+
+    draftRecap: {
+      method: "Upper bids with twelve wallets, Lower with nine, so Upper money runs structurally hotter — it spent $2,320 on the 186 players bought in both rooms where Lower spent $1,776. Every cross-tier price is scaled 1.306× to close that gap. Those shared players account for 94–99.5% of every team's $200, because what does not overlap is almost entirely dollar fliers. This is an auction-price signal, not a projection: it measures who bought efficiently against the league's own revealed pricing. Grades are curved within tier — an Upper C− and a Lower C− are not the same roster.",
+      characteristics: [
+        { stat: "50%", text: "of Upper's 264 picks went for exactly one dollar — against a third of Lower's. Upper is a stars-and-scrubs room now and the auction stopped pretending otherwise." },
+        { stat: "QB",  text: "Quarterback pricing diverged hardest of any position. Dak, Hurts, Goff, Bo Nix and Burrow are five of the seven widest cross-tier gaps in the dataset." },
+        { stat: "$31", text: "The widest single gap: Omarion Hampton cost $50 in Upper and $19 in Lower. Jared Goff is close behind at $38 against $9." }
+      ],
+      upper: {
+        label: "Upper Tier",
+        subhead: "$2,400 spent · 264 picks",
+        superlatives: [
+          { kind: "buy",   label: "Biggest buy",       subject: "Jahmyr Gibbs",     value: "$69", team: "Turkey Hat Conglomerate", owner: "Ed Peters",
+            note: "The most expensive player bought in either room. Lower got him for $61 in a shallower field, so Ed paid the twelve-wallet premium and paid it happily." },
+          { kind: "value", label: "Best value",        subject: "Puka Nacua",       value: "$44", team: "South Hills FunShiners", owner: "BJ Funari",
+            note: "Lower paid $49 for Nacua in a shallower room. BJ got him for $44 in a deeper one — $20 under market, and the second-biggest piece of the best draft in the tier." },
+          { kind: "reach", label: "Biggest reach",     subject: "Jared Goff",       value: "$38", team: "Turkey Hat Conglomerate", owner: "Ed Peters",
+            note: "Goff went for $9 in Lower. Ed paid $38. Same quarterback, same week, four times the money." },
+          { kind: "conc",  label: "Most concentrated", subject: "Top-heavy index",  value: "78%", team: "Turkey Hat Conglomerate", owner: "Ed Peters",
+            note: "Share of Ed's $200 tied up in his three most expensive players — the most top-heavy roster in either tier. The other eighteen picks cost a dollar each." }
+        ],
+        grades: [
+          { team: "South Hills FunShiners",     owner: "BJ Funari",                 grade: "A+", vsMarket: -64,
+            note: "$145 of $200 into three players, and both starting quarterback slots filled for $2 in a league that starts two. The most extreme stars-and-scrubs build in MAFFL — and the market says every star was a bargain." },
+          { team: "Southside Shooters",         owner: "Jon Fetrow/Casey Trozzo",   grade: "A-", vsMarket: -22,
+            note: "Lamb at $38 was $16 under. Two mid-priced quarterbacks instead of one expensive one. Quietly the most sensible board in the tier." },
+          { team: "The Prodigal Sons",          owner: "Jon Murello/Rick Simmons",  grade: "B+", vsMarket: -17,
+            note: "$127 on running backs, $9 on wide receivers. Ludicrous on its face, efficiently executed line by line." },
+          { team: "Jake's Jagoffs",             owner: "Jacob Nickman",             grade: "B+", vsMarket: -12,
+            note: "Jefferson at $32 was the steal of his board. No single bid over $42 and value on nearly all of them." },
+          { team: "Reilly's Reindeer",          owner: "Joe Reilly",                grade: "B",  vsMarket: -6,
+            note: "Priced almost perfectly to market top to bottom. The $21 Jadarian Price is the only visible splurge." },
+          { team: "Turkey Hat Conglomerate",    owner: "Ed Peters",                 grade: "B",  vsMarket: -3,
+            note: "The loudest auction in the league: $156 on three players, then eighteen dollar-guys. Chase at $49 was a steal, Goff at $38 was a fire. They cancel." },
+          { team: "Bad Attitude Gang",          owner: "Mike Murello",              grade: "B-", vsMarket: 3,
+            note: "Josh Allen at $62 anchors a $75 starting quarterback pair. Then $23 total on running backs. The commissioner picked his spot and will live with it." },
+          { team: "Marco Clair Kardiac Attack", owner: "David Murello",             grade: "C+", vsMarket: 12,
+            note: "New name, same board. Spread evenly, paid a touch over on most of it. Nothing broken, nothing sharp." },
+          { team: "Happy Valley Hammer Time",   owner: "Tony Trozzo",               grade: "C+", vsMarket: 16,
+            note: "Hampton at +$25 and Bo Nix at +$18 are two of the four worst reaches in the tier. Amon-Ra at $48 was the one fair price." },
+          { team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder",            grade: "C",  vsMarket: 21,
+            note: "Hurts and Maye for $95 — the most expensive starting quarterback pair in the league, and in a two-QB format that is a plan rather than an indulgence. It left $28 for receivers." },
+          { team: "Hadley's Comets",            owner: "Brian Murello/Ron Murello", grade: "C-", vsMarket: 33,
+            note: "Dak and Burrow for $94 and not a third quarterback anywhere on the roster. Fully funded at the top, nothing behind it, and $23 on receivers. Worst overpay per player in the tier." },
+          { team: "The Big Bang Theory",        owner: "Dan Reilly",                grade: "C-", vsMarket: 40,
+            note: "The most balanced roster in MAFFL — top bid of $30 — and the most expensive relative to market. Dan bought twenty-one fair-to-rich prices instead of three cheap ones." }
+        ]
+      },
+      lower: {
+        label: "Lower Tier",
+        subhead: "$1,788 spent · 198 picks",
+        superlatives: [
+          { kind: "buy",   label: "Biggest buy",       subject: "Bijan Robinson",  value: "$63", team: "Portly Primates", owner: "Charles Lavrinc",
+            note: "Top price in Lower, and the start of a $103 running back room. Upper paid $67 for the same man with three more bidders in the field." },
+          { kind: "value", label: "Best value",        subject: "Jared Goff",      value: "$9",  team: "Fightin Ferrets", owner: "Todd Trozzo",
+            note: "The exact quarterback Upper torched $38 on. Todd got him for nine — and he was the fifth QB Todd bought." },
+          { kind: "reach", label: "Biggest reach",     subject: "Ja'Marr Chase",   value: "$53", team: "Steel City Champyinz", owner: "Dominic Nicastro",
+            note: "Paid $53 in a nine-team room for a player a twelve-team room landed at $49. Dom wanted him and the whole table knew it." },
+          { kind: "conc",  label: "Most concentrated", subject: "Top-heavy index", value: "62%", team: "Portly Primates", owner: "Charles Lavrinc",
+            note: "Share of Charlie's $200 in his top three. Top-heavy for Lower, but nothing close to what Upper did — this room spread its money far wider." }
+        ],
+        grades: [
+          { team: "Fightin Ferrets",        owner: "Todd Trozzo",      grade: "A+", vsMarket: -44,
+            note: "Allen and Lamar start for $85; Maye, Dart and Goff cost $57 more behind them. Four wide receivers for $3. Deranged on paper and still the most efficient dollar-for-dollar auction in the league." },
+          { team: "The V-Unit",             owner: "Chris Johnson",    grade: "A-", vsMarket: -17,
+            note: "Burrow $27, Bo Nix $17, Jadarian Price $6 — three of the tier's best buys. Chris found his quarterbacks in the bargain bin and it worked." },
+          { team: "Tony's Talented Team",   owner: "Tony Brooks",      grade: "B",  vsMarket: -5,
+            note: "Hurts at $21 and Etienne at $12 were two of the best value buys in the tier. A middle-class board with a pair of genuine steals in it." },
+          { team: "Sarge's Squad",          owner: "Nick Yankovich",   grade: "B",  vsMarket: -3,
+            note: "Dak at $21 paid for the Puka reach. Net wash, full $200 deployed, no wasted motion." },
+          { team: "The Best in The 'Burgh", owner: "Ben Funari",       grade: "B-", vsMarket: 3,
+            note: "$89 on receivers, most in the tier. Twenty-one measured buys at flat market pricing — no mistakes, and no edges either." },
+          { team: "Portly Primates",        owner: "Charles Lavrinc",  grade: "B-", vsMarket: 6,
+            note: "Biggest buy in Lower at $63, $103 on running backs total. Paid a small premium to own the position outright." },
+          { team: "Tommy Phamclub",         owner: "Sam Lavrinc",      grade: "B-", vsMarket: 7,
+            note: "Paid up for Amon-Ra and CeeDee, then found Omarion Hampton at $19 — the single biggest bargain in either auction." },
+          { team: "Camp Kes",               owner: "Bob Keslar",       grade: "C",  vsMarket: 24,
+            note: "The most disciplined board in the tier: top bid $34, only two dollar-guys, all $200 spent. Also retail on nearly every line." },
+          { team: "Steel City Champyinz",   owner: "Dominic Nicastro", grade: "C-", vsMarket: 30,
+            note: "Chase at +$16 and McConkey at +$9 were the two biggest reaches in Lower. Dom telegraphed his guys and the room billed him for it." }
+        ]
+      }
+    },
+
+    /* All 11 Week 1 games are present for completeness. The renderer shows only highlight:true. */
+    matchupPreviews: [
+      { tier: "U", highlight: true,  teamA: "Bad Attitude Gang", ownerA: "Mike Murello", teamB: "Reilly's Reindeer", ownerB: "Joe Reilly",
+        note: "The commissioner's $62 Josh Allen against Joe's $44 McCaffrey. Mike put $85 into quarterbacks and $23 into running backs; Joe did almost exactly the opposite." },
+      { tier: "U", highlight: false, teamA: "Marco Clair Kardiac Attack", ownerA: "David Murello", teamB: "Southside Shooters", ownerB: "Jon Fetrow/Casey Trozzo",
+        note: "New name, first outing. David's $44 Lamar opens against Casey Trozzo's first game as a co-owner of record." },
+      { tier: "U", highlight: false, teamA: "The Big Bang Theory", ownerA: "Dan Reilly", teamB: "Hadley's Comets", ownerB: "Brian Murello/Ron Murello",
+        note: "The two lowest draft grades in Upper, drawn against each other in Week 1. Dan's twenty-one fair prices against a $94 quarterback room." },
+      { tier: "U", highlight: true,  teamA: "Jake's Jagoffs", ownerA: "Jacob Nickman", teamB: "South Hills FunShiners", ownerB: "BJ Funari",
+        note: "The tier's A+ auction gets audited immediately. Three players are $145 of BJ's roster; Jacob's most expensive man cost $42." },
+      { tier: "U", highlight: false, teamA: "The Prodigal Sons", ownerA: "Jon Murello/Rick Simmons", teamB: "Happy Valley Hammer Time", ownerB: "Tony Trozzo",
+        note: "$127 of running back against Tony's $62 quarterback room and the $50 Omarion Hampton. Somebody's theory of this sport is wrong by Sunday night." },
+      { tier: "U", highlight: true,  teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters",
+        note: "$96 of quarterback against eighteen dollar-guys and Jahmyr Gibbs. The two most extreme builds in the tier, in Week 1, because of course." },
+      { tier: "L", highlight: true,  ghost: true, teamA: "MAFFL Ghost", ownerA: "—", teamB: "Portly Primates", ownerB: "Charles Lavrinc",
+        note: "👻 The Ghost's first appearance on a MAFFL schedule, and Charlie draws it. No roster, no walkover: the Ghost posts the average of the real Lower scores with the top one dropped, so Portly Primates has to beat the room, not an empty chair." },
+      { tier: "L", highlight: false, teamA: "Camp Kes", ownerA: "Bob Keslar", teamB: "The Best in The 'Burgh", ownerB: "Ben Funari",
+        note: "The two flattest boards in Lower. Bob's top bid was $34, Ben's was $39. This gets decided entirely in the middle rounds." },
+      { tier: "L", highlight: false, teamA: "Steel City Champyinz", ownerA: "Dominic Nicastro", teamB: "Tommy Phamclub", ownerB: "Sam Lavrinc",
+        note: "Dom's $53 Chase against Sam's $83 receiver pair. The two teams that paid most for pass-catchers meet on day one." },
+      { tier: "L", highlight: true,  teamA: "Fightin Ferrets", ownerA: "Todd Trozzo", teamB: "Tony's Talented Team", ownerB: "Tony Brooks",
+        note: "The most efficient auction in Lower against the tier's second-biggest buy. Todd's five quarterbacks open against Tony's $61 Gibbs." },
+      { tier: "L", highlight: false, teamA: "The V-Unit", ownerA: "Chris Johnson", teamB: "Sarge's Squad", ownerB: "Nick Yankovich",
+        note: "Chris got Burrow, Lawrence and Nix for $65 combined. Nick paid $49 for Nacua alone. Patience against star power." }
+    ],
+
+    newsReel: [
+      "Ed Peters owns both ends of the Upper auction: the $69 Jahmyr Gibbs, the most expensive player in either room, and the $38 Jared Goff, the worst reach in the tier. Eighteen of his other twenty picks cost a dollar.",
+      "This is a two-quarterback league and Upper priced it like one. Braiden Snyder paid $95 for Hurts and Maye, Hadley's Comets $94 for Dak and Burrow — and BJ Funari filled both his starting slots for $4, with four one-dollar quarterbacks.",
+      "Todd Trozzo bought five quarterbacks for $142. Allen and Lamar start; $57 of Maye, Dart and Goff sits behind them. He spent $3 on four wide receivers, and the Ferrets have also dropped “U-Town” from the name.",
+      "Hadley's Comets are the only team in Upper carrying exactly two quarterbacks and nothing else. Dak and Burrow for $94, no third arm on the roster, and byes arrive whether Brian and Ron planned for them or not.",
+      "Jared Goff cost $9 in Lower and $38 in Upper. The two rooms have never disagreed harder about one man.",
+      "David Murello's Kids BadBlood HighSchool is now Marco Clair Kardiac Attack.",
+      "Casey Trozzo joins Jon Fetrow as co-owner of record for the Southside Shooters.",
+      "Half of Upper's 264 picks went for exactly one dollar. A third of Lower's did. Draw your own conclusions about which room still has a middle class.",
+      "👻 makes its first appearance on a MAFFL schedule this season. Lower sits at nine real teams, so the Ghost fills the tenth slot and every week posts the average of the real teams' scores with the top score dropped. Beat the average, win. It is not a bye."
+    ]
+  }
+];
 
 /* --------- HELPERS --------- */
 function esc(s) {
@@ -1126,7 +1481,8 @@ const SHORT_NAMES = {
   "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
   "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
   "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
-  "jon fetrow":"Fetrow","ed peters":"Ed","tony brooks":"Brooks",
+  "jon fetrow":"Fetrow","jon fetrow / casey trozzo":"Fetrow/Casey",
+  "ed peters":"Ed","tony brooks":"Brooks",
   "braiden snyder":"Braiden","charles lavrinc":"Charlie","sam lavrinc":"Sam",
   "nick yankovich":"Nick","dominic nicastro":"Dom"
 };
@@ -1138,6 +1494,22 @@ function streakLabel(n) {
   return "—";
 }
 function streakClass(n) { return n >= 0 ? "w" : "l"; }
+
+/* Week 0 has no games, so standings rank by credit balance, highest first.
+   Ties break alphabetically. MAFFL Ghost always sorts last in Week 0 — it holds
+   no credits and is a schedule filler, not a competitor. Every other week falls
+   through to standingsSort (wins, losses, points, then credits). */
+function pulseSort(week) {
+  if (week && week.weekNumber === 0) {
+    return (a, b) => {
+      if (a.team === "MAFFL Ghost") return 1;
+      if (b.team === "MAFFL Ghost") return -1;
+      if (b.credits !== a.credits) return b.credits - a.credits;
+      return a.team.localeCompare(b.team);
+    };
+  }
+  return standingsSort;
+}
 
 function weekLabel(w) { return w.label || ("Week " + w.weekNumber); }
 
@@ -1175,14 +1547,25 @@ function renderPage(week) {
   const main = document.getElementById("pulseMain");
   const hasStandings = !!(week.upperTier && week.lowerTier && week.lowerTier.length);
   const hasSurvivor  = !!(week.survivor && week.survivor.upperActive);
-  const hasElite     = !!(week.elite5 && week.elite5.length) || week.weekNumber >= 14;
+  const hasElite     = !!(week.elite5 && week.elite5.length) || week.weekNumber >= 14
+                       || !!(week.weekNumber === 0 && week.draftRecap);
+  /* Week 0 leads with the auction recap — it is the marquee item of the
+     post-draft edition and must not land last in the grid. */
+  const cards = week.weekNumber === 0
+    ? [renderNewsCard(week),
+       hasElite ? renderElite5Card(week) : "",
+       hasStandings ? renderStandingsCard(week) : "",
+       renderPreviewCard(week),
+       hasSurvivor ? renderSurvivorCard(week) : "",
+       renderCreditTrackerCard(week)]
+    : [renderNewsCard(week),
+       hasStandings ? renderStandingsCard(week) : "",
+       hasSurvivor ? renderSurvivorCard(week) : "",
+       renderCreditTrackerCard(week),
+       hasElite ? renderElite5Card(week) : ""];
   main.innerHTML = `
     <section class="card-grid" id="cardGrid" aria-label="Pulse sections">
-      ${renderNewsCard(week)}
-      ${hasStandings ? renderStandingsCard(week) : ""}
-      ${hasSurvivor ? renderSurvivorCard(week) : ""}
-      ${renderCreditTrackerCard(week)}
-      ${hasElite ? renderElite5Card(week) : ""}
+      ${cards.join("")}
     </section>
   `;
   wireCards();
@@ -1194,13 +1577,20 @@ function renderStandingsCard(week) {
   const upperAll = [
     ...week.upperTier.divA, ...week.upperTier.divB,
     ...week.upperTier.divC, ...week.upperTier.divD
-  ].slice().sort(standingsSort);
+  ].slice().sort(pulseSort(week));
   const topTwoUpper = upperAll.slice(0, 2);
-  const lowerLeader = week.lowerTier.slice().sort(standingsSort)[0];
+  const lowerLeader = week.lowerTier.slice().sort(pulseSort(week))[0];
+  const isWk0 = week.weekNumber === 0;
 
   const freshSlate = upperAll.concat(week.lowerTier)
     .every(t => t.w === 0 && t.l === 0);
-  const preview = freshSlate
+  const preview = isWk0
+    ? `
+      <div><span class="strong">Upper:</span> ${teamOwner(upperAll[0])} ${upperAll[0].credits} CR</div>
+      <div style="margin-top:4px"><span class="strong">Lower:</span> ${teamOwner(lowerLeader)} ${lowerLeader.credits} CR</div>
+      <div class="muted-line">No games played — Week 0 ranks by credit balance. Tap for full standings.</div>
+    `
+    : freshSlate
     ? `
       <div><span class="strong">Everybody's 0-0.</span></div>
       <div style="margin-top:4px">Divisions seeded by offseason credit balance.</div>
@@ -1218,10 +1608,10 @@ function renderStandingsCard(week) {
         <span>Upper-Tier</span><span class="chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="tier-body">
-        ${renderDivStatic("Division A", week.upperTier.divA)}
-        ${renderDivStatic("Division B", week.upperTier.divB)}
-        ${renderDivStatic("Division C", week.upperTier.divC)}
-        ${renderDivStatic("Division D", week.upperTier.divD)}
+        ${renderDivStatic("Division A", week.upperTier.divA, week)}
+        ${renderDivStatic("Division B", week.upperTier.divB, week)}
+        ${renderDivStatic("Division C", week.upperTier.divC, week)}
+        ${renderDivStatic("Division D", week.upperTier.divD, week)}
       </div>
     </div>
     <div class="tier-block">
@@ -1229,7 +1619,7 @@ function renderStandingsCard(week) {
         <span>Lower-Tier</span><span class="chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="tier-body">
-        ${renderRanked(week.lowerTier)}
+        ${renderRanked(week.lowerTier, week)}
       </div>
     </div>
   `;
@@ -1237,38 +1627,27 @@ function renderStandingsCard(week) {
   return cardShell("standings", "🏆", "Standings", preview, upperBody);
 }
 
-function renderDiv(name, teams, openByDefault) {
-  const sorted = teams.slice().sort(standingsSort);
-  return `
-    <div class="div-block">
-      <button class="div-head" data-toggle="div" aria-expanded="${openByDefault ? "true" : "false"}">
-        <span>${esc(name)}</span><span class="chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="div-body">
-        ${sorted.map(t => row(t)).join("")}
-      </div>
-    </div>
-  `;
-}
-
-function renderDivStatic(name, teams) {
-  const sorted = teams.slice().sort(standingsSort);
+function renderDivStatic(name, teams, week) {
+  const sorted = teams.slice().sort(pulseSort(week));
   return `
     <div class="div-block">
       <div class="div-label">${esc(name)}</div>
       <div class="div-body div-body--static">
-        ${sorted.map(t => row(t)).join("")}
+        ${sorted.map(t => row(t, week)).join("")}
       </div>
     </div>
   `;
 }
 
-function renderRanked(teams) {
-  const sorted = teams.slice().sort(standingsSort);
-  return sorted.map(t => row(t)).join("");
+function renderRanked(teams, week) {
+  const sorted = teams.slice().sort(pulseSort(week));
+  return sorted.map(t => row(t, week)).join("");
 }
 
-function row(t) {
+function row(t, week) {
+  /* Week 0 has no games, so a 0 streak is "none", not a win streak — a green
+     pill behind an em dash reads as a result nobody has earned yet. */
+  const sClass = (week && week.weekNumber === 0) ? "none" : streakClass(t.streak);
   return `
     <div class="row">
       <div class="record">${t.w}-${t.l}</div>
@@ -1278,7 +1657,7 @@ function row(t) {
       </div>
       <div class="meta">
         <span class="pts">${t.points.toFixed(1)}<span class="pts-label">PF</span></span>
-        <span class="streak ${streakClass(t.streak)}">${streakLabel(t.streak)}</span>
+        <span class="streak ${sClass}">${streakLabel(t.streak)}</span>
         <span class="cr">${t.credits}<span class="cr-label">CR</span></span>
       </div>
     </div>
@@ -1314,7 +1693,9 @@ function renderSurvivorCard(week) {
     ${recentLine}
   `;
 
+  const noteBlock = week.survivorNote ? `<p class="survivor-note">${esc(week.survivorNote)}</p>` : "";
   const body = `
+    ${noteBlock}
     <div class="survivor-grid">
       ${survivorPool("Upper-Tier", s.upperActive, s.upperEliminated, s.upperConcluded, s.upperWinner)}
       ${survivorPool("Lower-Tier", s.lowerActive, s.lowerEliminated, s.lowerConcluded, s.lowerWinner)}
@@ -1367,6 +1748,17 @@ function survivorPool(title, active, eliminated, concluded, winner) {
 /* --------- CREDIT TRACKER CARD --------- */
 function ctCell(item) {
   if (!item) return `<div class="ct-col"></div>`;
+  /* An unawarded category has no leader yet — rendering "— (—)" reads as a bug
+     rather than as an empty slot, so show the status line on its own. */
+  if (item.leaderTeam === "—") {
+    return `
+      <div class="ct-col">
+        <span class="tier-badge ${item.tier}">${item.tier === "U" ? "Upper" : "Lower"}</span>
+        <div class="ct-unclaimed">${esc(item.value)}</div>
+        <span class="credit-pill">+${item.credits} credits</span>
+      </div>
+    `;
+  }
   const tier = item.tier; // "U" or "L"
   return `
     <div class="ct-col">
@@ -1469,6 +1861,9 @@ function renderCreditTrackerCard(week) {
 
 /* --------- ELITE 5 / BRACKET CARD --------- */
 function renderElite5Card(week) {
+  /* Week 0 has no Elite 5 — the auction recap owns this slot instead. */
+  if (week.weekNumber === 0 && week.draftRecap) return renderDraftRecapCard(week);
+
   if (week.weekNumber >= 14) {
     const preview = `
       <div><span class="strong">Bracket lives here once seeds lock in.</span></div>
@@ -1481,6 +1876,10 @@ function renderElite5Card(week) {
     `;
     return cardShell("bracket", "🏆", "Playoff Bracket", preview, body);
   }
+
+  /* Guard: week.elite5[0] below is a TypeError on an empty array, which would
+     blank the whole grid rather than just this card. */
+  if (!week.elite5 || !week.elite5.length) return "";
 
   const top = week.elite5[0];
   const preview = `
@@ -1507,6 +1906,124 @@ function renderElite5Card(week) {
   `;
 
   return cardShell("elite", "⭐", "Elite 5", preview, body);
+}
+
+/* --------- DRAFT RECAP CARD (Week 0 only) --------- */
+/* A centered bar: the track's midpoint is market price, an under-market team
+   fills left of it, an over-market team fills right. Widths are scaled to the
+   tier's own largest deviation, so the bars are comparable within a tier only. */
+function marketBar(vsMarket, maxAbs) {
+  const w = maxAbs ? (50 * Math.abs(vsMarket) / maxAbs) : 0;
+  const left = vsMarket < 0 ? 50 - w : 50;
+  const dir = vsMarket < 0 ? "under" : "over";
+  return `<span class="track" aria-hidden="true"><span class="zero"></span><span class="bar ${dir}" style="left:${left.toFixed(2)}%;width:${w.toFixed(2)}%"></span></span>`;
+}
+
+function gradeRows(tier) {
+  const maxAbs = Math.max.apply(null, tier.grades.map(g => Math.abs(g.vsMarket))) || 1;
+  return tier.grades.map(g => {
+    const dir = g.vsMarket < 0 ? "under" : "over";
+    const amt = (g.vsMarket < 0 ? "−$" : "+$") + Math.abs(g.vsMarket);
+    return `
+      <div class="grade-row">
+        <span class="grade g${esc(g.grade.charAt(0))}">${esc(g.grade)}</span>
+        <div class="grade-main">
+          <div class="grade-team">${esc(g.team)} <span class="grade-owner">${esc(shortName(g.owner))}</span></div>
+          <div class="grade-note">${esc(g.note)}</div>
+        </div>
+        <div class="grade-mkt">
+          ${marketBar(g.vsMarket, maxAbs)}
+          <span class="vm ${dir}">${amt}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function supTiles(tier) {
+  return `
+    <div class="sup-grid">
+      ${tier.superlatives.map(s => `
+        <div class="sup ${esc(s.kind)}">
+          <span class="sup-label">${esc(s.label)}</span>
+          <div class="sup-subject">${esc(s.subject)}</div>
+          <div class="sup-value">${esc(s.value)}</div>
+          <div class="sup-team">${esc(s.team)} · ${esc(shortName(s.owner))}</div>
+          <p class="sup-note">${esc(s.note)}</p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function recapTier(tier) {
+  return `
+    <div class="tier-block">
+      <button class="tier-head" data-toggle="tier" aria-expanded="false">
+        <span>${esc(tier.label)} · ${esc(tier.subhead)}</span><span class="chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="tier-body">
+        ${supTiles(tier)}
+        <div class="grade-legend">
+          <span><i class="sw under"></i>Under market</span>
+          <span><i class="sw over"></i>Over market</span>
+          <span class="grade-legend-note">Curved within tier</span>
+        </div>
+        ${gradeRows(tier)}
+      </div>
+    </div>
+  `;
+}
+
+function renderDraftRecapCard(week) {
+  const d = week.draftRecap;
+  const bestU = d.upper.grades[0], bestL = d.lower.grades[0];
+  const preview = `
+    <div><span class="strong">Upper:</span> ${esc(bestU.grade)} — ${esc(bestU.team)} (${esc(shortName(bestU.owner))})</div>
+    <div style="margin-top:4px"><span class="strong">Lower:</span> ${esc(bestL.grade)} — ${esc(bestL.team)} (${esc(shortName(bestL.owner))})</div>
+    <div class="muted-line">Tap for all 21 grades, the superlatives and the method.</div>
+  `;
+  const body = `
+    <p class="recap-method">${esc(d.method)}</p>
+    <ul class="recap-chars">
+      ${d.characteristics.map(c => `<li><span class="cnum">${esc(c.stat)}</span><span class="ctxt">${esc(c.text)}</span></li>`).join("")}
+    </ul>
+    ${recapTier(d.upper)}
+    ${recapTier(d.lower)}
+  `;
+  return cardShell("draftrecap", "🔨", "Draft Recap", preview, body);
+}
+
+/* --------- NEXT-WEEK PREVIEW CARD --------- */
+function renderPreviewCard(week) {
+  const all = week.matchupPreviews || [];
+  const shown = all.filter(m => m.highlight);
+  if (!shown.length) return "";
+  const label = "Week " + (week.weekNumber + 1) + " Preview";
+  const preview = `
+    <div><span class="strong">${all.length} games</span> open the season.</div>
+    <div class="muted-line">Tap for the ${shown.length} worth talking about now.</div>
+  `;
+  const group = (tier, title) => {
+    const rows = shown.filter(m => m.tier === tier);
+    if (!rows.length) return "";
+    return `
+      <div class="div-label">${esc(title)}</div>
+      <div class="mu-grid">
+        ${rows.map(m => `
+          <article class="mu${m.ghost ? " ghost" : ""}">
+            <div class="mu-teams">
+              <div class="mu-side"><span class="mu-team">${esc(m.teamA)}</span><span class="mu-owner">${esc(shortName(m.ownerA))}</span></div>
+              <span class="mu-vs">vs</span>
+              <div class="mu-side right"><span class="mu-team">${esc(m.teamB)}</span><span class="mu-owner">${esc(shortName(m.ownerB))}</span></div>
+            </div>
+            <p class="mu-note">${esc(m.note)}</p>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  };
+  return cardShell("preview", "📅", label, preview, group("U", "Upper-Tier") + group("L", "Lower-Tier"));
 }
 
 /* --------- NEWS CARD --------- */
