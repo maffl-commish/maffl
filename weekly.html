@@ -1203,7 +1203,7 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v3.4</span>
+      <span class="meta-pill">v3.5</span>
       <span class="meta-pill">Last Updated September 7, 2026</span>
     </div>
   </header>
@@ -1351,7 +1351,7 @@ const WEEKS = [
     elite5: [],
 
     draftRecap: {
-      method: "ESPN can tell you how you drafted against its own preseason book — the same rankings it hands every league in the country. This is built on MAFFL instead. It prices every player off what this league actually paid across both 2026 auctions, corrects for the fact that twelve Upper wallets bid hotter than nine Lower ones, and scores you on how well you bought against a room of experienced bidders. Grades are curved within tier, so an Upper C− and a Lower C− are not the same roster.",
+      method: "ESPN will tell you how you drafted against its preseason rank. Those are fun. This is fun too, because it's built on MAFFL context. It prices every player off what this league actually paid across both 2026 auctions, corrects for the fact that twelve Upper wallets bid hotter than nine Lower ones, and scores you on how well you bought against a room of experienced bidders. Grades are curved within tier, so an Upper C− and a Lower C− are not the same roster.",
       characteristics: [
         { stat: "50%", text: "of Upper's 264 picks went for exactly one dollar — against a third of Lower's. Upper is a stars-and-scrubs room now and the auction stopped pretending otherwise." },
         { stat: "QB",  text: "Quarterback pricing diverged hardest of any position. Dak, Hurts, Goff, Bo Nix and Burrow are five of the seven widest cross-tier gaps in the dataset." },
@@ -1963,9 +1963,9 @@ function supTiles(tier) {
   `;
 }
 
-/* The superlative tiles sit OUTSIDE .tier-body so both tiers' quad boxes are
-   visible as soon as the recap card opens. Only the grade rows — the heavy
-   part, 21 of them — stay behind the accordion. */
+/* No accordion here — the tier label, the superlative tiles and the full grade
+   board all render inline, so opening the recap card shows every result for
+   both tiers in one pass. */
 function recapTier(tier) {
   return `
     <div class="tier-block">
@@ -1973,17 +1973,12 @@ function recapTier(tier) {
         ${esc(tier.label)} <span class="recap-tier-sub">${esc(tier.subhead)}</span>
       </div>
       ${supTiles(tier)}
-      <button class="tier-head" data-toggle="tier" aria-expanded="false">
-        <span>All ${tier.grades.length} grades</span><span class="chev" aria-hidden="true">&#9662;</span>
-      </button>
-      <div class="tier-body">
-        <div class="grade-legend">
-          <span><i class="sw under"></i>Under market</span>
-          <span><i class="sw over"></i>Over market</span>
-          <span class="grade-legend-note">Curved within tier</span>
-        </div>
-        ${gradeRows(tier)}
+      <div class="grade-legend">
+        <span><i class="sw under"></i>Under market</span>
+        <span><i class="sw over"></i>Over market</span>
+        <span class="grade-legend-note">Curved within tier</span>
       </div>
+      ${gradeRows(tier)}
     </div>
   `;
 }
