@@ -920,6 +920,18 @@
   }
   .recap-chars .ctxt { font-family: var(--body); font-size: 12px; line-height: 1.45; color: var(--navy); }
 
+  .recap-tier-label {
+    padding: 8px 4px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border);
+  }
+  .recap-tier-sub { color: var(--muted); font-weight: 500; letter-spacing: 0.06em; }
+
   .sup-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1191,7 +1203,7 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v3.2</span>
+      <span class="meta-pill">v3.3</span>
       <span class="meta-pill">Last Updated September 7, 2026</span>
     </div>
   </header>
@@ -1951,14 +1963,20 @@ function supTiles(tier) {
   `;
 }
 
+/* The superlative tiles sit OUTSIDE .tier-body so both tiers' quad boxes are
+   visible as soon as the recap card opens. Only the grade rows — the heavy
+   part, 21 of them — stay behind the accordion. */
 function recapTier(tier) {
   return `
     <div class="tier-block">
+      <div class="recap-tier-label">
+        ${esc(tier.label)} <span class="recap-tier-sub">${esc(tier.subhead)}</span>
+      </div>
+      ${supTiles(tier)}
       <button class="tier-head" data-toggle="tier" aria-expanded="false">
-        <span>${esc(tier.label)} · ${esc(tier.subhead)}</span><span class="chev" aria-hidden="true">&#9662;</span>
+        <span>All ${tier.grades.length} grades</span><span class="chev" aria-hidden="true">&#9662;</span>
       </button>
       <div class="tier-body">
-        ${supTiles(tier)}
         <div class="grade-legend">
           <span><i class="sw under"></i>Under market</span>
           <span><i class="sw over"></i>Over market</span>
