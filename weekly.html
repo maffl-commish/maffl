@@ -1203,7 +1203,7 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v3.6</span>
+      <span class="meta-pill">v3.7</span>
       <span class="meta-pill">Last Updated September 7, 2026</span>
     </div>
   </header>
@@ -1300,7 +1300,7 @@ const WEEKS = [
       ],
       divD: [
         { team: "Hadley's Comets",            owner: "Brian Murello/Ron Murello", w: 0, l: 0, points: 0, streak: 0, credits: 7 },
-        { team: "Southside Shooters",         owner: "Jon Fetrow/Casey Trozzo",   w: 0, l: 0, points: 0, streak: 0, credits: 7 },
+        { team: "Southside Shooters",         owner: "Jon Fetrow",                w: 0, l: 0, points: 0, streak: 0, credits: 7 },
         { team: "Turkey Hat Conglomerate",    owner: "Ed Peters",                 w: 0, l: 0, points: 0, streak: 0, credits: 7 }
       ]
     },
@@ -1373,7 +1373,7 @@ const WEEKS = [
         grades: [
           { team: "South Hills FunShiners",     owner: "BJ Funari",                 grade: "A+", vsMarket: -64,
             note: "$145 of $200 into three players, and both starting quarterback slots filled for $2 in a league that starts two. The most extreme stars-and-scrubs build in MAFFL — and the market says every star was a bargain." },
-          { team: "Southside Shooters",         owner: "Jon Fetrow/Casey Trozzo",   grade: "A-", vsMarket: -22,
+          { team: "Southside Shooters",         owner: "Jon Fetrow",                grade: "A-", vsMarket: -22,
             note: "Lamb at $38 was $16 under. Two mid-priced quarterbacks instead of one expensive one. Quietly the most sensible board in the tier." },
           { team: "The Prodigal Sons",          owner: "Jon Murello/Rick Simmons",  grade: "B+", vsMarket: -17,
             note: "$127 on running backs, $9 on wide receivers. Ludicrous on its face, efficiently executed line by line." },
@@ -1436,13 +1436,13 @@ const WEEKS = [
     /* All 11 Week 1 games are present for completeness. The renderer shows only highlight:true. */
     matchupPreviews: [
       { tier: "U", highlight: true,  teamA: "Bad Attitude Gang", ownerA: "Mike Murello", teamB: "Marco Clair Kardiac Attack", ownerB: "David Murello",
-        note: "Division A opens with brothers, and under the new structure they will do this again in Week 12 with the division on the line. Mike put $85 into quarterbacks and $23 into running backs. David spread his evenly and paid a touch over on most of it." },
+        note: "Division A opens with father and son, and under the new structure they will do this again in Week 12 with the division on the line. Mike put $85 into quarterbacks and $23 into running backs. David spread his evenly and paid a touch over on most of it." },
       { tier: "U", highlight: false, teamA: "Happy Valley Hammer Time", ownerA: "Tony Trozzo", teamB: "The Big Bang Theory", ownerB: "Dan Reilly",
         note: "Division C, first meeting. Tony's $50 Hampton and $18 Bo Nix were two of the four worst reaches in the tier; Dan bought twenty-one fair-to-rich prices and no cheap ones. Two ways to overpay, tested against each other." },
       { tier: "U", highlight: true,  teamA: "Hadley's Comets", ownerA: "Brian Murello/Ron Murello", teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters",
         note: "The two loudest auctions in Upper meet in Week 1 and again in Week 14 with Division D likely riding on it. $94 of quarterback and nothing behind it against $156 on three players and eighteen dollar-guys." },
-      { tier: "U", highlight: false, teamA: "Southside Shooters", ownerA: "Jon Fetrow/Casey Trozzo", teamB: "The Prodigal Sons", ownerB: "Jon Murello/Rick Simmons",
-        note: "The two most sensible boards in the tier, A- against B+. Casey Trozzo's first game as co-owner of record, and Jon and Rick's $127 running back room against a team that deliberately bought two mid-priced quarterbacks instead of one expensive one." },
+      { tier: "U", highlight: false, teamA: "Southside Shooters", ownerA: "Jon Fetrow", teamB: "The Prodigal Sons", ownerB: "Jon Murello/Rick Simmons",
+        note: "The two most sensible boards in the tier, A- against B+. Jon and Rick's $127 running back room against a team that deliberately bought two mid-priced quarterbacks instead of one expensive one." },
       { tier: "U", highlight: false, teamA: "Reilly's Reindeer", ownerA: "Joe Reilly", teamB: "Jake's Jagoffs", ownerB: "Jacob Nickman",
         note: "Joe priced almost perfectly to market top to bottom; Jacob's $32 Jefferson was the steal of his board and he never bid over $42. Two teams that did not make a mistake, which means this one gets decided on Sunday and not in August." },
       { tier: "U", highlight: true,  teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", teamB: "South Hills FunShiners", ownerB: "BJ Funari",
@@ -1490,7 +1490,7 @@ const SHORT_NAMES = {
   "david murello":"Dave","todd trozzo":"Troz","tony trozzo":"Tony",
   "chris johnson":"Johnson","jacob nickman":"Jake","bj funari":"BJ",
   "ben funari":"Ben","bob keslar":"Bo","dan reilly":"Dan",
-  "jon fetrow":"Fetrow","jon fetrow / casey trozzo":"Fetrow/Casey",
+  "jon fetrow":"Fetrow",
   "ed peters":"Ed","tony brooks":"Brooks",
   "braiden snyder":"Braiden","charles lavrinc":"Charlie","sam lavrinc":"Sam",
   "nick yankovich":"Nick","dominic nicastro":"Dom"
