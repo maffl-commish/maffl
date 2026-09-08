@@ -1203,7 +1203,7 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v3.5</span>
+      <span class="meta-pill">v3.6</span>
       <span class="meta-pill">Last Updated September 7, 2026</span>
     </div>
   </header>
@@ -1278,7 +1278,7 @@ const WEEKS = [
     weekNumber: 0,
     dateString: "Sep 7, 2026",
     headline: "Both auctions are in the books, the 2026 rosters are set, and 👻 has a schedule. Nothing counts until Sunday.",
-    latestChange: "Every award is unclaimed and every balance is exactly what you walked out of the auction holding. The tracker starts moving this week.",
+    latestChange: "New this season: the Upper-Tier schedule is commissioner-set, every division game is played exactly twice, and Week 11 is Mirror Match. Every award is still unclaimed and every balance is exactly what you walked out of the auction holding.",
 
     /* Standings are pre-sorted credits-descending, ties alphabetical, MAFFL Ghost last.
        The renderer re-sorts with the same rule for weekNumber === 0 — see pulseSort. */
@@ -1435,18 +1435,18 @@ const WEEKS = [
 
     /* All 11 Week 1 games are present for completeness. The renderer shows only highlight:true. */
     matchupPreviews: [
-      { tier: "U", highlight: true,  teamA: "Bad Attitude Gang", ownerA: "Mike Murello", teamB: "Reilly's Reindeer", ownerB: "Joe Reilly",
-        note: "The commissioner's $62 Josh Allen against Joe's $44 McCaffrey. Mike put $85 into quarterbacks and $23 into running backs; Joe did almost exactly the opposite." },
-      { tier: "U", highlight: false, teamA: "Marco Clair Kardiac Attack", ownerA: "David Murello", teamB: "Southside Shooters", ownerB: "Jon Fetrow/Casey Trozzo",
-        note: "New name, first outing. David's $44 Lamar opens against Casey Trozzo's first game as a co-owner of record." },
-      { tier: "U", highlight: false, teamA: "The Big Bang Theory", ownerA: "Dan Reilly", teamB: "Hadley's Comets", ownerB: "Brian Murello/Ron Murello",
-        note: "The two lowest draft grades in Upper, drawn against each other in Week 1. Dan's twenty-one fair prices against a $94 quarterback room." },
-      { tier: "U", highlight: true,  teamA: "Jake's Jagoffs", ownerA: "Jacob Nickman", teamB: "South Hills FunShiners", ownerB: "BJ Funari",
-        note: "The tier's A+ auction gets audited immediately. Three players are $145 of BJ's roster; Jacob's most expensive man cost $42." },
-      { tier: "U", highlight: false, teamA: "The Prodigal Sons", ownerA: "Jon Murello/Rick Simmons", teamB: "Happy Valley Hammer Time", ownerB: "Tony Trozzo",
-        note: "$127 of running back against Tony's $62 quarterback room and the $50 Omarion Hampton. Somebody's theory of this sport is wrong by Sunday night." },
-      { tier: "U", highlight: true,  teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters",
-        note: "$96 of quarterback against eighteen dollar-guys and Jahmyr Gibbs. The two most extreme builds in the tier, in Week 1, because of course." },
+      { tier: "U", highlight: true,  teamA: "Bad Attitude Gang", ownerA: "Mike Murello", teamB: "Marco Clair Kardiac Attack", ownerB: "David Murello",
+        note: "Division A opens with brothers, and under the new structure they will do this again in Week 12 with the division on the line. Mike put $85 into quarterbacks and $23 into running backs. David spread his evenly and paid a touch over on most of it." },
+      { tier: "U", highlight: false, teamA: "Happy Valley Hammer Time", ownerA: "Tony Trozzo", teamB: "The Big Bang Theory", ownerB: "Dan Reilly",
+        note: "Division C, first meeting. Tony's $50 Hampton and $18 Bo Nix were two of the four worst reaches in the tier; Dan bought twenty-one fair-to-rich prices and no cheap ones. Two ways to overpay, tested against each other." },
+      { tier: "U", highlight: true,  teamA: "Hadley's Comets", ownerA: "Brian Murello/Ron Murello", teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters",
+        note: "The two loudest auctions in Upper meet in Week 1 and again in Week 14 with Division D likely riding on it. $94 of quarterback and nothing behind it against $156 on three players and eighteen dollar-guys." },
+      { tier: "U", highlight: false, teamA: "Southside Shooters", ownerA: "Jon Fetrow/Casey Trozzo", teamB: "The Prodigal Sons", ownerB: "Jon Murello/Rick Simmons",
+        note: "The two most sensible boards in the tier, A- against B+. Casey Trozzo's first game as co-owner of record, and Jon and Rick's $127 running back room against a team that deliberately bought two mid-priced quarterbacks instead of one expensive one." },
+      { tier: "U", highlight: false, teamA: "Reilly's Reindeer", ownerA: "Joe Reilly", teamB: "Jake's Jagoffs", ownerB: "Jacob Nickman",
+        note: "Joe priced almost perfectly to market top to bottom; Jacob's $32 Jefferson was the steal of his board and he never bid over $42. Two teams that did not make a mistake, which means this one gets decided on Sunday and not in August." },
+      { tier: "U", highlight: true,  teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", teamB: "South Hills FunShiners", ownerB: "BJ Funari",
+        note: "The eleventh and twelfth credit balances in the league, which makes them mirrors — they run this back in Week 11. Braiden's $95 Hurts/Maye pair against BJ's $4 starting quarterback room and the tier's only A+ auction." },
       { tier: "L", highlight: true,  ghost: true, teamA: "MAFFL Ghost", ownerA: "—", teamB: "Portly Primates", ownerB: "Charles Lavrinc",
         note: "👻 The Ghost's first appearance on a MAFFL schedule, and Charlie draws it. No roster, no walkover: the Ghost posts the average of the real Lower scores with the top one dropped, so Portly Primates has to beat the room, not an empty chair." },
       { tier: "L", highlight: false, teamA: "Camp Kes", ownerA: "Bob Keslar", teamB: "The Best in The 'Burgh", ownerB: "Ben Funari",
@@ -1460,6 +1460,8 @@ const WEEKS = [
     ],
 
     newsReel: [
+      "The Upper-Tier schedule is no longer ESPN's. Every division rival is played exactly twice — once in Weeks 1-4, once in Weeks 12-14. ESPN was running us as two six-team conferences, which meant half the league played a division rival twice and the other half played one once. Division races were being decided on unequal schedules. That is fixed.",
+      "Week 11 is Mirror Match. The fourteenth game on everyone's schedule is a rematch against the team nearest you in credits: Bad Attitude Gang and Reilly's Reindeer, The Prodigal Sons and Happy Valley Hammer Time, Jake's Jagoffs and Southside Shooters, Marco Clair Kardiac Attack and Hadley's Comets, Turkey Hat Conglomerate and The Big Bang Theory, Mike Vicks Dog Sitting Co. and South Hills FunShiners. Credits already set your division. Now they set your mirror — and unlike a division game, a Mirror Match can be swapped.",
       "Ed Peters owns both ends of the Upper auction: the $69 Jahmyr Gibbs, the most expensive player in either room, and the $38 Jared Goff, the worst reach in the tier. Eighteen of his other twenty picks cost a dollar.",
       "Todd Trozzo bought five quarterbacks for $142. Allen and Lamar start; $57 of Maye, Dart and Goff sits behind them. He spent $3 on four wide receivers, and the Ferrets have also dropped “U-Town” from the name.",
       "Hadley's Comets are the only team in Upper carrying exactly two quarterbacks and nothing else. Dak and Burrow for $94, no third arm on the roster, and byes arrive whether Brian and Ron planned for them or not.",

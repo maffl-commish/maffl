@@ -516,7 +516,7 @@
     text-overflow: ellipsis;
   }
   /* Non-selectable "no results" row. Reuses --muted; default cursor so it
-     never looks clickable. Kept ≥44px tall for touch parity with real rows. */
+     never looks clickable. Kept ≥44px tall for touch, matching real rows. */
   .rules-search-empty {
     padding: 12px;
     min-height: 44px;
@@ -1253,8 +1253,8 @@
       <p class="page-header__subtitle">Official Rulebook</p>
     </div>
     <div class="page-header__meta" aria-label="Rulebook version metadata">
-      <span class="meta-pill" id="versionChipVersion">v1.2</span>
-      <span class="meta-pill" id="versionChipUpdated">Last Updated August 22, 2026</span>
+      <span class="meta-pill" id="versionChipVersion">v2.1</span>
+      <span class="meta-pill" id="versionChipUpdated">Last Updated September 7, 2026</span>
     </div>
   </header>
 
@@ -1316,6 +1316,7 @@
             <tr><td>League Size</td><td>12 Teams</td><td>Min 6</td></tr>
             <tr><td>Divisions</td><td>4</td><td>None</td></tr>
             <tr><td>Regular Season</td><td>NFL Wks 1&ndash;14</td><td>NFL Wks 1&ndash;14</td></tr>
+            <tr><td>Schedule</td><td>Commissioner-set (see <a class="inline-link" href="#schedule-structure">Schedule Structure</a>)</td><td>ESPN auto-generated</td></tr>
             <tr><td>Post Season</td><td>NFL Wks 15&ndash;17</td><td>NFL Wks 15&ndash;17</td></tr>
             <tr><td>Playoff Format</td><td>Top 6 Bracket</td><td>No</td></tr>
             <tr><td>MAFFL Cup Awarded</td><td>Yes</td><td>No</td></tr>
@@ -1376,6 +1377,7 @@
               <tr><td class="row-label">Promotions / Relegations Determined</td><td>Offseason</td></tr>
               <tr><td class="row-label">MAFFL HQ Updated</td><td>Offseason</td></tr>
               <tr><td class="row-label">Tier &amp; Division Alignment Established</td><td>Offseason</td></tr>
+              <tr><td class="row-label">Upper-Tier Schedule Built &amp; Entered in ESPN</td><td>Off-Season &mdash; set with division alignment</td></tr>
               <tr><td class="row-label">ESPN.com Adjustments (Tiers and Divisions)</td><td>Offseason</td></tr>
               <tr><td class="row-label">Division Swap Window Freezes (alignment final)</td><td>Labor Day Eve</td></tr>
               <tr><td class="row-label">Draft</td><td>Labor Day</td></tr>
@@ -1683,6 +1685,65 @@
     </section>
 
     <!-- =========================================================
+         SECTION 4c — Regular Season Schedule Structure. Sits directly
+         after Division Alignment because the schedule is built from the
+         alignment: divisions first, then the 14-game slate that follows
+         from them. Carries a "New 2026" pill on the head while collapsed,
+         same pattern as MAFFL Ghost.
+         ========================================================= -->
+    <section class="rule-section" id="schedule-structure" data-section="schedule-structure">
+      <button class="rule-head" aria-expanded="false" aria-controls="body-schedule-structure">
+        <span class="rule-head-titlewrap">
+          <h2 class="rule-title">Regular Season Schedule Structure</h2>
+          <span class="rule-tag new head-pill">New<span class="tag-sep">&middot;</span>2026</span>
+        </span>
+        <span class="rule-chev" aria-hidden="true">&#9662;</span>
+      </button>
+      <div class="rule-body" id="body-schedule-structure">
+        <p>The Upper-Tier regular season is <strong>14 games</strong>, and every team&rsquo;s slate is built the same way: <strong>4 divisional</strong> (both division rivals, twice each), <strong>9 unique non-divisional</strong> (every other Upper-Tier team once), and <strong>1 Mirror Match</strong>.</p>
+
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Weeks</th>
+                <th scope="col">Block</th>
+                <th scope="col">Shape</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-label">Wks 1&ndash;4</td><td>Divisional Round 1</td><td>First meeting with each of your 2 division rivals; the other 2 weeks are non-divisional.</td></tr>
+              <tr><td class="row-label">Wks 5&ndash;10</td><td>Open Slate</td><td>No divisional games at all &mdash; non-divisional opponents only.</td></tr>
+              <tr><td class="row-label">Wk 11</td><td>Mirror Match</td><td>The six mirror pairs meet. Still no divisional games.</td></tr>
+              <tr><td class="row-label">Wks 12&ndash;14</td><td>Division Finish</td><td>Second meeting with each of your 2 division rivals; the remaining week is non-divisional.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Mirror Match</span>
+          <p>The twelve Upper-Tier teams split into three credit tiers of four &mdash; ranks 1&ndash;4, 5&ndash;8, 9&ndash;12. Within each tier, teams pair off by rank. Where the straight pairing would produce a division rematch, the tier crosses. Those six pairs are mirrors, and they meet a second time in <strong>Week 11 &mdash; Mirror Match</strong>. Credits already set your division. They set your mirror too.</p>
+        </div>
+
+        <h3 class="subhead">2026 Mirror Pairs</h3>
+        <ul>
+          <li>Bad Attitude Gang (1) &mdash; Reilly&rsquo;s Reindeer (3)</li>
+          <li>The Prodigal Sons (2) &mdash; Happy Valley Hammer Time (4)</li>
+          <li>Jake&rsquo;s Jagoffs (5) &mdash; Southside Shooters (7)</li>
+          <li>Marco Clair Kardiac Attack (6) &mdash; Hadley&rsquo;s Comets (8)</li>
+          <li>Turkey Hat Conglomerate (9) &mdash; The Big Bang Theory (10)</li>
+          <li>Mike Vicks Dog Sitting Co. (11) &mdash; South Hills FunShiners (12)</li>
+        </ul>
+
+        <p>Credit rank for scheduling is the same rank used for division alignment, including the same tiebreakers &mdash; previous-season W/L %, then previous-season total points.</p>
+
+        <p>Divisional games are capped at two meetings and <strong>cannot be swapped</strong>. The Week 11 Mirror Match <strong>can</strong> be &mdash; it is a scheduled rematch, not a division game. See <a class="inline-link" href="#credit-system">Credit System</a>.</p>
+
+        <p>The Upper-Tier schedule is set by the commissioner and entered manually in ESPN; ESPN&rsquo;s auto-generated schedule is not used for the Upper-Tier. The Lower-Tier has no divisions and uses ESPN&rsquo;s standard auto-generated schedule.</p>
+      </div>
+    </section>
+
+    <!-- =========================================================
          SECTION 4 — Prize Schedule
          ========================================================= -->
     <section class="rule-section" data-section="prizes">
@@ -1982,7 +2043,7 @@
       <td><ul>
         <li><strong>Deadline:</strong> Notify commish and affected owners by Thursday 6:00 PM ET (or 1 hour before the week&rsquo;s first game, if earlier).</li>
         <li><strong>Approvals:</strong> Commish approval required. Affected owners&rsquo; approval is not required.</li>
-        <li><strong>Restrictions:</strong> Regular season only. Cannot impact a division matchup. Limit 1 swap per owner per week.</li>
+        <li><strong>Restrictions:</strong> Regular season only. <strong>Cannot impact a division matchup. Week 11 Mirror Match games are eligible and may be swapped.</strong> Limit 1 swap per owner per week.</li>
         <li><strong>Locking:</strong> Final once approved (no reversals or secondary swaps).</li>
         <li><strong>Prizes:</strong> Does not affect the Survivor pool or weekly high-score awards.</li>
       </ul></td>
@@ -2117,7 +2178,7 @@
  * Bump the version, effective date, and last updated whenever rules
  * change. Add an entry to CHANGE_LOG below for any meaningful change.
  * ------------------------------------------------------------------- */
-const PAGE_BUILD = "1.1.1"; // internal page build — NOT user-facing; bump for behind-
+const PAGE_BUILD = "1.2.1"; // internal page build — NOT user-facing; bump for behind-
                             // the-scenes/functional changes. Rulebook (RULEBOOK_VERSION)
                             // and rules content are versioned separately above.
 // Build 1.0.1 (2026-07-01): rulebook search — relevance ranking, deep-scroll to match,
@@ -2131,8 +2192,14 @@ const PAGE_BUILD = "1.1.1"; // internal page build — NOT user-facing; bump for
 // Build 1.1.1 (2026-09-07): NEWS_FEED emptied for in-season; evergreen
 //   empty-state copy; News section auto-hides when both lists are empty;
 //   version chip fallbacks synced. No rule content changed.
-const RULEBOOK_VERSION      = "v1.2";
-const RULEBOOK_LAST_UPDATED = "August 22, 2026";
+// Build 1.2.0 (2026-09-07): Regular Season Schedule Structure section added to the
+//   Rulebook tab; League Info gains a Schedule row; NEWS_FEED carries the
+//   announcement. Rulebook v2.0.
+// Build 1.2.1 (2026-09-07): Week 11 renamed Mirror Match; Matchup Swap now
+//   states Mirror Match games are swappable; Off-Season milestone added for the
+//   Upper-Tier schedule build; 2026 Mirror Pairs listed. Rulebook v2.1.
+const RULEBOOK_VERSION      = "v2.1";
+const RULEBOOK_LAST_UPDATED = "September 7, 2026";
 
 /* ---------------------------------------------------------------------
  * NEWS_FEED — timely, time-sensitive items only. Full-weight rows at the
@@ -2140,7 +2207,15 @@ const RULEBOOK_LAST_UPDATED = "August 22, 2026";
  * "Open now"), NOT change stamps — do not convert these to ISO.
  * The Draft Day row uses cta:true for the gold highlight treatment.
  * ------------------------------------------------------------------- */
-const NEWS_FEED = [];
+const NEWS_FEED = [
+  {
+    date: "Sep 7",
+    type: "NEW",
+    label: "New",
+    note: "Schedule Structure — division games are exactly two now, one in Wks 1–4 and one in Wks 12–14. Wk 11 is Mirror Match.",
+    href: "#schedule-structure"
+  }
+];
 
 /* ---------------------------------------------------------------------
  * RULE_UPDATES — SEASONAL. A short orientation list of what changed in the
