@@ -5871,14 +5871,14 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,Mike Murello,Jaxon Smith-Njigba,Jaxon Smith-Njigba,WR,WR,SEA,44.0
 2026,Jon Murello / Rick Simmons,Jonathan Taylor,Jonathan Taylor,RB,RB,IND,47.0
 2026,Tony Trozzo,Amon-Ra St. Brown,Amon-Ra St. Brown,WR,WR,DET,48.0
-2026,Jon Fetrow / Casey Trozzo,CeeDee Lamb,CeeDee Lamb,WR,WR,DAL,38.0
+2026,Jon Fetrow,CeeDee Lamb,CeeDee Lamb,WR,WR,DAL,38.0
 2026,Jacob Nickman,De'Von Achane,De'Von Achane,RB,RB,MIA,42.0
-2026,Jon Fetrow / Casey Trozzo,Jaxson Dart,Jaxson Dart,QB,QB,NYG,29.0
+2026,Jon Fetrow,Jaxson Dart,Jaxson Dart,QB,QB,NYG,29.0
 2026,Mike Murello,Will Anderson Jr.,Will Anderson Jr.,DE,DE,HOU,5.0
 2026,Dan Reilly,Javonte Williams,Javonte Williams,RB,RB,DAL,22.0
 2026,Brian Murello / Ron Murello,Joe Burrow,Joe Burrow,QB,QB,CIN,43.0
 2026,Jon Murello / Rick Simmons,James Cook III,James Cook,RB,RB,BUF,38.0
-2026,Jon Fetrow / Casey Trozzo,Rashee Rice,Rashee Rice,WR,WR,KC,25.0
+2026,Jon Fetrow,Rashee Rice,Rashee Rice,WR,WR,KC,25.0
 2026,Jacob Nickman,Justin Jefferson,Justin Jefferson,WR,WR,MIN,32.0
 2026,Brian Murello / Ron Murello,Brock Bowers,Brock Bowers,TE,TE,LV,25.0
 2026,Dan Reilly,Trey McBride,Trey McBride,TE,TE,ARI,26.0
@@ -5891,7 +5891,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,BJ Funari,Jeremiyah Love,Jeremiyah Love,RB,RB,ARI,34.0
 2026,Tony Trozzo,Omarion Hampton,Omarion Hampton,RB,RB,LAC,50.0
 2026,Jacob Nickman,Nico Collins,Nico Collins,WR,WR,HOU,29.0
-2026,Jon Fetrow / Casey Trozzo,Trevor Lawrence,Trevor Lawrence,QB,QB,JAX,30.0
+2026,Jon Fetrow,Trevor Lawrence,Trevor Lawrence,QB,QB,JAX,30.0
 2026,Brian Murello / Ron Murello,Derrick Henry,Derrick Henry,RB,RB,BAL,45.0
 2026,BJ Funari,Malik Nabers,Malik Nabers,WR,WR,NYG,22.0
 2026,David Murello,George Pickens,George Pickens,WR,WR,DAL,22.0
@@ -5903,13 +5903,13 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,Jacob Nickman,Ashton Jeanty,Ashton Jeanty,RB,RB,LV,34.0
 2026,David Murello,Chris Olave,Chris Olave,WR,WR,NO,23.0
 2026,BJ Funari,Andrew Van Ginkel,Andrew Van Ginkel,DE,DE,MIN,1.0
-2026,Jon Fetrow / Casey Trozzo,Breece Hall,Breece Hall,RB,RB,NYJ,22.0
+2026,Jon Fetrow,Breece Hall,Breece Hall,RB,RB,NYJ,22.0
 2026,Braiden Snyder,Kyren Williams,Kyren Williams,RB,RB,LAR,24.0
 2026,Jon Murello / Rick Simmons,Justin Herbert,Justin Herbert,QB,QB,LAC,25.0
 2026,Ed Peters,Patrick Mahomes,Patrick Mahomes,QB,QB,KC,26.0
 2026,Mike Murello,Carson Schwesinger,Carson Schwesinger,LB,LB,CLE,4.0
 2026,Jon Murello / Rick Simmons,Zaire Franklin,Zaire Franklin,LB,LB,GB,2.0
-2026,Jon Fetrow / Casey Trozzo,Myles Garrett,Myles Garrett,DE,DE,LAR,6.0
+2026,Jon Fetrow,Myles Garrett,Myles Garrett,DE,DE,LAR,6.0
 2026,Jon Murello / Rick Simmons,Chase Brown,Chase Brown,RB,RB,CIN,37.0
 2026,Dan Reilly,Travis Etienne Jr.,Travis Etienne Jr.,RB,RB,NO,27.0
 2026,Tony Trozzo,Brock Purdy,Brock Purdy,QB,QB,SF,21.0
@@ -5927,7 +5927,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,David Murello,Emeka Egbuka,Emeka Egbuka,WR,WR,TB,16.0
 2026,Joe Reilly,Jadarian Price,Jadarian Price,RB,RB,SEA,21.0
 2026,BJ Funari,Devin Bush,Devin Bush,LB,LB,CHI,2.0
-2026,Jon Fetrow / Casey Trozzo,Bucky Irving,Bucky Irving,RB,RB,TB,8.0
+2026,Jon Fetrow,Bucky Irving,Bucky Irving,RB,RB,TB,8.0
 2026,Joe Reilly,Tyler Warren,Tyler Warren,TE,TE,IND,16.0
 2026,BJ Funari,Ladd McConkey,Ladd McConkey,WR,WR,LAC,4.0
 2026,Jon Murello / Rick Simmons,David Montgomery,David Montgomery,RB,RB,HOU,5.0
@@ -5939,7 +5939,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,Dan Reilly,Tee Higgins,Tee Higgins,WR,WR,CIN,6.0
 2026,Mike Murello,Tetairoa McMillan,Tetairoa McMillan,WR,WR,CAR,12.0
 2026,Mike Murello,Quay Walker,Quay Walker,LB,LB,LV,3.0
-2026,Jon Fetrow / Casey Trozzo,Blake Cashman,Blake Cashman,LB,LB,MIN,3.0
+2026,Jon Fetrow,Blake Cashman,Blake Cashman,LB,LB,MIN,3.0
 2026,David Murello,Josh Jacobs,Josh Jacobs,RB,RB,GB,4.0
 2026,David Murello,Terry McLaurin,Terry McLaurin,WR,WR,WSH,10.0
 2026,Dan Reilly,Rico Dowdle,Rico Dowdle,RB,RB,PIT,4.0
@@ -5947,23 +5947,23 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,Jacob Nickman,Leonard Williams,Leonard Williams,DT,DT,SEA,1.0
 2026,Braiden Snyder,Jeffery Simmons,Jeffery Simmons,DT,DT,TEN,3.0
 2026,Joe Reilly,Jordan Love,Jordan Love,QB,QB,GB,15.0
-2026,Jon Fetrow / Casey Trozzo,Brian Burns,Brian Burns,DE,DE,NYG,5.0
+2026,Jon Fetrow,Brian Burns,Brian Burns,DE,DE,NYG,5.0
 2026,Brian Murello / Ron Murello,DJ Moore,DJ Moore,WR,WR,BUF,4.0
 2026,Tony Trozzo,Jaylen Waddle,Jaylen Waddle,WR,WR,DEN,10.0
 2026,BJ Funari,Derwin James Jr.,Derwin James Jr.,S,S,LAC,2.0
-2026,Jon Fetrow / Casey Trozzo,Kyle Pitts Sr.,Kyle Pitts,TE,TE,ATL,7.0
+2026,Jon Fetrow,Kyle Pitts Sr.,Kyle Pitts,TE,TE,ATL,7.0
 2026,Tony Trozzo,Bhayshul Tuten,Bhayshul Tuten,RB,RB,JAX,14.0
 2026,BJ Funari,Rome Odunze,Rome Odunze,WR,WR,CHI,6.0
 2026,Ed Peters,Tony Pollard,Tony Pollard,RB,RB,TEN,1.0
 2026,Mike Murello,Harold Fannin Jr.,Harold Fannin Jr.,TE,TE,CLE,6.0
 2026,BJ Funari,Jordan Davis,Jordan Davis,DT,DT,PHI,2.0
-2026,Jon Fetrow / Casey Trozzo,Cedric Gray,Cedric Gray,LB,LB,TEN,3.0
+2026,Jon Fetrow,Cedric Gray,Cedric Gray,LB,LB,TEN,3.0
 2026,Joe Reilly,Danielle Hunter,Danielle Hunter,DE,DE,HOU,4.0
 2026,Dan Reilly,Tuli Tuipulotu,Tuli Tuipulotu,DE,DE,LAC,2.0
 2026,Jacob Nickman,Nick Cross,Nick Cross,S,S,WSH,2.0
 2026,Jacob Nickman,Alec Pierce,Alec Pierce,WR,WR,IND,2.0
 2026,BJ Funari,Ernest Jones IV,Ernest Jones IV,LB,LB,SEA,1.0
-2026,Jon Fetrow / Casey Trozzo,Jameson Williams,Jameson Williams,WR,WR,DET,3.0
+2026,Jon Fetrow,Jameson Williams,Jameson Williams,WR,WR,DET,3.0
 2026,David Murello,Rhamondre Stevenson,Rhamondre Stevenson,RB,RB,NE,4.0
 2026,BJ Funari,Foyesade Oluokun,Foyesade Oluokun,LB,LB,JAX,2.0
 2026,Jon Murello / Rick Simmons,Parker Washington,Parker Washington,WR,WR,JAX,4.0
@@ -5973,21 +5973,21 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,Joe Reilly,Roquan Smith,Roquan Smith,LB,LB,BAL,1.0
 2026,Dan Reilly,Nate Landman,Nate Landman,LB,LB,LAR,1.0
 2026,David Murello,C.J. Stroud,C.J. Stroud,QB,QB,HOU,8.0
-2026,Jon Fetrow / Casey Trozzo,Jaylen Warren,Jaylen Warren,RB,RB,PIT,4.0
+2026,Jon Fetrow,Jaylen Warren,Jaylen Warren,RB,RB,PIT,4.0
 2026,BJ Funari,Jeremy Chinn,Jeremy Chinn,S,S,LV,1.0
-2026,Jon Fetrow / Casey Trozzo,Travis Hunter,Travis Hunter,WR,WR,JAX,6.0
+2026,Jon Fetrow,Travis Hunter,Travis Hunter,WR,WR,JAX,6.0
 2026,Jon Murello / Rick Simmons,Zack Baun,Zack Baun,LB,LB,PHI,1.0
 2026,Tony Trozzo,Nakobe Dean,Nakobe Dean,LB,LB,LV,1.0
 2026,BJ Funari,J.K. Dobbins,J.K. Dobbins,RB,RB,DEN,2.0
 2026,BJ Funari,Marvin Harrison Jr.,Marvin Harrison Jr.,WR,WR,ARI,2.0
 2026,Jacob Nickman,Alex Highsmith,Alex Highsmith,DE,DE,PIT,1.0
 2026,Braiden Snyder,Devin White,Devin White,LB,LB,DET,1.0
-2026,Jon Fetrow / Casey Trozzo,Kyle Hamilton,Kyle Hamilton,S,S,BAL,3.0
+2026,Jon Fetrow,Kyle Hamilton,Kyle Hamilton,S,S,BAL,3.0
 2026,Joe Reilly,Budda Baker,Budda Baker,S,S,ARI,2.0
 2026,Joe Reilly,Sam Darnold,Sam Darnold,QB,QB,SEA,4.0
 2026,Mike Murello,Chuba Hubbard,Chuba Hubbard,RB,RB,CAR,2.0
 2026,Jacob Nickman,George Kittle,George Kittle,TE,TE,SF,2.0
-2026,Jon Fetrow / Casey Trozzo,Jamien Sherwood,Jamien Sherwood,LB,LB,NYJ,1.0
+2026,Jon Fetrow,Jamien Sherwood,Jamien Sherwood,LB,LB,NYJ,1.0
 2026,Mike Murello,Jonathon Brooks,Jonathon Brooks,RB,RB,CAR,3.0
 2026,Tony Trozzo,Tremaine Edmunds,Tremaine Edmunds,LB,LB,NYG,1.0
 2026,Ed Peters,Kyle Monangai,Kyle Monangai,RB,RB,CHI,1.0
@@ -6011,7 +6011,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,David Murello,Tykee Smith,Tykee Smith,S,S,TB,1.0
 2026,Brian Murello / Ron Murello,Aaron Jones Sr.,Aaron Jones,RB,RB,MIN,1.0
 2026,BJ Funari,Geno Smith,Geno Smith,QB,QB,NYJ,1.0
-2026,Jon Fetrow / Casey Trozzo,Courtland Sutton,Courtland Sutton,WR,WR,DEN,1.0
+2026,Jon Fetrow,Courtland Sutton,Courtland Sutton,WR,WR,DEN,1.0
 2026,Tony Trozzo,Tucker Kraft,Tucker Kraft,TE,TE,GB,2.0
 2026,Tony Trozzo,Aaron Rodgers,Aaron Rodgers,QB,QB,PIT,1.0
 2026,Ed Peters,Michael Pittman Jr.,Michael Pittman Jr.,WR,WR,PIT,1.0
@@ -6023,7 +6023,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,David Murello,Isaiah Likely,Isaiah Likely,TE,TE,NYG,1.0
 2026,Jacob Nickman,Matthew Golden,Matthew Golden,WR,WR,GB,2.0
 2026,BJ Funari,Woody Marks,Woody Marks,RB,RB,HOU,1.0
-2026,Jon Fetrow / Casey Trozzo,Brian Thomas Jr.,Brian Thomas Jr.,WR,WR,JAX,2.0
+2026,Jon Fetrow,Brian Thomas Jr.,Brian Thomas Jr.,WR,WR,JAX,2.0
 2026,Jon Murello / Rick Simmons,Dalton Kincaid,Dalton Kincaid,TE,TE,BUF,1.0
 2026,Tony Trozzo,Travis Kelce,Travis Kelce,TE,TE,KC,1.0
 2026,Ed Peters,Juwan Johnson,Juwan Johnson,TE,TE,NO,1.0
@@ -6035,7 +6035,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,David Murello,DeMarvion Overshown,DeMarvion Overshown,LB,LB,DAL,1.0
 2026,Brian Murello / Ron Murello,MarShawn Lloyd,MarShawn Lloyd,RB,RB,GB,1.0
 2026,BJ Funari,Fernando Mendoza,Fernando Mendoza,QB,QB,LV,1.0
-2026,Jon Fetrow / Casey Trozzo,Michael Wilson,Michael Wilson,WR,WR,ARI,1.0
+2026,Jon Fetrow,Michael Wilson,Michael Wilson,WR,WR,ARI,1.0
 2026,Jon Murello / Rick Simmons,Arvell Reese,Arvell Reese,LB,LB,NYG,1.0
 2026,Tony Trozzo,Kenyon Sadiq,Kenyon Sadiq,TE,TE,NYJ,1.0
 2026,Ed Peters,Xavier Worthy,Xavier Worthy,WR,WR,KC,1.0
@@ -6047,7 +6047,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,David Murello,Abdul Carter,Abdul Carter,DE,DE,NYG,1.0
 2026,Brian Murello / Ron Murello,Jordan Addison,Jordan Addison,WR,WR,MIN,1.0
 2026,BJ Funari,Jacory Croskey-Merritt,Jacory Croskey-Merritt,RB,RB,WSH,1.0
-2026,Jon Fetrow / Casey Trozzo,Jake Ferguson,Jake Ferguson,TE,TE,DAL,1.0
+2026,Jon Fetrow,Jake Ferguson,Jake Ferguson,TE,TE,DAL,1.0
 2026,Jon Murello / Rick Simmons,Chamarri Conner,Chamarri Conner,S,S,KC,1.0
 2026,Tony Trozzo,Mike Washington Jr.,Mike Washington Jr.,RB,RB,LV,1.0
 2026,Ed Peters,Pat Freiermuth,Pat Freiermuth,TE,TE,PIT,1.0
@@ -6058,7 +6058,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,David Murello,Robert Spillane,Robert Spillane,LB,LB,NE,1.0
 2026,Brian Murello / Ron Murello,Devaughn Vele,Devaughn Vele,WR,WR,NO,1.0
 2026,BJ Funari,Kirk Cousins,Kirk Cousins,QB,QB,LV,1.0
-2026,Jon Fetrow / Casey Trozzo,Tyjae Spears,Tyjae Spears,RB,RB,TEN,1.0
+2026,Jon Fetrow,Tyjae Spears,Tyjae Spears,RB,RB,TEN,1.0
 2026,Jon Murello / Rick Simmons,Jared Verse,Jared Verse,DE,DE,CLE,1.0
 2026,Tony Trozzo,Calvin Ridley,Calvin Ridley,WR,WR,TEN,1.0
 2026,Ed Peters,Khalil Shakir,Khalil Shakir,WR,WR,BUF,1.0
@@ -6067,7 +6067,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2026,Joe Reilly,Michael Penix Jr.,Michael Penix Jr.,QB,QB,ATL,1.0
 2026,David Murello,Quentin Lake,Quentin Lake,CB,CB,LAR,1.0
 2026,Brian Murello / Ron Murello,Brian Robinson Jr.,Brian Robinson Jr.,RB,RB,ATL,1.0
-2026,Jon Fetrow / Casey Trozzo,Tyler Allgeier,Tyler Allgeier,RB,RB,ARI,1.0
+2026,Jon Fetrow,Tyler Allgeier,Tyler Allgeier,RB,RB,ARI,1.0
 2026,Jon Murello / Rick Simmons,Quentin Johnston,Quentin Johnston,WR,WR,LAC,1.0
 2026,Tony Trozzo,Josh Hines-Allen,Josh Hines-Allen,DE,DE,JAX,1.0
 2026,Ed Peters,Aiden Fisher,Aiden Fisher,LB,LB,HOU,1.0

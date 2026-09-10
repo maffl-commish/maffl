@@ -1046,6 +1046,43 @@
   .draft-pos-meta .draft-pos-price { color: var(--gold-dark); }
   .draft-cta--compact { background: none; padding: 0; text-align: left; }
 
+  /* Draft tab: most-recent-auction block */
+  .draft-season {
+    background: var(--gold-soft);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  .draft-season .stat-label { margin-bottom: 6px; }
+  .draft-season-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 8px;
+    align-items: end;
+  }
+  .ds-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .ds-num {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.1;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+  .ds-cell.ds-wide .ds-num { font-size: 15px; }
+  .ds-lab {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  @media (max-width: 400px) {
+    .draft-season-grid { grid-template-columns: 1fr 1fr; }
+    .ds-cell.ds-wide { grid-column: 1 / -1; }
+  }
+
   .bg-toggle {
     display: inline-flex;
     align-items: center;
@@ -1157,7 +1194,7 @@
       <p class="page-header__subtitle">Owner Profiles</p>
     </div>
     <div class="page-header__meta" aria-label="Power Rankings version metadata">
-      <span class="meta-pill">v1.1</span>
+      <span class="meta-pill">v1.2</span>
       <span class="meta-pill">Last Updated September 10, 2026</span>
     </div>
   </header>
@@ -1213,7 +1250,7 @@
 /* Team-name fields (recentTeam + timeline[*][1]) are sourced from
    MAFFL_Team_History.csv via MAFFL_Owner_Registry.csv — regenerate from
    gold, do NOT hand-edit these fields. Ratings, rank, finish flags, W/L,
-   and scout text remain hand-authored. Last name sync: 2026-06-14. */
+   and scout text remain hand-authored. Last name sync: 2026-09-10. */
 const OWNERS_DATA = [
   /* ============================================================
      ACTIVE OWNERS — sorted by 2026 Power Ranking
@@ -1402,7 +1439,7 @@ const OWNERS_DATA = [
   {
     key: "david-murello",
     name: "David Murello",
-    recentTeam: "Kids BadBlood HighSchool",
+    recentTeam: "Marco Clair Kardiac Attack",
     active: true,
     league2026: "Upper-Tier",
     rank: 6,
@@ -1438,7 +1475,7 @@ const OWNERS_DATA = [
   {
     key: "todd-trozzo",
     name: "Todd Trozzo",
-    recentTeam: "U-Town Fightin Ferrets",
+    recentTeam: "Fightin Ferrets",
     active: true,
     league2026: "Lower-Tier",
     rank: 7,
@@ -2623,13 +2660,35 @@ function renderDraftSummary(owner) {
     { num: escHtml(d.mostPlayer || "—"), label: "Most-Drafted Player", sub: d.mostPlayer ? (d.mostPlayerCount + "× drafted") : "" },
     { num: escHtml(d.favPos || "—"),     label: "Favorite Position",   sub: d.favPos ? (d.favPosPct + "% of spend") : "" }
   ];
-  var boxesHtml = boxes.map(function (b) {
+  function statBoxHtml(b) {
     return '<div class="stat-box">' +
       '<div class="stat-num">' + b.num + '</div>' +
       '<div class="stat-label">' + escHtml(b.label) + '</div>' +
       (b.sub ? '<div class="stat-rank">' + escHtml(b.sub) + '</div>' : "") +
     '</div>';
-  }).join("");
+  }
+  var boxesHtml = boxes.map(statBoxHtml).join("");
+  // Most recent auction — labelled by its own year so this never needs a yearly edit.
+  var ls = d.lastSeason;
+  var seasonBlock = ls
+    ? '<div class="draft-season">' +
+        '<div class="stat-label">' + escHtml(ls.year) + ' Auction</div>' +
+        '<div class="draft-season-grid">' +
+          '<div class="ds-cell"><span class="ds-num">' + escHtml(ls.picks) + '</span><span class="ds-lab">Picks</span></div>' +
+          '<div class="ds-cell"><span class="ds-num">' + fmtMoney(ls.spent) + '</span><span class="ds-lab">Spent</span></div>' +
+          '<div class="ds-cell ds-wide"><span class="ds-num">' + escHtml(ls.topPlayer) + '</span>' +
+            '<span class="ds-lab">Top Buy · ' + fmtMoney(ls.topPrice) + '</span></div>' +
+        '</div>' +
+      '</div>'
+    : "";
+  // Career line — maxPlayer/picks/spent have always been in the data, never shown.
+  var careerBoxes = [
+    { num: escHtml(d.maxPlayer || "—"), label: "Biggest Buy Ever",
+      sub: d.maxPlayer ? (fmtMoney(d.maxPrice) + " · " + d.maxYear) : "" },
+    { num: fmtMoney(d.spent), label: "Career Spend",
+      sub: d.picks + " picks · " + d.years }
+  ];
+  var careerBoxesHtml = careerBoxes.map(statBoxHtml).join("");
   // Biggest auction splash at each position (QB/RB/WR/TE plus IDP for the top
   // defensive pick), omitting any position the owner never drafted.
   var tbp = d.topByPos || {};
@@ -2650,7 +2709,9 @@ function renderDraftSummary(owner) {
       '</div>'
     : "";
   return '<div class="draft-summary">' +
+    seasonBlock +
     '<div class="draft-stats">' + boxesHtml + '</div>' +
+    '<div class="draft-stats">' + careerBoxesHtml + '</div>' +
     byPos +
     '<div class="draft-cta draft-cta--compact">' + cta + '</div>' +
   '</div>';
