@@ -1,0 +1,463 @@
+Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
+2026,David Murello,Lamar Jackson,Lamar Jackson,QB,QB,BAL,44.0
+2026,Ed Peters,Jared Goff,Jared Goff,QB,QB,DET,38.0
+2026,Joe Reilly,Christian McCaffrey,Christian McCaffrey,RB,RB,SF,44.0
+2026,Mike Murello,Josh Allen,Josh Allen,QB,QB,BUF,62.0
+2026,Jacob Nickman,Jayden Daniels,Jayden Daniels,QB,QB,WSH,33.0
+2026,Joe Reilly,A.J. Brown,A.J. Brown,WR,WR,NE,27.0
+2026,Ed Peters,Jahmyr Gibbs,Jahmyr Gibbs,RB,RB,DET,69.0
+2026,Braiden Snyder,Drake Maye,Drake Maye,QB,QB,NE,45.0
+2026,BJ Funari,Bijan Robinson,Bijan Robinson,RB,RB,ATL,67.0
+2026,Dan Reilly,Zay Flowers,Zay Flowers,WR,WR,BAL,19.0
+2026,Ed Peters,Ja'Marr Chase,Ja'Marr Chase,WR,WR,CIN,49.0
+2026,Brian Murello / Ron Murello,Dak Prescott,Dak Prescott,QB,QB,DAL,51.0
+2026,BJ Funari,Puka Nacua,Puka Nacua,WR,WR,LAR,44.0
+2026,Braiden Snyder,Jalen Hurts,Jalen Hurts,QB,QB,PHI,50.0
+2026,Mike Murello,Jaxon Smith-Njigba,Jaxon Smith-Njigba,WR,WR,SEA,44.0
+2026,Jon Murello / Rick Simmons,Jonathan Taylor,Jonathan Taylor,RB,RB,IND,47.0
+2026,Tony Trozzo,Amon-Ra St. Brown,Amon-Ra St. Brown,WR,WR,DET,48.0
+2026,Jon Fetrow / Casey Trozzo,CeeDee Lamb,CeeDee Lamb,WR,WR,DAL,38.0
+2026,Jacob Nickman,De'Von Achane,De'Von Achane,RB,RB,MIA,42.0
+2026,Jon Fetrow / Casey Trozzo,Jaxson Dart,Jaxson Dart,QB,QB,NYG,29.0
+2026,Mike Murello,Will Anderson Jr.,Will Anderson Jr.,DE,DE,HOU,5.0
+2026,Dan Reilly,Javonte Williams,Javonte Williams,RB,RB,DAL,22.0
+2026,Brian Murello / Ron Murello,Joe Burrow,Joe Burrow,QB,QB,CIN,43.0
+2026,Jon Murello / Rick Simmons,James Cook III,James Cook,RB,RB,BUF,38.0
+2026,Jon Fetrow / Casey Trozzo,Rashee Rice,Rashee Rice,WR,WR,KC,25.0
+2026,Jacob Nickman,Justin Jefferson,Justin Jefferson,WR,WR,MIN,32.0
+2026,Brian Murello / Ron Murello,Brock Bowers,Brock Bowers,TE,TE,LV,25.0
+2026,Dan Reilly,Trey McBride,Trey McBride,TE,TE,ARI,26.0
+2026,Dan Reilly,Daniel Jones,Daniel Jones,QB,QB,IND,14.0
+2026,Braiden Snyder,Kenneth Walker III,Kenneth Walker III,RB,RB,KC,37.0
+2026,Braiden Snyder,Drake London,Drake London,WR,WR,ATL,25.0
+2026,David Murello,Saquon Barkley,Saquon Barkley,RB,RB,PHI,34.0
+2026,Joe Reilly,Aidan Hutchinson,Aidan Hutchinson,DE,DE,DET,3.0
+2026,Jon Murello / Rick Simmons,Matthew Stafford,Matthew Stafford,QB,QB,LAR,26.0
+2026,BJ Funari,Jeremiyah Love,Jeremiyah Love,RB,RB,ARI,34.0
+2026,Tony Trozzo,Omarion Hampton,Omarion Hampton,RB,RB,LAC,50.0
+2026,Jacob Nickman,Nico Collins,Nico Collins,WR,WR,HOU,29.0
+2026,Jon Fetrow / Casey Trozzo,Trevor Lawrence,Trevor Lawrence,QB,QB,JAX,30.0
+2026,Brian Murello / Ron Murello,Derrick Henry,Derrick Henry,RB,RB,BAL,45.0
+2026,BJ Funari,Malik Nabers,Malik Nabers,WR,WR,NYG,22.0
+2026,David Murello,George Pickens,George Pickens,WR,WR,DAL,22.0
+2026,Dan Reilly,Jordyn Brooks,Jordyn Brooks,LB,LB,MIA,13.0
+2026,Tony Trozzo,Bo Nix,Bo Nix,QB,QB,DEN,40.0
+2026,Joe Reilly,DeVonta Smith,DeVonta Smith,WR,WR,PHI,20.0
+2026,Mike Murello,Maxx Crosby,Maxx Crosby,DE,DE,LV,5.0
+2026,Dan Reilly,Caleb Williams,Caleb Williams,QB,QB,CHI,30.0
+2026,Jacob Nickman,Ashton Jeanty,Ashton Jeanty,RB,RB,LV,34.0
+2026,David Murello,Chris Olave,Chris Olave,WR,WR,NO,23.0
+2026,BJ Funari,Andrew Van Ginkel,Andrew Van Ginkel,DE,DE,MIN,1.0
+2026,Jon Fetrow / Casey Trozzo,Breece Hall,Breece Hall,RB,RB,NYJ,22.0
+2026,Braiden Snyder,Kyren Williams,Kyren Williams,RB,RB,LAR,24.0
+2026,Jon Murello / Rick Simmons,Justin Herbert,Justin Herbert,QB,QB,LAC,25.0
+2026,Ed Peters,Patrick Mahomes,Patrick Mahomes,QB,QB,KC,26.0
+2026,Mike Murello,Carson Schwesinger,Carson Schwesinger,LB,LB,CLE,4.0
+2026,Jon Murello / Rick Simmons,Zaire Franklin,Zaire Franklin,LB,LB,GB,2.0
+2026,Jon Fetrow / Casey Trozzo,Myles Garrett,Myles Garrett,DE,DE,LAR,6.0
+2026,Jon Murello / Rick Simmons,Chase Brown,Chase Brown,RB,RB,CIN,37.0
+2026,Dan Reilly,Travis Etienne Jr.,Travis Etienne Jr.,RB,RB,NO,27.0
+2026,Tony Trozzo,Brock Purdy,Brock Purdy,QB,QB,SF,21.0
+2026,Brian Murello / Ron Murello,Garrett Wilson,Garrett Wilson,WR,WR,NYJ,16.0
+2026,Mike Murello,Talanoa Hufanga,Talanoa Hufanga,S,S,DEN,2.0
+2026,Mike Murello,Quinshon Judkins,Quinshon Judkins,RB,RB,CLE,16.0
+2026,David Murello,Colston Loveland,Colston Loveland,TE,TE,CHI,17.0
+2026,Jacob Nickman,Davante Adams,Davante Adams,WR,WR,LAR,10.0
+2026,David Murello,Kenny Gainwell,Kenneth Gainwell,RB,RB,TB,5.0
+2026,Dan Reilly,Fred Warner,Fred Warner,LB,LB,SF,5.0
+2026,Joe Reilly,Alex Singleton,Alex Singleton,LB,LB,DEN,2.0
+2026,Mike Murello,Nick Bolton,Nick Bolton,LB,LB,KC,4.0
+2026,Joe Reilly,D'Andre Swift,D'Andre Swift,RB,RB,CHI,13.0
+2026,Dan Reilly,Cam Skattebo,Cam Skattebo,RB,RB,NYG,15.0
+2026,David Murello,Emeka Egbuka,Emeka Egbuka,WR,WR,TB,16.0
+2026,Joe Reilly,Jadarian Price,Jadarian Price,RB,RB,SEA,21.0
+2026,BJ Funari,Devin Bush,Devin Bush,LB,LB,CHI,2.0
+2026,Jon Fetrow / Casey Trozzo,Bucky Irving,Bucky Irving,RB,RB,TB,8.0
+2026,Joe Reilly,Tyler Warren,Tyler Warren,TE,TE,IND,16.0
+2026,BJ Funari,Ladd McConkey,Ladd McConkey,WR,WR,LAC,4.0
+2026,Jon Murello / Rick Simmons,David Montgomery,David Montgomery,RB,RB,HOU,5.0
+2026,Mike Murello,Kyler Murray,Kyler Murray,QB,QB,MIN,10.0
+2026,Jacob Nickman,Edgerrin Cooper,Edgerrin Cooper,LB,LB,GB,1.0
+2026,Joe Reilly,Jack Campbell,Jack Campbell,LB,LB,DET,6.0
+2026,Joe Reilly,Baker Mayfield,Baker Mayfield,QB,QB,TB,15.0
+2026,Dan Reilly,Rashid Shaheed,Rashid Shaheed,WR,WR,SEA,3.0
+2026,Dan Reilly,Tee Higgins,Tee Higgins,WR,WR,CIN,6.0
+2026,Mike Murello,Tetairoa McMillan,Tetairoa McMillan,WR,WR,CAR,12.0
+2026,Mike Murello,Quay Walker,Quay Walker,LB,LB,LV,3.0
+2026,Jon Fetrow / Casey Trozzo,Blake Cashman,Blake Cashman,LB,LB,MIN,3.0
+2026,David Murello,Josh Jacobs,Josh Jacobs,RB,RB,GB,4.0
+2026,David Murello,Terry McLaurin,Terry McLaurin,WR,WR,WSH,10.0
+2026,Dan Reilly,Rico Dowdle,Rico Dowdle,RB,RB,PIT,4.0
+2026,Mike Murello,Tyler Shough,Tyler Shough,QB,QB,NO,13.0
+2026,Jacob Nickman,Leonard Williams,Leonard Williams,DT,DT,SEA,1.0
+2026,Braiden Snyder,Jeffery Simmons,Jeffery Simmons,DT,DT,TEN,3.0
+2026,Joe Reilly,Jordan Love,Jordan Love,QB,QB,GB,15.0
+2026,Jon Fetrow / Casey Trozzo,Brian Burns,Brian Burns,DE,DE,NYG,5.0
+2026,Brian Murello / Ron Murello,DJ Moore,DJ Moore,WR,WR,BUF,4.0
+2026,Tony Trozzo,Jaylen Waddle,Jaylen Waddle,WR,WR,DEN,10.0
+2026,BJ Funari,Derwin James Jr.,Derwin James Jr.,S,S,LAC,2.0
+2026,Jon Fetrow / Casey Trozzo,Kyle Pitts Sr.,Kyle Pitts,TE,TE,ATL,7.0
+2026,Tony Trozzo,Bhayshul Tuten,Bhayshul Tuten,RB,RB,JAX,14.0
+2026,BJ Funari,Rome Odunze,Rome Odunze,WR,WR,CHI,6.0
+2026,Ed Peters,Tony Pollard,Tony Pollard,RB,RB,TEN,1.0
+2026,Mike Murello,Harold Fannin Jr.,Harold Fannin Jr.,TE,TE,CLE,6.0
+2026,BJ Funari,Jordan Davis,Jordan Davis,DT,DT,PHI,2.0
+2026,Jon Fetrow / Casey Trozzo,Cedric Gray,Cedric Gray,LB,LB,TEN,3.0
+2026,Joe Reilly,Danielle Hunter,Danielle Hunter,DE,DE,HOU,4.0
+2026,Dan Reilly,Tuli Tuipulotu,Tuli Tuipulotu,DE,DE,LAC,2.0
+2026,Jacob Nickman,Nick Cross,Nick Cross,S,S,WSH,2.0
+2026,Jacob Nickman,Alec Pierce,Alec Pierce,WR,WR,IND,2.0
+2026,BJ Funari,Ernest Jones IV,Ernest Jones IV,LB,LB,SEA,1.0
+2026,Jon Fetrow / Casey Trozzo,Jameson Williams,Jameson Williams,WR,WR,DET,3.0
+2026,David Murello,Rhamondre Stevenson,Rhamondre Stevenson,RB,RB,NE,4.0
+2026,BJ Funari,Foyesade Oluokun,Foyesade Oluokun,LB,LB,JAX,2.0
+2026,Jon Murello / Rick Simmons,Parker Washington,Parker Washington,WR,WR,JAX,4.0
+2026,Mike Murello,TreVeyon Henderson,TreVeyon Henderson,RB,RB,NE,1.0
+2026,Jacob Nickman,Kaden Elliss,Kaden Elliss,LB,LB,NO,1.0
+2026,Braiden Snyder,Sonny Styles,Sonny Styles,LB,LB,WSH,1.0
+2026,Joe Reilly,Roquan Smith,Roquan Smith,LB,LB,BAL,1.0
+2026,Dan Reilly,Nate Landman,Nate Landman,LB,LB,LAR,1.0
+2026,David Murello,C.J. Stroud,C.J. Stroud,QB,QB,HOU,8.0
+2026,Jon Fetrow / Casey Trozzo,Jaylen Warren,Jaylen Warren,RB,RB,PIT,4.0
+2026,BJ Funari,Jeremy Chinn,Jeremy Chinn,S,S,LV,1.0
+2026,Jon Fetrow / Casey Trozzo,Travis Hunter,Travis Hunter,WR,WR,JAX,6.0
+2026,Jon Murello / Rick Simmons,Zack Baun,Zack Baun,LB,LB,PHI,1.0
+2026,Tony Trozzo,Nakobe Dean,Nakobe Dean,LB,LB,LV,1.0
+2026,BJ Funari,J.K. Dobbins,J.K. Dobbins,RB,RB,DEN,2.0
+2026,BJ Funari,Marvin Harrison Jr.,Marvin Harrison Jr.,WR,WR,ARI,2.0
+2026,Jacob Nickman,Alex Highsmith,Alex Highsmith,DE,DE,PIT,1.0
+2026,Braiden Snyder,Devin White,Devin White,LB,LB,DET,1.0
+2026,Jon Fetrow / Casey Trozzo,Kyle Hamilton,Kyle Hamilton,S,S,BAL,3.0
+2026,Joe Reilly,Budda Baker,Budda Baker,S,S,ARI,2.0
+2026,Joe Reilly,Sam Darnold,Sam Darnold,QB,QB,SEA,4.0
+2026,Mike Murello,Chuba Hubbard,Chuba Hubbard,RB,RB,CAR,2.0
+2026,Jacob Nickman,George Kittle,George Kittle,TE,TE,SF,2.0
+2026,Jon Fetrow / Casey Trozzo,Jamien Sherwood,Jamien Sherwood,LB,LB,NYJ,1.0
+2026,Mike Murello,Jonathon Brooks,Jonathon Brooks,RB,RB,CAR,3.0
+2026,Tony Trozzo,Tremaine Edmunds,Tremaine Edmunds,LB,LB,NYG,1.0
+2026,Ed Peters,Kyle Monangai,Kyle Monangai,RB,RB,CHI,1.0
+2026,Mike Murello,Luther Burden III,Luther Burden III,WR,WR,CHI,2.0
+2026,Dan Reilly,Kamari Lassiter,Kamari Lassiter,CB,CB,HOU,2.0
+2026,BJ Funari,Sam LaPorta,Sam LaPorta,TE,TE,DET,2.0
+2026,Jon Murello / Rick Simmons,Christian Watson,Christian Watson,WR,WR,GB,2.0
+2026,Dan Reilly,Trey Hendrickson,Trey Hendrickson,DE,DE,BAL,1.0
+2026,David Murello,Dallas Turner,Dallas Turner,DE,DE,MIN,1.0
+2026,Brian Murello / Ron Murello,Jordan Mason,Jordan Mason,RB,RB,MIN,1.0
+2026,BJ Funari,J.J. McCarthy,J.J. McCarthy,QB,QB,MIN,1.0
+2026,Dan Reilly,Malik Willis,Malik Willis,QB,QB,MIA,4.0
+2026,David Murello,T.J. Watt,T.J. Watt,DE,DE,PIT,2.0
+2026,David Murello,Cam Ward,Cam Ward,QB,QB,TEN,2.0
+2026,Dan Reilly,DK Metcalf,DK Metcalf,WR,WR,PIT,2.0
+2026,Mike Murello,Caleb Downs,Caleb Downs,S,S,DAL,1.0
+2026,Jacob Nickman,Kam Curl,Kamren Curl,S,S,LAR,1.0
+2026,Braiden Snyder,Dallas Goedert,Dallas Goedert,TE,TE,PHI,1.0
+2026,Jon Murello / Rick Simmons,Bryce Young,Bryce Young,QB,QB,CAR,2.0
+2026,Dan Reilly,Makai Lemon,Makai Lemon,WR,WR,PHI,1.0
+2026,David Murello,Tykee Smith,Tykee Smith,S,S,TB,1.0
+2026,Brian Murello / Ron Murello,Aaron Jones Sr.,Aaron Jones,RB,RB,MIN,1.0
+2026,BJ Funari,Geno Smith,Geno Smith,QB,QB,NYJ,1.0
+2026,Jon Fetrow / Casey Trozzo,Courtland Sutton,Courtland Sutton,WR,WR,DEN,1.0
+2026,Tony Trozzo,Tucker Kraft,Tucker Kraft,TE,TE,GB,2.0
+2026,Tony Trozzo,Aaron Rodgers,Aaron Rodgers,QB,QB,PIT,1.0
+2026,Ed Peters,Michael Pittman Jr.,Michael Pittman Jr.,WR,WR,PIT,1.0
+2026,Mike Murello,Carnell Tate,Carnell Tate,WR,WR,TEN,2.0
+2026,Jacob Nickman,Jacoby Brissett,Jacoby Brissett,QB,QB,ARI,1.0
+2026,Braiden Snyder,Mike Evans,Mike Evans,WR,WR,SF,1.0
+2026,Joe Reilly,De'Zhaun Stribling,De'Zhaun Stribling,WR,WR,SF,1.0
+2026,Dan Reilly,Jakobi Meyers,Jakobi Meyers,WR,WR,JAX,1.0
+2026,David Murello,Isaiah Likely,Isaiah Likely,TE,TE,NYG,1.0
+2026,Jacob Nickman,Matthew Golden,Matthew Golden,WR,WR,GB,2.0
+2026,BJ Funari,Woody Marks,Woody Marks,RB,RB,HOU,1.0
+2026,Jon Fetrow / Casey Trozzo,Brian Thomas Jr.,Brian Thomas Jr.,WR,WR,JAX,2.0
+2026,Jon Murello / Rick Simmons,Dalton Kincaid,Dalton Kincaid,TE,TE,BUF,1.0
+2026,Tony Trozzo,Travis Kelce,Travis Kelce,TE,TE,KC,1.0
+2026,Ed Peters,Juwan Johnson,Juwan Johnson,TE,TE,NO,1.0
+2026,Mike Murello,KC Concepcion,KC Concepcion,WR,WR,CLE,1.0
+2026,Jacob Nickman,Chase Young,Chase Young,DE,DE,NO,1.0
+2026,Braiden Snyder,Stefon Diggs,Stefon Diggs,WR,WR,WSH,1.0
+2026,Joe Reilly,Jessie Bates III,Jessie Bates III,S,S,ATL,1.0
+2026,Dan Reilly,Blake Corum,Blake Corum,RB,RB,LAR,1.0
+2026,David Murello,DeMarvion Overshown,DeMarvion Overshown,LB,LB,DAL,1.0
+2026,Brian Murello / Ron Murello,MarShawn Lloyd,MarShawn Lloyd,RB,RB,GB,1.0
+2026,BJ Funari,Fernando Mendoza,Fernando Mendoza,QB,QB,LV,1.0
+2026,Jon Fetrow / Casey Trozzo,Michael Wilson,Michael Wilson,WR,WR,ARI,1.0
+2026,Jon Murello / Rick Simmons,Arvell Reese,Arvell Reese,LB,LB,NYG,1.0
+2026,Tony Trozzo,Kenyon Sadiq,Kenyon Sadiq,TE,TE,NYJ,1.0
+2026,Ed Peters,Xavier Worthy,Xavier Worthy,WR,WR,KC,1.0
+2026,Mike Murello,RJ Harvey,RJ Harvey,RB,RB,DEN,1.0
+2026,Jacob Nickman,Konata Mumpfield,Konata Mumpfield,WR,WR,LAR,1.0
+2026,Braiden Snyder,Nick Bosa,Nick Bosa,DE,DE,SF,1.0
+2026,Joe Reilly,Chris Godwin Jr.,Chris Godwin,WR,WR,TB,1.0
+2026,Dan Reilly,Nick Emmanwori,Nick Emmanwori,CB,CB,SEA,1.0
+2026,David Murello,Abdul Carter,Abdul Carter,DE,DE,NYG,1.0
+2026,Brian Murello / Ron Murello,Jordan Addison,Jordan Addison,WR,WR,MIN,1.0
+2026,BJ Funari,Jacory Croskey-Merritt,Jacory Croskey-Merritt,RB,RB,WSH,1.0
+2026,Jon Fetrow / Casey Trozzo,Jake Ferguson,Jake Ferguson,TE,TE,DAL,1.0
+2026,Jon Murello / Rick Simmons,Chamarri Conner,Chamarri Conner,S,S,KC,1.0
+2026,Tony Trozzo,Mike Washington Jr.,Mike Washington Jr.,RB,RB,LV,1.0
+2026,Ed Peters,Pat Freiermuth,Pat Freiermuth,TE,TE,PIT,1.0
+2026,Mike Murello,Micah Parsons,Micah Parsons,DE,DE,GB,1.0
+2026,Jacob Nickman,Deebo Samuel Sr.,Deebo Samuel,WR,WR,SF,1.0
+2026,Braiden Snyder,Quinnen Williams,Quinnen Williams,DT,DT,DAL,1.0
+2026,Joe Reilly,Chris Rodriguez Jr.,Chris Rodriguez Jr.,RB,RB,JAX,1.0
+2026,David Murello,Robert Spillane,Robert Spillane,LB,LB,NE,1.0
+2026,Brian Murello / Ron Murello,Devaughn Vele,Devaughn Vele,WR,WR,NO,1.0
+2026,BJ Funari,Kirk Cousins,Kirk Cousins,QB,QB,LV,1.0
+2026,Jon Fetrow / Casey Trozzo,Tyjae Spears,Tyjae Spears,RB,RB,TEN,1.0
+2026,Jon Murello / Rick Simmons,Jared Verse,Jared Verse,DE,DE,CLE,1.0
+2026,Tony Trozzo,Calvin Ridley,Calvin Ridley,WR,WR,TEN,1.0
+2026,Ed Peters,Khalil Shakir,Khalil Shakir,WR,WR,BUF,1.0
+2026,Jacob Nickman,Rachaad White,Rachaad White,RB,RB,WSH,1.0
+2026,Braiden Snyder,Trent McDuffie,Trent McDuffie,CB,CB,LAR,1.0
+2026,Joe Reilly,Michael Penix Jr.,Michael Penix Jr.,QB,QB,ATL,1.0
+2026,David Murello,Quentin Lake,Quentin Lake,CB,CB,LAR,1.0
+2026,Brian Murello / Ron Murello,Brian Robinson Jr.,Brian Robinson Jr.,RB,RB,ATL,1.0
+2026,Jon Fetrow / Casey Trozzo,Tyler Allgeier,Tyler Allgeier,RB,RB,ARI,1.0
+2026,Jon Murello / Rick Simmons,Quentin Johnston,Quentin Johnston,WR,WR,LAC,1.0
+2026,Tony Trozzo,Josh Hines-Allen,Josh Hines-Allen,DE,DE,JAX,1.0
+2026,Ed Peters,Aiden Fisher,Aiden Fisher,LB,LB,HOU,1.0
+2026,Jacob Nickman,Jonah Coleman,Jonah Coleman,RB,RB,DEN,1.0
+2026,Braiden Snyder,Devon Witherspoon,Devon Witherspoon,CB,CB,SEA,1.0
+2026,Joe Reilly,Tua Tagovailoa,Tua Tagovailoa,QB,QB,ATL,1.0
+2026,David Murello,Demario Davis,Demario Davis,LB,LB,NYJ,1.0
+2026,Brian Murello / Ron Murello,Wan'Dale Robinson,Wan'Dale Robinson,WR,WR,TEN,1.0
+2026,Jon Murello / Rick Simmons,Nik Bonitto,Nik Bonitto,DE,DE,DEN,1.0
+2026,Tony Trozzo,Azeez Al-Shaair,Azeez Al-Shaair,LB,LB,HOU,1.0
+2026,Ed Peters,Cooper McDonald,Cooper McDonald,LB,LB,KC,1.0
+2026,Jacob Nickman,Keaton Mitchell,Keaton Mitchell,RB,RB,LAC,1.0
+2026,Braiden Snyder,Alvin Kamara,Alvin Kamara,RB,RB,NO,1.0
+2026,Joe Reilly,Jordyn Tyson,Jordyn Tyson,WR,WR,NO,1.0
+2026,David Murello,Mark Andrews,Mark Andrews,TE,TE,BAL,1.0
+2026,Brian Murello / Ron Murello,Dylan Sampson,Dylan Sampson,RB,RB,CLE,1.0
+2026,Jon Murello / Rick Simmons,Kevin Winston Jr.,Kevin Winston Jr.,S,S,TEN,1.0
+2026,Tony Trozzo,Jordan Battle,Jordan Battle,S,S,CIN,1.0
+2026,Ed Peters,DeForest Buckner,DeForest Buckner,DT,DT,IND,1.0
+2026,Braiden Snyder,Drew Allar,Drew Allar,QB,QB,PIT,1.0
+2026,Brian Murello / Ron Murello,Emmett Johnson,Emmett Johnson,RB,RB,KC,1.0
+2026,Jon Murello / Rick Simmons,Jalen Coker,Jalen Coker,WR,WR,CAR,1.0
+2026,Tony Trozzo,Tre'von Moehrig,Tre'von Moehrig,S,S,CAR,1.0
+2026,Ed Peters,Pat Surtain II,Pat Surtain II,CB,CB,DEN,1.0
+2026,Braiden Snyder,Jayden Reed,Jayden Reed,WR,WR,GB,1.0
+2026,Brian Murello / Ron Murello,Mack Wilson Sr.,Mack Wilson Sr.,LB,LB,ARI,1.0
+2026,Jon Murello / Rick Simmons,Dalton Schultz,Dalton Schultz,TE,TE,HOU,1.0
+2026,Tony Trozzo,Najee Harris,Najee Harris,RB,RB,NYG,1.0
+2026,Ed Peters,Christian Gonzalez,Christian Gonzalez,CB,CB,NE,1.0
+2026,Braiden Snyder,Zach Charbonnet,Zach Charbonnet,RB,RB,SEA,1.0
+2026,Brian Murello / Ron Murello,Barrett Carter,Barrett Carter,LB,LB,CIN,1.0
+2026,Jon Murello / Rick Simmons,Dontayvion Wicks,Dontayvion Wicks,WR,WR,PHI,1.0
+2026,Tony Trozzo,Aaron Donald,Aaron Donald,DT,DT,LAR,1.0
+2026,Ed Peters,Romeo Doubs,Romeo Doubs,WR,WR,NE,1.0
+2026,Braiden Snyder,Derek Stingley Jr.,Derek Stingley Jr.,CB,CB,HOU,1.0
+2026,Brian Murello / Ron Murello,DeMarcus Lawrence,DeMarcus Lawrence,DE,DE,SEA,1.0
+2026,Jon Murello / Rick Simmons,T.J. Hockenson,T.J. Hockenson,TE,TE,MIN,1.0
+2026,Tony Trozzo,Jerry Jeudy,Jerry Jeudy,WR,WR,CLE,1.0
+2026,Ed Peters,Domonique Orange,Domonique Orange,DT,DT,MIN,1.0
+2026,Braiden Snyder,Hunter Henry,Hunter Henry,TE,TE,NE,1.0
+2026,Brian Murello / Ron Murello,Montez Sweat,Montez Sweat,DE,DE,CHI,1.0
+2026,Tony Trozzo,Cooper Kupp,Cooper Kupp,WR,WR,SEA,1.0
+2026,Ed Peters,Damar Hamlin,Damar Hamlin,S,S,BUF,1.0
+2026,Braiden Snyder,Tank Bigsby,Tank Bigsby,RB,RB,PHI,1.0
+2026,Brian Murello / Ron Murello,Greg Rousseau,Greg Rousseau,DE,DE,BUF,1.0
+2026,Ed Peters,Keenan Allen,Keenan Allen,WR,WR,IND,1.0
+2026,Brian Murello / Ron Murello,Xavier McKinney,Xavier McKinney,S,S,GB,1.0
+2026,Ed Peters,Brenton Strange,Brenton Strange,TE,TE,JAX,1.0
+2026,Brian Murello / Ron Murello,Jaquan Brisker,Jaquan Brisker,S,S,PIT,1.0
+2026,Ed Peters,Odell Beckham Jr.,Odell Beckham Jr.,WR,WR,NYG,1.0
+2026,Tony Brooks,Jahmyr Gibbs,Jahmyr Gibbs,RB,RB,DET,61.0
+2026,Todd Trozzo,Josh Allen,Josh Allen,QB,QB,BUF,46.0
+2026,Ben Funari,Jaxon Smith-Njigba,Jaxon Smith-Njigba,WR,WR,SEA,39.0
+2026,Tony Brooks,Jalen Hurts,Jalen Hurts,QB,QB,PHI,21.0
+2026,Nick Yankovich,Christian McCaffrey,Christian McCaffrey,RB,RB,SF,37.0
+2026,Chris Johnson,Joe Burrow,Joe Burrow,QB,QB,CIN,27.0
+2026,Sam Lavrinc,Jayden Daniels,Jayden Daniels,QB,QB,WSH,29.0
+2026,Dominic Nicastro,Ja'Marr Chase,Ja'Marr Chase,WR,WR,CIN,53.0
+2026,Todd Trozzo,Jaxson Dart,Jaxson Dart,QB,QB,NYG,16.0
+2026,Nick Yankovich,Puka Nacua,Puka Nacua,WR,WR,LAR,49.0
+2026,Charles Lavrinc,Bijan Robinson,Bijan Robinson,RB,RB,ATL,63.0
+2026,Sam Lavrinc,Amon-Ra St. Brown,Amon-Ra St. Brown,WR,WR,DET,42.0
+2026,Sam Lavrinc,Omarion Hampton,Omarion Hampton,RB,RB,LAC,19.0
+2026,Bob Keslar,Justin Jefferson,Justin Jefferson,WR,WR,MIN,34.0
+2026,Todd Trozzo,Lamar Jackson,Lamar Jackson,QB,QB,BAL,39.0
+2026,Todd Trozzo,Drake Maye,Drake Maye,QB,QB,NE,32.0
+2026,Sam Lavrinc,James Cook III,James Cook,RB,RB,BUF,38.0
+2026,Chris Johnson,Trevor Lawrence,Trevor Lawrence,QB,QB,JAX,21.0
+2026,Ben Funari,Drake London,Drake London,WR,WR,ATL,23.0
+2026,Sam Lavrinc,CeeDee Lamb,CeeDee Lamb,WR,WR,DAL,41.0
+2026,Ben Funari,Jeremiyah Love,Jeremiyah Love,RB,RB,ARI,25.0
+2026,Tony Brooks,Jaylen Waddle,Jaylen Waddle,WR,WR,DEN,13.0
+2026,Nick Yankovich,Dak Prescott,Dak Prescott,QB,QB,DAL,21.0
+2026,Ben Funari,Trey McBride,Trey McBride,TE,TE,ARI,20.0
+2026,Dominic Nicastro,Saquon Barkley,Saquon Barkley,RB,RB,PHI,27.0
+2026,Charles Lavrinc,Jonathan Taylor,Jonathan Taylor,RB,RB,IND,38.0
+2026,Ben Funari,Nico Collins,Nico Collins,WR,WR,HOU,20.0
+2026,Charles Lavrinc,Rashee Rice,Rashee Rice,WR,WR,KC,22.0
+2026,Bob Keslar,A.J. Brown,A.J. Brown,WR,WR,NE,27.0
+2026,Tony Brooks,Travis Etienne Jr.,Travis Etienne Jr.,RB,RB,NO,12.0
+2026,Todd Trozzo,Kenneth Walker III,Kenneth Walker III,RB,RB,KC,22.0
+2026,Chris Johnson,Bo Nix,Bo Nix,QB,QB,DEN,17.0
+2026,Chris Johnson,Derrick Henry,Derrick Henry,RB,RB,BAL,39.0
+2026,Dominic Nicastro,Baker Mayfield,Baker Mayfield,QB,QB,TB,12.0
+2026,Bob Keslar,Patrick Mahomes,Patrick Mahomes,QB,QB,KC,16.0
+2026,Tony Brooks,Tyler Shough,Tyler Shough,QB,QB,NO,4.0
+2026,Nick Yankovich,Ashton Jeanty,Ashton Jeanty,RB,RB,LV,26.0
+2026,Bob Keslar,Chase Brown,Chase Brown,RB,RB,CIN,22.0
+2026,Dominic Nicastro,Kyren Williams,Kyren Williams,RB,RB,LAR,19.0
+2026,Tony Brooks,Zay Flowers,Zay Flowers,WR,WR,BAL,10.0
+2026,Ben Funari,Brock Purdy,Brock Purdy,QB,QB,SF,18.0
+2026,Dominic Nicastro,De'Von Achane,De'Von Achane,RB,RB,MIA,28.0
+2026,Chris Johnson,George Pickens,George Pickens,WR,WR,DAL,13.0
+2026,Dominic Nicastro,Matthew Stafford,Matthew Stafford,QB,QB,LAR,18.0
+2026,Sam Lavrinc,Breece Hall,Breece Hall,RB,RB,NYJ,11.0
+2026,Tony Brooks,Brock Bowers,Brock Bowers,TE,TE,LV,17.0
+2026,Bob Keslar,D'Andre Swift,D'Andre Swift,RB,RB,CHI,13.0
+2026,Charles Lavrinc,Malik Nabers,Malik Nabers,WR,WR,NYG,15.0
+2026,Bob Keslar,DeVonta Smith,DeVonta Smith,WR,WR,PHI,16.0
+2026,Charles Lavrinc,Caleb Williams,Caleb Williams,QB,QB,CHI,21.0
+2026,Ben Funari,Javonte Williams,Javonte Williams,RB,RB,DAL,15.0
+2026,Chris Johnson,Emeka Egbuka,Emeka Egbuka,WR,WR,TB,10.0
+2026,Bob Keslar,Tetairoa McMillan,Tetairoa McMillan,WR,WR,CAR,12.0
+2026,Ben Funari,Bucky Irving,Bucky Irving,RB,RB,TB,9.0
+2026,Nick Yankovich,Chris Olave,Chris Olave,WR,WR,NO,13.0
+2026,Bob Keslar,Colston Loveland,Colston Loveland,TE,TE,CHI,11.0
+2026,Todd Trozzo,Cam Skattebo,Cam Skattebo,RB,RB,NYG,7.0
+2026,Dominic Nicastro,Ladd McConkey,Ladd McConkey,WR,WR,LAC,12.0
+2026,Charles Lavrinc,Justin Herbert,Justin Herbert,QB,QB,LAC,13.0
+2026,Todd Trozzo,Maxx Crosby,Maxx Crosby,DE,DE,LV,4.0
+2026,Chris Johnson,DJ Moore,DJ Moore,WR,WR,BUF,6.0
+2026,Bob Keslar,Kyler Murray,Kyler Murray,QB,QB,MIN,7.0
+2026,Tony Brooks,Cam Ward,Cam Ward,QB,QB,TEN,2.0
+2026,Nick Yankovich,Terry McLaurin,Terry McLaurin,WR,WR,WSH,7.0
+2026,Bob Keslar,David Montgomery,David Montgomery,RB,RB,HOU,7.0
+2026,Ben Funari,Tyler Warren,Tyler Warren,TE,TE,IND,7.0
+2026,Tony Brooks,Luther Burden III,Luther Burden III,WR,WR,CHI,1.0
+2026,Charles Lavrinc,Garrett Wilson,Garrett Wilson,WR,WR,NYJ,5.0
+2026,Todd Trozzo,Jordyn Brooks,Jordyn Brooks,LB,LB,MIA,3.0
+2026,Chris Johnson,Bhayshul Tuten,Bhayshul Tuten,RB,RB,JAX,11.0
+2026,Todd Trozzo,Jared Goff,Jared Goff,QB,QB,DET,9.0
+2026,Ben Funari,Daniel Jones,Daniel Jones,QB,QB,IND,6.0
+2026,Nick Yankovich,Kyle Pitts Sr.,Kyle Pitts,TE,TE,ATL,6.0
+2026,Bob Keslar,Jeffery Simmons,Jeffery Simmons,DT,DT,TEN,1.0
+2026,Dominic Nicastro,Harold Fannin Jr.,Harold Fannin Jr.,TE,TE,CLE,4.0
+2026,Tony Brooks,Parker Washington,Parker Washington,WR,WR,JAX,11.0
+2026,Bob Keslar,Davante Adams,Davante Adams,WR,WR,LAR,7.0
+2026,Bob Keslar,Myles Garrett,Myles Garrett,DE,DE,LAR,5.0
+2026,Chris Johnson,Jadarian Price,Jadarian Price,RB,RB,SEA,6.0
+2026,Ben Funari,Malik Willis,Malik Willis,QB,QB,MIA,2.0
+2026,Chris Johnson,Tee Higgins,Tee Higgins,WR,WR,CIN,6.0
+2026,Chris Johnson,Rome Odunze,Rome Odunze,WR,WR,CHI,5.0
+2026,Todd Trozzo,Carson Schwesinger,Carson Schwesinger,LB,LB,CLE,5.0
+2026,Tony Brooks,Fred Warner,Fred Warner,LB,LB,SF,4.0
+2026,Tony Brooks,Rhamondre Stevenson,Rhamondre Stevenson,RB,RB,NE,5.0
+2026,Nick Yankovich,Quinshon Judkins,Quinshon Judkins,RB,RB,CLE,4.0
+2026,Nick Yankovich,Sam Darnold,Sam Darnold,QB,QB,SEA,5.0
+2026,Bob Keslar,Dalton Kincaid,Dalton Kincaid,TE,TE,BUF,3.0
+2026,Chris Johnson,Marvin Harrison Jr.,Marvin Harrison Jr.,WR,WR,ARI,4.0
+2026,Todd Trozzo,Jack Campbell,Jack Campbell,LB,LB,DET,3.0
+2026,Todd Trozzo,Jaylen Warren,Jaylen Warren,RB,RB,PIT,3.0
+2026,Nick Yankovich,Alex Singleton,Alex Singleton,LB,LB,DEN,3.0
+2026,Tony Brooks,Travis Hunter,Travis Hunter,WR,WR,JAX,6.0
+2026,Chris Johnson,Jordan Love,Jordan Love,QB,QB,GB,8.0
+2026,Chris Johnson,Sam LaPorta,Sam LaPorta,TE,TE,DET,4.0
+2026,Chris Johnson,Blake Cashman,Blake Cashman,LB,LB,MIN,5.0
+2026,Chris Johnson,Cedric Gray,Cedric Gray,LB,LB,TEN,4.0
+2026,Bob Keslar,Robert Spillane,Robert Spillane,LB,LB,NE,3.0
+2026,Sam Lavrinc,Tucker Kraft,Tucker Kraft,TE,TE,GB,4.0
+2026,Nick Yankovich,Brian Burns,Brian Burns,DE,DE,NYG,4.0
+2026,Dominic Nicastro,Ernest Jones IV,Ernest Jones IV,LB,LB,SEA,4.0
+2026,Charles Lavrinc,Travis Kelce,Travis Kelce,TE,TE,KC,4.0
+2026,Chris Johnson,Christian Watson,Christian Watson,WR,WR,GB,3.0
+2026,Dominic Nicastro,Jameson Williams,Jameson Williams,WR,WR,DET,4.0
+2026,Bob Keslar,Courtland Sutton,Courtland Sutton,WR,WR,DEN,2.0
+2026,Chris Johnson,Nick Bolton,Nick Bolton,LB,LB,KC,6.0
+2026,Tony Brooks,Foyesade Oluokun,Foyesade Oluokun,LB,LB,JAX,4.0
+2026,Nick Yankovich,Nick Bosa,Nick Bosa,DE,DE,SF,2.0
+2026,Nick Yankovich,Sonny Styles,Sonny Styles,LB,LB,WSH,4.0
+2026,Bob Keslar,Zack Baun,Zack Baun,LB,LB,PHI,3.0
+2026,Nick Yankovich,Nick Emmanwori,Nick Emmanwori,CB,CB,SEA,4.0
+2026,Dominic Nicastro,TreVeyon Henderson,TreVeyon Henderson,RB,RB,NE,4.0
+2026,Dominic Nicastro,George Kittle,George Kittle,TE,TE,SF,3.0
+2026,Bob Keslar,Nakobe Dean,Nakobe Dean,LB,LB,LV,2.0
+2026,Tony Brooks,Aidan Hutchinson,Aidan Hutchinson,DE,DE,DET,4.0
+2026,Tony Brooks,Nate Landman,Nate Landman,LB,LB,LAR,2.0
+2026,Ben Funari,Carnell Tate,Carnell Tate,WR,WR,TEN,4.0
+2026,Nick Yankovich,Kyle Hamilton,Kyle Hamilton,S,S,BAL,5.0
+2026,Bob Keslar,Budda Baker,Budda Baker,S,S,ARI,3.0
+2026,Tony Brooks,Roquan Smith,Roquan Smith,LB,LB,BAL,4.0
+2026,Tony Brooks,Jordyn Tyson,Jordyn Tyson,WR,WR,NO,3.0
+2026,Charles Lavrinc,Dallas Goedert,Dallas Goedert,TE,TE,PHI,2.0
+2026,Todd Trozzo,Tony Pollard,Tony Pollard,RB,RB,TEN,2.0
+2026,Chris Johnson,Nik Bonitto,Nik Bonitto,DE,DE,DEN,1.0
+2026,Bob Keslar,Talanoa Hufanga,Talanoa Hufanga,S,S,DEN,2.0
+2026,Charles Lavrinc,Jamien Sherwood,Jamien Sherwood,LB,LB,NYJ,1.0
+2026,Nick Yankovich,Alec Pierce,Alec Pierce,WR,WR,IND,3.0
+2026,Bob Keslar,J.K. Dobbins,J.K. Dobbins,RB,RB,DEN,3.0
+2026,Dominic Nicastro,T.J. Watt,T.J. Watt,DE,DE,PIT,3.0
+2026,Tony Brooks,Derwin James Jr.,Derwin James Jr.,S,S,LAC,1.0
+2026,Todd Trozzo,DK Metcalf,DK Metcalf,WR,WR,PIT,1.0
+2026,Nick Yankovich,C.J. Stroud,C.J. Stroud,QB,QB,HOU,2.0
+2026,Chris Johnson,Trey Hendrickson,Trey Hendrickson,DE,DE,BAL,1.0
+2026,Tony Brooks,Danielle Hunter,Danielle Hunter,DE,DE,HOU,2.0
+2026,Charles Lavrinc,Will Anderson Jr.,Will Anderson Jr.,DE,DE,HOU,3.0
+2026,Sam Lavrinc,Jacory Croskey-Merritt,Jacory Croskey-Merritt,RB,RB,WSH,2.0
+2026,Bob Keslar,Aaron Rodgers,Aaron Rodgers,QB,QB,PIT,1.0
+2026,Dominic Nicastro,Quay Walker,Quay Walker,LB,LB,LV,1.0
+2026,Tony Brooks,Jonathon Brooks,Jonathon Brooks,RB,RB,CAR,1.0
+2026,Todd Trozzo,Tykee Smith,Tykee Smith,S,S,TB,1.0
+2026,Charles Lavrinc,Andrew Van Ginkel,Andrew Van Ginkel,DE,DE,MIN,2.0
+2026,Chris Johnson,Antoine Winfield Jr.,Antoine Winfield Jr.,S,S,TB,1.0
+2026,Ben Funari,Tremaine Edmunds,Tremaine Edmunds,LB,LB,NYG,1.0
+2026,Ben Funari,Kamari Lassiter,Kamari Lassiter,CB,CB,HOU,2.0
+2026,Nick Yankovich,Alex Highsmith,Alex Highsmith,DE,DE,PIT,1.0
+2026,Dominic Nicastro,Tuli Tuipulotu,Tuli Tuipulotu,DE,DE,LAC,1.0
+2026,Tony Brooks,Wan'Dale Robinson,Wan'Dale Robinson,WR,WR,TEN,1.0
+2026,Todd Trozzo,Kenyon Sadiq,Kenyon Sadiq,TE,TE,NYJ,1.0
+2026,Sam Lavrinc,Dallas Turner,Dallas Turner,DE,DE,MIN,1.0
+2026,Chris Johnson,Grant Delpit,Grant Delpit,S,S,CLE,1.0
+2026,Charles Lavrinc,Jeremy Chinn,Jeremy Chinn,S,S,LV,2.0
+2026,Charles Lavrinc,Devin Bush,Devin Bush,LB,LB,CHI,1.0
+2026,Nick Yankovich,Matthew Golden,Matthew Golden,WR,WR,GB,1.0
+2026,Dominic Nicastro,Devon Witherspoon,Devon Witherspoon,CB,CB,SEA,1.0
+2026,Todd Trozzo,Rashid Shaheed,Rashid Shaheed,WR,WR,SEA,1.0
+2026,Sam Lavrinc,Quentin Lake,Quentin Lake,CB,CB,LAR,1.0
+2026,Ben Funari,Nick Cross,Nick Cross,S,S,WSH,1.0
+2026,Charles Lavrinc,Kam Curl,Kamren Curl,S,S,LAR,1.0
+2026,Nick Yankovich,Rico Dowdle,Rico Dowdle,RB,RB,PIT,1.0
+2026,Dominic Nicastro,DeMarvion Overshown,DeMarvion Overshown,LB,LB,DAL,1.0
+2026,Ben Funari,Makai Lemon,Makai Lemon,WR,WR,PHI,2.0
+2026,Sam Lavrinc,Bryce Young,Bryce Young,QB,QB,CAR,1.0
+2026,Ben Funari,Chase Young,Chase Young,DE,DE,NO,1.0
+2026,Charles Lavrinc,Trent McDuffie,Trent McDuffie,CB,CB,LAR,1.0
+2026,Nick Yankovich,Michael Pittman Jr.,Michael Pittman Jr.,WR,WR,PIT,1.0
+2026,Dominic Nicastro,Marcus Jones,Marcus Jones,CB,CB,NE,1.0
+2026,Todd Trozzo,Malik Washington,Malik Washington,WR,WR,MIA,1.0
+2026,Sam Lavrinc,Byron Young,Byron Young,DE,DE,LAR,1.0
+2026,Ben Funari,T.J. Edwards,T.J. Edwards,LB,LB,CHI,1.0
+2026,Charles Lavrinc,Chuba Hubbard,Chuba Hubbard,RB,RB,CAR,1.0
+2026,Nick Yankovich,Mike Evans,Mike Evans,WR,WR,SF,1.0
+2026,Dominic Nicastro,KaVontae Turpin,KaVontae Turpin,WR,WR,DAL,1.0
+2026,Todd Trozzo,Jalen Pitre,Jalen Pitre,CB,CB,HOU,1.0
+2026,Sam Lavrinc,Kenny Gainwell,Kenneth Gainwell,RB,RB,TB,1.0
+2026,Ben Funari,Demario Davis,Demario Davis,LB,LB,NYJ,1.0
+2026,Charles Lavrinc,Geno Smith,Geno Smith,QB,QB,NYJ,1.0
+2026,Dominic Nicastro,Fernando Mendoza,Fernando Mendoza,QB,QB,LV,1.0
+2026,Todd Trozzo,Caleb Banks,Caleb Banks,DT,DT,MIN,1.0
+2026,Sam Lavrinc,Jacoby Brissett,Jacoby Brissett,QB,QB,ARI,1.0
+2026,Ben Funari,DeForest Buckner,DeForest Buckner,DT,DT,IND,1.0
+2026,Charles Lavrinc,Kyle Monangai,Kyle Monangai,RB,RB,CHI,1.0
+2026,Dominic Nicastro,Deebo Samuel Sr.,Deebo Samuel,WR,WR,SF,1.0
+2026,Todd Trozzo,David Bailey,David Bailey,DE,DE,NYJ,1.0
+2026,Sam Lavrinc,Brian Thomas Jr.,Brian Thomas Jr.,WR,WR,JAX,1.0
+2026,Ben Funari,Xavier Worthy,Xavier Worthy,WR,WR,KC,1.0
+2026,Charles Lavrinc,DeMarcus Lawrence,DeMarcus Lawrence,DE,DE,SEA,1.0
+2026,Dominic Nicastro,Chimere Dike,Chimere Dike,WR,WR,TEN,1.0
+2026,Todd Trozzo,Josh Jacobs,Josh Jacobs,RB,RB,GB,1.0
+2026,Sam Lavrinc,Jordan Battle,Jordan Battle,S,S,CIN,1.0
+2026,Ben Funari,Aaron Jones Sr.,Aaron Jones,RB,RB,MIN,1.0
+2026,Charles Lavrinc,Khalil Shakir,Khalil Shakir,WR,WR,BUF,1.0
+2026,Sam Lavrinc,Devin White,Devin White,LB,LB,DET,1.0
+2026,Charles Lavrinc,Michael Wilson,Michael Wilson,WR,WR,ARI,1.0
+2026,Sam Lavrinc,Justin Jefferson,Justin Jefferson (CLE LB),LB,LB,CLE,1.0
+2026,Sam Lavrinc,Jakobi Meyers,Jakobi Meyers,WR,WR,JAX,1.0
+2026,Sam Lavrinc,Jake Ferguson,Jake Ferguson,TE,TE,DAL,1.0
+2026,Sam Lavrinc,Stefon Diggs,Stefon Diggs,WR,WR,WSH,1.0
+2026,Sam Lavrinc,Xavier McKinney,Xavier McKinney,S,S,GB,1.0

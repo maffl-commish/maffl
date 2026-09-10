@@ -63,3 +63,6 @@ Marvin Harrison,Marvin Harrison,DO_NOT_MERGE,4,"father/son - keep separate, do N
 Marvin Harrison Jr.,Marvin Harrison Jr.,DO_NOT_MERGE,3,"father/son - keep separate, do NOT merge"
 Michael Pittman,Michael Pittman,DO_NOT_MERGE,3,"father/son - keep separate, do NOT merge"
 Michael Pittman Jr.,Michael Pittman Jr.,DO_NOT_MERGE,7,"father/son - keep separate, do NOT merge"
+Kenny Gainwell,Kenneth Gainwell,SAME_PERSON_MERGE,2,"2026 source uses nickname; canonical = fuller form matching 2022-2024 history"
+Kam Curl,Kamren Curl,SAME_PERSON_MERGE,2,"2026 source uses nickname; canonical = fuller form matching 2021 history"
+Justin Jefferson,Justin Jefferson (CLE LB),DO_NOT_MERGE,1,"CLE linebacker - unrelated to Justin Jefferson (MIN WR); disambiguate the LB only"
