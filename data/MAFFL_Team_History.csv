@@ -1,5 +1,5 @@
 Owner,Year,Team_Name,Is_Current
-Ben Funari,2025,The Best in The 'Burgh,TRUE
+Ben Funari,2025,The Best in The 'Burgh,FALSE
 BJ Funari,2006,Wilkinsburg N'@s,FALSE
 BJ Funari,2007,Greensburg N'@s,FALSE
 BJ Funari,2008,Greensburg N'@s,FALSE
@@ -19,7 +19,7 @@ BJ Funari,2021,South Hills FunShiners,FALSE
 BJ Funari,2022,South Hills FunShiners,FALSE
 BJ Funari,2023,South Hills FunShiners,FALSE
 BJ Funari,2024,South Hills FunShiners,FALSE
-BJ Funari,2025,South Hills FunShiners,TRUE
+BJ Funari,2025,South Hills FunShiners,FALSE
 Bob Keslar,2014,Camp Kes,FALSE
 Bob Keslar,2015,Camp Kes,FALSE
 Bob Keslar,2016,Camp Kes,FALSE
@@ -31,11 +31,11 @@ Bob Keslar,2021,Camp Kes,FALSE
 Bob Keslar,2022,Camp Kes,FALSE
 Bob Keslar,2023,Camp Kes,FALSE
 Bob Keslar,2024,Camp Kes,FALSE
-Bob Keslar,2025,Camp Kes,TRUE
+Bob Keslar,2025,Camp Kes,FALSE
 Braiden Snyder,2022,Motown Ballers,FALSE
 Braiden Snyder,2023,Motown Ballers,FALSE
 Braiden Snyder,2024,Mike Vicks Dog Sitting Co.,FALSE
-Braiden Snyder,2025,Mike Vicks Dog Sitting Co.,TRUE
+Braiden Snyder,2025,Mike Vicks Dog Sitting Co.,FALSE
 Brian Murello/ Ron Murello,2005,Swissvale SkeeDaddies,FALSE
 Brian Murello/ Ron Murello,2006,Swissvale Flashes,FALSE
 Brian Murello/ Ron Murello,2007,ONE HOUSE DIVIDED,FALSE
@@ -56,8 +56,8 @@ Brian Murello/ Ron Murello,2021,Hadley's Comets,FALSE
 Brian Murello/ Ron Murello,2022,Hadley's Comets,FALSE
 Brian Murello/ Ron Murello,2023,Hadley's Comets,FALSE
 Brian Murello/ Ron Murello,2024,Hadley's Comets,FALSE
-Brian Murello/ Ron Murello,2025,Hadley's Comets,TRUE
-Charles Lavrinc,2025,Portly Primates,TRUE
+Brian Murello/ Ron Murello,2025,Hadley's Comets,FALSE
+Charles Lavrinc,2025,Portly Primates,FALSE
 Chris Johnson,2005,The V-Unit,FALSE
 Chris Johnson,2006,The V-Unit,FALSE
 Chris Johnson,2007,The V-Unit,FALSE
@@ -78,7 +78,7 @@ Chris Johnson,2021,The V-Unit,FALSE
 Chris Johnson,2022,The V-Unit,FALSE
 Chris Johnson,2023,The V-Unit,FALSE
 Chris Johnson,2024,The V-Unit,FALSE
-Chris Johnson,2025,The V-Unit,TRUE
+Chris Johnson,2025,The V-Unit,FALSE
 Craig Toth,2005,Moon Township Psycho Squirrels,FALSE
 Craig Toth,2006,Moon Township Psycho Squirrels,FALSE
 Craig Toth,2007,Moon Township Psycho Squirrels,FALSE
@@ -95,7 +95,7 @@ Dan Reilly,2021,The Big Bang Theory,FALSE
 Dan Reilly,2022,The Big Bang Theory,FALSE
 Dan Reilly,2023,The Big Bang Theory,FALSE
 Dan Reilly,2024,The Big Bang Theory,FALSE
-Dan Reilly,2025,The Big Bang Theory,TRUE
+Dan Reilly,2025,The Big Bang Theory,FALSE
 David Murello,2005,Kardiac Kids,FALSE
 David Murello,2006,Kardiac Kids,FALSE
 David Murello,2007,Kardiac Kids,FALSE
@@ -116,8 +116,8 @@ David Murello,2021,Kardiac Kids,FALSE
 David Murello,2022,Kardiac Kids,FALSE
 David Murello,2023,Kardiac Kids,FALSE
 David Murello,2024,Kids Mixon with Lamar,FALSE
-David Murello,2025,Kids BadBlood HighSchool,TRUE
-Dominic Nicastro,2025,Steel City Champyinz,TRUE
+David Murello,2025,Kids BadBlood HighSchool,FALSE
+Dominic Nicastro,2025,Steel City Champyinz,FALSE
 Ed Peters,2013,Turkey Hat Conglomerate,FALSE
 Ed Peters,2014,Turkey Hat Conglomerate,FALSE
 Ed Peters,2015,Turkey Hat Conglomerate,FALSE
@@ -130,7 +130,7 @@ Ed Peters,2021,Turkey Hat Conglomerate,FALSE
 Ed Peters,2022,Turkey Hat Conglomerate,FALSE
 Ed Peters,2023,Turkey Hat Conglomerate,FALSE
 Ed Peters,2024,Turkey Hat Conglomerate,FALSE
-Ed Peters,2025,Turkey Hat Conglomerate,TRUE
+Ed Peters,2025,Turkey Hat Conglomerate,FALSE
 Jacob Nickman,2005,Jake's Jagoffs,FALSE
 Jacob Nickman,2006,Jake's Jagoffs,FALSE
 Jacob Nickman,2007,Jake's Jagoffs,FALSE
@@ -151,7 +151,7 @@ Jacob Nickman,2021,Jake's Jagoffs,FALSE
 Jacob Nickman,2022,Jake's Jagoffs,FALSE
 Jacob Nickman,2023,Jake's Jagoffs,FALSE
 Jacob Nickman,2024,Jake's Jagoffs,FALSE
-Jacob Nickman,2025,Jake's Jagoffs,TRUE
+Jacob Nickman,2025,Jake's Jagoffs,FALSE
 Jeff Grace,2005,. Pardon the Intoxication,FALSE
 Jeff Grace,2006,Pardon the Intoxication,FALSE
 Jeff Grace,2007,Pardon the Intoxication,FALSE
@@ -183,7 +183,7 @@ Joe Reilly,2021,Reilly's Reindeer,FALSE
 Joe Reilly,2022,Reilly's Reindeer,FALSE
 Joe Reilly,2023,Reilly's Reindeer,FALSE
 Joe Reilly,2024,Reilly's Reindeer,FALSE
-Joe Reilly,2025,Reilly's Reindeer,TRUE
+Joe Reilly,2025,Reilly's Reindeer,FALSE
 Jon Fetrow,2014,Johnny Incognito,FALSE
 Jon Fetrow,2015,Johnny Incognito,FALSE
 Jon Fetrow,2016,Johnny Incognito,FALSE
@@ -195,7 +195,7 @@ Jon Fetrow,2021,Johnny Incognito,FALSE
 Jon Fetrow,2022,Southside Shooters,FALSE
 Jon Fetrow,2023,Southside Shooters,FALSE
 Jon Fetrow,2024,Southside Shooters,FALSE
-Jon Fetrow,2025,Southside Shooters,TRUE
+Jon Fetrow,2025,Southside Shooters,FALSE
 Jon Murello/ Rick Simmons,2006,Outlaw In-Law,FALSE
 Jon Murello/ Rick Simmons,2007,The Prodigal Sons,FALSE
 Jon Murello/ Rick Simmons,2008,The Prodigal Sons,FALSE
@@ -215,7 +215,7 @@ Jon Murello/ Rick Simmons,2021,The Prodigal Sons,FALSE
 Jon Murello/ Rick Simmons,2022,The Prodigal Sons,FALSE
 Jon Murello/ Rick Simmons,2023,The Prodigal Sons,FALSE
 Jon Murello/ Rick Simmons,2024,The Prodigal Sons,FALSE
-Jon Murello/ Rick Simmons,2025,The Prodigal Sons,TRUE
+Jon Murello/ Rick Simmons,2025,The Prodigal Sons,FALSE
 Joni Murello,2010,Powder Puffs,FALSE
 Joni Murello,2011,Powder Puffs,FALSE
 Joni Murello,2012,Powder Puffs,FALSE
@@ -276,9 +276,9 @@ Mike Murello,2021,Bad Attitude Gang,FALSE
 Mike Murello,2022,Bad Attitude Gang,FALSE
 Mike Murello,2023,Bad Attitude Gang,FALSE
 Mike Murello,2024,Bad Attitude Gang,FALSE
-Mike Murello,2025,Bad Attitude Gang,TRUE
-Nick Yankovich,2025,Sarge's Squad,TRUE
-Sam Lavrinc,2025,Tommy Phamclub,TRUE
+Mike Murello,2025,Bad Attitude Gang,FALSE
+Nick Yankovich,2025,Sarge's Squad,FALSE
+Sam Lavrinc,2025,Tommy Phamclub,FALSE
 Sean Ritson,2006,Silver Bullets,FALSE
 Sean Ritson,2007,Silver Bullets,FALSE
 Sean Ritson,2008,The Silver Bullets,FALSE
@@ -306,12 +306,12 @@ Todd Trozzo,2021,U-Town Fightin Ferrets,FALSE
 Todd Trozzo,2022,U-Town Fightin Ferrets,FALSE
 Todd Trozzo,2023,U-Town Fightin Ferrets,FALSE
 Todd Trozzo,2024,U-Town Fightin Ferrets,FALSE
-Todd Trozzo,2025,U-Town Fightin Ferrets,TRUE
+Todd Trozzo,2025,U-Town Fightin Ferrets,FALSE
 Tony Brooks,2021,Number 2 Tony,FALSE
 Tony Brooks,2022,Number 2 Tony,FALSE
 Tony Brooks,2023,Number 2 Tony,FALSE
 Tony Brooks,2024,Number 2 Tony,FALSE
-Tony Brooks,2025,Tony's Talented Team,TRUE
+Tony Brooks,2025,Tony's Talented Team,FALSE
 Tony Trozzo,2005,Happy Valley Hammer Time,FALSE
 Tony Trozzo,2006,Happy Valley Hammer Time,FALSE
 Tony Trozzo,2007,Happy Valley Hammer Time,FALSE
@@ -332,7 +332,28 @@ Tony Trozzo,2021,Happy Valley Hammer Time,FALSE
 Tony Trozzo,2022,Happy Valley Hammer Time,FALSE
 Tony Trozzo,2023,Happy Valley Hammer Time,FALSE
 Tony Trozzo,2024,Happy Valley Hammer Time,FALSE
-Tony Trozzo,2025,Happy Valley Hammer Time,TRUE
+Tony Trozzo,2025,Happy Valley Hammer Time,FALSE
 Vincent Cavalier / Dominic Nicastro,2011,Warren Brownies,FALSE
 Vincent Cavalier / Dominic Nicastro,2012,Warren Brownies,FALSE
 Vincent Cavalier / Dominic Nicastro,2013,Warren Brownies,TRUE
+Mike Murello,2026,Bad Attitude Gang,TRUE
+Dan Reilly,2026,The Big Bang Theory,TRUE
+Braiden Snyder,2026,Mike Vicks Dog Sitting Co.,TRUE
+Brian Murello / Ron Murello,2026,Hadley's Comets,TRUE
+Jacob Nickman,2026,Jake's Jagoffs,TRUE
+Tony Trozzo,2026,Happy Valley Hammer Time,TRUE
+Joe Reilly,2026,Reilly's Reindeer,TRUE
+David Murello,2026,Marco Clair Kardiac Attack,TRUE
+BJ Funari,2026,South Hills FunShiners,TRUE
+Ed Peters,2026,Turkey Hat Conglomerate,TRUE
+Jon Murello / Rick Simmons,2026,The Prodigal Sons,TRUE
+Jon Fetrow / Casey Trozzo,2026,Southside Shooters,TRUE
+Todd Trozzo,2026,Fightin Ferrets,TRUE
+Bob Keslar,2026,Camp Kes,TRUE
+Chris Johnson,2026,The V-Unit,TRUE
+Tony Brooks,2026,Tony's Talented Team,TRUE
+Nick Yankovich,2026,Sarge's Squad,TRUE
+Ben Funari,2026,The Best in The 'Burgh,TRUE
+Sam Lavrinc,2026,Tommy Phamclub,TRUE
+Charles Lavrinc,2026,Portly Primates,TRUE
+Dominic Nicastro,2026,Steel City Champyinz,TRUE
