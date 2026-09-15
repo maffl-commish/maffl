@@ -1078,6 +1078,39 @@
     border-top: 1px solid var(--border);
   }
 
+  /* ---------- Results ---------- */
+  .mu-tag {
+    display: inline-block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .mu-score {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.1;
+    margin-top: 4px;
+    color: var(--navy);
+  }
+  .mu-side.won .mu-score { color: var(--gold-dark); }
+  .mu-side.lost .mu-team,
+  .mu-side.lost .mu-score { color: var(--muted); }
+  .mu-side.lost .mu-score { font-weight: 600; }
+  .mu.result .mu-vs { padding-top: 4px; }
+
+  /* ---------- Ghost standings row ---------- */
+  .row.ghost .record,
+  .row.ghost .team-name,
+  .row.ghost .pts { color: var(--muted); }
+  .row.ghost .team-name::before { content: "👻 "; }
+  .row.ghost .streak { opacity: 0.55; }
+  .row.ghost .cr { visibility: hidden; }
+
   /* ---------- Week 0 misc ---------- */
   .survivor-note {
     font-family: var(--body);
@@ -1203,8 +1236,8 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v3.7</span>
-      <span class="meta-pill">Last Updated September 7, 2026</span>
+      <span class="meta-pill">v4.0</span>
+      <span class="meta-pill">Last Updated September 10, 2026</span>
     </div>
   </header>
 </div>
@@ -1256,6 +1289,8 @@
  * Standings, survivor, credit tracker, and Elite 5 cards each render only if
  * their data is present, so a news-only week is valid.
  * Optional `label` overrides the display name ("Week 0" -> "Post-Draft").
+ * Optional `results`: array of games for the Results card (see renderResultsCard).
+ * Optional `matchupPreviews`: next week's games; only highlight:true entries render.
  * ===================================================================== */
 
 const SEASON = 2026;
@@ -1504,20 +1539,31 @@ function streakLabel(n) {
 }
 function streakClass(n) { return n >= 0 ? "w" : "l"; }
 
-/* Week 0 has no games, so standings rank by credit balance, highest first.
-   Ties break alphabetically. MAFFL Ghost always sorts last in Week 0 — it holds
-   no credits and is a schedule filler, not a competitor. Every other week falls
-   through to standingsSort (wins, losses, points, then credits). */
+const GHOST_TEAM = "MAFFL Ghost";
+
+/* The Ghost is a schedule filler, not a competitor — it never affects promotion
+   or relegation, so it sorts below every real team in every week regardless of
+   its record. Wraps whichever comparator the week uses. */
+function ghostLast(cmp) {
+  return (a, b) => {
+    const ag = a.team === GHOST_TEAM, bg = b.team === GHOST_TEAM;
+    if (ag && !bg) return 1;
+    if (bg && !ag) return -1;
+    return cmp(a, b);
+  };
+}
+
+/* Week 0 has no games, so standings rank by credit balance, highest first, ties
+   alphabetical. Every other week uses standingsSort (wins, losses, points, then
+   credits). The Ghost sorts last in both. */
 function pulseSort(week) {
   if (week && week.weekNumber === 0) {
-    return (a, b) => {
-      if (a.team === "MAFFL Ghost") return 1;
-      if (b.team === "MAFFL Ghost") return -1;
+    return ghostLast((a, b) => {
       if (b.credits !== a.credits) return b.credits - a.credits;
       return a.team.localeCompare(b.team);
-    };
+    });
   }
-  return standingsSort;
+  return ghostLast(standingsSort);
 }
 
 function weekLabel(w) { return w.label || ("Week " + w.weekNumber); }
@@ -1568,10 +1614,12 @@ function renderPage(week) {
        hasSurvivor ? renderSurvivorCard(week) : "",
        renderCreditTrackerCard(week)]
     : [renderNewsCard(week),
+       renderResultsCard(week),
        hasStandings ? renderStandingsCard(week) : "",
        hasSurvivor ? renderSurvivorCard(week) : "",
        renderCreditTrackerCard(week),
-       hasElite ? renderElite5Card(week) : ""];
+       hasElite ? renderElite5Card(week) : "",
+       renderPreviewCard(week)];
   main.innerHTML = `
     <section class="card-grid" id="cardGrid" aria-label="Pulse sections">
       ${cards.join("")}
@@ -1657,8 +1705,9 @@ function row(t, week) {
   /* Week 0 has no games, so a 0 streak is "none", not a win streak — a green
      pill behind an em dash reads as a result nobody has earned yet. */
   const sClass = (week && week.weekNumber === 0) ? "none" : streakClass(t.streak);
+  const isGhost = t.team === GHOST_TEAM;
   return `
-    <div class="row">
+    <div class="row${isGhost ? " ghost" : ""}">
       <div class="record">${t.w}-${t.l}</div>
       <div class="mid">
         <span class="team-name">${esc(t.team)}</span>
@@ -2004,14 +2053,78 @@ function renderDraftRecapCard(week) {
   return cardShell("draftrecap", "🔨", "Draft Recap", preview, body);
 }
 
+/* --------- RESULTS CARD --------- */
+function fmtScore(n) { return (typeof n === "number") ? n.toFixed(2) : "—"; }
+
+function resultSide(team, owner, score, outcome, right) {
+  const ownerLabel = team === GHOST_TEAM ? "Par score" : shortName(owner);
+  return `
+    <div class="mu-side${right ? " right" : ""} ${outcome}">
+      <span class="mu-team">${esc(team)}</span>
+      <span class="mu-owner">${esc(ownerLabel)}</span>
+      <span class="mu-score">${fmtScore(score)}</span>
+    </div>
+  `;
+}
+
+function renderResultsCard(week) {
+  const all = week.results || [];
+  if (!all.length) return "";
+  const outcome = (mine, theirs) => mine > theirs ? "won" : mine < theirs ? "lost" : "tied";
+
+  /* Tier high scores for the preview. The Ghost is excluded — it can never hold
+     a weekly high, and its par score is not a real team's result. */
+  const sides = [];
+  all.forEach(g => {
+    sides.push({ tier: g.tier, team: g.teamA, owner: g.ownerA, score: g.scoreA });
+    sides.push({ tier: g.tier, team: g.teamB, owner: g.ownerB, score: g.scoreB });
+  });
+  const real = sides.filter(s => s.team !== GHOST_TEAM);
+  const high = tier => real.filter(s => s.tier === tier).sort((a, b) => b.score - a.score)[0];
+  const hu = high("U"), hl = high("L");
+
+  const preview = `
+    ${hu ? `<div><span class="strong">Upper high:</span> ${teamOwner(hu)} ${fmtScore(hu.score)}</div>` : ""}
+    ${hl ? `<div style="margin-top:4px"><span class="strong">Lower high:</span> ${teamOwner(hl)} ${fmtScore(hl.score)}</div>` : ""}
+    <div class="muted-line">Tap for all ${all.length} results.</div>
+  `;
+
+  const group = (tier, title) => {
+    const rows = all.filter(g => g.tier === tier);
+    if (!rows.length) return "";
+    return `
+      <div class="div-label">${esc(title)}</div>
+      <div class="mu-grid">
+        ${rows.map(g => `
+          <article class="mu result${g.ghost ? " ghost" : ""}">
+            ${g.tag ? `<span class="mu-tag">${esc(g.tag)}</span>` : ""}
+            <div class="mu-teams">
+              ${resultSide(g.teamA, g.ownerA, g.scoreA, outcome(g.scoreA, g.scoreB), false)}
+              <span class="mu-vs">vs</span>
+              ${resultSide(g.teamB, g.ownerB, g.scoreB, outcome(g.scoreB, g.scoreA), true)}
+            </div>
+            ${g.note ? `<p class="mu-note">${esc(g.note)}</p>` : ""}
+          </article>
+        `).join("")}
+      </div>
+    `;
+  };
+
+  return cardShell("results", "🏈", weekLabel(week) + " Results", preview,
+    group("U", "Upper-Tier") + group("L", "Lower-Tier"));
+}
+
 /* --------- NEXT-WEEK PREVIEW CARD --------- */
 function renderPreviewCard(week) {
   const all = week.matchupPreviews || [];
   const shown = all.filter(m => m.highlight);
   if (!shown.length) return "";
   const label = "Week " + (week.weekNumber + 1) + " Preview";
+  const lead = week.weekNumber === 0
+    ? `<span class="strong">${all.length} games</span> open the season.`
+    : `<span class="strong">${all.length} games</span> on the Week ${week.weekNumber + 1} slate.`;
   const preview = `
-    <div><span class="strong">${all.length} games</span> open the season.</div>
+    <div>${lead}</div>
     <div class="muted-line">Tap for the ${shown.length} worth talking about now.</div>
   `;
   const group = (tier, title) => {
