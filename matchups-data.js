@@ -1,10 +1,17 @@
 ﻿/* =====================================================================
  * MAFFL MATCHUPS DATA  (consolation games already excluded)
  * ---------------------------------------------------------------------
- * Source: data/MAFFL_Matchups_NoConsolation.csv (2,389 rows, 2005-2025).
+ * Source: data/MAFFL_Matchups_NoConsolation.csv (2,400 rows, 2005-2026).
+ * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,399 rows emitted.
+ *   MAFFL Ghost is a schedule filler, not a franchise: it earns no credits, wins
+ *   no prizes, and does not affect promotion or relegation. Emitting it would put
+ *   "MAFFL Ghost" in the rivalry.html owner picker (that roster is built from the
+ *   names appearing in these rows) and, because both consumers treat any type
+ *   other than "R" as postseason, would book it as a playoff meeting.
+ *   The real team's win and points are still recorded in gold and in NoConsolation.
  * Each row (8 fields):
  *   [year, week, tier, winnerName, winnerScore, loserName, loserScore, type]
- *   year       : integer season (2005-2025)
+ *   year       : integer season (2005-2026)
  *   week       : integer week number
  *   tier       : "U" = Upper, "L" = Lower
  *   winnerName : canonical gold owner name (NOT the ESPN variant)
@@ -2408,5 +2415,15 @@ window.MATCHUPS_DATA = [
 [2025,15,"U","Jon Fetrow",160.14,"Brian Murello/ Ron Murello",141.84,"Q"],
 [2025,16,"U","Joe Reilly",175.94,"David Murello",162.48,"S"],
 [2025,16,"U","Jon Murello/ Rick Simmons",150.0,"Jon Fetrow",137.22,"S"],
-[2025,17,"U","Jon Murello/ Rick Simmons",147.92,"Joe Reilly",116.54,"C"]
+[2025,17,"U","Jon Murello/ Rick Simmons",147.92,"Joe Reilly",116.54,"C"],
+[2026,1,"U","David Murello",159.22,"Mike Murello",137.98,"R"],
+[2026,1,"U","Braiden Snyder",165.24,"BJ Funari",159.2,"R"],
+[2026,1,"U","Jon Murello/ Rick Simmons",156.66,"Jon Fetrow",142.2,"R"],
+[2026,1,"U","Jacob Nickman",160.64,"Joe Reilly",145.32,"R"],
+[2026,1,"U","Dan Reilly",174.8,"Tony Trozzo",124.14,"R"],
+[2026,1,"U","Brian Murello/ Ron Murello",158.56,"Ed Peters",146.9,"R"],
+[2026,1,"L","Todd Trozzo",194.82,"Tony Brooks",189.82,"R"],
+[2026,1,"L","Sam Lavrinc",162.3,"Dominic Nicastro",116.34,"R"],
+[2026,1,"L","Ben Funari",160.04,"Bob Keslar",144.58,"R"],
+[2026,1,"L","Chris Johnson",141.06,"Nick Yankovich",126.4,"R"]
 ];
