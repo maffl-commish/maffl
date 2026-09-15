@@ -1236,8 +1236,8 @@
       <p class="page-header__subtitle">News Across the MAFFL Universe</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v4.0</span>
-      <span class="meta-pill">Last Updated September 10, 2026</span>
+      <span class="meta-pill">v4.1</span>
+      <span class="meta-pill">Last Updated September 15, 2026</span>
     </div>
   </header>
 </div>
@@ -1309,6 +1309,181 @@ const PULSE_STATE = "live";
  * Balance) + MAFFL_League_Packet__Division_History.csv (2026 Division).
  * ------------------------------------------------------------------- */
 const WEEKS = [
+  {
+    weekNumber: 1,
+    dateString: "Sep 15, 2026",
+    headline: "Todd Trozzo opened his Lower-Tier season with 194.82 — the highest Week 1 score in MAFFL history — and won by five. 👻 lost its debut. Joe Reilly lost his seventh straight opener.",
+    latestChange: "Six credit awards are live and four already have a Week 1 leader. Balances themselves do not move until the offseason.",
+
+    /* Records and PF are Week 1 only. Credit balances carry forward from the Week 0
+       post-auction snapshot — no perks were declared and credits are awarded in the
+       offseason, so nothing has moved. Standings sort via standingsSort; the Ghost is
+       pinned last by ghostLast() regardless of its record. */
+    upperTier: {
+      divA: [
+        { team: "Marco Clair Kardiac Attack", owner: "David Murello", w: 1, l: 0, points: 159.22, streak:  1, credits: 12 },
+        { team: "South Hills FunShiners",     owner: "BJ Funari",     w: 0, l: 1, points: 159.20, streak: -1, credits:  4 },
+        { team: "Bad Attitude Gang",          owner: "Mike Murello",  w: 0, l: 1, points: 137.98, streak: -1, credits: 27 }
+      ],
+      divB: [
+        { team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder",           w: 1, l: 0, points: 165.24, streak: 1, credits:  5 },
+        { team: "Jake's Jagoffs",             owner: "Jacob Nickman",            w: 1, l: 0, points: 160.64, streak: 1, credits: 15 },
+        { team: "The Prodigal Sons",          owner: "Jon Murello/Rick Simmons", w: 1, l: 0, points: 156.66, streak: 1, credits: 24 }
+      ],
+      divC: [
+        { team: "The Big Bang Theory",      owner: "Dan Reilly",  w: 1, l: 0, points: 174.80, streak:  1, credits:  6 },
+        { team: "Reilly's Reindeer",        owner: "Joe Reilly",  w: 0, l: 1, points: 145.32, streak: -1, credits: 23 },
+        { team: "Happy Valley Hammer Time", owner: "Tony Trozzo", w: 0, l: 1, points: 124.14, streak: -1, credits: 17 }
+      ],
+      divD: [
+        { team: "Hadley's Comets",         owner: "Brian Murello/Ron Murello", w: 1, l: 0, points: 158.56, streak:  1, credits: 7 },
+        { team: "Turkey Hat Conglomerate", owner: "Ed Peters",                 w: 0, l: 1, points: 146.90, streak: -1, credits: 7 },
+        { team: "Southside Shooters",      owner: "Jon Fetrow",                w: 0, l: 1, points: 142.20, streak: -1, credits: 7 }
+      ]
+    },
+    lowerTier: [
+      { team: "Fightin Ferrets",        owner: "Todd Trozzo",      w: 1, l: 0, points: 194.82, streak:  1, credits:  1 },
+      { team: "Portly Primates",        owner: "Charles Lavrinc",  w: 1, l: 0, points: 168.72, streak:  1, credits:  6 },
+      { team: "Tommy Phamclub",         owner: "Sam Lavrinc",      w: 1, l: 0, points: 162.30, streak:  1, credits:  8 },
+      { team: "The Best in The 'Burgh", owner: "Ben Funari",       w: 1, l: 0, points: 160.04, streak:  1, credits:  6 },
+      { team: "The V-Unit",             owner: "Chris Johnson",    w: 1, l: 0, points: 141.06, streak:  1, credits:  0 },
+      { team: "Tony's Talented Team",   owner: "Tony Brooks",      w: 0, l: 1, points: 189.82, streak: -1, credits: 10 },
+      { team: "Camp Kes",               owner: "Bob Keslar",       w: 0, l: 1, points: 144.58, streak: -1, credits:  1 },
+      { team: "Sarge's Squad",          owner: "Nick Yankovich",   w: 0, l: 1, points: 126.40, streak: -1, credits:  5 },
+      { team: "Steel City Champyinz",   owner: "Dominic Nicastro", w: 0, l: 1, points: 116.34, streak: -1, credits:  6 },
+      { team: "MAFFL Ghost",            owner: "—",                w: 0, l: 1, points: 151.16, streak: -1, credits:  0 }
+    ],
+
+    results: [
+      { tier: "U", tag: "Div A", teamA: "Marco Clair Kardiac Attack", ownerA: "David Murello", scoreA: 159.22,
+        teamB: "Bad Attitude Gang", ownerB: "Mike Murello", scoreB: 137.98,
+        note: "Twentieth meeting, and Dave takes the division opener to go up 12-8 in the series. They run it back in Week 12 with Division A likely on it." },
+      { tier: "U", tag: "Div C", teamA: "The Big Bang Theory", ownerA: "Dan Reilly", scoreA: 174.80,
+        teamB: "Happy Valley Hammer Time", ownerB: "Tony Trozzo", scoreB: 124.14,
+        note: "The week's highest Upper score against its lowest. Dan's fifth straight Week 1 win, and the largest margin in either tier." },
+      { tier: "U", tag: "Div D", teamA: "Hadley's Comets", ownerA: "Brian Murello/Ron Murello", scoreA: 158.56,
+        teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters", scoreB: 146.90,
+        note: "Comets go to 7-1 in the series. Ed has now lost four openers in a row, and the $69 Jahmyr Gibbs did not save this one." },
+      { tier: "U", teamA: "The Prodigal Sons", ownerA: "Jon Murello/Rick Simmons", scoreA: 156.66,
+        teamB: "Southside Shooters", ownerB: "Jon Fetrow", scoreB: 142.20,
+        note: "Five straight for Jon and Rick, who also ended Southside's season in the 2025 semifinal. Casey Trozzo's first game as co-owner of record." },
+      { tier: "U", teamA: "Jake's Jagoffs", ownerA: "Jacob Nickman", scoreA: 160.64,
+        teamB: "Reilly's Reindeer", ownerB: "Joe Reilly", scoreB: 145.32,
+        note: "Joe had won seven in a row in this series. Jacob had not beaten him since Week 2 of 2021. Thirtieth meeting, and the streak is over." },
+      { tier: "U", tag: "Mirror pair", teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", scoreA: 165.24,
+        teamB: "South Hills FunShiners", ownerB: "BJ Funari", scoreB: 159.20,
+        note: "Their fourth opener in five seasons, and the closest Upper game of the week at 6.04. Mirrors, so Week 11 gets the rematch." },
+      { tier: "L", tag: "👻 Ghost", ghost: true, teamA: "Portly Primates", ownerA: "Charles Lavrinc", scoreA: 168.72,
+        teamB: "MAFFL Ghost", ownerB: "—", scoreB: 151.16,
+        note: "The Ghost's debut, and it loses. Par was the average of the eight real Lower scores left after Todd's 194.82 came off the top. Charlie cleared it by 17.56." },
+      { tier: "L", teamA: "Fightin Ferrets", ownerA: "Todd Trozzo", scoreA: 194.82,
+        teamB: "Tony's Talented Team", ownerB: "Tony Brooks", scoreB: 189.82,
+        note: "384.64 combined — the highest-scoring game in any Week 1 in league history, and third-highest all time. Brooks's 189.82 is the second-highest losing score MAFFL has ever recorded. Their first meeting that was not in Week 6." },
+      { tier: "L", teamA: "Tommy Phamclub", ownerA: "Sam Lavrinc", scoreA: 162.30,
+        teamB: "Steel City Champyinz", ownerB: "Dominic Nicastro", scoreB: 116.34,
+        note: "Sam takes the series 2-1 and posts the biggest blowout in Lower at 45.96. Dom drops the week's lowest score in either tier." },
+      { tier: "L", teamA: "The Best in The 'Burgh", ownerA: "Ben Funari", scoreA: 160.04,
+        teamB: "Camp Kes", ownerB: "Bob Keslar", scoreB: 144.58,
+        note: "First meeting between them, and Ben's first career Week 1 win. Bob's first game back in Lower since relegation." },
+      { tier: "L", teamA: "The V-Unit", ownerA: "Chris Johnson", scoreA: 141.06,
+        teamB: "Sarge's Squad", ownerB: "Nick Yankovich", scoreB: 126.40,
+        note: "Also a first meeting. Two of the four lowest scores in Lower, and the only Lower game where neither team cleared 145." }
+    ],
+
+    /* Survivor eliminates the single lowest score in each tier per week — not every
+       team that lost. Upper: Tony Trozzo 124.14. Lower: Dominic Nicastro 116.34.
+       Charlie is scored on his own 168.72; the Ghost result does not affect Survivor
+       and the Ghost is not in the pool. 11 alive Upper, 8 alive Lower. */
+    survivor: {
+      upperActive: [
+        "The Big Bang Theory", "Mike Vicks Dog Sitting Co.", "Jake's Jagoffs",
+        "Marco Clair Kardiac Attack", "South Hills FunShiners", "Hadley's Comets",
+        "The Prodigal Sons", "Turkey Hat Conglomerate", "Reilly's Reindeer",
+        "Southside Shooters", "Bad Attitude Gang"
+      ],
+      upperEliminated: [
+        { team: "Happy Valley Hammer Time", week: 1, recent: true }
+      ],
+      upperConcluded: false,
+      upperWinner: null,
+      lowerActive: [
+        "Fightin Ferrets", "Tony's Talented Team", "Portly Primates",
+        "Tommy Phamclub", "The Best in The 'Burgh", "Camp Kes",
+        "The V-Unit", "Sarge's Squad"
+      ],
+      lowerEliminated: [
+        { team: "Steel City Champyinz", week: 1, recent: true }
+      ],
+      lowerConcluded: false,
+      lowerWinner: null
+    },
+    survivorNote: "One team goes out per tier per week — the single lowest score, not everybody who lost. Tony Brooks lost by five with 189.82 and is very much alive; Tony Trozzo won nothing and is out.",
+
+    creditTracker: [
+      { award: "Most Team Points Scored — Upper",      credits: 5, leaderTeam: "The Big Bang Theory",  leaderOwner: "Dan Reilly",       value: "174.80 (Wk 1 leader)" },
+      { award: "Most Team Points Scored — Lower",      credits: 5, leaderTeam: "Fightin Ferrets",      leaderOwner: "Todd Trozzo",      value: "194.82 (Wk 1 leader)" },
+      { award: "Largest Blowout Victory — Upper",      credits: 3, leaderTeam: "The Big Bang Theory",  leaderOwner: "Dan Reilly",       value: "50.66 over Happy Valley Hammer Time" },
+      { award: "Largest Blowout Victory — Lower",      credits: 3, leaderTeam: "Tommy Phamclub",       leaderOwner: "Sam Lavrinc",      value: "45.96 over Steel City Champyinz" },
+      { award: "Individual High Score (Wkly) — Upper", credits: 3, leaderTeam: "The Big Bang Theory",  leaderOwner: "Dan Reilly",       value: "41.26 — Caleb Williams" },
+      { award: "Individual High Score (Wkly) — Lower", credits: 3, leaderTeam: "Portly Primates",      leaderOwner: "Charles Lavrinc",  value: "41.26 — Caleb Williams" }
+    ],
+    highestWeekly: {
+      credits: 1,
+      weeks: [
+        { week: 1,
+          upper: { team: "The Big Bang Theory", owner: "Dan Reilly",  score: 174.80 },
+          lower: { team: "Fightin Ferrets",     owner: "Todd Trozzo", score: 194.82 } }
+      ]
+    },
+
+    /* Ranked on how far above the tier's own Week 1 mean each score landed, not on raw
+       points — Lower averaged 156.01 to Upper's 152.57 and is far more spread out, so a
+       raw list would skew Lower. */
+    elite5: [
+      { rank: 1, team: "The Big Bang Theory", owner: "Dan Reilly", tier: "U",
+        note: "174.80 — furthest above its tier of any score in the league, and the week's biggest margin at 50.66. The most balanced roster in MAFFL, graded C− in the auction for buying twenty-one fair prices instead of three cheap ones, led both Upper credit categories in its first week." },
+      { rank: 2, team: "Fightin Ferrets", owner: "Todd Trozzo", tier: "L",
+        note: "194.82 is the highest Week 1 score MAFFL has ever recorded. The five quarterbacks and the $3 receiver corps produced the league high in their first outing after relegation — and it was only worth five points of margin." },
+      { rank: 3, team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder", tier: "U",
+        note: "165.24, second in Upper, with a $15 waiver claim on Deshaun Watson landing three days before kickoff. The $95 Hurts/Maye pair looked like an indulgence in September; it is 1-0 now." },
+      { rank: 4, team: "Portly Primates", owner: "Charles Lavrinc", tier: "L",
+        note: "168.72 and the first team ever to beat the Ghost. Third in Lower, and it needed to be — par came in at 151.16 in a week where the tier averaged 156." },
+      { rank: 5, team: "Jake's Jagoffs", owner: "Jacob Nickman", tier: "U",
+        note: "160.64, and the only team this week to end a streak that had run seven games. The $32 Jefferson was the steal of his board and Jacob never bid over $42 — the promoted team looks like it belongs." }
+    ],
+
+    newsReel: [
+      "Todd Trozzo's 194.82 is the highest Week 1 score in MAFFL history, clearing the old mark of 167.44 that Jon and Rick set last year. He beat Tony Brooks by five. Brooks's 189.82 is the second-highest losing score ever recorded in this league.",
+      "👻 lost its first game. Charles Lavrinc put up 168.72 against a par of 151.16 — the average of the eight real Lower scores left after Todd's league-leading 194.82 came off the top. Nine real teams, so this happens every week: beat the room and you win.",
+      "Joe Reilly has now lost seven consecutive season openers and is 5-17 in Week 1 all time. He is also 23 credits deep, the third-largest balance in the league. The two facts have never had much to do with each other.",
+      "Jacob Nickman beat Joe Reilly for the first time since Week 2 of 2021, ending a seven-game run in the most-played series on the board. It was their thirtieth meeting.",
+      "Dan Reilly opened with 174.80 and beat Tony Trozzo by 50.66, the largest margin in either tier. That is five straight Week 1 wins for Dan. Tony scored the lowest total in Upper and is the first team out of the Survivor pool.",
+      "The two Tonys had opposite weeks. Tony Brooks scored 189.82, lost, and is alive in Survivor. Tony Trozzo scored 124.14, lost, and is out.",
+      "Lower out-scored Upper again. The tier averaged 156.01 to Upper's 152.57, and its top two scores both beat everything in the twelve-team room.",
+      "Braiden Snyder claimed Deshaun Watson off waivers for $15 on Wednesday, dropped Drew Allar, and beat BJ Funari by six. It was the closest Upper game of the week, and those two are mirrors — Week 11 does it again.",
+      "Tony Trozzo dropped Cooper Kupp on the Tuesday before kickoff, then posted the lowest score in Upper. Hadley's Comets made seven moves, the most in the league, and won.",
+      "Sam Lavrinc dropped Justin Jefferson — the Cleveland linebacker, not the Minnesota receiver, the one that needed its own crosswalk entry after the auction — and won by 45.96, the biggest blowout in Lower.",
+      "Ed Peters walked out of the auction with the $69 Jahmyr Gibbs and eighteen dollar-guys, then added five players before Week 1. He lost anyway, and has now dropped four openers in a row."
+    ],
+
+    /* Week 2 preview. The Upper six come from data/MAFFL_Schedule_2026_Upper.csv
+       (Week 2, Divisional Round 1). Lower is on ESPN's auto-generated schedule. */
+    matchupPreviews: [
+      { tier: "U", highlight: true, teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", teamB: "Jake's Jagoffs", ownerB: "Jacob Nickman",
+        note: "Division B, and both teams are 1-0 with the division's two highest scores. Braiden's $95 quarterback room against the man who got Jefferson for $32." },
+      { tier: "U", highlight: false, teamA: "Happy Valley Hammer Time", ownerA: "Tony Trozzo", teamB: "Reilly's Reindeer", ownerB: "Joe Reilly",
+        note: "Division C, and both open 0-1. Tony is already out of Survivor; Joe is 5-17 in openers and now needs this one." },
+      { tier: "U", highlight: false, teamA: "Turkey Hat Conglomerate", ownerA: "Ed Peters", teamB: "Southside Shooters", ownerB: "Jon Fetrow",
+        note: "Division D, both 0-1, both beaten by under twelve. The loser starts 0-2 in a division the Comets already lead." },
+      { tier: "U", highlight: true, teamA: "The Prodigal Sons", ownerA: "Jon Murello/Rick Simmons", teamB: "Bad Attitude Gang", ownerB: "Mike Murello",
+        note: "The commissioner is 0-1 and drew the defending semifinalist. Jon and Rick have the second-largest credit balance in the league; Mike has the largest." },
+      { tier: "U", highlight: false, teamA: "Marco Clair Kardiac Attack", ownerA: "David Murello", teamB: "Hadley's Comets", ownerB: "Brian Murello/Ron Murello",
+        note: "Mirror pair, first meeting. Two 1-0 teams and the first Week 2 game with a Week 11 rematch already on the calendar." },
+      { tier: "U", highlight: false, teamA: "South Hills FunShiners", ownerA: "BJ Funari", teamB: "The Big Bang Theory", ownerB: "Dan Reilly",
+        note: "The tier's A+ auction lost its opener by six; the tier's C− won by fifty. One of those grades is about to look wrong." }
+    ]
+  },
+
   {
     weekNumber: 0,
     dateString: "Sep 7, 2026",
