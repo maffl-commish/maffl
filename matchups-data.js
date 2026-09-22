@@ -1,8 +1,8 @@
 ﻿/* =====================================================================
  * MAFFL MATCHUPS DATA  (consolation games already excluded)
  * ---------------------------------------------------------------------
- * Source: data/MAFFL_Matchups_NoConsolation.csv (2,400 rows, 2005-2026).
- * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,399 rows emitted.
+ * Source: data/MAFFL_Matchups_NoConsolation.csv (2,411 rows, 2005-2026).
+ * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,409 rows emitted.
  *   MAFFL Ghost is a schedule filler, not a franchise: it earns no credits, wins
  *   no prizes, and does not affect promotion or relegation. Emitting it would put
  *   "MAFFL Ghost" in the rivalry.html owner picker (that roster is built from the
@@ -2425,5 +2425,15 @@ window.MATCHUPS_DATA = [
 [2026,1,"L","Todd Trozzo",194.82,"Tony Brooks",189.82,"R"],
 [2026,1,"L","Sam Lavrinc",162.3,"Dominic Nicastro",116.34,"R"],
 [2026,1,"L","Ben Funari",160.04,"Bob Keslar",144.58,"R"],
-[2026,1,"L","Chris Johnson",141.06,"Nick Yankovich",126.4,"R"]
+[2026,1,"L","Chris Johnson",141.06,"Nick Yankovich",126.4,"R"],
+[2026,2,"U","Mike Murello",202.0,"Jon Murello/ Rick Simmons",146.86,"R"],
+[2026,2,"U","Tony Trozzo",170.8,"Joe Reilly",139.38,"R"],
+[2026,2,"U","Ed Peters",168.46,"Jon Fetrow",103.06,"R"],
+[2026,2,"U","Jacob Nickman",164.24,"Braiden Snyder",118.08,"R"],
+[2026,2,"U","Brian Murello/ Ron Murello",158.74,"David Murello",109.62,"R"],
+[2026,2,"U","BJ Funari",108.0,"Dan Reilly",87.72,"R"],
+[2026,2,"L","Ben Funari",147.88,"Todd Trozzo",137.52,"R"],
+[2026,2,"L","Dominic Nicastro",137.56,"Bob Keslar",126.86,"R"],
+[2026,2,"L","Nick Yankovich",132.78,"Charles Lavrinc",126.2,"R"],
+[2026,2,"L","Tony Brooks",125.64,"Chris Johnson",118.74,"R"]
 ];
