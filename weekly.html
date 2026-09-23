@@ -713,6 +713,19 @@
     letter-spacing: 0.08em;
     margin-bottom: 6px;
   }
+  .ct-status {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-family: var(--display); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px; white-space: nowrap;
+  }
+  .ct-status.locked { background: var(--navy); color: #fff; }
+  .ct-status.new    { background: var(--gold); color: var(--navy); }
+  .ct-status.held   { background: #eceff4; color: var(--muted); }
+  .ct-legend {
+    font-family: var(--body); font-size: 12px; color: var(--muted);
+    margin: 0 0 12px; line-height: 1.8;
+  }
 
   /* ---------- News headline (top card preview) ---------- */
   .news-headline {
@@ -788,6 +801,38 @@
     line-height: 1.4;
   }
 
+  .elite-stat { font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--gold-dark); letter-spacing: 0.03em; margin-top: 2px; }
+
+  /* ---------- Post-Season Picture ---------- */
+  .ps-tier + .ps-tier { margin-top: 18px; }
+  .ps-group { padding: 10px 0; border-top: 1px solid var(--border); }
+  .ps-group:first-of-type { border-top: 0; }
+  .ps-group-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+  }
+  .ps-pair { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 4px 0; }
+  .ps-team { display: flex; align-items: center; gap: 8px; min-width: 0; font-family: var(--body); font-size: 13px; }
+  .ps-seed {
+    flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--navy); color: #fff; display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 700; font-size: 12px;
+  }
+  .ps-rec { color: var(--muted); font-size: 12px; font-weight: 700; }
+  .ps-vs { font-family: var(--display); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .ps-badge { font-family: var(--display); font-weight: 700; font-size: 10px; padding: 2px 7px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  .ps-badge.safe      { background: rgba(29,158,117,.12); color: var(--win); }
+  .ps-badge.promoted  { background: var(--win); color: #fff; }
+  .ps-badge.tbd       { background: var(--gold-soft); color: var(--gold-dark); border: 1px solid var(--gold); }
+  .ps-badge.relegated { background: var(--loss); color: #fff; }
+  .ps-tier-label { margin: 0; }
+  .ps-foot { font-family: var(--body); font-size: 11px; font-style: italic; color: var(--muted); margin: 12px 0 0; }
+  @media (max-width: 767px) {
+    .ps-pair { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .ps-pair + .ps-pair { margin-top: 6px; }
+  }
+
   /* ---------- Bracket placeholder ---------- */
   .bracket-placeholder {
     padding: 20px;
@@ -814,6 +859,35 @@
     line-height: 1.45;
   }
   .news-list li:first-child { border-top: 0; }
+  .news-subhead {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.4;
+    margin: -2px 0 8px;
+  }
+  .news-lead { margin-bottom: 6px; }
+  .news-section-head {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 0 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .news-section + .news-section { margin-top: 14px; }
+  /* Highlighter stroke under team names, so an owner's eye finds their own team. */
+  .team-chip {
+    font-weight: 700;
+    background: linear-gradient(transparent 60%, rgba(245, 166, 35, 0.38) 60%);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    padding: 0 1px;
+  }
   .news-list .bullet {
     flex: 0 0 auto;
     width: 6px;
@@ -1233,11 +1307,11 @@
   <header class="page-header">
     <div class="page-header__id">
       <h1 class="page-header__title">📈 Weekly Pulse</h1>
-      <p class="page-header__subtitle">News Across the MAFFL Universe</p>
+      <p class="page-header__subtitle">News Across MAFFL</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v4.5</span>
-      <span class="meta-pill">Last Updated September 22, 2026</span>
+      <span class="meta-pill">v5.0</span>
+      <span class="meta-pill">Last Updated September 23, 2026</span>
     </div>
   </header>
 </div>
@@ -1291,6 +1365,12 @@
  * Optional `label` overrides the display name ("Week 0" -> "Post-Draft").
  * Optional `results`: array of games for the Results card (see renderResultsCard).
  * Optional `matchupPreviews`: next week's games; only highlight:true entries render.
+ * Optional `subhead`: one sentence under the headline (≤160 chars; headline ≤120).
+ * `newsReel` may be a flat string array or sections:
+ *   [{ section: "Big Spenders", icon: "💸", items: ["…"] }, …] — ≤6 items total.
+ * Optional creditTracker item `status` ("leading" | "locked") and `since` (week #).
+ * Optional `relegationInsurance` (team names) and `postseasonNote` for the
+ * Post-Season Picture card, which is otherwise derived from standings.
  * ===================================================================== */
 
 const SEASON = 2026;
@@ -1312,7 +1392,8 @@ const WEEKS = [
   {
     weekNumber: 2,
     dateString: "Sep 22, 2026",
-    headline: "Josh Allen scored 46.82 and won Individual High in both tiers at once — he dragged Bad Attitude Gang to 202.0 and the Fightin Ferrets to a ten-point loss. Dan Reilly went from the best score in Upper to the worst in seven days, and out of Survivor.",
+    headline: "Dan Reilly went from the best score in Upper to the worst in seven days — and out of Survivor.",
+    subhead: "Bad Attitude Gang (Mike) posted the only 200 of the season, and four teams are still unbeaten.",
     latestChange: "Dan Reilly held three of the six credit leads after Week 1 and holds none after Week 2. Five of the six changed hands. Balances still do not move until the offseason.",
 
     /* points = SEASON TOTAL through Week 2 (Wk1 + Wk2). credits are unchanged from
@@ -1418,12 +1499,12 @@ const WEEKS = [
     survivorNote: "One team goes out per tier per week — the single lowest score. Dan Reilly posted the highest score in Upper in Week 1 and the lowest in Week 2; that is the entire pool explained in one owner. Seventeen left of twenty-one.",
 
     creditTracker: [
-      { award: "Most Team Points Scored — Upper",      credits: 5, leaderTeam: "Bad Attitude Gang",       leaderOwner: "Mike Murello",  value: "339.98 through Wk 2" },
-      { award: "Most Team Points Scored — Lower",      credits: 5, leaderTeam: "Tommy Phamclub",          leaderOwner: "Sam Lavrinc",   value: "357.22 through Wk 2" },
-      { award: "Largest Blowout Victory — Upper",      credits: 3, leaderTeam: "Turkey Hat Conglomerate", leaderOwner: "Ed Peters",     value: "65.40 over Southside (Wk 2)" },
-      { award: "Largest Blowout Victory — Lower",      credits: 3, leaderTeam: "Tommy Phamclub",          leaderOwner: "Sam Lavrinc",   value: "63.27 over 👻 (Wk 2)" },
-      { award: "Individual High Score (Wkly) — Upper", credits: 3, leaderTeam: "Bad Attitude Gang",       leaderOwner: "Mike Murello",  value: "46.82 — Josh Allen" },
-      { award: "Individual High Score (Wkly) — Lower", credits: 3, leaderTeam: "Fightin Ferrets",         leaderOwner: "Todd Trozzo",   value: "46.82 — Josh Allen" }
+      { award: "Most Team Points Scored — Upper",      credits: 5, leaderTeam: "Bad Attitude Gang",       leaderOwner: "Mike Murello",  value: "339.98 through Wk 2", status: "leading", since: 2 },
+      { award: "Most Team Points Scored — Lower",      credits: 5, leaderTeam: "Tommy Phamclub",          leaderOwner: "Sam Lavrinc",   value: "357.22 through Wk 2", status: "leading", since: 2 },
+      { award: "Largest Blowout Victory — Upper",      credits: 3, leaderTeam: "Turkey Hat Conglomerate", leaderOwner: "Ed Peters",     value: "65.40 over Southside (Wk 2)", status: "leading", since: 2 },
+      { award: "Largest Blowout Victory — Lower",      credits: 3, leaderTeam: "Tommy Phamclub",          leaderOwner: "Sam Lavrinc",   value: "63.27 over 👻 (Wk 2)", status: "leading", since: 1 },
+      { award: "Individual High Score (Wkly) — Upper", credits: 3, leaderTeam: "Bad Attitude Gang",       leaderOwner: "Mike Murello",  value: "46.82 — Josh Allen", status: "leading", since: 2 },
+      { award: "Individual High Score (Wkly) — Lower", credits: 3, leaderTeam: "Fightin Ferrets",         leaderOwner: "Todd Trozzo",   value: "46.82 — Josh Allen", status: "leading", since: 2 }
     ],
     highestWeekly: {
       credits: 1,
@@ -1449,7 +1530,6 @@ const WEEKS = [
     ],
 
     newsReel: [
-      "Josh Allen scored 46.82 and won Individual High in BOTH tiers — Bad Attitude Gang up top, Fightin Ferrets down below. Mike won by 55 with him. Todd lost by ten with him.",
       "Dan Reilly posted 174.80 in Week 1 — the best score in Upper — and 87.72 in Week 2, the worst. He held three of the six credit leads seven days ago and holds none now, and he is out of Survivor.",
       "Reilly's Reindeer dropped $51 on Carson Wentz, the biggest waiver bid in the league this week, and lost anyway. Joe is 0-2.",
       "Bad Attitude Gang paid $35 for Josiah Trotter and cut Nick Bolton. Braiden Snyder scooped Bolton off waivers for $5 two days later, ran seven more moves rebuilding his entire defense, and lost 164.24–118.08.",
@@ -1929,6 +2009,66 @@ function standingsSort(a, b) {
   if (b.points !== a.points) return b.points - a.points;
   return (b.credits || 0) - (a.credits || 0);
 }
+/* Post-season seeding follows the rulebook's General tiebreaker: record (W/L %),
+   then credit balance, then total points for. Deliberately separate from
+   standingsSort, which runs points ahead of credits. */
+function winPct(t) { const g = t.w + t.l + (t.t || 0); return g ? (t.w + 0.5 * (t.t || 0)) / g : 0; }
+function seedSort(a, b) {
+  if (winPct(b) !== winPct(a)) return winPct(b) - winPct(a);
+  if ((b.credits || 0) !== (a.credits || 0)) return (b.credits || 0) - (a.credits || 0);
+  return b.points - a.points;
+}
+
+/* All-play record: every week through uptoWeek, the team's score against every
+   other real score in its tier that week. The Ghost's par score is not a team. */
+function allPlay(teamName, tier, uptoWeek) {
+  const rec = { w: 0, l: 0, t: 0 };
+  WEEKS.forEach(wk => {
+    if (wk.weekNumber < 1 || wk.weekNumber > uptoWeek || !wk.results || !wk.results.length) return;
+    const scores = [];
+    wk.results.filter(g => g.tier === tier).forEach(g => {
+      if (g.teamA !== GHOST_TEAM) scores.push({ team: g.teamA, score: g.scoreA });
+      if (g.teamB !== GHOST_TEAM) scores.push({ team: g.teamB, score: g.scoreB });
+    });
+    const mine = scores.find(s => s.team === teamName);
+    if (!mine) return;
+    scores.forEach(s => {
+      if (s === mine) return;
+      if (mine.score > s.score) rec.w++;
+      else if (mine.score < s.score) rec.l++;
+      else rec.t++;
+    });
+  });
+  return rec;
+}
+
+/* Wraps every real team name from the week's standings in a highlighter chip.
+   Text around the matches is escaped piece by piece; the chip markup itself is
+   never passed through esc(). */
+function chipTeams(text, week) {
+  const s = String(text == null ? "" : text);
+  if (!week || !week.upperTier || !week.lowerTier) return esc(s);
+  const u = week.upperTier;
+  const names = [...(u.divA || []), ...(u.divB || []), ...(u.divC || []), ...(u.divD || []), ...week.lowerTier]
+    .map(t => t.team)
+    .filter(n => n && n !== GHOST_TEAM)
+    .sort((a, b) => b.length - a.length);
+  if (!names.length) return esc(s);
+  const re = new RegExp("(" + names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "g");
+  /* split() with one capture group alternates plain text (even) and match (odd). */
+  return s.split(re).map((piece, i) =>
+    i % 2 ? `<span class="team-chip">${esc(piece)}</span>` : esc(piece)
+  ).join("");
+}
+
+/* Legacy weeks (0–2) carry a flat string array. Treat it as one untitled section. */
+function newsSections(week) {
+  const r = week.newsReel || [];
+  if (!r.length) return [];
+  return typeof r[0] === "string" ? [{ section: null, icon: null, items: r }] : r;
+}
+function newsItems(week) { return newsSections(week).flatMap(s => s.items || []); }
+
 function getWeekFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const raw = params.get("week");
@@ -1967,6 +2107,7 @@ function renderPage(week) {
     : [renderNewsCard(week),
        renderResultsCard(week),
        hasStandings ? renderStandingsCard(week) : "",
+       hasStandings && week.weekNumber >= 1 && week.weekNumber <= 13 ? renderPostseasonCard(week) : "",
        hasSurvivor ? renderSurvivorCard(week) : "",
        renderCreditTrackerCard(week),
        hasElite ? renderElite5Card(week) : "",
@@ -2033,6 +2174,74 @@ function renderStandingsCard(week) {
   `;
 
   return cardShell("standings", "🏆", "Standings", preview, upperBody);
+}
+
+/* --------- POST-SEASON PICTURE CARD ("if the season ended today") --------- */
+/* Fully derived from the week's standings — no authored bracket data. Upper seeds
+   1–12 across all four divisions, Lower seeds 1–9 with the Ghost excluded (not
+   postseason-eligible). Optional week.relegationInsurance lifts an insured team
+   sitting at 7–12 to seed 7, in original relative order. */
+function postseasonSeeds(week) {
+  const u = week.upperTier;
+  let upper = [...u.divA, ...u.divB, ...u.divC, ...u.divD].slice().sort(seedSort);
+  const insured = week.relegationInsurance || [];
+  if (insured.length) {
+    const top = upper.slice(0, 6), rest = upper.slice(6);
+    const lifted = rest.filter(t => insured.includes(t.team));
+    upper = top.concat(lifted, rest.filter(t => !insured.includes(t.team)));
+  }
+  const lower = week.lowerTier.filter(t => t.team !== GHOST_TEAM).slice().sort(seedSort);
+  return { upper, lower };
+}
+
+function renderPostseasonCard(week) {
+  const { upper, lower } = postseasonSeeds(week);
+  const at = (list, seed) => list[seed - 1];
+  const psTeam = (list, seed) => {
+    const t = at(list, seed);
+    if (!t) return "";
+    return `<div class="ps-team"><span class="ps-seed">${seed}</span><span>${teamOwner(t)}</span><span class="ps-rec">${t.w}-${t.l}</span></div>`;
+  };
+  const psPair = (list, a, b) => `
+    <div class="ps-pair">${psTeam(list, a)}<span class="ps-vs">vs</span>${psTeam(list, b)}</div>`;
+  const psGroup = (title, badgeClass, badgeText, inner) => `
+    <div class="ps-group">
+      <div class="ps-group-head"><span>${esc(title)}</span><span class="ps-badge ${badgeClass}">${esc(badgeText)}</span></div>
+      ${inner}
+    </div>`;
+
+  const upperHtml = `
+    <div class="ps-tier">
+      <h4 class="div-label ps-tier-label">Upper-Tier</h4>
+      ${psGroup("Championship — First-Round Bye", "safe", "Bye",
+          `<div class="ps-pair">${psTeam(upper, 1)}</div><div class="ps-pair">${psTeam(upper, 2)}</div>`)}
+      ${psGroup("Championship — Wild Card", "safe", "Playoffs", psPair(upper, 4, 5) + psPair(upper, 3, 6))}
+      ${psGroup("Consolation · Best of 3", "safe", "Safe", psPair(upper, 7, 8))}
+      ${psGroup("Relegation Showdown · Best of 3", "tbd", "Showdown", psPair(upper, 9, 10))}
+      ${psGroup("Consolation · Best of 3", "relegated", "Relegated", psPair(upper, 11, 12))}
+    </div>`;
+  const lowerHtml = `
+    <div class="ps-tier">
+      <h4 class="div-label ps-tier-label">Lower-Tier</h4>
+      ${psGroup("Promotion Consolation · Best of 3", "promoted", "Promoted", psPair(lower, 1, 2))}
+      ${psGroup("Promotion Showdown · Best of 3", "tbd", "Showdown", psPair(lower, 3, 4))}
+      ${psGroup("Safe", "safe", "Stays Lower",
+          lower.slice(4).map((t, i) => `<div class="ps-pair">${psTeam(lower, i + 5)}</div>`).join(""))}
+    </div>`;
+
+  const names = list => list.filter(Boolean).map(teamOwner).join(", ");
+  const preview = `
+    <div><span class="strong">Byes:</span> ${names([at(upper, 1), at(upper, 2)])}</div>
+    <div style="margin-top:4px"><span class="strong">Promoted:</span> ${names([at(lower, 1), at(lower, 2)])}</div>
+    <div class="muted-line">Tap for the projected bracket, showdowns and relegation line.</div>
+  `;
+  const body = `
+    ${week.postseasonNote ? `<p class="survivor-note">${esc(week.postseasonNote)}</p>` : ""}
+    ${upperHtml}
+    ${lowerHtml}
+    <p class="ps-foot">Projection only — seeded by record, then credit balance, then points (rulebook General tiebreaker). All 3-game series are first to 2 wins.</p>
+  `;
+  return cardShell("postseason", "🏟️", "Post-Season Picture", preview, body);
 }
 
 function renderDivStatic(name, teams, week) {
@@ -2155,7 +2364,19 @@ function survivorPool(title, active, eliminated, concluded, winner) {
 }
 
 /* --------- CREDIT TRACKER CARD --------- */
-function ctCell(item) {
+/* Optional status pill: locked (final) or leading (can still change). Absent on
+   weeks authored before the field existed, so those render unchanged. */
+function ctStatus(item, week) {
+  if (item.status === "locked") return `<span class="ct-status locked">🔒 Locked</span>`;
+  if (item.status === "leading") {
+    return item.since === week.weekNumber
+      ? `<span class="ct-status new">New leader</span>`
+      : `<span class="ct-status held">Leader since Wk ${esc(item.since)}</span>`;
+  }
+  return "";
+}
+
+function ctCell(item, week) {
   if (!item) return `<div class="ct-col"></div>`;
   /* An unawarded category has no leader yet — rendering "— (—)" reads as a bug
      rather than as an empty slot, so show the status line on its own. */
@@ -2163,6 +2384,7 @@ function ctCell(item) {
     return `
       <div class="ct-col">
         <span class="tier-badge ${item.tier}">${item.tier === "U" ? "Upper" : "Lower"}</span>
+        ${ctStatus(item, week)}
         <div class="ct-unclaimed">${esc(item.value)}</div>
         <span class="credit-pill">+${item.credits} credits</span>
       </div>
@@ -2172,6 +2394,7 @@ function ctCell(item) {
   return `
     <div class="ct-col">
       <span class="tier-badge ${tier}">${tier === "U" ? "Upper" : "Lower"}</span>
+      ${ctStatus(item, week)}
       <div class="ct-leader"><span class="strong">${esc(item.leaderTeam)}</span> (${esc(shortName(item.leaderOwner))})</div>
       <div class="ct-value">${esc(item.value)}</div>
       <span class="credit-pill">+${item.credits} credits</span>
@@ -2193,7 +2416,7 @@ function renderHighestWeekly(hw) {
   if (!hw || !hw.weeks || !hw.weeks.length) return "";
   const latest = hw.weeks[0];
   const summary = `
-    <div class="ct-cat">Highest Weekly Score (Wk ${latest.week}) <span class="credit-pill">+${hw.credits} credit</span></div>
+    <div class="ct-cat">Highest Weekly Score (Wk ${latest.week}) <span class="credit-pill">+${hw.credits} credit</span> <span class="ct-status locked">🔒 Locked</span></div>
     <div class="ct-split">
       ${hwCell(latest.upper, "U")}
       ${hwCell(latest.lower, "L")}
@@ -2201,7 +2424,7 @@ function renderHighestWeekly(hw) {
   `;
   const history = hw.weeks.map(wk => `
     <div class="ct-weekly-row">
-      <div class="ct-weekly-wk">Week ${wk.week}</div>
+      <div class="ct-weekly-wk">Week ${wk.week} <span class="ct-status locked">🔒 Locked</span></div>
       <div class="ct-split">
         ${hwCell(wk.upper, "U")}
         ${hwCell(wk.lower, "L")}
@@ -2252,13 +2475,15 @@ function renderCreditTrackerCard(week) {
     <li class="ct-row">
       <div class="ct-cat">${esc(g.base)}</div>
       <div class="ct-split">
-        ${ctCell(g.upper)}
-        ${ctCell(g.lower)}
+        ${ctCell(g.upper, week)}
+        ${ctCell(g.lower, week)}
       </div>
     </li>
   `).join("");
 
   const body = `
+    <p class="ct-legend"><span class="ct-status locked">🔒 Locked</span> final, can't change ·
+    <span class="ct-status held">Leader</span> current holder, can change any week</p>
     <ul class="ct-list">
       ${categoryRows}
       ${renderHighestWeekly(hw)}
@@ -2291,6 +2516,19 @@ function renderElite5Card(week) {
   if (!week.elite5 || !week.elite5.length) return "";
 
   const top = week.elite5[0];
+  /* Derived stat line; an authored e.stat string overrides it. Renders nothing
+     when the team is not in this week's standings or has no results yet. */
+  const standingsRows = week.upperTier && week.lowerTier
+    ? [...week.upperTier.divA, ...week.upperTier.divB, ...week.upperTier.divC, ...week.upperTier.divD, ...week.lowerTier]
+    : [];
+  const eliteStat = e => {
+    if (e.stat) return `<div class="elite-stat">${esc(e.stat)}</div>`;
+    const t = standingsRows.find(r => r.team === e.team);
+    if (!t) return "";
+    const ap = allPlay(e.team, e.tier === "U" ? "U" : "L", week.weekNumber);
+    if (!(ap.w + ap.l + ap.t)) return "";
+    return `<div class="elite-stat">${t.w}-${t.l} · ${t.points.toFixed(1)} PF · All-play ${ap.w}-${ap.l}</div>`;
+  };
   const preview = `
     <div><span class="strong">#1 this week:</span> ${esc(top.team)}</div>
     <div class="muted-line">${esc(top.note)}</div>
@@ -2307,6 +2545,7 @@ function renderElite5Card(week) {
               <span class="tier-badge ${e.tier === "U" ? "U" : "L"}">${e.tier === "U" ? "Upper" : "Lower"}</span>
             </div>
             <div class="elite-owner">${esc(shortName(e.owner))}</div>
+            ${eliteStat(e)}
             <div class="elite-note">${esc(e.note)}</div>
           </div>
         </div>
@@ -2446,8 +2685,11 @@ function renderResultsCard(week) {
     return `
       <div class="div-label">${esc(title)}</div>
       <div class="mu-grid">
-        ${rows.map(g => `
-          <article class="mu result${g.ghost ? " ghost" : ""}">
+        ${rows.map(g => {
+          /* From Week 3 on a Ghost game renders as an ordinary game. */
+          const ghostStyled = g.ghost && week.weekNumber <= 2;
+          return `
+          <article class="mu result${ghostStyled ? " ghost" : ""}">
             ${g.tag ? `<span class="mu-tag">${esc(g.tag)}</span>` : ""}
             <div class="mu-teams">
               ${resultSide(g.teamA, g.ownerA, g.scoreA, outcome(g.scoreA, g.scoreB), false)}
@@ -2456,7 +2698,8 @@ function renderResultsCard(week) {
             </div>
             ${g.note ? `<p class="mu-note">${esc(g.note)}</p>` : ""}
           </article>
-        `).join("")}
+        `;
+        }).join("")}
       </div>
     `;
   };
@@ -2484,8 +2727,11 @@ function renderPreviewCard(week) {
     return `
       <div class="div-label">${esc(title)}</div>
       <div class="mu-grid">
-        ${rows.map(m => `
-          <article class="mu${m.ghost ? " ghost" : ""}">
+        ${rows.map(m => {
+          /* From Week 3 on a Ghost game renders as an ordinary game. */
+          const ghostStyled = m.ghost && week.weekNumber <= 2;
+          return `
+          <article class="mu${ghostStyled ? " ghost" : ""}">
             <div class="mu-teams">
               <div class="mu-side"><span class="mu-team">${esc(m.teamA)}</span><span class="mu-owner">${esc(shortName(m.ownerA))}</span></div>
               <span class="mu-vs">vs</span>
@@ -2493,7 +2739,8 @@ function renderPreviewCard(week) {
             </div>
             <p class="mu-note">${esc(m.note)}</p>
           </article>
-        `).join("")}
+        `;
+        }).join("")}
       </div>
     `;
   };
@@ -2503,17 +2750,36 @@ function renderPreviewCard(week) {
 /* --------- NEWS CARD --------- */
 function renderNewsCard(week) {
   const header = `${weekLabel(week)} · ${week.dateString}`;
+  const total = newsItems(week).length;
+
+  /* Authoring guardrails — console only, never shown to readers. */
+  if (week.weekNumber >= 3) {
+    if (total > 6) console.warn(`Week ${week.weekNumber}: ${total} news items (max 6).`);
+    if (week.headline && week.headline.length > 120) console.warn(`Week ${week.weekNumber}: headline is ${week.headline.length} chars (max 120).`);
+    if (week.subhead && week.subhead.length > 160) console.warn(`Week ${week.weekNumber}: subhead is ${week.subhead.length} chars (max 160).`);
+  }
+
+  const subhead = week.subhead ? `<div class="news-subhead">${chipTeams(week.subhead, week)}</div>` : "";
   const preview = `
-    <div class="news-headline">${esc(week.headline)}</div>
-    <div class="muted-line">Tap for the rest of the week's news.</div>
+    <div class="news-headline">${chipTeams(week.headline, week)}</div>
+    ${subhead}
+    <div class="muted-line">Tap for ${total} ${total === 1 ? "story" : "stories"}.</div>
   `;
 
+  /* The preview hides when the card opens, so the body repeats the headline. */
   const body = `
-    <ul class="news-list">
-      ${week.newsReel.map(item => `
-        <li><span class="bullet"></span><span>${esc(item)}</span></li>
-      `).join("")}
-    </ul>
+    <div class="news-headline news-lead">${chipTeams(week.headline, week)}</div>
+    ${subhead}
+    ${newsSections(week).map(s => `
+      <div class="news-section">
+        ${s.section ? `<div class="news-section-head"><span aria-hidden="true">${esc(s.icon || "")}</span> ${esc(s.section)}</div>` : ""}
+        <ul class="news-list">
+          ${(s.items || []).map(item => `
+            <li><span class="bullet"></span><span>${chipTeams(item, week)}</span></li>
+          `).join("")}
+        </ul>
+      </div>
+    `).join("")}
   `;
 
   return cardShell("news", "📰", header, preview, body);
