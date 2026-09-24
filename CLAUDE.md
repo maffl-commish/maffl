@@ -16,18 +16,37 @@ Each subpage (`credits.html`, `draft.html`, `history.html`, `power-rankings.html
 (around line 846): `<span class="meta-pill">v1.0</span>` and
 `<span class="meta-pill">Last Updated <Month D, YYYY></span>`.
 
-### ON EVERY EDIT to a page:
+The two pills do different jobs:
+- **Last Updated** = "something on this page is fresh." Update it on EVERY edit.
+- **Version** = "the page itself changed in a way a returning owner would notice."
+  It is a product signal, not a change counter. Most edits do NOT touch it.
 
-1. ALWAYS update that page's "Last Updated" pill to today's date.
-2. AFTER GO-LIVE (2026-07-01 onward): also bump that page's version pill IF the change
-   is user-facing/substantive (markup, data, behavior). Use the page's own pill as the
-   source of truth: patch bump (vX.Y → vX.Y+1) for fixes/tweaks; minor bump
-   (vX.Y → vX+1.0) for new features/columns/sections. Skip the version bump only for
-   trivial no-user-impact changes (comments, whitespace) — but still update the date.
-3. Pages are versioned INDEPENDENTLY; do not sync version numbers across pages.
-4. If a page is missing a meta pill, add it following the existing pattern before stamping.
+### Version format: `vMAJOR.MINOR` only. There is no third digit on the pill.
 
-**A stamp update is part of the SAME commit as the change, not a separate pass.**
+| Level | Pill change | Use it for | How often |
+|---|---|---|---|
+| **None** (default) | date only | New weekly content, data refreshes (balances, standings, dues), rule text edits, copy and wording, bug fixes, style tweaks, follow-up fixes to a feature already shipped | Most commits |
+| **Minor** | vX.Y → vX.(Y+1) | A new card, section, tab, or feature an owner would notice and use | A few per page per season |
+| **Major** | vX.Y → v(X+1).0 | An overhaul: new layout, or a new way of using the page | About once per page per season, at most |
+
+### Who decides
+1. Every commissioner prompt carries a `VERSION:` line, which is `none`, `minor`, or `major`. Follow it exactly.
+2. If a prompt has no `VERSION:` line, the default is **none**. Update the date only, and say in your report
+   that you did not bump the version.
+3. Never choose **major** yourself. Only the commissioner can call a major.
+4. **One bump per release.** If the pill was already bumped for this feature in an earlier commit or prompt
+   that hasn't gone out to the league, don't bump it again. Follow-ups and fixes to it are `none`.
+
+### Other rules (unchanged)
+- Pages are versioned INDEPENDENTLY. Don't sync numbers across pages.
+- If a page is missing a meta pill, add it following the existing pattern before stamping.
+- `rules.html`: `RULEBOOK_VERSION` tracks rule content and `PAGE_BUILD` is internal. This policy
+  doesn't change either one. CAUTION: the header pills are rendered at runtime from
+  `RULEBOOK_VERSION` / `RULEBOOK_LAST_UPDATED` (`renderVersionChips()` overwrites
+  `#versionChipVersion` / `#versionChipUpdated`), so on this page the header pill always SHOWS
+  `RULEBOOK_VERSION`. Stamp the date via `RULEBOOK_LAST_UPDATED` and keep the static pill
+  markup in sync with the constants; editing only the static markup has no visible effect.
+- A stamp update is part of the SAME commit as the change, not a separate pass.
 
 ## Data Governance
 
