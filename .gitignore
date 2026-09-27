@@ -1,0 +1,15 @@
+# Backups and scratch (git history is the backup)
+*.bak
+*.bak_*
+*.bak-*
+*_html.bak*
+_chunk*.txt
+_scratch*
+
+# OS / OneDrive
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Claude Code local settings (machine-specific, can hold permissions)
+.claude/settings.local.json

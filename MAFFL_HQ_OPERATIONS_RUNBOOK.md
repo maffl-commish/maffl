@@ -4,10 +4,10 @@ The operating manual for MAFFL HQ, the web hub for the **Mid-Atlantic Fantasy Fo
 (MAFFL, founded 2002). If you read nothing else, read §0 and §1.
 
 **Companion documents** (keep together in the project):
-- `# MAFFL HQ Project.md` — the build spec (architecture, design system, data-authority rules)
-- `CHANGE_INVENTORY.md` — every changeable datapoint, its authoritative source, and the change-event catalog
-- `AUDIT.md` — the 2026-06 data provenance audit (historical record)
-- `BUILD_SUMMARY.md` — what the build pipeline generates, per page
+- `_ops/archive/2026-06-build/# MAFFL HQ Project.md` — the build spec (architecture, design system, data-authority rules)
+- `_ops/archive/2026-06-build/CHANGE_INVENTORY.md` — every changeable datapoint, its authoritative source, and the change-event catalog
+- `_ops/archive/2026-06-build/AUDIT.md` — the 2026-06 data provenance audit (historical record)
+- `_ops/archive/2026-06-build/BUILD_SUMMARY.md` — what the build pipeline generates, per page
 
 ---
 
@@ -30,7 +30,7 @@ so that can't happen.
 
 ## 1. The publish loop (every change goes through this)
 
-1. **Identify the owning source.** Use the table in §2 (or `CHANGE_INVENTORY.md`) to find which
+1. **Identify the owning source.** Use the table in §2 (or `_ops/archive/2026-06-build/CHANGE_INVENTORY.md`) to find which
    CSV owns the datapoint. One datapoint, one source.
 2. **Edit the source CSV** in `./data/`.
 3. **Run the build (check mode first):**
@@ -163,7 +163,7 @@ The pipeline and all file edits happen in Claude Code (it can see the real files
 cannot). Patterns that have worked and are worth keeping:
 
 - **Audits and sweeps are read-only.** When you want to understand state, ask for a report that
-  changes nothing (`AUDIT.md`, `DOC_SWEEP.md` were built this way). Look before touching.
+  changes nothing (`_ops/archive/2026-06-build/AUDIT.md`, `_ops/archive/2026-06-build/DOC_SWEEP.md` were built this way). Look before touching.
 - **Edits happen on a branch, reviewed before merge.** "Work on a branch, produce a CHANGES
   summary, don't push until I review" — this caught real issues (e.g. a fix that got silently
   reverted later).
@@ -198,7 +198,7 @@ cannot). Patterns that have worked and are worth keeping:
   which season-name the weekly/history pages display when an owner has renamed often.
 - (Resolved items, for reference: credit model, credit seeding, owner-name format, pre-2025 prize
   handling, rules-manual decision, and the 2007 price display are all settled — see
-  `CHANGE_INVENTORY.md` §4.)
+  `_ops/archive/2026-06-build/CHANGE_INVENTORY.md` §4.)
 
 ---
 

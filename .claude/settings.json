@@ -8,7 +8,7 @@
             "type": "command",
             "shell": "powershell",
             "statusMessage": "Checking iOS standalone tags + shim...",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\micha\\OneDrive\\Desktop\\MAFFL\\check-standalone.ps1\" -Quiet"
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PROJECT_DIR\\check-standalone.ps1\" -Quiet"
           }
         ]
       }
