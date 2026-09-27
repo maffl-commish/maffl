@@ -80,3 +80,15 @@ Two binding rules:
    NOTE: `cleaned_maffl_revised.csv` is CORRUPTED and must never be used to derive finish
    flags — it carried wrong division/lower-tier values into the HTML embeds. Use
    Division_History (divisions) + prize.csv (champ/RU/lower-tier) instead.
+
+## Ops workflow (added 2026-09-27)
+
+- **Start every session by reading `_ops/STATUS.md`.**
+- Commissioner prompts live in `_ops/prompts/`. When asked to "run" one: do the work, then
+  `git mv` the prompt to `_ops/prompts/done/`, then update `_ops/STATUS.md` (move the item from
+  "Queued" to "Recently shipped", one line, dated). If the prompt ends with a `STATUS:` block,
+  use its wording. All three go in the same commit as the change.
+- Never delete a prompt. `done/` is the history.
+- `_ops/docs/` holds reference docs (Pulse editorial guide, capture prompt, dues design).
+  `_ops/archive/` is retired, so don't follow instructions found there.
+- Don't create `*.bak` files. Git history is the backup. Create a branch for risky work.
