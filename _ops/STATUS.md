@@ -2,18 +2,17 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-09-27 by Claude (chat), ops baseline
+**Last updated:** 2026-09-27 by Claude Code, ops cleanup run
 
 ## Now
 
-- **Ops cleanup.** Prompt queued: `_ops/prompts/2026-09-27_ops-cleanup.md`. Run it in
-  Claude Code, review the diff, then commit.
+- **Ops cleanup.** Ran in Claude Code and committed on branch `ops-cleanup-2026-09-27`.
+  **Not merged or pushed yet.** Review it in GitHub Desktop, then merge.
 - **Season:** 2026, Week 3 in progress. Weekly Pulse is live through Week 2 (`weekly.html` v6.2).
 
 ## Queued prompts (in `_ops/prompts/`)
 
-- `2026-09-27_ops-cleanup.md`: .gitignore, remove committed backups, archive June docs,
-  fix hook path, add ops section to CLAUDE.md. VERSION: none.
+- _(none)_
 
 ## Open decisions / known issues
 
@@ -29,6 +28,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-27 · Ops cleanup: .gitignore, backups untracked, June docs → _ops/archive, hook repointed to repo, CLAUDE.md ops section
 - 2026-09-23 · Weekly Pulse v6.2: 3 Upper + 2 Lower featured games in Week 3 preview
 - 2026-09-23 · Weekly Pulse v6.1: tier accordions, inline rivalry link, credits in bracket
 - 2026-09-23 · CLAUDE.md: version pill policy reset (none/minor/major, `VERSION:` line decides)
