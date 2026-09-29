@@ -68,6 +68,7 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 | Fact | GOLD source (authoritative) | Other copies that must stay in sync (derived) | Cadence |
 |---|---|---|---|
 | Game result (W/L, scores) | `MAFFL_Matchups_Clean.csv` | `MAFFL_Matchups_NoConsolation.csv`, `matchups-data.js`, embedded standings/records in history/stats/power-rankings/rivalry/weekly | Weekly (in season) |
+| Weekly top-3 scorers per team (2026+) | `data/MAFFL_Top_Performers_2026.csv` — **hand-appended weekly from capture v2.1** (`Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points`; ESPN first-initial player names; `Pos` blank until capture supplies it) | None generated. Quoted by hand in weekly.html Pulse prose (Results notes, Credit Tracker Individual High) | Weekly (in season) |
 | Regular-season **fixtures** — 2026 Upper-Tier (week, home/away, Week_Type, Game_Class, Division) | `data/MAFFL_Schedule_2026_Upper.csv` — **hand-authored by the commissioner; NOT derived from any other file** | rules.html Schedule Structure (four-block table, 2026 Mirror Pairs list), weekly.html Week 1 Preview | Seasonal (set with division alignment) |
 | Team name by owner×year | `MAFFL_Team_History.csv` | Owners_Sheet "Current Team", **power-rankings.html `recentTeam`+`timeline`**, Matchups Winner/Loser_Team, Division_History "Team", embeds in history/draft/prize | Seasonal (+ ad-hoc renames) |
 | Owner W/L/T per season | `MAFFL_Matchups_Clean.csv` (derive) | `cleaned_maffl_revised.csv`, Division_History, power-rankings.html `timeline` | Weekly |
@@ -116,6 +117,7 @@ This is the table you asked for. Read it as: *trigger → propagate in this orde
 
 ### CE-1 — New week of results posted (most frequent)
 `MAFFL_Matchups_Clean.csv` (append rows)
++ `data/MAFFL_Top_Performers_2026.csv` (append that week's 3 rows per real team — gold, same capture; no derived files)
 → regenerate `MAFFL_Matchups_NoConsolation.csv`
 → regenerate `matchups-data.js`
 → recompute `MAFFL_Points_By_Season.csv` + `MAFFL_Points_AllTime.csv`
