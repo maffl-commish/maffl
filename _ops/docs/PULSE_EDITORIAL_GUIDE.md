@@ -136,13 +136,32 @@ Early in the season, credit balance decides most of the order. That's a good sto
 ## 8. Results and Preview notes
 
 - One sentence each (two at most). Same naming rule.
-- Preview: **exactly 2 featured games (`highlight: true`), one per tier by default.** Pick for stakes:
+- Preview: **5 featured games (`highlight: true`): 3 Upper + 2 Lower** (commish ruling 2026-09-29;
+  matches v6.2). Pick for stakes:
   a real rivalry (the page shows the all-time series automatically), a division lead, playoff/relegation
   lines, unbeaten vs unbeaten. Being the Ghost game isn't a reason.
 - A featured `note` is the whole case for the game, in 2–3 sentences: weave the rivalry fact
   (streak, playoff history, first meeting), the standings context, and the stakes together. The
   `⚔️ … leads X–Y →` link is added by the page; don't repeat the bare series score.
 - Every other game renders as a compact "Rest of the slate" row; its note doesn't show.
+- **Pairings come from a schedule, never a guess.** Upper: `data/MAFFL_Schedule_2026_Upper.csv`.
+  Lower: ESPN's League Schedule page (the Week 2 preview derived Lower from a rotation and got
+  4 of 5 wrong). If the Lower schedule isn't in hand, ask for it.
+
+## 8a. Top performers (from Week 3)
+
+Capture v2.1 now gives the top 3 scorers on every team, and HQ keeps them for the season.
+Use them to say *who* won the game, not just by how much.
+
+- **Results notes:** name the player who decided it when one did ("Chase's 38.4 was the
+  margin"). One player per note, two at most. Don't list all three.
+- **Can You Believe This?:** a team's #1 outscoring the whole opposing lineup's top 3, or
+  a loss with the tier's individual high.
+- **Hot & Not:** once there are 3+ weeks, a player in his team's top 3 every week, or a
+  high-priced auction buy who hasn't made it once.
+- **Credit Watch:** the Individual High line quotes the player and points from capture.
+- The cross-tier rule in §1 still applies: the same player on one roster per tier is normal,
+  not a story.
 
 ## 9. Pre-publish checklist
 
