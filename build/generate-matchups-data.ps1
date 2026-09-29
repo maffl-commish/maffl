@@ -11,6 +11,7 @@
 #
 #   build\generate-matchups-data.ps1          # check-only: report, write nothing
 #   build\generate-matchups-data.ps1 -Write   # write the files that changed
+#   build\generate-matchups-data.ps1 -CorrectSeason 2026 [-Write]   # re-derive after a stat correction
 #
 # Exit 0 = all four files already match the gold; 1 = differences found
 # (written only with -Write); 2 = REFUSED, nothing written.
@@ -24,7 +25,9 @@
 #   - regeneration would change anything already published other than the
 #     in-progress season: NoConsolation / matchups-data.js rows must be an
 #     exact prefix of the regenerated rows, and By_Season rows for earlier
-#     seasons must be byte-identical.
+#     seasons must be byte-identical -- unless -CorrectSeason <in-progress
+#     year> is passed, which allows edits to that season's existing rows only
+#     (ESPN stat corrections, CE-1a). Earlier seasons stay byte-locked.
 #
 # Owner names. The CSVs carry each row's gold owner string verbatim. The two
 # name-keyed outputs (matchups-data.js, points files) instead emit ONE label
@@ -45,7 +48,7 @@
 # Seasons after that use the runbook 8 rule: Upper-tier, non-ThirdPlace
 # playoff games.
 # ======================================================================
-param([switch]$Write)
+param([switch]$Write, [int]$CorrectSeason = 0)
 
 . (Join-Path $PSScriptRoot 'maffl-lib.ps1')
 
@@ -161,6 +164,10 @@ for ($i = 1; $i -lt $cleanLines.Count; $i++) {
 }
 Stop-IfProblems 'gold'
 $maxYear = ($games | Measure-Object -Property Year -Maximum).Maximum
+if ($CorrectSeason -ne 0 -and $CorrectSeason -ne $maxYear) {
+    Add-Problem "-CorrectSeason $CorrectSeason is not the in-progress season ($maxYear)"
+}
+$corrected = 0
 
 # ----------------------------------------------------------------------
 # 2. Owner identity: exact alias lookup against the registry
@@ -221,7 +228,14 @@ if ($oldNc.Count -gt $ncLines.Count) {
     Add-Problem "NoConsolation would SHRINK ($($oldNc.Count - 1) -> $($ncLines.Count - 1) rows)"
 } else {
     for ($i = 0; $i -lt $oldNc.Count; $i++) {
-        if ($oldNc[$i] -cne $ncLines[$i]) { Add-Problem "NoConsolation line $($i + 1) would change: '$($oldNc[$i])' -> '$($ncLines[$i])'"; break }
+        if ($oldNc[$i] -cne $ncLines[$i]) {
+            if ($CorrectSeason -gt 0 -and $oldNc[$i].StartsWith("$CorrectSeason,") -and $ncLines[$i].StartsWith("$CorrectSeason,")) {
+                Write-Host "  corrected NoConsolation: $($oldNc[$i]) -> $($ncLines[$i])" -ForegroundColor Yellow
+                $corrected++
+                continue
+            }
+            Add-Problem "NoConsolation line $($i + 1) would change: '$($oldNc[$i])' -> '$($ncLines[$i])'"; break
+        }
     }
 }
 
@@ -298,7 +312,13 @@ else {
 if ($oldJsRows.Count -gt $jsRows.Count) { Add-Problem "matchups-data.js would SHRINK ($($oldJsRows.Count) -> $($jsRows.Count) rows)" }
 else {
     for ($i = 0; $i -lt $oldJsRows.Count; $i++) {
-        if ($oldJsRows[$i] -cne $jsRows[$i]) { Add-Problem "matchups-data.js row $($i + 1) would change: $($oldJsRows[$i]) -> $($jsRows[$i])"; break }
+        if ($oldJsRows[$i] -cne $jsRows[$i]) {
+            if ($CorrectSeason -gt 0 -and $oldJsRows[$i].StartsWith("[$CorrectSeason,") -and $jsRows[$i].StartsWith("[$CorrectSeason,")) {
+                Write-Host "  corrected matchups-data.js: $($oldJsRows[$i]) -> $($jsRows[$i])" -ForegroundColor Yellow
+                continue
+            }
+            Add-Problem "matchups-data.js row $($i + 1) would change: $($oldJsRows[$i]) -> $($jsRows[$i])"; break
+        }
     }
 }
 
@@ -432,6 +452,7 @@ foreach ($gg in $ghostGames) {
 }
 foreach ($k in $respelled.Keys) { Write-Host "  Registry-resolved spelling: $k x$($respelled[$k])" -ForegroundColor DarkGray }
 Write-Host "  G-8: $g8 owner-season(s) <= $PostFrozenThrough carry frozen Post_ values that differ from the matchup-derived playoff set (carried, not fixed)." -ForegroundColor DarkGray
+if ($CorrectSeason -gt 0) { Write-Host "[correct] $corrected NoConsolation row(s) corrected in season $CorrectSeason" -ForegroundColor Yellow }
 
 $outputs = @(
     @{ Label = 'MAFFL_Matchups_NoConsolation.csv'; Path = $NoConsPath;   Bytes = (Get-EncodedBytes $ncText $Utf8NoBom); Note = "$($oldNc.Count - 1) -> $($ncLines.Count - 1) rows" },

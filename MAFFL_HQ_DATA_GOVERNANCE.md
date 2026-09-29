@@ -124,6 +124,14 @@ This is the table you asked for. Read it as: *trigger → propagate in this orde
 → recompute W/L records used by standings
 → refresh embeds in: `weekly.html`, `stats.html`, `history.html`, `rivalry.html` (auto via JS), `power-rankings.html` (rivals auto via JS; **but timeline W/L is hand-typed → also stale**)
 
+### CE-1a — ESPN stat correction to an already-posted week (in-progress season only)
+Edit the affected rows' scores in `MAFFL_Matchups_Clean.csv` (never add or remove rows)
+→ recompute that week's 👻 par from the corrected real Lower scores and edit the Ghost row too
+→ `build\generate-matchups-data.ps1 -CorrectSeason <year> [-Write]` (the lock stays on for every earlier season)
+→ correct every weekly.html week object from the corrected week onward: results, standings points, creditTracker, highestWeekly, and any prose that quotes a changed number
+→ LM re-enters the corrected 👻 par in ESPN
+Top-performer rows are not re-captured for corrections (player-level corrections aren't visible on the schedule page).
+
 ### CE-2 — Owner renames their team (the Murello chain)
 `MAFFL_Team_History.csv` (update the `is_current` TRUE row)
 → `MAFFL_Owners_Sheet_revised.csv` "Current Team"
