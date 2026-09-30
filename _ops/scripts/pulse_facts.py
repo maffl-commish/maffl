@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL Pulse facts calculator
-# VERSION: 0.1 (2026-09-29) — verified: reproduces the published Week 3 object exactly
+# VERSION: 0.1.1 (2026-09-29): UTF-8 console output for Windows runners. 0.1 — verified: reproduces the published Week 3 object exactly
 #
 # Computes every NUMBER the weekly Pulse needs, straight from gold, so the drafter
 # (Claude, human or robot) writes prose and never does arithmetic:
@@ -18,6 +18,11 @@
 import csv, json, os, re, sys
 from collections import defaultdict
 from decimal import Decimal, ROUND_HALF_UP
+
+# Windows runners print with a legacy code page that can't show 👻 or →; force UTF-8 output.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 YEAR = 2026
 GHOST = "MAFFL Ghost"

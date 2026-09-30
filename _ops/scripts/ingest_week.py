@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL ingest: append one ESPN-pulled week to the gold CSVs (CE-1, gold part only)
-# VERSION: 0.1 (2026-09-29)
+# VERSION: 0.1.1 (2026-09-29): UTF-8 console output for Windows runners
 #
 # Usage (repo root):  python _ops/scripts/ingest_week.py 4
 # Reads  _ops/inbox/MAFFL_2026_WeekNN_espn.md (must end STATUS: READY TO INGEST)
@@ -12,6 +12,11 @@
 # ============================================================
 import os, re, sys
 from decimal import Decimal
+
+# Windows runners print with a legacy code page that can't show 👻 or →; force UTF-8 output.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 YEAR = 2026
 
