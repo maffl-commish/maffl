@@ -33,15 +33,30 @@ foreach ($r in $season) { $champFlags += (ConvertTo-IntZero $r.Champ) }
 $d1 = "sum(Champ)=$champFlags (expected 25; 2002 co-champ counts as 2 -- whitelisted)"
 Add-Gate '1' 'Championship flags == 25' ($champFlags -eq 25) $d1
 
-# ===== Gate 2: recomputed W/L/T per owner == published =====
+# ===== Gate 2: Owners Sheet career W/L/T == recomputed from gold matchups =====
+# Source: MAFFL_Matchups_Clean.csv (GOLD, governance 7.2). Regular-season games only
+# (Game_Type 'Regular'; excludes playoffs, consolation and 'Ghost'), both tiers, equal
+# scores = tie. cleaned_maffl_revised.csv is quarantined and is NOT read here.
+# The sheet's career columns run "From 2005" through the last completed season:
+# bump $SheetThroughYear when the Owners Sheet is rolled forward after a season.
+$SheetThroughYear = 2025
 $agg = @{}
-foreach ($r in $season) {
-    $n = Normalize-Owner $r.Owner
-    if (-not $n) { continue }
-    if (-not $agg.ContainsKey($n)) { $agg[$n] = @{ w=0; l=0; t=0 } }
-    $agg[$n].w += (ConvertTo-IntZero $r.W)
-    $agg[$n].l += (ConvertTo-IntZero $r.L)
-    $agg[$n].t += (ConvertTo-IntZero $r.T)
+foreach ($g in (Read-MafflCsv 'MAFFL_Matchups_Clean.csv')) {
+    if ($g.Game_Type -ne 'Regular') { continue }
+    if ([int]$g.Year -gt $SheetThroughYear) { continue }
+    $wn = Normalize-Owner $g.Winner_Owner
+    $ln = Normalize-Owner $g.Loser_Owner
+    if (-not $wn -or -not $ln) { continue }
+    foreach ($n in @($wn, $ln)) {
+        if (-not $agg.ContainsKey($n)) { $agg[$n] = @{ w=0; l=0; t=0 } }
+    }
+    if ([double]$g.Winner_Score -eq [double]$g.Loser_Score) {
+        $agg[$wn].t += 1
+        $agg[$ln].t += 1
+    } else {
+        $agg[$wn].w += 1
+        $agg[$ln].l += 1
+    }
 }
 $wltMismatch = New-Object System.Collections.ArrayList
 foreach ($o in $owners) {
@@ -50,7 +65,7 @@ foreach ($o in $owners) {
         [void]$wltMismatch.Add(("{0}: computed {1}-{2}-{3} vs published {4}-{5}-{6}" -f $o.name, $a.w, $a.l, $a.t, $o.wins, $o.losses, $o.ties))
     }
 }
-if ($wltMismatch.Count -eq 0) { $d2 = "all $($owners.Count) owners match" } else { $d2 = ($wltMismatch -join ' | ') }
+if ($wltMismatch.Count -eq 0) { $d2 = "all $($owners.Count) owners match (Matchups_Clean, Regular, 2005-$SheetThroughYear)" } else { $d2 = ($wltMismatch -join ' | ') }
 Add-Gate '2' 'Recomputed W/L/T == published' ($wltMismatch.Count -eq 0) $d2
 
 # ===== Gate 3: published Win% == round(W/(W+L+T)) =====

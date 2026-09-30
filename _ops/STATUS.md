@@ -6,7 +6,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Now
 
-- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Next: Step 3, fix `build.ps1` Gate 2. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
+- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3: Gate 2 ✅; remaining before Step 4: gen-prize dues safety + cleaned_maffl consumers. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
 - **Week 4 Pulse.** The robot pulls Week 4 on Tue Oct 6 (5 AM ET, retries 7 AM / Wed) into
   `_ops/inbox/MAFFL_2026_Week04_espn.md`. Pull in GitHub Desktop, then draft the Pulse in Cowork chat
   from that file (same shape as capture v2.2). Screenshots + Results Engine only as a backup if
@@ -23,8 +23,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **Build is unsafe for dues.** `gen-prize.ps1` emits the old `dues_2026` shape and would wipe
   pay stamps. Hand-edit `dues_seasons` in `prize.html` until the generator reads
   `Dues_Log.csv`. (See `_ops/docs/DUES_PROCESS_NOTE.md`.)
-- **`build.ps1` aborts on validate Gate 2** (W/L/T recompute vs Owners_Sheet, co-owner split
-  attribution). This blocks the full publish loop. Status unverified since 2026-09-03.
+- **Quarantined cleaned_maffl_revised.csv is still read** by validate Gates 1 (champ flags) + 7 (names), gen-history (csv-seasons embed) and gen-draft (CHAMPS). It has 3 swapped 2015/2022/2024 results and 5 mis-owned seasons (Warren Brownies 2011–13, Daddy Fat Sacks 2006–07). Repoint to gold per governance §7.3 before the robot runs generators unattended.
 - **`Dues_Log.csv` is at repo root, not `data/`.** Open: move it and point `gen-prize.ps1` at it.
 - **Old repo copy at `Desktop\MAFFL`.** After the hook fix, nothing depends on it. Archive or
   delete it by hand once cleanup is committed.
@@ -32,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-29 · validate Gate 2 now reads gold Matchups_Clean (Regular, 2005–2025); 34/34 owners match. validate: 8/8 pass. build check-only: validate 8/8, nothing written; stats/history/draft/credits report drift vs current pages; gen-prize aborts (`dues_2026` marker gone) before the final summary
 - 2026-09-29 · Automation Step 2 ✅: repo secrets added; manual test run of `espn-weekly-pull` on Week 3 green/READY; report committed by the robot
 - 2026-09-29 · Automation Step 2 installed: `.github/workflows/espn-weekly-pull.yml` (Tue 5 & 7 AM ET + Wed backstop) runs pull script v0.4 → `_ops/inbox/`. Needs secrets ESPN_S2 + SWID; first test run pending
 - 2026-09-29 · Pulse Wk 3 waiver-time wording fixed; editorial guide §4 "Waiver times" rule; ESPN pull v0.3.2 lists waiver runs separately from real-time moves
