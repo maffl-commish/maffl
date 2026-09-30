@@ -2,21 +2,21 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-09-30 by Claude (chat)
+**Last updated:** 2026-09-30 by Claude (Code)
 
 ## Now
 
 - **ESPN history inventory ✅ (9/30).** Report: `_ops/inbox/MAFFL_ESPN_Inventory.md` (raw zip is git-ignored: private, keep local). ESPN has Upper 2005–2026 (results, drafts, weekly starters; bench only from 2018) and Lower 2025–26. Old message boards are gone (1 LM note per season survives); no Coach of the Week posts. Next, when wanted: check gold 2005–2025 against ESPN (would settle the quarantined-CSV swaps below).
-- **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card: queued prompt below.
+- **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card ✅ (`weekly.html` v6.3).
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
 - **Weekly robot ✅ live (9/30).** One-pager: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Connection test passed end to end (data job → Claude → PR). **Habit: GitHub Desktop Fetch/Pull before starting work.**
 - **Week 4 Pulse (Tue Oct 6) = the robot's first real draft.** Review the "Weekly Pulse: Week 4 draft" PR, comment `@claude …` for changes, Merge to publish. Fallback: draft in Cowork chat from `_ops/inbox/`. After one good Tuesday, retire the Results Engine, screenshots and `CAPTURE_SYSTEM_PROMPT.md`.
 - **LM to-do:** set ESPN 👻 scores to Wk 1 151.28, Wk 2 138.02 (Wk 3 already shows 151.47 per the ESPN pull). Delete this line once done.
-- **Season:** 2026, Week 4 in progress. Weekly Pulse is live through Week 3 (`weekly.html` v6.2).
+- **Season:** 2026, Week 4 in progress. Weekly Pulse is live through Week 3 (`weekly.html` v6.3).
 
 ## Queued prompts (in `_ops/prompts/`)
 
-- `2026-09-30_coach-of-the-week-card.md`: Pulse v6.3 Coach of the Week card (run before Tue Oct 6)
+- (none)
 
 ## Open decisions / known issues
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-30 · Coach of the Week is back (bragging rights): ESPN pull v0.5.1 computes fewest points left on the bench per tier + 🔄 Could have won (OUTPUT 2e); Pulse v6.3 card; editorial §8b; robot recipe v0.3. First appears Week 4.
 - 2026-09-30 · Weekly robot live: Pulse-draft connection test passed (Windows data job + Linux Claude job + PR). Automation plan rewritten as a one-page guide
 - 2026-09-29 · Pulse-draft robot: data job ✅ and Claude ✅ on test #3; final push failed on expired action token, fixed by resetting git auth to GITHUB_TOKEN. Re-run the connection test.
 - 2026-09-29 · Pulse-draft robot split: Windows job (ingest_week.py → CE-1 → validate → facts) + Linux Claude job (writes Pulse, opens PR). First smoke test had failed: Claude action won't install on Windows.

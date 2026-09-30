@@ -1259,6 +1259,21 @@
   .sl-vs { font-family: var(--display); font-weight: 700; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
   .sl-h2h { flex: 0 0 auto; font-family: var(--display); font-weight: 700; font-size: 11px; color: var(--gold-dark); text-align: right; max-width: 42%; }
 
+  /* ---------- Coach of the Week ---------- */
+  .cw-tier + .cw-tier { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .cw-win { font-family: var(--body); font-size: 14px; line-height: 1.4; color: var(--navy); overflow-wrap: anywhere; }
+  .cw-win .sl-team { font-size: 15px; }
+  .cw-num { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.1; color: var(--win); margin-top: 4px; }
+  .cw-line { font-family: var(--body); font-size: 12px; line-height: 1.45; color: var(--navy); margin-top: 6px; overflow-wrap: anywhere; }
+  .cw-line.muted { color: var(--muted); }
+  .cw-lbl { font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+  .cw-could { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .cw-could ul { list-style: none; margin: 0; padding: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .cw-could li { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; background: var(--page-bg);
+                 font-family: var(--body); font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+  .cw-could li + li { border-top: 1px solid var(--border); }
+  .cw-could .mu-chip { flex: 0 0 auto; margin-top: 1px; }
+
   @media (max-width: 1024px) {
     .site-nav { gap: 16px; }
     .site-nav a { font-size: 12px; }
@@ -1379,8 +1394,8 @@
       <p class="page-header__subtitle">News Across MAFFL</p>
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
-      <span class="meta-pill">v6.2</span>
-      <span class="meta-pill">Last Updated September 29, 2026</span>
+      <span class="meta-pill">v6.3</span>
+      <span class="meta-pill">Last Updated September 30, 2026</span>
     </div>
   </header>
 </div>
@@ -1438,6 +1453,9 @@
  * Optional `results`: array of games for the Results card (see renderResultsCard).
  * Optional `matchupPreviews`: next week's games; only highlight:true entries render.
  * Optional `subhead`: one sentence under the headline (≤160 chars; headline ≤120).
+ * Optional `coachOfWeek`: { upper, lower, couldHaveWon, note } — see renderCoachCard. upper/lower =
+ *   { team, owner, leftOnBench, scored, best, runnersUp:[{team,leftOnBench}], out:[{team,reason}] } or null;
+ *   couldHaveWon = [{ team, tier, opponent, lostBy, leftOnBench }].
  * `newsReel` may be a flat string array or sections:
  *   [{ section: "Big Spenders", icon: "💸", items: ["…"] }, …] — ≤6 items total.
  * Optional creditTracker item `status` ("leading" | "locked") and `since` (week #).
@@ -2402,7 +2420,7 @@ function renderPage(week) {
        renderCreditTrackerCard(week)]
     /* Tile layout: News is a full-width banner, then pairs —
        Standings | Post-Season, Survivor | Credit Tracker, Results | Preview —
-       and Elite 5 closes as a full-width row. */
+       then Coach of the Week and Elite 5 as full-width rows. */
     : [renderNewsCard(week),
        hasStandings ? renderStandingsCard(week) : "",
        hasStandings && week.weekNumber >= 1 && week.weekNumber <= 13 ? renderPostseasonCard(week) : "",
@@ -2410,6 +2428,7 @@ function renderPage(week) {
        renderCreditTrackerCard(week),
        renderResultsCard(week),
        renderPreviewCard(week),
+       renderCoachCard(week),
        hasElite ? renderElite5Card(week) : ""];
   main.innerHTML = `
     <section class="card-grid" id="cardGrid" aria-label="Pulse sections">
@@ -3214,6 +3233,83 @@ function renderPreviewCard(week) {
   return cardShell("preview", "📅", label, preview, group("U", "Upper-Tier") + group("L", "Lower-Tier"));
 }
 
+/* --------- COACH OF THE WEEK CARD --------- */
+/* Bragging rights only (no money, no credits). Fewest points left on the bench
+   wins, one winner per tier; a bye, an empty slot or a zero-point starter
+   knocks a team out. Numbers are copied from the ESPN report and print as
+   given, so a whole number keeps one decimal (0 → "0.0"). */
+function fmtBench(n) {
+  if (typeof n !== "number") return String(n == null ? "—" : n);
+  return Number.isInteger(n) ? n.toFixed(1) : String(n);
+}
+function renderCoachCard(week) {
+  const c = week.coachOfWeek;
+  if (!c) return "";
+  /* couldHaveWon / runnersUp rows carry only the team; find the owner in the
+     week's standings, then its results. */
+  const ownerOf = {};
+  const u = week.upperTier || {};
+  [...(u.divA || []), ...(u.divB || []), ...(u.divC || []), ...(u.divD || []), ...(week.lowerTier || [])]
+    .forEach(r => { if (r.team && r.owner) ownerOf[r.team] = r.owner; });
+  (week.results || []).forEach(g => {
+    if (!ownerOf[g.teamA] && g.ownerA) ownerOf[g.teamA] = g.ownerA;
+    if (!ownerOf[g.teamB] && g.ownerB) ownerOf[g.teamB] = g.ownerB;
+  });
+  const withOwner = (team, owner) => {
+    const o = owner || ownerOf[team];
+    return o ? teamOwner({ team, owner: o }) : esc(team);
+  };
+  const benchPhrase = t => fmtBench(t.leftOnBench) + " left on the bench" + (t.leftOnBench === 0 ? " · perfect lineup" : "");
+  const tiers = [["Upper", c.upper], ["Lower", c.lower]];
+  const could = c.couldHaveWon || [];
+
+  const preview = `
+    ${tiers.map(([name, t], i) => `<div${i ? ' style="margin-top:4px"' : ""}><span class="strong">${name} ·</span> ${t
+      ? `${withOwner(t.team, t.owner)} · ${benchPhrase(t)}`
+      : "nobody — every lineup had a hole"}</div>`).join("")}
+    ${could.length ? `<div style="margin-top:4px">🔄 ${could.length} ${could.length === 1 ? "team" : "teams"} could have won</div>` : ""}
+  `;
+
+  const tierBlock = ([name, t]) => {
+    if (!t) return `
+      <div class="cw-tier">
+        <div class="sl-head">${name}-Tier</div>
+        <div class="cw-win">Nobody — every lineup had a hole.</div>
+      </div>`;
+    const ru = t.runnersUp || [], out = t.out || [];
+    return `
+      <div class="cw-tier">
+        <div class="sl-head">${name}-Tier</div>
+        <div class="cw-win"><span class="sl-team">${esc(t.team)}</span> <span class="sl-own">${esc(shortName(t.owner || ownerOf[t.team] || ""))}</span></div>
+        <div class="cw-num">${esc(benchPhrase(t))}</div>
+        <div class="cw-line">Scored ${esc(fmtBench(t.scored))} of a possible ${esc(fmtBench(t.best))}.</div>
+        ${ru.length ? `<div class="cw-line"><span class="cw-lbl">Next closest</span>${ru.map(r =>
+          `${withOwner(r.team)} ${esc(fmtBench(r.leftOnBench))}`).join(" · ")}</div>` : ""}
+        ${out.length ? `<div class="cw-line muted"><span class="cw-lbl">Out of contention</span>${out.map(o =>
+          `${esc(o.team)} (${esc(o.reason)})`).join(" · ")}</div>` : ""}
+      </div>`;
+  };
+
+  const couldBlock = could.length ? `
+    <div class="cw-could">
+      <div class="sl-head">Could have won</div>
+      <ul>
+        ${could.map(r => `
+          <li><span class="mu-chip rvx">🔄</span><span>${withOwner(r.team)} lost to ${esc(r.opponent)} by ${esc(fmtBench(r.lostBy))} and left ${esc(fmtBench(r.leftOnBench))} on the bench.</span></li>
+        `).join("")}
+      </ul>
+    </div>` : "";
+
+  const body = `
+    ${tiers.map(tierBlock).join("")}
+    ${couldBlock}
+    ${c.note ? `<p class="mu-note">${chipTeams(c.note, week)}</p>` : ""}
+    <p class="ps-foot">A MAFFL classic, back in 2026. Fewest points left on the bench wins; a bye, an empty slot or a zero-point starter knocks you out.</p>
+  `;
+
+  return cardShell("coach", "📋", "Coach of the Week", preview, body);
+}
+
 /* --------- NEWS CARD --------- */
 function renderNewsCard(week) {
   const header = `${weekLabel(week)} · ${week.dateString}`;
@@ -3266,9 +3362,9 @@ function tierAccordion(title, inner) {
 }
 
 /* --------- CARD SHELL --------- */
-/* News, Elite 5 and the Week 0 Draft Recap span the full row; every other card
-   is a half-width tile. */
-const FULL_WIDTH_CARDS = ["news", "elite", "draftrecap", "bracket"];
+/* News, Coach of the Week, Elite 5 and the Week 0 Draft Recap span the full
+   row; every other card is a half-width tile. */
+const FULL_WIDTH_CARDS = ["news", "coach", "elite", "draftrecap", "bracket"];
 function cardShell(id, icon, title, previewHtml, bodyHtml, alwaysCollapsed) {
   const span = FULL_WIDTH_CARDS.includes(id) ? " span-2" : " tile";
   return `
