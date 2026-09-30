@@ -169,6 +169,22 @@ Use them to say *who* won the game, not just by how much.
 - The cross-tier rule in §1 still applies: the same player on one roster per tier is normal,
   not a story.
 
+## 8b. Coach of the Week (from Week 4)
+
+A MAFFL classic, revived 2026-09-30 (commish ruling). Bragging rights only: no money, no credits.
+
+- **The measure:** points left on the bench = the best legal lineup a team could have started from
+  that week's roster (flex, OP and DP spots included) minus what it actually started. Lowest wins;
+  0.0 is a perfect lineup.
+- **Out of contention:** a starter on bye, an empty starting slot, or a starter who scored 0.
+- **One winner per tier.** Tie → higher team score. The ESPN pull computes all of it (OUTPUT 2e);
+  copy the numbers, never recompute them.
+- **Voice:** a short, warm nod to the old award. The winner line reads like
+  "Jake's Jagoffs (Jake) left 0.0 on the bench — a perfect lineup." The `note` (optional, one
+  sentence) can name the worst miss in the tier ("Brooks sat Gibbs' 34.4").
+- A team knocked out for a bye starter is fair game for Can You Believe This? if it would have won.
+- Never mention the Ghost here; it has no lineup.
+
 ## 9. Pre-publish checklist
 
 - [ ] Headline ≤ 110 chars, subhead ≤ 150, neither one repeated in the reel
@@ -178,4 +194,5 @@ Use them to say *who* won the game, not just by how much.
 - [ ] No Ghost tag, `ghost: true` or Ghost-driven highlight
 - [ ] Every `creditTracker` item has `status` + `since`, with `since` carried forward correctly
 - [ ] Elite 5 order holds up against the stat lines (all-play + PF lead)
+- [ ] `coachOfWeek` copied from OUTPUT 2e (both tiers), if the report has it
 - [ ] `grep -n "NEEDS COMMISH\|CONFIRM\|placeholder"` → zero hits in the new week object

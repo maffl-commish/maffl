@@ -1,6 +1,6 @@
 # Robot recipe — draft the Weekly Pulse from the ESPN pull
 
-VERSION: 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
+VERSION: 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
 
 You are Claude Code running unattended in GitHub Actions on the draft branch. The workflow's
 Windows job has **already** appended the week to the gold CSVs, run the CE-1 generator and
@@ -67,6 +67,12 @@ with `},`. Mirror the previous week's object field for field.
 - **highestWeekly**: prepend this week's entry to the previous list (facts file "Highest weekly").
 - **elite5**: rank with editorial §6 (all-play first, then points), using the facts file's all-play.
   Put a comment above it listing the all-play numbers you used, like the previous week does.
+- **coachOfWeek**: copy from OUTPUT 2e of the ESPN report (editorial §8b). Shape:
+  `coachOfWeek: { upper: { team, owner, leftOnBench, scored, best, runnersUp: [{ team, leftOnBench }] ×2,
+  out: [{ team, reason }] }, lower: { … }, note: "…" }`. `owner` = the owner string from the standings;
+  numbers exactly as the report prints them; `runnersUp` = the next two teams still in contention;
+  `out` = every team knocked out, with the report's reason. If every team in a tier is out,
+  `upper: null` (or `lower: null`). If the report has no 2e section, omit `coachOfWeek`.
 - **postseasonNote**: optional, one sentence, from the facts file's playoff picture.
 - **headline / subhead / newsReel**: editorial §3–§4. 5–6 items, 2–4 sections. Transactions come
   from OUTPUT 2c. **Waiver claims carry ESPN's processing time: never present that as when a

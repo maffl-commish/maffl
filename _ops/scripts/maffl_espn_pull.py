@@ -1,6 +1,7 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
+# VERSION: 0.5 (2026-09-30) - Coach of the Week (2e): fewest points left on the bench, per tier.
+#   0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
 #          writes _ops/inbox/, skips weeks already pulled, reports READY/BLOCKED to the workflow.
 #   0.3.2 waiver claims grouped by ESPN processing run · 0.3.1 same-timestamp waivers fix ·
 #   0.3 full week: scores, top 3s, transactions, stat-correction audit, next-week pairings.
@@ -145,6 +146,43 @@ def fetch_repo_csv(path):
             continue
     return None
 
+# ---------------------------------------------------------------- Coach of the Week
+# Revived from David Murello's old award (commish ruling 2026-09-30, bragging rights only).
+# Score = points left on the bench = best legal lineup from the week's roster - points actually started.
+# Knocked out of contention: a starter on bye, an empty starting slot, or a starter who scored 0.
+# Winner per tier: fewest points left on the bench; tie -> higher team score.
+def best_lineup(slot_counts, players):
+    """Max points ESPN would allow. slot_counts: {slot: n} (starting slots only);
+    players: [(points, set_of_eligible_slots)]. Exact (Hungarian), empty slot = 0 allowed."""
+    slots = [s for s, n in slot_counts.items() for _ in range(int(n))]
+    n = len(slots)
+    if n == 0: return 0.0
+    cols = [(float(p), set(e)) for p, e in players] + [(0.0, None)] * n   # None = leave the slot empty
+    m = len(cols)
+    BIG = 1e9
+    cost = [[(-c[0] if (c[1] is None or s in c[1]) else BIG) for c in cols] for s in slots]
+    INF = float("inf")
+    u = [0.0] * (n + 1); v = [0.0] * (m + 1); p = [0] * (m + 1); way = [0] * (m + 1)
+    for i in range(1, n + 1):
+        p[0] = i; j0 = 0
+        minv = [INF] * (m + 1); used = [False] * (m + 1)
+        while True:
+            used[j0] = True; i0 = p[j0]; delta = INF; j1 = 0
+            for j in range(1, m + 1):
+                if not used[j]:
+                    cur = cost[i0 - 1][j - 1] - u[i0] - v[j]
+                    if cur < minv[j]: minv[j] = cur; way[j] = j0
+                    if minv[j] < delta: delta = minv[j]; j1 = j
+            for j in range(m + 1):
+                if used[j]: u[p[j]] += delta; v[j] -= delta
+                else: minv[j] -= delta
+            j0 = j1
+            if p[j0] == 0: break
+        while True:
+            j1 = way[j0]; p[j0] = p[j1]; j0 = j1
+            if j0 == 0: break
+    return sum(cols[j - 1][0] for j in range(1, m + 1) if p[j])
+
 # ---------------------------------------------------------------- cookies
 ESPN_S2 = os.environ.get("ESPN_S2") or ""
 SWID = os.environ.get("SWID") or ""
@@ -169,6 +207,7 @@ if not gold_all: note("Couldn't load the gold CSV, so the stat-correction audit 
 # ---------------------------------------------------------------- pull
 games = {}          # week -> list of (tier, playoff, home, home_score, away, away_score, decided)
 top3, bench_facts = [], []
+cotw = []          # (tier, team, actual, best, left_on_bench, [disqualifiers])
 tx_lines, tx_bids, trade_count = [], [], 0
 next_pairs = {"Upper": [], "Lower": []}
 
@@ -239,6 +278,21 @@ for tier, (lg, by_id, schedule) in conns.items():
             for i, p in enumerate(best, 1):
                 top3.append([str(YEAR), str(WEEK), tier, k, TEAM_MAP.get(k, ("???",))[0], str(i),
                              short_player(p.name), getattr(p, "position", "") or "", fmt(p.points)])
+            # Coach of the Week
+            slot_counts = {s: n for s, n in (getattr(lg.settings, "position_slot_counts", {}) or {}).items()
+                           if n and s not in ("BE", "IR")}
+            pool = [(float(p.points), set(getattr(p, "eligibleSlots", []) or [])) for p in starters + bench]
+            best_pts = best_lineup(slot_counts, pool) if slot_counts else None
+            actual = sum(float(p.points) for p in starters)
+            dq = [f"{short_player(p.name)} on bye" for p in starters if getattr(p, "on_bye_week", False)]
+            dq += [f"{short_player(p.name)} scored 0" for p in starters
+                   if float(p.points) == 0 and not getattr(p, "on_bye_week", False)]
+            empty = sum(slot_counts.values()) - len(starters) if slot_counts else 0
+            if empty > 0: dq.append(f"{empty} empty slot{'s' if empty > 1 else ''}")
+            if best_pts is None:
+                flag(f"[COTW: no lineup slot settings for {tier}] Coach of the Week skipped.")
+            else:
+                cotw.append((tier, k, actual, max(best_pts, actual), max(best_pts, actual) - actual, dq))
             if bench:
                 bb = max(bench, key=lambda p: float(p.points))
                 if float(bb.points) > float(best[0].points):
@@ -412,7 +466,7 @@ if top3_gold_all:
 # ---------------------------------------------------------------- write the inbox report
 status = "STATUS: READY TO INGEST" if not blocks else "STATUS: BLOCKED — " + "; ".join(blocks)
 L = [f"# MAFFL {YEAR} Week {WEEK} — ESPN pull",
-     f"Source: maffl_espn_pull.py v0.4.1 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
+     f"Source: maffl_espn_pull.py v0.5 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
      "## OUTPUT 1 — MATCHUP ROWS", "```", *[",".join(r) for r in rows], "```\n",
      "## OUTPUT 2 — WEEK FACTS", "### 2a. Top performers", "```", ",".join(TOP3_HEADER), *[",".join(r) for r in top3], "```",
      "### 2b. Individual high"]
@@ -436,6 +490,20 @@ top_bids = sorted(tx_bids, key=lambda x: -x[0])[:5]
 L.append("TOP BIDS: " + (", ".join(f"${b} {p} ({t}, {tr})" for b, t, p, tr in top_bids) or "none") + f" · TRADES: {trade_count}")
 if bench_facts:
     L += ["\n### 2d. A bench player beat every starter", *["- " + b for b in bench_facts]]
+if cotw:
+    L += ["\n### 2e. Coach of the Week (fewest points left on the bench)",
+          "_Best legal lineup from the week's roster minus points started. Out of contention: a starter "
+          "on bye, an empty slot, or a starter who scored 0. Winner per tier; tie → higher team score._"]
+    for tier in ("Upper", "Lower"):
+        rows_t = [c for c in cotw if c[0] == tier]
+        live = sorted([c for c in rows_t if not c[5]], key=lambda c: (D(c[4]), -D(c[2])))
+        win = live[0] if live else None
+        L.append(f"\nCOACH OF THE WEEK — {tier}: " + (f"{win[1]}, left {fmt(win[4])} on the bench "
+                 f"(scored {fmt(win[2])} of a possible {fmt(win[3])})" if win else "none (every team knocked out)"))
+        L.append("| Team | Scored | Best possible | Left on bench | Out of contention |")
+        L.append("|---|---|---|---|---|")
+        for c in sorted(rows_t, key=lambda c: (bool(c[5]), D(c[4]))):
+            L.append(f"| {c[1]} | {fmt(c[2])} | {fmt(c[3])} | {fmt(c[4])} | {'; '.join(c[5]) or '—'} |")
 L += ["\n## OUTPUT 3 — VALIDATION", *checks]
 if par_info:
     srt, dropped, s8, par, espn_g = par_info

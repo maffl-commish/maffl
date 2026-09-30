@@ -6,7 +6,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Now
 
-- **ESPN history inventory (one-time, read-only).** `_ops/scripts/maffl_espn_inventory.py` v0.1: run in Colab; lists every season ESPN still has for both leagues (results, drafts, lineups, slots, transactions) and searches the message board for Coach of the Week posts. Save its two output files OUTSIDE the repo (message board is private). Goal: backfill/verify history and rebuild Dad's COTW (best lineup use; starting a bye player knocked you out).
+- **ESPN history inventory ✅ (9/30).** Report: `_ops/inbox/MAFFL_ESPN_Inventory.md` (raw zip is git-ignored: private, keep local). ESPN has Upper 2005–2026 (results, drafts, weekly starters; bench only from 2018) and Lower 2025–26. Old message boards are gone (1 LM note per season survives); no Coach of the Week posts. Next, when wanted: check gold 2005–2025 against ESPN (would settle the quarantined-CSV swaps below).
+- **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5 computes it (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card: queued prompt below.
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
 - **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3 ✅ (validate 8/8). The weekly loop only needs validate + `generate-matchups-data.ps1` (CE-1), so the page-generator drift and gen-prize issues below are logged cleanup, not Step 4 blockers. Step 4 installed and split (Windows data job + Linux Claude job) after the first connection test failed; the connection test still needs re-running (Actions → Pulse draft → smoke_test), then Week 4 on Tue Oct 6 is the first real draft PR. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
 - **Week 4 Pulse.** The robot pulls Week 4 on Tue Oct 6 (5 AM ET, retries 7 AM / Wed) into
@@ -18,7 +19,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Queued prompts (in `_ops/prompts/`)
 
-- (none)
+- `2026-09-30_coach-of-the-week-card.md`: Pulse v6.3 Coach of the Week card (run before Tue Oct 6)
 
 ## Open decisions / known issues
 
