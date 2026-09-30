@@ -1,5 +1,5 @@
 # MAFFL 2026 Week 3 — ESPN pull
-Source: maffl_espn_pull.py v0.4 · pulled 2026-09-29 08:37 PM ET · replaces the capture v2.2 screenshot reply
+Source: maffl_espn_pull.py v0.5.1 · pulled 2026-09-30 12:22 PM ET · replaces the capture v2.2 screenshot reply
 
 ## OUTPUT 1 — MATCHUP ROWS
 ```
@@ -32,18 +32,18 @@ Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points
 2026,3,Upper,Bad Attitude Gang,Mike Murello,1,T. Shough,QB,28.8
 2026,3,Upper,Bad Attitude Gang,Mike Murello,2,J. Smith-Njigba,WR,25.36
 2026,3,Upper,Bad Attitude Gang,Mike Murello,3,W. Anderson Jr.,DE,18.5
-2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,J. Cook III,RB,18.4
-2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,C. Watson,WR,15.6
-2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,B. Young,QB,14.64
 2026,3,Upper,Jake's Jagoffs,Jacob Nickman,1,J. Brissett,QB,29.6
 2026,3,Upper,Jake's Jagoffs,Jacob Nickman,2,G. Kittle,TE,20.2
 2026,3,Upper,Jake's Jagoffs,Jacob Nickman,3,D. Samuel Sr.,WR,18.9
-2026,3,Upper,The Big Bang Theory,Dan Reilly,1,F. Warner,LB,16.5
-2026,3,Upper,The Big Bang Theory,Dan Reilly,2,J. Williams,RB,16.3
-2026,3,Upper,The Big Bang Theory,Dan Reilly,3,T. Higgins,WR,15.0
+2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,J. Cook III,RB,18.4
+2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,C. Watson,WR,15.6
+2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,B. Young,QB,14.64
 2026,3,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. London,WR,20.4
 2026,3,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,K. Walker III,RB,19.3
 2026,3,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,K. Williams,RB,15.8
+2026,3,Upper,The Big Bang Theory,Dan Reilly,1,F. Warner,LB,16.5
+2026,3,Upper,The Big Bang Theory,Dan Reilly,2,J. Williams,RB,16.3
+2026,3,Upper,The Big Bang Theory,Dan Reilly,3,T. Higgins,WR,15.0
 2026,3,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,QB,27.58
 2026,3,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Prescott,QB,20.94
 2026,3,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,D. Henry,RB,20.9
@@ -56,33 +56,33 @@ Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points
 2026,3,Upper,Reilly's Reindeer,Joe Reilly,1,J. Love,QB,21.48
 2026,3,Upper,Reilly's Reindeer,Joe Reilly,2,C. McCaffrey,RB,17.6
 2026,3,Upper,Reilly's Reindeer,Joe Reilly,3,R. Smith,LB,12.5
-2026,3,Lower,Fightin Ferrets,Todd Trozzo,1,L. Jackson,QB,24.44
-2026,3,Lower,Fightin Ferrets,Todd Trozzo,2,K. Walker III,RB,19.3
-2026,3,Lower,Fightin Ferrets,Todd Trozzo,3,J. Warren,RB,17.6
 2026,3,Lower,Camp Kes,Bob Keslar,1,T. Hufanga,S,22.5
 2026,3,Lower,Camp Kes,Bob Keslar,2,P. Mahomes,QB,18.94
 2026,3,Lower,Camp Kes,Bob Keslar,3,N. Dean,LB,16.0
-2026,3,Lower,Steel City Champyinz,Dominic Nicastro,1,M. Stafford,QB,22.9
-2026,3,Lower,Steel City Champyinz,Dominic Nicastro,2,G. Kittle,TE,20.2
-2026,3,Lower,Steel City Champyinz,Dominic Nicastro,3,D. Samuel Sr.,WR,18.9
+2026,3,Lower,Fightin Ferrets,Todd Trozzo,1,L. Jackson,QB,24.44
+2026,3,Lower,Fightin Ferrets,Todd Trozzo,2,K. Walker III,RB,19.3
+2026,3,Lower,Fightin Ferrets,Todd Trozzo,3,J. Warren,RB,17.6
 2026,3,Lower,The Best in The 'Burgh,Ben Funari,1,B. Purdy,QB,39.28
 2026,3,Lower,The Best in The 'Burgh,Ben Funari,2,J. Smith-Njigba,WR,25.36
 2026,3,Lower,The Best in The 'Burgh,Ben Funari,3,J. Rodriguez,LB,17.0
 2026,3,Lower,The V-Unit,Chris Johnson,1,J. Burrow,QB,27.58
 2026,3,Lower,The V-Unit,Chris Johnson,2,T. Lawrence,QB,24.78
 2026,3,Lower,The V-Unit,Chris Johnson,3,D. Henry,RB,20.9
-2026,3,Lower,Tommy Phamclub,Sam Lavrinc,1,J. Brissett,QB,29.6
-2026,3,Lower,Tommy Phamclub,Sam Lavrinc,2,J. Cook III,RB,18.4
-2026,3,Lower,Tommy Phamclub,Sam Lavrinc,3,B. Young,QB,14.64
 2026,3,Lower,Sarge's Squad,Nick Yankovich,1,D. Prescott,QB,20.94
 2026,3,Lower,Sarge's Squad,Nick Yankovich,2,C. McCaffrey,RB,17.6
 2026,3,Lower,Sarge's Squad,Nick Yankovich,3,M. Golden,WR,16.0
-2026,3,Lower,Tony's Talented Team,Tony Brooks,1,J. Gibbs,RB,34.4
-2026,3,Lower,Tony's Talented Team,Tony Brooks,2,T. Shough,QB,28.8
-2026,3,Lower,Tony's Talented Team,Tony Brooks,3,B. Bowers,TE,17.6
+2026,3,Lower,Tommy Phamclub,Sam Lavrinc,1,J. Brissett,QB,29.6
+2026,3,Lower,Tommy Phamclub,Sam Lavrinc,2,J. Cook III,RB,18.4
+2026,3,Lower,Tommy Phamclub,Sam Lavrinc,3,B. Young,QB,14.64
 2026,3,Lower,Portly Primates,Charles Lavrinc,1,B. Robinson,RB,33.3
 2026,3,Lower,Portly Primates,Charles Lavrinc,2,G. Smith,QB,31.04
 2026,3,Lower,Portly Primates,Charles Lavrinc,3,W. Anderson Jr.,DE,18.5
+2026,3,Lower,Tony's Talented Team,Tony Brooks,1,J. Gibbs,RB,34.4
+2026,3,Lower,Tony's Talented Team,Tony Brooks,2,T. Shough,QB,28.8
+2026,3,Lower,Tony's Talented Team,Tony Brooks,3,B. Bowers,TE,17.6
+2026,3,Lower,Steel City Champyinz,Dominic Nicastro,1,M. Stafford,QB,22.9
+2026,3,Lower,Steel City Champyinz,Dominic Nicastro,2,G. Kittle,TE,20.2
+2026,3,Lower,Steel City Champyinz,Dominic Nicastro,3,D. Samuel Sr.,WR,18.9
 ```
 ### 2b. Individual high
 INDIVIDUAL HIGH — Upper: B. Purdy, Happy Valley Hammer Time, 39.28
@@ -91,7 +91,7 @@ INDIVIDUAL HIGH — Lower: B. Purdy, The Best in The 'Burgh, 39.28
 ### 2c. Transactions (Tue 09/22 – Mon 09/28)
 _Waiver claims carry ESPN's **processing** time (every claim in a run gets the same stamp). That is not when the owner bid, so never write it as a pickup time. Free-agent moves and drops below carry their real times._
 
-**Waiver run — Lower, processed Thu 09/24 03:11 AM** (1 claims)
+**Waiver run — Lower, processed Thu 09/24 03:11 AM** (1 claim)
 - The Best in The 'Burgh · ADD C. Downs ($1) | DROP R. Harvey
 
 **Waiver run — Upper, processed Thu 09/24 03:12 AM** (18 claims)
@@ -114,10 +114,10 @@ _Waiver claims carry ESPN's **processing** time (every claim in a run gets the s
 - Hadley's Comets · DROP M. Lloyd | ADD J. Coleman ($31)
 - Hadley's Comets · DROP J. Flacco | ADD M. Mariota ($51)
 
-**Waiver run — Lower, processed Sat 09/26 03:18 AM** (1 claims)
+**Waiver run — Lower, processed Sat 09/26 03:18 AM** (1 claim)
 - Tony's Talented Team · ADD R. Harvey ($0)
 
-**Waiver run — Upper, processed Sat 09/26 03:44 AM** (1 claims)
+**Waiver run — Upper, processed Sat 09/26 03:44 AM** (1 claim)
 - Turkey Hat Conglomerate · DROP Q. Williams | ADD J. Rodriguez ($5)
 
 **Free-agent moves, drops and trades** (real times)
@@ -157,6 +157,40 @@ TOP BIDS: $51 M. Mariota (Hadley's Comets, Upper), $31 J. Coleman (Hadley's Come
 - Reilly's Reindeer: benched S. Darnold scored 33.66, more than any starter (best starter 21.48)
 - Camp Kes: benched A. Rodgers scored 27.68, more than any starter (best starter 22.5)
 - Sarge's Squad: benched S. Darnold scored 33.66, more than any starter (best starter 20.94)
+
+### 2e. Coach of the Week (fewest points left on the bench)
+_Best legal lineup from the week's roster minus points started. Out of contention: a starter on bye, an empty slot, or a starter who scored 0. Winner per tier; tie → higher team score._
+
+COACH OF THE WEEK — Upper: Hadley's Comets, left 5.48 on the bench (scored 172.02 of a possible 177.5)
+| Team | Scored | Best possible | Left on bench | Out of contention | Could have won |
+|---|---|---|---|---|---|
+| Hadley's Comets | 172.02 | 177.5 | 5.48 | — | — |
+| South Hills FunShiners | 168.86 | 175.96 | 7.1 | — | — |
+| Turkey Hat Conglomerate | 181.8 | 191.1 | 9.3 | — | — |
+| Marco Clair Kardiac Attack | 114.32 | 123.92 | 9.6 | — | — |
+| The Prodigal Sons | 143.78 | 155.14 | 11.36 | — | YES: lost to Jake's Jagoffs by 6.42, best lineup wins by 4.94 |
+| Bad Attitude Gang | 154.22 | 171.62 | 17.4 | — | YES: lost to Happy Valley Hammer Time by 15.1, best lineup wins by 2.3 |
+| Happy Valley Hammer Time | 169.32 | 196.16 | 26.84 | — | — |
+| Reilly's Reindeer | 123.26 | 155.14 | 31.88 | — | — |
+| Mike Vicks Dog Sitting Co. | 127.08 | 161.88 | 34.8 | — | — |
+| The Big Bang Theory | 125.6 | 137.7 | 12.1 | T. Hendrickson scored 0 | YES: lost to Mike Vicks Dog Sitting Co. by 1.48, best lineup wins by 10.62 |
+| Jake's Jagoffs | 150.2 | 174.9 | 24.7 | A. Highsmith scored 0 | — |
+| Southside Shooters | 130.46 | 157.36 | 26.9 | B. Burns scored 0 | — |
+COULD HAVE WON — Upper: Bad Attitude Gang (lost by 15.1, left 17.4 on the bench); The Big Bang Theory (lost by 1.48, left 12.1 on the bench); The Prodigal Sons (lost by 6.42, left 11.36 on the bench)
+
+COACH OF THE WEEK — Lower: Fightin Ferrets, left 13.2 on the bench (scored 137.6 of a possible 150.8)
+| Team | Scored | Best possible | Left on bench | Out of contention | Could have won |
+|---|---|---|---|---|---|
+| Fightin Ferrets | 137.6 | 150.8 | 13.2 | — | YES: lost to Camp Kes by 3.46, best lineup wins by 9.74 |
+| Tommy Phamclub | 135.94 | 150.44 | 14.5 | — | YES: lost to Sarge's Squad by 2.48, best lineup wins by 12.02 |
+| Steel City Champyinz | 168.08 | 183.48 | 15.4 | — | — |
+| Portly Primates | 185.98 | 202.38 | 16.4 | — | — |
+| Tony's Talented Team | 167.52 | 193.92 | 26.4 | — | YES: lost to Portly Primates by 18.46, best lineup wins by 7.94 |
+| The Best in The 'Burgh | 179.34 | 208.94 | 29.6 | — | — |
+| Camp Kes | 141.06 | 175.42 | 34.36 | — | — |
+| Sarge's Squad | 138.42 | 158.4 | 19.98 | A. Highsmith scored 0; A. Carter scored 0 | — |
+| The V-Unit | 143.76 | 171.32 | 27.56 | T. Hendrickson scored 0 | — |
+COULD HAVE WON — Lower: Tony's Talented Team (lost by 18.46, left 26.4 on the bench); Tommy Phamclub (lost by 2.48, left 14.5 on the bench); Fightin Ferrets (lost by 3.46, left 13.2 on the bench)
 
 ## OUTPUT 3 — VALIDATION
 ✅ Week 3 is final on ESPN
