@@ -1,6 +1,6 @@
 # Weekly Automation Plan — "Wake up to a drafted Pulse"
 
-Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Steps 1–3 done, Step 4 next
+Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Steps 1–3 done, Step 4 installing
 
 ## Goal
 
@@ -56,9 +56,16 @@ revises, and Mike clicks **Merge** to publish.
    `generate-matchups-data.ps1` (CE-1). The page generators (stats/history/draft/credits/prize)
    have drifted from hand-edited pages and gen-prize aborts. That's logged cleanup, not a blocker,
    and the robot must never run `build.ps1 -Write`.
-4. **Claude drafting + PR** ← *next* — Claude Code on GitHub (token from Mike's Claude
-   subscription) appends gold, runs CE-1, writes the Pulse week object, opens a PR. Mike comments,
-   merges. The runner must be `windows-latest`, because the CE-1 scripts need Windows PowerShell 5.1.
+4. **Claude drafting + PR** ← *installing* — `.github/workflows/pulse-draft.yml` runs after every
+   successful ESPN pull (and has a manual button with `week` and `smoke_test`). It picks the newest pulled
+   week not yet in gold, makes branch `pulse/2026-weekNN`, and runs Claude (`anthropics/claude-code-action@v1`,
+   secret `CLAUDE_CODE_OAUTH_TOKEN`, Windows runner for PowerShell 5.1) on `_ops/docs/ROBOT_PULSE_RECIPE.md`.
+   Then it opens PR "Weekly Pulse: Week N draft" with Claude's summary as the description.
+   Numbers come from `_ops/scripts/pulse_facts.py`, which reproduced the published Week 3 object exactly
+   (standings, all-play, Survivor, credit leaders + since, highest weekly, seeds, ⚔️ series).
+   `.github/workflows/claude-mention.yml`: comment `@claude …` on the PR to request changes (owner/members only).
+   Open risk: Anthropic's docs don't confirm Windows runners for the action, so the smoke test checks it.
+   First real draft: Week 4, Tue Oct 6. Fallback: draft in Cowork chat from the inbox files.
 
 ## Decisions / caveats
 
