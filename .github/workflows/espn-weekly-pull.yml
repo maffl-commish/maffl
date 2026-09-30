@@ -5,10 +5,15 @@ name: ESPN weekly pull
 
 on:
   schedule:
-    # GitHub schedules are in UTC. 09:00 UTC = 5:00 AM EDT (4:00 AM after the Nov 1 clock change).
-    - cron: "0 9 * * 2"    # Tuesday, first try
-    - cron: "0 11 * * 2"   # Tuesday, retry if ESPN hadn't finalized yet
-    - cron: "0 9 * * 3"    # Wednesday backstop
+    # GitHub schedules are in UTC and can start hours late (on-the-hour slots are busiest), so we use
+    # odd minutes and several tries. Times below are EDT (one hour earlier ET after the Nov 1 clock change).
+    # Each run exits quietly if the week is already pulled or not final yet.
+    - cron: "17 5 * * 2"   # Tue 1:17 AM
+    - cron: "47 6 * * 2"   # Tue 2:47 AM
+    - cron: "13 8 * * 2"   # Tue 4:13 AM
+    - cron: "37 9 * * 2"   # Tue 5:37 AM
+    - cron: "23 11 * * 2"  # Tue 7:23 AM
+    - cron: "41 9 * * 3"   # Wed 5:41 AM backstop
   workflow_dispatch:        # adds a "Run workflow" button on the Actions tab
     inputs:
       week:

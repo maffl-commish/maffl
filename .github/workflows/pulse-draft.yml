@@ -154,6 +154,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
           prompt: |
             W = ${{ needs.data.outputs.week }}.
             Read _ops/docs/ROBOT_PULSE_RECIPE.md and follow it exactly for Week W of 2026.
@@ -168,6 +169,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
           prompt: |
             W = ${{ needs.data.outputs.week }}. This is a REHEARSAL. It will never be merged.
             Read _ops/docs/ROBOT_PULSE_RECIPE.md and follow it for Week W of 2026, with the changes in its §7 "Rehearsal mode".
@@ -181,6 +183,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
           prompt: |
             This is a connection test. Change no file except the one below.
             Read _ops/inbox/robot-smoke-data.md (written by the Windows data job) and _ops/docs/ROBOT_PULSE_RECIPE.md.
