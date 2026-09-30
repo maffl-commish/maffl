@@ -6,7 +6,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Now
 
-- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3: Gate 2 ✅; remaining before Step 4: gen-prize dues safety + cleaned_maffl consumers. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
+- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3 ✅ (validate 8/8). The weekly loop only needs validate + `generate-matchups-data.ps1` (CE-1), so the page-generator drift and gen-prize issues below are logged cleanup, not Step 4 blockers. Next: Step 4 (Claude drafts the Pulse as a PR). **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
 - **Week 4 Pulse.** The robot pulls Week 4 on Tue Oct 6 (5 AM ET, retries 7 AM / Wed) into
   `_ops/inbox/MAFFL_2026_Week04_espn.md`. Pull in GitHub Desktop, then draft the Pulse in Cowork chat
   from that file (same shape as capture v2.2). Screenshots + Results Engine only as a backup if
@@ -23,6 +23,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **Build is unsafe for dues.** `gen-prize.ps1` emits the old `dues_2026` shape and would wipe
   pay stamps. Hand-edit `dues_seasons` in `prize.html` until the generator reads
   `Dues_Log.csv`. (See `_ops/docs/DUES_PROCESS_NOTE.md`.)
+- **Page generators have drifted from their pages.** build check-only (9/29): stats/history/draft/credits report differences vs the live pages (hand edits since June), and gen-prize aborts because the `dues_2026` marker is gone. Never run `build.ps1 -Write` until each is reconciled.
 - **Quarantined cleaned_maffl_revised.csv is still read** by validate Gates 1 (champ flags) + 7 (names), gen-history (csv-seasons embed) and gen-draft (CHAMPS). It has 3 swapped 2015/2022/2024 results and 5 mis-owned seasons (Warren Brownies 2011–13, Daddy Fat Sacks 2006–07). Repoint to gold per governance §7.3 before the robot runs generators unattended.
 - **`Dues_Log.csv` is at repo root, not `data/`.** Open: move it and point `gen-prize.ps1` at it.
 - **Old repo copy at `Desktop\MAFFL`.** After the hook fix, nothing depends on it. Archive or

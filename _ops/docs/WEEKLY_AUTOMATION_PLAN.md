@@ -1,6 +1,6 @@
 # Weekly Automation Plan — "Wake up to a drafted Pulse"
 
-Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Steps 1–2 done, Step 3 next
+Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Steps 1–3 done, Step 4 next
 
 ## Goal
 
@@ -51,9 +51,14 @@ revises, and Mike clicks **Merge** to publish.
    on BLOCKED, missing secrets or expired cookies. The robot commits to `main`, so Mike fetches/pulls
    in GitHub Desktop before starting work. Retires screenshots and the Weekly Results Engine once a
    real Tuesday succeeds.
-3. **Fix `build.ps1` Gate 2** so generators can run unattended.
-4. **Claude drafting + PR** — Claude Code on GitHub (token from Mike's Claude subscription)
-   appends gold, runs CE-1, writes the Pulse week object, opens a PR. Mike comments, merges.
+3. ✅ **Fix validate Gate 2** (2026-09-29) — Gate 2 now recomputes career W/L/T from gold
+   `MAFFL_Matchups_Clean.csv`; validate 8/8. Finding: the weekly loop needs only validate +
+   `generate-matchups-data.ps1` (CE-1). The page generators (stats/history/draft/credits/prize)
+   have drifted from hand-edited pages and gen-prize aborts. That's logged cleanup, not a blocker,
+   and the robot must never run `build.ps1 -Write`.
+4. **Claude drafting + PR** ← *next* — Claude Code on GitHub (token from Mike's Claude
+   subscription) appends gold, runs CE-1, writes the Pulse week object, opens a PR. Mike comments,
+   merges. The runner must be `windows-latest`, because the CE-1 scripts need Windows PowerShell 5.1.
 
 ## Decisions / caveats
 
