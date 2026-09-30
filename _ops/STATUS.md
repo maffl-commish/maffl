@@ -35,6 +35,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-29 · Pulse-draft robot: data job ✅ and Claude ✅ on test #3; final push failed on expired action token, fixed by resetting git auth to GITHUB_TOKEN. Re-run the connection test.
 - 2026-09-29 · Pulse-draft robot split: Windows job (ingest_week.py → CE-1 → validate → facts) + Linux Claude job (writes Pulse, opens PR). First smoke test had failed: Claude action won't install on Windows.
 - 2026-09-29 · Automation Step 4 installed: pulse-draft.yml (runs after the ESPN pull; Windows runner; opens "Weekly Pulse: Week N draft" PR), claude-mention.yml (@claude on PRs, owner-only), ROBOT_PULSE_RECIPE.md, pulse_facts.py (matches published Wk 3). Connection test pending.
 - 2026-09-29 · validate Gate 2 now reads gold Matchups_Clean (Regular, 2005–2025); 34/34 owners match. validate: 8/8 pass. build check-only: validate 8/8, nothing written; stats/history/draft/credits report drift vs current pages; gen-prize aborts (`dues_2026` marker gone) before the final summary

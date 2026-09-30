@@ -175,6 +175,9 @@ jobs:
         run: |
           git config user.name "maffl-pulse-robot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Claude's action leaves git pointed at its own token, which has expired by now: use ours.
+          git config --local --unset-all http.https://github.com/.extraheader || true
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           if [ "$MODE" = "smoke" ]; then
             TITLE="TEST: robot connection test (close, don't merge)"; BODY="_ops/inbox/robot-smoke-test_pr.md"
           else
