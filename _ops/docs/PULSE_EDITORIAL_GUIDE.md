@@ -57,6 +57,12 @@ written to it. Requires `weekly.html` v5.0 (`PROMPT_pulse_v5_upgrades.md`).
 | Trade Desk | 🤝 | Only when a trade happened (deadline is Dec 2) |
 | Rivalry Corner | ⚔️ | A real history-backed rivalry game (use `rivalry.html` data) |
 
+**Waiver times (added 2026-09-29).** ESPN stamps every claim in a waiver run with the run's
+*processing* time (e.g. Thursday 3:12 a.m.). That is not when an owner bid or picked anyone up,
+so never write it as one ("paid $10 at 3:12 a.m." is wrong). Say "on Thursday's waivers" instead.
+Free-agent adds and drops carry their real times, so "cut him less than three hours after the
+claim went through" is fine. The ESPN pull report lists waiver runs and real-time moves separately.
+
 ### Data shape
 
 ```js

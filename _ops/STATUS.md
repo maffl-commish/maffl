@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-29 · Pulse Wk 3 waiver-time wording fixed; editorial guide §4 "Waiver times" rule; ESPN pull v0.3.2 lists waiver runs separately from real-time moves
 - 2026-09-29 · Weekly automation Step 1 done: ESPN pull v0.3.1 matched Week 3 gold (scores, 👻, all 63 top-3s) and caught waiver bids the screenshots missed; Pulse Wk 3 Big Spenders corrected
 - 2026-09-29 · ESPN pull Phase 1: `_ops/scripts/maffl_espn_pull.py` v0.2 (run in Google Colab; my workspace can't reach ESPN). Live Week 3 pull matched gold on all 11 games + Ghost par 151.47. Next: Week 4 via the script alongside screenshots
 - 2026-09-29 · ESPN stat corrections applied to 2026 Wks 1–2 (17 rows); generator -CorrectSeason; CE-1a added; Pulse Wks 1–3 corrected

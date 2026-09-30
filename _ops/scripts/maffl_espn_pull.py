@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.3.1 (2026-09-29) - fix: same-timestamp waivers were dropped. 0.3: full week: scores, top 3s, transactions,
+# VERSION: 0.3.2 (2026-09-29) - waiver claims grouped by ESPN processing run (not pickup times). 0.3.1: same-timestamp waivers fix. 0.3: full week: scores, top 3s, transactions,
 #          stat-correction audit, next-week pairings, validation, inbox file.
 #
 # Runs two ways, same file:
@@ -238,7 +238,8 @@ for tier, lid in LEAGUES.items():
                     team_name = team_name or tk; parts.append(f"DROP {pname}")
             if any(p.startswith("TRADE") for p in parts): trade_count += 1
             if parts:
-                tx_lines.append((act.date, f"{when:%a %m/%d %I:%M %p} · {tier} · {team_name} · " + " | ".join(parts)))
+                is_waiver = any("($" in p for p in parts)
+                tx_lines.append((act.date, is_waiver, tier, when, f"{tier} · {team_name} · " + " | ".join(parts)))
         if older: break
 
 # ---------------------------------------------------------------- build gold rows
@@ -368,7 +369,7 @@ if top3_gold_all:
 # ---------------------------------------------------------------- write the inbox report
 status = "STATUS: READY TO INGEST" if not blocks else "STATUS: BLOCKED — " + "; ".join(blocks)
 L = [f"# MAFFL {YEAR} Week {WEEK} — ESPN pull",
-     f"Source: maffl_espn_pull.py v0.3.1 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
+     f"Source: maffl_espn_pull.py v0.3.2 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
      "## OUTPUT 1 — MATCHUP ROWS", "```", *[",".join(r) for r in rows], "```\n",
      "## OUTPUT 2 — WEEK FACTS", "### 2a. Top performers", "```", ",".join(TOP3_HEADER), *[",".join(r) for r in top3], "```",
      "### 2b. Individual high"]
@@ -376,7 +377,18 @@ for tier in ("Upper", "Lower"):
     hs = highs.get(tier, [])
     L.append(f"INDIVIDUAL HIGH — {tier}: " + ("; ".join(f"{r[6]}, {r[3]}, {r[8]}" for r in hs) if hs else "[NEEDS BOX SCORES]"))
 L.append(f"\n### 2c. Transactions ({start:%a %m/%d} – {end - timedelta(minutes=1):%a %m/%d})")
-L += [line for _, line in sorted(tx_lines)] or ["(none)"]
+L.append("_Waiver claims carry ESPN's **processing** time (every claim in a run gets the same stamp). "
+         "That is not when the owner bid, so never write it as a pickup time. Free-agent moves and drops "
+         "below carry their real times._")
+runs = {}
+for d, w, tr, when, line in sorted(tx_lines, key=lambda x: x[0]):
+    if w: runs.setdefault((when.strftime("%a %m/%d %I:%M %p"), tr), []).append(line)
+for (stamp, tr), lines in runs.items():   # already in time order
+    L.append(f"\n**Waiver run — {tr}, processed {stamp}** ({len(lines)} claims)")
+    L += ["- " + l.split(" · ", 1)[1] for l in lines]
+others = [(when, line) for d, w, tr, when, line in sorted(tx_lines, key=lambda x: x[0]) if not w]
+L.append("\n**Free-agent moves, drops and trades** (real times)")
+L += [f"- {when:%a %m/%d %I:%M %p} · {line}" for when, line in others] or ["- (none)"]
 top_bids = sorted(tx_bids, key=lambda x: -x[0])[:5]
 L.append("TOP BIDS: " + (", ".join(f"${b} {p} ({t}, {tr})" for b, t, p, tr in top_bids) or "none") + f" · TRADES: {trade_count}")
 if bench_facts:
