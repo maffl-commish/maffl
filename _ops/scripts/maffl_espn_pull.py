@@ -424,7 +424,7 @@ runs = {}
 for d, w, tr, when, line in sorted(tx_lines, key=lambda x: x[0]):
     if w: runs.setdefault((when.strftime("%a %m/%d %I:%M %p"), tr), []).append(line)
 for (stamp, tr), lines in runs.items():   # already in time order
-    L.append(f"\n**Waiver run — {tr}, processed {stamp}** ({len(lines)} claims)")
+    L.append(f"\n**Waiver run — {tr}, processed {stamp}** ({len(lines)} claim{'s' if len(lines) != 1 else ''})")
     L += ["- " + l.split(" · ", 1)[1] for l in lines]
 others = [(when, line) for d, w, tr, when, line in sorted(tx_lines, key=lambda x: x[0]) if not w]
 L.append("\n**Free-agent moves, drops and trades** (real times)")

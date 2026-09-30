@@ -1,6 +1,6 @@
 # Weekly Automation Plan — "Wake up to a drafted Pulse"
 
-Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Step 2 in progress
+Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Steps 1–2 done, Step 3 next
 
 ## Goal
 
@@ -44,7 +44,7 @@ revises, and Mike clicks **Merge** to publish.
 
 1. ✅ **Grow the script** — full week in one report shaped like capture v2.2 output, plus
    next-week pairings. v0.3.1 matched Week 3 gold and found waiver claims the screenshots missed.
-2. **GitHub robot, data only** ← *in progress* — `.github/workflows/espn-weekly-pull.yml` runs
+2. ✅ **GitHub robot, data only** (test run 2026-09-29 green) — `.github/workflows/espn-weekly-pull.yml` runs
    script v0.4 Tue 09:00 + 11:00 UTC and Wed 09:00 UTC (5/7 AM EDT), plus a manual "Run workflow"
    button (week + force inputs). Cookies in repo secrets `ESPN_S2`, `SWID`. Writes
    `_ops/inbox/MAFFL_2026_WeekNN_espn.md`, skips weeks already pulled, fails (GitHub emails Mike)
