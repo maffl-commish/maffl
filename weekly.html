@@ -1273,6 +1273,13 @@
                  font-family: var(--body); font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
   .cw-could li + li { border-top: 1px solid var(--border); }
   .cw-could .mu-chip { flex: 0 0 auto; margin-top: 1px; }
+  .pulse-card[data-card="coach"] { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 4px 14px var(--gold-soft); }
+  .pulse-card[data-card="coach"] .card-preview { background: var(--gold-soft); border-radius: 8px; padding: 8px 10px; }
+  .card-badge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--gold); color: var(--navy);
+                font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+                vertical-align: middle; animation: badge-pulse 2.4s ease-in-out infinite; }
+  @keyframes badge-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.55); } 50% { box-shadow: 0 0 0 6px rgba(245, 166, 35, 0); } }
+  @media (prefers-reduced-motion: reduce) { .card-badge { animation: none; } }
 
   @media (max-width: 1024px) {
     .site-nav { gap: 16px; }
@@ -3343,7 +3350,7 @@ function renderCoachCard(week) {
     <p class="ps-foot">A MAFFL classic, back in 2026. Fewest points left on the bench wins; a bye, an empty slot or a zero-point starter knocks you out.</p>
   `;
 
-  return cardShell("coach", "📋", "Coach of the Week", preview, body);
+  return cardShell("coach", "📋", "Coach of the Week", preview, body, false, "✨ Back");
 }
 
 /* --------- NEWS CARD --------- */
@@ -3401,14 +3408,14 @@ function tierAccordion(title, inner) {
 /* News, Coach of the Week, Elite 5 and the Week 0 Draft Recap span the full
    row; every other card is a half-width tile. */
 const FULL_WIDTH_CARDS = ["news", "coach", "elite", "draftrecap", "bracket"];
-function cardShell(id, icon, title, previewHtml, bodyHtml, alwaysCollapsed) {
+function cardShell(id, icon, title, previewHtml, bodyHtml, alwaysCollapsed, badge) {
   const span = FULL_WIDTH_CARDS.includes(id) ? " span-2" : " tile";
   return `
     <article class="pulse-card${span}" data-card="${id}" tabindex="0" role="button" aria-expanded="false">
       <div class="card-head">
         <div class="left">
           <span class="card-icon" aria-hidden="true">${icon}</span>
-          <h3 class="card-title">${esc(title)}</h3>
+          <h3 class="card-title">${esc(title)}${badge ? `<span class="card-badge">${esc(badge)}</span>` : ""}</h3>
         </div>
         ${alwaysCollapsed ? "" : '<span class="card-chev" aria-hidden="true">&#9662;</span>'}
       </div>
