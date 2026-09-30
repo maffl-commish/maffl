@@ -58,13 +58,16 @@ revises, and Mike clicks **Merge** to publish.
    and the robot must never run `build.ps1 -Write`.
 4. **Claude drafting + PR** ← *installing* — `.github/workflows/pulse-draft.yml` runs after every
    successful ESPN pull (and has a manual button with `week` and `smoke_test`). It picks the newest pulled
-   week not yet in gold, makes branch `pulse/2026-weekNN`, and runs Claude (`anthropics/claude-code-action@v1`,
-   secret `CLAUDE_CODE_OAUTH_TOKEN`, Windows runner for PowerShell 5.1) on `_ops/docs/ROBOT_PULSE_RECIPE.md`.
-   Then it opens PR "Weekly Pulse: Week N draft" with Claude's summary as the description.
+   week not yet in gold and makes branch `pulse/2026-weekNN`. **Job `data`** (Windows, no AI) runs
+   `_ops/scripts/ingest_week.py` → CE-1 generator (check/write/re-check) → validate → `pulse_facts.py`,
+   logs each step to `_ops/inbox/…_datalog.md`, and pushes. **Job `write`** (Linux) runs Claude
+   (`anthropics/claude-code-action@v1`, secret `CLAUDE_CODE_OAUTH_TOKEN`) on `_ops/docs/ROBOT_PULSE_RECIPE.md`
+   to write the Week object. It then opens PR "Weekly Pulse: Week N draft" with Claude's summary.
+   The split exists because the first test (9/29) showed the Claude action won't install on Windows runners.
+   Stat corrections (CE-1a) are flagged in the PR, not applied automatically.
    Numbers come from `_ops/scripts/pulse_facts.py`, which reproduced the published Week 3 object exactly
    (standings, all-play, Survivor, credit leaders + since, highest weekly, seeds, ⚔️ series).
    `.github/workflows/claude-mention.yml`: comment `@claude …` on the PR to request changes (owner/members only).
-   Open risk: Anthropic's docs don't confirm Windows runners for the action, so the smoke test checks it.
    First real draft: Week 4, Tue Oct 6. Fallback: draft in Cowork chat from the inbox files.
 
 ## Decisions / caveats

@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.4 (2026-09-29) - robot mode for GitHub Actions: finds the latest completed week,
+# VERSION: 0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
 #          writes _ops/inbox/, skips weeks already pulled, reports READY/BLOCKED to the workflow.
 #   0.3.2 waiver claims grouped by ESPN processing run · 0.3.1 same-timestamp waivers fix ·
 #   0.3 full week: scores, top 3s, transactions, stat-correction audit, next-week pairings.
@@ -314,6 +314,9 @@ if not this_games or not all(g[6] for g in this_games):
     raise SystemExit(f"\nSTATUS: BLOCKED — Week {WEEK} isn't final on ESPN yet "
                      f"({open_games} of {len(this_games)} games undecided). Nothing written. Try again later.")
 rows, par_info = build_rows(this_games, WEEK)
+# Top performers follow the matchup rows (capture v2.2 rule): winner's team, then loser's, Rank 1-3.
+_order = [t for r in rows for t in (r[7], r[11]) if t != GHOST]
+top3.sort(key=lambda x: (_order.index(x[3]) if x[3] in _order else 99, int(x[5])))
 
 # ---------------------------------------------------------------- validation (capture v2.2 checks)
 checks = []
@@ -409,7 +412,7 @@ if top3_gold_all:
 # ---------------------------------------------------------------- write the inbox report
 status = "STATUS: READY TO INGEST" if not blocks else "STATUS: BLOCKED — " + "; ".join(blocks)
 L = [f"# MAFFL {YEAR} Week {WEEK} — ESPN pull",
-     f"Source: maffl_espn_pull.py v0.4 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
+     f"Source: maffl_espn_pull.py v0.4.1 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
      "## OUTPUT 1 — MATCHUP ROWS", "```", *[",".join(r) for r in rows], "```\n",
      "## OUTPUT 2 — WEEK FACTS", "### 2a. Top performers", "```", ",".join(TOP3_HEADER), *[",".join(r) for r in top3], "```",
      "### 2b. Individual high"]
