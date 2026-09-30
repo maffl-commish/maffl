@@ -6,7 +6,7 @@ Updated 2026-09-30 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older 
 
 | When (ET) | What | Where you see it |
 |---|---|---|
-| 5:00 AM (retry 7:00, Wed backstop) | **ESPN pull**: scores, top-3 scorers, waivers/trades, stat-correction check, next week's pairings, 8 safety checks | `_ops/inbox/MAFFL_2026_WeekNN_espn.md` |
+| from 1:17 AM (retries 2:47, 4:13, 5:37, 7:23; Wed backstop). GitHub's timer can run late, hence several tries | **ESPN pull**: scores, top-3 scorers, waivers/trades, stat-correction check, next week's pairings, 8 safety checks | `_ops/inbox/MAFFL_2026_WeekNN_espn.md` |
 | right after | **Data job** (no AI): adds the week to the gold CSVs, refreshes the matchup files, validate 8/8, computes every number | branch `pulse/2026-weekNN` |
 | right after | **Claude** writes the Week object in `weekly.html` using the editorial guide, then opens a pull request | GitHub → **Pull requests** → "Weekly Pulse: Week N draft" |
 
