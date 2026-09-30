@@ -7,13 +7,10 @@ _Read first. Keep it short. Newest entries on top in each section._
 ## Now
 
 - **ESPN history inventory ✅ (9/30).** Report: `_ops/inbox/MAFFL_ESPN_Inventory.md` (raw zip is git-ignored: private, keep local). ESPN has Upper 2005–2026 (results, drafts, weekly starters; bench only from 2018) and Lower 2025–26. Old message boards are gone (1 LM note per season survives); no Coach of the Week posts. Next, when wanted: check gold 2005–2025 against ESPN (would settle the quarantined-CSV swaps below).
-- **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5 computes it (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card: queued prompt below.
+- **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card: queued prompt below.
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
-- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3 ✅ (validate 8/8). The weekly loop only needs validate + `generate-matchups-data.ps1` (CE-1), so the page-generator drift and gen-prize issues below are logged cleanup, not Step 4 blockers. Step 4 installed and split (Windows data job + Linux Claude job) after the first connection test failed; the connection test still needs re-running (Actions → Pulse draft → smoke_test), then Week 4 on Tue Oct 6 is the first real draft PR. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
-- **Week 4 Pulse.** The robot pulls Week 4 on Tue Oct 6 (5 AM ET, retries 7 AM / Wed) into
-  `_ops/inbox/MAFFL_2026_Week04_espn.md`. Pull in GitHub Desktop, then draft the Pulse in Cowork chat
-  from that file (same shape as capture v2.2). Screenshots + Results Engine only as a backup if
-  GitHub emails a failure.
+- **Weekly robot ✅ live (9/30).** One-pager: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Connection test passed end to end (data job → Claude → PR). **Habit: GitHub Desktop Fetch/Pull before starting work.**
+- **Week 4 Pulse (Tue Oct 6) = the robot's first real draft.** Review the "Weekly Pulse: Week 4 draft" PR, comment `@claude …` for changes, Merge to publish. Fallback: draft in Cowork chat from `_ops/inbox/`. After one good Tuesday, retire the Results Engine, screenshots and `CAPTURE_SYSTEM_PROMPT.md`.
 - **LM to-do:** set ESPN 👻 scores to Wk 1 151.28, Wk 2 138.02 (Wk 3 already shows 151.47 per the ESPN pull). Delete this line once done.
 - **Season:** 2026, Week 4 in progress. Weekly Pulse is live through Week 3 (`weekly.html` v6.2).
 
@@ -35,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-30 · Weekly robot live: Pulse-draft connection test passed (Windows data job + Linux Claude job + PR). Automation plan rewritten as a one-page guide
 - 2026-09-29 · Pulse-draft robot: data job ✅ and Claude ✅ on test #3; final push failed on expired action token, fixed by resetting git auth to GITHUB_TOKEN. Re-run the connection test.
 - 2026-09-29 · Pulse-draft robot split: Windows job (ingest_week.py → CE-1 → validate → facts) + Linux Claude job (writes Pulse, opens PR). First smoke test had failed: Claude action won't install on Windows.
 - 2026-09-29 · Automation Step 4 installed: pulse-draft.yml (runs after the ESPN pull; Windows runner; opens "Weekly Pulse: Week N draft" PR), claude-mention.yml (@claude on PRs, owner-only), ROBOT_PULSE_RECIPE.md, pulse_facts.py (matches published Wk 3). Connection test pending.

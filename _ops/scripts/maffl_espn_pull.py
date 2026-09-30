@@ -1,6 +1,7 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.5 (2026-09-30) - Coach of the Week (2e): fewest points left on the bench, per tier.
+# VERSION: 0.5.1 (2026-09-30) - 2e adds COULD HAVE WON: lost by less than it left on the bench.
+#   0.5 (2026-09-30) - Coach of the Week (2e): fewest points left on the bench, per tier.
 #   0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
 #          writes _ops/inbox/, skips weeks already pulled, reports READY/BLOCKED to the workflow.
 #   0.3.2 waiver claims grouped by ESPN processing run · 0.3.1 same-timestamp waivers fix ·
@@ -466,7 +467,7 @@ if top3_gold_all:
 # ---------------------------------------------------------------- write the inbox report
 status = "STATUS: READY TO INGEST" if not blocks else "STATUS: BLOCKED — " + "; ".join(blocks)
 L = [f"# MAFFL {YEAR} Week {WEEK} — ESPN pull",
-     f"Source: maffl_espn_pull.py v0.5 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
+     f"Source: maffl_espn_pull.py v0.5.1 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
      "## OUTPUT 1 — MATCHUP ROWS", "```", *[",".join(r) for r in rows], "```\n",
      "## OUTPUT 2 — WEEK FACTS", "### 2a. Top performers", "```", ",".join(TOP3_HEADER), *[",".join(r) for r in top3], "```",
      "### 2b. Individual high"]
@@ -491,6 +492,14 @@ L.append("TOP BIDS: " + (", ".join(f"${b} {p} ({t}, {tr})" for b, t, p, tr in to
 if bench_facts:
     L += ["\n### 2d. A bench player beat every starter", *["- " + b for b in bench_facts]]
 if cotw:
+    # COULD HAVE WON: a loser who left more on the bench than it lost by (👻 par counts as the winner's score).
+    best_of = {c[1]: c for c in cotw}
+    chw = {}
+    for r in rows:
+        w, ws, l, ls = r[7], D(r[8]), r[11], D(r[12])
+        c = best_of.get(l)
+        if c and D(c[4]) > ws - ls:          # left more on the bench than the losing margin
+            chw[l] = (w, ws - ls, D(c[4]), D(c[4]) - (ws - ls))
     L += ["\n### 2e. Coach of the Week (fewest points left on the bench)",
           "_Best legal lineup from the week's roster minus points started. Out of contention: a starter "
           "on bye, an empty slot, or a starter who scored 0. Winner per tier; tie → higher team score._"]
@@ -500,10 +509,17 @@ if cotw:
         win = live[0] if live else None
         L.append(f"\nCOACH OF THE WEEK — {tier}: " + (f"{win[1]}, left {fmt(win[4])} on the bench "
                  f"(scored {fmt(win[2])} of a possible {fmt(win[3])})" if win else "none (every team knocked out)"))
-        L.append("| Team | Scored | Best possible | Left on bench | Out of contention |")
-        L.append("|---|---|---|---|---|")
+        L.append("| Team | Scored | Best possible | Left on bench | Out of contention | Could have won |")
+        L.append("|---|---|---|---|---|---|")
         for c in sorted(rows_t, key=lambda c: (bool(c[5]), D(c[4]))):
-            L.append(f"| {c[1]} | {fmt(c[2])} | {fmt(c[3])} | {fmt(c[4])} | {'; '.join(c[5]) or '—'} |")
+            cw = chw.get(c[1])
+            cws = (f"YES: lost to {'👻' if cw[0] == GHOST else cw[0]} by {fmt(cw[1])}, best lineup wins by {fmt(cw[3])}"
+                   if cw else "—")
+            L.append(f"| {c[1]} | {fmt(c[2])} | {fmt(c[3])} | {fmt(c[4])} | {'; '.join(c[5]) or '—'} | {cws} |")
+        tier_cw = [(t, v) for t, v in chw.items() if any(c[1] == t for c in rows_t)]
+        L.append(f"COULD HAVE WON — {tier}: " + ("; ".join(
+            f"{t} (lost by {fmt(v[1])}, left {fmt(v[2])} on the bench)" for t, v in sorted(tier_cw, key=lambda x: -x[1][2]))
+            if tier_cw else "none"))
 L += ["\n## OUTPUT 3 — VALIDATION", *checks]
 if par_info:
     srt, dropped, s8, par, espn_g = par_info

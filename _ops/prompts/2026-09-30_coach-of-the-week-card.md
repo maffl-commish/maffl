@@ -12,12 +12,12 @@ bullet in §4). If an anchor below doesn't match the file exactly, **stop and as
 Why (commissioner ruling 2026-09-30): Coach of the Week was a long-running MAFFL award. It's
 coming back in the Pulse from Week 4 as bragging rights only (no money, no credits, so
 `prize.html` and dues aren't touched). Chat already wrote the pieces under `_ops/`:
-ESPN pull v0.5 computes it (report OUTPUT 2e), editorial guide §8b, robot recipe v0.3.
+ESPN pull v0.5.1 computes it (report OUTPUT 2e), editorial guide §8b, robot recipe v0.3.
 This prompt is only the page side.
 
 **The rule, for the card's footer text:** fewest points left on the bench wins (best legal lineup
 minus what you started). A starter on bye, an empty slot or a zero-point starter knocks you out.
-One winner per tier.
+One winner per tier. 🔄 Could have won = lost by less than you left on the bench.
 
 ---
 
@@ -27,8 +27,9 @@ In the big comment above `const WEEKS = [` (the "Optional `results`…" list, ar
 add one line in the same style:
 
 ```
- * Optional `coachOfWeek`: { upper, lower, note } — see renderCoachCard. upper/lower =
- *   { team, owner, leftOnBench, scored, best, runnersUp:[{team,leftOnBench}], out:[{team,reason}] } or null.
+ * Optional `coachOfWeek`: { upper, lower, couldHaveWon, note } — see renderCoachCard. upper/lower =
+ *   { team, owner, leftOnBench, scored, best, runnersUp:[{team,leftOnBench}], out:[{team,reason}] } or null;
+ *   couldHaveWon = [{ team, tier, opponent, lostBy, leftOnBench }].
 ```
 
 Example object (for testing only, **don't commit it into any week**):
@@ -41,6 +42,10 @@ coachOfWeek: {
   lower: { team: "Portly Primates", owner: "Charles Lavrinc", leftOnBench: 2.4, scored: 185.98, best: 188.38,
            runnersUp: [{ team: "Camp Kes", leftOnBench: 5.9 }, { team: "Sarge's Squad", leftOnBench: 12.2 }],
            out: [] },
+  couldHaveWon: [
+    { team: "Bad Attitude Gang", tier: "U", opponent: "Happy Valley Hammer Time", lostBy: 15.1, leftOnBench: 17.4 },
+    { team: "Tommy Phamclub", tier: "L", opponent: "👻", lostBy: 2.36, leftOnBench: 9.8 }
+  ],
   note: "Tony's Talented Team (Brooks) sat Gibbs' 34.4 and missed the Lower crown by a mile."
 }
 ```
@@ -59,7 +64,13 @@ and muted styles; add no new colors, only reuse existing CSS variables/classes.
   A null tier reads `Upper · nobody — every lineup had a hole`.
 - **Body (expanded), per tier:** winner line with `scored` of a possible `best`; runners-up as a
   compact "Next closest" line; knocked-out teams as a muted "Out of contention" line with reasons
-  (omit the line when `out` is empty); then `note` (if present) once, below both tiers.
+  (omit the line when `out` is empty).
+- **🔄 Could have won** (the commissioner's favorite part; give it room): below both tiers, a
+  short list, one row per team: `🔄 Bad Attitude Gang (Mike) lost to Happy Valley Hammer Time by
+  15.1 and left 17.4 on the bench.` Use a small pill/tag style the page already has for the 🔄 label
+  (like the Results card's tags). Omit the section when the list is empty. In the collapsed preview,
+  add a third short line when the list isn't empty: `🔄 3 teams could have won`.
+- Then `note` (if present) once, at the bottom.
 - **Footer (muted, small):** `A MAFFL classic, back in 2026. Fewest points left on the bench wins;
   a bye, an empty slot or a zero-point starter knocks you out.`
 - Numbers print exactly as given (don't reformat 0.0 to 0).
@@ -81,7 +92,8 @@ VERSION minor → `v6.2` → `v6.3`; Last Updated = today's date.
 - Weeks 0–3 render identically to before (no `coachOfWeek` in any week → no card).
 - In DevTools, set the example object on `WEEKS[0]` and call `renderPage(WEEKS[0])`. The card
   appears full-width between Results/Preview and Elite 5, collapses/expands like the others,
-  and a `lower: null` variant shows the "nobody" line without errors. Don't save this.
+  and a `lower: null` variant shows the "nobody" line without errors; an empty `couldHaveWon`
+  hides the 🔄 section and its preview line. Don't save this.
 - **Mobile:** DevTools iPhone 12 Pro (390×844) and iOS Home-Screen standalone width. Card
   collapsed and expanded: long team names wrap, nothing clips, and
   `document.documentElement.scrollWidth === 390`.
@@ -94,10 +106,10 @@ VERSION minor → `v6.2` → `v6.3`; Last Updated = today's date.
 Report the diff summary. `git mv` this prompt to `_ops/prompts/done/`, update `_ops/STATUS.md`
 with the block below. One commit.
 
-Suggested commit message: `Pulse v6.3: Coach of the Week card; ESPN pull v0.5 computes it (2e); editorial §8b; recipe v0.3`
+Suggested commit message: `Pulse v6.3: Coach of the Week card; ESPN pull v0.5.1 computes it (2e) incl. 🔄 Could have won; editorial §8b; recipe v0.3`
 
 ---
 
 STATUS:
-- Recently shipped (top): `2026-09-30 · Coach of the Week is back (bragging rights): ESPN pull v0.5 computes fewest points left on the bench per tier (OUTPUT 2e); Pulse v6.3 card; editorial §8b; robot recipe v0.3. First appears Week 4.`
+- Recently shipped (top): `2026-09-30 · Coach of the Week is back (bragging rights): ESPN pull v0.5.1 computes fewest points left on the bench per tier + 🔄 Could have won (OUTPUT 2e); Pulse v6.3 card; editorial §8b; robot recipe v0.3. First appears Week 4.`
 - Queued prompts: remove this prompt's line.

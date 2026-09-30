@@ -182,6 +182,10 @@ A MAFFL classic, revived 2026-09-30 (commish ruling). Bragging rights only: no m
 - **Voice:** a short, warm nod to the old award. The winner line reads like
   "Jake's Jagoffs (Jake) left 0.0 on the bench — a perfect lineup." The `note` (optional, one
   sentence) can name the worst miss in the tier ("Brooks sat Gibbs' 34.4").
+- **🔄 Could have won:** a team that lost by less than it left on the bench ("lost by 15.1, left 17.4
+  on the bench"). The 👻 par counts as the winner's score. It's flagged whether or not the team was in
+  contention for the award. The card lists every one; the best (biggest bench, smallest margin) is
+  also fair game for Can You Believe This?
 - A team knocked out for a bye starter is fair game for Can You Believe This? if it would have won.
 - Never mention the Ghost here; it has no lineup.
 

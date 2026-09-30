@@ -73,6 +73,8 @@ with `},`. Mirror the previous week's object field for field.
   numbers exactly as the report prints them; `runnersUp` = the next two teams still in contention;
   `out` = every team knocked out, with the report's reason. If every team in a tier is out,
   `upper: null` (or `lower: null`). If the report has no 2e section, omit `coachOfWeek`.
+  `couldHaveWon: [{ team, tier: "U"|"L", opponent, lostBy, leftOnBench }]`: every row the report marks
+  "Could have won: YES" (both tiers, biggest bench first; `opponent: "👻"` for the Ghost). Empty list if none.
 - **postseasonNote**: optional, one sentence, from the facts file's playoff picture.
 - **headline / subhead / newsReel**: editorial §3–§4. 5–6 items, 2–4 sections. Transactions come
   from OUTPUT 2c. **Waiver claims carry ESPN's processing time: never present that as when a

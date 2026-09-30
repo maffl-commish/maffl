@@ -1,80 +1,58 @@
-# Weekly Automation Plan — "Wake up to a drafted Pulse"
+# MAFFL Weekly Robot, on one page
 
-Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Steps 1–3 done, Step 4 installing
+Updated 2026-09-30 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older step-by-step build plan
 
-## Goal
+## What happens every Tuesday (no one lifts a finger)
 
-Every Tuesday morning a draft Weekly Pulse is waiting as a GitHub **pull request** (a proposed
-change that isn't live yet). Mike reads it, gives the approach in plain-English comments, Claude
-revises, and Mike clicks **Merge** to publish.
+| When (ET) | What | Where you see it |
+|---|---|---|
+| 5:00 AM (retry 7:00, Wed backstop) | **ESPN pull**: scores, top-3 scorers, waivers/trades, stat-correction check, next week's pairings, 8 safety checks | `_ops/inbox/MAFFL_2026_WeekNN_espn.md` |
+| right after | **Data job** (no AI): adds the week to the gold CSVs, refreshes the matchup files, validate 8/8, computes every number | branch `pulse/2026-weekNN` |
+| right after | **Claude** writes the Week object in `weekly.html` using the editorial guide, then opens a pull request | GitHub → **Pull requests** → "Weekly Pulse: Week N draft" |
 
-## What we proved (2026-09-29)
+**Nothing goes on the site until you click Merge.** If anything fails, GitHub emails you and nothing is drafted.
 
-- `_ops/scripts/maffl_espn_pull.py` with the open-source `espn-api` library and Mike's
-  `espn_s2`/`SWID` cookies reads both leagues (Upper 34467, Lower 1587593698).
-- Live Week 3 pull matched gold on all 11 games and the 👻 par (151.47).
-- ESPN quirks seen: trailing space on "Portly Primates ", co-owner order/case differs,
-  "Bo Kes" and "David Murello" alone as owner labels. The script maps by **team name** only, so
-  these can't mis-credit a game.
+## Your Tuesday routine
 
-## Where each piece runs
+1. Open the pull request (phone is fine). Read Claude's summary: headline, checks, "Needs your OK".
+2. Want changes? Comment `@claude …` in plain English (e.g. "@claude lead with the Reilly game"). Claude edits the draft.
+3. Happy? Click **Merge pull request**, then **Confirm merge**. The site updates in a minute or two.
+4. On your computer: in GitHub Desktop, click **Fetch origin**, then **Pull origin**, before any other MAFFL work.
 
-| Place | ESPN? | Schedule? | Role |
-|---|---|---|---|
-| Claude in Cowork (cloud) | Blocked | Yes, but can't reach GitHub either | Review/steer conversations, write prompts |
-| Google Colab | Works | Not on free tier | Testing and manual backup |
-| **GitHub Actions** | Expected to work | Yes | The Tuesday robot |
+**Fallback:** if the robot fails, start a Cowork chat in MAFFL HQ Ops: "draft the Week N Pulse from the inbox".
 
-## What gets automated
+## If something breaks
 
-| Pulse ingredient | Source |
+| Symptom | Fix |
 |---|---|
-| Gold matchup rows, 👻 par | ESPN schedule (proven) |
-| Top 3 starters per team, individual high | ESPN box scores |
-| Waivers with FAAB $, FA adds, drops, trades | ESPN recent activity |
-| Stat-correction audit of earlier weeks | ESPN schedule vs gold |
-| Next week's pairings (both tiers) | ESPN schedule; Upper checked vs schedule file |
-| Standings, all-play, Survivor, credits | Existing generators from gold CSVs |
-| Headline, news reel, Elite 5, notes, featured games | Claude, per `PULSE_EDITORIAL_GUIDE.md` |
-| Commish rulings, relegation insurance, dues | Mike, in PR comments |
+| Email: ESPN pull failed, "Could not open the league" | ESPN cookies expired (~yearly). Get `espn_s2` + `SWID` again (Chrome F12 → Application → Cookies) and update the two GitHub secrets |
+| ESPN pull "BLOCKED" | Open that week's `_espn.md` and read the BLOCKING line (tie, unknown team, Ghost mismatch…). Ask Claude in chat |
+| Pulse draft failed at "Claude" | Claude token expired (~yearly). PowerShell: `& "$env:USERPROFILE\.local\bin\claude.exe" setup-token`, then update secret `CLAUDE_CODE_OAUTH_TOKEN` |
+| Any other red ✗ | Click the failed step and screenshot the last lines for Claude |
+| Need to run by hand | Actions → pick the workflow → **Run workflow** (ESPN pull: week + force; Pulse draft: week, or smoke_test) |
 
-"League news" = transactions and trades (confirmed by Mike). Message board not needed.
+## The parts (everything that matters, nothing else)
 
-## Build order
+- **3 robots** (`.github/workflows/`): `espn-weekly-pull.yml` · `pulse-draft.yml` · `claude-mention.yml` (@claude)
+- **3 scripts** (`_ops/scripts/`): `maffl_espn_pull.py` (ESPN → report) · `ingest_week.py` (report → gold CSVs) · `pulse_facts.py` (gold → every number)
+- **2 instruction docs** (`_ops/docs/`): `ROBOT_PULSE_RECIPE.md` (Claude's weekly steps) · `PULSE_EDITORIAL_GUIDE.md` (your writing rules)
+- **3 secrets** (GitHub → Settings → Secrets → Actions): `ESPN_S2`, `SWID`, `CLAUDE_CODE_OAUTH_TOKEN`
+- **1 inbox** (`_ops/inbox/`): each week's `_espn.md` report, `_facts.md`, `_datalog.md`, `_pr.md`
+- To change the schedule or any robot: ask Claude in chat. Don't hand-edit the workflow files.
 
-1. ✅ **Grow the script** — full week in one report shaped like capture v2.2 output, plus
-   next-week pairings. v0.3.1 matched Week 3 gold and found waiver claims the screenshots missed.
-2. ✅ **GitHub robot, data only** (test run 2026-09-29 green) — `.github/workflows/espn-weekly-pull.yml` runs
-   script v0.4 Tue 09:00 + 11:00 UTC and Wed 09:00 UTC (5/7 AM EDT), plus a manual "Run workflow"
-   button (week + force inputs). Cookies in repo secrets `ESPN_S2`, `SWID`. Writes
-   `_ops/inbox/MAFFL_2026_WeekNN_espn.md`, skips weeks already pulled, fails (GitHub emails Mike)
-   on BLOCKED, missing secrets or expired cookies. The robot commits to `main`, so Mike fetches/pulls
-   in GitHub Desktop before starting work. Retires screenshots and the Weekly Results Engine once a
-   real Tuesday succeeds.
-3. ✅ **Fix validate Gate 2** (2026-09-29) — Gate 2 now recomputes career W/L/T from gold
-   `MAFFL_Matchups_Clean.csv`; validate 8/8. Finding: the weekly loop needs only validate +
-   `generate-matchups-data.ps1` (CE-1). The page generators (stats/history/draft/credits/prize)
-   have drifted from hand-edited pages and gen-prize aborts. That's logged cleanup, not a blocker,
-   and the robot must never run `build.ps1 -Write`.
-4. **Claude drafting + PR** ← *installing* — `.github/workflows/pulse-draft.yml` runs after every
-   successful ESPN pull (and has a manual button with `week` and `smoke_test`). It picks the newest pulled
-   week not yet in gold and makes branch `pulse/2026-weekNN`. **Job `data`** (Windows, no AI) runs
-   `_ops/scripts/ingest_week.py` → CE-1 generator (check/write/re-check) → validate → `pulse_facts.py`,
-   logs each step to `_ops/inbox/…_datalog.md`, and pushes. **Job `write`** (Linux) runs Claude
-   (`anthropics/claude-code-action@v1`, secret `CLAUDE_CODE_OAUTH_TOKEN`) on `_ops/docs/ROBOT_PULSE_RECIPE.md`
-   to write the Week object. It then opens PR "Weekly Pulse: Week N draft" with Claude's summary.
-   The split exists because the first test (9/29) showed the Claude action won't install on Windows runners.
-   Stat corrections (CE-1a) are flagged in the PR, not applied automatically.
-   Numbers come from `_ops/scripts/pulse_facts.py`, which reproduced the published Week 3 object exactly
-   (standings, all-play, Survivor, credit leaders + since, highest weekly, seeds, ⚔️ series).
-   `.github/workflows/claude-mention.yml`: comment `@claude …` on the PR to request changes (owner/members only).
-   First real draft: Week 4, Tue Oct 6. Fallback: draft in Cowork chat from the inbox files.
+## Not done yet (honest list)
 
-## Decisions / caveats
+- **The robot hasn't drafted a real Pulse yet.** Week 4 (Tue Oct 6) is the first. Read that PR closely.
+- **@claude revisions are untested** until that first PR.
+- **Stat corrections to earlier weeks are flagged, not applied.** CE-1a stays your call.
+- **Retire after one good Tuesday:** the Weekly Results Engine project, screenshots, `CAPTURE_SYSTEM_PROMPT.md`, Colab.
+- **Older cleanup (not blocking the robot):** page generators have drifted (never run `build.ps1 -Write`); gen-prize/dues; the quarantined `cleaned_maffl_revised.csv` is still read by validate Gates 1/7, gen-history and gen-draft.
+- **The robot never updates** stats/history/draft/credits/power-rankings pages, only `weekly.html` + matchup data.
 
-- House-rule change at Step 4: the robot's Claude Code edits site files, and Mike approves the
-  PR diff instead of running a prompt himself. Approved in principle 2026-09-29.
-- Cookies expire (roughly yearly): the robot fails loudly; refresh the two repo secrets.
-- The repo is public: drafts and inbox files are visible on GitHub before merge. Secrets aren't.
-- Tuesday scores can still get NFL stat corrections; the next week's audit catches them (as today).
-- Top performers now include `Pos` (e.g. QB); existing Week 3 rows have it blank.
+## How we got here (for the record)
+
+Phase 1 proved `espn-api` + cookies in Colab (Week 3 matched gold, and caught waiver bids the screenshots
+missed). Step 2 put the pull on GitHub Actions. Step 3 fixed validate Gate 2 (it read a quarantined CSV).
+Step 4 added the drafting robot. It had to split into a Windows data job + a Linux Claude job, because
+Claude's action won't install on Windows. Three test runs fixed: Windows console emoji, the split, and an
+expired git token on push. Connection test passed 2026-09-30.
