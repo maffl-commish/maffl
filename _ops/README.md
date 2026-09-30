@@ -32,6 +32,8 @@ still visible in the GitHub repo itself.
 | `_ops/prompts/` | Prompts queued for Claude Code | Claude (chat) |
 | `_ops/prompts/done/` | Executed prompts, kept as history | Claude Code (moves them) |
 | `_ops/docs/` | Lasting reference: editorial guide, capture prompt, design decisions | Either |
+| `_ops/inbox/` | Robot output each week: `_espn.md`, `_facts.md`, `_datalog.md`, `_pr.md` (ESPN raw archive is git-ignored) | The robots |
+| `_ops/scripts/` | Robot scripts: ESPN pull, ingest, facts calculator | Claude Code prompts |
 | `_ops/archive/` | Retired docs worth keeping but not following | Either |
 | repo root `CLAUDE.md` | Binding rules for Claude Code | Commish-approved edits |
 | repo root `MAFFL_HQ_DATA_GOVERNANCE.md`, `MAFFL_HQ_OPERATIONS_RUNBOOK.md` | Data model + runbook | Commish-approved edits |
@@ -59,3 +61,4 @@ that's the old workflow.
 
 - **MAFFL Weekly Results Engine** gets its instructions from `_ops/docs/CAPTURE_SYSTEM_PROMPT.md`
   and `_ops/docs/PULSE_EDITORIAL_GUIDE.md`. When either changes here, re-paste it there.
+  (Retiring: after the robot's first good Tuesday, this project and the capture prompt go away. See `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`.)

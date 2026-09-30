@@ -1,6 +1,6 @@
 # MAFFL HQ — Data Governance, Model & Audit Framework
 
-**Status:** First-pass audit (pre go-live, target 2026-07-01)
+**Status:** Living reference. First written June 2026 (pre go-live); refreshed 2026-09-30 for the weekly robot and dues ledger.
 **Coverage:** Full data layer (all CSVs + 2 JS data files) reconciled; `power-rankings.html` embed audited line-level; remaining HTML embeds inventoried at a high level (not yet read field-by-field — see Phase 2).
 **Author note:** This is the "where does everything live, what overlaps, what breaks what" map you asked for. Fixes are deliberately *not* applied here — each becomes its own Claude Code prompt when you're ready.
 
@@ -68,7 +68,7 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 | Fact | GOLD source (authoritative) | Other copies that must stay in sync (derived) | Cadence |
 |---|---|---|---|
 | Game result (W/L, scores) | `MAFFL_Matchups_Clean.csv` | `MAFFL_Matchups_NoConsolation.csv`, `matchups-data.js`, embedded standings/records in history/stats/power-rankings/rivalry/weekly | Weekly (in season) |
-| Weekly top-3 scorers per team (2026+) | `data/MAFFL_Top_Performers_2026.csv` — **hand-appended weekly from capture v2.1** (`Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points`; ESPN first-initial player names; `Pos` blank until capture supplies it) | None generated. Quoted by hand in weekly.html Pulse prose (Results notes, Credit Tracker Individual High) | Weekly (in season) |
+| Weekly top-3 scorers per team (2026+) | `data/MAFFL_Top_Performers_2026.csv` — **appended weekly by the robot** (`_ops/scripts/ingest_week.py`, from the ESPN pull's OUTPUT 2a) (`Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points`; ESPN first-initial player names; `Pos` blank until capture supplies it) | None generated. Quoted by hand in weekly.html Pulse prose (Results notes, Credit Tracker Individual High) | Weekly (in season) |
 | Regular-season **fixtures** — 2026 Upper-Tier (week, home/away, Week_Type, Game_Class, Division) | `data/MAFFL_Schedule_2026_Upper.csv` — **hand-authored by the commissioner; NOT derived from any other file** | rules.html Schedule Structure (four-block table, 2026 Mirror Pairs list), weekly.html Week 1 Preview | Seasonal (set with division alignment) |
 | Team name by owner×year | `MAFFL_Team_History.csv` | Owners_Sheet "Current Team", **power-rankings.html `recentTeam`+`timeline`**, Matchups Winner/Loser_Team, Division_History "Team", embeds in history/draft/prize | Seasonal (+ ad-hoc renames) |
 | Owner W/L/T per season | `MAFFL_Matchups_Clean.csv` (derive) | `cleaned_maffl_revised.csv`, Division_History, power-rankings.html `timeline` | Weekly |
@@ -79,6 +79,7 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 | Credit balance | `Credit_Log.csv` (sum of entries) | Owners_Sheet "Current Credit Balance", 2025_League_Status balance, credits.html embed | Weekly/ad-hoc |
 | Power ratings (OVR/Clutch/Grind/Heat) + rank | `Power_Rankings.csv` | Owners_Sheet power cols, power-rankings.html embed | Seasonal (you set these) |
 | Prizes/payouts | `prize.csv` | prize.html embed, League_Packet prize CSV | Seasonal |
+| Dues obligations + payments | `Dues_Log.csv` (repo root; append-only) | prize.html `dues_seasons` (hand-synced until gen-prize reads Dues_Log; see `_ops/docs/DUES_PROCESS_NOTE.md`) | Ad-hoc |
 | Owner roster / active status / aliases | `MAFFL_Owners_Sheet_revised.csv` | every page, every data file (join key) | Rare |
 | Rules | `MAFFL_Rules_revised.csv` | rules.html | Rare |
 
@@ -116,6 +117,7 @@ spelling introduced by a future season's schedule must be added to the registry 
 This is the table you asked for. Read it as: *trigger → propagate in this order.*
 
 ### CE-1 — New week of results posted (most frequent)
+*In season this runs automatically in the weekly robot (`pulse-draft.yml`): `ingest_week.py` appends gold, then `build\generate-matchups-data.ps1` regenerates the derived files and `validate.ps1` runs. Nothing publishes until the commissioner merges the PR.*
 `MAFFL_Matchups_Clean.csv` (append rows)
 + `data/MAFFL_Top_Performers_2026.csv` (append that week's 3 rows per real team — gold, same capture; no derived files)
 → regenerate `MAFFL_Matchups_NoConsolation.csv`
@@ -139,7 +141,7 @@ Top-performer rows are not re-captured for corrections (player-level corrections
 → any page printing current team: `history.html`, `draft.html`, `prize.html`, `weekly.html`, `index.html` if shown
 
 ### CE-3 — Season finishes / playoffs resolve
-`cleaned_maffl_revised.csv` (finish flags)
+Finish flags per §7.5: `MAFFL_Division_History_2005_2025.csv` (division ranks) + `prize.csv` (Champ / RU / Lower-Tier placements) + `MAFFL_Matchups_NoConsolation.csv` (playoffs). **Never `cleaned_maffl_revised.csv`.**
 → `MAFFL_Placements_AllTime.csv`, `MAFFL_ThirdPlace_ByYear.csv`
 → `prize.csv` (payouts) → `prize.html`
 → `Power_Rankings.csv` career totals → power-rankings embed + Owners_Sheet
@@ -162,8 +164,8 @@ Top-performer rows are not re-captured for corrections (player-level corrections
 
 ### CE-7 — Dues paid / adjusted
 `Dues_Log.csv` (append a Payment row, Approved?=Y; or an Obligation row if the assessment changes)
-→ re-bake `prize.html` dues_2026 array (owed = Obligation − Payments; status = PAID when owed ≤ 0)
-→ this is the ONLY place dues_2026 should be edited — never hand-edit the array directly
+→ update the open season's rows in `prize.html` `dues_seasons` (owed = Obligation − Payments; status = PAID when owed ≤ 0)
+→ until `gen-prize.ps1` reads `Dues_Log.csv`, this sync is by hand, in the same commit. See `_ops/docs/DUES_PROCESS_NOTE.md` and `DUES_LEDGER_DESIGN.md`
 → keep `2025_League_Status` / Owners_Sheet 2026 columns in sync manually (parallel, non-runtime sources)
 
 ### CE-8 — Power re-rank (you re-score the league)
@@ -177,7 +179,7 @@ Top-performer rows are not re-captured for corrections (player-level corrections
 
 | Cadence | Data | Implication |
 |---|---|---|
-| **Weekly (in season)** | Matchups, Points, Credits, weekly scores/standings | Needs a fast, low-error pipeline. This is where your Fable screenshot→CSV flow lives. Automate hard. |
+| **Weekly (in season)** | Matchups, Points, Credits, weekly scores/standings | Needs a fast, low-error pipeline. Automated by the weekly robot (ESPN pull → gold → PR). |
 | **Seasonal** | Team names, Division, Drafts, Placements, Prizes, Power Rankings, career totals | Batch once; high blast radius (CE-2/3/5/6/8). Run audit after. |
 | **Rare** | Owner roster, Rules, aliases | Manual, but each change is a CE-6 (big ripple). |
 
@@ -218,9 +220,9 @@ brian-ron-murello, Brian Murello / Ron Murello, Brian/Ron, Y, Co-Owner, ...,
 - **DERIVED** (generated, never hand-edited): every `.js` file, every HTML embed, NoConsolation, Points_*, Placements, ThirdPlace, Draft_Summary, Owners_Sheet's computed columns (credit balance, career totals).
 
 ### 7.3 Generation pipeline (extend what already works)
-Your `.js` files prove the pattern. Extend it so **`power-rankings.html`'s `timeline`/`recentTeam` is generated from Team_History + cleaned_maffl**, not hand-typed. Same for the other big embeds. A small build step (one script per page, or one shared builder) turns gold CSVs → embedded blocks between marker comments:
+Your `.js` files prove the pattern. Extend it so **`power-rankings.html`'s `timeline`/`recentTeam` is generated from Team_History + Division_History + prize.csv + Matchups (§7.5)**, not hand-typed. Same for the other big embeds. A small build step (one script per page, or one shared builder) turns gold CSVs → embedded blocks between marker comments:
 ```html
-<!-- AUTO-GEN:owners-data START — source: Team_History.csv + cleaned_maffl.csv — regen YYYY-MM-DD — DO NOT HAND-EDIT -->
+<!-- AUTO-GEN:owners-data START — source: Team_History.csv + Division_History + prize.csv — regen YYYY-MM-DD — DO NOT HAND-EDIT -->
 ... generated array ...
 <!-- AUTO-GEN:owners-data END -->
 ```
@@ -245,7 +247,7 @@ A `validate.py` (or node) script run before each commit, plus an optional hidden
 2. **Team-name freshness:** for each owner, `power-rankings recentTeam` == latest `is_current` row in Team_History == Owners_Sheet "Current Team". Mismatch → FAIL (would have caught Murello, G-1).
 3. **Timeline ↔ gold:** each `timeline[year]` team/W/L matches Team_History + Matchups-derived record. Mismatch → WARN with diff (G-1/G-3).
 4. **Credit reconciliation:** `sum(Credit_Log where Approved=Y) per owner` == Owners_Sheet balance == 2025_League_Status balance (G-4).
-5. **Career totals:** rings/RU/div/playoff/win% recomputed from cleaned_maffl/Matchups == every stored copy (G-5).
+5. **Career totals:** rings/RU/div/playoff/win% recomputed from Matchups + Division_History + prize.csv == every stored copy (G-5).
 6. **Consolation rule:** assert no `Game_Type=Consolation` rows leak into records/points (your standing rule).
 7. **Provenance present:** every DERIVED file/embed has a header with a regen date newer than its gold source's mtime; stale → WARN.
 8. **Crosswalk gate:** Draft_Summary regen blocked unless name crosswalk has run (CE-5).
@@ -255,6 +257,7 @@ Output: a short `AUDIT.md`-style report — counts of PASS/WARN/FAIL with the sp
 ---
 
 ## 9. Phased roadmap to go-live (2026-07-01)
+*Historical: the June 2026 go-live plan. Current open work lives in `_ops/STATUS.md`.*
 
 - **Phase 1 — Stop the bleeding (highest ROI):**
   1. Build `MAFFL_Owner_Registry.csv` with aliases (kills G-2, unblocks everything).

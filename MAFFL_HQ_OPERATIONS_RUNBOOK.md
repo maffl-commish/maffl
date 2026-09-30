@@ -3,24 +3,26 @@
 The operating manual for MAFFL HQ, the web hub for the **Mid-Atlantic Fantasy Football League**
 (MAFFL, founded 2002). If you read nothing else, read §0 and §1.
 
-**Companion documents** (keep together in the project):
-- `_ops/archive/2026-06-build/# MAFFL HQ Project.md` — the build spec (architecture, design system, data-authority rules)
-- `_ops/archive/2026-06-build/CHANGE_INVENTORY.md` — every changeable datapoint, its authoritative source, and the change-event catalog
-- `_ops/archive/2026-06-build/AUDIT.md` — the 2026-06 data provenance audit (historical record)
-- `_ops/archive/2026-06-build/BUILD_SUMMARY.md` — what the build pipeline generates, per page
+> **Read this first (2026-09-30):** the page generators have drifted from the hand-edited pages, so
+> `build\build.ps1` is **check-only**. **Never run `build.ps1 -Write`.** `_ops/STATUS.md` lists what's safe
+> right now. Where this runbook and `CLAUDE.md` disagree, `CLAUDE.md` wins.
+
+**Companion documents:**
+- `CLAUDE.md`: binding rules for Claude Code
+- `MAFFL_HQ_DATA_GOVERNANCE.md`: gold sources (§2) and chain events (§4)
+- `_ops/STATUS.md`: current work, open issues, what's safe
+- `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`: the weekly robot
+- History only, don't follow: `_ops/archive/2026-06-build/` (June build spec, audits, change inventory)
 
 ---
 
 ## 0. The one rule everything follows
 
-**Data lives in the CSVs in `./data/`. The HTML is generated from them. You never hand-edit data
-in HTML.**
+**Data lives in the gold CSVs (`./data/`, plus `Dues_Log.csv` at the repo root). Derived files and page
+embeds are regenerated from gold, or synced to it in the same commit. You never change a number only in the HTML.**
 
-To change a number on the site: edit the CSV that owns it, run the build, review, publish. That's
-the whole loop. The build regenerates the page from the CSV, so the page can't drift from the
-source. When the *source itself* is wrong (it happens — a stale rule value, a typo), you fix the
-source, not the page. The principle is *single source of truth*, not *the CSV is always factually
-right*.
+To change a number on the site: edit the gold CSV that owns it, regenerate or sync what derives from it,
+validate, review, publish. When the *source itself* is wrong, fix the source, not the page.
 
 Why this matters: the site's value to the league is that the data is trustworthy. The fastest way
 to lose that trust is two pages showing different numbers for the same fact. The pipeline exists
@@ -30,25 +32,17 @@ so that can't happen.
 
 ## 1. The publish loop (every change goes through this)
 
-1. **Identify the owning source.** Use the table in §2 (or `_ops/archive/2026-06-build/CHANGE_INVENTORY.md`) to find which
-   CSV owns the datapoint. One datapoint, one source.
-2. **Edit the source CSV** in `./data/`.
-3. **Run the build (check mode first):**
-   ```
-   powershell -ExecutionPolicy Bypass -File build\build.ps1
-   ```
-   This validates and proves the round-trip but writes nothing. If a validation gate fails, it
-   tells you what and stops — fix the cause before going further.
-4. **Run the build (write mode):**
-   ```
-   powershell -ExecutionPolicy Bypass -File build\build.ps1 -Write
-   ```
-   This regenerates the affected page(s) from the CSVs.
-5. **Review** the changed page(s) — confirm the change you intended, and nothing else moved.
-6. **Commit and push** (GitHub Pages publishes automatically from the repo).
+1. **Identify the gold source.** `MAFFL_HQ_DATA_GOVERNANCE.md` §2 (short version in §2 below).
+2. **Write a Claude Code prompt** (`_ops/prompts/`) that edits the gold CSV.
+3. **Regenerate what derives from it**, using only the generator for that event. Today the safe one is
+   `build\generate-matchups-data.ps1` (CE-1 / CE-1a): check → `-Write` → re-check. For page embeds that have no
+   safe generator (see STATUS), the prompt syncs the embed to gold by hand **in the same commit** and says so.
+4. **Validate:** `powershell -ExecutionPolicy Bypass -File build\validate.ps1`. Expect 8/8.
+5. **Review** the diff in GitHub Desktop: the change you intended, nothing else.
+6. **Commit and push.** GitHub Pages publishes.
 
-> The pipeline is PowerShell (`build\*.ps1`), not Python — this machine has no working Python.
-> Same design, same loop; just the language the environment required.
+> Build and generator scripts are Windows PowerShell 5.1 (`build\*.ps1`). The weekly robot's scripts are
+> Python 3 (`_ops/scripts/`) and run in GitHub Actions.
 
 **Never** skip to hand-editing the HTML because it's "just one number." That's how the original
 drift happened. The loop is the discipline.
@@ -57,18 +51,24 @@ drift happened. The loop is the discipline.
 
 ## 2. Who owns what (authoritative source per datapoint)
 
-| Datapoint | Authoritative source | Generated into |
+Full registry: `MAFFL_HQ_DATA_GOVERNANCE.md` §2. Owner names always resolve through `data/MAFFL_Owner_Registry.csv`.
+
+| Datapoint | Gold source | Feeds |
 |---|---|---|
-| Career totals (champs, playoffs, W/L/T, win%) | `cleaned_maffl_revised.csv` → recomputed | stats.html, draft.html |
-| Year-by-year records & flags | `cleaned_maffl_revised.csv` | history.html |
-| Canonical team names / division ranks | `MAFFL_Division_History_2005_2025.csv` | history.html |
-| Draft picks | `MAFFL_Draft_History_Clean_v3.csv` | draft.html |
-| Credit transactions → balances | `Credit_Log.csv` | credits.html (+ Owners Sheet balance mirror) |
-| Prize dues / pay status / payouts | `MAFFL League Packet - 2025 Prizes.csv` (payouts formula-derived) | prize.html |
-| Power ratings + scout notes | `Power_Rankings_*.csv` *(to be created)* | power-rankings.html |
-| Rules | `MAFFL_Rules_revised.csv` | **rules.html is MANUAL — see §4 Event 7** |
-| Weekly Pulse | pasted ESPN results *(workflow TBD)* | weekly.html + standalone |
-| Site chrome (nav, season count, news strip) | n/a — code | the page itself |
+| Game results | `data/MAFFL_Matchups_Clean.csv` | CE-1 generator → NoConsolation, `matchups-data.js`, Points_* |
+| Weekly top-3 scorers | `data/MAFFL_Top_Performers_2026.csv` (robot appends) | weekly.html prose |
+| Division titles | `data/MAFFL_Division_History_2005_2025.csv` | history, power-rankings, stats |
+| Champ / RU / Lower-Tier finishes | `data/prize.csv` placement rows | history, power-rankings, prize |
+| Playoff appearances | `data/MAFFL_Matchups_NoConsolation.csv` (Upper, `Is_Playoffs`) | history, power-rankings |
+| Draft picks | `data/MAFFL_Draft_History_Clean_v3.csv` (name crosswalk first) | `draft-summary-data.js`, draft.html |
+| Credits | `data/Credit_Log.csv` | credits.html, Owners Sheet balance |
+| Dues | `Dues_Log.csv` (repo root) | prize.html `dues_seasons`, hand-synced (see `_ops/docs/DUES_PROCESS_NOTE.md`) |
+| Prizes / payouts | `data/prize.csv` | prize.html |
+| Power ratings + scout notes | `data/Power_Rankings.csv` | power-rankings.html |
+| Rules | `data/MAFFL_Rules_revised.csv` | rules.html is manual (§4 Event 7) |
+| Weekly Pulse | the weekly robot's PR | weekly.html |
+
+**Never use `data/cleaned_maffl_revised.csv` as a source.** It's corrupted and quarantined (governance §7.2).
 
 **Owner-name normalization** is automatic in the build: all co-owner variants collapse to the
 canonical `Name A / Name B` (forward slash, spaces both sides), and `Michael Murello` →
@@ -91,6 +91,8 @@ understand them, because a failure is the system catching a real problem:
 7. Every owner name resolves to a canonical name.
 8. Power-rank positions unique 1..N; every rated owner exists.
 
+> Gates 1 and 7 still read the quarantined `cleaned_maffl_revised.csv` (open issue in STATUS). A pass there isn't proof that the finish flags are right.
+
 **Standing exceptions the build will NOT flag** (these are confirmed-correct, don't "fix" them):
 2002 co-championship; 2002–2004 blank W/L/T; 2007 blank draft prices (shown as "—", not $0);
 `Michael Murello` alias; co-owner pairs as single units; the credit-packet "2026 League"
@@ -104,24 +106,22 @@ Most changes happen as one of these recurring events. Each lists what to touch a
 
 ### Event 1 — Season-End Push
 *The big one. Priority outputs first; the rest can follow together.*
-1. **Prizes** — update `MAFFL League Packet - 2025 Prizes.csv` (new payouts via formula, pay
+1. **Prizes** — update `data/prize.csv` (new payouts via formula, pay
    status). *Priority output — league is waiting on it.*
 2. **Promotion / Relegation** — 3 up from Lower, 3 down from Upper. Updates next season's tier
    assignments; ripples into rules.html (tier tables), credits.html (balance grouping), and
    weekly.html. *Priority output. Easy to forget — touches multiple pages.*
 3. **Credit awards** — append season-outcome credits (champion, survivor, etc.) to `Credit_Log.csv`.
-4. **History** — append the new season's rows to `cleaned_maffl_revised.csv` and division
-   alignment to `MAFFL_Division_History_2005_2025.csv`.
+4. **History**: add the season's division ranks to `MAFFL_Division_History_2005_2025.csv` and placements to `prize.csv`. **Don't** append to `cleaned_maffl_revised.csv` (quarantined). Follow governance CE-3.
 5. **Stats** — career totals **recompute** from history automatically. *Build dependency: history
    (step 4) must be updated before stats regenerate. Doing stats from memory instead of recompute
    is what caused the original Tony Brooks division-title error.*
 6. **Season count** — bump "Seasons" count in index.html (site chrome).
-- Then run the publish loop. The validator confirms the whole set reconciles before anything ships.
+- Then run the publish loop (§1). Validate must pass before anything ships.
 
 ### Event 2 — Power Rankings
 *Later off-season / near season start. Standalone — not part of the season-end push.*
-You **author** fresh OVR/Clutch/Grind/Heat + scout notes. Update the power-rankings source CSV
-(once created), run the build. No recompute check — these are authored, not derived.
+You **author** fresh OVR/Clutch/Grind/Heat + scout notes. Update `data/Power_Rankings.csv`, then sync the power-rankings.html embed from it (governance CE-8). No recompute check — these are authored, not derived.
 
 ### Event 3 — Division Alignment
 *By August 1 (Upper-Tier).* New A/B/C/D assignments. May overlap the credit-spend window (division
@@ -129,12 +129,14 @@ swaps cost credits → `Credit_Log.csv` rows).
 
 ### Event 4 — Draft Results
 *Shortly after the Labor Day draft.* Append the new picks (a few hundred rows) to
-`MAFFL_Draft_History_Clean_v3.csv`, run the build → regenerates draft.html. Validator checks pick
+`MAFFL_Draft_History_Clean_v3.csv`, run the player-name crosswalk first, then regenerate per governance CE-5. `_ops/docs/AUDIT_2026_Draft_Ingest.md` is the per-season checklist. Validator checks pick
 counts per team and the no-Kicker rule.
 
 ### Event 5 — Weekly In-Season
-*Every regular-season week.* Paste ESPN results → produce the week's data object → flows into
-weekly.html and the standalone Gmail attachment. *(Ingestion workflow is a separate build — see §6.)*
+*Every regular-season week, automatic.* The robot pulls ESPN on Tuesday morning, updates gold + matchup
+files, and opens a "Weekly Pulse: Week N draft" PR. Review it, comment `@claude …` for changes, and merge to
+publish. Stat corrections to earlier weeks are flagged in the PR, never applied: CE-1a is the commissioner's
+call. See `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`.
 
 ### Event 6 — Ad-Hoc Correction
 *Anytime an owner reports an error ("I didn't draft that guy", wrong position, wrong stat).*
@@ -159,8 +161,7 @@ process rather than build-regeneration.)*
 
 ## 5. Working with Claude Code safely
 
-The pipeline and all file edits happen in Claude Code (it can see the real files; a chat assistant
-cannot). Patterns that have worked and are worth keeping:
+All file edits happen in Claude Code. Claude in Cowork chat reads the live repo and writes prompts into `_ops/prompts/` (see `_ops/README.md`). Patterns that have worked and are worth keeping:
 
 - **Audits and sweeps are read-only.** When you want to understand state, ask for a report that
   changes nothing (`_ops/archive/2026-06-build/AUDIT.md`, `_ops/archive/2026-06-build/DOC_SWEEP.md` were built this way). Look before touching.
@@ -176,19 +177,9 @@ cannot). Patterns that have worked and are worth keeping:
 
 ---
 
-## 6. Known open work (as of 2026-06)
+## 6. Known open work
 
-- **Power rankings source CSV** — `power-rankings.html` is skipped by the build until a
-  `Power_Rankings_*.csv` source exists. Create it, then the page generates like the others.
-- **Pre-2025 prize history CSV** — the 2013–2024 history (and all-time total) currently lives only
-  as literals in prize.html. Once a source CSV exists, regenerate the whole `prize_events` array
-  (including 2025) in one pass.
-- **Weekly preview/labeling** — at launch, weekly.html may show sample data. Ensure sample data is
-  clearly labeled as a preview so no one mistakes it for real results; switch to the off-season
-  message when the season starts, then to live weekly at kickoff. *(Decision/build still open.)*
-- **Weekly Capture project** — a planned separate tool: a system prompt that extracts structured
-  weekly data (standings, scores) from uploaded ESPN screenshots into the CSV/object shape
-  weekly.html consumes. The clean implementation of "paste results, the rest is automatic."
+Tracked in `_ops/STATUS.md` → "Open decisions / known issues". (The June 2026 list is in git history.)
 
 ---
 
@@ -220,11 +211,11 @@ change — the rule governs 2026+.
 
 ## Quick reference card
 
-**To change any number:** edit the CSV (§2) → `build.ps1` (check) → `build.ps1 -Write` → review →
-commit/push.
+**To change any number:** edit the gold CSV (§2) → its generator or same-commit sync → `validate.ps1` → review → commit/push. **Never `build.ps1 -Write`.**
 **Build fails a gate:** it caught something real — fix the cause, don't override (unless it's a §3
 standing exception, which it won't flag anyway).
 **Owner reports an error:** log → verify against source → fix the CSV → publish loop → reply.
 **A rule changed:** rules.html is manual — edit the CSV for the record, hand-sync the page.
 **Season ended:** Event 1 — prizes & promotion/relegation first, then credits, history, stats,
 season count.
+**Tuesday in season:** review and merge the robot's Weekly Pulse PR before the next Tuesday.

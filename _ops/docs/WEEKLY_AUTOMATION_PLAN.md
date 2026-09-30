@@ -18,6 +18,7 @@ Updated 2026-09-30 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older 
 2. Want changes? Comment `@claude …` in plain English (e.g. "@claude lead with the Reilly game"). Claude edits the draft.
 3. Happy? Click **Merge pull request**, then **Confirm merge**. The site updates in a minute or two.
 4. On your computer: in GitHub Desktop, click **Fetch origin**, then **Pull origin**, before any other MAFFL work.
+5. **Merge each week's PR before the next Tuesday.** The robot won't draft a week while the previous one is still unmerged. It emails you instead.
 
 **Fallback:** if the robot fails, start a Cowork chat in MAFFL HQ Ops: "draft the Week N Pulse from the inbox".
 
@@ -28,12 +29,14 @@ Updated 2026-09-30 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older 
 | Email: ESPN pull failed, "Could not open the league" | ESPN cookies expired (~yearly). Get `espn_s2` + `SWID` again (Chrome F12 → Application → Cookies) and update the two GitHub secrets |
 | ESPN pull "BLOCKED" | Open that week's `_espn.md` and read the BLOCKING line (tie, unknown team, Ghost mismatch…). Ask Claude in chat |
 | Pulse draft failed at "Claude" | Claude token expired (~yearly). PowerShell: `& "$env:USERPROFILE\.local\bin\claude.exe" setup-token`, then update secret `CLAUDE_CODE_OAUTH_TOKEN` |
+| Pulse draft failed and you want to retry it | Open the failed run and click **Re-run failed jobs**. (**Run workflow** does nothing while the `pulse/2026-weekNN` branch exists. Delete that branch first if you want a fresh start.) |
+| Email: "Week N−1 isn't in gold on main yet" | Last week's Pulse PR wasn't merged. Merge it. The Wednesday backstop drafts this week by itself, or use Actions → Pulse draft → **Run workflow** (week N). Expect one of these emails per Tuesday retry until you merge. |
 | Any other red ✗ | Click the failed step and screenshot the last lines for Claude |
 | Need to run by hand | Actions → pick the workflow → **Run workflow** (ESPN pull: week + force; Pulse draft: week, or smoke_test) |
 
 ## The parts (everything that matters, nothing else)
 
-- **3 robots** (`.github/workflows/`): `espn-weekly-pull.yml` · `pulse-draft.yml` · `claude-mention.yml` (@claude)
+- **4 robots** (`.github/workflows/`): `espn-weekly-pull.yml` · `pulse-draft.yml` · `claude-mention.yml` (@claude) · `rehearsal.yml` (re-draft a published week into a PR to close; button only after 2026-09-30)
 - **3 scripts** (`_ops/scripts/`): `maffl_espn_pull.py` (ESPN → report) · `ingest_week.py` (report → gold CSVs) · `pulse_facts.py` (gold → every number)
 - **2 instruction docs** (`_ops/docs/`): `ROBOT_PULSE_RECIPE.md` (Claude's weekly steps) · `PULSE_EDITORIAL_GUIDE.md` (your writing rules)
 - **3 secrets** (GitHub → Settings → Secrets → Actions): `ESPN_S2`, `SWID`, `CLAUDE_CODE_OAUTH_TOKEN`

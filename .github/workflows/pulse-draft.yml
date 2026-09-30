@@ -6,6 +6,7 @@
 #            _ops/docs/ROBOT_PULSE_RECIPE.md, then open a pull request for the commissioner.
 # Nothing publishes until he merges. Needs secret CLAUDE_CODE_OAUTH_TOKEN and the repo setting
 # "Allow GitHub Actions to create and approve pull requests".
+# Guard: a week is only drafted when the previous week is already in gold on main (merge each PR before the next Tuesday).
 # (Claude's GitHub action can't install on Windows runners, hence the split.)
 name: Pulse draft
 
@@ -93,6 +94,14 @@ jobs:
             }
           }
           if (-not $week) { Write-Host "No new week to draft."; "mode=none" >> $env:GITHUB_OUTPUT; exit 0 }
+          if ($week -gt 1) {
+            $prev = $week - 1
+            if (-not (Select-String -Path data/MAFFL_Matchups_Clean.csv -Pattern "^2026,$prev," -Quiet)) {
+              $pb = "pulse/2026-week{0:D2}" -f $prev
+              Write-Host "::error::Week $prev isn't in gold on main yet, so Week $week can't be drafted. Merge the 'Weekly Pulse: Week $prev draft' pull request first. The Wednesday backstop then drafts Week $week by itself, or use Actions > Pulse draft > Run workflow (week $week). If the Week $prev PR was closed without merging, delete branch $pb and run Pulse draft for week $prev first."
+              exit 1
+            }
+          }
           $branch = "pulse/2026-week{0:D2}" -f $week
           git ls-remote --exit-code --heads origin $branch | Out-Null
           if ($LASTEXITCODE -eq 0) { Write-Host "A draft branch $branch already exists."; "mode=none" >> $env:GITHUB_OUTPUT; exit 0 }

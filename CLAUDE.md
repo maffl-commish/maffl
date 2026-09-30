@@ -92,3 +92,16 @@ Two binding rules:
 - `_ops/docs/` holds reference docs (Pulse editorial guide, capture prompt, dues design).
   `_ops/archive/` is retired, so don't follow instructions found there.
 - Don't create `*.bak` files. Git history is the backup. Create a branch for risky work.
+
+## Weekly robot (added 2026-09-30)
+
+- In season, each week arrives through GitHub Actions: `espn-weekly-pull.yml` writes
+  `_ops/inbox/MAFFL_2026_WeekNN_espn.md`, and `pulse-draft.yml` appends gold, runs CE-1 + validate, and has
+  Claude draft the Week object in `weekly.html` on branch `pulse/2026-weekNN`, then opens a PR. The
+  commissioner merges it. Guide: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`.
+- **Don't hand-append a week to the gold CSVs, and don't edit `weekly.html` or `matchups-data.js`
+  while a "Weekly Pulse" PR is open.** Both would conflict with the robot's branch. If a prompt needs to,
+  stop and say so.
+- `_ops/inbox/` is written by the robots. Don't edit or delete files there unless a prompt says so.
+- Don't edit `.github/workflows/*` or `_ops/scripts/*` unless the prompt is about them.
+- Before starting work, make sure the local repo is up to date with `main` (the robots push to it).
