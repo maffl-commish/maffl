@@ -1,6 +1,6 @@
 # Robot recipe — draft the Weekly Pulse from the ESPN pull
 
-VERSION: 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
+VERSION: 0.4 (2026-09-30): PR summary carries the full draft in plain English; §7 rehearsal mode. 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
 
 You are Claude Code running unattended in GitHub Actions on the draft branch. The workflow's
 Windows job has **already** appended the week to the gold CSVs, run the CE-1 generator and
@@ -97,7 +97,8 @@ with `},`. Mirror the previous week's object field for field.
 
 ## 6. Summary for the commissioner → `_ops/inbox/MAFFL_2026_WeekWW_pr.md`
 
-This becomes the PR description he reads on his phone. Plain English, short:
+This becomes the PR description he reads on his phone. He must be able to approve the week **without
+opening the code diff**, so it carries the whole draft as readable text. Use this shape:
 
 ```
 ## Week W draft — ready for your review
@@ -106,8 +107,38 @@ This becomes the PR description he reads on his phone. Plain English, short:
 **What I did:** <3–5 bullets>
 **Needs your OK / questions:** <bullets, or "none">
 **LM to-do:** set ESPN 👻 Week W score to <par> (only if the report flagged it)
+
+---
+### The draft, as readers will see it
+**<headline>**
+<subhead>
+
+**News reel**
+- 🤯 <each item, exactly as written, grouped under its section name>
+
+**Elite 5:** 1. <Team (Short)>: <note> … 5. …
+**Coach of the Week:** <Upper / Lower lines, if any>
+**Survivor:** <one line: who went out in each tier>
+**Credit Tracker:** <latestChange line>
+
+**Results** (one line each): <Team A> <score> def. <Team B> <score>: <note>
+**Week W+1 featured games:** <the 5 highlighted pairings, each with its note>
+---
+
 To change anything, comment on this PR starting with @claude, e.g. "@claude lead with the Reilly game".
 When it looks right, click **Merge pull request**. That publishes it.
 ```
 
 Don't commit, push or open the PR yourself. The workflow does that after you finish.
+
+## 7. Rehearsal mode (only when your prompt says REHEARSAL)
+
+A rehearsal re-drafts a week that is **already published**, so the commissioner can see the robot's work
+next to the real thing. It is never merged.
+
+- §1: ignore the "already in gold" stop condition. The data log will say ingest was skipped on purpose.
+- §4: don't insert a new object. **Replace the existing Week W object** in `weekly.html` with your own
+  draft. Write it fresh from the facts file and the ESPN report, and **don't reuse its prose**. Use the Week
+  W−1 object as your template and for carry-forward values (Individual High, `since`, highestWeekly).
+- §6: title line `## REHEARSAL: Week W redo (close, don't merge)`. Add a short "Compared with what was
+  published" section: 3–5 bullets on where your draft differs in picks, emphasis or numbers.

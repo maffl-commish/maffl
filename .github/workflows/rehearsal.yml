@@ -1,0 +1,54 @@
+# MAFFL rehearsal: the full Tuesday chain on an already-published week, ending in a PR to CLOSE.
+#   1. ESPN weekly pull (re-pulls the week from ESPN, force)
+#   2. waits for it to finish
+#   3. Pulse draft in rehearsal mode (Claude re-drafts the week on a throwaway branch)
+# Runs once by schedule (Wed Sep 30, 2026, 6:00 AM ET) and any time from the "Run workflow" button.
+name: Rehearsal
+
+on:
+  schedule:
+    - cron: "0 10 30 9 *"   # Sep 30, 10:00 UTC = 6:00 AM EDT (guarded to 2026 below)
+  workflow_dispatch:
+    inputs:
+      week:
+        description: "Already-published week to rehearse"
+        required: false
+        default: "3"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  rehearse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      WEEK: ${{ inputs.week || '3' }}
+    steps:
+      - name: Only the 2026 schedule date (manual runs always go)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%Y)" != "2026" ]; then
+            echo "go=false" >> "$GITHUB_OUTPUT"; echo "Not 2026: nothing to do."
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 1. ESPN pull (week ${{ env.WEEK }}, forced)
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          gh workflow run espn-weekly-pull.yml -f week="$WEEK" -f force=true
+          sleep 20
+          RUN=$(gh run list --workflow espn-weekly-pull.yml --event workflow_dispatch --limit 1 --json databaseId -q '.[0].databaseId')
+          echo "Watching ESPN pull run $RUN"
+          gh run watch "$RUN" --exit-status --interval 20
+
+      - name: 2. Pulse draft, rehearsal mode
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          sleep 60   # let the automatic post-pull draft run (a no-op for a published week) get out of the way
+          gh workflow run pulse-draft.yml -f week="$WEEK" -f rehearsal=true
+          echo "Started. The REHEARSAL pull request appears in about 10 minutes."

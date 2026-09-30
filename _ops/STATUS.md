@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-30 · Rehearsal workflow + pulse-draft rehearsal mode; recipe v0.4 (full draft as readable text in the PR). Week 3 rehearsal scheduled Wed Sep 30 6:00 AM ET: expect a "REHEARSAL: Week 3 redo" PR to review on the phone, then close.
 - 2026-09-30 · Coach of the Week is back (bragging rights): ESPN pull v0.5.1 computes fewest points left on the bench per tier + 🔄 Could have won (OUTPUT 2e); Pulse v6.3 card; editorial §8b; robot recipe v0.3. First appears Week 4.
 - 2026-09-30 · Weekly robot live: Pulse-draft connection test passed (Windows data job + Linux Claude job + PR). Automation plan rewritten as a one-page guide
 - 2026-09-29 · Pulse-draft robot: data job ✅ and Claude ✅ on test #3; final push failed on expired action token, fixed by resetting git auth to GITHUB_TOKEN. Re-run the connection test.

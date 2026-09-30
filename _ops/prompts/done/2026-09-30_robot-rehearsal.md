@@ -1,3 +1,28 @@
+# Robot rehearsal: re-run the whole Tuesday chain on Week 3, ending in a PR to close
+
+VERSION: none
+
+Date: 2026-09-30 · Author: Claude (chat) · Scope: replace `.github/workflows/pulse-draft.yml` (adds a
+`rehearsal` input) and add `.github/workflows/rehearsal.yml`. No pages or data change on `main`.
+
+Why: the commissioner wants to wake up to a real end-to-end draft before Week 4. Week 3 is the only finished
+week, and it's already published. So the rehearsal re-pulls it from ESPN and has Claude re-draft it on a
+throwaway branch. The PR is titled "REHEARSAL … (close, don't merge)". `rehearsal.yml` fires once on
+**Wed Sep 30, 2026, 6:00 AM ET** and also has a Run workflow button. Chat has already updated
+`_ops/docs/ROBOT_PULSE_RECIPE.md` to v0.4: the PR summary now carries the full draft as readable text,
+and §7 covers rehearsal mode.
+
+Read first: `_ops/STATUS.md`. If anything doesn't match, **stop and ask**. No `*.bak` files.
+
+## Step 1 — Pre-checks
+
+- `.github/workflows/pulse-draft.yml` contains `x-access-token` (the push fix). `rehearsal.yml` doesn't exist yet.
+- `Select-String _ops/docs/ROBOT_PULSE_RECIPE.md -Pattern 'VERSION: 0.4'` → 1 hit.
+- `.github/workflows/espn-weekly-pull.yml` has inputs `week` and `force`. Leave it unchanged.
+
+## Step 2 — Replace `.github/workflows/pulse-draft.yml` entirely (verbatim)
+
+```yaml
 # MAFFL Pulse draft — Step 4 of _ops/docs/WEEKLY_AUTOMATION_PLAN.md
 # Runs after "ESPN weekly pull" succeeds (or by hand). Two jobs:
 #   1. data  (Windows, no AI): append the week to gold, run the CE-1 generator + validate,
@@ -220,3 +245,82 @@ jobs:
             echo "Claude didn't write a summary file. Check the 'Claude' step in this run's log before merging." > "$BODY"
           fi
           gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY"
+```
+
+## Step 3 — Create `.github/workflows/rehearsal.yml` (verbatim)
+
+```yaml
+# MAFFL rehearsal: the full Tuesday chain on an already-published week, ending in a PR to CLOSE.
+#   1. ESPN weekly pull (re-pulls the week from ESPN, force)
+#   2. waits for it to finish
+#   3. Pulse draft in rehearsal mode (Claude re-drafts the week on a throwaway branch)
+# Runs once by schedule (Wed Sep 30, 2026, 6:00 AM ET) and any time from the "Run workflow" button.
+name: Rehearsal
+
+on:
+  schedule:
+    - cron: "0 10 30 9 *"   # Sep 30, 10:00 UTC = 6:00 AM EDT (guarded to 2026 below)
+  workflow_dispatch:
+    inputs:
+      week:
+        description: "Already-published week to rehearse"
+        required: false
+        default: "3"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  rehearse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      WEEK: ${{ inputs.week || '3' }}
+    steps:
+      - name: Only the 2026 schedule date (manual runs always go)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%Y)" != "2026" ]; then
+            echo "go=false" >> "$GITHUB_OUTPUT"; echo "Not 2026: nothing to do."
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 1. ESPN pull (week ${{ env.WEEK }}, forced)
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          gh workflow run espn-weekly-pull.yml -f week="$WEEK" -f force=true
+          sleep 20
+          RUN=$(gh run list --workflow espn-weekly-pull.yml --event workflow_dispatch --limit 1 --json databaseId -q '.[0].databaseId')
+          echo "Watching ESPN pull run $RUN"
+          gh run watch "$RUN" --exit-status --interval 20
+
+      - name: 2. Pulse draft, rehearsal mode
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          sleep 60   # let the automatic post-pull draft run (a no-op for a published week) get out of the way
+          gh workflow run pulse-draft.yml -f week="$WEEK" -f rehearsal=true
+          echo "Started. The REHEARSAL pull request appears in about 10 minutes."
+```
+
+## Step 4 — Verify
+
+- No tabs in either file. `Select-String .github/workflows/pulse-draft.yml -Pattern 'rehearsal'` → several hits,
+  including `mode == 'rehearsal'`. `x-access-token` still present (1 hit).
+- `git status`: the two workflow files, STATUS, this prompt's move (plus the recipe if uncommitted).
+
+## Step 5 — Close out
+
+`git mv` this prompt to `_ops/prompts/done/`, update `_ops/STATUS.md`, one commit, and **push tonight** so
+the 6:00 AM schedule sees it.
+
+Suggested commit message: `Robot rehearsal: Week 3 end-to-end dry run (scheduled Sep 30 6 AM ET) + readable PR summary`
+
+---
+
+STATUS:
+- Recently shipped (top): `2026-09-30 · Rehearsal workflow + pulse-draft rehearsal mode; recipe v0.4 (full draft as readable text in the PR). Week 3 rehearsal scheduled Wed Sep 30 6:00 AM ET: expect a "REHEARSAL: Week 3 redo" PR to review on the phone, then close.`
+- Queued prompts: remove this prompt's line.
