@@ -1,8 +1,12 @@
 # MAFFL Pulse draft — Step 4 of _ops/docs/WEEKLY_AUTOMATION_PLAN.md
-# After "ESPN weekly pull" succeeds, Claude follows _ops/docs/ROBOT_PULSE_RECIPE.md on a new
-# branch and this workflow opens a pull request for the commissioner. Nothing publishes until
-# he merges it. Needs secret CLAUDE_CODE_OAUTH_TOKEN and the repo setting
+# Runs after "ESPN weekly pull" succeeds (or by hand). Two jobs:
+#   1. data  (Windows, no AI): append the week to gold, run the CE-1 generator + validate,
+#            compute the facts file, push branch pulse/2026-weekNN.
+#   2. write (Linux, Claude): write the Week object in weekly.html per
+#            _ops/docs/ROBOT_PULSE_RECIPE.md, then open a pull request for the commissioner.
+# Nothing publishes until he merges. Needs secret CLAUDE_CODE_OAUTH_TOKEN and the repo setting
 # "Allow GitHub Actions to create and approve pull requests".
+# (Claude's GitHub action can't install on Windows runners, hence the split.)
 name: Pulse draft
 
 on:
@@ -31,10 +35,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  draft:
+  data:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: windows-latest   # CE-1 scripts need Windows PowerShell 5.1
-    timeout-minutes: 60
+    timeout-minutes: 20
+    outputs:
+      mode: ${{ steps.pick.outputs.mode }}
+      week: ${{ steps.pick.outputs.week }}
+      branch: ${{ steps.pick.outputs.branch }}
     steps:
       - name: Get the repo
         uses: actions/checkout@v4
@@ -56,7 +64,7 @@ jobs:
         run: |
           if ($env:SMOKE -eq 'true') {
             "mode=smoke" >> $env:GITHUB_OUTPUT
-            "week=0" >> $env:GITHUB_OUTPUT
+            "week=3" >> $env:GITHUB_OUTPUT
             "branch=robot/smoke-test-$(Get-Date -Format 'yyyyMMdd-HHmm')" >> $env:GITHUB_OUTPUT
             exit 0
           }
@@ -80,65 +88,103 @@ jobs:
           "branch=$branch" >> $env:GITHUB_OUTPUT
           exit 0
 
-      - name: Make the draft branch
+      - name: Gold data, generator, validate, facts
         if: steps.pick.outputs.mode != 'none'
         shell: pwsh
-        run: git checkout -b "${{ steps.pick.outputs.branch }}"
+        run: |
+          $ErrorActionPreference = 'Continue'   # native tools report via exit codes; Step() throws on a bad one
+          $w = [int]"${{ steps.pick.outputs.week }}"
+          $mode = "${{ steps.pick.outputs.mode }}"
+          $log = "_ops/inbox/MAFFL_2026_Week{0:D2}_datalog.md" -f $w
+          if ($mode -eq 'smoke') { $log = "_ops/inbox/robot-smoke-data.md" }
+          git checkout -b "${{ steps.pick.outputs.branch }}"
+          function Step($title, [scriptblock]$cmd, [int[]]$ok) {
+            Add-Content $log "`n### $title`n``````"
+            $out = & $cmd 2>&1 | Out-String
+            $code = $LASTEXITCODE
+            Add-Content $log ($out.TrimEnd())
+            Add-Content $log "``````  exit $code"
+            Write-Host $out
+            if ($ok -notcontains $code) { throw "$title failed (exit $code). See $log." }
+          }
+          Set-Content $log "# Week $w data log (robot, Windows runner)"
+          if ($mode -eq 'draft') {
+            Step "Append week to gold (ingest_week.py)" { python _ops/scripts/ingest_week.py $w } @(0)
+            Step "CE-1 generator, check (expect 1 = additions)" { powershell -ExecutionPolicy Bypass -File build\generate-matchups-data.ps1 } @(1)
+            Step "CE-1 generator, write" { powershell -ExecutionPolicy Bypass -File build\generate-matchups-data.ps1 -Write } @(0,1)
+            Step "CE-1 generator, re-check (expect 0 = in sync)" { powershell -ExecutionPolicy Bypass -File build\generate-matchups-data.ps1 } @(0)
+          }
+          Step "validate (expect 0 = 8/8)" { powershell -ExecutionPolicy Bypass -File build\validate.ps1 } @(0)
+          Step "Facts calculator" { python _ops/scripts/pulse_facts.py $w } @(0)
+          if ($mode -eq 'smoke') { Remove-Item ("_ops/inbox/MAFFL_2026_Week{0:D2}_facts.md" -f $w) }
+          git config user.name "maffl-pulse-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Week $w data: CE-1 + facts ($mode)"
+          git push -u origin HEAD
 
-      - name: Claude drafts the Pulse
-        if: steps.pick.outputs.mode == 'draft'
+  write:
+    needs: data
+    if: needs.data.outputs.mode != 'none' && needs.data.outputs.mode != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Get the draft branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.data.outputs.branch }}
+          fetch-depth: 0
+
+      - name: Claude writes the Pulse
+        if: needs.data.outputs.mode == 'draft'
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
-            W = ${{ steps.pick.outputs.week }}.
+            W = ${{ needs.data.outputs.week }}.
             Read _ops/docs/ROBOT_PULSE_RECIPE.md and follow it exactly for Week W of 2026.
-            You are on branch ${{ steps.pick.outputs.branch }}. Don't commit, push or open a PR.
+            The gold data, CE-1 files and facts file are already done on this branch (see the data log).
+            Don't commit, push or open a PR.
           claude_args: |
             --max-turns 150
             --allowedTools "Bash,Read,Edit,Write,Glob,Grep"
 
       - name: Claude connection test
-        if: steps.pick.outputs.mode == 'smoke'
+        if: needs.data.outputs.mode == 'smoke'
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
-            This is a connection test on a Windows runner. Change no file except the one below.
-            1. Run: powershell -ExecutionPolicy Bypass -File build\validate.ps1
-            2. Run: python _ops/scripts/pulse_facts.py 3   (it writes a facts file; the workflow deletes it afterwards)
-            3. Run: python --version ; node --version
-            4. Create _ops/inbox/robot-smoke-test_pr.md with: a line "## Robot connection test",
-               the validate gate summary, whether pulse_facts.py ran, the two version lines, and one
-               sentence confirming you could read _ops/docs/ROBOT_PULSE_RECIPE.md.
-               End with: "This is a test. Close this pull request without merging."
+            This is a connection test. Change no file except the one below.
+            Read _ops/inbox/robot-smoke-data.md (written by the Windows data job) and _ops/docs/ROBOT_PULSE_RECIPE.md.
+            Run: node --version
+            Create _ops/inbox/robot-smoke-test_pr.md with: a line "## Robot connection test",
+            a 3-line summary of the data log (did validate pass 8/8, did the facts calculator run),
+            the node version, and one sentence confirming you read the recipe.
+            End with: "This is a test. Close this pull request without merging."
           claude_args: |
-            --max-turns 30
+            --max-turns 20
             --allowedTools "Bash,Read,Edit,Write,Glob,Grep"
 
       - name: Commit, push and open the pull request
-        if: steps.pick.outputs.mode != 'none'
-        shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODE: ${{ needs.data.outputs.mode }}
+          WEEK: ${{ needs.data.outputs.week }}
+          BRANCH: ${{ needs.data.outputs.branch }}
         run: |
           git config user.name "maffl-pulse-robot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if ("${{ steps.pick.outputs.mode }}" -eq "smoke") { Remove-Item _ops/inbox/MAFFL_2026_Week03_facts.md -ErrorAction SilentlyContinue }
+          if [ "$MODE" = "smoke" ]; then
+            TITLE="TEST: robot connection test (close, don't merge)"; BODY="_ops/inbox/robot-smoke-test_pr.md"
+          else
+            TITLE="Weekly Pulse: Week $WEEK draft"; BODY=$(printf "_ops/inbox/MAFFL_2026_Week%02d_pr.md" "$WEEK")
+          fi
           git add -A
-          if (-not (git status --porcelain)) { Write-Error "Claude made no changes. Open this run's log."; exit 1 }
-          if ("${{ steps.pick.outputs.mode }}" -eq "smoke") {
-            $title = "TEST: robot connection test (close, don't merge)"
-            $body  = "_ops/inbox/robot-smoke-test_pr.md"
-          } else {
-            $w = "${{ steps.pick.outputs.week }}"
-            $title = "Weekly Pulse: Week $w draft"
-            $body  = "_ops/inbox/MAFFL_2026_Week{0:D2}_pr.md" -f [int]$w
-          }
-          git commit -m "$title"
-          git push -u origin HEAD
-          if (-not (Test-Path $body)) {
-            $body = "$env:RUNNER_TEMP\pr-body.md"
-            Set-Content $body "Claude didn't write a summary file. Check the 'Claude' step in this run's log before merging."
-          }
-          gh pr create --base main --head "${{ steps.pick.outputs.branch }}" --title "$title" --body-file "$body"
+          git diff --cached --quiet || git commit -m "$TITLE"
+          git push origin HEAD
+          if [ ! -f "$BODY" ]; then
+            BODY="$RUNNER_TEMP/pr-body.md"
+            echo "Claude didn't write a summary file. Check the 'Claude' step in this run's log before merging." > "$BODY"
+          fi
+          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY"

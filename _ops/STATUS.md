@@ -2,11 +2,13 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-09-29 by Claude Code
+**Last updated:** 2026-09-30 by Claude (chat)
 
 ## Now
 
-- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3 ✅ (validate 8/8). The weekly loop only needs validate + `generate-matchups-data.ps1` (CE-1), so the page-generator drift and gen-prize issues below are logged cleanup, not Step 4 blockers. Step 4 installed; run the connection test (Actions → Pulse draft → smoke_test), then Week 4 on Tue Oct 6 is the first real draft PR. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
+- **ESPN history inventory (one-time, read-only).** `_ops/scripts/maffl_espn_inventory.py` v0.1: run in Colab; lists every season ESPN still has for both leagues (results, drafts, lineups, slots, transactions) and searches the message board for Coach of the Week posts. Save its two output files OUTSIDE the repo (message board is private). Goal: backfill/verify history and rebuild Dad's COTW (best lineup use; starting a bye player knocked you out).
+- **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
+- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Steps 1–2 ✅ (robot test run 9/29 on Week 3: green, READY, data identical to Colab). Step 3 ✅ (validate 8/8). The weekly loop only needs validate + `generate-matchups-data.ps1` (CE-1), so the page-generator drift and gen-prize issues below are logged cleanup, not Step 4 blockers. Step 4 installed and split (Windows data job + Linux Claude job) after the first connection test failed; the connection test still needs re-running (Actions → Pulse draft → smoke_test), then Week 4 on Tue Oct 6 is the first real draft PR. **Habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main).
 - **Week 4 Pulse.** The robot pulls Week 4 on Tue Oct 6 (5 AM ET, retries 7 AM / Wed) into
   `_ops/inbox/MAFFL_2026_Week04_espn.md`. Pull in GitHub Desktop, then draft the Pulse in Cowork chat
   from that file (same shape as capture v2.2). Screenshots + Results Engine only as a backup if
@@ -32,6 +34,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-29 · Pulse-draft robot split: Windows job (ingest_week.py → CE-1 → validate → facts) + Linux Claude job (writes Pulse, opens PR). First smoke test had failed: Claude action won't install on Windows.
 - 2026-09-29 · Automation Step 4 installed: pulse-draft.yml (runs after the ESPN pull; Windows runner; opens "Weekly Pulse: Week N draft" PR), claude-mention.yml (@claude on PRs, owner-only), ROBOT_PULSE_RECIPE.md, pulse_facts.py (matches published Wk 3). Connection test pending.
 - 2026-09-29 · validate Gate 2 now reads gold Matchups_Clean (Regular, 2005–2025); 34/34 owners match. validate: 8/8 pass. build check-only: validate 8/8, nothing written; stats/history/draft/credits report drift vs current pages; gen-prize aborts (`dues_2026` marker gone) before the final summary
 - 2026-09-29 · Automation Step 2 ✅: repo secrets added; manual test run of `espn-weekly-pull` on Week 3 green/READY; report committed by the robot
