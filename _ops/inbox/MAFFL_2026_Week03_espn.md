@@ -1,5 +1,5 @@
 # MAFFL 2026 Week 3 — ESPN pull
-Source: maffl_espn_pull.py v0.3.1 · pulled 2026-09-29 08:07 PM ET · replaces the capture v2.2 screenshot reply
+Source: maffl_espn_pull.py v0.4 · pulled 2026-09-29 08:37 PM ET · replaces the capture v2.2 screenshot reply
 
 ## OUTPUT 1 — MATCHUP ROWS
 ```
@@ -89,55 +89,66 @@ INDIVIDUAL HIGH — Upper: B. Purdy, Happy Valley Hammer Time, 39.28
 INDIVIDUAL HIGH — Lower: B. Purdy, The Best in The 'Burgh, 39.28
 
 ### 2c. Transactions (Tue 09/22 – Mon 09/28)
-Wed 09/23 10:04 PM · Lower · Tony's Talented Team · DROP J. Brooks
-Wed 09/23 10:42 PM · Upper · Jake's Jagoffs · DROP A. Pierce
-Thu 09/24 03:11 AM · Lower · The Best in The 'Burgh · ADD C. Downs ($1) | DROP R. Harvey
-Thu 09/24 03:12 AM · Upper · Bad Attitude Gang · ADD J. Holland ($27) | DROP J. Brooks
-Thu 09/24 03:12 AM · Upper · Hadley's Comets · ADD C. Elliss ($6) | DROP B. Carter
-Thu 09/24 03:12 AM · Upper · Hadley's Comets · ADD J. McMillan ($10) | DROP T. Hockenson
-Thu 09/24 03:12 AM · Upper · Hadley's Comets · ADD L. Van Ness ($10) | DROP U. Nwosu
-Thu 09/24 03:12 AM · Upper · Hadley's Comets · DROP J. Flacco | ADD M. Mariota ($51)
-Thu 09/24 03:12 AM · Upper · Hadley's Comets · DROP J. Rodriguez | ADD J. Campbell ($4)
-Thu 09/24 03:12 AM · Upper · Hadley's Comets · DROP M. Lloyd | ADD J. Coleman ($31)
-Thu 09/24 03:12 AM · Upper · Happy Valley Hammer Time · ADD A. Davis-Gaither ($7) | DROP T. Edmunds
-Thu 09/24 03:12 AM · Upper · Happy Valley Hammer Time · ADD E. Williams ($5) | DROP T. Stukes
-Thu 09/24 03:12 AM · Upper · Happy Valley Hammer Time · DROP C. Ridley | ADD T. Dell ($0)
-Thu 09/24 03:12 AM · Upper · Happy Valley Hammer Time · DROP N. Harris | ADD E. Wilson ($5)
-Thu 09/24 03:12 AM · Upper · Mike Vicks Dog Sitting Co. · DROP A. Kamara | ADD T. Bigsby ($8)
-Thu 09/24 03:12 AM · Upper · Reilly's Reindeer · ADD A. Mitchell ($6) | DROP C. Wentz
-Thu 09/24 03:12 AM · Upper · Reilly's Reindeer · DROP D. Stribling | ADD D. Boston ($11)
-Thu 09/24 03:12 AM · Upper · South Hills FunShiners · DROP J. Davis | ADD A. Donald ($5)
-Thu 09/24 03:12 AM · Upper · The Prodigal Sons · ADD D. Knight Jr. ($5) | DROP Z. Franklin
-Thu 09/24 03:12 AM · Upper · The Prodigal Sons · ADD J. Simmons ($7) | DROP N. Bonitto
-Thu 09/24 03:12 AM · Upper · The Prodigal Sons · ADD L. Latu ($3) | DROP J. Verse
-Thu 09/24 03:57 AM · Upper · Southside Shooters · DROP J. Dart | ADD C. Keenum (FA)
-Thu 09/24 05:11 AM · Upper · Hadley's Comets · ADD J. Winston (FA) | DROP S. Sanders
-Thu 09/24 06:08 AM · Upper · Hadley's Comets · ADD D. Claiborne (FA) | DROP J. McMillan
-Thu 09/24 06:15 AM · Upper · Hadley's Comets · ADD K. Coleman (FA) | DROP C. Douglas
-Thu 09/24 07:03 AM · Upper · Jake's Jagoffs · ADD A. Hooker (FA)
-Thu 09/24 08:41 AM · Upper · Happy Valley Hammer Time · DROP I. Pacheco
-Thu 09/24 08:41 AM · Upper · Happy Valley Hammer Time · ADD I. Williams (FA)
-Thu 09/24 12:15 PM · Upper · Marco Clair Kardiac Attack · ADD A. Carter (FA) | DROP C. Brooks
-Thu 09/24 12:29 PM · Lower · Fightin Ferrets · ADD M. Washington (FA)
-Thu 09/24 12:43 PM · Upper · Mike Vicks Dog Sitting Co. · ADD D. Bailey (FA) | DROP P. Wilson
-Thu 09/24 01:04 PM · Upper · Happy Valley Hammer Time · ADD J. Palmer (FA) | DROP A. Williams
-Thu 09/24 03:44 PM · Upper · Hadley's Comets · ADD W. Robinson (FA) | DROP K. Coleman
-Thu 09/24 07:26 PM · Upper · Turkey Hat Conglomerate · ADD B. Young (FA) | DROP E. Oliver
-Fri 09/25 01:20 PM · Upper · Hadley's Comets · ADD P. Werner (FA) | DROP D. Claiborne
-Fri 09/25 01:24 PM · Upper · Hadley's Comets · DROP P. Werner | ADD B. Okereke (FA)
-Fri 09/25 04:53 PM · Upper · Hadley's Comets · DROP W. Robinson | ADD O. Gadsden (FA)
-Fri 09/25 05:59 PM · Upper · Bad Attitude Gang · DROP T. Hufanga | ADD P. Werner (FA)
-Fri 09/25 07:19 PM · Lower · Sarge's Squad · ADD A. Carter (FA) | DROP N. Bosa
-Fri 09/25 07:59 PM · Lower · Sarge's Squad · DROP B. Burns | ADD O. Oweh (FA)
-Sat 09/26 03:18 AM · Lower · Tony's Talented Team · ADD R. Harvey ($0)
-Sat 09/26 03:44 AM · Upper · Turkey Hat Conglomerate · DROP Q. Williams | ADD J. Rodriguez ($5)
-Sat 09/26 12:42 PM · Upper · Marco Clair Kardiac Attack · DROP K. Gainwell | ADD A. Kamara (FA)
-Sat 09/26 01:04 PM · Upper · The Prodigal Sons · ADD E. Heidenreich (FA) | DROP C. Conner
-Sat 09/26 04:53 PM · Upper · Hadley's Comets · DROP J. Coleman | ADD A. Dillon (FA)
-Sat 09/26 07:25 PM · Upper · Hadley's Comets · ADD T. Ferguson (FA) | DROP O. Gadsden
-Sun 09/27 07:25 AM · Upper · Jake's Jagoffs · ADD A. Wingard (FA)
-Sun 09/27 09:18 AM · Upper · The Prodigal Sons · ADD J. Flacco (FA) | DROP E. Heidenreich
-Sun 09/27 09:31 AM · Upper · Happy Valley Hammer Time · ADD J. Verse (FA) | DROP D. Ezeiruaku
+_Waiver claims carry ESPN's **processing** time (every claim in a run gets the same stamp). That is not when the owner bid, so never write it as a pickup time. Free-agent moves and drops below carry their real times._
+
+**Waiver run — Lower, processed Thu 09/24 03:11 AM** (1 claims)
+- The Best in The 'Burgh · ADD C. Downs ($1) | DROP R. Harvey
+
+**Waiver run — Upper, processed Thu 09/24 03:12 AM** (18 claims)
+- Happy Valley Hammer Time · DROP C. Ridley | ADD T. Dell ($0)
+- The Prodigal Sons · ADD L. Latu ($3) | DROP J. Verse
+- Hadley's Comets · DROP J. Rodriguez | ADD J. Campbell ($4)
+- Happy Valley Hammer Time · DROP N. Harris | ADD E. Wilson ($5)
+- The Prodigal Sons · ADD D. Knight Jr. ($5) | DROP Z. Franklin
+- Happy Valley Hammer Time · ADD E. Williams ($5) | DROP T. Stukes
+- South Hills FunShiners · DROP J. Davis | ADD A. Donald ($5)
+- Hadley's Comets · ADD C. Elliss ($6) | DROP B. Carter
+- Reilly's Reindeer · ADD A. Mitchell ($6) | DROP C. Wentz
+- The Prodigal Sons · ADD J. Simmons ($7) | DROP N. Bonitto
+- Happy Valley Hammer Time · ADD A. Davis-Gaither ($7) | DROP T. Edmunds
+- Mike Vicks Dog Sitting Co. · DROP A. Kamara | ADD T. Bigsby ($8)
+- Hadley's Comets · ADD J. McMillan ($10) | DROP T. Hockenson
+- Hadley's Comets · ADD L. Van Ness ($10) | DROP U. Nwosu
+- Reilly's Reindeer · DROP D. Stribling | ADD D. Boston ($11)
+- Bad Attitude Gang · ADD J. Holland ($27) | DROP J. Brooks
+- Hadley's Comets · DROP M. Lloyd | ADD J. Coleman ($31)
+- Hadley's Comets · DROP J. Flacco | ADD M. Mariota ($51)
+
+**Waiver run — Lower, processed Sat 09/26 03:18 AM** (1 claims)
+- Tony's Talented Team · ADD R. Harvey ($0)
+
+**Waiver run — Upper, processed Sat 09/26 03:44 AM** (1 claims)
+- Turkey Hat Conglomerate · DROP Q. Williams | ADD J. Rodriguez ($5)
+
+**Free-agent moves, drops and trades** (real times)
+- Wed 09/23 10:04 PM · Lower · Tony's Talented Team · DROP J. Brooks
+- Wed 09/23 10:42 PM · Upper · Jake's Jagoffs · DROP A. Pierce
+- Thu 09/24 03:57 AM · Upper · Southside Shooters · DROP J. Dart | ADD C. Keenum (FA)
+- Thu 09/24 05:11 AM · Upper · Hadley's Comets · ADD J. Winston (FA) | DROP S. Sanders
+- Thu 09/24 06:08 AM · Upper · Hadley's Comets · ADD D. Claiborne (FA) | DROP J. McMillan
+- Thu 09/24 06:15 AM · Upper · Hadley's Comets · ADD K. Coleman (FA) | DROP C. Douglas
+- Thu 09/24 07:03 AM · Upper · Jake's Jagoffs · ADD A. Hooker (FA)
+- Thu 09/24 08:41 AM · Upper · Happy Valley Hammer Time · DROP I. Pacheco
+- Thu 09/24 08:41 AM · Upper · Happy Valley Hammer Time · ADD I. Williams (FA)
+- Thu 09/24 12:15 PM · Upper · Marco Clair Kardiac Attack · ADD A. Carter (FA) | DROP C. Brooks
+- Thu 09/24 12:29 PM · Lower · Fightin Ferrets · ADD M. Washington (FA)
+- Thu 09/24 12:43 PM · Upper · Mike Vicks Dog Sitting Co. · ADD D. Bailey (FA) | DROP P. Wilson
+- Thu 09/24 01:04 PM · Upper · Happy Valley Hammer Time · ADD J. Palmer (FA) | DROP A. Williams
+- Thu 09/24 03:44 PM · Upper · Hadley's Comets · ADD W. Robinson (FA) | DROP K. Coleman
+- Thu 09/24 07:26 PM · Upper · Turkey Hat Conglomerate · ADD B. Young (FA) | DROP E. Oliver
+- Fri 09/25 01:20 PM · Upper · Hadley's Comets · ADD P. Werner (FA) | DROP D. Claiborne
+- Fri 09/25 01:24 PM · Upper · Hadley's Comets · DROP P. Werner | ADD B. Okereke (FA)
+- Fri 09/25 04:53 PM · Upper · Hadley's Comets · DROP W. Robinson | ADD O. Gadsden (FA)
+- Fri 09/25 05:59 PM · Upper · Bad Attitude Gang · DROP T. Hufanga | ADD P. Werner (FA)
+- Fri 09/25 07:19 PM · Lower · Sarge's Squad · ADD A. Carter (FA) | DROP N. Bosa
+- Fri 09/25 07:59 PM · Lower · Sarge's Squad · DROP B. Burns | ADD O. Oweh (FA)
+- Sat 09/26 12:42 PM · Upper · Marco Clair Kardiac Attack · DROP K. Gainwell | ADD A. Kamara (FA)
+- Sat 09/26 01:04 PM · Upper · The Prodigal Sons · ADD E. Heidenreich (FA) | DROP C. Conner
+- Sat 09/26 04:53 PM · Upper · Hadley's Comets · DROP J. Coleman | ADD A. Dillon (FA)
+- Sat 09/26 07:25 PM · Upper · Hadley's Comets · ADD T. Ferguson (FA) | DROP O. Gadsden
+- Sun 09/27 07:25 AM · Upper · Jake's Jagoffs · ADD A. Wingard (FA)
+- Sun 09/27 09:18 AM · Upper · The Prodigal Sons · ADD J. Flacco (FA) | DROP E. Heidenreich
+- Sun 09/27 09:31 AM · Upper · Happy Valley Hammer Time · ADD J. Verse (FA) | DROP D. Ezeiruaku
 TOP BIDS: $51 M. Mariota (Hadley's Comets, Upper), $31 J. Coleman (Hadley's Comets, Upper), $27 J. Holland (Bad Attitude Gang, Upper), $11 D. Boston (Reilly's Reindeer, Upper), $10 J. McMillan (Hadley's Comets, Upper) · TRADES: 0
 
 ### 2d. A bench player beat every starter
