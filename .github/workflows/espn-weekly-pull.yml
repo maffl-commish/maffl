@@ -1,0 +1,73 @@
+# MAFFL ESPN weekly pull — the "Tuesday robot" (Step 2 of _ops/docs/WEEKLY_AUTOMATION_PLAN.md)
+# Runs _ops/scripts/maffl_espn_pull.py and commits the report to _ops/inbox/.
+# Needs repository secrets ESPN_S2 and SWID. _ops/ is Jekyll-ignored, so nothing here publishes.
+name: ESPN weekly pull
+
+on:
+  schedule:
+    # GitHub schedules are in UTC. 09:00 UTC = 5:00 AM EDT (4:00 AM after the Nov 1 clock change).
+    - cron: "0 9 * * 2"    # Tuesday, first try
+    - cron: "0 11 * * 2"   # Tuesday, retry if ESPN hadn't finalized yet
+    - cron: "0 9 * * 3"    # Wednesday backstop
+  workflow_dispatch:        # adds a "Run workflow" button on the Actions tab
+    inputs:
+      week:
+        description: "Week to pull (leave blank for the latest completed week)"
+        required: false
+        default: ""
+      force:
+        description: "Re-pull even if that week's report already exists"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: espn-weekly-pull
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Get the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install espn-api
+        run: pip install espn-api
+
+      - name: Pull the week from ESPN
+        id: pull
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+          MAFFL_WEEK: ${{ inputs.week }}
+          MAFFL_FORCE: ${{ inputs.force }}
+        run: python _ops/scripts/maffl_espn_pull.py
+
+      - name: Save the report to the repo
+        if: steps.pull.outputs.report != ''
+        run: |
+          git config user.name "maffl-espn-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _ops/inbox/
+          if git diff --cached --quiet; then
+            echo "Report unchanged; nothing to commit."
+          else
+            git commit -m "ESPN pull: ${{ steps.pull.outputs.title }}"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Stop with an error if the week is BLOCKED
+        if: steps.pull.outputs.blocked == 'true'
+        run: |
+          echo "::error::ESPN pull is BLOCKED. Open ${{ steps.pull.outputs.report }} and read the BLOCKING line."
+          exit 1

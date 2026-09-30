@@ -2,11 +2,11 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-09-29 by Claude (chat)
+**Last updated:** 2026-09-29 by Claude Code
 
 ## Now
 
-- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Step 1 ✅. Next: Step 2, GitHub robot (data only). Screenshots stay the live process until Step 2 ships.
+- **Weekly automation (ESPN → drafted Pulse PR).** Plan: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Step 1 ✅. Step 2: workflow installed; add secrets + test run. **New habit: in GitHub Desktop, Fetch/Pull before starting work** (the robot commits to main). Screenshots stay the live process until the robot's first real Tuesday succeeds.
 - **Week 4 Pulse.** Run Week 4 screenshots through capture **v2.2** (re-paste
   `_ops/docs/CAPTURE_SYSTEM_PROMPT.md` into the Weekly Results Engine first). Paste the ESPN
   League Schedule page for **both tiers** with the screenshots. That feeds the new prior-week score
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-09-29 · Automation Step 2 installed: `.github/workflows/espn-weekly-pull.yml` (Tue 5 & 7 AM ET + Wed backstop) runs pull script v0.4 → `_ops/inbox/`. Needs secrets ESPN_S2 + SWID; first test run pending
 - 2026-09-29 · Pulse Wk 3 waiver-time wording fixed; editorial guide §4 "Waiver times" rule; ESPN pull v0.3.2 lists waiver runs separately from real-time moves
 - 2026-09-29 · Weekly automation Step 1 done: ESPN pull v0.3.1 matched Week 3 gold (scores, 👻, all 63 top-3s) and caught waiver bids the screenshots missed; Pulse Wk 3 Big Spenders corrected
 - 2026-09-29 · ESPN pull Phase 1: `_ops/scripts/maffl_espn_pull.py` v0.2 (run in Google Colab; my workspace can't reach ESPN). Live Week 3 pull matched gold on all 11 games + Ghost par 151.47. Next: Week 4 via the script alongside screenshots

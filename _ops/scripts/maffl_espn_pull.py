@@ -1,16 +1,19 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.3.2 (2026-09-29) - waiver claims grouped by ESPN processing run (not pickup times). 0.3.1: same-timestamp waivers fix. 0.3: full week: scores, top 3s, transactions,
-#          stat-correction audit, next-week pairings, validation, inbox file.
+# VERSION: 0.4 (2026-09-29) - robot mode for GitHub Actions: finds the latest completed week,
+#          writes _ops/inbox/, skips weeks already pulled, reports READY/BLOCKED to the workflow.
+#   0.3.2 waiver claims grouped by ESPN processing run · 0.3.1 same-timestamp waivers fix ·
+#   0.3 full week: scores, top 3s, transactions, stat-correction audit, next-week pairings.
 #
 # Runs two ways, same file:
 #   * Google Colab: paste into a cell, click Run. Asks for cookies in private boxes.
-#   * GitHub Actions (later): cookies come from encrypted repo secrets.
+#   * GitHub Actions (.github/workflows/espn-weekly-pull.yml): cookies come from encrypted
+#     repo secrets ESPN_S2 and SWID. Optional env: MAFFL_WEEK (blank = latest completed), MAFFL_FORCE.
 # Output = one "inbox" report shaped like the Results Engine (capture v2.2) reply,
 # so everything downstream keeps working unchanged.
 # ============================================================
 
-WEEK = 3             # <-- the week to pull. (The Tuesday robot will work this out itself.)
+WEEK = None          # <-- None = latest completed week. Or set a number, e.g. WEEK = 3
 YEAR = 2026
 LEAGUES = {"Upper": 34467, "Lower": 1587593698}
 WEEK1_TUESDAY = "2026-09-08"   # transactions for week W = the 7 days starting this Tuesday + 7*(W-1)
@@ -31,7 +34,16 @@ from espn_api.football import League
 
 ET = ZoneInfo("America/New_York")
 IN_COLAB = "google.colab" in sys.modules
-WEEK = int(os.environ.get("MAFFL_WEEK", WEEK))
+ROBOT = os.environ.get("GITHUB_ACTIONS") == "true"
+FORCE = os.environ.get("MAFFL_FORCE", "").strip().lower() == "true"
+if os.environ.get("MAFFL_WEEK", "").strip():
+    WEEK = int(os.environ["MAFFL_WEEK"].strip())
+
+def gh_output(**kv):
+    """Hand values to later workflow steps (GitHub Actions only)."""
+    if ROBOT and os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+            for k, v in kv.items(): f.write(f"{k}={v}\n")
 
 # ---------------------------------------------------------------- MAFFL team map
 # Same table as capture v2.2. ESPN team name -> (Owner, Owner_ESPN, Tier)
@@ -136,6 +148,9 @@ def fetch_repo_csv(path):
 # ---------------------------------------------------------------- cookies
 ESPN_S2 = os.environ.get("ESPN_S2") or ""
 SWID = os.environ.get("SWID") or ""
+if not (ESPN_S2 and SWID) and ROBOT:
+    raise SystemExit("The ESPN_S2 / SWID repository secrets are missing or empty. "
+                     "Add them under GitHub → Settings → Secrets and variables → Actions.")
 if not (ESPN_S2 and SWID):
     from getpass import getpass
     print("Paste each value, then press Enter. The box stays blank - that's normal.")
@@ -156,20 +171,45 @@ games = {}          # week -> list of (tier, playoff, home, home_score, away, aw
 top3, bench_facts = [], []
 tx_lines, tx_bids, trade_count = [], [], 0
 next_pairs = {"Upper": [], "Lower": []}
-start = datetime.fromisoformat(WEEK1_TUESDAY).replace(tzinfo=ET) + timedelta(days=7 * (WEEK - 1))
-end = start + timedelta(days=7)
 
+conns = {}
 for tier, lid in LEAGUES.items():
     try:
         lg = League(league_id=lid, year=YEAR, espn_s2=ESPN_S2, swid=SWID)
     except Exception as e:
         raise SystemExit(f"\nCould not open the {tier} league ({lid}). Cookies pasted wrong or expired?\nDetail: {e}")
     print(f"Connected: {tier} = '{lg.settings.name}' ({len(lg.teams)} teams)")
-    by_id = {t.team_id: t for t in lg.teams}
-
-    # 1) schedule: every week's scores, and whether ESPN has decided them
     raw = lg.espn_request.league_get(params={"view": "mMatchupScore"})
-    for m in raw["schedule"]:
+    conns[tier] = (lg, {t.team_id: t for t in lg.teams}, raw["schedule"])
+
+# Which week? Latest week that ESPN has fully decided in BOTH tiers.
+def decided_weeks(sched):
+    wk_state = {}
+    for m in sched:
+        if "home" in m and "away" in m:
+            wk_state.setdefault(m["matchupPeriodId"], []).append(m.get("winner", "UNDECIDED") != "UNDECIDED")
+    return {w for w, v in wk_state.items() if v and all(v)}
+done_weeks = set.intersection(*(decided_weeks(c[2]) for c in conns.values()))
+if WEEK is None:
+    if not done_weeks:
+        raise SystemExit("No completed weeks on ESPN yet.")
+    WEEK = max(done_weeks)
+    print(f"Latest completed week on ESPN: {WEEK}")
+
+fname = f"MAFFL_{YEAR}_Week{WEEK:02d}_espn.md"
+if ROBOT:
+    fname = os.path.join("_ops", "inbox", fname)
+    if os.path.exists(fname) and not FORCE:
+        print(f"{fname} already exists, so there's nothing new to pull. (Use 'force' to re-pull.)")
+        gh_output(report="", blocked="false")
+        raise SystemExit(0)
+
+start = datetime.fromisoformat(WEEK1_TUESDAY).replace(tzinfo=ET) + timedelta(days=7 * (WEEK - 1))
+end = start + timedelta(days=7)
+
+for tier, (lg, by_id, schedule) in conns.items():
+    # 1) schedule: every week's scores, and whether ESPN has decided them
+    for m in schedule:
         wk = m["matchupPeriodId"]
         if "home" not in m or "away" not in m: continue
         h, a = by_id.get(m["home"]["teamId"]), by_id.get(m["away"]["teamId"])
@@ -369,7 +409,7 @@ if top3_gold_all:
 # ---------------------------------------------------------------- write the inbox report
 status = "STATUS: READY TO INGEST" if not blocks else "STATUS: BLOCKED — " + "; ".join(blocks)
 L = [f"# MAFFL {YEAR} Week {WEEK} — ESPN pull",
-     f"Source: maffl_espn_pull.py v0.3.2 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
+     f"Source: maffl_espn_pull.py v0.4 · pulled {datetime.now(ET):%Y-%m-%d %I:%M %p} ET · replaces the capture v2.2 screenshot reply\n",
      "## OUTPUT 1 — MATCHUP ROWS", "```", *[",".join(r) for r in rows], "```\n",
      "## OUTPUT 2 — WEEK FACTS", "### 2a. Top performers", "```", ",".join(TOP3_HEADER), *[",".join(r) for r in top3], "```",
      "### 2b. Individual high"]
@@ -420,7 +460,7 @@ if sched_all and next_pairs["Upper"]:
 L.append("\n" + status)
 report = "\n".join(L)
 
-fname = f"MAFFL_{YEAR}_Week{WEEK:02d}_espn.md"
+if ROBOT: os.makedirs(os.path.dirname(fname), exist_ok=True)
 open(fname, "w", encoding="utf-8").write(report)
 
 # ---------------------------------------------------------------- short summary on screen
@@ -437,6 +477,18 @@ print("FLAGS: " + (" | ".join(flags) if flags else "none"))
 print(status)
 print("-" * 26 + " TO HERE " + "-" * 31)
 print(f"Full report saved as {fname}")
+if ROBOT:
+    gh_output(report=fname, blocked="true" if blocks else "false",
+              title=f"{YEAR} Week {WEEK} — {'BLOCKED' if blocks else 'READY'}")
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+            f.write(f"## MAFFL {YEAR} Week {WEEK} — ESPN pull\n\n**{status}**\n\n")
+            f.write(f"- {len(rows)} games · {len(top3)} top-3 rows · {len(tx_lines)} transactions · {trade_count} trades\n")
+            f.write(f"- Stat corrections in earlier weeks: {len(corrections) or 'none'}\n")
+            for c in corrections[:10]: f.write(f"  - {c}\n")
+            f.write("- Blocking: " + ("; ".join(blocks) if blocks else "none") + "\n")
+            f.write("- Flags: " + (" | ".join(flags) if flags else "none") + "\n")
+            f.write(f"\nFull report: `{fname}`\n")
 if IN_COLAB:
     from google.colab import files
     files.download(fname)

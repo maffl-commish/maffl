@@ -1,6 +1,6 @@
 # Weekly Automation Plan — "Wake up to a drafted Pulse"
 
-Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Step 1 in progress
+Date: 2026-09-29 · Author: Claude (chat) · Status: approved direction, Step 2 in progress
 
 ## Goal
 
@@ -42,11 +42,15 @@ revises, and Mike clicks **Merge** to publish.
 
 ## Build order
 
-1. **Grow the script (v0.3)** — full week in one report shaped like capture v2.2 output, plus
-   next-week pairings. Test in Colab against Week 3. ← *in progress*
-2. **GitHub robot, data only** — scheduled Action runs the script Tuesday ~5 AM ET, cookies in
-   repo secrets, writes `_ops/inbox/2026-wkNN_espn.md`, emails on failure. Retires screenshots
-   and the Weekly Results Engine.
+1. ✅ **Grow the script** — full week in one report shaped like capture v2.2 output, plus
+   next-week pairings. v0.3.1 matched Week 3 gold and found waiver claims the screenshots missed.
+2. **GitHub robot, data only** ← *in progress* — `.github/workflows/espn-weekly-pull.yml` runs
+   script v0.4 Tue 09:00 + 11:00 UTC and Wed 09:00 UTC (5/7 AM EDT), plus a manual "Run workflow"
+   button (week + force inputs). Cookies in repo secrets `ESPN_S2`, `SWID`. Writes
+   `_ops/inbox/MAFFL_2026_WeekNN_espn.md`, skips weeks already pulled, fails (GitHub emails Mike)
+   on BLOCKED, missing secrets or expired cookies. The robot commits to `main`, so Mike fetches/pulls
+   in GitHub Desktop before starting work. Retires screenshots and the Weekly Results Engine once a
+   real Tuesday succeeds.
 3. **Fix `build.ps1` Gate 2** so generators can run unattended.
 4. **Claude drafting + PR** — Claude Code on GitHub (token from Mike's Claude subscription)
    appends gold, runs CE-1, writes the Pulse week object, opens a PR. Mike comments, merges.
