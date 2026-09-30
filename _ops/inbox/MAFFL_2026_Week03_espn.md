@@ -1,5 +1,5 @@
 # MAFFL 2026 Week 3 — ESPN pull
-Source: maffl_espn_pull.py v0.5.1 · pulled 2026-09-30 12:22 PM ET · replaces the capture v2.2 screenshot reply
+Source: maffl_espn_pull.py v0.5.1 · pulled 2026-09-30 01:31 PM ET · replaces the capture v2.2 screenshot reply
 
 ## OUTPUT 1 — MATCHUP ROWS
 ```
