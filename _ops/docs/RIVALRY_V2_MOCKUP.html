@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rivalry v2.0 Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--surface:#fff;--page-bg:#f8f9fb;--navy:#1a2e50;--gold:#f5a623;--gold-dark:#d98e10;--gold-soft:#fff4e0;--muted:#6f7f9b;--border:#e2e6ed;--win:#1d9e75;--loss:#c04a4a;--display:"Barlow Condensed",system-ui,sans-serif;--body:"Barlow",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--page-bg);color:var(--navy);font-family:var(--body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;line-height:1.4}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;text-align:inherit}
+.wrap{max-width:430px;margin:0 auto;padding:16px 16px 48px}
+@media(min-width:900px){.wrap{max-width:1100px;display:grid;grid-template-columns:400px 1fr;gap:28px;align-items:start}}
+.note{font-size:13px;color:var(--muted);background:#eef1f6;border-radius:10px;padding:10px 12px;margin:0 0 14px}
+.note b{color:var(--navy)}
+.panel-lab{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-dark);margin:18px 0 8px}
+.section-label{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.tier-lab{font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.1em;color:var(--muted);margin:14px 0 6px}
+.slate-card{display:block;width:100%;min-height:72px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:10px;box-shadow:0 2px 8px rgba(26,46,80,.06)}
+.sl1{display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:8px}
+.nm{font-weight:700;font-size:17px}.nm.r{text-align:right}
+.rec{font-family:var(--display);font-weight:700;font-size:22px}
+.lead{color:var(--navy)}.trail{color:#a3b0c6}
+.sl2{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
+.chip{font-family:var(--display);font-weight:700;font-size:12.5px;background:var(--gold-soft);border:1px solid var(--gold);border-radius:999px;padding:2px 9px}
+.rchip{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;padding:0 6px;border-radius:999px;background:var(--navy);color:#fff;font-family:var(--display);font-weight:700;font-size:13px}
+.em{font-size:14px}
+.sl3{font-size:14px;color:var(--muted);margin-top:4px}
+.slate-ghost{font-size:14px;color:var(--muted);padding:10px 12px;border:1px dashed var(--border);border-radius:12px;margin-bottom:10px}
+.picker-hint{font-size:14px;color:var(--muted);text-align:center;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.collapsed{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 8px 8px 14px;margin-bottom:12px}
+.collapsed .n1{color:var(--gold-dark);font-family:var(--display);font-weight:700;font-size:18px}
+.collapsed .n2{font-family:var(--display);font-weight:700;font-size:18px}
+.collapsed .vs{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.1em;color:var(--muted);margin:0 6px}
+.change{min-height:44px;padding:0 16px;border:1px solid var(--gold);border-radius:999px;font-family:var(--display);font-weight:700;font-size:14px;color:var(--gold-dark)}
+.hero{background:linear-gradient(160deg,#243a62 0%,#1a2e50 55%,#0f1d34 100%);color:#fff;border-radius:14px;padding:14px 14px 16px;text-align:center}
+.strip{display:inline-block;background:var(--gold);color:var(--navy);border-radius:999px;padding:5px 14px;font-weight:700;font-size:14px}
+.stakes{margin:8px 0 12px;text-align:left}
+.stake{font-size:14px;color:rgba(255,255,255,.88);padding:2px 4px}
+.sb{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:6px}
+.sb .name{font-family:var(--display);font-weight:700;font-size:18px;line-height:1.1;min-height:40px;display:flex;align-items:flex-end;justify-content:center}
+.sb .n1{color:#f7c46a}
+.big{font-family:var(--display);font-weight:700;font-size:56px;line-height:1;margin-top:4px}
+.big.lead{color:var(--gold)}.big.trail{color:rgba(255,255,255,.72)}
+.sb .vs{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.12em;color:rgba(255,255,255,.6);padding-bottom:18px}
+.split{font-size:14px;color:rgba(255,255,255,.8);margin-top:8px}.split b{color:#fff}
+.row3{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+.rating{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--gold);background:rgba(245,166,35,.16);border-radius:999px;padding:0 14px;min-height:44px;font-family:var(--display);font-weight:700;font-size:14px}
+.rating strong{font-size:18px}
+.share{min-height:44px;padding:0 16px;border:1px solid rgba(255,255,255,.5);border-radius:999px;font-family:var(--display);font-weight:700;font-size:14px;color:#fff}
+.blurb{font-size:16px;font-weight:500;text-align:center;margin:14px 6px 10px}
+.badges{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
+.badge{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 12px;border-radius:999px;background:var(--gold-soft);border:1px solid var(--gold);font-family:var(--display);font-weight:700;font-size:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px}
+.lab{font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.lab span{text-transform:none;letter-spacing:0;font-family:var(--body);font-weight:500}
+.form{display:flex;gap:10px;justify-content:space-between}
+.fc{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12.5px;color:var(--muted)}
+.chipf{position:relative;width:44px;height:44px;border-radius:10px;color:#fff;font-family:var(--display);font-weight:700;font-size:18px;text-align:center}
+.chipf.w{background:var(--win)}.chipf.l{background:var(--loss)}
+.chipf i{position:absolute;top:-6px;right:-6px;background:var(--navy);color:#fff;font-style:normal;font-size:12px;border-radius:999px;padding:0 5px;line-height:18px}
+.cap{font-size:14px;text-align:center;margin-top:8px;color:var(--navy)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+@media(min-width:900px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.wide{grid-column:1/-1}
+.bn{font-family:var(--display);font-weight:700;font-size:28px;line-height:1.05}
+.who{font-weight:700;font-size:15px}
+.sub{font-size:14px;color:var(--muted)}
+.po{font-size:16px;padding:2px 0}.po .gd{color:var(--gold-dark)}.mut{color:var(--muted);font-weight:400}
+svg{width:100%;height:auto;display:block}
+.axis{display:flex;justify-content:space-between;font-family:var(--display);font-weight:700;font-size:12.5px;color:var(--muted)}
+.legend{display:flex;justify-content:center;gap:14px;font-size:12.5px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.stat-line{font-size:14px;margin-top:6px}
+.glt{display:flex;justify-content:space-between;align-items:center;min-height:44px;font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-dark)}
+</style></head><body><div class="wrap">
+<div>
+<p class="note"><b>Rivalry v2.0 mockup.</b> Real data through Week 3. Left: what the Head-to-Head tab opens to. Right: tapping a game. Static, so the taps don't do anything here.</p>
+<div class="panel-lab">① Landing: This Week</div>
+<div class="section-label">⚔️ Week 4 Rivalries</div>
+<div class="tier-lab">Upper</div>
+<button class="slate-card"><div class="sl1"><span class="nm">Brian/Ron</span><span class="rec"><span class="lead">21</span>–<span class="trail">11</span></span><span class="nm r">Jake</span></div><div class="sl2"><span class="rchip">86</span><span class="em">🩸</span></div><div class="sl3">Brian/Ron goes for 4 straight; Jake is trying to snap a 3-game skid.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Dave</span><span class="rec"><span class="lead">16</span>–<span class="trail">11</span></span><span class="nm r">Ed</span></div><div class="sl2"><span class="rchip">76</span></div><div class="sl3">Dave goes for 3 straight; Ed is trying to snap a 2-game skid.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Joe</span><span class="rec"><span class="lead">6</span>–<span class="lead">6</span></span><span class="nm r">Dan</span></div><div class="sl2"><span class="chip">Division game</span><span class="rchip">55</span><span class="em">⚖️</span></div><div class="sl3">Series is tied 6–6. The winner takes the lead.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Mike</span><span class="rec"><span class="lead">3</span>–<span class="lead">3</span></span><span class="nm r">BJ</span></div><div class="sl2"><span class="chip">Division game</span><span class="rchip">38</span><span class="em">🏎️</span></div><div class="sl3">Series is tied 3–3. The winner takes the lead.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Tony</span><span class="rec"><span class="lead">10</span>–<span class="trail">2</span></span><span class="nm r">Fetrow</span></div><div class="sl2"><span class="rchip">38</span><span class="em">🔨🪵</span></div><div class="sl3">Last time: Tony by 24.02 (2024 Wk 7).</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Braiden</span><span class="rec"><span class="lead">3</span>–<span class="trail">1</span></span><span class="nm r">Jon/Rick</span></div><div class="sl2"><span class="chip">Division game</span><span class="rchip">37</span></div><div class="sl3">Last time: Jon/Rick by 67.24 (2025 Wk 7).</div></button>
+<div class="tier-lab">Lower</div>
+<button class="slate-card"><div class="sl1"><span class="nm">Troz</span><span class="rec"><span class="trail">9</span>–<span class="lead">10</span></span><span class="nm r">Johnson</span></div><div class="sl2"><span class="rchip">71</span><span class="em">⚖️</span></div><div class="sl3">Troz can even the series at 10–10.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Sam</span><span class="rec"><span class="trail">0</span>–<span class="lead">1</span></span><span class="nm r">Brooks</span></div><div class="sl2"><span class="rchip">32</span></div><div class="sl3">Sam can even the series at 1–1.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Dom</span><span class="rec"><span class="trail">0</span>–<span class="lead">1</span></span><span class="nm r">Nick</span></div><div class="sl2"><span class="rchip">24</span></div><div class="sl3">Dom can even the series at 1–1.</div></button>
+<button class="slate-card"><div class="sl1"><span class="nm">Ben</span><span class="rec"><span class="lead">1</span>–<span class="trail">0</span></span><span class="nm r">Charlie</span></div><div class="sl2"><span class="rchip">21</span></div><div class="sl3">Charlie can even the series at 1–1.</div></button>
+<div class="slate-ghost">Bo draws 👻, so nothing on the line in the series.</div>
+<div class="section-label" style="margin-top:18px">Or pick any two owners</div>
+<div class="picker-hint">(owner pills, same as today)</div>
+</div>
+<div>
+<div class="panel-lab">② Tap “Brian/Ron vs Jake”</div>
+<div class="collapsed"><div><span class="n1">Brian/Ron</span><span class="vs">VS</span><span class="n2">Jake</span></div><button class="change">Change</button></div>
+<div class="hero">
+<div class="strip">🗓️ THIS WEEK · Week 4</div>
+<div class="stakes"><div class="stake">▸ Brian/Ron goes for 4 straight; Jake is trying to snap a 3-game skid.</div></div>
+<div class="sb"><div><div class="name n1">Brian Murello / Ron Murello</div><div class="big lead">21</div></div><div class="vs">VS</div><div><div class="name">Jacob Nickman</div><div class="big trail">11</div></div></div>
+<div class="split">Regular Season <b>18–10</b> · Postseason <b>3–1</b></div>
+<div class="row3"><span class="rating">Rivalry Rating <strong>86</strong> 🩸</span><button class="share">Share this rivalry</button></div>
+</div>
+<p class="blurb">4 playoff collisions and counting. This one matters in December.</p>
+<div class="badges"><span class="badge">🩸 Blood Feud</span></div>
+<div class="card"><div class="lab">Last 5 <span>Brian/Ron's view</span></div><div class="form"><div class="fc"><button class="chipf w">W</button><span>'21</span></div><div class="fc"><button class="chipf l">L<i>Q</i></button><span>'21</span></div><div class="fc"><button class="chipf w">W</button><span>'22</span></div><div class="fc"><button class="chipf w">W</button><span>'23</span></div><div class="fc"><button class="chipf w">W</button><span>'24</span></div></div><div class="cap">2024 Wk6 · 99.96–82.22 (+17.74)</div></div>
+<div class="tiles">
+<div class="card wide"><div class="lab">Postseason by Round</div><div class="po"><b>Semi</b> <span class="mut">—</span> <b class="gd">Brian/Ron</b> <b>1–0</b> <span class="mut">(2006)</span></div><div class="po"><b>Quarter</b> <span class="mut">—</span> <b class="gd">Brian/Ron</b> <b>2–1</b> <span class="mut">(2005, 2007, 2021)</span></div></div>
+<div class="card"><div class="lab">Streaks</div><div class="bn">3</div><div class="who">straight for Brian/Ron</div><div class="sub">Longest: Brian/Ron 6 · Jake 4</div></div>
+<div class="card"><div class="lab">Biggest Blowout</div><div class="bn">62.5</div><div class="who">Jake</div><div class="sub">146–83.5 · 2011 Wk 12</div></div>
+<div class="card"><div class="lab">Heartbreaker</div><div class="bn">1.5</div><div class="who">Brian/Ron</div><div class="sub">112–110.5 · 2009 Wk 11</div></div>
+<div class="card"><div class="lab">Nail-Biters</div><div class="bn">1</div><div class="who">decided by ≤ 3 pts</div><div class="sub">Brian/Ron 1 · Jake 0</div></div>
+<div class="card wide"><div class="lab">Total Points</div><div class="bn">3632.56 <span class="mut" style="font-size:18px">vs</span> 3346.12</div><div class="sub">Brian/Ron vs Jake · avg margin 27.43</div></div>
+<div class="card wide"><div class="lab">Series Lead</div><svg viewBox="0 0 340 140"><defs><clipPath id="up"><rect x="0" y="0" width="340" height="106.0"/></clipPath><clipPath id="dn"><rect x="0" y="106.0" width="340" height="34.0"/></clipPath></defs><path d="M8,106.0 H17.9 V115.0 H27.8 V124.0 H37.6 V115.0 H47.5 V106.0 H57.4 V97.0 H67.2 V88.0 H77.1 V79.0 H87.0 V88.0 H96.9 V79.0 H106.8 V88.0 H116.6 V97.0 H126.5 V88.0 H136.4 V79.0 H146.2 V70.0 H156.1 V79.0 H166.0 V88.0 H175.9 V97.0 H185.8 V106.0 H195.6 V97.0 H205.5 V88.0 H215.4 V79.0 H225.2 V88.0 H235.1 V79.0 H245.0 V70.0 H254.9 V61.0 H264.8 V52.0 H274.6 V43.0 H284.5 V34.0 H294.4 V43.0 H304.2 V34.0 H314.1 V25.0 H324.0 V16.0 V106.0 Z" fill="#1d9e75" fill-opacity=".18" clip-path="url(#up)"/><path d="M8,106.0 H17.9 V115.0 H27.8 V124.0 H37.6 V115.0 H47.5 V106.0 H57.4 V97.0 H67.2 V88.0 H77.1 V79.0 H87.0 V88.0 H96.9 V79.0 H106.8 V88.0 H116.6 V97.0 H126.5 V88.0 H136.4 V79.0 H146.2 V70.0 H156.1 V79.0 H166.0 V88.0 H175.9 V97.0 H185.8 V106.0 H195.6 V97.0 H205.5 V88.0 H215.4 V79.0 H225.2 V88.0 H235.1 V79.0 H245.0 V70.0 H254.9 V61.0 H264.8 V52.0 H274.6 V43.0 H284.5 V34.0 H294.4 V43.0 H304.2 V34.0 H314.1 V25.0 H324.0 V16.0 V106.0 Z" fill="#c04a4a" fill-opacity=".18" clip-path="url(#dn)"/><line x1="8" y1="106.0" x2="332" y2="106.0" stroke="#e2e6ed"/><path d="M8,106.0 H17.9 V115.0 H27.8 V124.0 H37.6 V115.0 H47.5 V106.0 H57.4 V97.0 H67.2 V88.0 H77.1 V79.0 H87.0 V88.0 H96.9 V79.0 H106.8 V88.0 H116.6 V97.0 H126.5 V88.0 H136.4 V79.0 H146.2 V70.0 H156.1 V79.0 H166.0 V88.0 H175.9 V97.0 H185.8 V106.0 H195.6 V97.0 H205.5 V88.0 H215.4 V79.0 H225.2 V88.0 H235.1 V79.0 H245.0 V70.0 H254.9 V61.0 H264.8 V52.0 H274.6 V43.0 H284.5 V34.0 H294.4 V43.0 H304.2 V34.0 H314.1 V25.0 H324.0 V16.0" fill="none" stroke="#1a2e50" stroke-width="2" stroke-linejoin="round"/><circle cx="324.0" cy="16.0" r="5" fill="#1a2e50"/><text x="314.0" y="21.0" text-anchor="end" font-family="Barlow Condensed" font-weight="700" font-size="16" fill="#1a2e50">+10</text></svg><div class="axis"><span>2005</span><span>2024</span></div><div class="legend"><span><i style="background:#1d9e75"></i>Brian/Ron ahead</span><span><i style="background:#c04a4a"></i>Jake ahead</span></div><div class="stat-line">Lead changes: <b>1</b> · Biggest lead: <b>Brian/Ron +10</b> (2024) · Jake last led in 2005</div></div>
+<div class="card wide"><div class="lab">Margin Timeline</div><svg viewBox="0 0 340 124"><line x1="8" y1="62" x2="332" y2="62" stroke="#e2e6ed"/><rect x="10.0" y="62.0" width="6.1" height="34.6" rx="1.5" fill="#c04a4a"/><rect x="20.1" y="62.0" width="6.1" height="13.8" rx="1.5" fill="#c04a4a"/><rect x="30.3" y="33.2" width="6.1" height="28.8" rx="1.5" fill="#1d9e75"/><rect x="40.4" y="53.6" width="6.1" height="8.4" rx="1.5" fill="#1d9e75"/><rect x="50.5" y="21.3" width="6.1" height="40.7" rx="1.5" fill="#1d9e75"/><rect x="60.6" y="18.6" width="6.1" height="43.4" rx="1.5" fill="#1d9e75"/><rect x="70.8" y="49.7" width="6.1" height="12.3" rx="1.5" fill="#1d9e75"/><rect x="80.9" y="62.0" width="6.1" height="4.2" rx="1.5" fill="#c04a4a"/><rect x="91.0" y="24.8" width="6.1" height="37.2" rx="1.5" fill="#1d9e75"/><rect x="101.2" y="62.0" width="6.1" height="19.6" rx="1.5" fill="#c04a4a"/><rect x="111.3" y="62.0" width="6.1" height="9.2" rx="1.5" fill="#c04a4a"/><rect x="121.4" y="57.8" width="6.1" height="4.2" rx="1.5" fill="#1d9e75"/><rect x="131.5" y="60.0" width="6.1" height="2.0" rx="1.5" fill="#1d9e75"/><rect x="141.7" y="47.8" width="6.1" height="14.2" rx="1.5" fill="#1d9e75"/><rect x="151.8" y="62.0" width="6.1" height="31.5" rx="1.5" fill="#c04a4a"/><rect x="161.9" y="62.0" width="6.1" height="36.5" rx="1.5" fill="#c04a4a"/><rect x="172.0" y="62.0" width="6.1" height="48.0" rx="1.5" fill="#c04a4a"/><rect x="182.2" y="62.0" width="6.1" height="11.5" rx="1.5" fill="#c04a4a"/><rect x="192.3" y="36.7" width="6.1" height="25.3" rx="1.5" fill="#1d9e75"/><rect x="202.4" y="49.9" width="6.1" height="12.1" rx="1.5" fill="#1d9e75"/><rect x="212.5" y="27.9" width="6.1" height="34.1" rx="1.5" fill="#1d9e75"/><rect x="222.7" y="62.0" width="6.1" height="12.3" rx="1.5" fill="#c04a4a"/><rect x="232.8" y="57.8" width="6.1" height="4.2" rx="1.5" fill="#1d9e75"/><rect x="242.9" y="50.2" width="6.1" height="11.8" rx="1.5" fill="#1d9e75"/><rect x="253.0" y="46.0" width="6.1" height="16.0" rx="1.5" fill="#1d9e75"/><rect x="263.1" y="29.1" width="6.1" height="32.9" rx="1.5" fill="#1d9e75"/><rect x="273.3" y="23.4" width="6.1" height="38.6" rx="1.5" fill="#1d9e75"/><rect x="283.4" y="53.8" width="6.1" height="8.2" rx="1.5" fill="#1d9e75"/><rect x="293.5" y="62.0" width="6.1" height="5.8" rx="1.5" fill="#c04a4a"/><rect x="303.6" y="16.6" width="6.1" height="45.4" rx="1.5" fill="#1d9e75"/><rect x="313.8" y="47.7" width="6.1" height="14.3" rx="1.5" fill="#1d9e75"/><rect x="323.9" y="48.4" width="6.1" height="13.6" rx="1.5" fill="#1d9e75"/></svg><div class="axis"><span>2005</span><span>2024</span></div><div class="legend"><span><i style="background:#1d9e75"></i>Brian/Ron win</span><span><i style="background:#c04a4a"></i>Jake win</span></div></div>
+<div class="card wide"><div class="glt"><span>All Meetings (32)</span><span>▾</span></div></div>
+</div>
+</div>
+</div></body></html>

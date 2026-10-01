@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-09-30 by Claude (Code)
+**Last updated:** 2026-09-30 by Claude (chat), Rivalry v2.0 queued
 
 ## Now
 
@@ -16,7 +16,14 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Queued prompts (in `_ops/prompts/`)
 
-- (none)
+Run in order. Commit 2 without pushing, then push after 3 (one v2.0 release).
+- `2026-09-30_rivalry-1-schedule-data.md`: Lower 2026 schedule from the ESPN snapshot (gold) + `schedule-data.js` generator; governance §2. VERSION: none.
+- `2026-09-30_rivalry-2-redesign.md`: rivalry.html scoreboard hero, stat tiles, last-5, Series Lead chart, 12px type floor, collapsible picker, rating recency fix. VERSION: major (v2.0). Mockup: `_ops/docs/RIVALRY_V2_MOCKUP.html`.
+- `2026-09-30_rivalry-3-gameday.md`: This Week's Rivalries slate, Next Meeting banner, stakes lines. VERSION: none (inside v2.0).
+
+## Planned (not written yet)
+
+- **Rivalry, next wave:** Defining Moments cards + upset flag (record entering the game); Tale of the Tape (needs a governance call on career-stat source); shareable rivalry card image (canvas PNG → iOS share sheet); MAFFL's Best: Nemesis / Punching Bag, per-owner heatmap row, player "rivalry killers" (2026+ from Top Performers). Commish hand-written notes: dropped.
 
 ## Open decisions / known issues
 
