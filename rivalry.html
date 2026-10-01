@@ -831,7 +831,8 @@
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v1.1</span>
-      <span class="meta-pill">Last Updated July 2, 2026</span>
+      <span class="meta-pill">Last Updated September 30, 2026</span>
+      <span class="meta-pill" id="dataThroughPill">Data through …</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -896,6 +897,16 @@
 
 <!-- Head-to-head source data (consolation games already excluded). -->
 <script src="matchups-data.js"></script>
+<script>
+/* Data-freshness pill: the newest game in matchups-data.js (refreshed weekly by the robot).
+ * "Last Updated" = this page file was edited; "Data through" = how current the results are. */
+(function () {
+  var rows = window.MATCHUPS_DATA || [], y = 0, w = 0;
+  rows.forEach(function (r) { if (r[0] > y || (r[0] === y && r[1] > w)) { y = r[0]; w = r[1]; } });
+  var el = document.getElementById("dataThroughPill");
+  if (el && y) el.textContent = "Data through " + y + " Wk " + w;
+})();
+</script>
 <script>
 /* =====================================================================
  * MAFFL RIVALRY ENGINE  (rivalry.html, v1.0)
@@ -1012,7 +1023,8 @@ ACTIVE_NAMES.forEach(function (nm) {
 });
 
 /* =====================================================================
- * SAME-DIVISION HISTORY — embedded from MAFFL_Division_History_2005_2025.csv.
+ * SAME-DIVISION HISTORY — embedded from MAFFL_Division_History_2005_2025.csv (2005–2026; the current
+ * season's rows are its alignment, added at season start per governance CE-9).
  * Each row: [year, tier ("U"/"L"), conference, division, ownerName].
  * We detect, per owner pair, the YEARS in which BOTH owners shared the same
  * (year + tier + conference + division) group.
@@ -1354,7 +1366,28 @@ var DIVISION_DATA = [
 [2025,"L","N/A","Lower Tier","Charles Lavrinc"],
 [2025,"L","N/A","Lower Tier","Nick Yankovich"],
 [2025,"L","N/A","Lower Tier","Sam Lavrinc"],
-[2025,"L","N/A","Lower Tier","Dominic Nicastro"]
+[2025,"L","N/A","Lower Tier","Dominic Nicastro"],
+[2026,"U","N/A","Division A","Mike Murello"],
+[2026,"U","N/A","Division A","David Murello"],
+[2026,"U","N/A","Division A","BJ Funari"],
+[2026,"U","N/A","Division B","Jacob Nickman"],
+[2026,"U","N/A","Division B","Jon Murello/Rick Simmons"],
+[2026,"U","N/A","Division B","Braiden Snyder"],
+[2026,"U","N/A","Division C","Tony Trozzo"],
+[2026,"U","N/A","Division C","Dan Reilly"],
+[2026,"U","N/A","Division C","Joe Reilly"],
+[2026,"U","N/A","Division D","Brian Murello/Ron Murello"],
+[2026,"U","N/A","Division D","Ed Peters"],
+[2026,"U","N/A","Division D","Jon Fetrow"],
+[2026,"L","N/A","Lower Tier","Sam Lavrinc"],
+[2026,"L","N/A","Lower Tier","Ben Funari"],
+[2026,"L","N/A","Lower Tier","Todd Trozzo"],
+[2026,"L","N/A","Lower Tier","Tony Brooks"],
+[2026,"L","N/A","Lower Tier","Charles Lavrinc"],
+[2026,"L","N/A","Lower Tier","Chris Johnson"],
+[2026,"L","N/A","Lower Tier","Nick Yankovich"],
+[2026,"L","N/A","Lower Tier","Dominic Nicastro"],
+[2026,"L","N/A","Lower Tier","Bob Keslar"]
 ];
 /* Division-file owner names don't all match the gold matchup names. Apply this
  * small fixup map BEFORE normalizeName when resolving DIVISION_DATA names to

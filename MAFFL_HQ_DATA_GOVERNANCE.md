@@ -146,6 +146,7 @@ Finish flags per §7.5: `MAFFL_Division_History_2005_2025.csv` (division ranks) 
 → `prize.csv` (payouts) → `prize.html`
 → `Power_Rankings.csv` career totals → power-rankings embed + Owners_Sheet
 → `history.html` book entries
+→ `MAFFL_Division_History_2005_2025.csv`: fill `Division_Rank` + `W`/`L`/`T` on the season's CE-9 alignment rows (don't add new rows)
 
 ### CE-4 — Credit awarded/spent
 `Credit_Log.csv` (append entry, Approved?=Y)
@@ -173,6 +174,15 @@ Finish flags per §7.5: `MAFFL_Division_History_2005_2025.csv` (division ranks) 
 → power-rankings.html embed (rank, ovr/clutch/grind/heat, scout/highlight)
 → Owners_Sheet power cols + "2026 Power Ranking"
 
+### CE-9 — New season begins (promotion/relegation + division alignment set)
+Added 2026-09-30. This gap left `rivalry.html` without 2026 divisions: every other CE starts from a result, none from a season start.
+`MAFFL_Division_History_2005_2025.csv`: append the new season's alignment rows (Upper Division A–D + Lower Tier), with `Division_Rank` / `W` / `L` / `T` **blank** until CE-3
+→ `rivalry.html` `DIVISION_DATA` (same rows, embed spellings; drives same-division and same-tier detection)
+→ `data/MAFFL_Schedule_<year>_Upper.csv` (commissioner-authored fixtures carry the same divisions; check they agree)
+→ weekly robot: `TEAM_MAP` tiers in `_ops/scripts/maffl_espn_pull.py`, `DIVISIONS` in `_ops/scripts/pulse_facts.py`
+→ `weekly.html` standings groups (`upperTier.divA..divD`, `lowerTier`) + Owners_Sheet "<year> League" column
+→ `history.html` csv-divisions embed is **not** updated mid-season; it picks the season up at CE-3
+
 ---
 
 ## 5. Update cadence (frequency of management)
@@ -197,6 +207,7 @@ Finish flags per §7.5: `MAFFL_Division_History_2005_2025.csv` (division ranks) 
 | G-6 | Medium | HTML embeds (esp. `history.html`, 885 KB, ~755 owner-string hits) have no provenance header or "do not hand-edit" marker; safe to edit by hand = will be edited by hand | history/draft/stats/prize/credits |
 | G-7 | Low | Owners_Sheet stores co-owner names across a literal in-cell newline — fragile to parse | Owners_Sheet |
 | G-8 | Low (known) | Playoff point totals undercounted in `MAFFL_Points_AllTime.csv`; matchup-derived values correct | Points_AllTime (already on your radar) |
+| G-9 | Medium | No chain event for season start, so `rivalry.html` DIVISION_DATA stopped at 2025 (fixed 2026-09-30 via CE-9). Hand-copied embeds go stale silently | `rivalry.html`, Division_History |
 
 ---
 

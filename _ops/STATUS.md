@@ -27,6 +27,7 @@ Run in order. Commit 2 without pushing, then push after 3 (one v2.0 release).
 
 ## Open decisions / known issues
 
+- **Data-through pill on weekly.html + power-rankings.html** (both read matchups-data.js), at their next edit (CLAUDE.md rule).
 - **Build is unsafe for dues.** `gen-prize.ps1` emits the old `dues_2026` shape and would wipe
   pay stamps. Hand-edit `dues_seasons` in `prize.html` until the generator reads
   `Dues_Log.csv`. (See `_ops/docs/DUES_PROCESS_NOTE.md`.)
@@ -38,6 +39,7 @@ Run in order. Commit 2 without pushing, then push after 3 (one v2.0 release).
 
 ## Recently shipped
 
+- 2026-09-30 · Rivalry: 2026 divisions/tiers added (gold Division_History alignment rows + DIVISION_DATA); runtime "Data through YYYY Wk N" pill; governance CE-9 "New season begins" + G-9; CLAUDE.md data-freshness pill rule
 - 2026-09-30 · Sweep audit fixes: pulse-draft won't draft week W until W−1 is in gold (emails instead; merge each PR before the next Tuesday); retry = "Re-run failed jobs"; CLAUDE.md robot section; runbook + governance refreshed (build is check-only, no cleaned_maffl as a source, dues_seasons, robot CE-1); _ops README map. Audit: _ops/AUDIT_2026-09-30_sweep.md
 - 2026-09-30 · Rehearsal findings fixed: pulse-draft allows the github-actions bot (Claude had refused a bot-started run); ESPN pull now tries Tue 1:17/2:47/4:13/5:37/7:23 AM ET + Wed backstop (the one-off 6 AM schedule ran 6 h late). Re-run Actions → Rehearsal to confirm.
 - 2026-09-30 · Rehearsal workflow + pulse-draft rehearsal mode; recipe v0.4 (full draft as readable text in the PR). Week 3 rehearsal scheduled Wed Sep 30 6:00 AM ET: expect a "REHEARSAL: Week 3 redo" PR to review on the phone, then close.
