@@ -69,7 +69,8 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 |---|---|---|---|
 | Game result (W/L, scores) | `MAFFL_Matchups_Clean.csv` | `MAFFL_Matchups_NoConsolation.csv`, `matchups-data.js`, embedded standings/records in history/stats/power-rankings/rivalry/weekly | Weekly (in season) |
 | Weekly top-3 scorers per team (2026+) | `data/MAFFL_Top_Performers_2026.csv` — **appended weekly by the robot** (`_ops/scripts/ingest_week.py`, from the ESPN pull's OUTPUT 2a) (`Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points`; ESPN first-initial player names; `Pos` blank until capture supplies it) | None generated. Quoted by hand in weekly.html Pulse prose (Results notes, Credit Tracker Individual High) | Weekly (in season) |
-| Regular-season **fixtures** — 2026 Upper-Tier (week, home/away, Week_Type, Game_Class, Division) | `data/MAFFL_Schedule_2026_Upper.csv` — **hand-authored by the commissioner; NOT derived from any other file** | rules.html Schedule Structure (four-block table, 2026 Mirror Pairs list), weekly.html Week 1 Preview | Seasonal (set with division alignment) |
+| Regular-season **fixtures** — 2026 Upper-Tier (week, home/away, Week_Type, Game_Class, Division) | `data/MAFFL_Schedule_2026_Upper.csv` — **hand-authored by the commissioner; NOT derived from any other file** | rules.html Schedule Structure (four-block table, 2026 Mirror Pairs list), weekly.html Week 1 Preview, `schedule-data.js` (via `build/generate-schedule-data.ps1`) → `rivalry.html` | Seasonal (set with division alignment) |
+| Regular-season **fixtures** — 2026 Lower-Tier (week, home/away) | `data/MAFFL_Schedule_2026_Lower.csv` — **extracted once from ESPN's auto-generated Lower schedule** by `_ops/scripts/extract_espn_schedule.py` (snapshot 2026-09-30); re-extract only if ESPN's schedule changes | `schedule-data.js` → `rivalry.html` | Seasonal |
 | Team name by owner×year | `MAFFL_Team_History.csv` | Owners_Sheet "Current Team", **power-rankings.html `recentTeam`+`timeline`**, Matchups Winner/Loser_Team, Division_History "Team", embeds in history/draft/prize | Seasonal (+ ad-hoc renames) |
 | Owner W/L/T per season | `MAFFL_Matchups_Clean.csv` (derive) | `cleaned_maffl_revised.csv`, Division_History, power-rankings.html `timeline` | Weekly |
 | Finish flags — Division Titles | `MAFFL_Division_History_2005_2025.csv` (Tier=Upper, Division_Rank=1, **all years 2005+**) | power-rankings `timeline`+`divTitles`, history.html STATS_DATA `div:` + csv-seasons, Owners_Sheet col 8, Power_Rankings.csv | Seasonal |
@@ -83,12 +84,13 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 | Owner roster / active status / aliases | `MAFFL_Owners_Sheet_revised.csv` | every page, every data file (join key) | Rare |
 | Rules | `MAFFL_Rules_revised.csv` | rules.html | Rare |
 
-**Fixtures are not results.** `MAFFL_Schedule_2026_Upper.csv` holds the *scheduled* Upper-Tier
-regular season only — who plays whom, in which week, at which slot. It carries no scores and no
+**Fixtures are not results.** `MAFFL_Schedule_2026_Upper.csv` and `MAFFL_Schedule_2026_Lower.csv` hold the
+*scheduled* regular season only — who plays whom, in which week, at which slot. They carry no scores and no
 W/L. `MAFFL_Matchups_NoConsolation.csv` remains the gold source for **played results**, and every
 record, standing and power rating still derives from there. Do not conflate the two, and do not
 join one onto the other to fill gaps: a fixture that has not been played yet is absent from the
-results file by design, not by omission.
+results file by design, not by omission. rivalry.html reads fixtures only to show upcoming meetings; records,
+streaks and ratings still come only from played results.
 
 Owner names in the schedule file are the ESPN-facing display spellings (e.g.
 `Brian / Ron Murello`, `Jon Murello / Rick Simmons`). Resolve them through
