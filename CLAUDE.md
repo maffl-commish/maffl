@@ -47,9 +47,6 @@ The two pills do different jobs:
   `RULEBOOK_VERSION`. Stamp the date via `RULEBOOK_LAST_UPDATED` and keep the static pill
   markup in sync with the constants; editing only the static markup has no visible effect.
 - A stamp update is part of the SAME commit as the change, not a separate pass.
-- **Data-freshness pill.** A page that reads `matchups-data.js` shows a third header pill, `Data through YYYY Wk N`,
-  computed at runtime from the newest row (live on `rivalry.html`; add it to `weekly.html` and `power-rankings.html`
-  the next time they're touched). It needs no stamping. `Last Updated` still means the page file itself was edited.
 
 ## Data Governance
 

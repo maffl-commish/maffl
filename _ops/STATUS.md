@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-03 by Claude (code), Rivalry v2.0 live + home What's New slide
+**Last updated:** 2026-10-03 by Claude (code), Rivalry v2.0 fixes (landing, hero scroll, back button, filter)
 
 ## Now
 
@@ -24,7 +24,6 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Open decisions / known issues
 
-- **Data-through pill on weekly.html + power-rankings.html** (both read matchups-data.js), at their next edit (CLAUDE.md rule).
 - **Build is unsafe for dues.** `gen-prize.ps1` emits the old `dues_2026` shape and would wipe
   pay stamps. Hand-edit `dues_seasons` in `prize.html` until the generator reads
   `Dues_Log.csv`. (See `_ops/docs/DUES_PROCESS_NOTE.md`.)
@@ -36,6 +35,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-03 · Rivalry v2.0 fixes: tiers start collapsed; tapping a game lands on the hero with every card closed; ‹ Week N Rivalries back button (and phone Back) returns to landing; Data-through pill + CLAUDE.md rule removed; compact one-line Show filter.
 - 2026-10-03 · Home What's New: Draft slide retired; new slide 2 "⚔️ Your League, Live Every Week" → rivalry.html.
 - 2026-10-03 · Rivalry v2.0 live: scoreboard + accordions, Week N Rivalries card (auto-advances after each ingest), This Week strip + stakes lines. Reads schedule-data.js.
 - 2026-10-03 · Rivalry v2.0 part 1 (committed, not pushed): scoreboard hero, Pulse-style accordion sections (Recent Form open), Last 5, Series Lead chart, 12px type floor, picker collapses after a pick; rating recency anchored to last complete season.

@@ -260,9 +260,6 @@
   .tab-logo { height: 18px; width: auto; display: block; flex: 0 0 auto; }
   .tab-panel[hidden] { display: none; }
 
-  /* ---------- VS head scroll offset (clears the sticky site-header) ---------- */
-  #vsResult { scroll-margin-top: 84px; }
-
   /* ---------- Collapsible explainer (both tabs; adapted from old legend) ---------- */
   .explain-box {
     background: var(--surface);
@@ -333,6 +330,22 @@
   }
   .filter-pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   .filter-count { font-weight: 500; font-size: 12px; opacity: 0.85; }
+
+  /* Active / All: one slim line ("SHOW [ACTIVE] [ALL]"). Scoped to #filterBar so the vs-the-field
+     sort buttons (also .filter-pill) are unchanged. */
+  .filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .filter-row[hidden] { display: none; }
+  .filter-row .section-label { margin: 0; }
+  #filterBar { gap: 6px; margin-bottom: 0; }
+  #filterBar .filter-pill {
+    position: relative;
+    min-height: 30px;
+    padding: 4px 12px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  #filterBar .filter-pill::after { content: ""; position: absolute; inset: -7px -2px; } /* 44px touch target */
+  #filterBar .filter-count { font-size: 12px; }
 
   /* ---------- Owner pills ---------- */
   .owner-pillbox {
@@ -469,6 +482,7 @@
 
   /* ---------- Scoreboard hero (overall record is the centerpiece) ---------- */
   .vs-hero {
+    scroll-margin-top: calc(76px + env(safe-area-inset-top)); /* lands just under the sticky header (and notch) */
     background: linear-gradient(160deg, #243a62 0%, #1a2e50 55%, #0f1d34 100%);
     color: #fff;
     border-radius: 14px;
@@ -838,9 +852,16 @@
     font-family: var(--display); font-weight: 700; font-size: 18px;
     text-align: left;
   }
-  .picker-bar .pb-names { min-width: 0; }
-  .picker-bar .pb-1 { color: var(--gold-dark); }
-  .picker-bar .pb-vs { font-size: 12px; letter-spacing: 0.1em; color: var(--muted); margin: 0 6px; }
+  .picker-back {
+    flex: 0 1 auto; min-width: 0;
+    min-height: 44px;
+    padding: 0 4px 0 0;
+    border: 0; background: none;
+    font-family: var(--display); font-weight: 700; font-size: 15px;
+    color: var(--gold-dark);
+    text-align: left; white-space: nowrap;
+  }
+  .picker-back:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
   .picker-change {
     flex: 0 0 auto;
     min-height: 44px;
@@ -955,7 +976,6 @@
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v2.0</span>
       <span class="meta-pill">Last Updated October 3, 2026</span>
-      <span class="meta-pill" id="dataThroughPill">Data through …</span>
     </div>
   </header>
   <hr class="gold-rule">
@@ -973,7 +993,7 @@
     <div id="slateSection"></div>
 
     <!-- 1) FILTER BAR -->
-    <section aria-label="Owner filter" id="filterSection">
+    <section aria-label="Owner filter" id="filterSection" class="filter-row">
       <p class="section-label">Show</p>
       <div class="filter-bar" id="filterBar" role="group" aria-label="Active or all owners">
         <button type="button" class="filter-pill" id="filterActive" aria-pressed="true">Active <span class="filter-count" id="countActive"></span></button>
@@ -1024,16 +1044,6 @@
 <!-- Head-to-head source data (consolation games already excluded). -->
 <script src="matchups-data.js"></script>
 <script src="schedule-data.js"></script>
-<script>
-/* Data-freshness pill: the newest game in matchups-data.js (refreshed weekly by the robot).
- * "Last Updated" = this page file was edited; "Data through" = how current the results are. */
-(function () {
-  var rows = window.MATCHUPS_DATA || [], y = 0, w = 0;
-  rows.forEach(function (r) { if (r[0] > y || (r[0] === y && r[1] > w)) { y = r[0]; w = r[1]; } });
-  var el = document.getElementById("dataThroughPill");
-  if (el && y) el.textContent = "Data through " + y + " Wk " + w;
-})();
-</script>
 <script>
 /* =====================================================================
  * MAFFL RIVALRY ENGINE  (rivalry.html, v2.0)
@@ -2013,7 +2023,7 @@ function renderPills() {
 
 function renderStatus() {
   var s = document.getElementById("ownerStatus");
-  // A full pair folds the picker (filter, label, pills) into a compact "A VS B · Change" bar.
+  // A full pair folds the picker (filter, label, pills) into a compact "‹ Week N Rivalries · Change" bar.
   var collapse = !!(sel1 && sel2 && pickerCollapsed);
   ["filterSection", "pickLabel", "ownerGrid"].forEach(function (id) {
     var el = document.getElementById(id);
@@ -2021,11 +2031,13 @@ function renderStatus() {
   });
   s.parentNode.classList.toggle("collapsed", collapse);
   if (collapse) {
+    var hasSlate = !!(SCHED && CUR_WEEK != null && schedGamesForWeek(CUR_WEEK).length);
     s.innerHTML = '<div class="picker-bar">' +
-      '<span class="pb-names"><span class="pb-1">' + escHtml(shortName(ROSTER_BY_KEY[sel1].name)) + '</span>' +
-        '<span class="pb-vs">VS</span>' + escHtml(shortName(ROSTER_BY_KEY[sel2].name)) + '</span>' +
+      '<button type="button" class="picker-back">' +
+        (hasSlate ? "&lsaquo; Week " + CUR_WEEK + " Rivalries" : "&lsaquo; Start over") + '</button>' +
       '<button type="button" class="picker-change">Change</button>' +
     '</div>';
+    s.querySelector(".picker-back").addEventListener("click", backToLanding);
     s.querySelector(".picker-change").addEventListener("click", function () {
       pickerCollapsed = false;   // re-show the picker, keep the selection
       renderStatus();
@@ -2052,12 +2064,12 @@ function tapOwner(key) {
   else if (!sel1) { sel1 = key; }                         // fill Owner 1
   else if (!sel2) { sel2 = key; }                         // fill Owner 2
   else { sel1 = key; sel2 = null; }                       // both full -> fresh start
-  if (sel1 && sel2) pickerCollapsed = true;               // new full pair -> fold the picker
+  if (sel1 && sel2) { pickerCollapsed = true; pendingHeroScroll = true; } // new full pair -> fold picker, land on hero
   renderPills();
   renderVS();
   renderSlate();
   syncHash();
-  if (sel1 && sel2) scrollToVs();
+  flushHeroScroll();
 }
 
 /* =====================================================================
@@ -2462,7 +2474,7 @@ function stakesLines(p, k1, k2) {
 /* Week N Rivalries card: open by default, top of the Head-to-Head tab, until Owner 1 is picked.
  * Ignores the Active/All filter. Rows tap into loadPair(away, home). */
 var slateOpen = true;
-var slateTierOpen = { U: true, L: false };
+var slateTierOpen = { U: false, L: false };
 function renderSlate() {
   var host = document.getElementById("slateSection");
   var label = document.getElementById("pickLabel");
@@ -2562,7 +2574,7 @@ function renderVS() {
     return;
   }
   explorer.classList.add("pair");
-  if (accState.pid !== p.id) accState = { pid: p.id, open: { form: true } };   // new pair: only Recent Form open
+  if (accState.pid !== p.id) accState = { pid: p.id, open: {} };   // new pair: every card starts closed
 
   var o1 = ROSTER_BY_KEY[k1], o2 = ROSTER_BY_KEY[k2];
   var s1 = shortName(o1.name), s2 = shortName(o2.name);
@@ -3022,19 +3034,43 @@ function activateTab(name) {
  *   rivalry.html#vs=keyA,keyB  → Head-to-Head tab, preselect both + render
  *   rivalry.html#owner=keyA    → Head-to-Head tab, preselect Owner 1 only
  * ===================================================================== */
-function scrollToVs() {
-  var el = document.getElementById("vsResult");
-  if (!el) return;
-  try { el.scrollIntoView({ behavior: "smooth", block: "start" }); }
-  catch (_) { el.scrollIntoView(); }
+/* Scroll to the navy hero AFTER the new markup is laid out (the Week N card above it may have just been
+ * removed). No smooth behavior: iOS standalone mis-lands smooth scrolls while content above collapses. */
+var pendingHeroScroll = false;
+function scrollToHero() {
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      var el = document.querySelector("#vsResult .vs-hero") || document.getElementById("vsResult");
+      if (el) el.scrollIntoView({ block: "start" });
+    });
+  });
+}
+function flushHeroScroll() {
+  if (!pendingHeroScroll) return;
+  pendingHeroScroll = false;
+  scrollToHero();
+}
+
+/* ‹ Week N Rivalries: full reset to the landing view. */
+function backToLanding() {
+  sel1 = sel2 = null;
+  pickerCollapsed = true;
+  pendingHeroScroll = false;
+  slateOpen = true; slateTierOpen = { U: false, L: false };   // landing state: card open, tiers collapsed
+  try { history.replaceState(null, "", location.pathname + location.search); }
+  catch (_) { /* ignore */ }
+  renderPills();
+  renderVS();
+  renderSlate();
+  window.scrollTo(0, 0);
 }
 
 function loadPair(aKey, bKey) {
   activateTab("h2h"); // cross-tab jump from a Discovery row
   pickerCollapsed = true;
+  pendingHeroScroll = true;   // applyHash() scrolls once the pair has rendered
   var newHash = "#vs=" + encodeURIComponent(aKey) + "," + encodeURIComponent(bKey);
   if (location.hash === newHash) { applyHash(); } else { location.hash = newHash; }
-  scrollToVs();
 }
 
 function syncHash() {
@@ -3062,10 +3098,17 @@ function applyHash() {
     sel1 = resolveKey(mo[1]);
     sel2 = null;
     activateTab("h2h");
+  } else {
+    // No vs=/owner= (e.g. phone Back after a pair was pushed): return to the landing view.
+    var hadSel = !!(sel1 || sel2);
+    sel1 = sel2 = null;
+    pickerCollapsed = true;
+    if (hadSel) { slateOpen = true; slateTierOpen = { U: false, L: false }; window.scrollTo(0, 0); }
   }
   renderPills();
   renderVS();
   renderSlate();
+  flushHeroScroll();
 }
 
 /* ---- Boot ---- */
@@ -3096,6 +3139,7 @@ function applyHash() {
   });
 
   renderLeaderboards();
+  if (/(?:^|[#&])vs=/.test(location.hash || "")) pendingHeroScroll = true; // cold #vs= link lands on the hero
   applyHash(); // renders pills + VS (and applies any incoming #vs / #owner)
 
   var activePairs = ALL_PAIRS.filter(function (p) { return isActive(p.aKey) && isActive(p.bKey); }).length;
