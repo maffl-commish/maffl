@@ -288,7 +288,7 @@
     text-align: left;
   }
   .explain-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-  .explain-chev { font-size: 11px; color: var(--muted); transition: transform 0.15s ease; }
+  .explain-chev { font-size: 12px; color: var(--muted); transition: transform 0.15s ease; }
   .explain-toggle[aria-expanded="true"] .explain-chev { transform: rotate(180deg); }
   .explain-body { padding: 0 16px 14px; }
   .explain-h {
@@ -332,7 +332,7 @@
     background: var(--navy); color: #fff; border-color: var(--navy);
   }
   .filter-pill:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .filter-count { font-weight: 500; font-size: 11px; opacity: 0.85; }
+  .filter-count { font-weight: 500; font-size: 12px; opacity: 0.85; }
 
   /* ---------- Owner pills ---------- */
   .owner-pillbox {
@@ -352,15 +352,15 @@
   .owner-status .os-slot { display: inline-flex; align-items: baseline; gap: 6px; }
   .owner-status .os-tag {
     font-family: var(--display); font-weight: 700;
-    font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase;
+    font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase;
     color: var(--muted);
   }
   .owner-status .os-name {
-    font-family: var(--display); font-weight: 700; font-size: 16px;
+    font-family: var(--display); font-weight: 700; font-size: 18px;
   }
   .owner-status .os-name-1 { color: var(--gold-dark); }
   .owner-status .os-name-2 { color: var(--navy); }
-  .owner-status .os-empty { font-family: var(--body); color: var(--muted); font-weight: 500; font-size: 13px; }
+  .owner-status .os-empty { font-family: var(--body); color: var(--muted); font-weight: 500; font-size: 14px; }
   .owner-status .os-vs {
     font-family: var(--display); font-weight: 700;
     font-size: 12px; letter-spacing: 0.1em; color: var(--muted);
@@ -378,7 +378,7 @@
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--page-bg);
-    font-family: var(--body); font-weight: 700; font-size: 13.5px;
+    font-family: var(--body); font-weight: 700; font-size: 14.5px;
     color: var(--navy);
     line-height: 1.15;
     transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
@@ -393,18 +393,19 @@
   }
   .owner-pill .op-badge {
     flex: 0 0 auto;
-    font-family: var(--display); font-weight: 700; font-size: 11px;
+    font-family: var(--display); font-weight: 700; font-size: 12px;
     border-radius: 999px; padding: 2px 8px;
     background: rgba(255, 255, 255, 0.4);
   }
   .owner-pill[data-state="b"] .op-badge { background: rgba(255, 255, 255, 0.22); }
+  .owner-grid[hidden] { display: none; }
   .owner-empty { font-family: var(--body); font-size: 13px; color: var(--muted); padding: 8px 2px; }
 
   /* Pill record-preview chips (shown vs Owner 1) */
   .owner-pill .op-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .op-rec {
     flex: 0 0 auto;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
     border-radius: 999px; padding: 2px 7px; margin-left: 6px;
     font-variant-numeric: tabular-nums;
   }
@@ -422,14 +423,14 @@
   .vs-msg {
     text-align: center;
     font-family: var(--body);
-    font-size: 14px;
+    font-size: 15px;
     color: var(--muted);
     padding: 22px 12px;
   }
 
   /* ---------- VS-the-field view (Owner 1 picked, Owner 2 empty) ---------- */
   .field-head {
-    font-family: var(--display); font-weight: 700; font-size: 18px;
+    font-family: var(--display); font-weight: 700; font-size: 20px;
     text-align: center; color: var(--navy); margin-bottom: 4px;
   }
   .field-sub {
@@ -443,7 +444,7 @@
     display: flex; align-items: center; gap: 8px; justify-content: space-between;
     padding: 10px 4px; min-height: 44px;
     border-bottom: 1px solid var(--border);
-    font-size: 13px; text-align: left;
+    font-size: 15px; text-align: left;
     transition: background 0.12s ease;
   }
   .field-row:last-child { border-bottom: 0; }
@@ -455,176 +456,205 @@
     font-family: var(--body); font-weight: 700; color: var(--navy);
   }
   .field-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
-  .field-emoji { font-size: 13px; white-space: nowrap; }
+  .field-emoji { font-size: 14px; white-space: nowrap; }
   .field-rec {
-    font-family: var(--display); font-weight: 700; font-size: 13px;
+    font-family: var(--display); font-weight: 700; font-size: 14px;
     color: var(--navy); border-radius: 999px; padding: 2px 8px;
     font-variant-numeric: tabular-nums; white-space: nowrap;
   }
-  .field-last { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .field-last { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 
-  /* Prominent VS header — overall record is the centerpiece */
-  .vs-head {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 10px 16px;
+  /* Pair view: the hero + accordion cards sit on the page background, not inside the explorer card. */
+  .vs-explorer.pair { background: none; border: 0; padding: 0; box-shadow: none; border-radius: 0; }
+
+  /* ---------- Scoreboard hero (overall record is the centerpiece) ---------- */
+  .vs-hero {
+    background: linear-gradient(160deg, #243a62 0%, #1a2e50 55%, #0f1d34 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 12px 14px 14px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .vs-strip-slot:empty { display: none; }
+  .vs-sb {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 6px;
+  }
+  .vs-sb > div { min-width: 0; }
+  .vs-sb-name {
+    font-family: var(--display); font-weight: 700;
+    font-size: 17px; line-height: 1.1;
+    color: #fff;
+    overflow-wrap: anywhere;
+  }
+  .vs-sb-name-1 { color: #f7c46a; }
+  .vs-sb-num {
+    font-family: var(--display); font-weight: 700;
+    font-size: 52px; line-height: 1;
+  }
+  .vs-sb-num.lead { color: var(--gold); }
+  .vs-sb-num.trail { color: rgba(255, 255, 255, 0.7); }
+  .vs-sb-vs {
+    font-family: var(--display); font-weight: 700;
+    font-size: 12px; letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.55);
+    padding-bottom: 16px;
+  }
+  .vs-meta {
+    display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-top: 8px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .vs-meta b { color: #fff; font-weight: 700; }
+  .hero-rating {
+    display: inline-flex; align-items: center; gap: 5px;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-family: var(--display); font-weight: 700; font-size: 14px;
+    color: #fff;
+  }
+  .vs-share {
+    min-height: 44px;
+    padding: 0 4px;
+    font-family: var(--display); font-weight: 700; font-size: 14px;
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .vs-share:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- Accordion cards (look copied from weekly.html .pulse-card) ---------- */
+  .acc {
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
   }
-  .vs-head-names {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+  .acc.open { border-color: var(--navy); box-shadow: 0 8px 22px var(--navy-shadow); }
+  .acc-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%; min-height: 52px;
+    padding: 12px 14px;
+    text-align: left;
   }
-  .vs-head-name {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 1.1;
-  }
-  .vs-head-name-1 { color: var(--gold-dark); }
-  .vs-head-name-2 { color: var(--navy); }
-  .vs-head-rec {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 30px;
+  .acc-head:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .acc-l { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .acc-icon { font-size: 19px; line-height: 1; flex: 0 0 auto; }
+  .acc-title {
+    font-family: var(--display); font-weight: 700; font-size: 16px;
+    text-transform: uppercase; letter-spacing: 0.04em;
     color: var(--navy);
+  }
+  .acc-chev { color: var(--muted); font-size: 13px; line-height: 1; flex: 0 0 auto; transition: transform 0.18s ease; }
+  .acc.open .acc-chev { transform: rotate(180deg); color: var(--navy); }
+  .acc-prev { padding: 0 14px 12px; margin-top: -4px; font-size: 14px; color: var(--muted); line-height: 1.4; }
+  .acc.open .acc-prev { display: none; }
+  .acc-body { display: none; padding: 4px 14px 14px; border-top: 1px solid var(--border); }
+  .acc.open .acc-body { display: block; }
+
+  .sub-h {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    font-family: var(--display); font-weight: 700; font-size: 12.5px;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--muted);
+    margin: 12px 0 6px;
+  }
+  .sub-h span { text-transform: none; letter-spacing: 0; font-family: var(--body); font-weight: 500; }
+
+  .kv {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .kv:last-child { border-bottom: 0; }
+  .kv-k { font-size: 14px; color: var(--muted); flex: 0 0 auto; }
+  .kv-v { text-align: right; font-size: 16px; font-weight: 700; color: var(--navy); min-width: 0; }
+  .kv-v small { display: block; font-size: 13.5px; font-weight: 400; color: var(--muted); }
+
+  /* ---------- Last-5 form strip ---------- */
+  .form-strip { display: flex; justify-content: space-between; gap: 6px; }
+  .form-strip.few { justify-content: flex-start; gap: 14px; }
+  .form-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12.5px; color: var(--muted); }
+  .form-chip {
+    position: relative;
+    width: 44px; height: 44px;
     border-radius: 10px;
-    padding: 8px 20px;
-    white-space: nowrap;
+    color: #fff;
+    font-family: var(--display); font-weight: 700; font-size: 18px;
     text-align: center;
-    line-height: 1.1;
   }
-  .vs-head-split {
-    font-family: var(--body);
-    font-weight: 500;
-    font-size: 13px;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.5;
-  }
-  .vs-head-split strong { color: var(--navy); font-weight: 700; }
-  .vs-head-vs {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    color: var(--muted);
+  .form-chip.w { background: var(--win); }
+  .form-chip.l { background: var(--loss); }
+  .form-chip[data-on="1"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--navy); }
+  .form-chip:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .form-chip i {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--navy); color: #fff;
+    font-style: normal; font-size: 12px; line-height: 18px;
+    border-radius: 999px; padding: 0 5px;
   }
 
   /* ---------- Rivalry tier badges ---------- */
-  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; margin-bottom: 8px; }
   .badge-chip {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 11px;
+    min-height: 36px;
+    padding: 0 12px;
     border-radius: 999px;
     background: var(--gold-soft);
     border: 1px solid var(--gold);
-    font-family: var(--display); font-weight: 700; font-size: 12.5px;
+    font-family: var(--display); font-weight: 700; font-size: 14px;
     color: var(--navy);
     white-space: nowrap;
   }
   .badge-chip .bc-emoji { font-size: 14px; }
   .badge-chip .bc-who { color: var(--gold-dark); font-weight: 700; }
   .badge-chip.open { background: var(--gold-soft); border-color: var(--gold-dark); }
-  .badge-desc { font-size: 12.5px; color: var(--muted); text-align: center; padding: 4px 8px 10px; }
+  .badge-desc { font-size: 14px; color: var(--muted); padding: 0 2px 8px; }
 
-  /* Rivalry Rating pill + share button (in the VS head) */
-  .vs-rating {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--display); font-weight: 700;
-    border: 1px solid var(--gold);
-    background: var(--gold-soft);
-    border-radius: 999px;
-    padding: 5px 14px;
-    font-size: 13px;
-    color: var(--navy);
-  }
-  .vs-rating strong { font-size: 16px; color: var(--navy); }
-  .vs-share {
-    border: 1px solid var(--border);
-    background: var(--surface);
-    border-radius: 999px;
-    padding: 8px 16px;
-    font-size: 12.5px;
-    min-height: 40px;
-    font-family: var(--display); font-weight: 700;
-    color: var(--navy);
-  }
-  .vs-share:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-
-  /* One-sentence rivalry blurb (between head and badge row) */
+  /* One-sentence rivalry blurb (top of The Story) */
   .vs-blurb {
-    font-size: 13.5px; font-style: italic; color: var(--muted);
-    text-align: center; margin: 0 0 12px; padding: 0 8px;
+    font-size: 16px; font-weight: 500; color: var(--navy);
+    text-align: left; margin: 10px 0;
   }
 
-  /* Championship callout (below badge row) */
+  /* Championship callout (top of Big Games) */
   .champ-callout {
     border: 1px solid var(--gold);
     background: var(--gold-soft);
     border-radius: 10px;
     padding: 10px 12px;
     font-size: 13px;
-    margin-bottom: 14px;
+    margin: 10px 0 4px;
     line-height: 1.5;
   }
 
-  /* Tappable timeline bar caption */
-  .tl-caption { font-size: 12px; text-align: center; color: var(--navy); padding: 4px 0; }
+  /* Tappable chart / chip caption */
+  .tl-caption { font-size: 14px; text-align: center; color: var(--navy); padding: 4px 0; }
 
-  /* Game log (All Meetings) — toggle styled like the removed legend toggle */
-  .gamelog-toggle {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    width: 100%; min-height: 44px; padding: 9px 2px;
-    font-family: var(--display); font-weight: 700; font-size: 13px;
-    text-transform: uppercase; letter-spacing: 0.05em; color: var(--gold-dark);
-    text-align: left;
-  }
-  .gamelog-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  .gamelog-chev { font-size: 11px; color: var(--muted); transition: transform 0.15s ease; }
-  .gamelog-toggle[aria-expanded="true"] .gamelog-chev { transform: rotate(180deg); }
-  .gamelog-body { padding-top: 2px; }
-  .gamelog-row {
-    font-size: 12.5px; padding: 7px 2px;
-    border-bottom: 1px solid var(--border);
-    color: var(--navy); line-height: 1.4;
-    overflow-wrap: anywhere;
-  }
-  .gamelog-row:last-child { border-bottom: 0; }
-  .gamelog-row .gl-win-1 { color: var(--win); font-weight: 700; }
-  .gamelog-row .gl-win-2 { color: var(--loss); font-weight: 700; }
+  /* Series Lead chart stats line */
+  .lead-stats { font-size: 14px; margin-top: 6px; line-height: 1.45; }
+  .lead-stats b { font-weight: 700; }
 
-  .vs-stats { display: flex; flex-direction: column; gap: 0; }
-  .vs-stat {
-    padding: 11px 2px;
+  /* Game log (All Meetings) */
+  .gl-row {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    font-size: 14px; padding: 8px 0;
     border-bottom: 1px solid var(--border);
   }
-  .vs-stat:last-child { border-bottom: 0; }
-  .vs-stat__label {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--muted);
-    margin-bottom: 3px;
-  }
-  .vs-stat__value {
-    font-family: var(--body);
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--navy);
-    line-height: 1.45;
-  }
-  .vs-stat__value strong { font-weight: 700; }
-  .vs-stat__sub { color: var(--muted); font-size: 13px; }
-  .vs-shared__row { margin-top: 2px; }
-  .vs-shared__row:first-child { margin-top: 0; }
+  .gl-row:last-child { border-bottom: 0; }
+  .gl-when { color: var(--muted); }
+  .gl-res { text-align: right; white-space: nowrap; }
+  .gl-res .gl-w { color: var(--win); font-weight: 700; }
+  .gl-res .gl-l { color: var(--loss); font-weight: 700; }
 
   /* Postseason-by-round vertical list */
   .po-list { display: flex; flex-direction: column; gap: 5px; }
@@ -633,19 +663,19 @@
   .po-line .po-dash { color: var(--muted); }
   .po-line .po-rec { font-family: var(--display); font-weight: 700; font-size: 15px; }
   .po-line .po-rec .po-who { color: var(--gold-dark); }
-  .po-line .po-years { color: var(--muted); font-size: 13px; }
+  .po-line .po-years { color: var(--muted); font-size: 14px; }
 
   /* ---------- Head-to-head margin timeline ---------- */
   .h2h-chart { margin-top: 4px; }
   .h2h-chart svg { width: 100%; height: auto; display: block; }
   .h2h-axis {
     display: flex; justify-content: space-between;
-    font-family: var(--display); font-weight: 700; font-size: 11px;
+    font-family: var(--display); font-weight: 700; font-size: 12.5px;
     color: var(--muted); margin-top: 2px;
   }
   .h2h-legend {
     display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px;
-    font-family: var(--body); font-size: 11px; color: var(--muted);
+    font-family: var(--body); font-size: 12.5px; color: var(--muted);
     margin-top: 6px;
   }
   .h2h-legend span { display: inline-flex; align-items: center; gap: 5px; }
@@ -674,7 +704,7 @@
   }
   .lb-note {
     font-family: var(--body);
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
     margin: 0 0 8px;
   }
@@ -698,14 +728,14 @@
   .lb-row__names {
     font-family: var(--body);
     font-weight: 700;
-    font-size: 13.5px;
+    font-size: 15px;
     color: var(--navy);
     line-height: 1.25;
     min-width: 0;
   }
-  .lb-row__names .lb-vs { color: var(--muted); font-weight: 500; font-size: 11px; padding: 0 3px; }
+  .lb-row__names .lb-vs { color: var(--muted); font-weight: 500; font-size: 12px; padding: 0 3px; }
   .lb-row__right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
-  .lb-emoji { font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+  .lb-emoji { font-size: 14px; letter-spacing: 1px; white-space: nowrap; }
   .lb-rating-chip {
     display: inline-flex;
     align-items: center;
@@ -740,6 +770,41 @@
     border-top: 1px solid var(--border);
   }
   .lb-more:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+  /* ---------- Collapsed picker (a full pair is loaded) ---------- */
+  .owner-pillbox.collapsed { padding: 6px 6px 6px 14px; border-radius: 10px; margin-bottom: 20px; }
+  .owner-pillbox.collapsed .owner-status { padding: 0; }
+  .picker-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    width: 100%;
+    font-family: var(--display); font-weight: 700; font-size: 18px;
+    text-align: left;
+  }
+  .picker-bar .pb-names { min-width: 0; }
+  .picker-bar .pb-1 { color: var(--gold-dark); }
+  .picker-bar .pb-vs { font-size: 12px; letter-spacing: 0.1em; color: var(--muted); margin: 0 6px; }
+  .picker-change {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    font-family: var(--display); font-weight: 700; font-size: 14px;
+    color: var(--gold-dark);
+  }
+  .picker-change:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- Hero + result column sizing ---------- */
+  @media (min-width: 768px) {
+    .vs-sb-num { font-size: 72px; }
+    .vs-sb-name { font-size: 22px; }
+  }
+  @media (min-width: 900px) {
+    .vs-pair { max-width: 760px; margin: 0 auto; }
+  }
+  @media (min-width: 1024px) {
+    .lb-grid { grid-template-columns: repeat(3, 1fr); }
+  }
 
   /* ---------- Footer ---------- */
   .site-footer {
@@ -830,8 +895,8 @@
       <p class="page-header__subtitle">Head to Head, All Time</p>
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
-      <span class="meta-pill">v1.1</span>
-      <span class="meta-pill">Last Updated September 30, 2026</span>
+      <span class="meta-pill">v2.0</span>
+      <span class="meta-pill">Last Updated October 3, 2026</span>
       <span class="meta-pill" id="dataThroughPill">Data through …</span>
     </div>
   </header>
@@ -847,7 +912,7 @@
   <div class="tab-panel" id="tab-h2h" data-tab-panel="h2h" role="tabpanel" aria-labelledby="tabBtnH2H">
 
     <!-- 1) FILTER BAR -->
-    <section aria-label="Owner filter">
+    <section aria-label="Owner filter" id="filterSection">
       <p class="section-label">Show</p>
       <div class="filter-bar" id="filterBar" role="group" aria-label="Active or all owners">
         <button type="button" class="filter-pill" id="filterActive" aria-pressed="true">Active <span class="filter-count" id="countActive"></span></button>
@@ -857,7 +922,7 @@
 
     <!-- 2) OWNER PILLS -->
     <section aria-label="Owner selection">
-      <p class="section-label">Pick Two Owners</p>
+      <p class="section-label" id="pickLabel">Pick Two Owners</p>
       <div class="owner-pillbox">
         <div class="owner-status" id="ownerStatus" aria-live="polite"></div>
         <div class="owner-grid" id="ownerGrid"></div>
@@ -909,14 +974,14 @@
 </script>
 <script>
 /* =====================================================================
- * MAFFL RIVALRY ENGINE  (rivalry.html, v1.0)
+ * MAFFL RIVALRY ENGINE  (rivalry.html, v2.0)
  * ---------------------------------------------------------------------
  * Self-contained. Consumes window.MATCHUPS_DATA (8-field rows):
  *   [year, week, tier, winnerName, winnerScore, loserName, loserScore, type]
  *   tier "U"/"L"   type "R"/"Q"/"S"/"C"/"T"  (Q/S/C/T = playoffs)
  * Builds a meeting-derived owner roster + a per-pair head-to-head index,
  * then renders: filter bar, tappable owner pills, discovery leaderboards,
- * and the anchored VS result (badges + stats + margin timeline).
+ * and the anchored VS result (scoreboard hero + accordion sections).
  *
  * Two embedded data sources (no fetches):
  *   ACTIVE_NAMES  — owners with Active? == "Y" in MAFFL_Owners_Sheet_revised.csv
@@ -1514,6 +1579,12 @@ var DATA_MAX_YEAR = (function () {
   DIVISION_DATA.forEach(function (r) { if (r[0] > mx) mx = r[0]; });
   return mx;
 })();
+/* Last season with a Championship game. Ratings anchor here so they don't swing week to week in-season. */
+var LAST_COMPLETE_YEAR = (function () {
+  var mx = 0;
+  (window.MATCHUPS_DATA || []).forEach(function (r) { if (r[7] === "C" && r[0] > mx) mx = r[0]; });
+  return mx || DATA_MAX_YEAR;
+})();
 /* Distinct years BOTH owners were active in MAFFL (matchups OR division data). */
 function overlapYears(k1, k2) {
   var y1 = OWNER_YEARS[k1] || {}, y2 = OWNER_YEARS[k2] || {}, out = [];
@@ -1634,9 +1705,9 @@ function ratingRaw(p) {
   var close = (1 - Math.abs(p.aPct - 0.5) * 2) * 15
             + Math.max(0, 20 - p.avgMargin) / 20 * 10;
   var postszn = Math.min(p.poCount, 4) / 4 * 15 + (p.champMeetings > 0 ? 5 : 0);
-  var recency = p.lastYear >= DATA_MAX_YEAR ? 15
-              : p.lastYear >= DATA_MAX_YEAR - 1 ? 10
-              : p.lastYear >= DATA_MAX_YEAR - 3 ? 5 : 0;
+  var recency = p.lastYear >= LAST_COMPLETE_YEAR ? 15
+              : p.lastYear >= LAST_COMPLETE_YEAR - 1 ? 10
+              : p.lastYear >= LAST_COMPLETE_YEAR - 3 ? 5 : 0;
   var drama = (p.meetings ? p.nailbiters / p.meetings : 0) * 10
             + (p.curStreakLen >= 3 ? 5 : 0);
   return volume + close + postszn + recency + drama;
@@ -1764,13 +1835,23 @@ var fieldSort = "games";     // vs-the-field sort: "games" | "winpct" | "lastmet
 var sel1 = null, sel2 = null; // selected owner keys (Owner 1, Owner 2)
 var vsResult = document.getElementById("vsResult");
 var tlTitles = [];            // current timeline bar caption strings (index = data-i)
+var formTitles = [];          // current Last-5 chip caption strings (index = data-i)
+var leadTitles = [];          // current Series Lead caption strings (index = data-i)
+var leadPts = [];             // current Series Lead step points [x, y] (index = data-i)
+var accState = { pid: null, open: {} }; // accordion open state; resets when a new pair loads
+var pickerCollapsed = true;   // full pair loaded -> owner picker folds into a compact bar
 
 var TIER_LABEL = { U: "Upper", L: "Lower" };
 var ROUND_NAME = { C: "Championship", S: "Semi", Q: "Quarter", T: "3rd" };
 var ROUND_ORDER = ["C", "S", "Q", "T"];
 
-function gameContext(g) { return "(" + g.year + ", Week " + g.week + ")"; }
-function fmtPts(v) { return (Math.round(v * 100) / 100).toFixed(2).replace(/\.00$/, ""); }
+function fmtPts(v) { return (Math.round(v * 100) / 100).toFixed(2).replace(/\.?0+$/, ""); }
+/* Caption for one meeting (timeline, Last 5): "2024 Wk6 · 99.96–82.22 (+17.74)". */
+function meetingTitle(g) {
+  var hi = Math.max(g.aScore, g.bScore), lo = Math.min(g.aScore, g.bScore);
+  var rnd = (g.type !== "R" && ROUND_NAME[g.type]) ? " " + ROUND_NAME[g.type] : "";
+  return g.year + " Wk" + g.week + rnd + " · " + fmtPts(hi) + "–" + fmtPts(lo) + " (+" + fmtPts(hi - lo) + ")";
+}
 function isActive(key) { return !!ACTIVE_KEYS[key]; }
 function pairVisible(p) { return filterMode === "all" || (isActive(p.aKey) && isActive(p.bKey)); }
 
@@ -1831,6 +1912,25 @@ function renderPills() {
 
 function renderStatus() {
   var s = document.getElementById("ownerStatus");
+  // A full pair folds the picker (filter, label, pills) into a compact "A VS B · Change" bar.
+  var collapse = !!(sel1 && sel2 && pickerCollapsed);
+  ["filterSection", "pickLabel", "ownerGrid"].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.hidden = collapse;
+  });
+  s.parentNode.classList.toggle("collapsed", collapse);
+  if (collapse) {
+    s.innerHTML = '<div class="picker-bar">' +
+      '<span class="pb-names"><span class="pb-1">' + escHtml(shortName(ROSTER_BY_KEY[sel1].name)) + '</span>' +
+        '<span class="pb-vs">VS</span>' + escHtml(shortName(ROSTER_BY_KEY[sel2].name)) + '</span>' +
+      '<button type="button" class="picker-change">Change</button>' +
+    '</div>';
+    s.querySelector(".picker-change").addEventListener("click", function () {
+      pickerCollapsed = false;   // re-show the picker, keep the selection
+      renderStatus();
+    });
+    return;
+  }
   function slot(tag, key, cls, emptyTxt) {
     return '<span class="os-slot"><span class="os-tag">' + tag + '</span>' +
       (key
@@ -1851,6 +1951,7 @@ function tapOwner(key) {
   else if (!sel1) { sel1 = key; }                         // fill Owner 1
   else if (!sel2) { sel2 = key; }                         // fill Owner 2
   else { sel1 = key; sel2 = null; }                       // both full -> fresh start
+  if (sel1 && sel2) pickerCollapsed = true;               // new full pair -> fold the picker
   renderPills();
   renderVS();
   syncHash();
@@ -1860,13 +1961,6 @@ function tapOwner(key) {
 /* =====================================================================
  * VS RESULT
  * ===================================================================== */
-function statBlock(label, valueHtml) {
-  return '<div class="vs-stat">' +
-    '<div class="vs-stat__label">' + label + '</div>' +
-    '<div class="vs-stat__value">' + valueHtml + '</div>' +
-  '</div>';
-}
-
 function renderBadgeRow(p) {
   var b = computeBadges(p);
   if (!b.length) return "";
@@ -1925,26 +2019,6 @@ function rivalryBlurb(p, k1, k2) {
   return closers[pick];
 }
 
-/* Collapsible "All Meetings (N)" game log — newest first, Owner-1 perspective. */
-function gameLogHtml(p, k1, k2) {
-  var rows = p.games.slice().reverse().map(function (g) {
-    var hi = Math.max(g.aScore, g.bScore), lo = Math.min(g.aScore, g.bScore);
-    var m = Math.abs(g.aScore - g.bScore);
-    var rnd = (g.type !== "R" && ROUND_NAME[g.type]) ? " · " + ROUND_NAME[g.type] : "";
-    var cls = (g.winnerKey === k1) ? "gl-win-1" : "gl-win-2";
-    return '<div class="gamelog-row">' + g.year + " Wk " + g.week + rnd + " — " +
-      '<span class="' + cls + '">' + escHtml(g.winnerName) + '</span> ' +
-      fmtPts(hi) + "–" + fmtPts(lo) + " (+" + fmtPts(m) + ")</div>";
-  }).join("");
-  return '<div class="vs-stat">' +
-    '<button type="button" class="gamelog-toggle" aria-expanded="false" aria-controls="gamelogBody">' +
-      '<span>All Meetings (' + p.meetings + ')</span>' +
-      '<span class="gamelog-chev" aria-hidden="true">&#9662;</span>' +
-    '</button>' +
-    '<div class="gamelog-body" id="gamelogBody" hidden>' + rows + '</div>' +
-  '</div>';
-}
-
 /* Reusable ratings/badges explainer (rendered into #explainH2H and #explainSugg). */
 function explainerHtml(idSuffix) {
   var bodyId = "explainBody" + idSuffix;
@@ -1952,7 +2026,7 @@ function explainerHtml(idSuffix) {
     ["Volume", "total meetings (up to 25 pts)"],
     ["Closeness", "near-even record &amp; tight average margin (up to 25 pts)"],
     ["Postseason", "playoff meetings, bonus for a Championship clash (up to 20)"],
-    ["Recency", "met recently (up to 15 pts)"],
+    ["Recency", "met this season or last (up to 15 pts)"],
     ["Drama", "nail-biters &amp; an active 3+ game streak (up to 15 pts)"]
   ];
   var rb = bullets.map(function (r) {
@@ -2026,9 +2100,7 @@ function renderTimeline(p, k1, k2) {
     var x = padX + i * step + step / 2 - bw / 2;
     var y = o1won ? midY - h : midY;
     var color = o1won ? "var(--win)" : "var(--loss)";
-    var hi = Math.max(g.aScore, g.bScore), lo = Math.min(g.aScore, g.bScore);
-    var rnd = (g.type !== "R" && ROUND_NAME[g.type]) ? " " + ROUND_NAME[g.type] : "";
-    var title = g.year + " Wk" + g.week + rnd + " · " + fmtPts(hi) + "–" + fmtPts(lo) + " (+" + fmtPts(m) + ")";
+    var title = meetingTitle(g);
     tlTitles.push(title);
     return '<rect data-i="' + i + '" x="' + f(x) + '" y="' + f(y) + '" width="' + f(bw) + '" height="' + f(h) + '" rx="1.5" fill="' + color + '">' +
       '<title>' + escHtml(title) + '</title></rect>';
@@ -2041,17 +2113,15 @@ function renderTimeline(p, k1, k2) {
     ' wins above the line">' + zero + bars + '</svg>';
 
   var firstY = games[0].year, lastY = games[n - 1].year;
-  return '<div class="vs-stat">' +
-    '<div class="vs-stat__label">Margin Timeline</div>' +
-    '<div class="h2h-chart">' + svg +
+  return subHead("Margin Timeline") +
+    '<div class="h2h-chart tl-chart">' + svg +
       '<div class="tl-caption" hidden></div>' +
       '<div class="h2h-axis"><span>' + firstY + '</span><span>' + lastY + '</span></div>' +
       '<div class="h2h-legend">' +
         '<span><i style="background:var(--win)"></i>' + escHtml(shortName(ROSTER_BY_KEY[k1].name)) + ' win</span>' +
         '<span><i style="background:var(--loss)"></i>' + escHtml(shortName(ROSTER_BY_KEY[k2].name)) + ' win</span>' +
       '</div>' +
-    '</div>' +
-  '</div>';
+    '</div>';
 }
 
 /* =====================================================================
@@ -2122,8 +2192,133 @@ function renderField(k1) {
   });
 }
 
+/* One Pulse-style accordion card (look copied from weekly.html .pulse-card). */
+function accHtml(id, icon, title, preview, body, open) {
+  return '<section class="acc' + (open ? " open" : "") + '" data-acc="' + id + '">' +
+    '<button type="button" class="acc-head" aria-expanded="' + (open ? "true" : "false") + '" aria-controls="acc-' + id + '">' +
+      '<span class="acc-l"><span class="acc-icon">' + icon + '</span><span class="acc-title">' + title + '</span></span>' +
+      '<span class="acc-chev" aria-hidden="true">&#9660;</span>' +
+    '</button>' +
+    '<div class="acc-prev">' + preview + '</div>' +
+    '<div class="acc-body" id="acc-' + id + '">' + body + '</div>' +
+  '</section>';
+}
+/* Label-left / value-right row, with an optional muted detail line under the value. */
+function kvHtml(label, value, small) {
+  return '<div class="kv"><span class="kv-k">' + label + '</span><span class="kv-v">' + value +
+    (small ? '<small>' + small + '</small>' : "") + '</span></div>';
+}
+function subHead(label, right) {
+  return '<div class="sub-h">' + label + (right ? '<span>' + right + '</span>' : "") + '</div>';
+}
+
+/* Last-5 strip: oldest -> newest, left to right, from Owner 1's view. Chips tap to a caption. */
+var ROUND_TAG = { Q: "Q", S: "S", C: "C", T: "3rd" };
+function formStripHtml(p, k1) {
+  var last = p.games.slice(-5);
+  formTitles = last.map(meetingTitle);
+  var cells = last.map(function (g, i) {
+    var won = (g.winnerKey === k1);
+    var tag = (g.type !== "R" && ROUND_TAG[g.type]) ? '<i>' + ROUND_TAG[g.type] + '</i>' : "";
+    return '<div class="form-cell">' +
+      '<button type="button" class="form-chip ' + (won ? "w" : "l") + '" data-i="' + i + '" aria-label="' +
+        escHtml((won ? "Win, " : "Loss, ") + formTitles[i]) + '">' + (won ? "W" : "L") + tag + '</button>' +
+      '<span>&#39;' + String(g.year).slice(-2) + '</span>' +
+    '</div>';
+  }).join("");
+  return subHead("Last " + last.length, escHtml(shortName(ROSTER_BY_KEY[k1].name)) + "&#39;s view") +
+    '<div class="form-strip' + (last.length < 5 ? " few" : "") + '">' + cells + '</div>' +
+    '<div class="tl-caption form-caption" hidden></div>';
+}
+
+/* Running series lead from Owner 1's view (+ = Owner 1 ahead). A lead change only counts
+ * when the side in front differs from the last side that was in front. */
+function leadInfo(p, k1) {
+  var lead = 0, leads = [], lastSide = 0, changes = 0, best = { v: 0, year: 0 }, lastLed = { "1": 0, "-1": 0 };
+  p.games.forEach(function (g) {
+    lead += (g.winnerKey === k1) ? 1 : -1;
+    leads.push(lead);
+    var side = lead > 0 ? 1 : (lead < 0 ? -1 : 0);
+    if (side) {
+      if (lastSide && side !== lastSide) changes++;
+      lastSide = side;
+      lastLed[side] = g.year;
+    }
+    if (Math.abs(lead) > Math.abs(best.v)) best = { v: lead, year: g.year };
+  });
+  return { leads: leads, changes: changes, best: best, final: lead, lastSide: lastSide,
+           led1: lastLed["1"], led2: lastLed["-1"] };
+}
+
+/* Series Lead step chart: y scaled to the actual lead range, green above zero, red below. */
+function seriesLeadHtml(p, k1, k2, li) {
+  var W = 340, H = 140, padX = 8, padY = 16, n = li.leads.length;
+  var lo = Math.min(0, Math.min.apply(null, li.leads), -1);
+  var hi = Math.max(0, Math.max.apply(null, li.leads), 1);
+  var step = (W - padX * 2 - 8) / n;
+  function f(v) { return Math.round(v * 10) / 10; }
+  function y(v) { return f(padY + (hi - v) / (hi - lo) * (H - padY * 2)); }
+  var n1 = shortName(ROSTER_BY_KEY[k1].name), n2 = shortName(ROSTER_BY_KEY[k2].name);
+  var y0 = y(0), d = "M" + padX + "," + y0, taps = "";
+  leadTitles = [];
+  leadPts = [];
+  li.leads.forEach(function (v, i) {
+    var g = p.games[i], x = f(padX + (i + 1) * step);
+    d += " H" + x + " V" + y(v);
+    leadPts.push([x, y(v)]);
+    leadTitles.push("After " + g.year + " Wk " + g.week + ": " +
+      (v === 0 ? "level" : (v > 0 ? n1 : n2) + " +" + Math.abs(v)));
+    taps += '<rect data-i="' + i + '" x="' + f(x - 10) + '" y="0" width="20" height="' + H + '" fill="transparent"/>';
+  });
+  var area = d + " V" + y0 + " Z";
+  var endX = leadPts[n - 1][0], endY = leadPts[n - 1][1];
+  var endTxt = li.final === 0 ? "Tied" : (li.final > 0 ? "+" + li.final : "−" + Math.abs(li.final));
+  var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" role="img" ' +
+    'aria-label="Series lead after each meeting, ' + escHtml(n1) + ' ahead above the line">' +
+    '<defs><clipPath id="slUp"><rect x="0" y="0" width="' + W + '" height="' + y0 + '"/></clipPath>' +
+      '<clipPath id="slDn"><rect x="0" y="' + y0 + '" width="' + W + '" height="' + f(H - y0) + '"/></clipPath></defs>' +
+    '<path d="' + area + '" fill="var(--win)" fill-opacity=".18" clip-path="url(#slUp)"/>' +
+    '<path d="' + area + '" fill="var(--loss)" fill-opacity=".18" clip-path="url(#slDn)"/>' +
+    '<line x1="' + padX + '" y1="' + y0 + '" x2="' + (W - padX) + '" y2="' + y0 + '" stroke="var(--border)" stroke-width="1"/>' +
+    '<path d="' + d + '" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linejoin="round"/>' +
+    '<circle cx="' + endX + '" cy="' + endY + '" r="5" fill="var(--navy)"/>' +
+    '<text x="' + f(endX - 10) + '" y="' + f(endY + 5) + '" text-anchor="end" font-family="Barlow Condensed, system-ui, sans-serif" ' +
+      'font-weight="700" font-size="16" fill="var(--navy)">' + endTxt + '</text>' +
+    '<circle class="sl-mark" r="4.5" fill="var(--gold)" stroke="var(--navy)" stroke-width="1.5" visibility="hidden"/>' +
+    taps +
+  '</svg>';
+
+  var bestTxt = li.best.v === 0 ? "" :
+    ' &middot; Biggest lead <b>' + escHtml(li.best.v > 0 ? n1 : n2) + ' +' + Math.abs(li.best.v) + '</b> (' + li.best.year + ')';
+  // The side NOT in front now (or, when level, the side that was last in front).
+  var otherSide = li.final > 0 ? -1 : (li.final < 0 ? 1 : li.lastSide);
+  var otherName = otherSide === 1 ? n1 : n2, otherLed = otherSide === 1 ? li.led1 : li.led2;
+  var ledTxt = otherLed ? escHtml(otherName) + " last led in " + otherLed : escHtml(otherName) + " has never led";
+  return '<div class="h2h-chart lead-chart">' + svg +
+      '<div class="tl-caption lead-caption" hidden></div>' +
+      '<div class="h2h-axis"><span>' + p.games[0].year + '</span><span>' + p.games[n - 1].year + '</span></div>' +
+      '<div class="h2h-legend">' +
+        '<span><i style="background:var(--win)"></i>' + escHtml(n1) + ' ahead</span>' +
+        '<span><i style="background:var(--loss)"></i>' + escHtml(n2) + ' ahead</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="lead-stats">Lead changes <b>' + li.changes + '</b>' + bestTxt + ' &middot; ' + ledTxt + '</div>';
+}
+
+/* Collapsed-preview lead summary for The Story. n1/n2 arrive escaped. */
+function leadSummary(li, n1, n2) {
+  if (li.final === 0) return "Series is level";
+  var leader = li.final > 0 ? n1 : n2, trailer = li.final > 0 ? n2 : n1;
+  var trailerLed = li.final > 0 ? li.led2 : li.led1;
+  if (!trailerLed) return leader + " has never trailed";
+  if (trailerLed >= LAST_COMPLETE_YEAR - 2) return leader + " leads after trailing as late as " + trailerLed;
+  return trailer + " hasn&#39;t led since " + trailerLed;
+}
+
 function renderVS() {
   var k1 = sel1, k2 = sel2;
+  var explorer = vsResult.parentNode;
+  explorer.classList.remove("pair");
   if (!k1) {
     vsResult.innerHTML = '<div class="vs-msg">Pick two owners above to see their all-time rivalry.</div>';
     return;
@@ -2139,14 +2334,17 @@ function renderVS() {
       ' and ' + escHtml(ROSTER_BY_KEY[k2].name) + ' have never met.</div>';
     return;
   }
+  explorer.classList.add("pair");
+  if (accState.pid !== p.id) accState = { pid: p.id, open: { form: true } };   // new pair: only Recent Form open
 
   var o1 = ROSTER_BY_KEY[k1], o2 = ROSTER_BY_KEY[k2];
+  var s1 = shortName(o1.name), s2 = shortName(o2.name);
+  var e1 = escHtml(s1), e2 = escHtml(s2);
   var oneIsA = (p.aKey === k1);
   var o1W = oneIsA ? p.aW : p.bW;
   var o1L = oneIsA ? p.bW : p.aW;
   var o1Pts = oneIsA ? p.aPts : p.bPts;
   var o2Pts = oneIsA ? p.bPts : p.aPts;
-  var o1Pct = (o1W + o1L) ? o1W / (o1W + o1L) : 0;
 
   // Regular-season vs postseason split (Owner 1 perspective): type "R" = regular,
   // Q/S/C/T = postseason.
@@ -2159,144 +2357,178 @@ function renderVS() {
   var rsW = oneIsA ? rsAw : rsBw, rsL = oneIsA ? rsBw : rsAw;
   var poW = oneIsA ? poAw : poBw, poL = oneIsA ? poBw : poAw;
 
-  // Prominent overall record (Owner 1 perspective) is the centerpiece; the
-  // smaller RS/PO split sits beneath it. The All-Time Record stat block is
-  // intentionally folded in here, so it is not repeated below.
   // Tier split (Owner-1 perspective) — only when both tiers have meetings.
   var tr = p.tierRec, uTot = tr.U[0] + tr.U[1], lTot = tr.L[0] + tr.L[1], tierLine = "";
   if (uTot > 0 && lTot > 0) {
     var uW = oneIsA ? tr.U[0] : tr.U[1], uL = oneIsA ? tr.U[1] : tr.U[0];
     var lW = oneIsA ? tr.L[0] : tr.L[1], lL = oneIsA ? tr.L[1] : tr.L[0];
-    tierLine = '<br>Upper: <strong>' + uW + "–" + uL + '</strong> &middot; Lower: <strong>' + lW + "–" + lL + '</strong>';
+    tierLine = '<span>Upper: <b>' + uW + "–" + uL + '</b> &middot; Lower: <b>' + lW + "–" + lL + '</b></span>';
   }
 
+  // ---- Scoreboard hero (full names; leader's number gold, tied = both gold) ----
   var emojis = badgeEmojis(p);
   var head =
-    '<div class="vs-head">' +
-      '<div class="vs-head-names">' +
-        '<span class="vs-head-name vs-head-name-1">' + escHtml(o1.name) + '</span>' +
-        '<span class="vs-head-vs">VS</span>' +
-        '<span class="vs-head-name vs-head-name-2">' + escHtml(o2.name) + '</span>' +
+    '<div class="vs-hero">' +
+      '<div class="vs-strip-slot"></div>' +
+      '<div class="vs-sb">' +
+        '<div><div class="vs-sb-name vs-sb-name-1">' + escHtml(o1.name) + '</div>' +
+          '<div class="vs-sb-num ' + (o1W >= o1L ? "lead" : "trail") + '">' + o1W + '</div></div>' +
+        '<div class="vs-sb-vs">VS</div>' +
+        '<div><div class="vs-sb-name">' + escHtml(o2.name) + '</div>' +
+          '<div class="vs-sb-num ' + (o1L >= o1W ? "lead" : "trail") + '">' + o1L + '</div></div>' +
       '</div>' +
-      '<div class="vs-head-rec" style="background:' + winRateColor(o1Pct) + '">' +
-        escHtml(shortName(o1.name)) + ' ' + o1W + "–" + o1L + '</div>' +
-      '<div class="vs-head-split">Regular Season: <strong>' + rsW + "–" + rsL + '</strong>' +
-        ' &middot; Postseason: <strong>' + poW + "–" + poL + '</strong>' + tierLine + '</div>' +
-      '<div class="vs-rating">Rivalry Rating <strong>' + p.rating + '</strong>' +
-        (emojis ? ' <span>' + emojis + '</span>' : "") + '</div>' +
-      '<button type="button" class="vs-share">Share this rivalry</button>' +
+      '<div class="vs-meta">' +
+        '<span>Reg <b>' + rsW + "–" + rsL + '</b> &middot; Post <b>' + poW + "–" + poL + '</b></span>' +
+        tierLine +
+        '<span class="hero-rating">Rating ' + p.rating + (emojis ? ' ' + emojis : "") + '</span>' +
+        '<button type="button" class="vs-share">Share</button>' +
+      '</div>' +
     '</div>';
 
-  var stats = [];
+  var curName = escHtml(shortName(ROSTER_BY_KEY[p.curStreakKey].name));
+  var bl = p.blowout, ht = p.heart;
+  function scoreTxt(g) { return fmtPts(Math.max(g.aScore, g.bScore)) + "–" + fmtPts(Math.min(g.aScore, g.bScore)); }
 
-  // Postseason by round (vertical, leader named, with years).
-  stats.push(statBlock("Postseason by Round", postseasonHtml(p, oneIsA, shortName(o1.name), shortName(o2.name))));
+  // 1) Recent Form.
+  var formPrev = p.curStreakLen === 1
+    ? curName + " won the last meeting"
+    : curName + " has won the last " + p.curStreakLen;
 
-  // 3) Streaks.
-  var curName = shortName(ROSTER_BY_KEY[p.curStreakKey].name);
-  var curTxt = p.curStreakLen === 1
-    ? escHtml(curName) + " won the most recent meeting"
-    : escHtml(curName) + " has won the last " + p.curStreakLen;
+  // 2) The Story.
+  var li = leadInfo(p, k1);
+  var badgeNames = computeBadges(p).map(function (x) { return x.emoji + " " + x.name; });
+  var storyPrev = leadSummary(li, e1, e2) + (badgeNames.length ? " &middot; " + badgeNames.join(" &middot; ") : "");
+  var storyBody = '<p class="vs-blurb">' + rivalryBlurb(p, k1, k2) + '</p>' +
+    renderBadgeRow(p) +
+    subHead("Series Lead") +
+    seriesLeadHtml(p, k1, k2, li);
+
+  // 3) Big Games.
+  var bigPrev = (poW + poL === 0 ? "No playoff meetings"
+      : "Postseason " + Math.max(poW, poL) + "–" + Math.min(poW, poL) +
+        (poW > poL ? " " + e1 : (poL > poW ? " " + e2 : " even"))) +
+    " &middot; Biggest blowout " + fmtPts(bl.margin);
+  var nb1 = 0, nb2 = 0;
+  p.games.forEach(function (g) {
+    if (Math.abs(g.aScore - g.bScore) <= 3.0) { if (g.winnerKey === k1) nb1++; else nb2++; }
+  });
+  var bigBody = champCalloutHtml(p) +
+    subHead("Postseason by Round") +
+    postseasonHtml(p, oneIsA, s1, s2) +
+    subHead("Extremes") +
+    kvHtml("Biggest blowout",
+      escHtml(shortName(ROSTER_BY_KEY[bl.winnerKey].name)) + " by " + fmtPts(bl.margin),
+      scoreTxt(bl) + " &middot; " + bl.year + " Wk " + bl.week) +
+    kvHtml("Heartbreaker",
+      escHtml(shortName(ROSTER_BY_KEY[ht.winnerKey].name)) + " by " + fmtPts(ht.margin),
+      scoreTxt(ht) + " &middot; " + ht.year + " Wk " + ht.week) +
+    kvHtml("Nail-biters (≤ 3 pts)", String(p.nailbiters), e1 + " " + nb1 + " &middot; " + e2 + " " + nb2);
+
+  // 4) Streaks & Scoring.
   var o1Long = oneIsA ? p.longA : p.longB;
   var o2Long = oneIsA ? p.longB : p.longA;
-  stats.push(statBlock("Streaks",
-    '<strong>' + curTxt + '.</strong><br>' +
-    '<span class="vs-stat__sub">Longest: ' + escHtml(shortName(o1.name)) + ' ' + o1Long +
-    ' &middot; ' + escHtml(shortName(o2.name)) + ' ' + o2Long + '</span>'));
+  var streakPrev = (p.curStreakLen === 1
+      ? curName + " won the last meeting"
+      : curName + " has won " + p.curStreakLen + " straight") +
+    " &middot; avg margin " + fmtPts(p.avgMargin);
+  var streakBody =
+    kvHtml("Current streak", curName + ", " + p.curStreakLen) +
+    kvHtml("Longest streak", e1 + " " + o1Long + " &middot; " + e2 + " " + o2Long) +
+    kvHtml("Total points", fmtPts(o1Pts) + " – " + fmtPts(o2Pts), e1 + " – " + e2) +
+    kvHtml("Average margin", fmtPts(p.avgMargin));
 
-  // 4) Biggest blowout.
-  var bl = p.blowout;
-  stats.push(statBlock("Biggest Blowout",
-    '<strong>' + escHtml(shortName(ROSTER_BY_KEY[bl.winnerKey].name)) + ' by ' + fmtPts(bl.margin) + '</strong> ' +
-    '<span class="vs-stat__sub">' + fmtPts(Math.max(bl.aScore, bl.bScore)) + "–" + fmtPts(Math.min(bl.aScore, bl.bScore)) +
-    ' ' + gameContext(bl) + '</span>'));
-
-  // 5) Heartbreaker.
-  var ht = p.heart;
-  stats.push(statBlock("Heartbreaker",
-    '<strong>' + escHtml(shortName(ROSTER_BY_KEY[ht.winnerKey].name)) + ' by ' + fmtPts(ht.margin) + '</strong> ' +
-    '<span class="vs-stat__sub">' + fmtPts(Math.max(ht.aScore, ht.bScore)) + "–" + fmtPts(Math.min(ht.aScore, ht.bScore)) +
-    ' ' + gameContext(ht) + '</span>'));
-
-  // 6) Total points + average margin.
-  stats.push(statBlock("Total Points",
-    '<strong>' + escHtml(shortName(o1.name)) + ' ' + fmtPts(o1Pts) + '</strong> &middot; ' +
-    '<strong>' + escHtml(shortName(o2.name)) + ' ' + fmtPts(o2Pts) + '</strong><br>' +
-    '<span class="vs-stat__sub">Average margin ' + fmtPts(p.avgMargin) + '</span>'));
-
-  // Format a sorted year array as "N seasons (lo–hi)", using "present" for the
-  // latest data year. nounSingular/nounPlural label the count.
-  function sharedYearsTxt(years, nounSingular, nounPlural, emptyTxt) {
+  // 5) Shared History — seasons together, same tier (Upper/Lower), and same division
+  //    (upper-tier only), naming the division(s) since the division names changed
+  //    year to year (Cuoco, Aniston, Lautner, etc.).
+  // Span of a sorted year array ("lo–hi"), using "present" for the latest data year.
+  function spanTxt(years) {
     var n = years.length;
-    if (n === 0) return emptyTxt;
-    if (n === 1) return "1 " + nounSingular + " (" + years[0] + ")";
-    var lo = years[0], hi = years[n - 1];
-    var hiTxt = (hi === DATA_MAX_YEAR) ? "present" : String(hi);
-    return n + " " + nounPlural + " (" + lo + "–" + hiTxt + ")";
+    if (n === 0) return "";
+    if (n === 1) return String(years[0]);
+    var hi = years[n - 1];
+    return years[0] + "–" + ((hi === DATA_MAX_YEAR) ? "present" : String(hi));
   }
-
-  // 7) Shared history — three lines: seasons together, same tier (Upper/Lower),
-  //    and same division (upper-tier only), naming the division(s) since the
-  //    division names changed year to year (Cuoco, Aniston, Lautner, etc.).
   var ovYears   = overlapYears(p.aKey, p.bKey);
   var tierEra   = tierEraYears(p.aKey, p.bKey);   // years both placed under tiers (>=2025)
   var tierYears = sameTierYears(p.aKey, p.bKey);  // shared-tier years (>=2025)
   var divYears  = sameDivisionYears(p.aKey, p.bKey); // [{ year, div }]
 
-  var togetherTxt = sharedYearsTxt(ovYears, "season together", "seasons together", "No overlapping seasons");
+  var togetherRow = kvHtml("Seasons together", String(ovYears.length),
+    ovYears.length ? spanTxt(ovYears) : "No overlapping seasons");
 
-  // Same-tier line: tiers only exist from 2025 on. If the pair were never both
-  // placed under the two-tier system, the question is n/a; otherwise label the
-  // span and, when a single shared tier applies, name it (Upper/Lower).
-  var tierTxt;
+  // Same tier: tiers only exist from 2025 on. If the pair were never both placed
+  // under the two-tier system, the question is n/a; otherwise show the span and,
+  // when shared, name the tier(s) (Upper/Lower).
+  var tierRow;
   if (!tierEra.length) {
-    tierTxt = "Same tier: n/a — tiers began in 2025";
+    tierRow = kvHtml("Same tier", "n/a", "tiers began in 2025");
   } else {
     var tierYearNums = tierYears.map(function (t) { return t.year; });
     var distinctTiers = {};
     tierYears.forEach(function (t) { distinctTiers[t.tier] = true; });
     var tierNames = Object.keys(distinctTiers).map(function (t) { return t === "L" ? "Lower" : "Upper"; });
-    var tierBase = sharedYearsTxt(tierYearNums, "season same tier", "seasons same tier", "Never in same tier");
-    tierTxt = (tierYearNums.length && tierNames.length)
-      ? tierBase + " (" + tierNames.join(" & ") + ")"
-      : tierBase;
+    tierRow = kvHtml("Same tier", String(tierYearNums.length),
+      tierYearNums.length ? spanTxt(tierYearNums) + (tierNames.length ? " (" + tierNames.join(" & ") + ")" : "")
+                          : "never in the same tier");
   }
 
-  // Same-division line: span text plus the distinct division name(s) shared.
+  // Same division: span plus the distinct division name(s) shared.
   var divYearNums = divYears.map(function (d) { return d.year; });
-  var divBase = sharedYearsTxt(divYearNums, "season same division", "seasons same division", "Never in same division");
   var divNamesSeen = [], divNameSet = {};
   divYears.forEach(function (d) {
     if (d.div && !divNameSet[d.div]) { divNameSet[d.div] = true; divNamesSeen.push(d.div); }
   });
-  var divTxt = (divYearNums.length && divNamesSeen.length)
-    ? divBase + " (" + divNamesSeen.join(", ") + ")"
-    : divBase;
+  var divRow = kvHtml("Same division", String(divYearNums.length),
+    divYearNums.length ? spanTxt(divYearNums) + (divNamesSeen.length ? " &middot; " + escHtml(divNamesSeen.join(", ")) : "")
+                       : "never in the same division");
 
-  stats.push(statBlock("Shared History",
-    '<div class="vs-shared__row">' + escHtml(togetherTxt) + '</div>' +
-    '<div class="vs-shared__row">' + escHtml(tierTxt) + '</div>' +
-    '<div class="vs-shared__row">' + escHtml(divTxt) + '</div>'));
+  var sharedPrev = ovYears.length + (ovYears.length === 1 ? " season together" : " seasons together") + " &middot; " +
+    (divYearNums.length ? divYearNums.length + " in the same division" : "never in the same division");
 
-  // 8) Margin timeline.
-  stats.push("");
-  var chart = renderTimeline(p, k1, k2);
+  // 6) All meetings: margin timeline + full game log (newest first, Owner-1 colours).
+  var logRows = p.games.slice().reverse().map(function (g) {
+    var rnd = (g.type !== "R" && ROUND_NAME[g.type]) ? " &middot; " + ROUND_NAME[g.type] : "";
+    var cls = (g.winnerKey === k1) ? "gl-w" : "gl-l";
+    return '<div class="gl-row"><span class="gl-when">' + g.year + " Wk " + g.week + rnd + '</span>' +
+      '<span class="gl-res"><b class="' + cls + '">' + escHtml(shortName(ROSTER_BY_KEY[g.winnerKey].name)) + '</b> ' +
+      scoreTxt(g) + '</span></div>';
+  }).join("");
+  var logBody = renderTimeline(p, k1, k2) + subHead("Game Log", "newest first") + logRows;
 
-  // 9) Game log (All Meetings) — after the timeline.
-  var gamelog = gameLogHtml(p, k1, k2);
-
-  vsResult.innerHTML = head +
-    '<p class="vs-blurb">' + rivalryBlurb(p, k1, k2) + '</p>' +
-    renderBadgeRow(p) +
-    champCalloutHtml(p) +
-    '<div class="vs-stats">' + stats.join("") + chart + gamelog + '</div>';
+  var op = accState.open;
+  vsResult.innerHTML = '<div class="vs-pair">' + head +
+    accHtml("form", "📈", "Recent Form", formPrev, formStripHtml(p, k1), !!op.form) +
+    accHtml("story", "📖", "The Story", storyPrev, storyBody, !!op.story) +
+    accHtml("big", "🏆", "Big Games", bigPrev, bigBody, !!op.big) +
+    accHtml("streaks", "🔥", "Streaks &amp; Scoring", streakPrev, streakBody, !!op.streaks) +
+    accHtml("shared", "🤝", "Shared History", sharedPrev, togetherRow + tierRow + divRow, !!op.shared) +
+    accHtml("log", "📜", "All " + p.meetings + " Meetings",
+      "Since " + p.games[0].year + " &middot; margin timeline + full log", logBody, !!op.log) +
+  '</div>';
 
   wireVSInteractions(p, k1, k2);
 }
 
-/* Wire taps for the freshly-injected VS markup: badge chips, share, game-log
- * toggle, and timeline bars. Re-run every render (innerHTML is rebuilt). */
+/* Tap-to-caption for a chart or chip strip: one caption at a time; tap again to hide. */
+function toggleCaption(cap, isOn, text) {
+  if (isOn) { cap.hidden = true; cap.textContent = ""; }
+  else { cap.textContent = text || ""; cap.hidden = false; }
+}
+
+/* Wire taps for the freshly-injected VS markup: accordion heads, badge chips, share,
+ * Last-5 chips, the Series Lead chart and timeline bars. Re-run every render
+ * (innerHTML is rebuilt). */
 function wireVSInteractions(p, k1, k2) {
+  // Accordion heads -> toggle open + aria-expanded (remembered until a new pair loads).
+  vsResult.querySelectorAll(".acc-head").forEach(function (h) {
+    h.addEventListener("click", function () {
+      var card = h.parentNode;
+      var open = card.classList.toggle("open");
+      h.setAttribute("aria-expanded", open ? "true" : "false");
+      accState.open[card.getAttribute("data-acc")] = open;
+    });
+  });
+
   // Badge chips -> swap/toggle the shared description line.
   var row = vsResult.querySelector(".badge-row");
   var desc = document.getElementById("badgeDesc");
@@ -2330,27 +2562,54 @@ function wireVSInteractions(p, k1, k2) {
         } else if (navigator.clipboard) {
           navigator.clipboard.writeText(url).then(function () {
             share.textContent = "Link copied!";
-            setTimeout(function () { share.textContent = "Share this rivalry"; }, 2000);
+            setTimeout(function () { share.textContent = "Share"; }, 2000);
           }).catch(function () {});
         }
       } catch (_) { /* user-cancelled share / unsupported — ignore */ }
     });
   }
 
-  // Game-log collapse toggle.
-  var glt = vsResult.querySelector(".gamelog-toggle");
-  if (glt) {
-    glt.addEventListener("click", function () {
-      var body = vsResult.querySelector(".gamelog-body");
-      var open = glt.getAttribute("aria-expanded") === "true";
-      glt.setAttribute("aria-expanded", open ? "false" : "true");
-      if (body) body.hidden = open;
+  // Last-5 chips -> caption under the strip.
+  var strip = vsResult.querySelector(".form-strip");
+  var fcap = vsResult.querySelector(".form-caption");
+  if (strip && fcap) {
+    strip.addEventListener("click", function (e) {
+      var chip = e.target.closest(".form-chip");
+      if (!chip) return;
+      var wasOn = chip.getAttribute("data-on") === "1";
+      strip.querySelectorAll(".form-chip").forEach(function (c) { c.removeAttribute("data-on"); });
+      if (!wasOn) chip.setAttribute("data-on", "1");
+      toggleCaption(fcap, wasOn, formTitles[chip.getAttribute("data-i")]);
+    });
+  }
+
+  // Series Lead chart -> nearest meeting to the tap (the 20px targets overlap when meetings are dense).
+  var lsvg = vsResult.querySelector(".lead-chart svg");
+  var lcap = vsResult.querySelector(".lead-caption");
+  if (lsvg && lcap) {
+    var mark = lsvg.querySelector(".sl-mark");
+    lsvg.addEventListener("click", function (e) {
+      if (!e.target.closest("rect[data-i]")) return;
+      var i = +e.target.getAttribute("data-i");
+      try {
+        var pt = lsvg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+        var sx = pt.matrixTransform(lsvg.getScreenCTM().inverse()).x, bestD = Infinity;
+        leadPts.forEach(function (xy, j) { var dd = Math.abs(xy[0] - sx); if (dd < bestD) { bestD = dd; i = j; } });
+      } catch (_) { /* keep the tapped target's index */ }
+      var wasOn = lsvg.getAttribute("data-on") === String(i);
+      if (wasOn) { lsvg.removeAttribute("data-on"); mark.setAttribute("visibility", "hidden"); }
+      else {
+        lsvg.setAttribute("data-on", String(i));
+        mark.setAttribute("cx", leadPts[i][0]); mark.setAttribute("cy", leadPts[i][1]);
+        mark.setAttribute("visibility", "visible");
+      }
+      toggleCaption(lcap, wasOn, leadTitles[i]);
     });
   }
 
   // Tappable timeline bars -> caption + highlight.
-  var svg = vsResult.querySelector(".h2h-chart svg");
-  var cap = vsResult.querySelector(".tl-caption");
+  var svg = vsResult.querySelector(".tl-chart svg");
+  var cap = vsResult.querySelector(".tl-chart .tl-caption");
   if (svg && cap) {
     svg.addEventListener("click", function (e) {
       var rect = e.target.closest("rect");
@@ -2430,7 +2689,7 @@ function renderLeaderboards() {
       if (p.meetings < 2) return false;
       var firstY = p.games[0].year;
       // First met within the last 3 seasons, still a young series (<= 5 meetings).
-      return firstY >= DATA_MAX_YEAR - 2 && p.meetings <= 5;
+      return firstY >= LAST_COMPLETE_YEAR - 2 && p.meetings <= 5;
     })
     .sort(function (a, b) {
       // Newest first-meeting first, then more meetings = more developed.
@@ -2529,6 +2788,7 @@ function scrollToVs() {
 
 function loadPair(aKey, bKey) {
   activateTab("h2h"); // cross-tab jump from a Discovery row
+  pickerCollapsed = true;
   var newHash = "#vs=" + encodeURIComponent(aKey) + "," + encodeURIComponent(bKey);
   if (location.hash === newHash) { applyHash(); } else { location.hash = newHash; }
   scrollToVs();
@@ -2553,6 +2813,7 @@ function applyHash() {
     var parts = mv[1].split(",");
     sel1 = resolveKey(parts[0]);
     sel2 = resolveKey(parts[1]);
+    pickerCollapsed = true;
     activateTab("h2h");
   } else if (mo) {
     sel1 = resolveKey(mo[1]);
