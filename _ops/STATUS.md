@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-03 by Claude (code), Rivalry v2.0 part 1 committed (not pushed)
+**Last updated:** 2026-10-03 by Claude (code), Rivalry v2.0 live (game-day mode)
 
 ## Now
 
@@ -17,7 +17,6 @@ _Read first. Keep it short. Newest entries on top in each section._
 ## Queued prompts (in `_ops/prompts/`)
 
 Run in order, one at a time. Commit 2 without pushing, then push after 3 (one v2.0 release).
-- `2026-09-30_rivalry-3-gameday.md` (reworked 10/3): Week N Rivalries card, This Week strip + stakes lines. VERSION: none (inside v2.0).
 - `2026-10-03_home-carousel-rivalry-slide.md`: index.html What's New: retire the Draft slide, new slide 2 → rivalry.html. Run after 3. VERSION: none.
 
 ## Planned (not written yet)
@@ -38,6 +37,7 @@ Run in order, one at a time. Commit 2 without pushing, then push after 3 (one v2
 
 ## Recently shipped
 
+- 2026-10-03 · Rivalry v2.0 live: scoreboard + accordions, Week N Rivalries card (auto-advances after each ingest), This Week strip + stakes lines. Reads schedule-data.js.
 - 2026-10-03 · Rivalry v2.0 part 1 (committed, not pushed): scoreboard hero, Pulse-style accordion sections (Recent Form open), Last 5, Series Lead chart, 12px type floor, picker collapses after a pick; rating recency anchored to last complete season.
 - 2026-10-03 · Rivalry upgrade 1/3: data/MAFFL_Schedule_2026_Lower.csv (one-time ESPN extract, Wks 1–3 match gold) + build/generate-schedule-data.ps1 → schedule-data.js (both tiers); governance §2 rows. No page changes.
 - 2026-09-30 · Rivalry: 2026 divisions/tiers added (gold Division_History alignment rows + DIVISION_DATA); runtime "Data through YYYY Wk N" pill; governance CE-9 "New season begins" + G-9; CLAUDE.md data-freshness pill rule

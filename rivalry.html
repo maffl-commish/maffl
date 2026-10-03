@@ -771,6 +771,64 @@
   }
   .lb-more:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 
+  /* ---------- Week N Rivalries card (game-day slate) ---------- */
+  #slateSection .acc { margin-bottom: 24px; }
+  .slate-tier {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 44px; padding: 10px 0;
+    font-family: var(--display); font-weight: 700; font-size: 13px;
+    color: var(--navy);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .slate-tier:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .slate-tier .chev { color: var(--muted); font-size: 12px; transition: transform 0.18s ease; }
+  .slate-tier[aria-expanded="true"] .chev { transform: rotate(180deg); color: var(--navy); }
+  .slate-tier-body { display: none; }
+  .slate-tier[aria-expanded="true"] + .slate-tier-body { display: block; }
+  .slate-row {
+    display: block; width: 100%;
+    min-height: 56px; padding: 10px 2px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .slate-row:last-child { border-bottom: 0; }
+  button.slate-row:hover, button.slate-row:active { background: var(--gold-soft); }
+  .slate-row:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+  .slate-line { display: grid; grid-template-columns: 1fr auto 1fr 30px; align-items: center; gap: 8px; }
+  .slate-n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; font-size: 16px; color: var(--navy); }
+  .slate-n.r { text-align: right; }
+  .slate-rec { font-family: var(--display); font-weight: 700; font-size: 20px; white-space: nowrap; }
+  .slate-rec .dash { color: var(--muted); padding: 0 2px; }
+  .slate-rec .lead { color: var(--navy); }
+  .slate-rec .trail { color: #a3b0c6; }
+  .slate-rec .new { color: var(--muted); font-size: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .slate-stk { display: block; font-size: 13.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .slate-tag {
+    display: inline-block; margin-right: 6px;
+    font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: 0.06em;
+    color: var(--gold-dark);
+  }
+  .slate-row.ghost {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 14px; color: var(--muted);
+  }
+
+  /* ---------- This Week (matchup view) ---------- */
+  .vs-strip {
+    display: inline-block;
+    background: var(--gold); color: var(--navy);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 8px;
+    font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: 0.06em;
+    max-width: 100%;
+  }
+  .stake { font-size: 15px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .stake:last-child { border-bottom: 0; }
+
   /* ---------- Collapsed picker (a full pair is loaded) ---------- */
   .owner-pillbox.collapsed { padding: 6px 6px 6px 14px; border-radius: 10px; margin-bottom: 20px; }
   .owner-pillbox.collapsed .owner-status { padding: 0; }
@@ -911,6 +969,9 @@
   <!-- TAB 1 — HEAD-TO-HEAD (default active) -->
   <div class="tab-panel" id="tab-h2h" data-tab-panel="h2h" role="tabpanel" aria-labelledby="tabBtnH2H">
 
+    <!-- 0) WEEK N RIVALRIES (game-day slate; shown until Owner 1 is picked) -->
+    <div id="slateSection"></div>
+
     <!-- 1) FILTER BAR -->
     <section aria-label="Owner filter" id="filterSection">
       <p class="section-label">Show</p>
@@ -962,6 +1023,7 @@
 
 <!-- Head-to-head source data (consolation games already excluded). -->
 <script src="matchups-data.js"></script>
+<script src="schedule-data.js"></script>
 <script>
 /* Data-freshness pill: the newest game in matchups-data.js (refreshed weekly by the robot).
  * "Last Updated" = this page file was edited; "Data through" = how current the results are. */
@@ -1585,6 +1647,44 @@ var LAST_COMPLETE_YEAR = (function () {
   (window.MATCHUPS_DATA || []).forEach(function (r) { if (r[7] === "C" && r[0] > mx) mx = r[0]; });
   return mx || DATA_MAX_YEAR;
 })();
+
+/* =====================================================================
+ * SCHEDULE (schedule-data.js, fixtures only, never results). Everything that
+ * reads it degrades quietly when it's missing: no slate card, no strip.
+ * ===================================================================== */
+/* Next unplayed regular-season week of the schedule year, from played results (never the calendar).
+   No results that year yet → 1. Past the last scheduled week → null. */
+var SCHED = window.SCHEDULE_DATA || null;
+var CUR_WEEK = (function () {
+  if (!SCHED || !SCHED.games || !SCHED.games.length) return null;
+  var played = 0, lastSched = 0;
+  (window.MATCHUPS_DATA || []).forEach(function (r) {
+    if (r[0] === SCHED.year && (r[7] || "R") === "R" && r[1] > played) played = r[1];
+  });
+  SCHED.games.forEach(function (g) { if (g[0] > lastSched) lastSched = g[0]; });
+  var next = played + 1;
+  return next > lastSched ? null : next;
+})();
+var GHOST_KEY = normalizeName("MAFFL Ghost");
+function schedGamesForWeek(w) {
+  if (!SCHED || !SCHED.games) return [];
+  return SCHED.games.filter(function (g) { return g[0] === w; });
+}
+/* First scheduled game from CUR_WEEK on between the two owners (either order), or null. */
+function nextMeeting(k1, k2) {
+  if (!SCHED || !SCHED.games || CUR_WEEK == null || !k1 || !k2) return null;
+  if (k1 === GHOST_KEY || k2 === GHOST_KEY) return null;   // the Ghost is never a rivalry
+  for (var i = 0; i < SCHED.games.length; i++) {
+    var g = SCHED.games[i];
+    if (g[0] < CUR_WEEK) continue;
+    var a = normalizeName(g[2]), h = normalizeName(g[3]);
+    if (a === GHOST_KEY || h === GHOST_KEY) continue;
+    if ((a === k1 && h === k2) || (a === k2 && h === k1)) {
+      return { week: g[0], tier: g[1], awayKey: a, homeKey: h, gameClass: g[4], division: g[5] };
+    }
+  }
+  return null;
+}
 /* Distinct years BOTH owners were active in MAFFL (matchups OR division data). */
 function overlapYears(k1, k2) {
   var y1 = OWNER_YEARS[k1] || {}, y2 = OWNER_YEARS[k2] || {}, out = [];
@@ -1865,6 +1965,7 @@ function setFilter(mode) {
   document.getElementById("filterAll").setAttribute("aria-pressed", mode === "all" ? "true" : "false");
   renderPills();
   renderVS();          // keep the field view (Owner 1 set, Owner 2 empty) filter-aware
+  renderSlate();
   renderLeaderboards();
 }
 
@@ -1954,6 +2055,7 @@ function tapOwner(key) {
   if (sel1 && sel2) pickerCollapsed = true;               // new full pair -> fold the picker
   renderPills();
   renderVS();
+  renderSlate();
   syncHash();
   if (sel1 && sel2) scrollToVs();
 }
@@ -2315,6 +2417,131 @@ function leadSummary(li, n1, n2) {
   return trailer + " hasn&#39;t led since " + trailerLed;
 }
 
+/* What's riding on the next meeting: priority order, deduped, max 3 lines.
+ * p may be undefined (never met). k1 = Owner 1 (away on the slate). */
+function stakesLines(p, k1, k2) {
+  if (!p) return ["First-ever meeting."];
+  var n1 = shortName(ROSTER_BY_KEY[k1].name), n2 = shortName(ROSTER_BY_KEY[k2].name);
+  var oneIsA = (p.aKey === k1);
+  var w1 = oneIsA ? p.aW : p.bW, w2 = oneIsA ? p.bW : p.aW, n = p.meetings;
+  var out = [];
+  function add(s) { if (s && out.indexOf(s) === -1 && out.length < 3) out.push(s); }
+
+  // Series score.
+  if (w1 === w2) add("Series is tied " + w1 + "–" + w2 + ". The winner takes the lead.");
+  else if (Math.abs(w1 - w2) === 1) {
+    var hiW = Math.max(w1, w2);
+    add((w1 < w2 ? n1 : n2) + " can even the series at " + hiW + "–" + hiW + ".");
+  }
+  // Active streak.
+  if (p.curStreakLen >= 2) {
+    var holder = shortName(ROSTER_BY_KEY[p.curStreakKey].name);
+    var other = p.curStreakKey === k1 ? n2 : n1;
+    add(holder + " goes for " + (p.curStreakLen + 1) + " straight; " + other +
+      " is trying to snap a " + p.curStreakLen + "-game skid.");
+  }
+  // The Hammer (>= 75%, min 8 games) at stake.
+  var leadW = Math.max(w1, w2), leader = w1 >= w2 ? n1 : n2, trailer = w1 >= w2 ? n2 : n1;
+  if (n >= 8 && leadW / n >= 0.75) {
+    if (leadW / (n + 1) < 0.75) add(trailer + " can shake The Nail with a win.");
+  } else if (n + 1 >= 8 && (leadW + 1) / (n + 1) >= 0.75) {
+    add(leader + " can claim The Hammer with a win.");
+  }
+  // Milestone meeting.
+  var ORD = { 10: "10th", 20: "20th", 25: "25th", 30: "30th", 40: "40th", 50: "50th" };
+  if (ORD[n + 1]) add("The " + ORD[n + 1] + " all-time meeting.");
+  // Fallback only when nothing above applied.
+  if (!out.length) {
+    var g = p.games[p.games.length - 1];
+    add("Last time: " + shortName(ROSTER_BY_KEY[g.winnerKey].name) + " by " +
+      fmtPts(Math.abs(g.aScore - g.bScore)) + " (" + g.year + " Wk " + g.week + ").");
+  }
+  return out;
+}
+
+/* Week N Rivalries card: open by default, top of the Head-to-Head tab, until Owner 1 is picked.
+ * Ignores the Active/All filter. Rows tap into loadPair(away, home). */
+var slateOpen = true;
+var slateTierOpen = { U: true, L: false };
+function renderSlate() {
+  var host = document.getElementById("slateSection");
+  var label = document.getElementById("pickLabel");
+  var show = !!(SCHED && CUR_WEEK != null && !sel1);
+  var games = show ? schedGamesForWeek(CUR_WEEK) : [];
+  if (!games.length) show = false;
+  if (label) label.textContent = show ? "Or pick any two owners" : "Pick Two Owners";
+  if (!host) return;
+  if (!show) { host.innerHTML = ""; return; }
+
+  var CLASS_TAG = { "Divisional": "DIV", "Mirror Match": "MIRROR" };
+  var tiers = { U: [], L: [] };
+  games.forEach(function (g) {
+    var a = normalizeName(g[2]), h = normalizeName(g[3]);
+    var t = tiers[g[1]] || (tiers[g[1]] = []);
+    if (a === GHOST_KEY || h === GHOST_KEY) {
+      var realKey = a === GHOST_KEY ? h : a;
+      var realName = ROSTER_BY_KEY[realKey] ? ROSTER_BY_KEY[realKey].name : (a === GHOST_KEY ? g[3] : g[2]);
+      t.push({ ghost: true, sort: 2, rating: -1,
+        html: '<div class="slate-row ghost"><span>' + escHtml(shortName(realName)) + ' draws 👻</span><span>no series</span></div>' });
+      return;
+    }
+    var aName = ROSTER_BY_KEY[a] ? ROSTER_BY_KEY[a].name : g[2];
+    var hName = ROSTER_BY_KEY[h] ? ROSTER_BY_KEY[h].name : g[3];
+    var p = (ROSTER_BY_KEY[a] && ROSTER_BY_KEY[h]) ? PAIR_INDEX[pairId(a, h)] : null;
+    var rec, chip = "<span></span>";
+    if (p) {
+      var aIsA = (p.aKey === a);
+      var wa = aIsA ? p.aW : p.bW, wh = aIsA ? p.bW : p.aW;
+      rec = '<b class="' + (wa >= wh ? "lead" : "trail") + '">' + wa + '</b><span class="dash">–</span>' +
+            '<b class="' + (wh >= wa ? "lead" : "trail") + '">' + wh + '</b>';
+      chip = '<span class="lb-rating-chip" title="Rivalry Rating">' + p.rating + '</span>';
+    } else {
+      rec = '<span class="new">new</span>';
+    }
+    var stake = p ? stakesLines(p, a, h)[0] : "First-ever meeting.";
+    var tag = CLASS_TAG[g[4]] ? '<span class="slate-tag">' + CLASS_TAG[g[4]] + '</span>' : "";
+    t.push({ sort: p ? 0 : 1, rating: p ? p.rating : -1,
+      html: '<button type="button" class="slate-row" data-a="' + escHtml(a) + '" data-h="' + escHtml(h) + '">' +
+        '<span class="slate-line">' +
+          '<span class="slate-n">' + escHtml(shortName(aName)) + '</span>' +
+          '<span class="slate-rec">' + rec + '</span>' +
+          '<span class="slate-n r">' + escHtml(shortName(hName)) + '</span>' +
+          chip +
+        '</span>' +
+        '<span class="slate-stk">' + tag + escHtml(stake) + '</span>' +
+      '</button>' });
+  });
+
+  var counts = [], body = "";
+  ["U", "L"].forEach(function (tk) {
+    var rows = tiers[tk];
+    if (!rows || !rows.length) return;
+    rows.sort(function (x, y) { return (x.sort - y.sort) || (y.rating - x.rating); });
+    counts.push(rows.length + " " + TIER_LABEL[tk]);
+    body += '<button type="button" class="slate-tier" data-tier="' + tk + '" aria-expanded="' +
+        (slateTierOpen[tk] ? "true" : "false") + '">' + TIER_LABEL[tk] + " &middot; " + rows.length +
+        (rows.length === 1 ? " game" : " games") + ' <span class="chev" aria-hidden="true">&#9660;</span></button>' +
+      '<div class="slate-tier-body">' + rows.map(function (r) { return r.html; }).join("") + '</div>';
+  });
+  host.innerHTML = accHtml("slate", "⚔️", "Week " + CUR_WEEK + " Rivalries", counts.join(" &middot; "), body, slateOpen);
+
+  var head = host.querySelector(".acc-head");
+  head.addEventListener("click", function () {
+    slateOpen = head.parentNode.classList.toggle("open");
+    head.setAttribute("aria-expanded", slateOpen ? "true" : "false");
+  });
+  host.querySelectorAll(".slate-tier").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var tk = b.getAttribute("data-tier");
+      slateTierOpen[tk] = b.getAttribute("aria-expanded") !== "true";
+      b.setAttribute("aria-expanded", slateTierOpen[tk] ? "true" : "false");
+    });
+  });
+  host.querySelectorAll("button.slate-row").forEach(function (b) {
+    b.addEventListener("click", function () { loadPair(b.getAttribute("data-a"), b.getAttribute("data-h")); });
+  });
+}
+
 function renderVS() {
   var k1 = sel1, k2 = sel2;
   var explorer = vsResult.parentNode;
@@ -2365,11 +2592,20 @@ function renderVS() {
     tierLine = '<span>Upper: <b>' + uW + "–" + uL + '</b> &middot; Lower: <b>' + lW + "–" + lL + '</b></span>';
   }
 
+  // ---- Scheduled meeting this week or later this season (schedule-data.js) ----
+  var nm = nextMeeting(k1, k2), strip = "";
+  if (nm) {
+    var cls = nm.gameClass === "Divisional" ? " &middot; DIVISION GAME"
+            : (nm.gameClass === "Mirror Match" ? " &middot; MIRROR MATCH" : "");
+    strip = '<div class="vs-strip">🗓️ ' + (nm.week === CUR_WEEK ? "THIS WEEK" : "NEXT MEETING") +
+      " &middot; WEEK " + nm.week + cls + '</div>';
+  }
+
   // ---- Scoreboard hero (full names; leader's number gold, tied = both gold) ----
   var emojis = badgeEmojis(p);
   var head =
     '<div class="vs-hero">' +
-      '<div class="vs-strip-slot"></div>' +
+      '<div class="vs-strip-slot">' + strip + '</div>' +
       '<div class="vs-sb">' +
         '<div><div class="vs-sb-name vs-sb-name-1">' + escHtml(o1.name) + '</div>' +
           '<div class="vs-sb-num ' + (o1W >= o1L ? "lead" : "trail") + '">' + o1W + '</div></div>' +
@@ -2393,6 +2629,11 @@ function renderVS() {
   var formPrev = p.curStreakLen === 1
     ? curName + " won the last meeting"
     : curName + " has won the last " + p.curStreakLen;
+  // ...or "This Week" / "Next Meeting" when the two are on the schedule: stakes first, then Last 5.
+  var stakes = nm ? stakesLines(p, k1, k2) : [];
+  var stakesHtml = stakes.length ? '<div class="stakes">' + stakes.map(function (s) {
+    return '<div class="stake">▸ ' + escHtml(s) + '</div>';
+  }).join("") + '</div>' : "";
 
   // 2) The Story.
   var li = leadInfo(p, k1);
@@ -2497,7 +2738,9 @@ function renderVS() {
 
   var op = accState.open;
   vsResult.innerHTML = '<div class="vs-pair">' + head +
-    accHtml("form", "📈", "Recent Form", formPrev, formStripHtml(p, k1), !!op.form) +
+    (nm ? accHtml("form", "🗓️", nm.week === CUR_WEEK ? "This Week" : "Next Meeting &middot; Week " + nm.week,
+              escHtml(stakes[0]), stakesHtml + formStripHtml(p, k1), !!op.form)
+        : accHtml("form", "📈", "Recent Form", formPrev, formStripHtml(p, k1), !!op.form)) +
     accHtml("story", "📖", "The Story", storyPrev, storyBody, !!op.story) +
     accHtml("big", "🏆", "Big Games", bigPrev, bigBody, !!op.big) +
     accHtml("streaks", "🔥", "Streaks &amp; Scoring", streakPrev, streakBody, !!op.streaks) +
@@ -2822,6 +3065,7 @@ function applyHash() {
   }
   renderPills();
   renderVS();
+  renderSlate();
 }
 
 /* ---- Boot ---- */
