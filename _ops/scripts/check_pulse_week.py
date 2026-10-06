@@ -129,6 +129,9 @@ def main(w):
                     errors.append(f"coachOfWeek.{tier} is empty but the report names {m.group(1)}.")
                 elif m and t and (t.get("team") != m.group(1) or float(t.get("leftOnBench", -1)) != float(m.group(2))):
                     errors.append(f"coachOfWeek.{tier} = {t.get('team')} {t.get('leftOnBench')}; report says {m.group(1)} {m.group(2)}.")
+            n_rows = len(re.findall(r"^\| (?!Team \|)(?!---).+\| [\d.]+ \| [\d.]+ \| [\d.]+ \|", espn[espn.find("### 2e."):], re.M))
+            if n_rows and len(c.get("board") or []) != n_rows:
+                errors.append(f"coachOfWeek.board has {len(c.get('board') or [])} rows; the report's 2e tables have {n_rows}.")
             n_could = len(re.findall(r"\| YES: lost to", espn))
             if len(c.get("couldHaveWon") or []) != n_could:
                 errors.append(f"coachOfWeek.couldHaveWon has {len(c.get('couldHaveWon') or [])} rows; the report marks {n_could}.")

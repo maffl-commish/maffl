@@ -90,6 +90,9 @@ with `},`. Mirror the previous week's object field for field.
   `upper: null` (or `lower: null`). If the report has no 2e section, omit `coachOfWeek`.
   `couldHaveWon: [{ team, tier: "U"|"L", opponent, lostBy, leftOnBench }]`: every row the report marks
   "Could have won: YES" (both tiers, biggest bench first; `opponent: "👻"` for the Ghost). Empty list if none.
+  `board: [{ team, tier: "U"|"L", scored, best, leftOnBench, holes, out? }]`: **every** row of both 2e tables (21 teams),
+  numbers exactly as printed; `holes` = byes + empty slots + "didn't play" (never the "(not a hole …)" notes);
+  `out: true` only for rows marked `OUT`. The page draws the bars.
   `calls: [{ team, tier: "U"|"L", benched, benchedPts, started, startedPts, cost }]` from the report's MISSED CALLS:
   each tier winner's calls (if any; they show under the winner), then the **5 biggest other calls by cost across
   both tiers**, spread across teams (max 1 per team, and favor teams not already in the news reel). Player names

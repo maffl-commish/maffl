@@ -35,6 +35,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-06 · Coach of the Week card: "Every coach" board, every team's points left on the bench with a scored-vs-possible bar, per tier (coachOfWeek.board; Week 4 filled; recipe + checker). No VERSION line, so weekly.html stays v6.3.
+
 - 2026-10-06 · Coach of the Week names the decisions: ESPN pull v0.5.5 MISSED CALLS (bench player the best lineup starts · over whom · cost); card shows each winner's "one that got away" + Biggest lineup calls (5); recipe + editorial §8b.
 
 - 2026-10-06 · Coach of the Week hole redefined (ESPN pull v0.5.4): bye, empty slot, or a starter who didn't play (no stats that week). A starter who played and scored 0 (e.g. Rice hurt in Q1) is not a hole. Week 4: no change.
