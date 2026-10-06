@@ -35,6 +35,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-06 · Coach of the Week hole redefined (ESPN pull v0.5.4): bye, empty slot, or a starter who didn't play (no stats that week). A starter who played and scored 0 (e.g. Rice hurt in Q1) is not a hole. Week 4: no change.
 - 2026-10-06 · Coach of the Week knockout set to 4+ lineup holes (commish, for the expanded lineup; Week 4: nobody out). Earlier same day: 3+ lineup holes (bye, empty slot, 0-point starter), the pre-expansion rule; 1–2 holes stay in. ESPN pull v0.5.2 (`COTW_KNOCKOUT_HOLES`), editorial §8b, recipe, card footer; Week 4 out lists updated (winners unchanged). Story hooks no longer mention the old cash prize.
 
 - 2026-10-06 · Pulse quality pass: (1) Week 4 Coach of the Week added to the page (robot listed it in the PR but never wrote it); (2) `check_pulse_week.py` checks the page itself (required sections, 11 games, coach matches OUTPUT 2e, 3+2 featured, reel size) and the workflow flags the PR ⚠️ when it fails; `@claude` fixes re-run it; (3) editorial §4a "Spread the wealth" + facts Coverage section (teams skipped in the last 3 Pulses, heavy teams, headline rotation); (4) facts v0.2 Story hooks for every team via `pulse_history.py` (series, streak snaps, best/worst start in years, 2025-era top-10 scores, career-win milestones, trophy case, old COTW counts); recipe 0.6.

@@ -1,6 +1,8 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.5.3 (2026-10-06) - COTW knockout = 4+ lineup holes (bye, empty slot, 0-point starter), per commish; 1-3 holes stay in.
+# VERSION: 0.5.4 (2026-10-06) - COTW hole = a starter who never had a chance to play (bye, empty slot, or inactive:
+#   no stats recorded that week). A starter who played and scored 0 (hurt in the 1st quarter, a dud) is NOT a hole.
+#   0.5.3 (2026-10-06) - COTW knockout = 4+ lineup holes, per commish.
 #   0.5.1 (2026-09-30) - 2e adds COULD HAVE WON: lost by less than it left on the bench.
 #   0.5 (2026-09-30) - Coach of the Week (2e): fewest points left on the bench, per tier.
 #   0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
@@ -151,7 +153,9 @@ def fetch_repo_csv(path):
 # ---------------------------------------------------------------- Coach of the Week
 # Revived from David Murello's old award (commish ruling 2026-09-30, bragging rights only).
 # Score = points left on the bench = best legal lineup from the week's roster - points actually started.
-# A "hole" = a starter on bye, an empty starting slot, or a starter who scored 0.
+# A "hole" = a starting slot the coach had no real decision on: a starter on bye, an empty starting slot,
+# or a starter who didn't play at all (inactive/ruled out: ESPN recorded no stats for him that week).
+# A starter who played and scored 0 (hurt in the 1st quarter, or just a dud) is NOT a hole (commish, 2026-10-06).
 # Knocked out of contention at COTW_KNOCKOUT_HOLES or more holes (the old rule was 3, pre roster expansion).
 COTW_KNOCKOUT_HOLES = 4   # commish ruling 2026-10-06: 4 for the expanded lineup
 # Winner per tier: fewest points left on the bench; tie -> higher team score.
@@ -289,11 +293,14 @@ for tier, (lg, by_id, schedule) in conns.items():
             best_pts = best_lineup(slot_counts, pool) if slot_counts else None
             actual = sum(float(p.points) for p in starters)
             dq = [f"{short_player(p.name)} on bye" for p in starters if getattr(p, "on_bye_week", False)]
-            dq += [f"{short_player(p.name)} scored 0" for p in starters
-                   if float(p.points) == 0 and not getattr(p, "on_bye_week", False)]
+            did_not_play = lambda p: (not getattr(p, "on_bye_week", False)
+                                      and not (getattr(p, "stats", {}) or {}).get(WEEK, {}).get("breakdown"))
+            dq += [f"{short_player(p.name)} didn't play" for p in starters if did_not_play(p)]
             empty = sum(slot_counts.values()) - len(starters) if slot_counts else 0
             if empty > 0: dq.append(f"{empty} empty slot{'s' if empty > 1 else ''}")
             holes = len(dq) - (1 if empty > 0 else 0) + max(empty, 0)
+            dq += [f"(not a hole: {short_player(p.name)} played, scored 0)" for p in starters
+                   if float(p.points) == 0 and not getattr(p, "on_bye_week", False) and not did_not_play(p)]
             if best_pts is None:
                 flag(f"[COTW: no lineup slot settings for {tier}] Coach of the Week skipped.")
             else:
@@ -506,7 +513,8 @@ if cotw:
             chw[l] = (w, ws - ls, D(c[4]), D(c[4]) - (ws - ls))
     L += ["\n### 2e. Coach of the Week (fewest points left on the bench)",
           f"_Best legal lineup from the week's roster minus points started. A hole = a starter on bye, an empty "
-          f"slot, or a starter who scored 0. Out of contention at {COTW_KNOCKOUT_HOLES}+ holes. Winner per tier; "
+          f"slot, or a starter who didn't play (inactive; a starter who played and scored 0 is not a hole). "
+          f"Out of contention at {COTW_KNOCKOUT_HOLES}+ holes. Winner per tier; "
           f"tie → higher team score._"]
     for tier in ("Upper", "Lower"):
         rows_t = [c for c in cotw if c[0] == tier]

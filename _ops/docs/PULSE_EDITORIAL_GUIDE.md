@@ -202,7 +202,9 @@ old award paid cash (2013–22); never mention a prize, payout or credits for it
   that week's roster (flex, OP and DP spots included) minus what it actually started. Lowest wins;
   0.0 is a perfect lineup.
 - **Out of contention: 4 or more lineup holes** (commish ruling 2026-10-06; the old rule was 3, before the
-  roster expansion). A hole = a starter on bye, an empty starting slot, or a starter who scored 0.
+  roster expansion). A hole = a starting slot the coach had no real decision on: a starter on bye, an empty starting slot, or a
+  starter who didn't play at all (inactive / ruled out). **A starter who played and scored 0 is not a hole**
+  (hurt in the 1st quarter, or just a dud: that's the coach's risk, not a missing decision).
   One to three holes cost you points but don't knock you out. The threshold is `COTW_KNOCKOUT_HOLES` in the ESPN pull.
 - **One winner per tier.** Tie → higher team score. The ESPN pull computes all of it (OUTPUT 2e);
   copy the numbers, never recompute them.

@@ -3519,7 +3519,7 @@ function renderCoachCard(week) {
     ${tiers.map(tierBlock).join("")}
     ${couldBlock}
     ${c.note ? `<p class="mu-note">${chipTeams(c.note, week)}</p>` : ""}
-    <p class="ps-foot">A MAFFL classic, back in 2026, for bragging rights only. Fewest points left on the bench wins; four or more holes (a bye, an empty slot or a zero-point starter) knock you out.</p>
+    <p class="ps-foot">A MAFFL classic, back in 2026, for bragging rights only. Fewest points left on the bench wins; four or more holes (a starter on bye, an empty slot, or a starter who didn't play) knock you out.</p>
   `;
 
   return cardShell("coach", "📋", "Coach of the Week", preview, body);
