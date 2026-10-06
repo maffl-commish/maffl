@@ -93,12 +93,11 @@ with `},`. Mirror the previous week's object field for field.
   `board: [{ team, tier: "U"|"L", scored, best, leftOnBench, holes, out? }]`: **every** row of both 2e tables (21 teams),
   numbers exactly as printed; `holes` = byes + empty slots + "didn't play" (never the "(not a hole …)" notes);
   `out: true` only for rows marked `OUT`. The page draws the bars.
-  `calls: [{ team, tier: "U"|"L", benched, benchedPts, started, startedPts, cost }]` from the report's MISSED CALLS:
-  each tier winner's biggest call (if any) first, then the **5 biggest other calls by cost across
-  both tiers**, spread across teams (max 1 per team, and favor teams not already in the news reel). Player names
-  exactly as the report prints them; `started: null` for "filled an empty slot". Skip `[shuffle]` rows unless the
-  cost is the tier's biggest. Results notes and Can You Believe This? may quote a call too ("Fetrow benched
-  Monangai's 23.2 for Rice").
+  `calls: [{ team, tier: "U"|"L", benched, benchedPts, started, startedPts, cost, decisive? }]` from the report's
+  MISSED CALLS: **every call that costs 15+ points, plus any smaller call tagged `COST THE GAME`** (add `decisive: true`
+  to those). One per team (its biggest qualifying call), biggest cost first. Skip `[shuffle]` rows. Player names exactly
+  as the report prints them; `started: null` for "filled an empty slot". Results notes and Can You Believe This? may
+  quote a call too ("Ed benched Doubs' 17.8 for Chase, and lost by 13.58").
 - **postseasonNote**: optional, one sentence, from the facts file's playoff picture.
 - **headline / subhead / newsReel**: editorial §3–§4a. 5–6 items, 2–4 sections. **Start from the facts
   file's Coverage section**: at least 2 items on teams it lists as not written about, at least 2 items

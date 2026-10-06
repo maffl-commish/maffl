@@ -213,7 +213,8 @@ old award paid cash (2013–22); never mention a prize, payout or credits for it
   sentence) can name the worst miss in the tier ("Brooks sat Gibbs' 34.4").
 - **Name the decisions (added 2026-10-06).** The ESPN report's MISSED CALLS pair each bench player the best
   lineup would have started with the starter he'd replace and what it cost ("benched Stafford 24.3, started
-  Goff 12.1, cost 12.2"). The card shows the full points-left-on-the-bench ranking per tier, then the winners' misses and the 5 biggest other calls. In prose, a call
+  Goff 12.1, cost 12.2"). The card shows each tier's winner with a tap to see the full ranking, then the Biggest lineup calls: 15+ points,
+  or smaller when the call cost the game (commish ruling 2026-10-06). The card title carries an "It's back" tag through Week 6. In prose, a call
   beats a bare number: "left 23.2 on the bench" → "left Monangai's 23.2 on the bench for Rice".
 - **🔄 Could have won:** a team that lost by less than it left on the bench ("lost by 15.1, left 17.4
   on the bench"). The 👻 par counts as the winner's score. It's flagged whether or not the team was in

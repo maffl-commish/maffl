@@ -35,6 +35,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-06 · Coach of the Week card: winner per tier with a "See all N coaches" tap; Biggest lineup calls = 15+ pts or the call that cost the game (ESPN pull v0.5.6 tags COST THE GAME); "It's back" tag through Week 6 (`COACH_BADGE_THROUGH_WEEK`).
+
 - 2026-10-06 · Coach of the Week card: per-tier winner blocks removed (the full ranking board replaces them); winners' missed calls now lead the Biggest lineup calls list. Collapsed preview still names both winners.
 
 - 2026-10-06 · Coach of the Week card: "Every coach" board, every team's points left on the bench with a scored-vs-possible bar, per tier (coachOfWeek.board; Week 4 filled; recipe + checker). No VERSION line, so weekly.html stays v6.3.

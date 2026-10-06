@@ -1290,6 +1290,18 @@
   .cw-track { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--navy-soft); }
   .cw-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--gold); }
   .cw-sub { grid-column: 2; margin-top: 3px; font-family: var(--body); font-size: 11px; color: var(--muted); }
+  .cw-more { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 44px; margin-top: 2px; padding: 8px 0;
+             background: none; border: 0; border-top: 1px solid var(--border); cursor: pointer; text-align: left;
+             font-family: var(--display); font-weight: 700; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-dark); }
+  .cw-more .chev { transition: transform .2s; }
+  .cw-more[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .cw-more .cw-more-hide, .cw-more[aria-expanded="true"] .cw-more-show { display: none; }
+  .cw-more[aria-expanded="true"] .cw-more-hide { display: inline; }
+  .cw-more-body { display: none; }
+  .cw-more[aria-expanded="true"] + .cw-more-body { display: block; }
+  .cw-new { display: inline-block; margin-left: 8px; padding: 2px 6px; border-radius: 4px; vertical-align: 3px;
+            background: var(--gold); color: var(--navy); font-family: var(--display); font-weight: 700; font-size: 10px;
+            letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.2; white-space: nowrap; }
   .cw-out { font-family: var(--display); font-weight: 700; font-size: 9px; letter-spacing: 0.08em; color: var(--loss);
             border: 1px solid var(--loss); border-radius: 3px; padding: 0 3px; margin-left: 4px; vertical-align: 1px; }
 
@@ -1668,15 +1680,17 @@ const WEEKS = [
         { team: "Turkey Hat Conglomerate", tier: "U", opponent: "Marco Clair Kardiac Attack", lostBy: 13.58, leftOnBench: 18.7 },
         { team: "Sarge's Squad", tier: "L", opponent: "Steel City Champyinz", lostBy: 4.4, leftOnBench: 17.66 }
       ],
-      /* MISSED CALLS (ESPN report 2e, re-pulled 2026-10-06): each winner's call, then the 5 biggest others (1 per team). */
+      /* MISSED CALLS (ESPN report 2e): 15+ points, or smaller when the call cost the game (decisive: cost > losing margin).
+         One per team; [shuffle] pairings skipped. */
       calls: [
-        { team: "Hadley's Comets", tier: "U", benched: "J. Winston", benchedPts: 23.0, started: "D. Prescott", startedPts: 20.1, cost: 2.9 },
-        { team: "Tommy Phamclub", tier: "L", benched: "T. Kraft", benchedPts: 11.5, started: "J. Ferguson", startedPts: 1.1, cost: 10.4 },
         { team: "Happy Valley Hammer Time", tier: "U", benched: "A. Rodgers", benchedPts: 25.96, started: "T. Bagent", startedPts: 7.82, cost: 18.14 },
+        { team: "Portly Primates", tier: "L", benched: "K. Monangai", benchedPts: 27.0, started: "J. Herbert", startedPts: 9.06, cost: 17.94 },
         { team: "South Hills FunShiners", tier: "U", benched: "M. Nabers", benchedPts: 17.2, started: "L. McConkey", startedPts: 0.0, cost: 17.2 },
-        { team: "Turkey Hat Conglomerate", tier: "U", benched: "R. Doubs", benchedPts: 17.8, started: "J. Chase", startedPts: 2.7, cost: 15.1 },
+        { team: "Turkey Hat Conglomerate", tier: "U", benched: "R. Doubs", benchedPts: 17.8, started: "J. Chase", startedPts: 2.7, cost: 15.1, decisive: true },
+        { team: "Marco Clair Kardiac Attack", tier: "U", benched: "O. Gordon II", benchedPts: 16.0, started: "S. Barkley", startedPts: 1.0, cost: 15.0 },
         { team: "Steel City Champyinz", tier: "L", benched: "O. Gordon II", benchedPts: 16.0, started: "S. Barkley", startedPts: 1.0, cost: 15.0 },
-        { team: "The V-Unit", tier: "L", benched: "T. Higgins", benchedPts: 15.7, started: "E. Egbuka", startedPts: 1.3, cost: 14.4 }
+        { team: "Sarge's Squad", tier: "L", benched: "C. Stroud", benchedPts: 27.08, started: "S. Darnold", startedPts: 16.32, cost: 10.76, decisive: true },
+        { team: "The Best in The 'Burgh", tier: "L", benched: "A. Jones Sr.", benchedPts: 12.8, started: "J. Love", startedPts: 5.5, cost: 7.3, decisive: true }
       ],
       /* Every coach (ESPN report 2e tables). holes = byes + empty slots + starters who didn't play. */
       board: [
@@ -3513,6 +3527,8 @@ function fmtBench(n) {
   if (typeof n !== "number") return String(n == null ? "—" : n);
   return Number.isInteger(n) ? n.toFixed(1) : String(n);
 }
+const CALL_MIN_COST = 15;            /* commish ruling 2026-10-06 */
+const COACH_BADGE_THROUGH_WEEK = 6;  /* "It's back" tag on the card title through this week */
 function renderCoachCard(week) {
   const c = week.coachOfWeek;
   if (!c) return "";
@@ -3555,7 +3571,7 @@ function renderCoachCard(week) {
     return `
       <div class="cw-btier">
         <div class="sl-head">${name}-Tier</div>
-        ${rows.map((r, i) => {
+        ${(() => { const row = (r, i) => {
           const pct = r.best ? (100 * r.scored / r.best) : 100;
           return `
           <div class="cw-row${i === 0 && !r.out ? " top" : ""}">
@@ -3568,23 +3584,31 @@ function renderCoachCard(week) {
             </div>
             <div class="cw-sub">${esc(fmtBench(r.scored))} of ${esc(fmtBench(r.best))} possible · ${pct.toFixed(1)}%${r.holes ? ` · ${r.holes} hole${r.holes > 1 ? "s" : ""}` : ""}</div>
           </div>`;
-        }).join("")}
+        };
+          return row(rows[0], 0) + (rows.length > 1 ? `
+            <button class="cw-more" data-toggle="cwmore" aria-expanded="false">
+              <span class="cw-more-show">See all ${rows.length} ${name} coaches</span><span class="cw-more-hide">Show less</span>
+              <span class="chev" aria-hidden="true">&#9662;</span>
+            </button>
+            <div class="cw-more-body">${rows.slice(1).map((r, i) => row(r, i + 1)).join("")}</div>` : "");
+        })()}
       </div>`;
   };
   const boardBlock = board.length ? `
     <div class="cw-board">
-      <div class="sl-head">Points left on the bench · fewest wins</div>
+      <div class="sl-head">Fewest points left on the bench wins</div>
       ${boardTier("U", "Upper")}
       ${boardTier("L", "Lower")}
     </div>` : "";
 
-  const others = calls;   /* winners' calls included: the board replaced the per-tier winner blocks */
+  /* A call makes the list at CALL_MIN_COST+ points, or smaller when it cost the team the game (decisive). */
+  const others = calls.filter(r => r.cost >= CALL_MIN_COST || r.decisive);
   const callsBlock = others.length ? `
     <div class="cw-could">
-      <div class="sl-head">Biggest lineup calls</div>
+      <div class="sl-head">Biggest lineup calls · ${CALL_MIN_COST}+ points, or the call that cost the game</div>
       <ul>
         ${others.map(r => `
-          <li><span class="mu-chip rvx">🪑</span><span>${withOwner(r.team)} ${callText(r)}.</span></li>
+          <li><span class="mu-chip rvx">🪑</span><span>${withOwner(r.team)} ${callText(r)}.${r.decisive ? ` <strong>That call cost the game.</strong>` : ""}</span></li>
         `).join("")}
       </ul>
     </div>` : "";
@@ -3607,7 +3631,10 @@ function renderCoachCard(week) {
     <p class="ps-foot">A MAFFL classic, back in 2026, for bragging rights only. Fewest points left on the bench wins; four or more holes (a starter on bye, an empty slot, or a starter who didn't play) knock you out.</p>
   `;
 
-  return cardShell("coach", "📋", "Coach of the Week", preview, body);
+  const html = cardShell("coach", "📋", "Coach of the Week", preview, body);
+  return (week.weekNumber || 0) <= COACH_BADGE_THROUGH_WEEK
+    ? html.replace(`>Coach of the Week</h3>`, `>Coach of the Week<span class="cw-new">It's back</span></h3>`)
+    : html;
 }
 
 /* --------- NEWS CARD --------- */

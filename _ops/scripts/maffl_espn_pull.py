@@ -1,6 +1,7 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.5.5 (2026-10-06) - 2e lists MISSED CALLS per team: which bench player the best lineup starts, over whom, and what it cost.
+# VERSION: 0.5.6 (2026-10-06) - MISSED CALLS tag a call that cost the game (cost > losing margin; 👻 par counts).
+#   0.5.5 (2026-10-06) - 2e lists MISSED CALLS per team: which bench player the best lineup starts, over whom, and what it cost.
 #   0.5.4 (2026-10-06) - COTW hole = a starter who never had a chance to play (bye, empty slot, or inactive:
 #   no stats recorded that week). A starter who played and scored 0 (hurt in the 1st quarter, a dud) is NOT a hole.
 #   0.5.3 (2026-10-06) - COTW knockout = 4+ lineup holes, per commish.
@@ -556,6 +557,7 @@ if cotw:
                      f"{f'OUT ({c[6]} holes)' if out else '—'} | {cws} |")
         L.append(f"MISSED CALLS — {tier} (bench player the best lineup starts · over the starter he replaces · cost; "
                  "'shuffle' = the best lineup moves players between slots, so the pairing is by points):")
+        lost_by = {r[11]: D(r[8]) - D(r[12]) for r in rows}   # loser -> margin (👻 par is the winner's score)
         for c in sorted(rows_t, key=lambda c: D(c[4])):
             if not c[7]:
                 L.append(f"- {c[1]}: none, a perfect lineup"); continue
@@ -564,7 +566,8 @@ if cotw:
                 + (f" · started {short_player(st.name)} ({st.slot_position}, {fmt(st.points)})"
                    + ("" if st.slot_position in (getattr(b, 'eligibleSlots', []) or []) else " [shuffle]")
                    if st is not None else " · filled an empty slot")
-                + f" · cost {fmt(cost)}" for b, st, cost in c[7]))
+                + f" · cost {fmt(cost)}"
+                + (" · COST THE GAME" if c[1] in lost_by and D(cost) > lost_by[c[1]] else "") for b, st, cost in c[7]))
         tier_cw = [(t, v) for t, v in chw.items() if any(c[1] == t for c in rows_t)]
         L.append(f"COULD HAVE WON — {tier}: " + ("; ".join(
             f"{t} (lost by {fmt(v[1])}, left {fmt(v[2])} on the bench)" for t, v in sorted(tier_cw, key=lambda x: -x[1][2]))
