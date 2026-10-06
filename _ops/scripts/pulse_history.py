@@ -204,7 +204,7 @@ def history_sections(root, year, week, owner_key, short_of=None):
         else: hooks.append("no MAFFL title yet")
         if cotw.get(oid):
             n = cotw[oid]
-            hooks.append(f"won Coach of the Week {'once' if n == 1 else f'{n} times'} in 2013–22 (prize ledger, $10 per award)")
+            hooks.append(f"won Coach of the Week {'once' if n == 1 else f'{n} times'} back in 2013–22 (old award; it's bragging rights only now, so never mention money)")
 
         H.append(f"- **{team}** ({'U' if tier == 'Upper' else 'L'}, {'W' if won else 'L'} vs {'👻' if opp == GHOST else opp}): " + " · ".join(hooks))
     return "\n".join(cov_lines + H) + "\n"

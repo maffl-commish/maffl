@@ -195,12 +195,15 @@ Use them to say *who* won the game, not just by how much.
 
 ## 8b. Coach of the Week (from Week 4)
 
-A MAFFL classic, revived 2026-09-30 (commish ruling). Bragging rights only: no money, no credits.
+A MAFFL classic, revived 2026-09-30 (commish ruling). **Bragging rights only: no money, no credits.** The
+old award paid cash (2013–22); never mention a prize, payout or credits for it now.
 
 - **The measure:** points left on the bench = the best legal lineup a team could have started from
   that week's roster (flex, OP and DP spots included) minus what it actually started. Lowest wins;
   0.0 is a perfect lineup.
-- **Out of contention:** a starter on bye, an empty starting slot, or a starter who scored 0.
+- **Out of contention: 3 or more lineup holes** (commish ruling 2026-10-06; the old rule, set before the
+  roster expansion). A hole = a starter on bye, an empty starting slot, or a starter who scored 0.
+  One or two holes cost you points but don't knock you out. The threshold is `COTW_KNOCKOUT_HOLES` in the ESPN pull.
 - **One winner per tier.** Tie → higher team score. The ESPN pull computes all of it (OUTPUT 2e);
   copy the numbers, never recompute them.
 - **Voice:** a short, warm nod to the old award. The winner line reads like
@@ -210,7 +213,7 @@ A MAFFL classic, revived 2026-09-30 (commish ruling). Bragging rights only: no m
   on the bench"). The 👻 par counts as the winner's score. It's flagged whether or not the team was in
   contention for the award. The card lists every one; the best (biggest bench, smallest margin) is
   also fair game for Can You Believe This?
-- A team knocked out for a bye starter is fair game for Can You Believe This? if it would have won.
+- A team knocked out (3+ holes) is fair game for Can You Believe This? if it would have won.
 - Never mention the Ghost here; it has no lineup.
 
 ## 9. Pre-publish checklist

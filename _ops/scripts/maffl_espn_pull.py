@@ -1,6 +1,7 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.5.1 (2026-09-30) - 2e adds COULD HAVE WON: lost by less than it left on the bench.
+# VERSION: 0.5.2 (2026-10-06) - COTW knockout = 3+ lineup holes (bye, empty slot, 0-point starter), per commish; 1-2 holes stay in.
+#   0.5.1 (2026-09-30) - 2e adds COULD HAVE WON: lost by less than it left on the bench.
 #   0.5 (2026-09-30) - Coach of the Week (2e): fewest points left on the bench, per tier.
 #   0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
 #          writes _ops/inbox/, skips weeks already pulled, reports READY/BLOCKED to the workflow.
@@ -150,7 +151,9 @@ def fetch_repo_csv(path):
 # ---------------------------------------------------------------- Coach of the Week
 # Revived from David Murello's old award (commish ruling 2026-09-30, bragging rights only).
 # Score = points left on the bench = best legal lineup from the week's roster - points actually started.
-# Knocked out of contention: a starter on bye, an empty starting slot, or a starter who scored 0.
+# A "hole" = a starter on bye, an empty starting slot, or a starter who scored 0.
+# Knocked out of contention at COTW_KNOCKOUT_HOLES or more holes (the old rule was 3, pre roster expansion).
+COTW_KNOCKOUT_HOLES = 3
 # Winner per tier: fewest points left on the bench; tie -> higher team score.
 def best_lineup(slot_counts, players):
     """Max points ESPN would allow. slot_counts: {slot: n} (starting slots only);
@@ -290,10 +293,11 @@ for tier, (lg, by_id, schedule) in conns.items():
                    if float(p.points) == 0 and not getattr(p, "on_bye_week", False)]
             empty = sum(slot_counts.values()) - len(starters) if slot_counts else 0
             if empty > 0: dq.append(f"{empty} empty slot{'s' if empty > 1 else ''}")
+            holes = len(dq) - (1 if empty > 0 else 0) + max(empty, 0)
             if best_pts is None:
                 flag(f"[COTW: no lineup slot settings for {tier}] Coach of the Week skipped.")
             else:
-                cotw.append((tier, k, actual, max(best_pts, actual), max(best_pts, actual) - actual, dq))
+                cotw.append((tier, k, actual, max(best_pts, actual), max(best_pts, actual) - actual, dq, holes))
             if bench:
                 bb = max(bench, key=lambda p: float(p.points))
                 if float(bb.points) > float(best[0].points):
@@ -501,21 +505,24 @@ if cotw:
         if c and D(c[4]) > ws - ls:          # left more on the bench than the losing margin
             chw[l] = (w, ws - ls, D(c[4]), D(c[4]) - (ws - ls))
     L += ["\n### 2e. Coach of the Week (fewest points left on the bench)",
-          "_Best legal lineup from the week's roster minus points started. Out of contention: a starter "
-          "on bye, an empty slot, or a starter who scored 0. Winner per tier; tie → higher team score._"]
+          f"_Best legal lineup from the week's roster minus points started. A hole = a starter on bye, an empty "
+          f"slot, or a starter who scored 0. Out of contention at {COTW_KNOCKOUT_HOLES}+ holes. Winner per tier; "
+          f"tie → higher team score._"]
     for tier in ("Upper", "Lower"):
         rows_t = [c for c in cotw if c[0] == tier]
-        live = sorted([c for c in rows_t if not c[5]], key=lambda c: (D(c[4]), -D(c[2])))
+        live = sorted([c for c in rows_t if c[6] < COTW_KNOCKOUT_HOLES], key=lambda c: (D(c[4]), -D(c[2])))
         win = live[0] if live else None
         L.append(f"\nCOACH OF THE WEEK — {tier}: " + (f"{win[1]}, left {fmt(win[4])} on the bench "
                  f"(scored {fmt(win[2])} of a possible {fmt(win[3])})" if win else "none (every team knocked out)"))
-        L.append("| Team | Scored | Best possible | Left on bench | Out of contention | Could have won |")
-        L.append("|---|---|---|---|---|---|")
-        for c in sorted(rows_t, key=lambda c: (bool(c[5]), D(c[4]))):
+        L.append("| Team | Scored | Best possible | Left on bench | Lineup holes | Out of contention | Could have won |")
+        L.append("|---|---|---|---|---|---|---|")
+        for c in sorted(rows_t, key=lambda c: (c[6] >= COTW_KNOCKOUT_HOLES, D(c[4]))):
             cw = chw.get(c[1])
             cws = (f"YES: lost to {'👻' if cw[0] == GHOST else cw[0]} by {fmt(cw[1])}, best lineup wins by {fmt(cw[3])}"
                    if cw else "—")
-            L.append(f"| {c[1]} | {fmt(c[2])} | {fmt(c[3])} | {fmt(c[4])} | {'; '.join(c[5]) or '—'} | {cws} |")
+            out = c[6] >= COTW_KNOCKOUT_HOLES
+            L.append(f"| {c[1]} | {fmt(c[2])} | {fmt(c[3])} | {fmt(c[4])} | {'; '.join(c[5]) or '—'} | "
+                     f"{f'OUT ({c[6]} holes)' if out else '—'} | {cws} |")
         tier_cw = [(t, v) for t, v in chw.items() if any(c[1] == t for c in rows_t)]
         L.append(f"COULD HAVE WON — {tier}: " + ("; ".join(
             f"{t} (lost by {fmt(v[1])}, left {fmt(v[2])} on the bench)" for t, v in sorted(tier_cw, key=lambda x: -x[1][2]))
