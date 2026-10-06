@@ -299,7 +299,8 @@ $jsText = $sb.ToString()
 
 $oldJsText = [IO.File]::ReadAllText($JsPath)
 $oldJsAll  = $oldJsText -split "`n"
-$start = [Array]::IndexOf($oldJsAll, 'window.MATCHUPS_DATA = [')
+# Windows runners check matchups-data.js out with CRLF (git stores LF): match the anchor without its CR.
+$start = [Array]::IndexOf(@($oldJsAll | ForEach-Object { $_.TrimEnd("`r") }), 'window.MATCHUPS_DATA = [')
 $oldJsRows = New-Object System.Collections.Generic.List[string]
 if ($start -lt 0) { Add-Problem "matchups-data.js: 'window.MATCHUPS_DATA = [' line not found" }
 else {

@@ -1,6 +1,6 @@
 # Robot recipe — draft the Weekly Pulse from the ESPN pull
 
-VERSION: 0.4 (2026-09-30): PR summary carries the full draft in plain English; §7 rehearsal mode. 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
+VERSION: 0.5 (2026-10-06): stat corrections are applied to gold by the data job; Claude updates earlier Week objects to match and lists every change. 0.4 (2026-09-30): PR summary carries the full draft in plain English; §7 rehearsal mode. 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
 
 You are Claude Code running unattended in GitHub Actions on the draft branch. The workflow's
 Windows job has **already** appended the week to the gold CSVs, run the CE-1 generator and
@@ -18,6 +18,8 @@ The week number is given in your prompt as **W**. Files below use two-digit week
 3. `MAFFL_HQ_DATA_GOVERNANCE.md` §4: CE-1 and CE-1a.
 4. `_ops/inbox/MAFFL_2026_WeekWW_espn.md`: this week's ESPN pull (same shape as capture v2.2).
 5. `_ops/inbox/MAFFL_2026_WeekWW_datalog.md`: what the data job did (ingest, generator, validate).
+5a. `_ops/inbox/MAFFL_2026_WeekWW_corrections.md` **if it exists**: stat corrections the data job
+   already applied to gold.
 6. `_ops/inbox/MAFFL_2026_WeekWW_facts.md`: every number you need (see §3).
 7. The **previous week's object** in `weekly.html` (the first element after `const WEEKS = [`).
    It is your template for field names, order, formatting, owner spellings and comment style.
@@ -32,9 +34,21 @@ The week number is given in your prompt as **W**. Files below use two-digit week
 
 The data job ran `_ops/scripts/ingest_week.py`, `build\generate-matchups-data.ps1` (check → write →
 re-check) and `build\validate.ps1` on Windows. You're on Linux without Windows PowerShell, so
-**don't edit any CSV, `matchups-data.js` or build script.** If the data log says stat corrections were
-reported for earlier weeks, they were **not** applied: list them in the summary under "Needs your OK"
-(CE-1a is the commissioner's call). **Never run `build.ps1 -Write`.**
+**don't edit any CSV, `matchups-data.js` or build script.** **Never run `build.ps1 -Write`.**
+
+If `_ops/inbox/MAFFL_2026_WeekWW_corrections.md` exists, the data job has **already applied** those ESPN
+stat corrections to gold, and the facts file is built from the corrected gold. Your part (CE-1a, robot
+path):
+- In each **earlier** Week object in `weekly.html`, change each corrected score (`scoreA` / `scoreB`) to
+  the new value, and fix any prose in that object that quotes a changed number (a score, a margin like
+  "by 3.46", a running total). Recompute a margin only by subtracting the two corrected scores as written
+  in the corrections file; show your arithmetic in the summary.
+- **Don't** rewrite earlier weeks' standings, creditTracker or highestWeekly snapshots. They stay as
+  published; this week's object (from the facts file) carries the corrected season totals.
+  Exception: if a correction changes who holds `highestWeekly` or flips a winner, say so under
+  "Needs your OK" and leave it for the commissioner.
+- Don't mention corrections in this week's prose unless a winner flipped.
+- `git status` may show `weekly.html` edits in earlier objects; that's expected.
 
 ## 3. Numbers: copy from the facts file, never do arithmetic yourself
 
@@ -102,6 +116,7 @@ opening the code diff**, so it carries the whole draft as readable text. Use thi
 
 ```
 ## Week W draft — ready for your review
+**Stat corrections applied (ESPN):** <copy the bullets from the corrections file, then list every weekly.html edit you made for them, or "none">
 **Headline:** <headline>
 **Checks:** 11 games added ✅ · validate 8/8 ✅ (data log) · JS parses ✅ · editorial checklist ✅
 **What I did:** <3–5 bullets>
@@ -128,6 +143,10 @@ opening the code diff**, so it carries the whole draft as readable text. Use thi
 To change anything, comment on this PR starting with @claude, e.g. "@claude lead with the Reilly game".
 When it looks right, click **Merge pull request**. That publishes it.
 ```
+
+If the corrections file has a ⚠️ WINNER FLIPPED line, put `⚠️ A stat correction flipped a result. Check
+before merging.` as the **first** line of the summary, above the heading. If the 👻 par changed (the
+corrections file's 👻 line isn't "none"), add the LM re-entry to "Needs your OK".
 
 Don't commit, push or open the PR yourself. The workflow does that after you finish.
 

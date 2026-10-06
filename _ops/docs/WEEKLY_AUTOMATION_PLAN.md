@@ -12,6 +12,8 @@ Updated 2026-09-30 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older 
 
 **Nothing goes on the site until you click Merge.** If anything fails, GitHub emails you and nothing is drafted.
 
+ESPN stat corrections to earlier weeks are applied automatically and listed in the PR under "Stat corrections applied". A ⚠️ at the top means a result flipped: read that before merging.
+
 ## Your Tuesday routine
 
 1. Open the pull request (phone is fine). Read Claude's summary: headline, checks, "Needs your OK".

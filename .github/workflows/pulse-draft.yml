@@ -1,6 +1,6 @@
 # MAFFL Pulse draft — Step 4 of _ops/docs/WEEKLY_AUTOMATION_PLAN.md
 # Runs after "ESPN weekly pull" succeeds (or by hand). Two jobs:
-#   1. data  (Windows, no AI): append the week to gold, run the CE-1 generator + validate,
+#   1. data  (Windows, no AI): append the week to gold, apply ESPN stat corrections, run CE-1 + validate,
 #            compute the facts file, push branch pulse/2026-weekNN.
 #   2. write (Linux, Claude): write the Week object in weekly.html per
 #            _ops/docs/ROBOT_PULSE_RECIPE.md, then open a pull request for the commissioner.
@@ -133,9 +133,13 @@ jobs:
           if ($mode -eq 'rehearsal') { Add-Content $log "REHEARSAL: Week $w is already in gold, so ingest + generator are skipped. Validate + facts run as normal." }
           if ($mode -eq 'draft') {
             Step "Append week to gold (ingest_week.py)" { python _ops/scripts/ingest_week.py $w } @(0)
-            Step "CE-1 generator, check (expect 1 = additions)" { powershell -ExecutionPolicy Bypass -File build\generate-matchups-data.ps1 } @(1)
-            Step "CE-1 generator, write" { powershell -ExecutionPolicy Bypass -File build\generate-matchups-data.ps1 -Write } @(0,1)
-            Step "CE-1 generator, re-check (expect 0 = in sync)" { powershell -ExecutionPolicy Bypass -File build\generate-matchups-data.ps1 } @(0)
+            Step "Apply ESPN stat corrections to earlier weeks (apply_corrections.py)" { python _ops/scripts/apply_corrections.py $w } @(0,3)
+            $cf = "_ops/inbox/MAFFL_2026_Week{0:D2}_corrections.md" -f $w
+            $gen = @('-ExecutionPolicy','Bypass','-File','build\generate-matchups-data.ps1')
+            if (Test-Path $cf) { $gen += @('-CorrectSeason','2026') }   # unlocks 2026 rows only; earlier seasons stay byte-locked
+            Step "CE-1 generator, check (expect 1 = additions)" { powershell @gen } @(1)
+            Step "CE-1 generator, write" { powershell @gen -Write } @(0,1)
+            Step "CE-1 generator, re-check (expect 0 = in sync)" { powershell @gen } @(0)
           }
           Step "validate (expect 0 = 8/8)" { powershell -ExecutionPolicy Bypass -File build\validate.ps1 } @(0)
           Step "Facts calculator" { python _ops/scripts/pulse_facts.py $w } @(0)

@@ -129,6 +129,7 @@ This is the table you asked for. Read it as: *trigger → propagate in this orde
 → refresh embeds in: `weekly.html`, `stats.html`, `history.html`, `rivalry.html` (auto via JS), `power-rankings.html` (rivals auto via JS; **but timeline W/L is hand-typed → also stale**)
 
 ### CE-1a — ESPN stat correction to an already-posted week (in-progress season only)
+**Robot path (from 2026-10-06):** in season, pulse-draft applies these automatically: apply_corrections.py edits gold scores (never rows) from the ESPN report's OUTPUT 4, the generator runs with -CorrectSeason, and the robot fixes earlier Week objects' scores and quoted numbers (not their standings snapshots). Every change is listed in the PR; a flipped winner is flagged at the top. The hand steps below remain the method outside the robot.
 Edit the affected rows' scores in `MAFFL_Matchups_Clean.csv` (never add or remove rows)
 → recompute that week's 👻 par from the corrected real Lower scores and edit the Ghost row too
 → `build\generate-matchups-data.ps1 -CorrectSeason <year> [-Write]` (the lock stays on for every earlier season)

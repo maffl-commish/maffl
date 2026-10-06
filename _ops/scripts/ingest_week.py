@@ -1,6 +1,7 @@
 # ============================================================
 # MAFFL ingest: append one ESPN-pulled week to the gold CSVs (CE-1, gold part only)
-# VERSION: 0.1.1 (2026-09-29): UTF-8 console output for Windows runners
+# VERSION: 0.1.2 (2026-10-06): stat-corrections message points to apply_corrections.py (no logic change)
+#          0.1.1 (2026-09-29): UTF-8 console output for Windows runners
 #
 # Usage (repo root):  python _ops/scripts/ingest_week.py 4
 # Reads  _ops/inbox/MAFFL_2026_WeekNN_espn.md (must end STATUS: READY TO INGEST)
@@ -75,7 +76,7 @@ def main(week):
     corr = re.search(r"Stat corrections vs gold: (\S+)", text)
     print(f"Appended week {week}: {len(rows)} matchup rows ({e1}) · {len(t3)} top-performer rows ({e2}) · score_sum {s}")
     print(f"Stat corrections reported for earlier weeks: {corr.group(1) if corr else 'unknown'}"
-          + ("  → NOT applied automatically (CE-1a needs the commissioner)" if corr and corr.group(1) != "none" else ""))
+          + ("  → applied next by apply_corrections.py" if corr and corr.group(1) != "none" else ""))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2: raise SystemExit("Usage: python _ops/scripts/ingest_week.py <week>")
