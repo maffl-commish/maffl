@@ -1,5 +1,5 @@
 # MAFFL 2026 Week 4 — ESPN pull
-Source: maffl_espn_pull.py v0.5.1 · pulled 2026-10-06 06:12 AM ET · replaces the capture v2.2 screenshot reply
+Source: maffl_espn_pull.py v0.5.1 · pulled 2026-10-06 04:36 PM ET · replaces the capture v2.2 screenshot reply
 
 ## OUTPUT 1 — MATCHUP ROWS
 ```
@@ -155,37 +155,37 @@ TOP BIDS: $102 O. Gordon II (Marco Clair Kardiac Attack, Upper), $49 J. Daniels 
 - Portly Primates: benched K. Monangai scored 27.0, more than any starter (best starter 26.7)
 
 ### 2e. Coach of the Week (fewest points left on the bench)
-_Best legal lineup from the week's roster minus points started. Out of contention: a starter on bye, an empty slot, or a starter who scored 0. Winner per tier; tie → higher team score._
+_Best legal lineup from the week's roster minus points started. A hole = a starter on bye, an empty slot, or a starter who didn't play (inactive; a starter who played and scored 0 is not a hole). Out of contention at 4+ holes. Winner per tier; tie → higher team score._
 
 COACH OF THE WEEK — Upper: Hadley's Comets, left 5.8 on the bench (scored 139.92 of a possible 145.72)
-| Team | Scored | Best possible | Left on bench | Out of contention | Could have won |
-|---|---|---|---|---|---|
-| Hadley's Comets | 139.92 | 145.72 | 5.8 | — | — |
-| The Prodigal Sons | 131.14 | 139.22 | 8.08 | — | — |
-| Bad Attitude Gang | 185.86 | 194.66 | 8.8 | — | — |
-| Mike Vicks Dog Sitting Co. | 172.68 | 183.88 | 11.2 | — | — |
-| Reilly's Reindeer | 104.3 | 117.7 | 13.4 | — | — |
-| Marco Clair Kardiac Attack | 172.86 | 187.86 | 15.0 | — | — |
-| Happy Valley Hammer Time | 130.94 | 160.28 | 29.34 | — | — |
-| The Big Bang Theory | 150.72 | 160.72 | 10.0 | M. Graham scored 0 | — |
-| Jake's Jagoffs | 154.16 | 167.96 | 13.8 | L. Williams scored 0 | — |
-| Turkey Hat Conglomerate | 159.28 | 177.98 | 18.7 | C. Gonzalez scored 0 | YES: lost to Marco Clair Kardiac Attack by 13.58, best lineup wins by 5.12 |
-| South Hills FunShiners | 152.36 | 176.46 | 24.1 | L. McConkey scored 0; D. James Jr. scored 0 | — |
-| Southside Shooters | 112.18 | 144.88 | 32.7 | R. Rice scored 0; K. Paye scored 0; C. Keenum scored 0 | YES: lost to Happy Valley Hammer Time by 18.76, best lineup wins by 13.94 |
+| Team | Scored | Best possible | Left on bench | Lineup holes | Out of contention | Could have won |
+|---|---|---|---|---|---|---|
+| Hadley's Comets | 139.92 | 145.72 | 5.8 | — | — | — |
+| The Prodigal Sons | 131.14 | 139.22 | 8.08 | — | — | — |
+| Bad Attitude Gang | 185.86 | 194.66 | 8.8 | — | — | — |
+| The Big Bang Theory | 150.72 | 160.72 | 10.0 | (not a hole: M. Graham played, scored 0) | — | — |
+| Mike Vicks Dog Sitting Co. | 172.68 | 183.88 | 11.2 | — | — | — |
+| Reilly's Reindeer | 104.3 | 117.7 | 13.4 | — | — | — |
+| Jake's Jagoffs | 154.16 | 167.96 | 13.8 | (not a hole: L. Williams played, scored 0) | — | — |
+| Marco Clair Kardiac Attack | 172.86 | 187.86 | 15.0 | — | — | — |
+| Turkey Hat Conglomerate | 159.28 | 177.98 | 18.7 | C. Gonzalez didn't play | — | YES: lost to Marco Clair Kardiac Attack by 13.58, best lineup wins by 5.12 |
+| South Hills FunShiners | 152.36 | 176.46 | 24.1 | D. James Jr. didn't play; (not a hole: L. McConkey played, scored 0) | — | — |
+| Happy Valley Hammer Time | 130.94 | 160.28 | 29.34 | — | — | — |
+| Southside Shooters | 112.18 | 144.88 | 32.7 | (not a hole: R. Rice played, scored 0); (not a hole: K. Paye played, scored 0); (not a hole: C. Keenum played, scored 0) | — | YES: lost to Happy Valley Hammer Time by 18.76, best lineup wins by 13.94 |
 COULD HAVE WON — Upper: Southside Shooters (lost by 18.76, left 32.7 on the bench); Turkey Hat Conglomerate (lost by 13.58, left 18.7 on the bench)
 
 COACH OF THE WEEK — Lower: Tommy Phamclub, left 14.3 on the bench (scored 155.9 of a possible 170.2)
-| Team | Scored | Best possible | Left on bench | Out of contention | Could have won |
-|---|---|---|---|---|---|
-| Tommy Phamclub | 155.9 | 170.2 | 14.3 | — | — |
-| Sarge's Squad | 161.72 | 179.38 | 17.66 | — | YES: lost to Steel City Champyinz by 4.4, best lineup wins by 13.26 |
-| Fightin Ferrets | 176.9 | 196.44 | 19.54 | — | — |
-| Steel City Champyinz | 166.12 | 193.12 | 27.0 | — | — |
-| The Best in The 'Burgh | 146.74 | 178.32 | 31.58 | — | YES: lost to Portly Primates by 1.58, best lineup wins by 30.0 |
-| Tony's Talented Team | 137.66 | 157.26 | 19.6 | D. James Jr. scored 0 | YES: lost to Tommy Phamclub by 18.24, best lineup wins by 1.36 |
-| Camp Kes | 124.88 | 145.26 | 20.38 | Z. Baun scored 0 | — |
-| The V-Unit | 124.0 | 149.5 | 25.5 | T. Hendrickson scored 0; 1 empty slot | — |
-| Portly Primates | 148.32 | 193.26 | 44.94 | R. Rice scored 0 | — |
+| Team | Scored | Best possible | Left on bench | Lineup holes | Out of contention | Could have won |
+|---|---|---|---|---|---|---|
+| Tommy Phamclub | 155.9 | 170.2 | 14.3 | — | — | — |
+| Sarge's Squad | 161.72 | 179.38 | 17.66 | — | — | YES: lost to Steel City Champyinz by 4.4, best lineup wins by 13.26 |
+| Fightin Ferrets | 176.9 | 196.44 | 19.54 | — | — | — |
+| Tony's Talented Team | 137.66 | 157.26 | 19.6 | D. James Jr. didn't play | — | YES: lost to Tommy Phamclub by 18.24, best lineup wins by 1.36 |
+| Camp Kes | 124.88 | 145.26 | 20.38 | Z. Baun didn't play | — | — |
+| The V-Unit | 124.0 | 149.5 | 25.5 | T. Hendrickson didn't play; 1 empty slot | — | — |
+| Steel City Champyinz | 166.12 | 193.12 | 27.0 | — | — | — |
+| The Best in The 'Burgh | 146.74 | 178.32 | 31.58 | — | — | YES: lost to Portly Primates by 1.58, best lineup wins by 30.0 |
+| Portly Primates | 148.32 | 193.26 | 44.94 | (not a hole: R. Rice played, scored 0) | — | — |
 COULD HAVE WON — Lower: The Best in The 'Burgh (lost by 1.58, left 31.58 on the bench); Tony's Talented Team (lost by 18.24, left 19.6 on the bench); Sarge's Squad (lost by 4.4, left 17.66 on the bench)
 
 ## OUTPUT 3 — VALIDATION
@@ -198,21 +198,17 @@ COULD HAVE WON — Lower: The Best in The 'Burgh (lost by 1.58, left 31.58 on th
 ✅ Top performers: 63 rows (21 teams × 3)
 ✅ Top 3 total ≤ team score
 ❌ Same player, same points in both tiers — [CROSS-TIER MISMATCH: ['B. Young']]
-👻 par: 176.90, 166.12, 161.72, 155.90, 148.32, 146.74, 137.66, 124.88, 124.00 · dropped 176.90 · sum of 8 1165.34 · mean 145.67 · ESPN shows 0.00
+👻 par: 176.90, 166.12, 161.72, 155.90, 148.32, 146.74, 137.66, 124.88, 124.00 · dropped 176.90 · sum of 8 1165.34 · mean 145.67 · ESPN shows 145.67
 CHECKSUM · week 4 · rows 11 · upper 6 · lower 5 · ghost 1 · score_sum 3254.31 · top3_rows 63
+SELF-TEST matchups vs repo: ALL MATCH
+SELF-TEST top performers vs repo: ALL MATCH
 
 BLOCKING: none
-FLAGS: LM to-do: set ESPN 👻 Week 4 score to 145.67. | STAT CORRECTIONS in earlier weeks: 6 change(s), see OUTPUT 4.
+FLAGS: none
 NOTES: Marco Clair Kardiac Attack: ESPN owner label 'David Murello' (CSV keeps 'David Murello / Michael Murello'). | The Prodigal Sons: ESPN owner label 'Richard Simmons / Jonathan Murello' (CSV keeps 'Jon Murello / Rick Simmons'). | Camp Kes: ESPN owner label 'Bo Kes' (CSV keeps 'Bob Keslar / Bo Kes').
 
 ## OUTPUT 4 — PRIOR-WEEK SCORE AUDIT
-Stat corrections vs gold: 6
-- Week 3: Bad Attitude Gang gold 154.22 → ESPN now 153.72
-- Week 3: The Prodigal Sons gold 143.78 → ESPN now 142.78
-- Week 3: The Big Bang Theory gold 125.60 → ESPN now 125.10
-- Week 3: Fightin Ferrets gold 137.60 → ESPN now 138.60
-- Week 3: The Best in The 'Burgh gold 179.34 → ESPN now 178.84
-- Week 3: Tony's Talented Team gold 167.52 → ESPN now 167.02
+Stat corrections vs gold: none
 
 Week 1
 ```
