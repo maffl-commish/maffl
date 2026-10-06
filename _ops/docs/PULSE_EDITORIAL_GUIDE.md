@@ -211,6 +211,10 @@ old award paid cash (2013–22); never mention a prize, payout or credits for it
 - **Voice:** a short, warm nod to the old award. The winner line reads like
   "Jake's Jagoffs (Jake) left 0.0 on the bench — a perfect lineup." The `note` (optional, one
   sentence) can name the worst miss in the tier ("Brooks sat Gibbs' 34.4").
+- **Name the decisions (added 2026-10-06).** The ESPN report's MISSED CALLS pair each bench player the best
+  lineup would have started with the starter he'd replace and what it cost ("benched Stafford 24.3, started
+  Goff 12.1, cost 12.2"). The card lists the winners' misses and the 5 biggest other calls. In prose, a call
+  beats a bare number: "left 23.2 on the bench" → "left Monangai's 23.2 on the bench for Rice".
 - **🔄 Could have won:** a team that lost by less than it left on the bench ("lost by 15.1, left 17.4
   on the bench"). The 👻 par counts as the winner's score. It's flagged whether or not the team was in
   contention for the award. The card lists every one; the best (biggest bench, smallest margin) is

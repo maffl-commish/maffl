@@ -90,6 +90,12 @@ with `},`. Mirror the previous week's object field for field.
   `upper: null` (or `lower: null`). If the report has no 2e section, omit `coachOfWeek`.
   `couldHaveWon: [{ team, tier: "U"|"L", opponent, lostBy, leftOnBench }]`: every row the report marks
   "Could have won: YES" (both tiers, biggest bench first; `opponent: "👻"` for the Ghost). Empty list if none.
+  `calls: [{ team, tier: "U"|"L", benched, benchedPts, started, startedPts, cost }]` from the report's MISSED CALLS:
+  each tier winner's calls (if any; they show under the winner), then the **5 biggest other calls by cost across
+  both tiers**, spread across teams (max 1 per team, and favor teams not already in the news reel). Player names
+  exactly as the report prints them; `started: null` for "filled an empty slot". Skip `[shuffle]` rows unless the
+  cost is the tier's biggest. Results notes and Can You Believe This? may quote a call too ("Fetrow benched
+  Monangai's 23.2 for Rice").
 - **postseasonNote**: optional, one sentence, from the facts file's playoff picture.
 - **headline / subhead / newsReel**: editorial §3–§4a. 5–6 items, 2–4 sections. **Start from the facts
   file's Coverage section**: at least 2 items on teams it lists as not written about, at least 2 items

@@ -1456,6 +1456,8 @@
  * Optional `coachOfWeek`: { upper, lower, couldHaveWon, note } — see renderCoachCard. upper/lower =
  *   { team, owner, leftOnBench, scored, best, runnersUp:[{team,leftOnBench}], out:[{team,reason}] } or null;
  *   couldHaveWon = [{ team, tier, opponent, lostBy, leftOnBench }].
+ *   calls (optional) = [{ team, tier, benched, benchedPts, started, startedPts, cost }] — lineup decisions
+ *   from the ESPN report's MISSED CALLS; started: null = the slot was left empty.
  * `newsReel` may be a flat string array or sections:
  *   [{ section: "Big Spenders", icon: "💸", items: ["…"] }, …] — ≤6 items total.
  * Optional creditTracker item `status` ("leading" | "locked") and `since` (week #).
@@ -3477,6 +3479,10 @@ function renderCoachCard(week) {
   const benchPhrase = t => fmtBench(t.leftOnBench) + " left on the bench" + (t.leftOnBench === 0 ? " · perfect lineup" : "");
   const tiers = [["Upper", c.upper], ["Lower", c.lower]];
   const could = c.couldHaveWon || [];
+  const calls = c.calls || [];
+  const callText = r => `benched ${esc(r.benched)} (${esc(fmtBench(r.benchedPts))})` +
+    (r.started ? ` and started ${esc(r.started)} (${esc(fmtBench(r.startedPts))})` : " and left a slot empty") +
+    `: cost ${esc(fmtBench(r.cost))}`;
 
   const preview = `
     ${tiers.map(([name, t], i) => `<div${i ? ' style="margin-top:4px"' : ""}><span class="strong">${name} ·</span> ${t
@@ -3498,12 +3504,25 @@ function renderCoachCard(week) {
         <div class="cw-win"><span class="sl-team">${esc(t.team)}</span> <span class="sl-own">${esc(shortName(t.owner || ownerOf[t.team] || ""))}</span></div>
         <div class="cw-num">${esc(benchPhrase(t))}</div>
         <div class="cw-line">Scored ${esc(fmtBench(t.scored))} of a possible ${esc(fmtBench(t.best))}.</div>
+        ${calls.filter(r => r.team === t.team).map(r =>
+          `<div class="cw-line"><span class="cw-lbl">The one that got away</span>${callText(r)}.</div>`).join("")}
         ${ru.length ? `<div class="cw-line"><span class="cw-lbl">Next closest</span>${ru.map(r =>
           `${withOwner(r.team)} ${esc(fmtBench(r.leftOnBench))}`).join(" · ")}</div>` : ""}
         ${out.length ? `<div class="cw-line muted"><span class="cw-lbl">Out of contention</span>${out.map(o =>
           `${esc(o.team)} (${esc(o.reason)})`).join(" · ")}</div>` : ""}
       </div>`;
   };
+
+  const others = calls.filter(r => !tiers.some(([, t]) => t && t.team === r.team));
+  const callsBlock = others.length ? `
+    <div class="cw-could">
+      <div class="sl-head">Biggest lineup calls</div>
+      <ul>
+        ${others.map(r => `
+          <li><span class="mu-chip rvx">🪑</span><span>${withOwner(r.team)} ${callText(r)}.</span></li>
+        `).join("")}
+      </ul>
+    </div>` : "";
 
   const couldBlock = could.length ? `
     <div class="cw-could">
@@ -3517,6 +3536,7 @@ function renderCoachCard(week) {
 
   const body = `
     ${tiers.map(tierBlock).join("")}
+    ${callsBlock}
     ${couldBlock}
     ${c.note ? `<p class="mu-note">${chipTeams(c.note, week)}</p>` : ""}
     <p class="ps-foot">A MAFFL classic, back in 2026, for bragging rights only. Fewest points left on the bench wins; four or more holes (a starter on bye, an empty slot, or a starter who didn't play) knock you out.</p>

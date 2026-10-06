@@ -1,6 +1,7 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.5.4 (2026-10-06) - COTW hole = a starter who never had a chance to play (bye, empty slot, or inactive:
+# VERSION: 0.5.5 (2026-10-06) - 2e lists MISSED CALLS per team: which bench player the best lineup starts, over whom, and what it cost.
+#   0.5.4 (2026-10-06) - COTW hole = a starter who never had a chance to play (bye, empty slot, or inactive:
 #   no stats recorded that week). A starter who played and scored 0 (hurt in the 1st quarter, a dud) is NOT a hole.
 #   0.5.3 (2026-10-06) - COTW knockout = 4+ lineup holes, per commish.
 #   0.5.1 (2026-09-30) - 2e adds COULD HAVE WON: lost by less than it left on the bench.
@@ -159,9 +160,10 @@ def fetch_repo_csv(path):
 # Knocked out of contention at COTW_KNOCKOUT_HOLES or more holes (the old rule was 3, pre roster expansion).
 COTW_KNOCKOUT_HOLES = 4   # commish ruling 2026-10-06: 4 for the expanded lineup
 # Winner per tier: fewest points left on the bench; tie -> higher team score.
-def best_lineup(slot_counts, players):
+def best_lineup(slot_counts, players, used_out=None):
     """Max points ESPN would allow. slot_counts: {slot: n} (starting slots only);
-    players: [(points, set_of_eligible_slots)]. Exact (Hungarian), empty slot = 0 allowed."""
+    players: [(points, set_of_eligible_slots)]. Exact (Hungarian), empty slot = 0 allowed.
+    If used_out is a set, the indexes of the players in the best lineup are added to it."""
     slots = [s for s, n in slot_counts.items() for _ in range(int(n))]
     n = len(slots)
     if n == 0: return 0.0
@@ -189,7 +191,26 @@ def best_lineup(slot_counts, players):
         while True:
             j1 = way[j0]; p[j0] = p[j1]; j0 = j1
             if j0 == 0: break
+    if used_out is not None:
+        used_out.update(j - 1 for j in range(1, m + 1) if p[j] and j - 1 < len(players))
     return sum(cols[j - 1][0] for j in range(1, m + 1) if p[j])
+
+
+def missed_calls(starters, bench, used):
+    """Pair each bench player the best lineup starts with the starter he replaces.
+    used = indexes into starters + bench. Returns [(benched, starter_or_None, cost)], biggest cost first.
+    A direct swap (bench player eligible for that starter's slot) is preferred; otherwise the best
+    lineup shuffles positions and the pairing is by points."""
+    ins = [bench[i - len(starters)] for i in sorted(used) if i >= len(starters)]
+    outs = [starters[i] for i in range(len(starters)) if i not in used]
+    ins.sort(key=lambda p: -float(p.points)); outs.sort(key=lambda p: float(p.points))
+    pairs = []
+    for b in ins:
+        elig = set(getattr(b, "eligibleSlots", []) or [])
+        pick = next((s for s in outs if s.slot_position in elig), outs[0] if outs else None)
+        if pick is not None: outs.remove(pick)
+        pairs.append((b, pick, float(b.points) - (float(pick.points) if pick else 0.0)))
+    return sorted(pairs, key=lambda x: -x[2])
 
 # ---------------------------------------------------------------- cookies
 ESPN_S2 = os.environ.get("ESPN_S2") or ""
@@ -290,7 +311,9 @@ for tier, (lg, by_id, schedule) in conns.items():
             slot_counts = {s: n for s, n in (getattr(lg.settings, "position_slot_counts", {}) or {}).items()
                            if n and s not in ("BE", "IR")}
             pool = [(float(p.points), set(getattr(p, "eligibleSlots", []) or [])) for p in starters + bench]
-            best_pts = best_lineup(slot_counts, pool) if slot_counts else None
+            used = set()
+            best_pts = best_lineup(slot_counts, pool, used) if slot_counts else None
+            calls = missed_calls(starters, bench, used) if slot_counts else []
             actual = sum(float(p.points) for p in starters)
             dq = [f"{short_player(p.name)} on bye" for p in starters if getattr(p, "on_bye_week", False)]
             did_not_play = lambda p: (not getattr(p, "on_bye_week", False)
@@ -304,7 +327,7 @@ for tier, (lg, by_id, schedule) in conns.items():
             if best_pts is None:
                 flag(f"[COTW: no lineup slot settings for {tier}] Coach of the Week skipped.")
             else:
-                cotw.append((tier, k, actual, max(best_pts, actual), max(best_pts, actual) - actual, dq, holes))
+                cotw.append((tier, k, actual, max(best_pts, actual), max(best_pts, actual) - actual, dq, holes, calls))
             if bench:
                 bb = max(bench, key=lambda p: float(p.points))
                 if float(bb.points) > float(best[0].points):
@@ -531,6 +554,17 @@ if cotw:
             out = c[6] >= COTW_KNOCKOUT_HOLES
             L.append(f"| {c[1]} | {fmt(c[2])} | {fmt(c[3])} | {fmt(c[4])} | {'; '.join(c[5]) or '—'} | "
                      f"{f'OUT ({c[6]} holes)' if out else '—'} | {cws} |")
+        L.append(f"MISSED CALLS — {tier} (bench player the best lineup starts · over the starter he replaces · cost; "
+                 "'shuffle' = the best lineup moves players between slots, so the pairing is by points):")
+        for c in sorted(rows_t, key=lambda c: D(c[4])):
+            if not c[7]:
+                L.append(f"- {c[1]}: none, a perfect lineup"); continue
+            L.append(f"- {c[1]}: " + "; ".join(
+                f"benched {short_player(b.name)} ({getattr(b, 'position', '') or '?'}, {fmt(b.points)})"
+                + (f" · started {short_player(st.name)} ({st.slot_position}, {fmt(st.points)})"
+                   + ("" if st.slot_position in (getattr(b, 'eligibleSlots', []) or []) else " [shuffle]")
+                   if st is not None else " · filled an empty slot")
+                + f" · cost {fmt(cost)}" for b, st, cost in c[7]))
         tier_cw = [(t, v) for t, v in chw.items() if any(c[1] == t for c in rows_t)]
         L.append(f"COULD HAVE WON — {tier}: " + ("; ".join(
             f"{t} (lost by {fmt(v[1])}, left {fmt(v[2])} on the bench)" for t, v in sorted(tier_cw, key=lambda x: -x[1][2]))

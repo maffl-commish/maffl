@@ -35,6 +35,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-06 · Coach of the Week names the decisions: ESPN pull v0.5.5 MISSED CALLS (bench player the best lineup starts · over whom · cost); card shows each winner's "one that got away" + Biggest lineup calls (5); recipe + editorial §8b.
+
 - 2026-10-06 · Coach of the Week hole redefined (ESPN pull v0.5.4): bye, empty slot, or a starter who didn't play (no stats that week). A starter who played and scored 0 (e.g. Rice hurt in Q1) is not a hole. Week 4: no change.
 - 2026-10-06 · Coach of the Week knockout set to 4+ lineup holes (commish, for the expanded lineup; Week 4: nobody out). Earlier same day: 3+ lineup holes (bye, empty slot, 0-point starter), the pre-expansion rule; 1–2 holes stay in. ESPN pull v0.5.2 (`COTW_KNOCKOUT_HOLES`), editorial §8b, recipe, card footer; Week 4 out lists updated (winners unchanged). Story hooks no longer mention the old cash prize.
 
