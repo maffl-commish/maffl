@@ -8,6 +8,11 @@ still visible in the GitHub repo itself.
 
 ## 1. The loop
 
+**Since 2026-10-06 the usual loop is just a claude.ai chat:** describe the change, and Claude edits the repo in a
+cloud workspace, checks it, commits and pushes to `main` (the site updates in a minute or two). Say "PR first" in
+the chat to get a pull request to review instead. Rules: `CLAUDE.md` → "Chat sessions". The desktop loop below
+still works and is the route for anything that needs the Windows `build\` scripts.
+
 ```
  Claude (Cowork chat)            Claude Code (CLI)            GitHub Desktop
  ───────────────────             ─────────────────            ──────────────

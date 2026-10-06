@@ -1,12 +1,12 @@
 # MAFFL Weekly Robot, on one page
 
-Updated 2026-09-30 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older step-by-step build plan
+Updated 2026-10-06 · Built 2026-09-29/30 (Mike + Claude) · Replaces the older step-by-step build plan
 
 ## What happens every Tuesday (no one lifts a finger)
 
 | When (ET) | What | Where you see it |
 |---|---|---|
-| from 1:17 AM (retries 2:47, 4:13, 5:37, 7:23; Wed backstop). GitHub's timer can run late, hence several tries | **ESPN pull**: scores, top-3 scorers, waivers/trades, stat-correction check, next week's pairings, 8 safety checks | `_ops/inbox/MAFFL_2026_WeekNN_espn.md` |
+| **5:07 AM: Claude scheduled task "MAFFL Tuesday Pulse kickoff"** starts the pull on time, watches the chain, re-runs a flaky failure once, and sends you a phone/email report. GitHub's own timers (1:17–7:23 AM, Wed backstop) stay as a backup; on Oct 6 they ran ~7 h late | **ESPN pull**: scores, top-3 scorers, waivers/trades, stat-correction check, next week's pairings, 8 safety checks | `_ops/inbox/MAFFL_2026_WeekNN_espn.md` |
 | right after | **Data job** (no AI): adds the week to the gold CSVs, refreshes the matchup files, validate 8/8, computes every number | branch `pulse/2026-weekNN` |
 | right after | **Claude** writes the Week object in `weekly.html` using the editorial guide, then opens a pull request | GitHub → **Pull requests** → "Weekly Pulse: Week N draft" |
 
@@ -19,10 +19,10 @@ ESPN stat corrections to earlier weeks are applied automatically and listed in t
 1. Open the pull request (phone is fine). Read Claude's summary: headline, checks, "Needs your OK".
 2. Want changes? Comment `@claude …` in plain English (e.g. "@claude lead with the Reilly game"). Claude edits the draft.
 3. Happy? Click **Merge pull request**, then **Confirm merge**. The site updates in a minute or two.
-4. On your computer: in GitHub Desktop, click **Fetch origin**, then **Pull origin**, before any other MAFFL work.
+4. Nothing to do on the computer. Edits happen in a claude.ai chat, which always starts from the latest `main`. (If you do open the desktop copy, Fetch/Pull first.)
 5. **Merge each week's PR before the next Tuesday.** The robot won't draft a week while the previous one is still unmerged. It emails you instead.
 
-**Fallback:** if the robot fails, start a Cowork chat in MAFFL HQ Ops: "draft the Week N Pulse from the inbox".
+**Fallback:** if the robot fails, the 5:07 AM report says why. Ask Claude in chat to fix it, or to draft the Week N Pulse from the inbox.
 
 ## If something breaks
 

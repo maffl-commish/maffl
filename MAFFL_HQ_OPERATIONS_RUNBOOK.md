@@ -161,7 +161,7 @@ process rather than build-regeneration.)*
 
 ## 5. Working with Claude Code safely
 
-All file edits happen in Claude Code. Claude in Cowork chat reads the live repo and writes prompts into `_ops/prompts/` (see `_ops/README.md`). Patterns that have worked and are worth keeping:
+Since 2026-10-06, most edits happen in a claude.ai chat: Claude works in a cloud copy of the repo and pushes straight to `main` unless the commissioner asks for a PR first (`CLAUDE.md` → "Chat sessions"). Claude Code on the desktop remains the route for the Windows `build\` scripts. Prompts in `_ops/prompts/` still work (see `_ops/README.md`). Patterns that have worked and are worth keeping:
 
 - **Audits and sweeps are read-only.** When you want to understand state, ask for a report that
   changes nothing (`_ops/archive/2026-06-build/AUDIT.md`, `_ops/archive/2026-06-build/DOC_SWEEP.md` were built this way). Look before touching.

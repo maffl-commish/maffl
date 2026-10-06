@@ -105,3 +105,25 @@ Two binding rules:
 - `_ops/inbox/` is written by the robots. Don't edit or delete files there unless a prompt says so.
 - Don't edit `.github/workflows/*` or `_ops/scripts/*` unless the prompt is about them.
 - Before starting work, make sure the local repo is up to date with `main` (the robots push to it).
+
+## Chat sessions (added 2026-10-06) — the default way work gets done
+
+The commissioner now works with Claude in claude.ai chat (often on his phone). Claude clones this repo into a
+cloud workspace, edits, verifies, commits and pushes. The Windows folder / GitHub Desktop copy is a backup only;
+nobody edits files on the computer.
+
+- **Push straight to `main` by default.** Open a pull request instead only when the commissioner asks for one
+  ("PR first") in that chat. Every change goes live on the site within a minute or two, so verify before pushing.
+- **Commits:** author "Mike Murello <michael.murello@gmail.com>", with Claude's co-author lines. One commit per
+  change, including the date stamp and the `_ops/STATUS.md` line (Recently shipped, dated). No prompt file is
+  needed for chat work; `_ops/prompts/` stays available for queued work.
+- **Verify before every push:** `node --check` on `weekly.html`'s inline scripts (or the page you changed);
+  `python3 _ops/scripts/check_pulse_week.py <W>` after any Pulse edit; and a headless screenshot at phone width
+  (390px) for any visible change, shown to the commissioner.
+- **Still binding:** don't edit `weekly.html` or `matchups-data.js` while a "Weekly Pulse" PR is open; derived
+  data is never hand-edited; `_ops/inbox/` is robot-written (regenerating a facts/check file with its own script
+  is fine; don't hand-edit). Never commit `__pycache__`, `*.bak` or scratch files.
+- **What the cloud workspace can't do:** run the Windows PowerShell 5.1 scripts in `build\` (CE-1 generator,
+  `validate.ps1`, `gen-*.ps1`) and reach ESPN. ESPN goes through the `ESPN weekly pull` workflow (Run workflow,
+  `week` + `force` inputs). For a change that needs a `build\` script, stop and say so; don't approximate the
+  generator by hand.
