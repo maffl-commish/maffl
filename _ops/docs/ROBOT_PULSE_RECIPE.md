@@ -1,6 +1,6 @@
 # Robot recipe — draft the Weekly Pulse from the ESPN pull
 
-VERSION: 0.5 (2026-10-06): stat corrections are applied to gold by the data job; Claude updates earlier Week objects to match and lists every change. 0.4 (2026-09-30): PR summary carries the full draft in plain English; §7 rehearsal mode. 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
+VERSION: 0.6 (2026-10-06): check_pulse_week.py must pass (Week 4 shipped without its Coach of the Week); editorial §4a spread the wealth; facts file adds Coverage + Story hooks. 0.5 (2026-10-06): stat corrections are applied to gold by the data job; Claude updates earlier Week objects to match and lists every change. 0.4 (2026-09-30): PR summary carries the full draft in plain English; §7 rehearsal mode. 0.3 (2026-09-30): adds Coach of the Week (OUTPUT 2e). 0.2 (2026-09-29): data steps moved to the workflow's Windows job; Claude writes prose only · Owner: commissioner (Mike) · Used by `.github/workflows/pulse-draft.yml`
 
 You are Claude Code running unattended in GitHub Actions on the draft branch. The workflow's
 Windows job has **already** appended the week to the gold CSVs, run the CE-1 generator and
@@ -54,8 +54,9 @@ path):
 
 The data job already ran `python _ops/scripts/pulse_facts.py W`. Its output,
 `_ops/inbox/MAFFL_2026_WeekWW_facts.md`, has standings (already in page order), all-play,
-Survivor, credit leaders with `since`, highest weekly, seeds, and head-to-head facts for next
-week's pairings. **Copy numbers from it exactly.** If you need a number it doesn't give, derive it
+Survivor, credit leaders with `since`, highest weekly, seeds, head-to-head facts for next
+week's pairings, **Coverage** (who the last 3 Pulses skipped) and **Story hooks** (history for every
+team: series, streaks, best/worst starts, era-top scores, milestones, trophies). **Copy numbers from it exactly.** If you need a number it doesn't give, derive it
 only from gold CSVs with a short script, and mention that in the summary.
 
 ## 4. Write the Week W object in `weekly.html`
@@ -90,7 +91,10 @@ with `},`. Mirror the previous week's object field for field.
   `couldHaveWon: [{ team, tier: "U"|"L", opponent, lostBy, leftOnBench }]`: every row the report marks
   "Could have won: YES" (both tiers, biggest bench first; `opponent: "👻"` for the Ghost). Empty list if none.
 - **postseasonNote**: optional, one sentence, from the facts file's playoff picture.
-- **headline / subhead / newsReel**: editorial §3–§4. 5–6 items, 2–4 sections. Transactions come
+- **headline / subhead / newsReel**: editorial §3–§4a. 5–6 items, 2–4 sections. **Start from the facts
+  file's Coverage section**: at least 2 items on teams it lists as not written about, at least 2 items
+  mentioning a Lower team, no team in more than 2 items, and don't lead with a team from the last two
+  headlines unless it's a record. Pull history from the Story hooks, never from memory. Transactions come
   from OUTPUT 2c. **Waiver claims carry ESPN's processing time: never present that as when a
   team picked someone up** (editorial §4 "Waiver times"). "Bench beat every starter" facts
   (OUTPUT 2d) are good Can You Believe This? material.
@@ -104,6 +108,11 @@ with `},`. Mirror the previous week's object field for field.
 
 ## 5. Self-check (fix, then re-check)
 
+- **Run `python3 _ops/scripts/check_pulse_week.py W` and fix every ❌ line, then run it again.** It reads
+  the page itself, so it catches a section you meant to add but didn't (Week 4: Coach of the Week was in
+  the summary but not the page). Fix ⚠️ lines too unless the story demands otherwise; if you keep one,
+  say why under "Needs your OK". The workflow runs it again after you and flags the PR if it fails.
+
 - Editorial guide §9 checklist, item by item.
 - JavaScript still parses: copy every inline `<script>` block of `weekly.html` (without the tags)
   into one temp `.js` file outside the repo and run `node --check` on it. It must pass.
@@ -111,14 +120,16 @@ with `},`. Mirror the previous week's object field for field.
 
 ## 6. Summary for the commissioner → `_ops/inbox/MAFFL_2026_WeekWW_pr.md`
 
-This becomes the PR description he reads on his phone. He must be able to approve the week **without
+This becomes the PR description he reads on his phone. **Write "The draft, as readers will see it" by
+reading the Week W object back out of `weekly.html`, not from your notes.** Anything that isn't in the
+page doesn't go in the summary. He must be able to approve the week **without
 opening the code diff**, so it carries the whole draft as readable text. Use this shape:
 
 ```
 ## Week W draft — ready for your review
 **Stat corrections applied (ESPN):** <copy the bullets from the corrections file, then list every weekly.html edit you made for them, or "none">
 **Headline:** <headline>
-**Checks:** 11 games added ✅ · validate 8/8 ✅ (data log) · JS parses ✅ · editorial checklist ✅
+**Checks:** 11 games added ✅ · validate 8/8 ✅ (data log) · JS parses ✅ · check_pulse_week ✅ (paste its Result line) · editorial checklist ✅
 **What I did:** <3–5 bullets>
 **Needs your OK / questions:** <bullets, or "none">
 **LM to-do:** set ESPN 👻 Week W score to <par> (only if the report flagged it)

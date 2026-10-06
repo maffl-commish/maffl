@@ -2,14 +2,14 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-06 by Claude (code), robot CRLF fix + auto stat corrections
+**Last updated:** 2026-10-06 by Claude (chat), Tuesday kickoff task + Pulse check + coverage/history hooks
 
 ## Now
 
 - **ESPN history inventory ✅ (9/30).** Report: `_ops/inbox/MAFFL_ESPN_Inventory.md` (raw zip is git-ignored: private, keep local). ESPN has Upper 2005–2026 (results, drafts, weekly starters; bench only from 2018) and Lower 2025–26. Old message boards are gone (1 LM note per season survives); no Coach of the Week posts. Next, when wanted: check gold 2005–2025 against ESPN (would settle the quarantined-CSV swaps below).
 - **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card ✅ (`weekly.html` v6.3).
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
-- **Weekly robot ✅ live (9/30).** One-pager: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Connection test passed end to end (data job → Claude → PR). Rehearsal ✅ (9/30): full chain ran, REHEARSAL PR opened, an `@claude` comment revised it, PR closed unmerged. Still unproven: a run with no manual start (first = Tue Oct 6). **Tuesday's five scheduled ESPN pulls never fired** (only the 6:12 AM manual run exists); watch next Tuesday; Wed backstop still in place. **Habit: GitHub Desktop Fetch/Pull before starting work.** **Merge each Pulse PR before the next Tuesday.**
+- **Weekly robot ✅ live (9/30).** One-pager: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Connection test passed end to end (data job → Claude → PR). Rehearsal ✅ (9/30): full chain ran, REHEARSAL PR opened, an `@claude` comment revised it, PR closed unmerged. **GitHub's Tuesday schedules DID fire on Oct 6, but every one ran ~6½–7 h late** (1:17 AM slot started 8:00 AM; last at 1:17 PM). Fix: a Claude scheduled task "MAFFL Tuesday Pulse kickoff" (Tue 5:07 AM ET) dispatches the ESPN pull, watches the chain, re-runs a transient failure once, and pushes Mike a phone report. GitHub crons stay as a backstop. First real test: Tue Oct 13. **Habit: GitHub Desktop Fetch/Pull before starting work.** **Merge each Pulse PR before the next Tuesday.**
 - **Week 4 Pulse:** first unattended run (Tue Oct 6) failed in the data job on a CRLF bug in the generator (fixed 10/6); re-run by hand via Actions → Pulse draft → Run workflow. Review the "Weekly Pulse: Week 4 draft" PR, comment `@claude …` for changes, Merge to publish. Fallback: draft in Cowork chat from `_ops/inbox/`. After one good Tuesday, retire the Results Engine, screenshots and `CAPTURE_SYSTEM_PROMPT.md`.
 - **LM to-do:** set ESPN 👻 scores to Wk 1 151.28, Wk 2 138.02 (Wk 3 already shows 151.47 per the ESPN pull). Delete this line once done.
 - **Season:** 2026, Week 4 in progress. Weekly Pulse is live through Week 3 (`weekly.html` v6.3).
@@ -34,6 +34,8 @@ _Read first. Keep it short. Newest entries on top in each section._
   delete it by hand once cleanup is committed.
 
 ## Recently shipped
+
+- 2026-10-06 · Pulse quality pass: (1) Week 4 Coach of the Week added to the page (robot listed it in the PR but never wrote it); (2) `check_pulse_week.py` checks the page itself (required sections, 11 games, coach matches OUTPUT 2e, 3+2 featured, reel size) and the workflow flags the PR ⚠️ when it fails; `@claude` fixes re-run it; (3) editorial §4a "Spread the wealth" + facts Coverage section (teams skipped in the last 3 Pulses, heavy teams, headline rotation); (4) facts v0.2 Story hooks for every team via `pulse_history.py` (series, streak snaps, best/worst start in years, 2025-era top-10 scores, career-win milestones, trophy case, old COTW counts); recipe 0.6.
 
 - 2026-10-06 · Robot fix: CE-1 generator finds the matchups-data.js anchor on CRLF checkouts (first unattended run failed on it); ESPN stat corrections now auto-applied to gold by apply_corrections.py + generator -CorrectSeason; recipe 0.5 has the robot fix earlier Week objects' scores and list every change in the PR.
 - 2026-10-03 · Rivalry v2.0 fixes: tiers start collapsed; tapping a game lands on the hero with every card closed; ‹ Week N Rivalries back button (and phone Back) returns to landing; Data-through pill + CLAUDE.md rule removed; compact one-line Show filter.

@@ -33,4 +33,4 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
             --max-turns 40
-            --append-system-prompt "This is the MAFFL HQ repo. For Weekly Pulse drafts, follow _ops/docs/ROBOT_PULSE_RECIPE.md and _ops/docs/PULSE_EDITORIAL_GUIDE.md. Take numbers from _ops/inbox/*_facts.md, never from memory. Never run build/build.ps1 -Write."
+            --append-system-prompt "This is the MAFFL HQ repo. For Weekly Pulse drafts, follow _ops/docs/ROBOT_PULSE_RECIPE.md and _ops/docs/PULSE_EDITORIAL_GUIDE.md. Take numbers from _ops/inbox/*_facts.md, never from memory. Never run build/build.ps1 -Write. After any weekly.html change, run python3 _ops/scripts/check_pulse_week.py <week> and fix every ❌ before you finish; reply with its Result line."

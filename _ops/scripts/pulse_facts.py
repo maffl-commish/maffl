@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL Pulse facts calculator
-# VERSION: 0.1.1 (2026-09-29): UTF-8 console output for Windows runners. 0.1 — verified: reproduces the published Week 3 object exactly
+# VERSION: 0.2 (2026-10-06): adds Coverage + Story hooks (pulse_history.py). 0.1.1 (2026-09-29): UTF-8 console output for Windows runners. 0.1 — verified: reproduces the published Week 3 object exactly
 #
 # Computes every NUMBER the weekly Pulse needs, straight from gold, so the drafter
 # (Claude, human or robot) writes prose and never does arithmetic:
@@ -192,7 +192,7 @@ def main(week):
 
     # ------------------------------------------------------------ output
     L = [f"# MAFFL {YEAR} Week {week} — Pulse facts (computed from gold)",
-         f"Source: pulse_facts.py v0.1. Numbers only; copy them exactly. Sort order = rulebook tiebreak (record → credits → points).\n"]
+         f"Source: pulse_facts.py v0.2. Numbers only; copy them exactly. Sort order = rulebook tiebreak (record → credits → points).\n"]
     L.append("## Standings (season totals through this week)")
     for d, ts in div_rank.items():
         L.append(f"**Upper Div {d}**")
@@ -264,6 +264,12 @@ def main(week):
                      (f" · current regular-season streak: {'%s' % (a if streak_team != 'other' else h)} ×{streak_n}" if reg else " · first meeting") +
                      (" · playoff meetings: " + "; ".join(f"{r['Year']} {r['Game_Type']} won by {r['Winner_Team']} {r['Winner_Score']}-{r['Loser_Score']}" for r in po) if po else "") +
                      (f" · last meeting {last['Year']} Wk {last['Week']} ({last['Game_Type']}): {last['Winner_Team']} {last['Winner_Score']}-{last['Loser_Score']}" if last else ""))
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from pulse_history import history_sections
+        L.append(history_sections(root, YEAR, week, owner_key))
+    except Exception as e:      # history is a bonus: never let it block the week
+        L.append(f"\n## Story hooks\n(history hooks failed: {type(e).__name__}: {e})")
     out = "\n".join(L) + "\n"
     dest = os.path.join(root, "_ops", "inbox", f"MAFFL_{YEAR}_Week{week:02d}_facts.md")
     os.makedirs(os.path.dirname(dest), exist_ok=True)

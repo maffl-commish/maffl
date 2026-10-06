@@ -73,6 +73,30 @@ newsReel: [
 ]
 ```
 
+## 4a. Spread the wealth (added 2026-10-06, commish ruling)
+
+Twenty-one teams pay the same dues. Through Week 4 the Pulse kept landing on the same four Upper
+teams while five teams (three of them Lower) never made a headline or the news reel. The facts file
+now carries two sections that fix this; use both every week.
+
+- **Coverage** (facts file) lists teams nobody wrote about in the last 3 Pulses, teams already
+  mentioned 3+ times, and teams in the last 2 headlines.
+  - **At least 2 news items go to "not written about" teams.** The Story hooks always have something.
+  - **Max 2 headline/news mentions per team per week.**
+  - **Headline rotation:** don't lead with a team that was in either of the last 2 headlines/subheads
+    unless it's a league record, a first-ever, or the title race itself.
+  - **At least 2 news items mention a Lower team.** Lower is half the league.
+  - **Commissioner's team (Bad Attitude Gang):** in the reel only for a record-level fact, and never
+    the headline two weeks running. Readers notice when the commish writes about himself.
+- **Story hooks** (facts file) give every team history-backed material: series vs this week's
+  opponent, streaks snapped, best/worst start in years, top-10 scores of the current scoring era
+  (2025 on), career-win milestones, trophy case, old Coach of the Week totals. **Use history only from
+  the hooks or the gold CSVs, never from memory.** One hook per item; don't stack three.
+- Good uses: "Jake's Jagoffs (Jake) is 4-0 for the first time since 2005", "Portly Primates
+  (Charlie) beat Ben for the first time", "Happy Valley Hammer Time (Tony) is 11-2 all-time against Fetrow."
+- `check_pulse_week.py` prints a ⚠️ for each rule above that the draft misses. Fix them unless the
+  week's story truly demands otherwise, and say why under "Needs your OK".
+
 ## 5. Credit Tracker
 
 Every `creditTracker` item gets two new fields:
@@ -199,4 +223,6 @@ A MAFFL classic, revived 2026-09-30 (commish ruling). Bragging rights only: no m
 - [ ] Every `creditTracker` item has `status` + `since`, with `since` carried forward correctly
 - [ ] Elite 5 order holds up against the stat lines (all-play + PF lead)
 - [ ] `coachOfWeek` copied from OUTPUT 2e (both tiers), if the report has it
+- [ ] §4a: 2+ items on uncovered teams, 2+ Lower items, no team in 3+ items, headline rotated
+- [ ] `python3 _ops/scripts/check_pulse_week.py W` → ✅ (no ❌ lines)
 - [ ] `grep -n "NEEDS COMMISH\|CONFIRM\|placeholder"` → zero hits in the new week object
