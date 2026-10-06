@@ -1274,7 +1274,7 @@
   .cw-could li + li { border-top: 1px solid var(--border); }
   .cw-could .mu-chip { flex: 0 0 auto; margin-top: 1px; }
   /* Every coach: scored vs best possible, one bar per team (track = best possible, fill = scored) */
-  .cw-board { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .cw-board { margin-top: 4px; }
   .cw-board .sl-head + .cw-row { margin-top: 6px; }
   .cw-btier + .cw-btier { margin-top: 14px; }
   .cw-row { display: grid; grid-template-columns: 20px 1fr; column-gap: 8px; padding: 6px 0; }
@@ -3545,28 +3545,6 @@ function renderCoachCard(week) {
     ${could.length ? `<div style="margin-top:4px">🔄 ${could.length} ${could.length === 1 ? "team" : "teams"} could have won</div>` : ""}
   `;
 
-  const tierBlock = ([name, t]) => {
-    if (!t) return `
-      <div class="cw-tier">
-        <div class="sl-head">${name}-Tier</div>
-        <div class="cw-win">Nobody — every lineup had 4+ holes.</div>
-      </div>`;
-    const ru = t.runnersUp || [], out = t.out || [];
-    return `
-      <div class="cw-tier">
-        <div class="sl-head">${name}-Tier</div>
-        <div class="cw-win"><span class="sl-team">${esc(t.team)}</span> <span class="sl-own">${esc(shortName(t.owner || ownerOf[t.team] || ""))}</span></div>
-        <div class="cw-num">${esc(benchPhrase(t))}</div>
-        <div class="cw-line">Scored ${esc(fmtBench(t.scored))} of a possible ${esc(fmtBench(t.best))}.</div>
-        ${calls.filter(r => r.team === t.team).map(r =>
-          `<div class="cw-line"><span class="cw-lbl">The one that got away</span>${callText(r)}.</div>`).join("")}
-        ${ru.length ? `<div class="cw-line"><span class="cw-lbl">Next closest</span>${ru.map(r =>
-          `${withOwner(r.team)} ${esc(fmtBench(r.leftOnBench))}`).join(" · ")}</div>` : ""}
-        ${out.length ? `<div class="cw-line muted"><span class="cw-lbl">Out of contention</span>${out.map(o =>
-          `${esc(o.team)} (${esc(o.reason)})`).join(" · ")}</div>` : ""}
-      </div>`;
-  };
-
   /* Every coach, per tier: fewest points left on the bench first (the award's order). */
   const board = c.board || [];
   const boardTier = (code, name) => {
@@ -3595,12 +3573,12 @@ function renderCoachCard(week) {
   };
   const boardBlock = board.length ? `
     <div class="cw-board">
-      <div class="sl-head">Every coach · points left on the bench</div>
+      <div class="sl-head">Points left on the bench · fewest wins</div>
       ${boardTier("U", "Upper")}
       ${boardTier("L", "Lower")}
     </div>` : "";
 
-  const others = calls.filter(r => !tiers.some(([, t]) => t && t.team === r.team));
+  const others = calls;   /* winners' calls included: the board replaced the per-tier winner blocks */
   const callsBlock = others.length ? `
     <div class="cw-could">
       <div class="sl-head">Biggest lineup calls</div>
@@ -3622,7 +3600,6 @@ function renderCoachCard(week) {
     </div>` : "";
 
   const body = `
-    ${tiers.map(tierBlock).join("")}
     ${boardBlock}
     ${callsBlock}
     ${couldBlock}

@@ -94,7 +94,7 @@ with `},`. Mirror the previous week's object field for field.
   numbers exactly as printed; `holes` = byes + empty slots + "didn't play" (never the "(not a hole …)" notes);
   `out: true` only for rows marked `OUT`. The page draws the bars.
   `calls: [{ team, tier: "U"|"L", benched, benchedPts, started, startedPts, cost }]` from the report's MISSED CALLS:
-  each tier winner's calls (if any; they show under the winner), then the **5 biggest other calls by cost across
+  each tier winner's biggest call (if any) first, then the **5 biggest other calls by cost across
   both tiers**, spread across teams (max 1 per team, and favor teams not already in the news reel). Player names
   exactly as the report prints them; `started: null` for "filled an empty slot". Skip `[shuffle]` rows unless the
   cost is the tier's biggest. Results notes and Can You Believe This? may quote a call too ("Fetrow benched
