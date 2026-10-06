@@ -1631,11 +1631,11 @@ const WEEKS = [
 
     /* COACH OF THE WEEK — copied from OUTPUT 2e of _ops/inbox/MAFFL_2026_Week04_espn.md (editorial §8b).
        Added by hand 2026-10-06: the robot's Week 4 draft listed it in the PR summary but left it out of the page.
-       Knockout = 3+ lineup holes (commish ruling 2026-10-06); 1–2 holes stay in. Winners unchanged. */
+       Knockout = 4+ lineup holes (commish ruling 2026-10-06); 1–3 holes stay in. Winners unchanged. */
     coachOfWeek: {
       upper: { team: "Hadley's Comets", owner: "Brian Murello/Ron Murello", leftOnBench: 5.8, scored: 139.92, best: 145.72,
                runnersUp: [ { team: "The Prodigal Sons", leftOnBench: 8.08 }, { team: "Bad Attitude Gang", leftOnBench: 8.8 } ],
-               out: [ { team: "Southside Shooters", reason: "3 holes: R. Rice, K. Paye and C. Keenum scored 0" } ] },
+               out: [] },
       lower: { team: "Tommy Phamclub", owner: "Sam Lavrinc", leftOnBench: 14.3, scored: 155.9, best: 170.2,
                runnersUp: [ { team: "Sarge's Squad", leftOnBench: 17.66 }, { team: "Fightin Ferrets", leftOnBench: 19.54 } ],
                out: [] },
@@ -3481,7 +3481,7 @@ function renderCoachCard(week) {
   const preview = `
     ${tiers.map(([name, t], i) => `<div${i ? ' style="margin-top:4px"' : ""}><span class="strong">${name} ·</span> ${t
       ? `${withOwner(t.team, t.owner)} · ${benchPhrase(t)}`
-      : "nobody — every lineup had 3+ holes"}</div>`).join("")}
+      : "nobody — every lineup had 4+ holes"}</div>`).join("")}
     ${could.length ? `<div style="margin-top:4px">🔄 ${could.length} ${could.length === 1 ? "team" : "teams"} could have won</div>` : ""}
   `;
 
@@ -3489,7 +3489,7 @@ function renderCoachCard(week) {
     if (!t) return `
       <div class="cw-tier">
         <div class="sl-head">${name}-Tier</div>
-        <div class="cw-win">Nobody — every lineup had 3+ holes.</div>
+        <div class="cw-win">Nobody — every lineup had 4+ holes.</div>
       </div>`;
     const ru = t.runnersUp || [], out = t.out || [];
     return `
@@ -3519,7 +3519,7 @@ function renderCoachCard(week) {
     ${tiers.map(tierBlock).join("")}
     ${couldBlock}
     ${c.note ? `<p class="mu-note">${chipTeams(c.note, week)}</p>` : ""}
-    <p class="ps-foot">A MAFFL classic, back in 2026, for bragging rights only. Fewest points left on the bench wins; three or more holes (a bye, an empty slot or a zero-point starter) knock you out.</p>
+    <p class="ps-foot">A MAFFL classic, back in 2026, for bragging rights only. Fewest points left on the bench wins; four or more holes (a bye, an empty slot or a zero-point starter) knock you out.</p>
   `;
 
   return cardShell("coach", "📋", "Coach of the Week", preview, body);

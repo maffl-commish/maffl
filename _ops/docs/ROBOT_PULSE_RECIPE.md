@@ -86,7 +86,7 @@ with `},`. Mirror the previous week's object field for field.
   `coachOfWeek: { upper: { team, owner, leftOnBench, scored, best, runnersUp: [{ team, leftOnBench }] ×2,
   out: [{ team, reason }] }, lower: { … }, note: "…" }`. `owner` = the owner string from the standings;
   numbers exactly as the report prints them; `runnersUp` = the next two teams still in contention;
-  `out` = every team the report marks `OUT (N holes)` (3+ holes), with its holes as the reason; teams with 1–2 holes stay in contention and are NOT listed in `out`. If every team in a tier is out,
+  `out` = every team the report marks `OUT (N holes)` (4+ holes), with its holes as the reason; teams with 1–3 holes stay in contention and are NOT listed in `out`. If every team in a tier is out,
   `upper: null` (or `lower: null`). If the report has no 2e section, omit `coachOfWeek`.
   `couldHaveWon: [{ team, tier: "U"|"L", opponent, lostBy, leftOnBench }]`: every row the report marks
   "Could have won: YES" (both tiers, biggest bench first; `opponent: "👻"` for the Ghost). Empty list if none.

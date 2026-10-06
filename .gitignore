@@ -13,3 +13,6 @@ Thumbs.db
 
 # Claude Code local settings (machine-specific, can hold permissions)
 .claude/settings.local.json
+
+__pycache__/
+*.pyc

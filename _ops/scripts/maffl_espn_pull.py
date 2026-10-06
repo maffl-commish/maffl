@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL ESPN Weekly Pull
-# VERSION: 0.5.2 (2026-10-06) - COTW knockout = 3+ lineup holes (bye, empty slot, 0-point starter), per commish; 1-2 holes stay in.
+# VERSION: 0.5.3 (2026-10-06) - COTW knockout = 4+ lineup holes (bye, empty slot, 0-point starter), per commish; 1-3 holes stay in.
 #   0.5.1 (2026-09-30) - 2e adds COULD HAVE WON: lost by less than it left on the bench.
 #   0.5 (2026-09-30) - Coach of the Week (2e): fewest points left on the bench, per tier.
 #   0.4.1 (2026-09-29) - top-3 rows follow matchup-row order. 0.4: robot mode for GitHub Actions: finds the latest completed week,
@@ -153,7 +153,7 @@ def fetch_repo_csv(path):
 # Score = points left on the bench = best legal lineup from the week's roster - points actually started.
 # A "hole" = a starter on bye, an empty starting slot, or a starter who scored 0.
 # Knocked out of contention at COTW_KNOCKOUT_HOLES or more holes (the old rule was 3, pre roster expansion).
-COTW_KNOCKOUT_HOLES = 3
+COTW_KNOCKOUT_HOLES = 4   # commish ruling 2026-10-06: 4 for the expanded lineup
 # Winner per tier: fewest points left on the bench; tie -> higher team score.
 def best_lineup(slot_counts, players):
     """Max points ESPN would allow. slot_counts: {slot: n} (starting slots only);
