@@ -1,5 +1,5 @@
 # MAFFL 2026 Week 4 — ESPN pull
-Source: maffl_espn_pull.py v0.5.1 · pulled 2026-10-06 04:36 PM ET · replaces the capture v2.2 screenshot reply
+Source: maffl_espn_pull.py v0.5.1 · pulled 2026-10-06 04:44 PM ET · replaces the capture v2.2 screenshot reply
 
 ## OUTPUT 1 — MATCHUP ROWS
 ```
@@ -172,6 +172,19 @@ COACH OF THE WEEK — Upper: Hadley's Comets, left 5.8 on the bench (scored 139.
 | South Hills FunShiners | 152.36 | 176.46 | 24.1 | D. James Jr. didn't play; (not a hole: L. McConkey played, scored 0) | — | — |
 | Happy Valley Hammer Time | 130.94 | 160.28 | 29.34 | — | — | — |
 | Southside Shooters | 112.18 | 144.88 | 32.7 | (not a hole: R. Rice played, scored 0); (not a hole: K. Paye played, scored 0); (not a hole: C. Keenum played, scored 0) | — | YES: lost to Happy Valley Hammer Time by 18.76, best lineup wins by 13.94 |
+MISSED CALLS — Upper (bench player the best lineup starts · over the starter he replaces · cost; 'shuffle' = the best lineup moves players between slots, so the pairing is by points):
+- Hadley's Comets: benched R. Sanders (RB, 4.6) · started D. Moore (WR, 1.7) [shuffle] · cost 2.9; benched J. Winston (QB, 23.0) · started D. Prescott (QB, 20.1) · cost 2.9
+- The Prodigal Sons: benched C. Conner (S, 5.5) · started D. Kincaid (TE, 0.7) [shuffle] · cost 4.8; benched Q. Johnston (WR, 4.0) · started P. Washington (WR, 1.0) · cost 3.0; benched J. Herbert (QB, 9.06) · started M. Stafford (QB, 7.68) · cost 1.38; benched D. Schultz (TE, 0.9) · started E. Wilson (LB, 2.0) [shuffle] · cost -1.1
+- Bad Attitude Gang: benched R. Harvey (RB, 12.3) · started L. Burden III (RB/WR/TE, 7.4) · cost 4.9; benched C. Tate (WR, 11.5) · started J. Smith-Njigba (WR, 7.6) · cost 3.9
+- The Big Bang Theory: benched D. Metcalf (WR, 11.5) · started M. Willis (OP, 1.5) · cost 10.0
+- Mike Vicks Dog Sitting Co.: benched K. Gainwell (RB, 8.7) · started S. Diggs (RB/WR/TE, 3.5) · cost 5.2; benched K. Nixon (CB, 7.5) · started T. Hufanga (DB, 3.0) · cost 4.5; benched Z. Allen (DT, 6.5) · started C. Young (DL, 5.0) · cost 1.5
+- Reilly's Reindeer: benched D. Boston (WR, 9.9) · started J. Downs (WR, 1.6) · cost 8.3; benched C. Rodriguez Jr. (RB, 9.5) · started D. Swift (RB/WR/TE, 4.4) · cost 5.1
+- Jake's Jagoffs: benched M. Gesicki (TE, 10.0) · started A. Wingard (DB, 1.0) [shuffle] · cost 9.0; benched D. Williams (LB, 8.0) · started D. Adams (WR, 3.2) [shuffle] · cost 4.8
+- Marco Clair Kardiac Attack: benched O. Gordon II (RB, 16.0) · started S. Barkley (RB, 1.0) · cost 15.0
+- Turkey Hat Conglomerate: benched R. Doubs (WR, 17.8) · started J. Chase (WR, 2.7) · cost 15.1; benched B. Strange (TE, 9.5) · started J. Johnson (TE, 5.9) · cost 3.6
+- South Hills FunShiners: benched M. Nabers (WR, 17.2) · started L. McConkey (WR, 0.0) · cost 17.2; benched R. Odunze (WR, 9.4) · started J. Dobbins (RB/WR/TE, 5.2) · cost 4.2; benched W. Marks (RB, 8.2) · started J. Love (RB, 5.5) · cost 2.7
+- Happy Valley Hammer Time: benched A. Rodgers (QB, 25.96) · started T. Bagent (OP, 7.82) · cost 18.14; benched I. Williams (WR, 14.3) · started J. Addison (WR, 5.1) · cost 9.2; benched J. Waddle (WR, 9.5) · started A. St. Brown (WR, 7.5) · cost 2.0
+- Southside Shooters: benched T. Allgeier (RB, 10.9) · started C. Keenum (OP, 0.0) · cost 10.9; benched J. Williams (WR, 10.2) · started R. Rice (WR, 0.0) · cost 10.2; benched J. Sherwood (LB, 14.5) · started V. Miller (LB, 4.5) · cost 10.0; benched B. Thomas Jr. (WR, 7.7) · started B. Irving (RB, 6.1) [shuffle] · cost 1.6
 COULD HAVE WON — Upper: Southside Shooters (lost by 18.76, left 32.7 on the bench); Turkey Hat Conglomerate (lost by 13.58, left 18.7 on the bench)
 
 COACH OF THE WEEK — Lower: Tommy Phamclub, left 14.3 on the bench (scored 155.9 of a possible 170.2)
@@ -186,6 +199,16 @@ COACH OF THE WEEK — Lower: Tommy Phamclub, left 14.3 on the bench (scored 155.
 | Steel City Champyinz | 166.12 | 193.12 | 27.0 | — | — | — |
 | The Best in The 'Burgh | 146.74 | 178.32 | 31.58 | — | — | YES: lost to Portly Primates by 1.58, best lineup wins by 30.0 |
 | Portly Primates | 148.32 | 193.26 | 44.94 | (not a hole: R. Rice played, scored 0) | — | — |
+MISSED CALLS — Lower (bench player the best lineup starts · over the starter he replaces · cost; 'shuffle' = the best lineup moves players between slots, so the pairing is by points):
+- Tommy Phamclub: benched T. Kraft (TE, 11.5) · started J. Ferguson (TE, 1.1) · cost 10.4; benched K. Gainwell (RB, 8.7) · started J. Croskey-Merritt (RB, 5.0) · cost 3.7; benched B. Thomas Jr. (WR, 7.7) · started A. St. Brown (WR, 7.5) · cost 0.2
+- Sarge's Squad: benched C. Stroud (QB, 27.08) · started S. Darnold (OP, 16.32) · cost 10.76; benched Q. Judkins (RB, 15.6) · started M. Golden (WR, 8.7) [shuffle] · cost 6.9
+- Fightin Ferrets: benched D. Maye (QB, 30.16) · started J. Allen (QB, 19.52) · cost 10.64; benched D. Metcalf (WR, 11.5) · started M. Washington (WR, 7.0) · cost 4.5; benched T. Pollard (RB, 11.0) · started C. Skattebo (RB, 6.6) · cost 4.4
+- Tony's Talented Team: benched J. Waddle (WR, 9.5) · started P. Washington (WR, 1.0) · cost 8.5; benched R. Harvey (RB, 12.3) · started B. Allen (RB, 6.7) · cost 5.6; benched N. Landman (LB, 9.0) · started R. Smith (LB, 3.5) · cost 5.5
+- Camp Kes: benched A. Rodgers (QB, 25.96) · started K. Murray (QB, 11.48) · cost 14.48; benched C. Loveland (TE, 5.7) · started D. Kincaid (TE, 0.7) · cost 5.0; benched J. Dobbins (RB, 5.2) · started D. Montgomery (RB, 4.3) · cost 0.9
+- The V-Unit: benched T. Higgins (WR, 15.7) · started E. Egbuka (WR, 1.3) · cost 14.4; benched M. Harrison Jr. (WR, 8.2) · filled an empty slot · cost 8.2; benched R. Odunze (WR, 9.4) · started G. Pickens (WR, 7.5) · cost 1.9; benched J. Love (QB, 16.08) · started T. Lawrence (OP, 15.08) · cost 1.0
+- Steel City Champyinz: benched O. Gordon II (RB, 16.0) · started S. Barkley (RB, 1.0) · cost 15.0; benched J. Williams (WR, 10.2) · started J. Chase (WR, 2.7) · cost 7.5; benched H. Fannin Jr. (TE, 8.7) · started T. Henderson (RB/WR/TE, 4.2) · cost 4.5
+- The Best in The 'Burgh: benched N. Collins (WR, 23.8) · started T. McBride (TE, 3.1) [shuffle] · cost 20.7; benched A. Jones Sr. (RB, 12.8) · started J. Love (RB, 5.5) · cost 7.3; benched C. Tate (WR, 11.5) · started D. Jones (QB, 5.92) [shuffle] · cost 5.58; benched T. Warren (TE, 4.1) · started B. Irving (RB, 6.1) [shuffle] · cost -2.0
+- Portly Primates: benched K. Monangai (RB, 27.0) · started J. Herbert (OP, 9.06) · cost 17.94; benched M. Nabers (WR, 17.2) · started R. Rice (WR, 0.0) · cost 17.2; benched M. Wilson (WR, 9.5) · started G. Wilson (WR, 2.7) · cost 6.8; benched D. Lawrence (DE, 7.0) · started T. McDuffie (DB, 4.0) [shuffle] · cost 3.0
 COULD HAVE WON — Lower: The Best in The 'Burgh (lost by 1.58, left 31.58 on the bench); Tony's Talented Team (lost by 18.24, left 19.6 on the bench); Sarge's Squad (lost by 4.4, left 17.66 on the bench)
 
 ## OUTPUT 3 — VALIDATION
