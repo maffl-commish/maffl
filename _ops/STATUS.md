@@ -16,7 +16,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Queued prompts (in `_ops/prompts/`)
 
-- (none)
+- `2026-10-06_robot-crlf-fix-and-auto-stat-corrections.md`: fixes the CRLF bug that failed the Week 4 draft + auto-applies ESPN stat corrections. Run it, then Actions → Pulse draft → Run workflow.
 
 ## Planned (not written yet)
 
