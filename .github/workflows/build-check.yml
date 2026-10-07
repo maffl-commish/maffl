@@ -1,0 +1,52 @@
+# MAFFL Build check — runs the build\ PowerShell scripts CHECK-ONLY on a Windows runner.
+# Lets chat sessions (which can't run Windows PowerShell 5.1) verify generator/validate changes.
+# Never passes -Write and never pushes: read-only. Output goes to the run summary + a log artifact.
+# Runs on any push to a build-fix/* branch, or by hand (Actions → Build check → Run workflow, pick a branch).
+name: Build check
+
+on:
+  push:
+    branches: ["build-fix/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: windows-latest   # build\ scripts need Windows PowerShell 5.1
+    timeout-minutes: 15
+    steps:
+      - name: Get the repo
+        uses: actions/checkout@v4
+
+      - name: Run validate + every generator (check-only)
+        shell: pwsh
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP 'build-check.log'
+          $steps = @('validate.ps1','gen-stats.ps1','gen-history.ps1','gen-draft.ps1','gen-credits.ps1','gen-prize.ps1')
+          $rows = @()
+          foreach ($s in $steps) {
+            "`n===== $s =====" | Tee-Object -FilePath $log -Append
+            powershell -ExecutionPolicy Bypass -File "build\$s" 2>&1 | Tee-Object -FilePath $log -Append
+            $code = $LASTEXITCODE
+            "----- $s exit $code" | Tee-Object -FilePath $log -Append
+            $rows += "| $s | $code |"
+          }
+          "`n===== build.ps1 (orchestrator, check-only) =====" | Tee-Object -FilePath $log -Append
+          powershell -ExecutionPolicy Bypass -File build\build.ps1 2>&1 | Tee-Object -FilePath $log -Append
+          $rows += "| build.ps1 | $LASTEXITCODE |"
+          $sum = @('## Build check (check-only, nothing written)','','| Script | Exit |','|---|---|') + $rows + @('','<details><summary>Full log</summary>','','```') + (Get-Content $log) + @('```','</details>')
+          $sum | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+          exit 0
+
+      - name: Save the log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-check-log
+          path: ${{ runner.temp }}/build-check.log
