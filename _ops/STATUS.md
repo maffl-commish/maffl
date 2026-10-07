@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-06 by Claude (chat), Build check workflow
+**Last updated:** 2026-10-06 by Claude (chat), dues generator repointed
 
 ## Now
 
@@ -11,7 +11,6 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
 - **Weekly robot ✅ live (9/30).** One-pager: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Connection test passed end to end (data job → Claude → PR). Rehearsal ✅ (9/30): full chain ran, REHEARSAL PR opened, an `@claude` comment revised it, PR closed unmerged. **GitHub's Tuesday schedules DID fire on Oct 6, but every one ran ~6½–7 h late** (1:17 AM slot started 8:00 AM; last at 1:17 PM). Fix: a Claude scheduled task "MAFFL Tuesday Pulse kickoff" (Tue 5:07 AM ET) dispatches the ESPN pull, watches the chain, re-runs a transient failure once, and pushes Mike a phone report. GitHub crons stay as a backstop. First real test: Tue Oct 13. **Work happens in claude.ai chat now (push to main; "PR first" on request); the desktop copy is a backup.** **Merge each Pulse PR before the next Tuesday.**
 - **Week 4 Pulse ✅** merged (PR #16) after a hand re-run (first unattended run hit a CRLF bug, fixed 10/6). After one good Tuesday (Oct 13), retire the Results Engine, screenshots and `CAPTURE_SYSTEM_PROMPT.md`.
-- **LM to-do:** set ESPN 👻 scores to Wk 1 151.28, Wk 2 138.02 (Wk 3 already shows 151.47 per the ESPN pull). Delete this line once done.
 - **Season:** 2026, Week 5 in progress. Weekly Pulse is live through Week 4 (`weekly.html` v6.3).
 
 ## Queued prompts (in `_ops/prompts/`)
@@ -24,15 +23,12 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Open decisions / known issues
 
-- **Build is unsafe for dues.** `gen-prize.ps1` emits the old `dues_2026` shape and would wipe
-  pay stamps. Hand-edit `dues_seasons` in `prize.html` until the generator reads
-  `Dues_Log.csv`. (See `_ops/docs/DUES_PROCESS_NOTE.md`.)
-- **Page generators have drifted from their pages.** build check-only (9/29): stats/history/draft/credits report differences vs the live pages (hand edits since June), and gen-prize aborts because the `dues_2026` marker is gone. Never run `build.ps1 -Write` until each is reconciled.
+- **Page generators have drifted from their pages.** Build check (10/6, Windows runner): validate 8/8, gen-prize CLEAN; stats/history/draft/credits still report differences vs the live pages (hand edits since June; some look like CRLF-only). Never run `build.ps1 -Write` until each is reconciled.
 - **Quarantined cleaned_maffl_revised.csv is still read** by validate Gates 1 (champ flags) + 7 (names), gen-history (csv-seasons embed) and gen-draft (CHAMPS). It has 3 swapped 2015/2022/2024 results and 5 mis-owned seasons (Warren Brownies 2011–13, Daddy Fat Sacks 2006–07). Repoint to gold per governance §7.3 before the robot runs generators unattended.
-- **`Dues_Log.csv` is at repo root, not `data/`.** Open: move it and point `gen-prize.ps1` at it.
 
 ## Recently shipped
 
+- 2026-10-06 · Dues: `Dues_Log.csv` moved to `data/`; `gen-prize.ps1` now generates `prize.html` `dues_seasons` rows from it (round-trips 2026 exactly, Build check CLEAN). Payments from chat: append the log row + hand-edit the page row, Build check proves they match. Docs updated. 👻 Wks 1–2 confirmed on ESPN (151.28, 138.02).
 - 2026-10-06 · Build check workflow (`.github/workflows/build-check.yml`): runs validate + every `gen-*.ps1` + build.ps1 CHECK-ONLY on a Windows runner for any `build-fix/*` branch (or Run workflow); results in the run summary. Lets chat verify build\ script fixes.
 
 - 2026-10-06 · Old `Desktop\MAFFL` copy archived by the commish; open issue closed.

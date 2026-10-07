@@ -1,5 +1,13 @@
 # Dues updates — how they actually work (discovered 2026-09-03)
 
+> **RESOLVED 2026-10-06.** `Dues_Log.csv` moved to `data/`, and `build/gen-prize.ps1` now generates each
+> season's `dues_seasons` rows from it (amount, owed, status, paid_date, method; round-trips the live page).
+> New process for a payment: append the Payment row to `data/Dues_Log.csv` (Approved?=Y), hand-edit that
+> owner's row in `prize.html` `dues_seasons` in the same commit, stamp the page. To prove they match, push to a
+> `build-fix/*` branch and read the "Build check" Action (gen-prize must say CLEAN), or run
+> `build\gen-prize.ps1 -Write` on Windows. Season status/closed_date/note stay hand-set.
+> Everything below is the history of the problem.
+
 <!-- Migrated from claude.ai Project doc claude/DUES_PROCESS_NOTE.md on 2026-09-27. This repo copy is now canonical.
      NOTE 2026-09-27: prize.html now uses `dues_seasons` (see DUES_LEDGER_DESIGN.md), not `dues_2026`.
      Where this note says "the dues_2026 array", read "the open season's rows in dues_seasons". -->

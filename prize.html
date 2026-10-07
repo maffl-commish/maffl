@@ -918,7 +918,7 @@
     </div>
     <div class="page-header__meta" aria-label="Prizes &amp; Dues version metadata">
       <span class="meta-pill">v2.9</span>
-      <span class="meta-pill">Last Updated September 7, 2026</span>
+      <span class="meta-pill">Last Updated October 6, 2026</span>
     </div>
   </header>
 
@@ -1295,7 +1295,7 @@ const MAFFL = {
   {"year":2025,"owner":"Ben Funari","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1},
   {"year":2025,"owner":"Dominic Nicastro","era":"Lower-Tier","prize_type":"Weekly High Score","amount":10,"count":1}
  ],
- /* HAND-MAINTAINED from Dues_Log.csv (repo root). One entry per season, newest
+ /* GENERATED rows from data/Dues_Log.csv by build\gen-prize.ps1. One entry per season, newest
     first. amount = the season's Obligation row for that owner; owed = Obligation
     - approved Payments; status = PAID when owed <= 0; paid_date/method from the
     latest approved Payment row.
@@ -1311,12 +1311,11 @@ const MAFFL = {
     When the new season's amounts are set, fill its "rows" and the same code
     renders the live tracker exactly as before.
 
-    DO NOT run build\gen-prize.ps1 (or build\build.ps1 -Write) against this array
-    until the generator is repointed: it still emits the old flat "dues_2026"
-    shape from "MAFFL League Packet - 2025 Prizes.csv", whose 2026 Pay Status
-    column is stale, and it emits only owner/owed/status -- a -Write would
-    clobber this structure, strip every amount/paid_date/method (killing the pay
-    stamps) and revert already-paid owners to UNPAID. */
+    The generator rewrites only each season's "rows" (for seasons that have
+    rows in Dues_Log.csv); status/closed_date/note above are hand-set. From chat
+    (no Windows), append the log row and hand-edit the matching row here in the
+    same commit; the "Build check" Action on a build-fix/* branch proves the two
+    match (gen-prize CLEAN). */
  "dues_seasons": [
   {"year":2027,"status":"OPEN","rows":[],
    "note":"Amounts TBD following the 2026 season."},

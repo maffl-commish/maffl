@@ -44,7 +44,7 @@ $gens = @(
     @{ label='history.html CSV blocks';              script='gen-history.ps1' },
     @{ label='draft.html  OWNERS/CHAMPS/PICKS (+2007 fix)'; script='gen-draft.ps1' },
     @{ label='credits.html balances + REGISTRY_DATA'; script='gen-credits.ps1' },
-    @{ label='prize.html  dues_2026 + payout verify'; script='gen-prize.ps1'  }
+    @{ label='prize.html  dues_seasons (Dues_Log) + payout verify'; script='gen-prize.ps1'  }
 )
 foreach ($g in $gens) {
     if ((Invoke-Step -Label $g.label -Script $g.script -PassWrite) -ne 0) { $fail++ }
