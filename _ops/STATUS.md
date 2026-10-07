@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-06 by Claude (chat), Tuesday kickoff task + Pulse check + coverage/history hooks
+**Last updated:** 2026-10-06 by Claude (chat), Desktop\MAFFL archived
 
 ## Now
 
@@ -30,10 +30,10 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **Page generators have drifted from their pages.** build check-only (9/29): stats/history/draft/credits report differences vs the live pages (hand edits since June), and gen-prize aborts because the `dues_2026` marker is gone. Never run `build.ps1 -Write` until each is reconciled.
 - **Quarantined cleaned_maffl_revised.csv is still read** by validate Gates 1 (champ flags) + 7 (names), gen-history (csv-seasons embed) and gen-draft (CHAMPS). It has 3 swapped 2015/2022/2024 results and 5 mis-owned seasons (Warren Brownies 2011–13, Daddy Fat Sacks 2006–07). Repoint to gold per governance §7.3 before the robot runs generators unattended.
 - **`Dues_Log.csv` is at repo root, not `data/`.** Open: move it and point `gen-prize.ps1` at it.
-- **Old repo copy at `Desktop\MAFFL`.** After the hook fix, nothing depends on it. Archive or
-  delete it by hand once cleanup is committed.
 
 ## Recently shipped
+
+- 2026-10-06 · Old `Desktop\MAFFL` copy archived by the commish; open issue closed.
 
 - 2026-10-06 · Docs: chat-first workflow written down (CLAUDE.md "Chat sessions", _ops/README, runbook §5, automation plan: 5:07 AM kickoff task, no desktop Fetch/Pull step).
 
