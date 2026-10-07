@@ -15,7 +15,7 @@ param([switch]$Write)
 
 $PagePath = Join-Path $RepoRoot 'history.html'
 $Blocks = @(
-    @{ id='csv-seasons';   csv='cleaned_maffl_revised.csv' },
+    @{ id='csv-seasons';   csv='MAFFL_Owner_Seasons.csv' },
     @{ id='csv-divisions'; csv='MAFFL_Division_History_2005_2025.csv' },
     @{ id='csv-drafts';    csv='MAFFL_Draft_History_Clean_v3.csv' }
 )

@@ -51,7 +51,7 @@ ESPN stat corrections to earlier weeks are applied automatically and listed in t
 - **@claude revisions are untested** until that first PR.
 - **Stat corrections to earlier weeks are flagged, not applied.** CE-1a stays your call.
 - **Retire after one good Tuesday:** the Weekly Results Engine project, screenshots, `CAPTURE_SYSTEM_PROMPT.md`, Colab.
-- **Older cleanup (not blocking the robot):** page generators have drifted (never run `build.ps1 -Write`); gen-prize/dues; the quarantined `cleaned_maffl_revised.csv` is still read by validate Gates 1/7, gen-history and gen-draft.
+- **Older cleanup (not blocking the robot):** page generators have drifted (never run `build.ps1 -Write`). Fixed 10/6: gen-prize/dues, and `cleaned_maffl_revised.csv` replaced by the generated `MAFFL_Owner_Seasons.csv`.
 - **The robot never updates** stats/history/draft/credits/power-rankings pages, only `weekly.html` + matchup data.
 
 ## How we got here (for the record)

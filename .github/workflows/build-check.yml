@@ -28,7 +28,7 @@ jobs:
         shell: pwsh
         run: |
           $log = Join-Path $env:RUNNER_TEMP 'build-check.log'
-          $steps = @('validate.ps1','gen-stats.ps1','gen-history.ps1','gen-draft.ps1','gen-credits.ps1','gen-prize.ps1')
+          $steps = @('gen-owner-seasons.ps1','validate.ps1','gen-stats.ps1','gen-history.ps1','gen-draft.ps1','gen-credits.ps1','gen-prize.ps1')
           $rows = @()
           # Each script's output also goes out as a run annotation (readable via the checks API,
           # which chat sessions can reach when the log download host is blocked).

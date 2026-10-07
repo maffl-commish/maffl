@@ -68,7 +68,7 @@ Full registry: `MAFFL_HQ_DATA_GOVERNANCE.md` §2. Owner names always resolve thr
 | Rules | `data/MAFFL_Rules_revised.csv` | rules.html is manual (§4 Event 7) |
 | Weekly Pulse | the weekly robot's PR | weekly.html |
 
-**Never use `data/cleaned_maffl_revised.csv` as a source.** It's corrupted and quarantined (governance §7.2).
+**Never use `data/cleaned_maffl_revised.csv` as a source.** It's corrupted and retired; nothing reads it. Its replacement, `data/MAFFL_Owner_Seasons.csv`, is DERIVED from gold by `build/gen-owner-seasons.ps1` (governance §2).
 
 **Owner-name normalization** is automatic in the build: all co-owner variants collapse to the
 canonical `Name A / Name B` (forward slash, spaces both sides), and `Michael Murello` →
@@ -91,7 +91,7 @@ understand them, because a failure is the system catching a real problem:
 7. Every owner name resolves to a canonical name.
 8. Power-rank positions unique 1..N; every rated owner exists.
 
-> Gates 1 and 7 still read the quarantined `cleaned_maffl_revised.csv` (open issue in STATUS). A pass there isn't proof that the finish flags are right.
+> Gates 1 and 7 read `MAFFL_Owner_Seasons.csv` (derived from gold by `gen-owner-seasons.ps1`).
 
 **Standing exceptions the build will NOT flag** (these are confirmed-correct, don't "fix" them):
 2002 co-championship; 2002–2004 blank W/L/T; 2007 blank draft prices (shown as "—", not $0);
@@ -112,7 +112,7 @@ Most changes happen as one of these recurring events. Each lists what to touch a
    assignments; ripples into rules.html (tier tables), credits.html (balance grouping), and
    weekly.html. *Priority output. Easy to forget — touches multiple pages.*
 3. **Credit awards** — append season-outcome credits (champion, survivor, etc.) to `Credit_Log.csv`.
-4. **History**: add the season's division ranks to `MAFFL_Division_History_2005_2025.csv` and placements to `prize.csv`. **Don't** append to `cleaned_maffl_revised.csv` (quarantined). Follow governance CE-3.
+4. **History**: add the season's division ranks to `MAFFL_Division_History_2005_2025.csv` and placements to `prize.csv`. Then regenerate `MAFFL_Owner_Seasons.csv` with `build\gen-owner-seasons.ps1 -Write` (a season appears once its Championship game is in the matchups) and re-embed history via `gen-history.ps1 -Write`. From chat, use the Build check Action. Follow governance CE-3.
 5. **Stats** — career totals **recompute** from history automatically. *Build dependency: history
    (step 4) must be updated before stats regenerate. Doing stats from memory instead of recompute
    is what caused the original Tony Brooks division-title error.*

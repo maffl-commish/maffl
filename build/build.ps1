@@ -40,6 +40,7 @@ if ((Invoke-Step -Label 'validate() -- 8 gates' -Script 'validate.ps1') -ne 0) {
 
 # 2. Page generators (round-trip-proven).
 $gens = @(
+    @{ label='data  MAFFL_Owner_Seasons.csv (from gold)'; script='gen-owner-seasons.ps1' },
     @{ label='stats.html  OWNERS[]';                 script='gen-stats.ps1'   },
     @{ label='history.html CSV blocks';              script='gen-history.ps1' },
     @{ label='draft.html  OWNERS/CHAMPS/PICKS (+2007 fix)'; script='gen-draft.ps1' },
@@ -53,7 +54,7 @@ foreach ($g in $gens) {
 Write-Host ""
 Write-Host "====================================================================" -ForegroundColor Cyan
 if ($fail -eq 0) {
-    Write-Host "BUILD OK -- validate 8/8; all 5 generated pages round-trip clean." -ForegroundColor Green
+    Write-Host "BUILD OK -- validate 8/8; the season table + all 5 generated pages round-trip clean." -ForegroundColor Green
     Write-Host "Skipped (by decision/missing source): power-rankings, rules, weekly." -ForegroundColor DarkGray
 } else {
     Write-Host "BUILD: $fail generator(s) reported differences -- review output above." -ForegroundColor Red

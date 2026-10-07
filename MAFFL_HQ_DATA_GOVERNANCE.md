@@ -54,7 +54,7 @@ MAFFL HQ is effectively a small star schema. Naming the entities makes the "sing
 
 **Key insight:** "SEASON-OWNER" (one row per owner per year carrying team name + record + finish) is currently **smeared across three CSVs** that should logically be one table:
 - `MAFFL_Team_History.csv` (owner, year, team_name, is_current)
-- `cleaned_maffl_revised.csv` (owner, year, team, W/L/T, champ/runner/div/playoff flags)
+- `MAFFL_Owner_Seasons.csv` (owner, year, team, W/L/T, champ/runner/div/playoff/lower-tier flags) — **since 2026-10-06 DERIVED** from the other two + Matchups + prize.csv by `build/gen-owner-seasons.ps1`; replaced the corrupted `cleaned_maffl_revised.csv`
 - `MAFFL_Division_History_2005_2025.csv` (year, tier, conference, division, rank, team, owner, W/L/T)
 
 Three files describe the same grain (owner × season) with overlapping columns and **independent copies of team name and W/L**. That overlap is where drift hides.
@@ -72,7 +72,8 @@ For every fact, declare exactly one gold source. Everything else is a copy that 
 | Regular-season **fixtures** — 2026 Upper-Tier (week, home/away, Week_Type, Game_Class, Division) | `data/MAFFL_Schedule_2026_Upper.csv` — **hand-authored by the commissioner; NOT derived from any other file** | rules.html Schedule Structure (four-block table, 2026 Mirror Pairs list), weekly.html Week 1 Preview, `schedule-data.js` (via `build/generate-schedule-data.ps1`) → `rivalry.html` | Seasonal (set with division alignment) |
 | Regular-season **fixtures** — 2026 Lower-Tier (week, home/away) | `data/MAFFL_Schedule_2026_Lower.csv` — **extracted once from ESPN's auto-generated Lower schedule** by `_ops/scripts/extract_espn_schedule.py` (snapshot 2026-09-30); re-extract only if ESPN's schedule changes | `schedule-data.js` → `rivalry.html` | Seasonal |
 | Team name by owner×year | `MAFFL_Team_History.csv` | Owners_Sheet "Current Team", **power-rankings.html `recentTeam`+`timeline`**, Matchups Winner/Loser_Team, Division_History "Team", embeds in history/draft/prize | Seasonal (+ ad-hoc renames) |
-| Owner W/L/T per season | `MAFFL_Matchups_Clean.csv` (derive) | `cleaned_maffl_revised.csv`, Division_History, power-rankings.html `timeline` | Weekly |
+| Owner W/L/T per season | `MAFFL_Matchups_Clean.csv` (derive) | `MAFFL_Owner_Seasons.csv` (generated), Division_History, power-rankings.html `timeline` | Weekly |
+| Owner-season table (team, W/L/T, all finish flags) | DERIVED: `data/MAFFL_Owner_Seasons.csv` via `build/gen-owner-seasons.ps1` from Team_History + Matchups_NoConsolation + Division_History + prize.csv; 2002–2004 rows from hand-kept gold `data/MAFFL_Seasons_2002_2004.csv` (no matchups exist) | history.html csv-seasons, draft.html CHAMPS, validate Gates 1 + 7 | Seasonal (after the Championship) |
 | Finish flags — Division Titles | `MAFFL_Division_History_2005_2025.csv` (Tier=Upper, Division_Rank=1, **all years 2005+**) | power-rankings `timeline`+`divTitles`, history.html STATS_DATA `div:` + csv-seasons, Owners_Sheet col 8, Power_Rankings.csv | Seasonal |
 | Finish flags — Champ / Runner-Up / Lower-Tier 1st & RU | `prize.csv` (Placement rows) | power-rankings `timeline`, history STATS_DATA, Placements_AllTime, ThirdPlace_ByYear | Seasonal |
 | Finish flags — Playoff (made Upper-Tier championship bracket) | `MAFFL_Matchups_NoConsolation.csv` (distinct Upper-Tier `Is_Playoffs=true` participants per year) | power-rankings `timeline` index 8, Power_Rankings.csv | Seasonal |
@@ -230,7 +231,7 @@ brian-ron-murello, Brian Murello / Ron Murello, Brian/Ron, Y, Co-Owner, ...,
 
 ### 7.2 Tier the data explicitly: GOLD vs DERIVED
 - **GOLD** (hand-edited): Matchups_Clean, Draft_History_v3, Credit_Log, Dues_Log, prize.csv, Division_History_2005_2025 (division titles), Team_History, Owners_Sheet/Registry, Rules, Power_Rankings (your scores).
-- **CORRUPTED — DO NOT USE:** `cleaned_maffl_revised.csv`. It was formerly treated as the finish-flag gold source and carried wrong values (e.g. Mike Murello 2021 division title, 2025 Lower-Tier 1st) into multiple HTML embeds. Derive finish flags from Division_History + prize.csv instead. Quarantine, do not regenerate from it.
+- **CORRUPTED — DO NOT USE:** `cleaned_maffl_revised.csv`. It was formerly treated as the finish-flag gold source and carried wrong values (e.g. Mike Murello 2021 division title, 2025 Lower-Tier 1st) into multiple HTML embeds. Derive finish flags from Division_History + prize.csv instead. **Retired 2026-10-06:** nothing reads it; `MAFFL_Owner_Seasons.csv` (generated from gold) replaced it everywhere. Old static page embeds that were once built from it (rivalry, stats, power-rankings comments) are covered by the generator-drift work.
 - **DERIVED** (generated, never hand-edited): every `.js` file, every HTML embed, NoConsolation, Points_*, Placements, ThirdPlace, Draft_Summary, Owners_Sheet's computed columns (credit balance, career totals).
 
 ### 7.3 Generation pipeline (extend what already works)

@@ -2,7 +2,7 @@
 # gen-draft.ps1  --  Regenerate draft.html OWNERS / CHAMPS / PICKS
 # ----------------------------------------------------------------------
 # OWNERS  = owners in CSV first-appearance order (the index space).
-# CHAMPS  = {year: ownerIdx} from cleaned_maffl_revised.csv Champ flags;
+# CHAMPS  = {year: ownerIdx} from MAFFL_Owner_Seasons.csv Champ flags;
 #           2002 co-champ stays an ascending [idx,idx] array.
 # PICKS   = [year,ownerIdx,"player","pos","team",price,champFlag] per row.
 #
@@ -21,7 +21,7 @@ param([switch]$Write)
 
 $PagePath = Join-Path $RepoRoot 'draft.html'
 $draft = Read-MafflCsv 'MAFFL_Draft_History_Clean_v3.csv'
-$season = Read-MafflCsv 'cleaned_maffl_revised.csv'
+$season = Read-MafflCsv 'MAFFL_Owner_Seasons.csv'
 
 # ---- OWNERS: first-appearance order, normalized ----
 $order = New-Object System.Collections.Specialized.OrderedDictionary

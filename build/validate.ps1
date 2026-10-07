@@ -25,7 +25,7 @@ $ownerByName = @{}
 foreach ($o in $owners) { $ownerByName[$o.name] = $o }
 
 # Load season rows once, normalizing owners.
-$season = Read-MafflCsv 'cleaned_maffl_revised.csv'
+$season = Read-MafflCsv 'MAFFL_Owner_Seasons.csv'   # derived from gold by gen-owner-seasons.ps1
 
 # ===== Gate 1: total championship flags == 25 (2002 co-champ => 2) =====
 $champFlags = 0
@@ -36,7 +36,7 @@ Add-Gate '1' 'Championship flags == 25' ($champFlags -eq 25) $d1
 # ===== Gate 2: Owners Sheet career W/L/T == recomputed from gold matchups =====
 # Source: MAFFL_Matchups_Clean.csv (GOLD, governance 7.2). Regular-season games only
 # (Game_Type 'Regular'; excludes playoffs, consolation and 'Ghost'), both tiers, equal
-# scores = tie. cleaned_maffl_revised.csv is quarantined and is NOT read here.
+# scores = tie. (cleaned_maffl_revised.csv is retired; nothing reads it.)
 # The sheet's career columns run "From 2005" through the last completed season:
 # bump $SheetThroughYear when the Owners Sheet is rolled forward after a season.
 $SheetThroughYear = 2025
@@ -131,7 +131,7 @@ Add-Gate '6' 'Zero Kickers drafted 2025+' ($kick -eq 0) $d6
 # ===== Gate 7: every owner name resolves to canonical =====
 $unresolved = New-Object System.Collections.Generic.HashSet[string]
 $ownerSources = @(
-    @{ file='cleaned_maffl_revised.csv';            col='Owner' },
+    @{ file='MAFFL_Owner_Seasons.csv';              col='Owner' },
     @{ file='Credit_Log.csv';                       col='Owner' },
     @{ file='MAFFL_Draft_History_Clean_v3.csv';     col='Owner' },
     @{ file='MAFFL_Division_History_2005_2025.csv'; col='Owner' }

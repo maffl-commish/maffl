@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-06 by Claude (chat), dues generator repointed
+**Last updated:** 2026-10-06 by Claude (chat), owner-season table from gold
 
 ## Now
 
@@ -24,10 +24,10 @@ _Read first. Keep it short. Newest entries on top in each section._
 ## Open decisions / known issues
 
 - **Page generators have drifted from their pages.** Build check (10/6, Windows runner): validate 8/8, gen-prize CLEAN; stats/history/draft/credits still report differences vs the live pages (hand edits since June; some look like CRLF-only). Never run `build.ps1 -Write` until each is reconciled.
-- **Quarantined cleaned_maffl_revised.csv is still read** by validate Gates 1 (champ flags) + 7 (names), gen-history (csv-seasons embed) and gen-draft (CHAMPS). It has 3 swapped 2015/2022/2024 results and 5 mis-owned seasons (Warren Brownies 2011–13, Daddy Fat Sacks 2006–07). Repoint to gold per governance §7.3 before the robot runs generators unattended.
 
 ## Recently shipped
 
+- 2026-10-06 · Quarantined `cleaned_maffl_revised.csv` retired: new `data/MAFFL_Owner_Seasons.csv` is generated from gold by `build/gen-owner-seasons.ps1` (2002–04 from hand-kept `MAFFL_Seasons_2002_2004.csv`) and feeds history csv-seasons, draft CHAMPS, validate Gates 1+7. Fixes the 3 swapped W/L seasons, 5 mis-owned seasons, 15 duplicate rows, 2 false division titles; adds 2005–12 division titles. Visible on History: 2007 champ shows ONE HOUSE DIVIDED (8–5), 2008 runner-up The Silver Bullets. Build check: gen-owner-seasons + csv-seasons round-trip, validate 8/8.
 - 2026-10-06 · Dues: `Dues_Log.csv` moved to `data/`; `gen-prize.ps1` now generates `prize.html` `dues_seasons` rows from it (round-trips 2026 exactly, Build check CLEAN). Payments from chat: append the log row + hand-edit the page row, Build check proves they match. Docs updated. 👻 Wks 1–2 confirmed on ESPN (151.28, 138.02).
 - 2026-10-06 · Build check workflow (`.github/workflows/build-check.yml`): runs validate + every `gen-*.ps1` + build.ps1 CHECK-ONLY on a Windows runner for any `build-fix/*` branch (or Run workflow); results in the run summary. Lets chat verify build\ script fixes.
 

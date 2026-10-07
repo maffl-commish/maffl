@@ -79,7 +79,8 @@ Two binding rules:
    MAFFL_Matchups_NoConsolation.csv. Regenerate from gold, never hand-edit.
    NOTE: `cleaned_maffl_revised.csv` is CORRUPTED and must never be used to derive finish
    flags — it carried wrong division/lower-tier values into the HTML embeds. Use
-   Division_History (divisions) + prize.csv (champ/RU/lower-tier) instead.
+   Division_History (divisions) + prize.csv (champ/RU/lower-tier) instead. It is retired (2026-10-06):
+   the per-owner-season table is now `data/MAFFL_Owner_Seasons.csv`, DERIVED by `build/gen-owner-seasons.ps1`.
 
 ## Ops workflow (added 2026-09-27)
 
