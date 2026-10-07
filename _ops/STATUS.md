@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-06 by Claude (chat), Desktop\MAFFL archived
+**Last updated:** 2026-10-06 by Claude (chat), Build check workflow
 
 ## Now
 
@@ -10,9 +10,9 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card ✅ (`weekly.html` v6.3).
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
 - **Weekly robot ✅ live (9/30).** One-pager: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`. Connection test passed end to end (data job → Claude → PR). Rehearsal ✅ (9/30): full chain ran, REHEARSAL PR opened, an `@claude` comment revised it, PR closed unmerged. **GitHub's Tuesday schedules DID fire on Oct 6, but every one ran ~6½–7 h late** (1:17 AM slot started 8:00 AM; last at 1:17 PM). Fix: a Claude scheduled task "MAFFL Tuesday Pulse kickoff" (Tue 5:07 AM ET) dispatches the ESPN pull, watches the chain, re-runs a transient failure once, and pushes Mike a phone report. GitHub crons stay as a backstop. First real test: Tue Oct 13. **Work happens in claude.ai chat now (push to main; "PR first" on request); the desktop copy is a backup.** **Merge each Pulse PR before the next Tuesday.**
-- **Week 4 Pulse:** first unattended run (Tue Oct 6) failed in the data job on a CRLF bug in the generator (fixed 10/6); re-run by hand via Actions → Pulse draft → Run workflow. Review the "Weekly Pulse: Week 4 draft" PR, comment `@claude …` for changes, Merge to publish. Fallback: draft in Cowork chat from `_ops/inbox/`. After one good Tuesday, retire the Results Engine, screenshots and `CAPTURE_SYSTEM_PROMPT.md`.
+- **Week 4 Pulse ✅** merged (PR #16) after a hand re-run (first unattended run hit a CRLF bug, fixed 10/6). After one good Tuesday (Oct 13), retire the Results Engine, screenshots and `CAPTURE_SYSTEM_PROMPT.md`.
 - **LM to-do:** set ESPN 👻 scores to Wk 1 151.28, Wk 2 138.02 (Wk 3 already shows 151.47 per the ESPN pull). Delete this line once done.
-- **Season:** 2026, Week 4 in progress. Weekly Pulse is live through Week 3 (`weekly.html` v6.3).
+- **Season:** 2026, Week 5 in progress. Weekly Pulse is live through Week 4 (`weekly.html` v6.3).
 
 ## Queued prompts (in `_ops/prompts/`)
 
@@ -32,6 +32,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **`Dues_Log.csv` is at repo root, not `data/`.** Open: move it and point `gen-prize.ps1` at it.
 
 ## Recently shipped
+
+- 2026-10-06 · Build check workflow (`.github/workflows/build-check.yml`): runs validate + every `gen-*.ps1` + build.ps1 CHECK-ONLY on a Windows runner for any `build-fix/*` branch (or Run workflow); results in the run summary. Lets chat verify build\ script fixes.
 
 - 2026-10-06 · Old `Desktop\MAFFL` copy archived by the commish; open issue closed.
 
