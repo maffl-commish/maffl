@@ -4,8 +4,9 @@ The operating manual for MAFFL HQ, the web hub for the **Mid-Atlantic Fantasy Fo
 (MAFFL, founded 2002). If you read nothing else, read §0 and §1.
 
 > **Read this first (2026-09-30):** the page generators have drifted from the hand-edited pages, so
-> `build\build.ps1` is **check-only**. **Never run `build.ps1 -Write`.** `_ops/STATUS.md` lists what's safe
-> right now. Where this runbook and `CLAUDE.md` disagree, `CLAUDE.md` wins.
+> Since 2026-10-06 every generator round-trips the live pages (Build check: BUILD OK), so `build.ps1 -Write` is safe again on Windows.
+> From chat, push to a `build-fix/*` branch and read the "Build check" Action instead. A page edited by hand must stay in step with its
+> generator: run the Build check before merging. `_ops/STATUS.md` lists anything currently unsafe. Where this runbook and `CLAUDE.md` disagree, `CLAUDE.md` wins.
 
 **Companion documents:**
 - `CLAUDE.md`: binding rules for Claude Code
@@ -211,7 +212,7 @@ change — the rule governs 2026+.
 
 ## Quick reference card
 
-**To change any number:** edit the gold CSV (§2) → its generator or same-commit sync → `validate.ps1` → review → commit/push. **Never `build.ps1 -Write`.**
+**To change any number:** edit the gold CSV (§2) → its generator or same-commit sync → `validate.ps1` → review → commit/push. Prove it with the Build check (BUILD OK).
 **Build fails a gate:** it caught something real — fix the cause, don't override (unless it's a §3
 standing exception, which it won't flag anyway).
 **Owner reports an error:** log → verify against source → fix the CSV → publish loop → reply.

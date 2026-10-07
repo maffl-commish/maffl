@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-06 by Claude (chat), owner-season table from gold
+**Last updated:** 2026-10-06 by Claude (chat), generator drift reconciled; BUILD OK
 
 ## Now
 
@@ -23,10 +23,12 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Open decisions / known issues
 
-- **Page generators have drifted from their pages.** Build check (10/6, Windows runner): validate 8/8, gen-prize CLEAN; stats/history/draft/credits still report differences vs the live pages (hand edits since June; some look like CRLF-only). Never run `build.ps1 -Write` until each is reconciled.
+- **`rivalry.html` old static embed** says it came from `cleaned_maffl_revised.csv`; may still credit Warren Brownies 2011–13 to Jimmy Crisan. Not generated; check by hand.
+- **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
 
+- 2026-10-06 · Generator drift reconciled; **Build check: BUILD OK** (validate 8/8, season table + all 5 pages round-trip), so `build.ps1 -Write` is safe again. Generators compare line-ending-neutral (Windows CRLF was most of the "drift"). gen-stats learned third/pWins/pLosses (match gold for all 34 owners). Pages brought to gold: stats (Jimmy Crisan years 11→8, row order), history csv-divisions/csv-drafts (Marcus Ruby 2006–07, Vincent/Dom 2011–13, 42 position fixes, 2026 rows; no visible year-card change), draft (owner list order + 42 position fixes, e.g. Eli Manning QB). gen-draft now simply lists diffs and writes on -Write. Stamps: stats, draft (no version bump).
 - 2026-10-06 · Quarantined `cleaned_maffl_revised.csv` retired: new `data/MAFFL_Owner_Seasons.csv` is generated from gold by `build/gen-owner-seasons.ps1` (2002–04 from hand-kept `MAFFL_Seasons_2002_2004.csv`) and feeds history csv-seasons, draft CHAMPS, validate Gates 1+7. Fixes the 3 swapped W/L seasons, 5 mis-owned seasons, 15 duplicate rows, 2 false division titles; adds 2005–12 division titles. Visible on History: 2007 champ shows ONE HOUSE DIVIDED (8–5), 2008 runner-up The Silver Bullets. Build check: gen-owner-seasons + csv-seasons round-trip, validate 8/8.
 - 2026-10-06 · Dues: `Dues_Log.csv` moved to `data/`; `gen-prize.ps1` now generates `prize.html` `dues_seasons` rows from it (round-trips 2026 exactly, Build check CLEAN). Payments from chat: append the log row + hand-edit the page row, Build check proves they match. Docs updated. 👻 Wks 1–2 confirmed on ESPN (151.28, 138.02).
 - 2026-10-06 · Build check workflow (`.github/workflows/build-check.yml`): runs validate + every `gen-*.ps1` + build.ps1 CHECK-ONLY on a Windows runner for any `build-fix/*` branch (or Run workflow); results in the run summary. Lets chat verify build\ script fixes.

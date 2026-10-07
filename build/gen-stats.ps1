@@ -19,17 +19,25 @@ $EndMarker   = "`n];"
 # Fixed start column for each field (measured from the live block) and
 # the closing-brace column. Pad-to-column with a 1-space minimum so an
 # unexpectedly long future value degrades gracefully instead of merging.
+# third / pWins / pLosses added 2026-10-06 to match the live page:
+#   third   = count of rows in MAFFL_ThirdPlace_ByYear.csv
+#   pWins / pLosses = Upper-Tier playoff games (full bracket incl. the 3rd-place
+#             game) in MAFFL_Matchups_NoConsolation.csv through $SheetThroughYear
+# A value that overruns its column pushes every later field right by the same
+# amount (the live page does this for the one long co-owner name).
 $Cols = [ordered]@{
-    name=4; active=46; years=61; champ=72; runner=82; playoff=93; div=106;
-    wins=114; losses=125; ties=138; ovr=147; clutch=156; grind=168; heat=179
+    name=4; active=46; years=61; champ=72; runner=82; third=93; playoff=103; div=116;
+    wins=124; losses=135; ties=148; pWins=157; pLosses=168; ovr=181; clutch=190; grind=202; heat=213
 }
-$BraceCol = 188
+$BraceCol = 222
+$SheetThroughYear = 2025   # same as validate Gate 2; bump when the Owners Sheet rolls forward
 $Keys = @($Cols.Keys)
 
 function Format-OwnerRow {
     param($Owner, [bool]$IsLast)
     $sb = New-Object System.Text.StringBuilder
     [void]$sb.Append('  { ')
+    $shift = 0
     for ($i = 0; $i -lt $Keys.Count; $i++) {
         $k = $Keys[$i]
         switch ($k) {
@@ -40,9 +48,9 @@ function Format-OwnerRow {
         [void]$sb.Append("$k`: $val")
         if ($i -lt ($Keys.Count - 1)) { [void]$sb.Append(',') }
         # Pad to the next field's column (>=1 space).
-        $target = if ($i -lt ($Keys.Count - 1)) { $Cols[$Keys[$i+1]] } else { $BraceCol }
+        $target = $shift + $(if ($i -lt ($Keys.Count - 1)) { $Cols[$Keys[$i+1]] } else { $BraceCol })
         $pad = $target - $sb.Length
-        if ($pad -lt 1) { $pad = 1 }
+        if ($pad -lt 1) { $shift += (1 - $pad); $pad = 1 }
         [void]$sb.Append(' ' * $pad)
     }
     [void]$sb.Append('}')
@@ -51,6 +59,22 @@ function Format-OwnerRow {
 }
 
 $owners = Get-CanonicalOwners
+$third = @{}; $pw = @{}; $pl = @{}
+foreach ($r in (Read-MafflCsv 'MAFFL_ThirdPlace_ByYear.csv')) {
+    $n = Normalize-Owner $r.Third_Place_Owner
+    if ($n) { $third[$n] = 1 + $(if ($third.ContainsKey($n)) { $third[$n] } else { 0 }) }
+}
+foreach ($g in (Read-MafflCsv 'MAFFL_Matchups_NoConsolation.csv')) {
+    if ($g.Tier -ne 'Upper' -or $g.Is_Playoffs -ne 'True' -or [int]$g.Year -gt $SheetThroughYear) { continue }
+    $w = Normalize-Owner $g.Winner_Owner; $l = Normalize-Owner $g.Loser_Owner
+    $pw[$w] = 1 + $(if ($pw.ContainsKey($w)) { $pw[$w] } else { 0 })
+    $pl[$l] = 1 + $(if ($pl.ContainsKey($l)) { $pl[$l] } else { 0 })
+}
+foreach ($o in $owners) {
+    $o | Add-Member -NotePropertyName third   -NotePropertyValue $(if ($third.ContainsKey($o.name)) { $third[$o.name] } else { 0 })
+    $o | Add-Member -NotePropertyName pWins   -NotePropertyValue $(if ($pw.ContainsKey($o.name)) { $pw[$o.name] } else { 0 })
+    $o | Add-Member -NotePropertyName pLosses -NotePropertyValue $(if ($pl.ContainsKey($o.name)) { $pl[$o.name] } else { 0 })
+}
 $rows = for ($i = 0; $i -lt $owners.Count; $i++) {
     Format-OwnerRow -Owner $owners[$i] -IsLast ($i -eq ($owners.Count - 1))
 }
@@ -59,6 +83,9 @@ $newBody = "`n" + ($rows -join "`n")
 
 # Inject into a copy and compare to current (round-trip proof).
 $current = Read-TextRaw $PagePath
+# Compare in LF; a Windows checkout gives CRLF. -Write restores the page's own line endings.
+$pageNl = if ($current.Contains("`r`n")) { "`r`n" } else { "`n" }
+$current = $current -replace "`r`n", "`n"
 $updated = Set-BlockBetweenMarkers -Content $current -StartMarker $StartMarker -EndMarker $EndMarker -NewBody $newBody
 
 if ($updated -eq $current) {
@@ -87,7 +114,7 @@ for ($i = 0; $i -lt $max -and $shown -lt 8; $i++) {
 }
 
 if ($Write) {
-    [System.IO.File]::WriteAllText($PagePath, $updated)
+    [System.IO.File]::WriteAllText($PagePath, ($updated -replace "`n", $pageNl))
     Write-Host "[stats.html] WROTE regenerated OWNERS[]." -ForegroundColor Cyan
 } else {
     Write-Host "[stats.html] check-only (no -Write); nothing written." -ForegroundColor DarkGray
