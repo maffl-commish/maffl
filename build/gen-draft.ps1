@@ -6,13 +6,11 @@
 #           2002 co-champ stays an ascending [idx,idx] array.
 # PICKS   = [year,ownerIdx,"player","pos","team",price,champFlag] per row.
 #
-# DELIBERATE FIX (commissioner): 2007 blank prices serialize as `null`
-# (was `0`), to render as a dash instead of "$0". So OWNERS + CHAMPS must
-# round-trip BYTE-IDENTICAL, and PICKS must be identical EXCEPT the 256
-# 2007 rows whose price goes 0 -> null. The check below proves exactly
-# that and rejects any other drift.
+# Blank prices serialize as `null` (renders as a dash, not "$0"; the
+# one-time 2007 migration is done). Check mode lists every differing
+# line; -Write injects the regenerated blocks.
 #
-#   build\gen-draft.ps1          # check-only: classify every diff
+#   build\gen-draft.ps1          # check-only: list every diff
 #   build\gen-draft.ps1 -Write   # inject the regenerated blocks
 # ======================================================================
 param([switch]$Write)
@@ -76,50 +74,29 @@ $step1 = Set-BlockBetweenMarkers -Content $content -StartMarker 'const OWNERS=['
 $step2 = Set-BlockBetweenMarkers -Content $step1   -StartMarker 'const CHAMPS={' -EndMarker '};' -NewBody $champsBody
 $updated = Set-BlockBetweenMarkers -Content $step2 -StartMarker 'const PICKS=['  -EndMarker "`n];" -NewBody $picksBody
 
-# Classify line-level diffs across the whole file.
+# Line-level diffs across the whole file (round-trip proof).
 $oldArr = $content -split "`n"
 $newArr = $updated -split "`n"
-$expected = 0   # 2007 price 0 -> null
-$unexpected = New-Object System.Collections.ArrayList
-$max = [math]::Max($oldArr.Count, $newArr.Count)
-if ($oldArr.Count -ne $newArr.Count) {
-    [void]$unexpected.Add("LINE COUNT changed: $($oldArr.Count) -> $($newArr.Count)")
-}
+$diffs = New-Object System.Collections.ArrayList
+if ($oldArr.Count -ne $newArr.Count) { [void]$diffs.Add("LINE COUNT changed: $($oldArr.Count) -> $($newArr.Count)") }
 for ($i = 0; $i -lt [math]::Min($oldArr.Count,$newArr.Count); $i++) {
-    if ($oldArr[$i] -eq $newArr[$i]) { continue }
-    # Is this a PICKS row whose ONLY change is price 0 -> null on a 2007 row?
-    $mo = [regex]::Match($oldArr[$i], '^\[2007,(\d+),(".*"),(".*"),(".*"),0,(\d)\]')
-    $mn = [regex]::Match($newArr[$i], '^\[2007,(\d+),(".*"),(".*"),(".*"),null,(\d)\]')
-    if ($mo.Success -and $mn.Success -and $mo.Groups[1].Value -eq $mn.Groups[1].Value `
-        -and $mo.Groups[2].Value -eq $mn.Groups[2].Value -and $mo.Groups[5].Value -eq $mn.Groups[5].Value) {
-        $expected++
-    } else {
-        [void]$unexpected.Add(("line {0}:`n    - {1}`n    + {2}" -f ($i+1), $oldArr[$i], $newArr[$i]))
-    }
+    if ($oldArr[$i] -ne $newArr[$i]) { [void]$diffs.Add(("line {0}:`n    - {1}`n    + {2}" -f ($i+1), $oldArr[$i], $newArr[$i])) }
 }
 
 Write-Host "[draft.html] OWNERS round-trip exact : $((Set-BlockBetweenMarkers $content 'const OWNERS=[' '];' $ownersBody) -eq $content)" -ForegroundColor Cyan
 Write-Host "[draft.html] CHAMPS round-trip exact : $((Set-BlockBetweenMarkers $content 'const CHAMPS={' '};' $champsBody) -eq $content)" -ForegroundColor Cyan
-# 256 = first run applying the fix; 0 = already fixed (idempotent regen).
-Write-Host "[draft.html] 2007 price 0->null migrations : $expected (256 on first run, 0 once applied)" -ForegroundColor Cyan
-Write-Host "[draft.html] UNEXPECTED diffs : $($unexpected.Count)" -ForegroundColor Cyan
+Write-Host "[draft.html] PICKS rows : $($pickLines.Count); differing lines : $($diffs.Count)" -ForegroundColor Cyan
 
-if ($unexpected.Count -gt 0) {
-    Write-Host "---- unexpected (showing up to 10) ----" -ForegroundColor Red
-    $unexpected | Select-Object -First 10 | ForEach-Object { Write-Host $_ -ForegroundColor Red }
-    Write-Host "[draft.html] REFUSING to write: drift beyond the intended 2007 fix." -ForegroundColor Red
-    exit 1
+if ($diffs.Count -eq 0) {
+    Write-Host "[draft.html] CLEAN: OWNERS/CHAMPS/PICKS round-trip from gold." -ForegroundColor Green
+    exit 0
 }
-if ($expected -notin @(0, 256)) {
-    Write-Host "[draft.html] migration count is neither 0 nor 256; refusing to write." -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "[draft.html] CLEAN: only intended 2007 price->null change (no other drift)." -ForegroundColor Green
+Write-Host "---- differences (showing up to 10) ----" -ForegroundColor Yellow
+$diffs | Select-Object -First 10 | ForEach-Object { Write-Host $_ }
 if ($Write) {
     [System.IO.File]::WriteAllText($PagePath, ($updated -replace "`n", $pageNl))
     Write-Host "[draft.html] WROTE regenerated OWNERS/CHAMPS/PICKS." -ForegroundColor Cyan
 } else {
     Write-Host "[draft.html] check-only (no -Write); nothing written." -ForegroundColor DarkGray
 }
-exit 0
+exit 1
