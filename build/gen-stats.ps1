@@ -59,6 +59,9 @@ $newBody = "`n" + ($rows -join "`n")
 
 # Inject into a copy and compare to current (round-trip proof).
 $current = Read-TextRaw $PagePath
+# Compare in LF; a Windows checkout gives CRLF. -Write restores the page's own line endings.
+$pageNl = if ($current.Contains("`r`n")) { "`r`n" } else { "`n" }
+$current = $current -replace "`r`n", "`n"
 $updated = Set-BlockBetweenMarkers -Content $current -StartMarker $StartMarker -EndMarker $EndMarker -NewBody $newBody
 
 if ($updated -eq $current) {
@@ -87,7 +90,7 @@ for ($i = 0; $i -lt $max -and $shown -lt 8; $i++) {
 }
 
 if ($Write) {
-    [System.IO.File]::WriteAllText($PagePath, $updated)
+    [System.IO.File]::WriteAllText($PagePath, ($updated -replace "`n", $pageNl))
     Write-Host "[stats.html] WROTE regenerated OWNERS[]." -ForegroundColor Cyan
 } else {
     Write-Host "[stats.html] check-only (no -Write); nothing written." -ForegroundColor DarkGray

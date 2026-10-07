@@ -88,6 +88,9 @@ function Set-TbodyAfterAnchor {
 }
 
 $content = Read-TextRaw $PagePath
+# Compare in LF; a Windows checkout gives CRLF. -Write restores the page's own line endings.
+$pageNl = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
+$content = $content -replace "`r`n", "`n"
 $u = Set-TbodyAfterAnchor -Content $content -Anchor '<h3>Upper-Tier</h3>' -NewRows $upperRows
 $u = Set-TbodyAfterAnchor -Content $u       -Anchor '<h3>Lower-Tier</h3>' -NewRows $lowerRows
 $updated = Set-BlockBetweenMarkers -Content $u -StartMarker 'const REGISTRY_DATA = [' -EndMarker "`n  ];" -NewBody $registryBody
@@ -111,7 +114,7 @@ for ($i = 0; $i -lt [math]::Max($o.Count,$n.Count) -and $shown -lt 12; $i++) {
     }
 }
 if ($Write) {
-    [System.IO.File]::WriteAllText($PagePath, $updated)
+    [System.IO.File]::WriteAllText($PagePath, ($updated -replace "`n", $pageNl))
     Write-Host "[credits.html] WROTE regenerated balances + REGISTRY_DATA." -ForegroundColor Cyan
 } else {
     Write-Host "[credits.html] check-only (no -Write); nothing written." -ForegroundColor DarkGray

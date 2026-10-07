@@ -69,6 +69,9 @@ $picksBody = "`n" + ($pickLines -join ",`n")   # EndMarker "`n];" supplies final
 
 # ---- Inject into a copy and classify diffs ----
 $content = Read-TextRaw $PagePath
+# Compare in LF; a Windows checkout gives CRLF. -Write restores the page's own line endings.
+$pageNl = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
+$content = $content -replace "`r`n", "`n"
 $step1 = Set-BlockBetweenMarkers -Content $content -StartMarker 'const OWNERS=['  -EndMarker '];' -NewBody $ownersBody
 $step2 = Set-BlockBetweenMarkers -Content $step1   -StartMarker 'const CHAMPS={' -EndMarker '};' -NewBody $champsBody
 $updated = Set-BlockBetweenMarkers -Content $step2 -StartMarker 'const PICKS=['  -EndMarker "`n];" -NewBody $picksBody
@@ -114,7 +117,7 @@ if ($expected -notin @(0, 256)) {
 
 Write-Host "[draft.html] CLEAN: only intended 2007 price->null change (no other drift)." -ForegroundColor Green
 if ($Write) {
-    [System.IO.File]::WriteAllText($PagePath, $updated)
+    [System.IO.File]::WriteAllText($PagePath, ($updated -replace "`n", $pageNl))
     Write-Host "[draft.html] WROTE regenerated OWNERS/CHAMPS/PICKS." -ForegroundColor Cyan
 } else {
     Write-Host "[draft.html] check-only (no -Write); nothing written." -ForegroundColor DarkGray
