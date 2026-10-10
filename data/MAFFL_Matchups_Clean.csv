@@ -1283,7 +1283,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2015,5,Upper,False,Regular,Todd Trozzo,Todd Trozzo,U-Town Fightin Ferrets,136.0,Bob Keslar,Bo Kes,Camp Kes,88.34
 2015,5,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeers,156.84,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,96.02
 2015,5,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,120.64,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,95.8
-2015,5,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,86.54,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,82.38
+2015,5,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,86.54,Mike Murello,Michael Murello,Bad Attitude Gang,82.38
 2015,5,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,109.12,Josh Lavrinc,Joshua Lavrinc,Jefferson Hills Juggernauts,103.54
 2015,6,Upper,False,Regular,BJ Funari,Bryan Funari,Motown Moonshiners,122.8,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,88.04
 2015,6,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,99.88,Brian Murello/ Ron Murello,Ron Murello,Swissvale Norseman,94.06
@@ -2191,7 +2191,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2022,5,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,122.46,Mike Murello,Michael Murello,Bad Attitude Gang,78.0
 2022,6,Upper,False,Regular,BJ Funari,Bryan Funari,South Hills FunShiners,111.0,Chris Johnson,Chris Johnson,The V-Unit,59.82
 2022,6,Upper,False,Regular,Braiden Snyder,Braiden Snyder,Motown Ballers,84.92,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,83.0
-2022,6,Upper,False,Regular,Tony Brooks,Tony Brooks,Number 2 Tony,91.08,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,86.62
+2022,6,Upper,False,Regular,Tony Brooks,Tony Brooks,Number 2 Tony,88.96,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,86.62
 2022,6,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,147.3,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,88.16
 2022,6,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,103.28,David Murello,David Murello,Kardiac Kids,75.08
 2022,6,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,122.7,Dan Reilly,Daniel Reilly,The Big Bang Theory,105.64
@@ -2245,8 +2245,8 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2022,12,Upper,False,Regular,David Murello,David Murello,Kardiac Kids,109.72,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,108.92
 2022,12,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,125.84,Dan Reilly,Daniel Reilly,The Big Bang Theory,107.78
 2022,12,Upper,False,Regular,Tony Trozzo,Tony Trozzo / Anthony Trozzo,Happy Valley Hammer Time,178.06,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,101.46
-2022,13,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,156.56,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,63.36
-2022,13,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,141.94,Tony Brooks,Tony Brooks,Number 2 Tony,89.3
+2022,13,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,115.1,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,86.44
+2022,13,Upper,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,107.9,Tony Brooks,Tony Brooks,Number 2 Tony,89.3
 2022,13,Upper,False,Regular,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,122.04,Braiden Snyder,Braiden Snyder,Motown Ballers,114.56
 2022,13,Upper,False,Regular,BJ Funari,Bryan Funari,South Hills FunShiners,93.16,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,86.18
 2022,13,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,129.2,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,75.92
@@ -2523,7 +2523,7 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2024,13,Upper,False,Regular,Todd Trozzo,Todd Trozzo / Todd Trozzo,U-Town Fightin Ferrets,107.82,BJ Funari,Bryan Funari,South Hills FunShiners,80.64
 2024,13,Upper,False,Regular,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,160.02,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,102.1
 2024,13,Upper,False,Regular,David Murello,David Murello,Kids Mixon with Lamar,134.88,Jon Fetrow,John Fetrow,Southside Shooters,66.2
-2024,13,Upper,False,Regular,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,115.32,Dan Reilly,Daniel Reilly,The Big Bang Theory,124.66
+2024,13,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,124.66,Tony Trozzo,Tony Trozzo / Tony Trozzo,Happy Valley Hammer Time,115.32
 2024,13,Upper,False,Regular,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,118.24,Mike Murello,Michael Murello,Bad Attitude Gang,95.36
 2024,14,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,115.56,Chris Johnson,Chris Johnson,The V-Unit,112.92
 2024,14,Upper,False,Regular,Joe Reilly,Michael Reilly / Joseph Reilly,Reilly's Reindeer,110.14,Tony Brooks,Tony Brooks,Number 2 Tony,88.76
