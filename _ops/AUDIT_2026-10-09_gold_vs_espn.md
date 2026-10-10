@@ -1,5 +1,7 @@
 # Gold vs ESPN audit — 2026-10-09
 
+> **Update (same day):** all game fixes and the draft rebuild are done on `build-fix/espn-audit-games` (PR). Re-audit after the fixes: every game and season record matches ESPN; draft leftovers are 2006 (ESPN gap) and 3 rows in `_ops/AUDIT_2026-10-09_draft_rebuild.md`.
+
 **Games:** gold is in very good shape. All 2,726 gold games (2005–2025, both tiers) matched an ESPN game in the same week with the same two teams; ESPN has no games gold is missing. Five games are wrong (three have the wrong winner, which explains all six season W-L differences). Fixed in gold on branch `build-fix/espn-audit-games` (not merged): downstream regen is blocked, see below.
 
 | Game | Gold had | ESPN (correct) |

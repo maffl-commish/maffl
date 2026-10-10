@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-09 by Claude (chat), gold vs ESPN audit
+**Last updated:** 2026-10-09 by Claude (chat), gold fixed against ESPN (PR)
 
 ## Now
 
@@ -23,12 +23,13 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Open decisions / known issues
 
-- **Gold vs ESPN fixes waiting (10/9):** 5 games on `build-fix/espn-audit-games` need a historic-correction switch in `generate-matchups-data.ps1` + a Windows `-Write` run; draft rebuild from ESPN names needs gen-draft/gen-history `-Write`. Raw ESPN archive still in public git history (purge = force-push, commish call). See `_ops/AUDIT_2026-10-09_gold_vs_espn.md`.
+- **Draft rows for the commish (10/9):** 2010 David Murello gold 'Stephen Tulloch' vs ESPN Keith Bulluck + Rashad Jennings; 2010 Mike 'Oshiomogho Atogwe' vs ESPN Devin Aromashodu. Left unchanged (see `_ops/AUDIT_2026-10-09_draft_rebuild.md`).
 - **`rivalry.html` old static embed** says it came from `cleaned_maffl_revised.csv`; may still credit Warren Brownies 2011–13 to Jimmy Crisan. Not generated; check by hand.
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
 
+- 2026-10-09 · **Gold fixed against ESPN (PR from `build-fix/espn-audit-games`).** Games: 5 corrected (2015 Wk5, 2022 Wk6, 2022 Wk13 ×2, 2024 Wk13) → 6 owners' career W-L (Owners Sheet, stats, power-rankings win%), Owner_Seasons, points, matchups-data.js. New CE-1b `-CorrectHistory` switch + Build write workflow did the regen (BUILD OK, proof re-run clean). history.html csv-matchups now generated from gold (adds 11 missing 2025 consolation games). Drafts: `rebuild_draft_from_espn.py` fixed 46 wrong players, 121 spellings, 509 positions (FLX → real), 3 owners, added 18 picks; 2006 left as is (ESPN lost picks); 3 rows for commish (2010 Tulloch, Atogwe). New `gen_draft_summary.py` regenerates draft-summary-data.js (round-trips old gold). Re-audit: games 100% match ESPN. Stamps: draft, history, stats, power-rankings (no version bump).
 - 2026-10-09 · Build write workflow (`.github/workflows/build-write.yml`, Run workflow only, build-fix/* branches only): runs the CE-1 generator (optional `correct_history`) + `build.ps1 -Write` on Windows, re-checks both clean, commits the regenerated files to the branch. Lets chat regenerate derived data; merge the branch PR to publish.
 - 2026-10-09 · Audit adds pick-level draft check (ESPN names): ~57 gold picks name the wrong player (surname guessed, e.g. Ed Reed as K, Evan Engram 2008), 18 missing, 3 wrong owner; 2006 gold beats ESPN. Gold game fixes on branch `build-fix/espn-audit-games` (Build check: Gate 2 fails as expected, generator lock blocks regen). Report updated.
 - 2026-10-09 · Private ESPN raw archive (`_ops/inbox/MAFFL_ESPN_raw/` + `.zip`: message boards, member IDs) untracked; it had been committed to the public repo on 9/29 despite the ignore rule. Still in git history until purged (commish decision). Scripts that read it take a path.
