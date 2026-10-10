@@ -29,6 +29,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-09 · Build write workflow (`.github/workflows/build-write.yml`, Run workflow only, build-fix/* branches only): runs the CE-1 generator (optional `correct_history`) + `build.ps1 -Write` on Windows, re-checks both clean, commits the regenerated files to the branch. Lets chat regenerate derived data; merge the branch PR to publish.
 - 2026-10-09 · Audit adds pick-level draft check (ESPN names): ~57 gold picks name the wrong player (surname guessed, e.g. Ed Reed as K, Evan Engram 2008), 18 missing, 3 wrong owner; 2006 gold beats ESPN. Gold game fixes on branch `build-fix/espn-audit-games` (Build check: Gate 2 fails as expected, generator lock blocks regen). Report updated.
 - 2026-10-09 · Private ESPN raw archive (`_ops/inbox/MAFFL_ESPN_raw/` + `.zip`: message boards, member IDs) untracked; it had been committed to the public repo on 9/29 despite the ignore rule. Still in git history until purged (commish decision). Scripts that read it take a path.
 - 2026-10-09 · ESPN draft history pull (Action, Run workflow only): `maffl_espn_drafts.py` v0.1 saves every 2005–2025 draft with player names to `_ops/inbox/MAFFL_ESPN_Drafts.json` (no board/member data), to name gold's 27 missing picks.

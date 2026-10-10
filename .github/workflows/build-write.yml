@@ -1,0 +1,93 @@
+# MAFFL Build write — runs the build\ PowerShell scripts WITH -Write on a Windows runner and commits
+# the regenerated derived files back to the same build-fix/* branch. Run workflow only, never on a schedule.
+# Lets chat sessions (which can't run Windows PowerShell 5.1) regenerate derived data after a gold edit.
+# It never touches main: it refuses any branch that isn't build-fix/*. Merge the branch's PR to publish.
+#
+# Steps: CE-1 generator (-Write, optional -CorrectHistory for finished seasons fixed against ESPN),
+# then build.ps1 -Write (validate first; aborts if any gate fails), then both again check-only:
+# the job fails unless everything ends in sync (generator exit 0, BUILD OK).
+name: Build write
+
+on:
+  workflow_dispatch:
+    inputs:
+      correct_history:
+        description: 'Finished seasons whose existing games were corrected in gold, e.g. "2015,2022,2024" (blank = none)'
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-write-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: windows-latest   # build\ scripts need Windows PowerShell 5.1
+    timeout-minutes: 20
+    steps:
+      - name: Refuse anything but a build-fix/* branch
+        shell: pwsh
+        run: |
+          if (-not "${{ github.ref }}".StartsWith('refs/heads/build-fix/')) {
+            Write-Output "::error::Build write only runs on build-fix/* branches (got ${{ github.ref }})."
+            exit 1
+          }
+
+      - name: Get the branch
+        uses: actions/checkout@v4
+
+      - name: Regenerate (write), then prove in sync (check-only)
+        shell: pwsh
+        env:
+          CORRECT_HISTORY: ${{ inputs.correct_history }}
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP 'build-write.log'
+          $rows = @()
+          function Notice($title, $lines) {
+            $t = (($lines | Out-String) -replace "`e\[[0-9;]*m", '')
+            if ($t.Length -gt 60000) { $t = $t.Substring(0, 60000) + "`n...(truncated; see log artifact)" }
+            $t = $t.Replace('%','%25').Replace("`r",'').Replace("`n",'%0A')
+            Write-Output "::notice title=$title::$t"
+          }
+          function Step($label, [scriptblock]$cmd, [int[]]$ok) {
+            "`n===== $label =====" | Tee-Object -FilePath $log -Append
+            $out = & $cmd 2>&1 | Tee-Object -FilePath $log -Append
+            $code = $LASTEXITCODE
+            $script:rows += "| $label | $code |"
+            Notice "$label exit $code" $out
+            if ($ok -notcontains $code) {
+              Write-Output "::error::$label exited $code (allowed: $($ok -join ', '))"
+              $script:rows | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+              exit 1
+            }
+          }
+          $gen = @('-ExecutionPolicy','Bypass','-File','build\generate-matchups-data.ps1')
+          if ($env:CORRECT_HISTORY) { $gen += @('-CorrectHistory', $env:CORRECT_HISTORY) }
+          Step 'CE-1 generator, write'            { powershell @gen -Write } @(0,1)
+          Step 'CE-1 generator, re-check (0)'     { powershell @gen } @(0)
+          Step 'build.ps1 -Write'                 { powershell -ExecutionPolicy Bypass -File build\build.ps1 -Write } @(0,1,2,3,4,5,6)
+          Step 'build.ps1 re-check (0 = BUILD OK)' { powershell -ExecutionPolicy Bypass -File build\build.ps1 } @(0)
+          $sum = @('## Build write','','| Step | Exit |','|---|---|') + $rows + @('','<details><summary>Full log</summary>','','```') + (Get-Content $log) + @('```','</details>')
+          $sum | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+
+      - name: Commit regenerated files to the branch
+        shell: pwsh
+        run: |
+          git config user.name "maffl-build-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/ build/ *.html *.js
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) { Write-Output "Nothing regenerated; nothing to commit."; exit 0 }
+          git diff --cached --stat
+          git commit -m "Build write: regenerate derived files (correct_history='${{ inputs.correct_history }}')"
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Save the log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-write-log
+          path: ${{ runner.temp }}/build-write.log
