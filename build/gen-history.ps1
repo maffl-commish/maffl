@@ -25,7 +25,11 @@ $Blocks = @(
     @{ id='csv-matchups';  csv='MAFFL_Matchups_Clean.csv'; throughYear=$HistoryThroughYear }
 )
 
+# Compare in LF and write back in the page's own line endings (as gen-draft does): a source CSV
+# freshly written by another generator can be LF while a Windows checkout of the page is CRLF.
 $content = Read-TextRaw $PagePath
+$pageNl  = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
+$content = $content -replace "`r`n", "`n"
 $updated = $content
 $allExact = $true
 
@@ -45,6 +49,7 @@ foreach ($b in $Blocks) {
         }
         $body = ($keep -join $nl) + $nl
     }
+    $body  = $body -replace "`r`n", "`n"
     $try   = Set-BlockBetweenMarkers -Content $updated -StartMarker $start -EndMarker $end -NewBody $body
     if ($try -eq $updated) {
         Write-Host ("[history.html] {0,-13} ROUND-TRIP EXACT ({1})" -f $b.id, $b.csv) -ForegroundColor Green
@@ -61,7 +66,7 @@ if ($allExact) {
 }
 
 if ($Write) {
-    [System.IO.File]::WriteAllText($PagePath, $updated)
+    [System.IO.File]::WriteAllText($PagePath, ($updated -replace "`n", $pageNl))
     Write-Host "[history.html] WROTE regenerated block(s)." -ForegroundColor Cyan
 } else {
     Write-Host "[history.html] check-only (no -Write); nothing written." -ForegroundColor DarkGray
