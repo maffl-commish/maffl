@@ -34,6 +34,86 @@ def team_maps(d):
         teams[t['id']] = {'name': name, 'owners': owners, 'rec': t.get('record', {}).get('overall', {})}
     return teams
 
+
+def draft_audit(path):
+    """Pick-level draft check from _ops/inbox/MAFFL_ESPN_Drafts.json (maffl_espn_drafts.py)."""
+    import re, unicodedata, difflib
+    def nn(x):
+        x = unicodedata.normalize('NFKD', x or '').encode('ascii', 'ignore').decode().lower()
+        x = re.sub(r'\b(jr|sr|ii|iii|iv|v)\b\.?', '', x)
+        return re.sub(r'[^a-z]', '', x)
+    canon = {}
+    for r in csv.DictReader(open(os.path.join(ROOT, 'data', 'MAFFL_Owner_Registry.csv'), encoding='utf-8-sig')):
+        for a in [r['canonical_name']] + r['aliases'].split('|'):
+            canon[nn(a)] = r['canonical_name']
+    C = lambda o: canon.get(nn(o), o)
+    seasons = json.load(open(path, encoding='utf-8'))['seasons']
+    gold = list(csv.DictReader(open(os.path.join(ROOT, 'data', 'MAFFL_Draft_History_Clean_v3.csv'), encoding='utf-8-sig')))
+    team_owner = collections.defaultdict(dict)
+    for g in csv.DictReader(open(os.path.join(ROOT, 'data', 'MAFFL_Matchups_Clean.csv'), encoding='utf-8-sig')):
+        for sd in ('Winner', 'Loser'):
+            team_owner[g['Year']][nn(g[sd + '_Team'])] = C(g[sd + '_Owner'])
+    def sim(a, b):
+        r = difflib.SequenceMatcher(None, nn(a), nn(b)).ratio()
+        la, lb = a.split()[-1:], b.split()[-1:]
+        return max(r, 0.8) if la and lb and nn(la[0]) == nn(lb[0]) else r
+    def same_first(a, b):
+        fa, fb = nn(a.split()[0]) if a.split() else '', nn(b.split()[0]) if b.split() else ''
+        return fa[:1] == fb[:1]
+    R = collections.defaultdict(list); st = collections.Counter()
+    for y in sorted(seasons):
+        if int(y) > LAST_YEAR:
+            continue
+        ep = []
+        for tier, v in seasons[y].items():
+            for pk in v['picks']:
+                if pk['playerId'] <= 0:
+                    st[f'empty {y}'] += 1; continue
+                t = nn(pk['team'])
+                o = team_owner[y].get(t) or next((ow for tn, ow in team_owner[y].items() if t.endswith(tn) or tn.endswith(t)), None)
+                ep.append(dict(pk, owner=o or pk['team']))
+        gr = [dict(r, owner=C(r['Owner'])) for r in gold if r['Year'] == y]
+        used, left = set(), []
+        for pk in ep:
+            c = [i for i, r in enumerate(gr) if i not in used and nn(r['Player']) == nn(pk['player'])]
+            if c:
+                i = next((i for i in c if gr[i]['owner'] == pk['owner']), c[0]); used.add(i); pk['m'] = i; st['exact'] += 1
+            else:
+                left.append(pk)
+        still = []
+        for pk in left:
+            c = sorted(((sim(gr[i]['Player'], pk['player']), i) for i, r in enumerate(gr) if i not in used and r['owner'] == pk['owner']), reverse=True)
+            if c and c[0][0] >= 0.75:
+                i = c[0][1]; used.add(i); pk['m'] = i
+                line = f"{y} {pk['owner']}: gold '{gr[i]['Player']}' → ESPN '{pk['player']}' ({pk['pos']})"
+                if same_first(gr[i]['Player'], pk['player']):
+                    R['Draft: spelling differs from ESPN'].append(line); st['spelling'] += 1
+                else:
+                    R['Draft: probably the wrong player in gold'].append(line); st['wrongish'] += 1
+            else:
+                still.append(pk)
+        gl = [i for i in range(len(gr)) if i not in used]
+        for pk in ep:
+            if 'm' in pk:
+                r = gr[pk['m']]
+                if r['owner'] != pk['owner']:
+                    R['Draft: pick credited to a different owner'].append(f"{y} {pk['player']}: gold {r['owner']} vs ESPN {pk['owner']}")
+                if int(y) >= 2020 and abs(float(r['Price'] or 0) - pk['bid']) > 0.5:
+                    R['Draft: price differs (2020+)'].append(f"{y} {pk['player']} ({r['owner']}): gold ${r['Price']} vs ESPN ${pk['bid']}")
+        for pk in still:
+            same = [i for i in gl if gr[i]['owner'] == pk['owner']]
+            if same:
+                for i in same: used.add(i)
+                R['Draft: probably the wrong player in gold'].append(
+                    f"{y} {pk['owner']}: ESPN R{pk['round']} {pk['player']} ({pk['pos']}) · gold unmatched: " +
+                    '; '.join(f"{gr[i]['Player']} ({gr[i]['Position_Actual']}) ${gr[i]['Price']}" for i in same))
+            else:
+                R['Draft: on ESPN, missing from gold'].append(f"{y} {pk['owner']}: R{pk['round']} {pk['player']} ({pk['pos']})")
+        for i in range(len(gr)):
+            if i not in used:
+                R['Draft: in gold, not on ESPN'].append(f"{y} {gr[i]['owner']}: {gr[i]['Player']} ({gr[i]['Position_Actual']}) ${gr[i]['Price']}")
+    return R, st
+
 def main():
     gold = list(csv.DictReader(open(os.path.join(ROOT, 'data', 'MAFFL_Matchups_Clean.csv'), encoding='utf-8-sig')))
     issues = collections.defaultdict(list)  # category -> rows
@@ -149,12 +229,24 @@ def main():
         if y >= 2020 and abs(gold_bid - espn_bid) > 0.5:
             issues['Draft $ total differs'].append(f'{y}: gold ${gold_bid:.0f} vs ESPN ${espn_bid}')
 
+    dj = os.path.join(ROOT, '_ops', 'inbox', 'MAFFL_ESPN_Drafts.json')
+    dstats = None
+    if os.path.exists(dj):
+        dR, dstats = draft_audit(dj)
+        for k, v in dR.items():
+            issues[k].extend(v)
+
     order = ['No ESPN data for season', 'Team not found on ESPN for that season', 'Game not on ESPN that week',
              'On ESPN but not in gold', 'Winner/loser swapped', 'Score mismatch', 'Game type differs',
              'Season W-L differs', 'Season record: team not found on ESPN', 'Draft pick count differs', 'Draft $ total differs',
+             'Draft: on ESPN, missing from gold', 'Draft: in gold, not on ESPN', 'Draft: probably the wrong player in gold',
+             'Draft: pick credited to a different owner', 'Draft: price differs (2020+)', 'Draft: spelling differs from ESPN',
              'Team name differs from ESPN']
     lines = ['# Gold vs ESPN audit', '', f'Seasons 2005–{LAST_YEAR}. Read-only; generated by _ops/scripts/audit_gold_vs_espn.py from the ESPN raw archive.', '',
              f'Gold games checked: {checked} · matched to an ESPN game: {matched} · season records checked: {rec_checked}', '']
+    if dstats:
+        empties = ', '.join(f"{k.split()[1]}: {v}" for k, v in sorted(dstats.items()) if k.startswith('empty'))
+        lines += [f"Draft picks: {dstats['exact']} exact name match · {dstats['spelling']} spelling-only · ESPN empty picks (no player) {empties}", '']
     lines.append('| Check | Count |\n|---|---|')
     for k in order:
         lines.append(f'| {k} | {len(set(issues.get(k, [])))} |')

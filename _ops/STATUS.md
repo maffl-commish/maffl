@@ -23,11 +23,13 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Open decisions / known issues
 
+- **Gold vs ESPN fixes waiting (10/9):** 5 games on `build-fix/espn-audit-games` need a historic-correction switch in `generate-matchups-data.ps1` + a Windows `-Write` run; draft rebuild from ESPN names needs gen-draft/gen-history `-Write`. Raw ESPN archive still in public git history (purge = force-push, commish call). See `_ops/AUDIT_2026-10-09_gold_vs_espn.md`.
 - **`rivalry.html` old static embed** says it came from `cleaned_maffl_revised.csv`; may still credit Warren Brownies 2011–13 to Jimmy Crisan. Not generated; check by hand.
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
 
+- 2026-10-09 · Audit adds pick-level draft check (ESPN names): ~57 gold picks name the wrong player (surname guessed, e.g. Ed Reed as K, Evan Engram 2008), 18 missing, 3 wrong owner; 2006 gold beats ESPN. Gold game fixes on branch `build-fix/espn-audit-games` (Build check: Gate 2 fails as expected, generator lock blocks regen). Report updated.
 - 2026-10-09 · Private ESPN raw archive (`_ops/inbox/MAFFL_ESPN_raw/` + `.zip`: message boards, member IDs) untracked; it had been committed to the public repo on 9/29 despite the ignore rule. Still in git history until purged (commish decision). Scripts that read it take a path.
 - 2026-10-09 · ESPN draft history pull (Action, Run workflow only): `maffl_espn_drafts.py` v0.1 saves every 2005–2025 draft with player names to `_ops/inbox/MAFFL_ESPN_Drafts.json` (no board/member data), to name gold's 27 missing picks.
 - 2026-10-09 · Gold vs ESPN audit (2005–2025): `_ops/scripts/audit_gold_vs_espn.py` + report `_ops/AUDIT_2026-10-09_gold_vs_espn.md`. All 2,726 games match ESPN; 5 bad games (3 wrong winners: 2015 Wk5, 2022 Wk13, 2024 Wk13) explain all 6 W-L diffs; drafts short 27 picks. No data changed yet.
