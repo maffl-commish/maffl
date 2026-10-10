@@ -138,6 +138,19 @@ Edit the affected rows' scores in `MAFFL_Matchups_Clean.csv` (never add or remov
 → LM re-enters the corrected 👻 par in ESPN
 Top-performer rows are not re-captured for corrections (player-level corrections aren't visible on the schedule page).
 
+### CE-1b — Finished season corrected against ESPN (added 2026-10-09)
+Historic results are byte-locked by the CE-1 generator. When an ESPN check (`_ops/scripts/audit_gold_vs_espn.py`)
+proves a finished season's game wrong:
+→ fix the row(s) in gold `MAFFL_Matchups_Clean.csv` on a `build-fix/*` branch (rows change in place; never add, drop or reorder)
+→ update the Owners Sheet career W/L/T + Win% by hand for the owners whose record moved (validate Gate 2/3 prove it); same for any hand-authored `power-rankings.html` winPct / timeline W/L
+→ Actions → **Build write** → Run workflow on that branch with `correct_history` = the years (e.g. `2015,2022,2024`): runs `generate-matchups-data.ps1 -CorrectHistory …`, then `build.ps1 -Write`, re-checks both clean and commits the regenerated files to the branch
+→ open a PR; merge publishes. Division_History W/L and finish flags are their own gold: check them too.
+
+### CE-1c — Draft history corrected against ESPN (added 2026-10-09)
+`_ops/scripts/rebuild_draft_from_espn.py` (input: the "ESPN draft history pull" Action's `_ops/inbox/MAFFL_ESPN_Drafts.json`) fixes gold
+draft player names, wrong-side positions, owners and missing picks (2006 skipped: ESPN lost picks). Then
+`python3 _ops/scripts/gen_draft_summary.py --write` (Draft_Summary_ByOwner.csv + draft-summary-data.js), then Build write for draft.html / history csv-drafts.
+
 ### CE-2 — Owner renames their team (the Murello chain)
 `MAFFL_Team_History.csv` (update the `is_current` TRUE row)
 → `MAFFL_Owners_Sheet_revised.csv` "Current Team"

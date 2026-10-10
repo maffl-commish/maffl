@@ -12,6 +12,7 @@
 #   build\generate-matchups-data.ps1          # check-only: report, write nothing
 #   build\generate-matchups-data.ps1 -Write   # write the files that changed
 #   build\generate-matchups-data.ps1 -CorrectSeason 2026 [-Write]   # re-derive after a stat correction
+#   build\generate-matchups-data.ps1 -CorrectHistory 2015,2022 [-Write]   # finished seasons fixed against ESPN
 #
 # Exit 0 = all four files already match the gold; 1 = differences found
 # (written only with -Write); 2 = REFUSED, nothing written.
@@ -27,7 +28,10 @@
 #     exact prefix of the regenerated rows, and By_Season rows for earlier
 #     seasons must be byte-identical -- unless -CorrectSeason <in-progress
 #     year> is passed, which allows edits to that season's existing rows only
-#     (ESPN stat corrections, CE-1a). Earlier seasons stay byte-locked.
+#     (ESPN stat corrections, CE-1a). Earlier seasons stay byte-locked,
+#     except seasons named in -CorrectHistory (CE-1b: a finished season's
+#     existing rows corrected against ESPN; rows may change but none may be
+#     added, removed or reordered).
 #
 # Owner names. The CSVs carry each row's gold owner string verbatim. The two
 # name-keyed outputs (matchups-data.js, points files) instead emit ONE label
@@ -48,7 +52,9 @@
 # Seasons after that use the runbook 8 rule: Upper-tier, non-ThirdPlace
 # playoff games.
 # ======================================================================
-param([switch]$Write, [int]$CorrectSeason = 0)
+param([switch]$Write, [int]$CorrectSeason = 0, [string]$CorrectHistory = '')
+# -CorrectHistory takes a comma list ("2015,2022"): powershell -File passes it as one string.
+$histYears = @($CorrectHistory -split '[,; ]+' | Where-Object { $_ } | ForEach-Object { [int]$_ })
 
 . (Join-Path $PSScriptRoot 'maffl-lib.ps1')
 
@@ -168,6 +174,16 @@ if ($CorrectSeason -ne 0 -and $CorrectSeason -ne $maxYear) {
     Add-Problem "-CorrectSeason $CorrectSeason is not the in-progress season ($maxYear)"
 }
 $corrected = 0
+foreach ($y in $histYears) {
+    if ($y -ge $maxYear) { Add-Problem "-CorrectHistory $y is not a finished season (in progress: $maxYear); use -CorrectSeason" }
+}
+# Seasons whose existing rows may change in place (CE-1a in-progress, CE-1b finished).
+$editYears = @($histYears)
+if ($CorrectSeason -gt 0) { $editYears += $CorrectSeason }
+function Test-EditableRow([string]$Old, [string]$New, [string]$Prefix) {
+    foreach ($y in $editYears) { if ($Old.StartsWith("$Prefix$y,") -and $New.StartsWith("$Prefix$y,")) { return $true } }
+    return $false
+}
 
 # ----------------------------------------------------------------------
 # 2. Owner identity: exact alias lookup against the registry
@@ -229,7 +245,7 @@ if ($oldNc.Count -gt $ncLines.Count) {
 } else {
     for ($i = 0; $i -lt $oldNc.Count; $i++) {
         if ($oldNc[$i] -cne $ncLines[$i]) {
-            if ($CorrectSeason -gt 0 -and $oldNc[$i].StartsWith("$CorrectSeason,") -and $ncLines[$i].StartsWith("$CorrectSeason,")) {
+            if (Test-EditableRow $oldNc[$i] $ncLines[$i] '') {
                 Write-Host "  corrected NoConsolation: $($oldNc[$i]) -> $($ncLines[$i])" -ForegroundColor Yellow
                 $corrected++
                 continue
@@ -314,7 +330,7 @@ if ($oldJsRows.Count -gt $jsRows.Count) { Add-Problem "matchups-data.js would SH
 else {
     for ($i = 0; $i -lt $oldJsRows.Count; $i++) {
         if ($oldJsRows[$i] -cne $jsRows[$i]) {
-            if ($CorrectSeason -gt 0 -and $oldJsRows[$i].StartsWith("[$CorrectSeason,") -and $jsRows[$i].StartsWith("[$CorrectSeason,")) {
+            if (Test-EditableRow $oldJsRows[$i] $jsRows[$i] '[') {
                 Write-Host "  corrected matchups-data.js: $($oldJsRows[$i]) -> $($jsRows[$i])" -ForegroundColor Yellow
                 continue
             }
@@ -393,10 +409,17 @@ foreach ($a in $bsRows) { $t = Format-BsLine $a; $bsLines += $t; $newBsByKey["$(
 $bsText = ($bsLines -join "`r`n") + "`r`n"
 
 # Drift guard: every earlier-season row must be unchanged, in both directions.
+$bsCorrected = 0
 foreach ($k in $oldBsByKey.Keys) {
-    if ([int]($k.Split("`t")[1]) -ge $maxYear) { continue }
+    $ky = [int]($k.Split("`t")[1])
+    if ($ky -ge $maxYear) { continue }
     if (-not $newBsByKey.ContainsKey($k))          { Add-Problem "By_Season row would disappear: $($oldBsByKey[$k])" }
-    elseif ($newBsByKey[$k] -cne $oldBsByKey[$k])  { Add-Problem "By_Season pre-$maxYear row would change: '$($oldBsByKey[$k])' -> '$($newBsByKey[$k])'" }
+    elseif ($newBsByKey[$k] -cne $oldBsByKey[$k]) {
+        if ($histYears -contains $ky) {
+            Write-Host "  corrected By_Season: $($oldBsByKey[$k]) -> $($newBsByKey[$k])" -ForegroundColor Yellow
+            $bsCorrected++
+        } else { Add-Problem "By_Season pre-$maxYear row would change: '$($oldBsByKey[$k])' -> '$($newBsByKey[$k])'" }
+    }
 }
 foreach ($k in $newBsByKey.Keys) {
     if ([int]($k.Split("`t")[1]) -lt $maxYear -and -not $oldBsByKey.ContainsKey($k)) { Add-Problem "By_Season would gain a pre-$maxYear row: $($newBsByKey[$k])" }
@@ -420,7 +443,7 @@ $atRows.Sort([Comparison[object]]{
     if ($c -ne 0) { $c } else { [string]::CompareOrdinal($x.Owner, $y.Owner) }
 })
 $ownersThisSeason = @{}
-foreach ($a in $bsRows) { if ($a.Year -eq $maxYear) { $ownersThisSeason[$a.Owner] = $true } }
+foreach ($a in $bsRows) { if ($a.Year -eq $maxYear -or $histYears -contains $a.Year) { $ownersThisSeason[$a.Owner] = $true } }
 $atLines = @($AllTimeHeader)
 $atChanged = 0
 foreach ($t in $atRows) {
@@ -453,7 +476,7 @@ foreach ($gg in $ghostGames) {
 }
 foreach ($k in $respelled.Keys) { Write-Host "  Registry-resolved spelling: $k x$($respelled[$k])" -ForegroundColor DarkGray }
 Write-Host "  G-8: $g8 owner-season(s) <= $PostFrozenThrough carry frozen Post_ values that differ from the matchup-derived playoff set (carried, not fixed)." -ForegroundColor DarkGray
-if ($CorrectSeason -gt 0) { Write-Host "[correct] $corrected NoConsolation row(s) corrected in season $CorrectSeason" -ForegroundColor Yellow }
+if ($editYears.Count -gt 0) { Write-Host "[correct] $corrected NoConsolation row(s) corrected in season(s) $($editYears -join ', '); $bsCorrected finished-season By_Season row(s)" -ForegroundColor Yellow }
 
 $outputs = @(
     @{ Label = 'MAFFL_Matchups_NoConsolation.csv'; Path = $NoConsPath;   Bytes = (Get-EncodedBytes $ncText $Utf8NoBom); Note = "$($oldNc.Count - 1) -> $($ncLines.Count - 1) rows" },
