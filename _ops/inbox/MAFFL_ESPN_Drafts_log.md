@@ -1,5 +1,5 @@
 # MAFFL ESPN draft pull
-maffl_espn_drafts.py v0.1 · run 2026-10-09 09:07 PM ET · read-only
+maffl_espn_drafts.py v0.2 · run 2026-10-09 09:34 PM ET · read-only
 
 | Tier | Year | Picks | Names found | Lookup used |
 |---|---|---|---|---|
