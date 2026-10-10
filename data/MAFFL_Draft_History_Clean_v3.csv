@@ -1458,7 +1458,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,Josh Lavrinc,Garcon,Pierre Garcon,WR,BN,IND,7.0
 2010,Jacob Nickman,Moore,Matt Moore,RB,BN,PIT,1.0
 2010,Jon Murello / Rick Simmons,Snelling,Jason Snelling,RB,BN,ATL,1.0
-2010,Mike Murello,Oshiomogho Atogwe,Oshiomogho Atogwe,S,BN,WAS,1.0
+2010,Mike Murello,Oshiomogho Atogwe,Devin Aromashodu,WR,BN,CHI,1.0
 2010,Matt Brown,Buckhalter,Correll Buckhalter,RB,BN,DEN,1.0
 2010,Todd Trozzo,Suggs,Terrell Suggs,LB,BN,BAL,1.0
 2010,Marcus Ruby / Joe Ruby,Massaqoui,Mohamed Massaquoi,WR,BN,CLE,2.0
@@ -1547,7 +1547,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,BJ Funari,Harrison,James Harrison,LB,LB,PIT,2.0
 2010,Joe Reilly,Levy,DeAndre Levy,LB,LB,DET,1.0
 2010,Jimmy Crisan,Poz,Paul Posluszny,LB,LB,BUF,4.0
-2010,David Murello,Stephen Tulloch,Stephen Tulloch,LB,LB,TEN,2.0
+2010,David Murello,Stephen Tulloch,Keith Bulluck,LB,LB,NYG,2.0
 2010,Sean Ritson,DeMeco Ryans,DeMeco Ryans,LB,LB,HOU,2.0
 2010,Tony Trozzo,Dan Connor,Dan Connor,LB,LB,CAR,1.0
 2010,Chris Johnson,Cushing,Brian Cushing,LB,LB,HOU,1.0
@@ -1609,6 +1609,7 @@ Year,Owner,Player_Raw,Player,Position_Actual,Draft_Slot,NFL_Team,Price
 2010,Joni Murello,E. Sanders,Emmanuel Sanders,WR,BN,PIT,4.0
 2010,BJ Funari,Manningham,Mario Manningham,WR,BN,NYG,1.0
 2010,Matt Brown,Anthony Gonzalez,Anthony Gonzalez,WR,,IND,
+2010,David Murello,Rashad Jennings,Rashad Jennings,RB,,JAX,
 2011,Mike Murello,ROMO,Tony Romo,QB,QB,DAL,36.0
 2011,Matt Brown,FITZPATRICK,Ryan Fitzpatrick,QB,QB,BUF,6.0
 2011,Todd Trozzo,SANCHEZ,Mark Sanchez,QB,QB,NYJ,5.0

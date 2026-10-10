@@ -728,6 +728,8 @@ Rows changed: 679 · rows added: 18
 
 ## Not changed: couldn't pair (commissioner check) (3)
 
+_Resolved 2026-10-09: commissioner said follow ESPN; all three applied by hand (Bulluck, Jennings added, Aromashodu)._
+
 - 2010 David Murello: ESPN Keith Bulluck (LB) · gold unpaired: Stephen Tulloch (LB) $2.0
 - 2010 David Murello: ESPN Rashad Jennings (RB) · gold unpaired: Stephen Tulloch (LB) $2.0
 - 2010 Mike Murello: ESPN Devin Aromashodu (WR) · gold unpaired: Oshiomogho Atogwe (S) $1.0
