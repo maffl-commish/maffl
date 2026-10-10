@@ -1,6 +1,6 @@
 # ============================================================
 # MAFFL ESPN draft history pull
-# VERSION: 0.1 (2026-10-09)
+# VERSION: 0.2 (2026-10-09) · saves each player's pro team id
 #
 # READ-ONLY on ESPN. Pulls every past draft (both tiers) with player NAMES and writes
 #   _ops/inbox/MAFFL_ESPN_Drafts.json   (picks: round, pick, team, player, position, $)
@@ -93,7 +93,7 @@ def pull(tier, year):
         rows.append({"overall": p.get("overallPickNumber"), "round": p.get("roundId"), "pick": p.get("roundPickNumber"),
                      "teamId": p.get("teamId"), "team": teams.get(str(p.get("teamId")), "?"),
                      "playerId": pid, "player": info.get("name", ""), "pos": info.get("pos", ""),
-                     "bid": p.get("bidAmount", 0), "keeper": bool(p.get("keeper"))})
+                     "proTeamId": info.get("proTeamId"), "bid": p.get("bidAmount", 0), "keeper": bool(p.get("keeper"))})
     missing = [i for i in ids if i not in names]
     LOG.append(f"| {tier} | {year} | {len(picks)} | {len(ids) - len(missing)}/{len(ids)} | {'; '.join(used) or '—'} |")
     if missing:
@@ -114,9 +114,9 @@ def main():
                 LOG.append(f"| {tier} | {year} | — | — | FAILED: {type(e).__name__} {str(e)[:100]} |")
             time.sleep(0.5)
     stamp = datetime.now(ET).strftime("%Y-%m-%d %I:%M %p ET")
-    json.dump({"source": "ESPN via maffl_espn_drafts.py v0.1", "pulled": stamp, "seasons": out},
+    json.dump({"source": "ESPN via maffl_espn_drafts.py v0.2", "pulled": stamp, "seasons": out},
               open(OUT_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=1, sort_keys=True)
-    log = [f"# MAFFL ESPN draft pull", f"maffl_espn_drafts.py v0.1 · run {stamp} · read-only", "",
+    log = [f"# MAFFL ESPN draft pull", f"maffl_espn_drafts.py v0.2 · run {stamp} · read-only", "",
            "| Tier | Year | Picks | Names found | Lookup used |", "|---|---|---|---|---|"] + LOG
     if NOTES:
         log += ["", "## Unnamed players", ""] + NOTES
