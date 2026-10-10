@@ -1,0 +1,55 @@
+# MAFFL ESPN draft history pull — one-off/occasional, Run workflow only.
+# Runs _ops/scripts/maffl_espn_drafts.py and commits the draft JSON + log to _ops/inbox/.
+# Read-only on ESPN; saves draft picks only (no message board or member data). Needs secrets ESPN_S2 + SWID.
+name: ESPN draft history pull
+
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: 'Seasons, e.g. "2005-2025" or "2011,2016"'
+        required: false
+        default: "2005-2025"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: espn-draft-history
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Get the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install espn-api
+        run: pip install espn-api
+
+      - name: Pull drafts from ESPN
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+          MAFFL_YEARS: ${{ inputs.years }}
+        run: python _ops/scripts/maffl_espn_drafts.py
+
+      - name: Save to the repo
+        run: |
+          git config user.name "maffl-espn-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _ops/inbox/MAFFL_ESPN_Drafts.json _ops/inbox/MAFFL_ESPN_Drafts_log.md
+          if git diff --cached --quiet; then
+            echo "Unchanged; nothing to commit."
+          else
+            git commit -m "ESPN draft history pull: ${{ inputs.years }}"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
