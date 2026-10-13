@@ -1,8 +1,8 @@
 ﻿/* =====================================================================
  * MAFFL MATCHUPS DATA  (consolation games already excluded)
  * ---------------------------------------------------------------------
- * Source: data/MAFFL_Matchups_NoConsolation.csv (2,433 rows, 2005-2026).
- * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,429 rows emitted.
+ * Source: data/MAFFL_Matchups_NoConsolation.csv (2,444 rows, 2005-2026).
+ * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,439 rows emitted.
  *   MAFFL Ghost is a schedule filler, not a franchise: it earns no credits, wins
  *   no prizes, and does not affect promotion or relegation. Emitting it would put
  *   "MAFFL Ghost" in the rivalry.html owner picker (that roster is built from the
@@ -2449,11 +2449,21 @@ window.MATCHUPS_DATA = [
 [2026,4,"U","Mike Murello",185.86,"BJ Funari",152.36,"R"],
 [2026,4,"U","Braiden Snyder",172.68,"Jon Murello/ Rick Simmons",131.14,"R"],
 [2026,4,"U","David Murello",172.86,"Ed Peters",159.28,"R"],
-[2026,4,"U","Dan Reilly",150.72,"Joe Reilly",104.3,"R"],
+[2026,4,"U","Dan Reilly",150.72,"Joe Reilly",103.3,"R"],
 [2026,4,"U","Tony Trozzo",130.94,"Jon Fetrow",112.18,"R"],
 [2026,4,"U","Jacob Nickman",154.16,"Brian Murello/ Ron Murello",139.92,"R"],
-[2026,4,"L","Todd Trozzo",176.9,"Chris Johnson",124.0,"R"],
+[2026,4,"L","Todd Trozzo",175.9,"Chris Johnson",124.0,"R"],
 [2026,4,"L","Dominic Nicastro",166.12,"Nick Yankovich",161.72,"R"],
-[2026,4,"L","Charles Lavrinc",148.32,"Ben Funari",146.74,"R"],
-[2026,4,"L","Sam Lavrinc",155.9,"Tony Brooks",137.66,"R"]
+[2026,4,"L","Charles Lavrinc",147.32,"Ben Funari",146.74,"R"],
+[2026,4,"L","Sam Lavrinc",155.9,"Tony Brooks",137.66,"R"],
+[2026,5,"U","Joe Reilly",171.48,"Mike Murello",102.24,"R"],
+[2026,5,"U","Jon Fetrow",166.82,"Jacob Nickman",140.64,"R"],
+[2026,5,"U","Jon Murello/ Rick Simmons",173.4,"Tony Trozzo",126.28,"R"],
+[2026,5,"U","David Murello",136.08,"Dan Reilly",110.56,"R"],
+[2026,5,"U","Braiden Snyder",189.86,"Brian Murello/ Ron Murello",170.94,"R"],
+[2026,5,"U","BJ Funari",164.2,"Ed Peters",150.74,"R"],
+[2026,5,"L","Chris Johnson",163.94,"Bob Keslar",146.46,"R"],
+[2026,5,"L","Todd Trozzo",188.54,"Charles Lavrinc",133.8,"R"],
+[2026,5,"L","Tony Brooks",190.84,"Dominic Nicastro",148.42,"R"],
+[2026,5,"L","Sam Lavrinc",182.34,"Ben Funari",174.78,"R"]
 ];

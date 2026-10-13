@@ -2424,11 +2424,22 @@ Year,Week,Tier,Is_Playoffs,Game_Type,Winner_Owner,Winner_Owner_ESPN,Winner_Team,
 2026,4,Upper,False,Regular,Mike Murello,Michael Murello,Bad Attitude Gang,185.86,BJ Funari,Bryan Funari,South Hills FunShiners,152.36
 2026,4,Upper,False,Regular,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,172.68,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,131.14
 2026,4,Upper,False,Regular,David Murello,David Murello / Michael Murello,Marco Clair Kardiac Attack,172.86,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,159.28
-2026,4,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,150.72,Joe Reilly,Joseph Reilly,Reilly's Reindeer,104.3
+2026,4,Upper,False,Regular,Dan Reilly,Daniel Reilly,The Big Bang Theory,150.72,Joe Reilly,Joseph Reilly,Reilly's Reindeer,103.3
 2026,4,Upper,False,Regular,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,130.94,Jon Fetrow/ Casey Trozzo,John Fetrow / Casey Trozzo,Southside Shooters,112.18
 2026,4,Upper,False,Regular,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,154.16,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,139.92
-2026,4,Lower,False,Regular,Todd Trozzo,Todd Trozzo,Fightin Ferrets,176.9,Chris Johnson,Chris Johnson,The V-Unit,124.0
+2026,4,Lower,False,Regular,Todd Trozzo,Todd Trozzo,Fightin Ferrets,175.9,Chris Johnson,Chris Johnson,The V-Unit,124.0
 2026,4,Lower,False,Regular,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,166.12,Nick Yankovich,Nick Yankovich,Sarge's Squad,161.72
-2026,4,Lower,False,Regular,Charles Lavrinc,Charlie Lavrinc,Portly Primates,148.32,Ben Funari,Benjamin Funari,The Best in The 'Burgh,146.74
+2026,4,Lower,False,Regular,Charles Lavrinc,Charlie Lavrinc,Portly Primates,147.32,Ben Funari,Benjamin Funari,The Best in The 'Burgh,146.74
 2026,4,Lower,False,Regular,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,155.9,Tony Brooks,Tony Brooks,Tony's Talented Team,137.66
-2026,4,Lower,False,Ghost,MAFFL Ghost,MAFFL Ghost,MAFFL Ghost,145.67,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,124.88
+2026,4,Lower,False,Ghost,MAFFL Ghost,MAFFL Ghost,MAFFL Ghost,145.54,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,124.88
+2026,5,Upper,False,Regular,Joe Reilly,Joseph Reilly,Reilly's Reindeer,171.48,Mike Murello,Michael Murello,Bad Attitude Gang,102.24
+2026,5,Upper,False,Regular,Jon Fetrow/ Casey Trozzo,John Fetrow / Casey Trozzo,Southside Shooters,166.82,Jacob Nickman,Jacob Nickman,Jake's Jagoffs,140.64
+2026,5,Upper,False,Regular,Jon Murello/ Rick Simmons,Jon Murello / Rick Simmons,The Prodigal Sons,173.4,Tony Trozzo,Tony Trozzo,Happy Valley Hammer Time,126.28
+2026,5,Upper,False,Regular,David Murello,David Murello / Michael Murello,Marco Clair Kardiac Attack,136.08,Dan Reilly,Daniel Reilly,The Big Bang Theory,110.56
+2026,5,Upper,False,Regular,Braiden Snyder,Braiden Snyder,Mike Vicks Dog Sitting Co.,189.86,Brian Murello/ Ron Murello,Ron Murello,Hadley's Comets,170.94
+2026,5,Upper,False,Regular,BJ Funari,Bryan Funari,South Hills FunShiners,164.2,Ed Peters,Edwin Peters,Turkey Hat Conglomerate,150.74
+2026,5,Lower,False,Regular,Chris Johnson,Chris Johnson,The V-Unit,163.94,Bob Keslar,Bob Keslar / Bo Kes,Camp Kes,146.46
+2026,5,Lower,False,Regular,Todd Trozzo,Todd Trozzo,Fightin Ferrets,188.54,Charles Lavrinc,Charlie Lavrinc,Portly Primates,133.8
+2026,5,Lower,False,Regular,Tony Brooks,Tony Brooks,Tony's Talented Team,190.84,Dominic Nicastro,Dominic Nicastro,Steel City Champyinz,148.42
+2026,5,Lower,False,Regular,Sam Lavrinc,Sam Lavrinc,Tommy Phamclub,182.34,Ben Funari,Benjamin Funari,The Best in The 'Burgh,174.78
+2026,5,Lower,False,Ghost,MAFFL Ghost,MAFFL Ghost,MAFFL Ghost,161.96,Nick Yankovich,Nick Yankovich,Sarge's Squad,157.38
