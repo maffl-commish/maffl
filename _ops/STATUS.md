@@ -29,6 +29,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-20 · Week 6 Pulse: added the 👻's three-game win streak (0-3 → 3-3) to the Tony's Talented Team news item (commish).
 - 2026-10-17 · Design note `_ops/docs/KEY_DATES_DESIGN.md`: season-milestone alerts (Pulse strip in season, carousel offseason, Rules & Info as reference, group-text nudges). Doc only; no page changes.
 - 2026-10-09 · Draft: the 3 held 2010 rows now follow ESPN (commish): David's Tulloch pick → Keith Bulluck (NYG) + added Rashad Jennings; Mike's Atogwe pick → Devin Aromashodu (CHI). Draft summary + draft/history pages regenerated (Build write).
 - 2026-10-09 · **Gold fixed against ESPN (PR from `build-fix/espn-audit-games`).** Games: 5 corrected (2015 Wk5, 2022 Wk6, 2022 Wk13 ×2, 2024 Wk13) → 6 owners' career W-L (Owners Sheet, stats, power-rankings win%), Owner_Seasons, points, matchups-data.js. New CE-1b `-CorrectHistory` switch + Build write workflow did the regen (BUILD OK, proof re-run clean). history.html csv-matchups now generated from gold (adds 11 missing 2025 consolation games). Drafts: `rebuild_draft_from_espn.py` fixed 46 wrong players, 121 spellings, 509 positions (FLX → real), 3 owners, added 18 picks; 2006 left as is (ESPN lost picks); 3 rows for commish (2010 Tulloch, Atogwe). New `gen_draft_summary.py` regenerates draft-summary-data.js (round-trips old gold). Re-audit: games 100% match ESPN. Stamps: draft, history, stats, power-rankings (no version bump).
