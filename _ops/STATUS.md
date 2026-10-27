@@ -29,6 +29,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-27 · Weekly Pulse: 🗓️ Key Dates strip under the News card (⏰ Last call / 📅 Coming up / ✅ Just closed), built from `key-dates-data.js` against each Week's date, so old Pulses show what mattered then (Wk 2 coming up, Wk 3 last call, Wk 4 just closed for Relegation Insurance; Wk 7 shows the Dec 2 trade deadline). Robot writes nothing. No VERSION given, so date only; stays v6.3.
 - 2026-10-27 · Rules & Info: Annual Milestones gets a `#milestones` deep-link anchor (Key Dates strip links there) and a Relegation Insurance Deadline row (before Wk 4 first kickoff); gold Rules CSV synced. Rulebook date stamp only, stays v2.1.
 - 2026-10-27 · Key Dates data: gold `data/MAFFL_Key_Dates_2026.csv` (Annual Milestones + credit perk deadlines; commish answers in design §10) → `_ops/scripts/gen_key_dates.py` → `key-dates-data.js` (derived). Governance row; editorial guide line. No page change.
 - 2026-10-20 · Week 6 Pulse: added the 👻's three-game win streak (0-3 → 3-3) to the Tony's Talented Team news item (commish).

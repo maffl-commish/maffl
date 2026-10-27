@@ -1196,6 +1196,51 @@
   }
   .ct-unclaimed { font-family: var(--body); font-size: 13px; color: var(--muted); font-style: italic; }
 
+  /* ---------- Key Dates strip (v6.4) ----------
+     Built from key-dates-data.js (generated from data/MAFFL_Key_Dates_2026.csv)
+     relative to each Week's dateString. Not a .pulse-card: never collapses. */
+  .kd-strip {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .kd-head {
+    font-family: var(--display); font-weight: 700; font-size: 12px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .kd-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; }
+  .kd-row + .kd-row { border-top: 1px solid var(--border); }
+  .kd-main { flex: 1 1 auto; min-width: 0; }
+  .kd-tag {
+    display: inline-block;
+    font-family: var(--display); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px; white-space: nowrap;
+    margin-right: 6px; vertical-align: 2px;
+  }
+  .kd-tag.last   { background: var(--gold); color: var(--navy); }
+  .kd-tag.soon   { background: var(--navy-soft); color: var(--navy); }
+  .kd-tag.closed { background: #eceff4; color: var(--muted); }
+  .kd-label { font-family: var(--display); font-weight: 700; font-size: 16px; line-height: 1.25; color: var(--navy); }
+  .kd-row.last .kd-label { color: var(--gold-dark); }
+  .kd-row.closed .kd-label { color: var(--muted); }
+  .kd-when { font-size: 13px; color: var(--navy); margin-top: 2px; }
+  .kd-when .kd-count { color: var(--muted); }
+  .kd-row.last .kd-when .kd-count { color: var(--gold-dark); font-weight: 600; }
+  .kd-note { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+  .kd-strip .tier-badge { vertical-align: 2px; margin-left: 4px; }
+  .kd-link {
+    flex: 0 0 auto; align-self: center;
+    font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--navy);
+    padding: 10px 0 10px 8px; min-height: 44px; display: inline-flex; align-items: center;
+    white-space: nowrap;
+  }
+  .kd-link:hover { color: var(--gold-dark); }
+
 
   /* ---------- Tile layout (v6.0) ---------- */
   /* Two columns at every width. News and Elite 5 span the row; everything else
@@ -1456,6 +1501,9 @@
 <!-- All-time head-to-head data (same generated file rivalry.html uses).
      Powers the rivalry strip on the Week N Preview card. -->
 <script src="matchups-data.js"></script>
+<!-- Season deadlines/milestones (generated from data/MAFFL_Key_Dates_2026.csv).
+     Powers the Key Dates strip under the News card. -->
+<script src="key-dates-data.js"></script>
 <script>
 /* =====================================================================
  * COMMISSIONER WORKFLOW — publishing a new Weekly Pulse
@@ -3450,6 +3498,76 @@ function leaderOfTier(divs) {
   })[0];
 }
 
+/* --------- KEY DATES STRIP (v6.4) ---------
+   Rows come from window.MAFFL_KEY_DATES (key-dates-data.js, generated; edit
+   data/MAFFL_Key_Dates_2026.csv and run _ops/scripts/gen_key_dates.py).
+   Everything is relative to this Week's own dateString, so old Pulses keep
+   showing what mattered that week:
+     ⏰ Last call   — a deadline due within 7 days (before the next Pulse)
+     📅 Coming up   — anything due within its leadDays
+     ✅ Just closed — a deadline that passed in the last 7 days
+   The strip is hidden when nothing qualifies. The robot writes nothing here. */
+const KD_MONTHS = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
+function kdDayNumber(y, m, d) { return Math.round(Date.UTC(y, m, d) / 864e5); }
+function kdPulseDay(week) {
+  const m = /^([A-Z][a-z]{2})[a-z]*\.?\s+(\d{1,2}),\s*(\d{4})/.exec(week.dateString || "");
+  if (!m || !(m[1] in KD_MONTHS)) return null;
+  return kdDayNumber(+m[3], KD_MONTHS[m[1]], +m[2]);
+}
+function kdDueDay(row) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(row.due || "");
+  return m ? kdDayNumber(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function keyDatesFor(week) {
+  const rows = window.MAFFL_KEY_DATES;
+  const today = kdPulseDay(week);
+  if (!Array.isArray(rows) || today === null) return [];
+  const out = [];
+  rows.forEach(r => {
+    const due = kdDueDay(r);
+    if (due === null) return;
+    const dd = due - today;
+    const lead = r.leadDays || 21;
+    let status = null;
+    if (r.kind === "deadline" && dd >= 0 && dd <= 7) status = "last";
+    else if (dd >= 0 && dd <= lead) status = "soon";
+    else if (r.kind === "deadline" && dd < 0 && dd >= -7) status = "closed";
+    if (status) out.push({ row: r, dd, status });
+  });
+  const rank = { last: 0, soon: 1, closed: 2 };
+  return out.sort((a, b) => rank[a.status] - rank[b.status] || a.dd - b.dd);
+}
+function kdCountdown(dd) {
+  if (dd === 0) return "today";
+  if (dd === 1) return "tomorrow";
+  return "in " + dd + " days";
+}
+function renderKeyDates(week) {
+  const items = keyDatesFor(week);
+  if (!items.length) return "";
+  const TAG = { last: "⏰ Last call", soon: "📅 Coming up", closed: "✅ Just closed" };
+  const rowsHtml = items.map(({ row, dd, status }) => {
+    const tier = row.tier === "Upper" ? '<span class="tier-badge U">Upper</span>'
+               : row.tier === "Lower" ? '<span class="tier-badge L">Lower</span>' : "";
+    const count = status === "closed" ? "" : ` <span class="kd-count">· ${kdCountdown(dd)}</span>`;
+    const link = row.link ? `<a class="kd-link" href="${esc(row.link)}">Rules &rarr;</a>` : "";
+    return `
+      <div class="kd-row ${status}">
+        <div class="kd-main">
+          <div class="kd-label"><span class="kd-tag ${status}">${TAG[status]}</span>${esc(row.label)}${tier}</div>
+          <div class="kd-when">${esc(row.when)}${count}</div>
+          ${row.note ? `<div class="kd-note">${esc(row.note)}</div>` : ""}
+        </div>
+        ${link}
+      </div>`;
+  }).join("");
+  return `
+    <section class="kd-strip" aria-label="Key dates">
+      <div class="kd-head">🗓️ Key Dates</div>
+      ${rowsHtml}
+    </section>`;
+}
+
 /* --------- RENDER: HERO + GRID --------- */
 function renderPage(week) {
   const main = document.getElementById("pulseMain");
@@ -3461,6 +3579,7 @@ function renderPage(week) {
      post-draft edition and must not land last in the grid. */
   const cards = week.weekNumber === 0
     ? [renderNewsCard(week),
+       renderKeyDates(week),
        hasElite ? renderElite5Card(week) : "",
        hasStandings ? renderStandingsCard(week) : "",
        renderPreviewCard(week),
@@ -3470,6 +3589,7 @@ function renderPage(week) {
        Standings | Post-Season, Survivor | Credit Tracker, Results | Preview —
        then Coach of the Week and Elite 5 as full-width rows. */
     : [renderNewsCard(week),
+       renderKeyDates(week),
        hasStandings ? renderStandingsCard(week) : "",
        hasStandings && week.weekNumber >= 1 && week.weekNumber <= 13 ? renderPostseasonCard(week) : "",
        hasSurvivor ? renderSurvivorCard(week) : "",
