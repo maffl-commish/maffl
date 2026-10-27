@@ -1426,7 +1426,7 @@
     </div>
     <div class="page-header__meta" aria-label="Weekly Pulse version metadata">
       <span class="meta-pill">v6.3</span>
-      <span class="meta-pill">Last Updated October 20, 2026</span>
+      <span class="meta-pill">Last Updated October 27, 2026</span>
     </div>
   </header>
 </div>
@@ -1514,9 +1514,267 @@ const PULSE_STATE = "live";
  * ------------------------------------------------------------------- */
 const WEEKS = [
   {
+    weekNumber: 7,
+    dateString: "Oct 27, 2026",
+    headline: "The Big Bang Theory (Dan) posted 187.74, the week's top score, and beat Hadley's Comets (Brian/Ron) by 56.88.",
+    subhead: "Steel City Champyinz (Dom) led Lower with 175.52, and Marco Clair Kardiac Attack (Dave) beat The Prodigal Sons (Jon/Rick) by 44.12.",
+    latestChange: "No lead changed hands this week. Both points leaders, both blowout marks and both Individual High marks held.",
+
+    /* points = SEASON TOTAL through Week 7 (after the Week 6 stat corrections). credits are unchanged —
+       credit balances do not move during the season. */
+    upperTier: {
+      divA: [
+        { team: "South Hills FunShiners",     owner: "BJ Funari",     w: 5, l: 2, points: 1035.00, streak:  3, credits:  4 },
+        { team: "Bad Attitude Gang",          owner: "Mike Murello",  w: 4, l: 3, points: 1092.48, streak:  2, credits: 27 },
+        { team: "Marco Clair Kardiac Attack", owner: "David Murello", w: 4, l: 3, points: 1005.82, streak:  1, credits: 12 }
+      ],
+      divB: [
+        { team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder",           w: 6, l: 1, points: 1080.66, streak:  5, credits:  5 },
+        { team: "Jake's Jagoffs",             owner: "Jacob Nickman",            w: 5, l: 2, points: 1006.16, streak: -1, credits: 15 },
+        { team: "The Prodigal Sons",          owner: "Jon Murello/Rick Simmons", w: 3, l: 4, points: 1026.18, streak: -1, credits: 24 }
+      ],
+      divC: [
+        { team: "The Big Bang Theory",        owner: "Dan Reilly",  w: 4, l: 3, points:  963.00, streak:  2, credits:  6 },
+        { team: "Happy Valley Hammer Time",   owner: "Tony Trozzo", w: 3, l: 4, points:  981.26, streak: -3, credits: 17 },
+        { team: "Reilly's Reindeer",          owner: "Joe Reilly",  w: 2, l: 5, points:  983.68, streak:  1, credits: 23 }
+      ],
+      divD: [
+        { team: "Hadley's Comets",            owner: "Brian Murello/Ron Murello", w: 3, l: 4, points: 1036.34, streak: -4, credits: 7 },
+        { team: "Turkey Hat Conglomerate",    owner: "Ed Peters",                 w: 2, l: 5, points: 1059.28, streak: -4, credits: 7 },
+        { team: "Southside Shooters",         owner: "Jon Fetrow",                w: 1, l: 6, points:  926.46, streak: -2, credits: 7 }
+      ]
+    },
+    lowerTier: [
+      { team: "The Best in The 'Burgh", owner: "Ben Funari",       w: 5, l: 2, points: 1113.38, streak:  2, credits:  6 },
+      { team: "Tommy Phamclub",         owner: "Sam Lavrinc",      w: 4, l: 3, points: 1116.54, streak: -2, credits:  8 },
+      { team: "Portly Primates",        owner: "Charles Lavrinc",  w: 4, l: 3, points: 1056.80, streak:  1, credits:  6 },
+      { team: "Steel City Champyinz",   owner: "Dominic Nicastro", w: 4, l: 3, points: 1046.22, streak:  1, credits:  6 },
+      { team: "Sarge's Squad",          owner: "Nick Yankovich",   w: 4, l: 3, points: 1076.80, streak:  2, credits:  5 },
+      { team: "Fightin Ferrets",        owner: "Todd Trozzo",      w: 4, l: 3, points: 1157.34, streak: -1, credits:  1 },
+      { team: "The V-Unit",             owner: "Chris Johnson",    w: 4, l: 3, points:  996.52, streak:  3, credits:  0 },
+      { team: "Tony's Talented Team",   owner: "Tony Brooks",      w: 2, l: 5, points: 1105.68, streak: -2, credits: 10 },
+      { team: "Camp Kes",               owner: "Bob Keslar",       w: 1, l: 6, points:  913.42, streak: -4, credits:  1 },
+      { team: "MAFFL Ghost",            owner: "—",                w: 3, l: 4, points: 1035.31, streak: -1, credits:  0 }
+    ],
+
+    /* Winner first in every row. Player names are ESPN's first-initial form (or last name only),
+       so no first names are guessed. */
+    results: [
+      { tier: "U", teamA: "The Big Bang Theory", ownerA: "Dan Reilly", scoreA: 187.74,
+        teamB: "Hadley's Comets", ownerB: "Brian Murello/Ron Murello", scoreB: 130.86,
+        note: "Willis' 30.02, C. Williams' 26.12 and J. Williams' 21.5 made Dan's 187.74 the week's top score. Burrow's 36.88 was the best in Upper and Brian/Ron still lost for the fourth straight week." },
+      { tier: "U", teamA: "Reilly's Reindeer", ownerA: "Joe Reilly", scoreA: 160.88,
+        teamB: "Southside Shooters", ownerB: "Jon Fetrow", scoreB: 116.8,
+        note: "Penix's 26.42 and Singleton's 20.5 powered Joe's perfect lineup, and he is 5-0 against Fetrow. Fetrow sat J. Williams' 21.1 for Noel's 1.7." },
+      { tier: "U", teamA: "Marco Clair Kardiac Attack", ownerA: "David Murello", scoreA: 156.14,
+        teamB: "The Prodigal Sons", ownerB: "Jon Murello/Rick Simmons", scoreB: 112.02,
+        note: "Stroud's 20.52 and Gordon's 16.3 led Dave to a 44.12 win. Jon/Rick left O. Cooper Jr.'s 17.5 on the bench for Coker's 0.9." },
+      { tier: "U", teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", scoreA: 147.16,
+        teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters", scoreB: 141.92,
+        note: "Maye's 30.44 settled a 5.24 game, Braiden's fifth straight win. Pollard's 33.5 for Ed still wasn't enough, and Ed has lost four straight." },
+      { tier: "U", teamA: "South Hills FunShiners", ownerA: "BJ Funari", scoreA: 145.18,
+        teamB: "Happy Valley Hammer Time", ownerB: "Tony Trozzo", scoreB: 135.0,
+        note: "G. Smith's 28.48 and Cousins' 24.4 gave BJ his first win over Tony since 2013. Tony's best lineup would have won by 0.28." },
+      { tier: "U", teamA: "Bad Attitude Gang", ownerA: "Mike Murello", scoreA: 134.22,
+        teamB: "Jake's Jagoffs", ownerB: "Jacob Nickman", scoreB: 84.76,
+        note: "Judkins' 22.4 and Smith-Njigba's 22.3 beat a Jake lineup that scored 84.76, the 3rd-lowest Upper score since 2025. It was Mike's first win over Jake since 2024." },
+      { tier: "L", teamA: "Steel City Champyinz", ownerA: "Dominic Nicastro", scoreA: 175.52,
+        teamB: "Fightin Ferrets", ownerB: "Todd Trozzo", scoreB: 145.96,
+        note: "Penix's 26.42, Stafford's 22.5 and J. Williams' 21.1 gave Dom the top Lower score in their first meeting ever. Troz benched Pollard's 33.5." },
+      { tier: "L", teamA: "Sarge's Squad", ownerA: "Nick Yankovich", scoreA: 172.9,
+        teamB: "Tony's Talented Team", ownerB: "Tony Brooks", scoreB: 159.26,
+        note: "Prescott's 29.28 and Cashman's 21.0, a $3 claim on Thursday's waivers, gave Nick his first win ever over Brooks." },
+      { tier: "L", teamA: "The Best in The 'Burgh", ownerA: "Ben Funari", scoreA: 165.02,
+        teamB: "MAFFL Ghost", ownerB: "—", scoreB: 145.73,
+        note: "Cousins' 24.4, Irving's 23.0 and Smith-Njigba's 22.3 beat 👻 by 19.29. Ben is 5-2 and still alive in Survivor." },
+      { tier: "L", teamA: "The V-Unit", ownerA: "Chris Johnson", scoreA: 154.84,
+        teamB: "Tommy Phamclub", ownerB: "Sam Lavrinc", scoreB: 129.9,
+        note: "Burrow's 36.88 was bigger than the 24.94 margin, Johnson's third straight win. It was their first meeting ever." },
+      { tier: "L", teamA: "Portly Primates", ownerA: "Charles Lavrinc", scoreA: 143.8,
+        teamB: "Camp Kes", ownerB: "Bob Keslar", scoreB: 94.18,
+        note: "G. Smith's 28.48 and C. Williams' 26.12 carried Charlie in a first meeting ever. Bo's 94.18 is the lowest Lower score since 2025, with Murray's 15.9 on the bench." }
+    ],
+
+    /* One elimination per tier per week — the single lowest score among active teams.
+       The Ghost is not in the pool. */
+    survivor: {
+      upperActive: [
+        "South Hills FunShiners", "The Prodigal Sons", "Mike Vicks Dog Sitting Co.",
+        "Turkey Hat Conglomerate", "Southside Shooters"
+      ],
+      upperEliminated: [
+        { team: "Jake's Jagoffs",             week: 7, recent: true  },
+        { team: "Hadley's Comets",            week: 6, recent: false },
+        { team: "Bad Attitude Gang",          week: 5, recent: false },
+        { team: "Reilly's Reindeer",          week: 4, recent: false },
+        { team: "Marco Clair Kardiac Attack", week: 3, recent: false },
+        { team: "The Big Bang Theory",        week: 2, recent: false },
+        { team: "Happy Valley Hammer Time",   week: 1, recent: false }
+      ],
+      upperConcluded: false,
+      upperWinner: null,
+      lowerActive: [
+        "Sarge's Squad", "The Best in The 'Burgh"
+      ],
+      lowerEliminated: [
+        { team: "Fightin Ferrets",      week: 7, recent: true  },
+        { team: "Tony's Talented Team", week: 6, recent: false },
+        { team: "Portly Primates",      week: 5, recent: false },
+        { team: "Camp Kes",             week: 4, recent: false },
+        { team: "Tommy Phamclub",       week: 3, recent: false },
+        { team: "The V-Unit",           week: 2, recent: false },
+        { team: "Steel City Champyinz", week: 1, recent: false }
+      ],
+      lowerConcluded: false,
+      lowerWinner: null
+    },
+    survivorNote: "One team goes out per tier per week, the single lowest score. Jake's Jagoffs (Jake) went out with 84.76, 27.26 behind The Prodigal Sons (Jon/Rick). Fightin Ferrets (Troz) went out with 145.96, 19.06 behind The Best in The 'Burgh (Ben). Seven left of twenty-one.",
+
+    creditTracker: [
+      { award: "Most Team Points Scored — Upper",      credits: 5, leaderTeam: "Bad Attitude Gang",          leaderOwner: "Mike Murello",   value: "1092.48 through Wk 7", status: "leading", since: 6 },
+      { award: "Most Team Points Scored — Lower",      credits: 5, leaderTeam: "Fightin Ferrets",            leaderOwner: "Todd Trozzo",    value: "1157.34 through Wk 7", status: "leading", since: 5 },
+      { award: "Largest Blowout Victory — Upper",      credits: 3, leaderTeam: "Reilly's Reindeer",          leaderOwner: "Joe Reilly",     value: "69.74 over Bad Attitude Gang (Wk 5)", status: "leading", since: 5 },
+      { award: "Largest Blowout Victory — Lower",      credits: 3, leaderTeam: "Tommy Phamclub",             leaderOwner: "Sam Lavrinc",    value: "60.90 over 👻 (Wk 2)", status: "leading", since: 1 },
+      { award: "Individual High Score (Wkly) — Upper", credits: 3, leaderTeam: "Mike Vicks Dog Sitting Co.", leaderOwner: "Braiden Snyder", value: "47.46 — D. Maye", status: "leading", since: 5 },
+      { award: "Individual High Score (Wkly) — Lower", credits: 3, leaderTeam: "Fightin Ferrets",            leaderOwner: "Todd Trozzo",    value: "46.82 — Josh Allen", status: "leading", since: 2 }
+    ],
+    highestWeekly: {
+      credits: 1,
+      weeks: [
+        { week: 7, upper: { team: "The Big Bang Theory",        owner: "Dan Reilly",       score: 187.74 },
+                   lower: { team: "Steel City Champyinz",       owner: "Dominic Nicastro", score: 175.52 } },
+        { week: 6, upper: { team: "Bad Attitude Gang",          owner: "Mike Murello",   score: 167.96 },
+                   lower: { team: "Sarge's Squad",              owner: "Nick Yankovich", score: 178.20 } },
+        { week: 5, upper: { team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder", score: 189.86 },
+                   lower: { team: "Tony's Talented Team",       owner: "Tony Brooks",    score: 190.84 } },
+        { week: 4, upper: { team: "Bad Attitude Gang",       owner: "Mike Murello",  score: 185.86 },
+                   lower: { team: "Fightin Ferrets",         owner: "Todd Trozzo",   score: 176.90 } },
+        { week: 3, upper: { team: "Turkey Hat Conglomerate", owner: "Ed Peters",       score: 181.8 },
+                   lower: { team: "Portly Primates",         owner: "Charles Lavrinc", score: 185.98 } },
+        { week: 2, upper: { team: "Bad Attitude Gang",   owner: "Mike Murello", score: 210.0 },
+                   lower: { team: "Tommy Phamclub",      owner: "Sam Lavrinc",  score: 198.92 } },
+        { week: 1, upper: { team: "The Big Bang Theory", owner: "Dan Reilly",   score: 174.80 },
+                   lower: { team: "Fightin Ferrets",     owner: "Todd Trozzo",  score: 194.82 } }
+      ]
+    },
+
+    /* Rubric (editorial guide §6): all-play first, then PF. All-play through Wk 7 (facts file):
+       Upper — MVDSC 54-23, BAG 45-32, THC 43-34, Jake's 42-35, Marco 41-36.
+       Lower — Ferrets 40-16, Burgh 35-21, Tommy 31-25, Steel City/Sarge's/Tony's 30-26. */
+    elite5: [
+      { rank: 1, team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder", tier: "U",
+        note: "6-1 with the best all-play in Upper at 54-23 and five straight wins. Maye's 30.44 won a 5.24 game over Ed." },
+      { rank: 2, team: "Fightin Ferrets", owner: "Todd Trozzo", tier: "L",
+        note: "A 40-16 all-play and 1157.34 points are the best in Lower, and the points lead both tiers. A loss with 38.6 left on the bench, and his best lineup would have won." },
+      { rank: 3, team: "The Best in The 'Burgh", owner: "Ben Funari", tier: "L",
+        note: "5-2 with a 35-21 all-play and 1113.38 points. First in Lower's seeds, and one of two teams left in Survivor." },
+      { rank: 4, team: "Bad Attitude Gang", owner: "Mike Murello", tier: "U",
+        note: "A 45-32 all-play and Upper's most points, 1092.48. 4-3 with two straight wins, and 25.0 left on the bench." },
+      { rank: 5, team: "Tommy Phamclub", owner: "Sam Lavrinc", tier: "L",
+        note: "4-3 and second in Lower's seeds on credits, with a 31-25 all-play and 1116.54 points. Lost to The V-Unit by 24.94 in a first meeting." }
+    ],
+
+    /* COACH OF THE WEEK — copied from OUTPUT 2e of _ops/inbox/MAFFL_2026_Week07_espn.md (editorial §8b).
+       Knockout = 4+ lineup holes; 1–3 holes stay in. Upper tie at 0.0 (Reilly's, South Hills) goes to the higher score. */
+    coachOfWeek: {
+      upper: { team: "Reilly's Reindeer", owner: "Joe Reilly", leftOnBench: 0.0, scored: 160.88, best: 160.88,
+               runnersUp: [ { team: "South Hills FunShiners", leftOnBench: 0.0 }, { team: "Turkey Hat Conglomerate", leftOnBench: 3.0 } ],
+               out: [] },
+      lower: { team: "Portly Primates", owner: "Charles Lavrinc", leftOnBench: 4.0, scored: 143.8, best: 147.8,
+               runnersUp: [ { team: "Tommy Phamclub", leftOnBench: 6.0 }, { team: "The V-Unit", leftOnBench: 8.22 } ],
+               out: [] },
+      couldHaveWon: [
+        { team: "Fightin Ferrets", tier: "L", opponent: "Steel City Champyinz", lostBy: 29.56, leftOnBench: 38.6 },
+        { team: "Tony's Talented Team", tier: "L", opponent: "Sarge's Squad", lostBy: 13.64, leftOnBench: 18.18 },
+        { team: "Happy Valley Hammer Time", tier: "U", opponent: "South Hills FunShiners", lostBy: 10.18, leftOnBench: 10.46 }
+      ],
+      /* MISSED CALLS (ESPN report 2e): 15+ points, or smaller when the call cost the game (decisive: true).
+         One per team; [shuffle] pairings skipped. */
+      calls: [
+        { team: "Fightin Ferrets", tier: "L", benched: "T. Pollard", benchedPts: 33.5, started: "K. Walker III", startedPts: 5.7, cost: 27.8 },
+        { team: "Southside Shooters", tier: "U", benched: "J. Williams", benchedPts: 21.1, started: "J. Noel", startedPts: 1.7, cost: 19.4 },
+        { team: "The Big Bang Theory", tier: "U", benched: "T. Higgins", benchedPts: 20.8, started: "R. Shaheed", startedPts: 3.1, cost: 17.7 },
+        { team: "Bad Attitude Gang", tier: "U", benched: "L. Burden III", benchedPts: 19.7, started: "G. Bernard", startedPts: 2.7, cost: 17.0 },
+        { team: "The Prodigal Sons", tier: "U", benched: "O. Cooper Jr.", benchedPts: 17.5, started: "J. Coker", startedPts: 0.9, cost: 16.6 },
+        { team: "Hadley's Comets", tier: "U", benched: "K. Concepcion", benchedPts: 15.2, started: "T. Hurst III", startedPts: 0.0, cost: 15.2 }
+      ],
+      /* Every coach (ESPN report 2e tables). holes = byes + empty slots + starters who didn't play. */
+      board: [
+        { team: "Reilly's Reindeer", tier: "U", scored: 160.88, best: 160.88, leftOnBench: 0.0, holes: 0 },
+        { team: "South Hills FunShiners", tier: "U", scored: 145.18, best: 145.18, leftOnBench: 0.0, holes: 0 },
+        { team: "Turkey Hat Conglomerate", tier: "U", scored: 141.92, best: 144.92, leftOnBench: 3.0, holes: 0 },
+        { team: "Happy Valley Hammer Time", tier: "U", scored: 135.0, best: 145.46, leftOnBench: 10.46, holes: 0 },
+        { team: "Mike Vicks Dog Sitting Co.", tier: "U", scored: 147.16, best: 158.46, leftOnBench: 11.3, holes: 0 },
+        { team: "Jake's Jagoffs", tier: "U", scored: 84.76, best: 99.66, leftOnBench: 14.9, holes: 0 },
+        { team: "Marco Clair Kardiac Attack", tier: "U", scored: 156.14, best: 172.24, leftOnBench: 16.1, holes: 0 },
+        { team: "Southside Shooters", tier: "U", scored: 116.8, best: 136.2, leftOnBench: 19.4, holes: 1 },
+        { team: "The Prodigal Sons", tier: "U", scored: 112.02, best: 134.82, leftOnBench: 22.8, holes: 0 },
+        { team: "Bad Attitude Gang", tier: "U", scored: 134.22, best: 159.22, leftOnBench: 25.0, holes: 0 },
+        { team: "Hadley's Comets", tier: "U", scored: 130.86, best: 157.16, leftOnBench: 26.3, holes: 0 },
+        { team: "The Big Bang Theory", tier: "U", scored: 187.74, best: 225.44, leftOnBench: 37.7, holes: 0 },
+        { team: "Portly Primates", tier: "L", scored: 143.8, best: 147.8, leftOnBench: 4.0, holes: 0 },
+        { team: "Tommy Phamclub", tier: "L", scored: 129.9, best: 135.9, leftOnBench: 6.0, holes: 0 },
+        { team: "The V-Unit", tier: "L", scored: 154.84, best: 163.06, leftOnBench: 8.22, holes: 0 },
+        { team: "Steel City Champyinz", tier: "L", scored: 175.52, best: 184.22, leftOnBench: 8.7, holes: 1 },
+        { team: "The Best in The 'Burgh", tier: "L", scored: 165.02, best: 180.2, leftOnBench: 15.18, holes: 1 },
+        { team: "Camp Kes", tier: "L", scored: 94.18, best: 109.38, leftOnBench: 15.2, holes: 2 },
+        { team: "Tony's Talented Team", tier: "L", scored: 159.26, best: 177.44, leftOnBench: 18.18, holes: 0 },
+        { team: "Sarge's Squad", tier: "L", scored: 172.9, best: 192.7, leftOnBench: 19.8, holes: 0 },
+        { team: "Fightin Ferrets", tier: "L", scored: 145.96, best: 184.56, leftOnBench: 38.6, holes: 0 }
+      ],
+      note: "Reilly's Reindeer (Joe) and South Hills FunShiners (BJ) both started perfect lineups, and Joe's higher score took it. Fightin Ferrets (Troz) left 38.6 on the bench, including Pollard's 33.5 for Walker's 5.7, and lost by 29.56."
+    },
+
+    postseasonNote: "Four Lower teams are 4-3 behind The Best in The 'Burgh (Ben): Tommy Phamclub (Sam) holds 2nd on 8 credits, and Portly Primates (Charlie) and Steel City Champyinz (Dom) have 6 each.",
+
+    newsReel: [
+      { section: "Can You Believe This?", icon: "🤯", items: [
+        "Fightin Ferrets (Troz) benched T. Pollard's 33.5, more than any starter Troz played, and lost to Steel City Champyinz (Dom) by 29.56. Troz's best lineup would have won by 9.04."
+      ] },
+      { section: "Hot & Not", icon: "🔥", items: [
+        "Camp Kes (Bo) scored 94.18, the lowest Lower score in 175 games since 2025, and benched K. Murray's 15.9, more than any starter. Bo has lost four straight and is 1-6.",
+        "South Hills FunShiners (BJ) beat Happy Valley Hammer Time (Tony) 145.18-135.00, BJ's first win over Tony since 2013 after four straight losses. Tony's best lineup would have won by 0.28.",
+        "Sarge's Squad (Nick) beat Tony's Talented Team (Brooks) for the first time ever, 172.90-159.26. Brooks left 18.18 on the bench, and his best lineup would have won by 4.54."
+      ] },
+      { section: "Survivor Watch", icon: "💀", items: [
+        "Jake's Jagoffs (Jake) went out of Upper's Survivor with 84.76, the 3rd-lowest Upper score since 2025. Fightin Ferrets (Troz) went out of Lower's, 19.06 behind The Best in The 'Burgh (Ben). Seven teams are left."
+      ] },
+      { section: "Big Spenders", icon: "💸", items: [
+        "South Hills FunShiners (BJ) topped Thursday's Upper waivers with $70 on J. Coleman. The Prodigal Sons (Jon/Rick) paid $17 for O. Cooper Jr. and then left his 17.5 on the bench."
+      ] }
+    ],
+
+    /* WEEK 8 PREVIEW. Both tiers' pairings from the ESPN pull (OUTPUT 5); Upper also matches
+       data/MAFFL_Schedule_2026_Upper.csv. Away team first. Featured: 3 Upper + 2 Lower (editorial guide §8). */
+    matchupPreviews: [
+      { tier: "U", highlight: true, teamA: "Jake's Jagoffs", ownerA: "Jacob Nickman", teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters",
+        note: "Jake is 5-2 and the 5th seed, the first wild card, and Ed is 2-5 and in a relegation spot after four straight losses. Ed has won the last three regular-season meetings, the latest in Week 8 of 2021." },
+      { tier: "U", highlight: false, teamA: "South Hills FunShiners", ownerA: "BJ Funari", teamB: "The Prodigal Sons", ownerB: "Jon Murello/Rick Simmons",
+        note: "BJ is 5-2 and the 2nd seed, and Jon/Rick are 3-4 and 8th. Jon/Rick have won the last two regular-season meetings." },
+      { tier: "U", highlight: false, teamA: "Bad Attitude Gang", ownerA: "Mike Murello", teamB: "The Big Bang Theory", ownerB: "Dan Reilly",
+        note: "Dan has won the last four regular-season meetings, but Mike won both playoff meetings, in 2015 and 2016. Dan is the 3rd seed and Mike the 6th." },
+      { tier: "U", highlight: false, teamA: "Marco Clair Kardiac Attack", ownerA: "David Murello", teamB: "Southside Shooters", ownerB: "Jon Fetrow",
+        note: "Dave is 4-3 and the 7th seed, and Fetrow is 1-6 and last in Upper. Fetrow won last year's Week 17 consolation game." },
+      { tier: "U", highlight: true, teamA: "Reilly's Reindeer", ownerA: "Joe Reilly", teamB: "Hadley's Comets", ownerB: "Brian Murello/Ron Murello",
+        note: "Brian/Ron are the 4th seed at 3-4 but have lost four straight, and Joe is 2-5 and 10th. They split two playoff meetings: Joe won the 2017 quarterfinal and Brian/Ron the 2022 semifinal." },
+      { tier: "U", highlight: true, teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", teamB: "Happy Valley Hammer Time", ownerB: "Tony Trozzo",
+        note: "A first meeting ever. Braiden is 6-1 on five straight wins and holds the 1st seed, and Tony is 3-4, ninth, on a three-game skid." },
+      { tier: "L", highlight: false, teamA: "Tony's Talented Team", ownerA: "Tony Brooks", teamB: "Camp Kes", ownerB: "Bob Keslar",
+        note: "Brooks has never lost to Bo. Brooks is 2-5 and 8th, and Bo is 1-6 and last." },
+      { tier: "L", highlight: true, teamA: "Portly Primates", ownerA: "Charles Lavrinc", teamB: "Tommy Phamclub", ownerB: "Sam Lavrinc",
+        note: "Both are 4-3 on the promotion line: Sam holds 2nd on 8 credits and Charlie is 3rd on 6, so the winner owns the line. Charlie won their last meeting, in last year's Week 17 consolation game." },
+      { tier: "L", highlight: true, teamA: "Sarge's Squad", ownerA: "Nick Yankovich", teamB: "The Best in The 'Burgh", ownerB: "Ben Funari",
+        note: "The last two Lower teams in Survivor meet, so one goes home. Ben is 5-2 and the 1st seed, Nick is 4-3 and 5th, and Ben won their last meeting, in Week 11 last year." },
+      { tier: "L", highlight: false, teamA: "The V-Unit", ownerA: "Chris Johnson", teamB: "Steel City Champyinz", ownerB: "Dominic Nicastro",
+        note: "A first meeting ever. Dom is 4-3 and 4th, and Johnson is 4-3 and 7th on three straight wins." },
+      { tier: "L", highlight: false, teamA: "MAFFL Ghost", ownerA: "—", teamB: "Fightin Ferrets", ownerB: "Todd Trozzo",
+        note: "Troz is 4-3 and 6th, and out of Survivor." }
+    ]
+  },
+  {
     weekNumber: 6,
     dateString: "Oct 20, 2026",
-    headline: "Sarge's Squad (Nick) scored 178.70, the top score in either tier, and beat Camp Kes (Bo) by 55.80.",
+    headline: "Sarge's Squad (Nick) scored 178.20, the top score in either tier, and beat Camp Kes (Bo) by 55.30.",
     subhead: "The V-Unit (Johnson) beat Portly Primates (Charlie) by 2.20 with a perfect lineup and T. Lawrence's 34.34.",
     latestChange: "One lead changed hands. Bad Attitude Gang (Mike) took Upper points at 958.26, while Reilly's Reindeer's 69.74 blowout and both Individual High marks held.",
 
@@ -1563,33 +1821,33 @@ const WEEKS = [
       { tier: "U", teamA: "Bad Attitude Gang", ownerA: "Mike Murello", scoreA: 167.96,
         teamB: "Southside Shooters", ownerB: "Jon Fetrow", scoreB: 145.94,
         note: "Shough's 32.96 and Allen's 22.3 carried Mike. Fetrow started a perfect lineup with the week's top individual score, Lawrence's 34.34, and still lost by 22.02." },
-      { tier: "U", teamA: "The Prodigal Sons", ownerA: "Jon Murello/Rick Simmons", scoreA: 160.32,
+      { tier: "U", teamA: "The Prodigal Sons", ownerA: "Jon Murello/Rick Simmons", scoreA: 159.32,
         teamB: "Reilly's Reindeer", ownerB: "Joe Reilly", scoreB: 134.56,
         note: "Young's 23.84 and Cook's 21.3 beat Joe, who left 40.28 on the bench, including Penix's 28.1, more than any starter he played." },
-      { tier: "U", teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", scoreA: 151.06,
+      { tier: "U", teamA: "Mike Vicks Dog Sitting Co.", ownerA: "Braiden Snyder", scoreA: 151.56,
         teamB: "Marco Clair Kardiac Attack", ownerB: "David Murello", scoreB: 150.58,
-        note: "Maye's 29.8 and Walker's 25.9 held on by 0.48, with Stroud's 27.98 and 12.3 left on Dave's bench." },
+        note: "Maye's 29.8 and Walker's 25.9 held on by 0.98, with Stroud's 27.98 and 12.3 left on Dave's bench." },
       { tier: "U", teamA: "Jake's Jagoffs", ownerA: "Jacob Nickman", scoreA: 135.52,
         teamB: "Happy Valley Hammer Time", ownerB: "Tony Trozzo", scoreB: 121.78,
         note: "Daniels' 25.0 gave Jake his first win over Tony since 2024 and snapped a two-game skid in the series." },
       { tier: "U", teamA: "South Hills FunShiners", ownerA: "BJ Funari", scoreA: 134.2,
         teamB: "Hadley's Comets", ownerB: "Brian Murello/Ron Murello", scoreB: 100.3,
         note: "Cousins' 21.52 and Nabers' 17.5 gave BJ career win No. 150. Brian/Ron went out of Survivor, with Pitts' 18.0 on the bench, more than any starter." },
-      { tier: "U", teamA: "The Big Bang Theory", ownerA: "Dan Reilly", scoreA: 125.86,
-        teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters", scoreB: 107.68,
+      { tier: "U", teamA: "The Big Bang Theory", ownerA: "Dan Reilly", scoreA: 125.36,
+        teamB: "Turkey Hat Conglomerate", ownerB: "Ed Peters", scoreB: 106.68,
         note: "Williams' 18.5 led Dan to career win No. 100 and his first over Ed since 2023. Ed started J. Johnson's 0.0 at tight end with Strange's 4.4 on the bench." },
-      { tier: "L", teamA: "Sarge's Squad", ownerA: "Nick Yankovich", scoreA: 178.7,
+      { tier: "L", teamA: "Sarge's Squad", ownerA: "Nick Yankovich", scoreA: 178.2,
         teamB: "Camp Kes", ownerB: "Bob Keslar", scoreB: 122.9,
-        note: "Stroud's 27.98 and McCaffrey's 20.7 made Nick's 178.70 the top score in either tier. It was their first meeting ever, and Bo started two inactive players." },
-      { tier: "L", teamA: "Fightin Ferrets", ownerA: "Todd Trozzo", scoreA: 171.5,
+        note: "Stroud's 27.98 and McCaffrey's 20.7 made Nick's 178.20 the top score in either tier. It was their first meeting ever, and Bo started two inactive players." },
+      { tier: "L", teamA: "Fightin Ferrets", ownerA: "Todd Trozzo", scoreA: 172.0,
         teamB: "Tommy Phamclub", ownerB: "Sam Lavrinc", scoreB: 151.24,
         note: "Maye's 29.8 and Walker's 25.9 powered Troz in their first meeting ever. Sam left Diggs' 10.4 on the bench." },
       { tier: "L", teamA: "The V-Unit", ownerA: "Chris Johnson", scoreA: 144.18,
         teamB: "Portly Primates", ownerB: "Charles Lavrinc", scoreB: 141.98,
         note: "Lawrence's 34.34 was more than the 2.20 margin, and Johnson's lineup left nothing on the bench. First meeting ever." },
-      { tier: "L", teamA: "MAFFL Ghost", ownerA: "—", scoreA: 141.19,
+      { tier: "L", teamA: "MAFFL Ghost", ownerA: "—", scoreA: 141.25,
         teamB: "Tony's Talented Team", ownerB: "Tony Brooks", scoreB: 134.44,
-        note: "Brooks lost to 👻 by 6.75 even with Shough's 32.96, and McKee's 14.6 sat on his bench. Tony's went out of Survivor." },
+        note: "Brooks lost to 👻 by 6.81 even with Shough's 32.96, and McKee's 14.6 sat on his bench. Tony's went out of Survivor." },
       { tier: "L", teamA: "The Best in The 'Burgh", ownerA: "Ben Funari", scoreA: 135.08,
         teamB: "Steel City Champyinz", ownerB: "Dominic Nicastro", scoreB: 128.18,
         note: "Cousins' 21.52 and Purdy's 19.36 beat a Dom lineup that had Penix's 28.1. Ben is 2-0 in the series." }
@@ -1626,7 +1884,7 @@ const WEEKS = [
       lowerConcluded: false,
       lowerWinner: null
     },
-    survivorNote: "One team goes out per tier per week, the single lowest score. Hadley's Comets (Brian/Ron) went out with 100.30, 7.38 behind Turkey Hat Conglomerate (Ed). Tony's Talented Team (Brooks) went out with 134.44, 0.64 behind The Best in The 'Burgh (Ben). Nine left of twenty-one.",
+    survivorNote: "One team goes out per tier per week, the single lowest score. Hadley's Comets (Brian/Ron) went out with 100.30, 6.38 behind Turkey Hat Conglomerate (Ed). Tony's Talented Team (Brooks) went out with 134.44, 0.64 behind The Best in The 'Burgh (Ben). Nine left of twenty-one.",
 
     creditTracker: [
       { award: "Most Team Points Scored — Upper",      credits: 5, leaderTeam: "Bad Attitude Gang",          leaderOwner: "Mike Murello",   value: "958.26 through Wk 6", status: "leading", since: 6 },
@@ -1661,7 +1919,7 @@ const WEEKS = [
       { rank: 1, team: "Fightin Ferrets", owner: "Todd Trozzo", tier: "L",
         note: "A 37-11 all-play is the best in either tier, and 1010.88 points lead Lower. 4-2 with three straight wins, the best start since 2016." },
       { rank: 2, team: "Mike Vicks Dog Sitting Co.", owner: "Braiden Snyder", tier: "U",
-        note: "5-1 with the best all-play in Upper at 46-20 and four straight wins. He beat Marco by 0.48 with 17.34 left on the bench." },
+        note: "5-1 with the best all-play in Upper at 46-20 and four straight wins. He beat Marco by 0.98 with 17.34 left on the bench." },
       { rank: 3, team: "Jake's Jagoffs", owner: "Jacob Nickman", tier: "U",
         note: "A 42-24 all-play and 921.40 points, and back in the win column after his first loss. 5-1 and the top seed in Upper." },
       { rank: 4, team: "Tommy Phamclub", owner: "Sam Lavrinc", tier: "L",
@@ -1680,9 +1938,9 @@ const WEEKS = [
                runnersUp: [ { team: "Steel City Champyinz", leftOnBench: 0.5 }, { team: "Sarge's Squad", leftOnBench: 1.4 } ],
                out: [] },
       couldHaveWon: [
-        { team: "Reilly's Reindeer", tier: "U", opponent: "The Prodigal Sons", lostBy: 25.76, leftOnBench: 40.28 },
-        { team: "Tony's Talented Team", tier: "L", opponent: "👻", lostBy: 6.75, leftOnBench: 12.42 },
-        { team: "Marco Clair Kardiac Attack", tier: "U", opponent: "Mike Vicks Dog Sitting Co.", lostBy: 0.48, leftOnBench: 12.3 }
+        { team: "Reilly's Reindeer", tier: "U", opponent: "The Prodigal Sons", lostBy: 24.76, leftOnBench: 40.28 },
+        { team: "Tony's Talented Team", tier: "L", opponent: "👻", lostBy: 6.81, leftOnBench: 12.42 },
+        { team: "Marco Clair Kardiac Attack", tier: "U", opponent: "Mike Vicks Dog Sitting Co.", lostBy: 0.98, leftOnBench: 12.3 }
       ],
       /* MISSED CALLS (ESPN report 2e): 15+ points, or smaller when the call cost the game (decisive: true).
          One per team; [shuffle] pairings skipped. */
@@ -1694,46 +1952,46 @@ const WEEKS = [
       /* Every coach (ESPN report 2e tables). holes = byes + empty slots + starters who didn't play. */
       board: [
         { team: "Southside Shooters", tier: "U", scored: 145.94, best: 145.94, leftOnBench: 0.0, holes: 0 },
-        { team: "The Prodigal Sons", tier: "U", scored: 160.32, best: 160.42, leftOnBench: 0.1, holes: 0 },
+        { team: "The Prodigal Sons", tier: "U", scored: 159.32, best: 160.42, leftOnBench: 0.1, holes: 0 },
         { team: "Happy Valley Hammer Time", tier: "U", scored: 121.78, best: 122.88, leftOnBench: 1.1, holes: 0 },
-        { team: "Turkey Hat Conglomerate", tier: "U", scored: 107.68, best: 112.98, leftOnBench: 5.3, holes: 0 },
+        { team: "Turkey Hat Conglomerate", tier: "U", scored: 106.68, best: 112.98, leftOnBench: 5.3, holes: 0 },
         { team: "Jake's Jagoffs", tier: "U", scored: 135.52, best: 141.26, leftOnBench: 5.74, holes: 0 },
         { team: "South Hills FunShiners", tier: "U", scored: 134.2, best: 144.8, leftOnBench: 10.6, holes: 1 },
         { team: "Marco Clair Kardiac Attack", tier: "U", scored: 150.58, best: 162.88, leftOnBench: 12.3, holes: 0 },
-        { team: "The Big Bang Theory", tier: "U", scored: 125.86, best: 139.46, leftOnBench: 13.6, holes: 0 },
+        { team: "The Big Bang Theory", tier: "U", scored: 125.36, best: 139.46, leftOnBench: 13.6, holes: 0 },
         { team: "Hadley's Comets", tier: "U", scored: 100.3, best: 116.0, leftOnBench: 15.7, holes: 0 },
-        { team: "Mike Vicks Dog Sitting Co.", tier: "U", scored: 151.06, best: 168.4, leftOnBench: 17.34, holes: 0 },
+        { team: "Mike Vicks Dog Sitting Co.", tier: "U", scored: 151.56, best: 168.4, leftOnBench: 17.34, holes: 0 },
         { team: "Bad Attitude Gang", tier: "U", scored: 167.96, best: 193.56, leftOnBench: 25.6, holes: 1 },
         { team: "Reilly's Reindeer", tier: "U", scored: 134.56, best: 174.84, leftOnBench: 40.28, holes: 0 },
         { team: "The V-Unit", tier: "L", scored: 144.18, best: 144.18, leftOnBench: 0.0, holes: 0 },
         { team: "Steel City Champyinz", tier: "L", scored: 128.18, best: 128.68, leftOnBench: 0.5, holes: 0 },
-        { team: "Sarge's Squad", tier: "L", scored: 178.7, best: 180.1, leftOnBench: 1.4, holes: 0 },
+        { team: "Sarge's Squad", tier: "L", scored: 178.2, best: 180.1, leftOnBench: 1.4, holes: 0 },
         { team: "Portly Primates", tier: "L", scored: 141.98, best: 143.98, leftOnBench: 2.0, holes: 1 },
         { team: "The Best in The 'Burgh", tier: "L", scored: 135.08, best: 140.18, leftOnBench: 5.1, holes: 0 },
         { team: "Tommy Phamclub", tier: "L", scored: 151.24, best: 157.74, leftOnBench: 6.5, holes: 0 },
         { team: "Tony's Talented Team", tier: "L", scored: 134.44, best: 146.86, leftOnBench: 12.42, holes: 1 },
         { team: "Camp Kes", tier: "L", scored: 122.9, best: 145.1, leftOnBench: 22.2, holes: 2 },
-        { team: "Fightin Ferrets", tier: "L", scored: 171.5, best: 196.1, leftOnBench: 24.6, holes: 0 }
+        { team: "Fightin Ferrets", tier: "L", scored: 172.0, best: 196.1, leftOnBench: 24.6, holes: 0 }
       ],
-      note: "Southside Shooters (Fetrow) and The V-Unit (Johnson) both started perfect lineups. Reilly's Reindeer (Joe) left 40.28 on the bench, including Penix's 28.1 for Darnold's 9.02, and lost by 25.76."
+      note: "Southside Shooters (Fetrow) and The V-Unit (Johnson) both started perfect lineups. Reilly's Reindeer (Joe) left 40.28 on the bench, including Penix's 28.1 for Darnold's 9.02, and lost by 24.76."
     },
 
     postseasonNote: "Three Lower teams are 4-2, and credits set the seeds: Tommy Phamclub (Sam) has 8, The Best in The 'Burgh (Ben) 6 and Fightin Ferrets (Troz) 1, so Troz sits 3rd, a spot off the promotion line.",
 
     newsReel: [
       { section: "Can You Believe This?", icon: "🤯", items: [
-        "Tony's Talented Team (Brooks) lost to 👻 by 6.75 after benching T. McKee's 14.6 for J. Winston's 6.48 in the OP slot. That 8.12 swing was bigger than the margin. It was the 👻's third straight win after an 0-3 start, and the Ghost is now 3-3.",
-        "Marco Clair Kardiac Attack (Dave) lost to Mike Vicks Dog Sitting Co. (Braiden) by 0.48 and left 12.3 on the bench. Dave's best lineup would have won by 11.82."
+        "Tony's Talented Team (Brooks) lost to 👻 by 6.81 after benching T. McKee's 14.6 for J. Winston's 6.48 in the OP slot. That 8.12 swing was bigger than the margin. It was the 👻's third straight win after an 0-3 start, and the Ghost is now 3-3.",
+        "Marco Clair Kardiac Attack (Dave) lost to Mike Vicks Dog Sitting Co. (Braiden) by 0.98 and left 12.3 on the bench. Dave's best lineup would have won by 11.32."
       ] },
       { section: "Hot & Not", icon: "🔥", items: [
         "South Hills FunShiners (BJ) won the 150th regular-season game of his career, 134.20-100.30, and leads Division A at 4-2.",
         "The Big Bang Theory (Dan) won career regular-season game No. 100 and beat Turkey Hat Conglomerate (Ed) for the first time since 2023. Ed has lost three straight."
       ] },
       { section: "Survivor Watch", icon: "💀", items: [
-        "Hadley's Comets (Brian/Ron) went out of Upper's Survivor with 100.30, 7.38 behind Turkey Hat Conglomerate (Ed). Tony's Talented Team (Brooks) went out of Lower's, 0.64 behind The Best in The 'Burgh (Ben). Nine teams are left."
+        "Hadley's Comets (Brian/Ron) went out of Upper's Survivor with 100.30, 6.38 behind Turkey Hat Conglomerate (Ed). Tony's Talented Team (Brooks) went out of Lower's, 0.64 behind The Best in The 'Burgh (Ben). Nine teams are left."
       ] },
       { section: "Big Spenders", icon: "💸", items: [
-        "Fightin Ferrets (Troz) spent $74 on Thursday's Lower waivers, $32 on D. Boston and $21 each on P. Wilson and E. Williams, and won by 20.26. Boston started for 1.5."
+        "Fightin Ferrets (Troz) spent $74 on Thursday's Lower waivers, $32 on D. Boston and $21 each on P. Wilson and E. Williams, and won by 20.76. Boston started for 1.5."
       ] }
     ],
 
@@ -1755,7 +2013,7 @@ const WEEKS = [
       { tier: "L", highlight: false, teamA: "Camp Kes", ownerA: "Bob Keslar", teamB: "Portly Primates", ownerB: "Charles Lavrinc",
         note: "A first meeting ever. Charlie is 3-3 and 4th, and Bo is 1-5 and last." },
       { tier: "L", highlight: true, teamA: "Tony's Talented Team", ownerA: "Tony Brooks", teamB: "Sarge's Squad", ownerB: "Nick Yankovich",
-        note: "Brooks won the last meeting by 35.78, in Week 10 last year, and has won both, but he is 2-4 and out of Survivor. Nick just posted the week's top score, 178.70, and is one of three teams left." },
+        note: "Brooks won the last meeting by 35.78, in Week 10 last year, and has won both, but he is 2-4 and out of Survivor. Nick just posted the week's top score, 178.20, and is one of three teams left." },
       { tier: "L", highlight: false, teamA: "Tommy Phamclub", ownerA: "Sam Lavrinc", teamB: "The V-Unit", ownerB: "Chris Johnson",
         note: "A first meeting ever. Sam is 4-2 and the #1 seed, and Johnson is 3-3 with no credits." },
       { tier: "L", highlight: false, teamA: "The Best in The 'Burgh", ownerA: "Ben Funari", teamB: "MAFFL Ghost", ownerB: "—",
