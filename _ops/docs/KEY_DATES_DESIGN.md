@@ -1,6 +1,6 @@
 # Key Dates — design note
 
-VERSION: 0.1 (2026-10-17, chat) · Owner: commissioner (Mike) · Status: **proposal, nothing built yet**
+VERSION: 0.1 (2026-10-17, chat) · Owner: commissioner (Mike) · Status: **steps 1–2 built 2026-10-27** (see §10)
 
 ## 1. Problem
 
@@ -119,3 +119,18 @@ The commish sends it. Nothing is sent automatically.
 2. Lower-tier-only milestones: any?
 3. Which rows get `nudge: yes`? (Proposed: Relegation Insurance, trade deadline.)
 4. Standing footer line for the weekly Thursday 6 PM perk deadline: yes or no?
+
+## 10. Commish answers (2026-10-27) and what was built
+
+1. Dates come from Rules & Info → Annual Milestones plus the credit perk rules. Week 17 shows as
+   "After Wk 17" (no exact day).
+2. Lower: the end of the regular season is the end for most Lower teams, so it gets its own row
+   (`lower-season-ends`, tier Lower).
+3. No group texts. The `nudge` column and step 3 are dropped.
+4. No standing footer line for the Thursday 6 PM perk deadlines.
+
+Built: `data/MAFFL_Key_Dates_2026.csv` (no `nudge` column; adds `when`, the display text),
+`_ops/scripts/gen_key_dates.py` (`--check` to verify) → `key-dates-data.js`, governance row,
+editorial guide line, `rules.html#milestones` anchor + Relegation Insurance row, and the strip in
+`weekly.html` v6.4. Trade deadline uses `lead_days` 42 so it shows from the Week 7 Pulse (Oct 27).
+Still open: step 5, the home "Next up" slide, before the offseason.

@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-17 by Claude (chat), Key Dates design note
+**Last updated:** 2026-10-27 by Claude (chat), Key Dates strip
 
 ## Now
 
@@ -19,7 +19,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Planned (not written yet)
 
-- **Key Dates alerts:** Pulse strip (Coming up / Last call / Just closed) from one gold dates file; offseason "Next up" carousel slide; nudge line in the Tuesday kickoff report. Design: `_ops/docs/KEY_DATES_DESIGN.md` (4 open questions for commish).
+- **Key Dates, phase 2:** home "Next up" carousel slide for the offseason, from `key-dates-data.js` (`_ops/docs/KEY_DATES_DESIGN.md` §5).
 - **Rivalry, next wave:** Defining Moments cards + upset flag (record entering the game); Tale of the Tape (needs a governance call on career-stat source); shareable rivalry card image (canvas PNG → iOS share sheet); MAFFL's Best: Nemesis / Punching Bag, per-owner heatmap row, player "rivalry killers" (2026+ from Top Performers). Commish hand-written notes: dropped.
 
 ## Open decisions / known issues
@@ -29,6 +29,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-27 · Key Dates data: gold `data/MAFFL_Key_Dates_2026.csv` (Annual Milestones + credit perk deadlines; commish answers in design §10) → `_ops/scripts/gen_key_dates.py` → `key-dates-data.js` (derived). Governance row; editorial guide line. No page change.
 - 2026-10-20 · Week 6 Pulse: added the 👻's three-game win streak (0-3 → 3-3) to the Tony's Talented Team news item (commish).
 - 2026-10-17 · Design note `_ops/docs/KEY_DATES_DESIGN.md`: season-milestone alerts (Pulse strip in season, carousel offseason, Rules & Info as reference, group-text nudges). Doc only; no page changes.
 - 2026-10-09 · Draft: the 3 held 2010 rows now follow ESPN (commish): David's Tulloch pick → Keith Bulluck (NYG) + added Rashad Jennings; Mike's Atogwe pick → Devin Aromashodu (CHI). Draft summary + draft/history pages regenerated (Build write).

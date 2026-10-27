@@ -1,0 +1,7 @@
+id,label,due,when,kind,tier,lead_days,note,link
+releg-insurance,Relegation Insurance closes,2026-10-01T20:15-04:00,Thu Oct 1 · Wk 4 kickoff,deadline,All,21,"Costs 25 credits. Max 3 per season, first come first served.",rules.html#credit-system
+trade-deadline,Trade deadline,2026-12-02T12:00-05:00,Wed Dec 2 · 12:00 PM ET,deadline,All,42,Credits can ride along in a trade. No trades in the postseason.,rules.html#trades
+reg-season-ends,Regular season ends (Wk 14),2026-12-14T23:59-05:00,Mon Dec 14,event,All,21,"Last week for Matchup Swaps, Survivor, Highest Weekly Score and Largest Blowout credits.",rules.html#milestones
+lower-season-ends,Season ends for most Lower teams,2026-12-14T23:59-05:00,Mon Dec 14 · after Wk 14,event,Lower,21,Only #1–#2 (Promotion Consolation) and #3–#4 (Promotion Showdown) play on.,rules.html#milestones
+postseason,Postseason starts · FAAB resets to $100,2026-12-17T20:15-05:00,Thu Dec 17 · Wk 15 kickoff,event,All,14,Upper playoffs and both Showdowns run Wks 15–17. No Double Player Bonus in Upper playoffs or Showdowns.,rules.html#milestones
+season-wrap,"Prizes, credits and promotions/relegations issued",2027-01-04T23:59-05:00,After Wk 17,event,All,14,,rules.html#milestones

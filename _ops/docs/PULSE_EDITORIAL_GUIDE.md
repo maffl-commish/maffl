@@ -57,6 +57,11 @@ written to it. Requires `weekly.html` v5.0 (`PROMPT_pulse_v5_upgrades.md`).
 | Trade Desk | 🤝 | Only when a trade happened (deadline is Dec 2) |
 | Rivalry Corner | ⚔️ | A real history-backed rivalry game (use `rivalry.html` data) |
 
+**Key Dates (added 2026-10-27).** The page builds a Key Dates strip (Last call / Coming up /
+Just closed) from `key-dates-data.js` on its own, so never write deadlines into the Week object.
+You may mention a ⏰ Last-call deadline in a news item when it matters to a story (a contender
+who needs a trade before Wed noon). Dates come from `data/MAFFL_Key_Dates_2026.csv`.
+
 **Waiver times (added 2026-09-29).** ESPN stamps every claim in a waiver run with the run's
 *processing* time (e.g. Thursday 3:12 a.m.). That is not when an owner bid or picked anyone up,
 so never write it as one ("paid $10 at 3:12 a.m." is wrong). Say "on Thursday's waivers" instead.
