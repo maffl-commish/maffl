@@ -29,6 +29,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-10-27 · Rules & Info: Annual Milestones gets a `#milestones` deep-link anchor (Key Dates strip links there) and a Relegation Insurance Deadline row (before Wk 4 first kickoff); gold Rules CSV synced. Rulebook date stamp only, stays v2.1.
 - 2026-10-27 · Key Dates data: gold `data/MAFFL_Key_Dates_2026.csv` (Annual Milestones + credit perk deadlines; commish answers in design §10) → `_ops/scripts/gen_key_dates.py` → `key-dates-data.js` (derived). Governance row; editorial guide line. No page change.
 - 2026-10-20 · Week 6 Pulse: added the 👻's three-game win streak (0-3 → 3-3) to the Tony's Talented Team news item (commish).
 - 2026-10-17 · Design note `_ops/docs/KEY_DATES_DESIGN.md`: season-milestone alerts (Pulse strip in season, carousel offseason, Rules & Info as reference, group-text nudges). Doc only; no page changes.
