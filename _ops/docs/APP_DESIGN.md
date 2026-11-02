@@ -205,8 +205,8 @@ interactions (trades for now, §4b).
 - Script: `_ops/apps-script/Code.gs` (bound to that Sheet, deployed as a web app). Actions: `login`, `request`
   (logs + emails the commish), `react`, `vote` (POST, text/plain JSON); `summary` (GET: reaction counts, your
   reactions, poll tallies, active polls).
-- PINs: salted SHA-256 only; 5 wrong tries locks. Commish menu in the Sheet: **MAFFL → Set / reset a PIN**
-  (shows the PIN once to text it), **Mark request done**, **Unlock an owner**.
+- Passphrases: two football words (GRONK-PISTOL), case/dashes ignored; salted SHA-256 only; 5 wrong tries locks.
+  Commish menu in the Sheet: **MAFFL → Set / reset a passphrase** (shows it once to text it), **Mark request done**, **Unlock an owner**.
 - Events is append-only (reactions toggle by appending on/off; last write wins).
 - Client: `lab/index.html` `API_URL` (empty = demo mode). A phone can point at a test URL via
   `localStorage.maffl_lab_api`.

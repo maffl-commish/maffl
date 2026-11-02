@@ -6,11 +6,27 @@
  *         Execute as: Me · Who has access: Anyone → copy the /exec URL into lab/index.html (API_URL).
  *
  * Rules this script keeps:
- *  - PINs are never stored, only salted SHA-256 hashes. 5 wrong PINs locks the owner.
+ *  - Passphrases (GRONK-PISTOL style) are never stored, only salted SHA-256 hashes. 5 wrong tries locks the owner.
  *  - Events is append-only. Nothing here deletes or edits a logged row.
  *  - Nothing here writes league gold data. Credits/trades are approved by the commish elsewhere.
  */
-var VERSION = "0.1";
+var VERSION = "0.2";
+
+// Passphrases are two football words, e.g. GRONK-PISTOL. Case, spaces and dashes don't matter when typing.
+var WORDS_A = ["GRONK","BLITZ","PISTOL","HAIL","WILDCAT","SHOTGUN","NICKEL","DIME","REDZONE","AUDIBLE","SPIKE","LAMBEAU",
+  "PYLON","STIFFARM","JUKE","SACK","PICKSIX","ONSIDE","FLEAFLICKER","BOOTLEG","CHEESE","FROZEN","TUNDRA","PRIMETIME",
+  "TURKEY","GRIDIRON","TOUCHBACK","FUMBLE","WAIVER","BYEWEEK","SLEEPER","HANDCUFF","FLEX","STACK","BOOM","BUST",
+  "MONEYBALL","BULLDOZER","TRUCK","HURDLE","DIVE","BLINDSIDE","GOALLINE","HASHMARK","HUDDLE","ENDZONE","BOMB","COUNTER"];
+var WORDS_B = ["PISTOL","HAMMER","TORNADO","EXPRESS","RAMPAGE","CANNON","THUNDER","STAMPEDE","LIGHTNING","BULLDOG","MACHINE",
+  "ROCKET","BLIZZARD","GRIZZLY","HURRICANE","JACKPOT","WRECKER","DYNAMO","PRESSURE","FURY","STALLION","TITAN","VORTEX",
+  "COMET","AVALANCHE","RHINO","TANK","SPARTAN","VIKING","OUTLAW","MAVERICK","BANDIT","PANTHER","COBRA","FALCON","GLADIATOR",
+  "WARHORSE","JUGGERNAUT","BOOMSTICK","DAGGER","HAYMAKER","SLINGSHOT","BRAWLER","ROCKSLIDE","FIREBALL","SNOWPLOW","MONSOON","GOLIATH"];
+function newPhrase_() {
+  var a = WORDS_A[Math.floor(Math.random() * WORDS_A.length)], b;
+  do { b = WORDS_B[Math.floor(Math.random() * WORDS_B.length)]; } while (b === a);
+  return a + "-" + b;
+}
+function normPin_(pin) { return String(pin || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
 var MAX_TRIES = 5;
 
 // ---------------------------------------------------------------- HTTP
@@ -56,7 +72,7 @@ function norm_(s) { return String(s || "").replace(/\s*\/\s*/g, "/").trim().toLo
 function owners_() { return rows_("Owners"); }
 function ownerRow_(owner) { var n = norm_(owner); return owners_().filter(function (o) { return norm_(o.owner) === n; })[0]; }
 function hash_(salt, pin) {
-  var raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ":" + String(pin).trim());
+  var raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ":" + normPin_(pin));
   return raw.map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join("");
 }
 function setCell_(name, row, header, value) {
@@ -68,13 +84,13 @@ function setCell_(name, row, header, value) {
 function login_(owner, pin) {
   var o = ownerRow_(owner);
   if (!o) return { ok: false, error: "Unknown owner" };
-  if (String(o.locked) === "Y") return { ok: false, error: "Locked after too many tries. Ask the commish to reset your PIN." };
-  if (!o.pin_hash) return { ok: false, error: "No PIN yet. Request one below." };
+  if (String(o.locked) === "Y") return { ok: false, error: "Locked after too many tries. Ask the commish for a new passphrase." };
+  if (!o.pin_hash) return { ok: false, error: "No passphrase yet. Request one below." };
   if (hash_(o.salt, pin) !== o.pin_hash) {
     var n = Number(o.failed_tries || 0) + 1;
     setCell_("Owners", o._row, "failed_tries", n);
     if (n >= MAX_TRIES) setCell_("Owners", o._row, "locked", "Y");
-    return { ok: false, error: n >= MAX_TRIES ? "Locked. Ask the commish to reset your PIN." : "Wrong PIN (" + (MAX_TRIES - n) + " tries left)" };
+    return { ok: false, error: n >= MAX_TRIES ? "Locked. Ask the commish for a new passphrase." : "Wrong passphrase (" + (MAX_TRIES - n) + " tries left)" };
   }
   if (Number(o.failed_tries)) setCell_("Owners", o._row, "failed_tries", 0);
   return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" };
@@ -105,9 +121,9 @@ function request_(owner, note) {
   if (recent.length >= 3) return { ok: false, error: "Already requested. The commish will text you." };
   sheet_("Requests").appendRow([new Date(), o.owner, String(note || "").slice(0, 300), "OPEN", "", ""]);
   var to = Session.getEffectiveUser().getEmail();
-  MailApp.sendEmail(to, "MAFFL HQ: PIN request from " + o.owner,
+  MailApp.sendEmail(to, "MAFFL HQ: passphrase request from " + o.owner,
     o.owner + " (" + o.team + ") asked for their PIN.\n\nNote: " + (note || "—") +
-    "\n\nTo finish: open the MAFFL HQ App Sheet → MAFFL menu → Set / reset a PIN, text it to them, then MAFFL → Mark request done.\n" +
+    "\n\nTo finish: open the MAFFL HQ App Sheet → MAFFL menu → Set / reset a passphrase, text it to them, then MAFFL → Mark request done.\n" +
     SpreadsheetApp.getActive().getUrl());
   return { ok: true };
 }
@@ -143,7 +159,7 @@ function summary_(week, owner) {
 // ---------------------------------------------------------------- commish menu
 function onOpen() {
   SpreadsheetApp.getUi().createMenu("MAFFL")
-    .addItem("Set / reset a PIN", "menuSetPin")
+    .addItem("Set / reset a passphrase", "menuSetPin")
     .addItem("Mark request done (select its row first)", "menuRequestDone")
     .addItem("Unlock an owner", "menuUnlock")
     .addToUi();
@@ -156,16 +172,16 @@ function pickOwner_(title) {
   return o;
 }
 function menuSetPin() {
-  var ui = SpreadsheetApp.getUi(), o = pickOwner_("Set / reset a PIN");
+  var ui = SpreadsheetApp.getUi(), o = pickOwner_("Set / reset a passphrase");
   if (!o) return;
-  if (o.pin_hash && ui.alert("Replace " + o.owner + "'s existing PIN?", ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
-  var pin = String(Math.floor(1000 + Math.random() * 9000)), salt = Utilities.getUuid();
+  if (o.pin_hash && ui.alert("Replace " + o.owner + "'s existing passphrase?", ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
+  var pin = newPhrase_(), salt = Utilities.getUuid();
   setCell_("Owners", o._row, "salt", salt);
   setCell_("Owners", o._row, "pin_hash", hash_(salt, pin));
   setCell_("Owners", o._row, "failed_tries", 0);
   setCell_("Owners", o._row, "locked", "");
   sheet_("Events").appendRow([new Date(), "commish", "pin_set", o.owner, "", "", ""]);
-  ui.alert("PIN for " + o.owner + ": " + pin + "\n\nText it to them now. It isn't stored anywhere, so this is the only time you'll see it.");
+  ui.alert("Passphrase for " + o.owner + ":\n\n" + pin + "\n\nText it to them now. It isn't stored anywhere, so this is the only time you'll see it.");
 }
 function menuRequestDone() {
   var sh = SpreadsheetApp.getActiveSheet(), ui = SpreadsheetApp.getUi();
@@ -176,5 +192,5 @@ function menuRequestDone() {
 function menuUnlock() {
   var o = pickOwner_("Unlock an owner"); if (!o) return;
   setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", "");
-  SpreadsheetApp.getUi().alert(o.owner + " is unlocked. Their PIN didn't change.");
+  SpreadsheetApp.getUi().alert(o.owner + " is unlocked. Their passphrase didn't change.");
 }
