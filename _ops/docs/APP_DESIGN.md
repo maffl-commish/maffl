@@ -10,6 +10,8 @@ VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-02 · **§6b refresh rhythm confirmed** (commish). Still to design: a short way to tell owners how
+  often the app syncs with ESPN (§8).
 - 2026-11-02 · **No lineup nudges.** Alerts only for direct interactions (trades for now; maybe more later).
   Fresh ESPN data is for the Reel app (`lab/` sandbox), not the classic pages.
 - 2026-11-02 · **Fresh ESPN data (§6b, proposed).** Not real time, but on a rhythm: rosters/lineups/moves
@@ -149,7 +151,7 @@ Easier to remember, far harder to guess. Not case-sensitive, dash optional. Same
 | Rosters, lineups, moves, live scores | **New** ESPN refresh, see §6b (v2) |
 | Reactions, votes, offers, PIN requests, owner email/phone, notification settings | **New** Google Sheet + Apps Script (v1). Contacts never in the repo |
 
-## 6b. Fresh ESPN data (proposed 11/2, commish idea)
+## 6b. Fresh ESPN data (rhythm confirmed 11/2, commish idea)
 
 Scope: the Reel app (`lab/` sandbox now, home page at go-live). Classic pages don't change.
 
@@ -212,7 +214,8 @@ interactions (trades for now, §4b).
 
 ## 8. Open
 
-- Confirm the §6b ESPN refresh rhythm.
+- ~~Confirm the §6b ESPN refresh rhythm?~~ **Yes** (11/2).
+- How the app tells owners the sync pattern, briefly (e.g. "Updated 7 min ago" tap → one-line rhythm note).
 - ~~Lineup-hole nudge?~~ **No.** Alerts only for direct interactions (trades).
 - Confirm the §2c page → app mapping.
 - PIN form: 4 digits or a fun two-word passphrase per owner (§4b)?
