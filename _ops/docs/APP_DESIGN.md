@@ -10,6 +10,8 @@ VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-02 · **No lineup nudges.** Alerts only for direct interactions (trades for now; maybe more later).
+  Fresh ESPN data is for the Reel app (`lab/` sandbox), not the classic pages.
 - 2026-11-02 · **Fresh ESPN data (§6b, proposed).** Not real time, but on a rhythm: rosters/lineups/moves
   every 30 min (every 10 before kickoffs), live scores every 5 min in game windows. Fresh data goes through
   Apps Script → Sheet, not git commits; the Tuesday robot stays the official final. Confirm §8.
@@ -149,6 +151,8 @@ Easier to remember, far harder to guess. Not case-sensitive, dash optional. Same
 
 ## 6b. Fresh ESPN data (proposed 11/2, commish idea)
 
+Scope: the Reel app (`lab/` sandbox now, home page at go-live). Classic pages don't change.
+
 Goal: an owner changes a lineup, adds a player or makes a trade on ESPN and HQ shows it soon after; on game
 days scores tick up a few times an hour. **Not real time; on a rhythm.**
 
@@ -179,8 +183,9 @@ one to watch; keep each run small). Apps Script triggers are also not to-the-min
 Tuesday pull stays the record. If ESPN fails, keep the last snapshot and show its age. Cookies expire about
 yearly: script emails the commish when ESPN says no.
 
-**Unlocks:** live matchup card (score, who's still to play), "your lineup has a bye/empty slot" nudge before
-kickoff, a moves feed (trades, adds/drops) as reel cards, trade block that knows current rosters.
+**Unlocks:** live matchup card (score, who's still to play), a moves feed (trades, adds/drops) as reel cards,
+trade block that knows current rosters. **No lineup nudges** (commish 11/2): alerts only come from direct
+interactions (trades for now, §4b).
 
 ## 7. Build order (everything ships together at go-live; commish 11/2)
 
@@ -207,7 +212,8 @@ kickoff, a moves feed (trades, adds/drops) as reel cards, trade block that knows
 
 ## 8. Open
 
-- Confirm the §6b ESPN refresh rhythm (and: lineup-hole nudge as an opt-in email?).
+- Confirm the §6b ESPN refresh rhythm.
+- ~~Lineup-hole nudge?~~ **No.** Alerts only for direct interactions (trades).
 - Confirm the §2c page → app mapping.
 - PIN form: 4 digits or a fun two-word passphrase per owner (§4b)?
 - Trades: both tiers at once at go-live, or one first? (trade note §8 Q4)

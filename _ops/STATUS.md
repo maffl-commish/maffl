@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · `APP_DESIGN.md` §6b: fresh ESPN data scoped to the Reel app (`lab/`); no lineup nudges, alerts only for direct interactions (trades). Doc only.
 - 2026-11-02 · `APP_DESIGN.md` v0.6 §6b Fresh ESPN data (proposed): Apps Script time trigger pulls both tiers into the backend Sheet; rosters/lineups/moves every 30 min (10 before kickoffs), live scores every 5 min in game windows; no git commits for live data; Tuesday robot stays the official final. Doc only.
 - 2026-11-02 · `APP_DESIGN.md` v0.5 §4b Contacts + notifications: owner email/phone live only in the backend Sheet (PIN-gated, never the repo), visible to all signed-in owners; trade nudges = prefilled Text/Email them button (owner sends it) + opt-in automatic emails from Settings; no robot texts or push. Passphrase PINs proposed (§8). Doc only.
 - 2026-11-02 · App backend: test Sheet "MAFFL HQ App — TEST backend (lab)" created (Owners ×21, Events, Requests, Polls, README) + `_ops/apps-script/Code.gs` (PIN login w/ salted hashes + lockout, request-access email to commish, reactions, Game of the Week votes, summary; commish menu: set/reset PIN, mark request done, unlock). Lab client wired: PIN sign-in, request access, every card/row reactable with live counts, vote card in For you. Tested end to end against a local mock. **Waiting on commish: paste script + deploy web app, send URL.**
