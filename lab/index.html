@@ -187,6 +187,27 @@
   .tbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
   body.busy{cursor:progress}body.busy .b{pointer-events:none;opacity:.6}
   .card.offer .two{margin-top:4px}
+  .psheet.full{height:92dvh;max-height:92dvh}
+  .tgrid2{display:flex;gap:8px;overflow:auto;height:calc(92dvh - 150px);padding-bottom:10px;-webkit-overflow-scrolling:touch}
+  .gcol{flex:0 0 140px;display:flex;flex-direction:column;gap:4px}
+  .gcol.mine{position:sticky;left:0;z-index:3;background:var(--page-bg);padding-right:6px;box-shadow:6px 0 8px -6px var(--navy-shadow)}
+  .ghead{position:sticky;top:0;z-index:2;display:block;width:100%;text-align:left;background:var(--navy);color:#fff;border-radius:10px;padding:8px}
+  .ghead.me{background:var(--gold);color:var(--navy)}
+  .ghead b{display:block;font:700 14px/1.05 var(--display)}.ghead small{font-size:10px;opacity:.8}
+  .gtrade{display:inline-block;margin-top:5px;background:var(--gold);color:var(--navy);border-radius:5px;padding:2px 7px;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em}
+  .gpos{font:700 10px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:6px}
+  .gp{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6b778d;border-radius:7px;padding:4px 6px}
+  .gp.p-QB{border-left-color:#7a3e9d}.gp.p-RB{border-left-color:var(--win)}.gp.p-WR{border-left-color:#3b6fb6}.gp.p-TE{border-left-color:#c46a1b}
+  .gp.blk{background:var(--gold-soft);border-color:var(--gold)}
+  .gp.blk b::after{content:" 🏷️"}
+  .gp b{display:block;font:700 13px/1.1 var(--display)}.gp small{font-size:10px;color:var(--muted)}
+  .gradebox{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin:8px 0}
+  .gl{display:flex;gap:8px}
+  .grade{flex:1;text-align:center;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.04em;border-radius:6px;padding:5px 0;background:var(--navy-soft)}
+  .grade.gAp,.grade.gA{background:var(--win);color:#fff}.grade.gB{background:#3b6fb6;color:#fff}.grade.gC{background:var(--gold);color:var(--navy)}.grade.gD,.grade.gF{background:var(--loss);color:#fff}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip2{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 11px;font:600 13px var(--body)}
+  .chip2.on{background:var(--navy);color:#fff;border-color:var(--navy)}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -275,7 +296,7 @@
 <body>
 <div class="app">
   <header class="hdr">
-    <div class="lab">Lab · real league data · trades and reactions are test-only</div>
+    <div class="lab">Lab · trades &amp; reactions are test-only</div>
     <div class="pastbar" id="pastbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
@@ -929,7 +950,10 @@
       '</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>';
     if (mineOffer) h += '<div class="two"><div>' + legHTML("You send", youSend[2], youSend[0], youSend[1]) + '</div><div>' + legHTML("You get", youGet[2], youGet[0], youGet[1]) + '</div></div>';
     else h += '<div class="two"><div>' + legHTML(teamOf(o.from).team + " sends", o.from, o.give, o.giveCredits) + '</div><div>' + legHTML(teamOf(o.to).team + " sends", o.to, o.get, o.getCredits) + '</div></div>';
+    if ((o.reasons || []).length) h += '<div class="chips" style="margin-top:6px">' + o.reasons.map(function (r) { return '<span class="chip2 on">' + esc(r) + '</span>'; }).join("") + '</div>';
     if (o.note) h += '<p class="meta" style="margin-top:6px">“' + esc(o.note) + '”</p>';
+    if (mineOffer && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0) { var gr = gradeTrade(o.from, o.to, o.give, o.get, o.giveCredits, o.getCredits);
+      h += gradeHTML(iAmFrom ? gr : { from: gr.to, to: gr.from }, "You", teamOf(other).team.split(" ")[0]); }
     if (o.reason) h += '<p class="meta">Commish: ' + esc(o.reason) + '</p>';
     var btn = "";
     if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
@@ -957,8 +981,55 @@
   }
 
   // ---------- builder: pick team → side by side → preview → send ----------
+  // ---------- trade grade (lab formula; see APP_DESIGN §7d) ----------
+  // Player value = 2026 auction price + half the points he has posted in his team's weekly top 3.
+  // 1 credit = $2 of auction value. Fit: getting a position you're thin at (vs. your tier's average) helps;
+  // giving one away hurts. Real per-game averages replace the production term once the ESPN stat pull exists.
+  var CREDIT_VALUE = 2, CORE = ["QB", "RB", "WR", "TE"];
+  var REASONS = ["Need depth", "Win now", "Selling for the future", "Want credits", "Bye-week fix", "Just a deal"];
+  function pval(p) { return p.price + 0.5 * topWeeks(p).reduce(function (n, w) { return n + w.pts; }, 0); }
+  function depth(owner) { var d = {}; CORE.forEach(function (k) { d[k] = 0; }); rosterOf(owner).forEach(function (p) { if (d[p.pos] != null) d[p.pos]++; }); return d; }
+  function tierDepth(tier) {
+    var owners = TEAMS.filter(function (t) { return t.tier === tier && !/ghost/i.test(t.team); }), avg = {};
+    CORE.forEach(function (k) { avg[k] = owners.reduce(function (n, t) { return n + depth(t.owner)[k]; }, 0) / Math.max(1, owners.length); });
+    return avg;
+  }
+  function gradeSide(owner, getsNames, getsFromOwner, getsCr, sendsNames, sendsCr) {
+    var gets = getsNames.map(function (n) { return findPlayer(getsFromOwner, n); }), sends = sendsNames.map(function (n) { return findPlayer(owner, n); });
+    var inV = gets.reduce(function (n, p) { return n + pval(p); }, 0) + getsCr * CREDIT_VALUE, outV = sends.reduce(function (n, p) { return n + pval(p); }, 0) + sendsCr * CREDIT_VALUE;
+    var d = depth(owner), avg = tierDepth(teamOf(owner).tier), fit = 0, why = [], who = isMe(owner) ? "you" : teamOf(owner).team.split(" ")[0];
+    gets.forEach(function (p) { if (d[p.pos] != null && d[p.pos] < avg[p.pos]) { fit += 0.06; why.push("Gives " + who + " a needed " + p.pos + " (" + d[p.pos] + " vs tier avg " + avg[p.pos].toFixed(1) + ")"); } });
+    sends.forEach(function (p) { if (d[p.pos] != null && d[p.pos] - 1 < avg[p.pos]) { fit -= 0.06; why.push("Leaves " + who + " thin at " + p.pos + " (" + (d[p.pos] - 1) + " left vs " + avg[p.pos].toFixed(1) + ")"); } });
+    var r = outV ? inV / outV + fit : (inV ? 2 : 1);
+    var g = r >= 1.3 ? "A+" : r >= 1.12 ? "A" : r >= 0.95 ? "B" : r >= 0.8 ? "C" : r >= 0.65 ? "D" : "F";
+    return { g: g, inV: inV, outV: outV, r: r, why: why };
+  }
+  function gradeTrade(from, to, give, get, gc, tc) {
+    return { from: gradeSide(from, get, to, tc, give, gc), to: gradeSide(to, give, from, gc, get, tc) };
+  }
+  function gradePill(x, label) { return '<span class="grade g' + x.g.replace("+", "p") + '">' + esc(label) + ' ' + x.g + '</span>'; }
+  function gradeHTML(gr, youLabel, themLabel) {
+    return '<div class="gradebox"><div class="gl">' + gradePill(gr.from, youLabel) + gradePill(gr.to, themLabel) + '</div>' +
+      '<div class="meta" style="margin-top:6px">Value in vs. out: $' + Math.round(gr.from.inV) + ' vs $' + Math.round(gr.from.outV) + ' for ' + esc(youLabel.toLowerCase()) + '</div>' +
+      (gr.from.why.concat(gr.to.why).length ? '<div class="meta">' + gr.from.why.concat(gr.to.why).slice(0, 3).map(esc).join(" · ") + '</div>' : '') + '</div>';
+  }
+
+  // ---------- the all-rosters grid (step 1): scroll across teams, tap a team ----------
+  function gridHTML() {
+    var order = ["QB", "RB", "WR", "TE"], teams = [teamOf(ME.owner)].concat(TEAMS.filter(function (t) { return t.tier === ME.tier && !isMe(t.owner) && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.rank - b.rank; }));
+    return '<p class="meta" style="margin:8px 0">Scroll across your tier. Tap a team to trade with them. 🏷️ = on the block.</p><div class="tgrid2">' + teams.map(function (t) {
+      var r = rosterOf(t.owner), me = isMe(t.owner), nb = r.filter(function (p) { return blockOf(p.tier, p.name, p.owner); }).length;
+      var groups = order.concat(["Other"]).map(function (pos) {
+        var ps = r.filter(function (p) { return pos === "Other" ? order.indexOf(p.pos) < 0 : p.pos === pos; }); if (!ps.length) return "";
+        return '<div class="gpos">' + pos + ' <small>' + ps.length + '</small></div>' + ps.map(function (p) {
+          return '<div class="gp p-' + esc(String(p.pos).replace("/", "")) + (blockOf(p.tier, p.name, p.owner) ? ' blk' : '') + '"><b>' + esc(p.name) + '</b><small>' + esc(p.nfl || "") + ' · $' + p.price + '</small></div>'; }).join("");
+      }).join("");
+      return '<div class="gcol' + (me ? ' mine' : '') + '">' + (me ? '<div class="ghead me"><b>You</b><small>' + rec(t) + ' · 💳 ' + availCredits(t.owner) + '</small></div>'
+        : '<button class="ghead" data-bteam="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b><small>' + rec(t) + ' · #' + t.rank + ' · 💳 ' + availCredits(t.owner) + (nb ? ' · 🏷️' + nb : '') + '</small><span class="gtrade">Trade ›</span></button>') + groups + '</div>'; }).join("") + '</div>';
+  }
+
   function startBuilder(withOwner, wantName, fromOffer) {
-    BLD = { step: withOwner ? 2 : 1, with: withOwner || null, give: {}, get: {}, gc: 0, tc: 0, note: "" };
+    BLD = { step: withOwner ? 2 : 1, with: withOwner || null, give: {}, get: {}, gc: 0, tc: 0, note: "", reasons: {} };
     if (wantName) BLD.get[wantName] = 1;
     if (fromOffer) { // counter: flip the original
       BLD.with = fromOffer.from; BLD.step = 2; fromOffer.get.forEach(function (n) { BLD.give[n] = 1; }); fromOffer.give.forEach(function (n) { BLD.get[n] = 1; });
@@ -968,7 +1039,8 @@
   }
   function builderSheet() {
     var h = '<div class="steps">' + ["Team", "Pick players", "Preview"].map(function (t, i) { return '<span class="' + (BLD.step === i + 1 ? "on" : BLD.step > i + 1 ? "done" : "") + '">' + (i + 1) + '. ' + t + '</span>'; }).join("") + '</div>';
-    if (BLD.step === 1) {
+    if (BLD.step === 1) return h + gridHTML();
+    if (false) {
       var mates = TEAMS.filter(function (t) { return t.tier === ME.tier && !isMe(t.owner) && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.rank - b.rank; });
       return h + '<div class="sh" style="padding-left:0"><h2>Who are you dealing with?</h2></div><div class="card" style="padding:2px 12px;margin-top:0">' + mates.map(function (t) {
         var nb = Object.keys(SUM.block || {}).filter(function (k) { return norm(SUM.block[k].owner) === norm(t.owner) && k.indexOf(ME.tier + ":") === 0; }).length;
@@ -981,7 +1053,7 @@
       function stepper(side, val, max) { return '<div class="crs"><span>💳 ' + val + '</span><button data-cr2="' + side + '" data-d="-1">−</button><button data-cr2="' + side + '" data-d="1">+</button><small>of ' + max + '</small></div>'; }
       return h + '<div class="sbs"><div><div class="colh me">You send</div>' + stepper("give", BLD.gc, availCredits(ME.owner)) + col(mineR, BLD.give, "give") + '</div>' +
         '<div><div class="colh">' + esc(them.team) + ' sends</div>' + stepper("get", BLD.tc, availCredits(BLD.with)) + col(theirR, BLD.get, "get") + '</div></div>' +
-        '<div class="sticky"><div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
+        '<div class="sticky">' + ((gN.length + tN.length) ? gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", them.team.split(" ")[0]) : '') + '<div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
         '<div class="btns" style="margin-top:6px"><button class="b" data-bstep="1">Back</button><button class="b pri" data-bstep="3"' + ((gN.length + tN.length) && (gN.length || BLD.gc) && (tN.length || BLD.tc) ? '' : ' disabled') + '>Preview trade</button></div></div>';
     }
     var checks = [
@@ -992,8 +1064,10 @@
       [Date.now() < new Date(SUM.deadline || "2026-12-02T17:00:00Z").getTime(), "Before the Dec 2 deadline"]];
     var ok = checks.every(function (c) { return c[0]; });
     return h + '<div class="card"><div class="eb">Trade with ' + esc(them.team) + (BLD.counterOf ? ' · counteroffer' : '') + '</div><div class="two"><div>' + legHTML("You send", ME.owner, gN, BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, tN, BLD.tc) + '</div></div></div>' +
+      gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", them.team.split(" ")[0]) +
       '<div class="checks">' + checks.map(function (c) { return (c[0] ? "✅ " : "❌ ") + esc(c[1]); }).join("<br>") + '</div>' +
-      '<input class="field" id="bnote2" maxlength="200" placeholder="Add a note (optional)" value="' + esc(BLD.note) + '">' +
+      '<div class="grp">Why this deal? (tap any)</div><div class="chips">' + REASONS.map(function (r) { return '<button class="chip2' + (BLD.reasons[r] ? ' on' : '') + '" data-reason="' + esc(r) + '">' + esc(r) + '</button>'; }).join("") + '</div>' +
+      '<input class="field" id="bnote2" maxlength="200" placeholder="Add your own note (optional)" value="' + esc(BLD.note) + '">' +
       '<div class="btns"><button class="b" data-bstep="2">Edit</button><button class="b pri" data-bsend="1"' + (ok ? '' : ' disabled') + '>Send offer</button></div>';
   }
 
@@ -1031,13 +1105,14 @@
       var keep = $("sb").scrollTop; openSheet("builder", null, null, false); $("sb").scrollTop = keep; return; }
     if ((el = e.target.closest("[data-cr2]"))) { var g = el.dataset.cr2 === "give", max = availCredits(g ? ME.owner : BLD.with), k2 = g ? "gc" : "tc";
       BLD[k2] = Math.max(0, Math.min(max, BLD[k2] + (+el.dataset.d))); var keep2 = $("sb").scrollTop; openSheet("builder", null, null, false); $("sb").scrollTop = keep2; return; }
+    if ((el = e.target.closest("[data-reason]"))) { if ($("bnote2")) BLD.note = $("bnote2").value; var rz = el.dataset.reason; if (BLD.reasons[rz]) delete BLD.reasons[rz]; else BLD.reasons[rz] = 1; el.classList.toggle("on"); return; }
     if ((el = e.target.closest("[data-bstep]"))) { if ($("bnote2")) BLD.note = $("bnote2").value; BLD.step = +el.dataset.bstep; openSheet("builder", null, null, false); return; }
     if ((el = e.target.closest("[data-bsend]"))) {
       BLD.note = $("bnote2").value;
       var them2 = teamOf(BLD.with);
       confirmBox("Send this offer?", '<p class="p">To <b>' + esc(them2.team) + '</b>. They can accept, decline or counter. You can withdraw it until they answer.</p><div class="card two" style="margin-top:8px"><div>' + legHTML("You send", ME.owner, Object.keys(BLD.give), BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, Object.keys(BLD.get), BLD.tc) + '</div></div>', "Yes, send it").then(function (yes) {
         if (!yes) return; busy(1);
-        var send = api("offer", Object.assign(creds(), { to: BLD.with, give: Object.keys(BLD.give), get: Object.keys(BLD.get), giveCredits: BLD.gc, getCredits: BLD.tc, note: BLD.note }));
+        var send = api("offer", Object.assign(creds(), { to: BLD.with, give: Object.keys(BLD.give), get: Object.keys(BLD.get), giveCredits: BLD.gc, getCredits: BLD.tc, note: BLD.note, reasons: Object.keys(BLD.reasons) }));
         var prev = BLD.counterOf ? api("respond", Object.assign(creds(), { offer_id: BLD.counterOf, decision: "decline" })) : Promise.resolve({ ok: true });
         Promise.all([send, prev]).then(function (rs) { busy(0); if (!rs[0].ok) { toast(rs[0].error); return; } closeSheet(); TEAM_SUB = "trades"; afterChange("Offer sent to " + them2.team + " ✓"); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); });
@@ -1074,6 +1149,7 @@
     paint($("sb"));
     if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
+    $("psheet").classList.toggle("full", kind === "builder");
     $("psheet").classList.add("on"); $("sscrim").classList.add("on"); document.body.style.overflow = "hidden";
   }
   function closeSheet() { $("psheet").classList.remove("on"); $("sscrim").classList.remove("on"); document.body.style.overflow = ""; stackS = []; }

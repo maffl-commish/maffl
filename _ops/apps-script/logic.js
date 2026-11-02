@@ -7,9 +7,9 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.5";
+var VERSION = "0.6";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
-var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason"];
+var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons"];
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
 
 // Passphrases are two football words, e.g. GRONK-PISTOL. Case, spaces and dashes don't matter when typing.
@@ -75,6 +75,7 @@ function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 function sheet_(name) {
   var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName(name);
   if (!sh && name === "Offers") { sh = ss.insertSheet("Offers"); sh.appendRow(OFFER_HEAD); sh.setFrozenRows(1); }
+  if (sh && name === "Offers" && sh.getLastColumn() < OFFER_HEAD.length) sh.getRange(1, 1, 1, OFFER_HEAD.length).setValues([OFFER_HEAD]); // add new columns
   return sh;
 }
 function rows_(name) {
@@ -171,7 +172,7 @@ function offer_(me, b) {
   if (!give.length && !gc) return { ok: false, error: "You have to send something" };
   if (!get.length && !tc) return { ok: false, error: "You have to get something back" };
   var id = "T" + Utilities.getUuid().slice(0, 8).toUpperCase(), now = new Date();
-  sheet_("Offers").appendRow([id, now, from.owner, to.owner, from.tier, JSON.stringify(give), JSON.stringify(get), gc, tc, String(b.note || "").slice(0, 200), "PROPOSED", now, ""]);
+  sheet_("Offers").appendRow([id, now, from.owner, to.owner, from.tier, JSON.stringify(give), JSON.stringify(get), gc, tc, String(b.note || "").slice(0, 200), "PROPOSED", now, "", JSON.stringify((b.reasons || []).slice(0, 6).map(function (r) { return String(r).slice(0, 30); }))]);
   log_(me.owner, "offer", id, "PROPOSED", "", to.owner);
   return { ok: true, offer_id: id };
 }
@@ -207,7 +208,7 @@ function trades_(owner) {
     return mine || tierPublic || (commish && o.status === "ACCEPTED");
   }).map(function (o) {
     return { id: o.offer_id, ts: o.ts, from: o.from_owner, to: o.to_owner, tier: o.tier, give: JSON.parse(o.give || "[]"), get: JSON.parse(o.get || "[]"),
-      giveCredits: Number(o.give_credits) || 0, getCredits: Number(o.get_credits) || 0, note: o.note, status: o.status, updated: o.updated_ts, reason: o.reason };
+      giveCredits: Number(o.give_credits) || 0, getCredits: Number(o.get_credits) || 0, note: o.note, status: o.status, updated: o.updated_ts, reason: o.reason, reasons: (function () { try { return JSON.parse(o.reasons || "[]"); } catch (e) { return []; } })() };
   });
   var block = {}; // player -> {owner, note} (last write wins)
   rows_("Events").forEach(function (e) {

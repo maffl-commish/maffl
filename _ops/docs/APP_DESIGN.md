@@ -220,6 +220,15 @@ from Top Performers (top 3 per team). Real rosters come from the daily ESPN rost
 Offer lifecycle and guardrails as in `TRADE_CENTER_DESIGN.md` (confirm sheet on every send/accept/decline/withdraw/
 approve/negate). Private offers are only returned to a signed-in owner (POST summary with passphrase).
 
+## 7d. Trade grade + reasons (11/2, lab formula, tune later)
+
+- Player value = 2026 auction price + ½ × points he's posted in his team's weekly top 3 (until ESPN per-game stats exist).
+- 1 credit = $2 of value. Grade per side = value in ÷ value out, ±0.06 per player for positional fit vs. the tier's
+  average depth (QB/RB/WR/TE). A+ ≥1.30 · A ≥1.12 · B ≥0.95 (fair) · C ≥0.80 · D ≥0.65 · F below.
+- Shown live while picking players, on the preview, and to the other team on the offer.
+- Reason chips on every offer: Need depth · Win now · Selling for the future · Want credits · Bye-week fix · Just a deal (+ free text).
+- Step 1 of a trade is the all-rosters grid (your column pinned, scroll across the tier, positions grouped, 🏷️ tags); tap a team to go to the side-by-side.
+
 ## 8. Open
 
 - ~~Confirm the §6b ESPN refresh rhythm?~~ **Yes** (11/2).
