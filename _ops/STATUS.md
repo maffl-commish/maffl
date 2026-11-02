@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-10-27 by Claude (chat), Key Dates strip
+**Last updated:** 2026-11-02 by Claude (chat), Trade Center design note
 
 ## Now
 
@@ -19,6 +19,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Planned (not written yet)
 
+- **Trade Center (sandbox first):** Sleeper-style trade block + offers with players + credits, per-owner PINs, Google Sheet + Apps Script backend, commish approves the credit leg. Design: `_ops/docs/TRADE_CENTER_DESIGN.md` (open questions §8).
 - **Key Dates, phase 2:** home "Next up" carousel slide for the offseason, from `key-dates-data.js` (`_ops/docs/KEY_DATES_DESIGN.md` §5).
 - **Rivalry, next wave:** Defining Moments cards + upset flag (record entering the game); Tale of the Tape (needs a governance call on career-stat source); shareable rivalry card image (canvas PNG → iOS share sheet); MAFFL's Best: Nemesis / Punching Bag, per-owner heatmap row, player "rivalry killers" (2026+ from Top Performers). Commish hand-written notes: dropped.
 
@@ -29,6 +30,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · Design note `_ops/docs/TRADE_CENTER_DESIGN.md`: trade block + offers (players + credits, own tier only, no picks), Sheet/Apps Script backend, per-owner PINs, rosters + credit-balance generators, sandbox → go-live plan. Doc only; no page changes.
 - 2026-10-27 · Weekly Pulse: 🗓️ Key Dates strip under the News card (⏰ Last call / 📅 Coming up / ✅ Just closed), built from `key-dates-data.js` against each Week's date, so old Pulses show what mattered then (Wk 2 coming up, Wk 3 last call, Wk 4 just closed for Relegation Insurance; Wk 7 shows the Dec 2 trade deadline). Robot writes nothing. No VERSION given, so date only; stays v6.3.
 - 2026-10-27 · Rules & Info: Annual Milestones gets a `#milestones` deep-link anchor (Key Dates strip links there) and a Relegation Insurance Deadline row (before Wk 4 first kickoff); gold Rules CSV synced. Rulebook date stamp only, stays v2.1.
 - 2026-10-27 · Key Dates data: gold `data/MAFFL_Key_Dates_2026.csv` (Annual Milestones + credit perk deadlines; commish answers in design §10) → `_ops/scripts/gen_key_dates.py` → `key-dates-data.js` (derived). Governance row; editorial guide line. No page change.
