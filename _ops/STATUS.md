@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-02 by Claude (chat), Trade Center design note
+**Last updated:** 2026-11-02 by Claude (chat), App prototype v0 (lab/)
 
 ## Now
 
@@ -19,6 +19,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Planned (not written yet)
 
+- **MAFFL HQ app (prototype):** `lab/` v0 live (hidden, read-only). Next: v1 test Sheet + Apps Script (PINs, request-access email, reactions, votes); v2 roster pull + trades; v3 credit perks. Design: `_ops/docs/APP_DESIGN.md`.
 - **Trade Center (sandbox first):** Sleeper-style trade block + offers with players + credits, per-owner PINs, Google Sheet + Apps Script backend, commish approves the credit leg. Design: `_ops/docs/TRADE_CENTER_DESIGN.md` (open questions §8).
 - **Key Dates, phase 2:** home "Next up" carousel slide for the offseason, from `key-dates-data.js` (`_ops/docs/KEY_DATES_DESIGN.md` §5).
 - **Rivalry, next wave:** Defining Moments cards + upset flag (record entering the game); Tale of the Tape (needs a governance call on career-stat source); shareable rivalry card image (canvas PNG → iOS share sheet); MAFFL's Best: Nemesis / Punching Bag, per-owner heatmap row, player "rivalry killers" (2026+ from Top Performers). Commish hand-written notes: dropped.
@@ -30,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · App prototype v0 at `lab/` (noindex, not linked): Home (Pulse deck circles from the latest WEEKS object: Scores w/ rivalry links, Coach, Survivor, Headlines, Credits, Dates; For-you cards), Match (next game from schedule-data, H2H from matchups-data, last week, tier slate), Team (KPIs, career; roster/trades/perks marked v2/v3), League (standings + credits, Rulebook first), More (Speak Up, switch team, PIN help mock). Pick-your-team stands in for PINs. Reads weekly.html at runtime; writes nothing. Design note `_ops/docs/APP_DESIGN.md`. No existing page changed.
 - 2026-11-02 · App mockup v4: Pulse circles become a swipeable card deck (react 🔥 then swipe; per-row reactions; "caught up" end card); rivalry links on every score/match tile; Build a Trade roster grid (your roster pinned, credits steppers, trade-block tags); confirm sheets for send/accept/decline + undo toast. Trade note §5b Guardrails. Sample data; no page changes.
 - 2026-11-02 · App mockup v3 (`_ops/docs/REEL_MOCKUP.html`): new structure Home · Match · Team · League · More. Home = Pulse rings (Scores, Coach, Survivor, Headlines, Credits, Dates; info-dense tap-through) + "For you" action cards; Match = this week + rivalry + last week's COTW + tier slate; Team = roster (player sheet with MAFFL draft history), trades, stats; League = standings + explore; More = reference. Sample data; no page changes.
 - 2026-11-02 · Reel mockup v2 (`_ops/docs/REEL_MOCKUP.html`): commish picked C (Hybrid); Reel = Pulse. MAFFL light theme (navy/gold, Barlow), Pulse rings (tap-through stories with reactions), Quick Access staple chips, interactive feed (offer, vote, trade block, rivalry, trivia), bottom anchor bar. Sample data; no page changes.
