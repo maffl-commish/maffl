@@ -1,6 +1,6 @@
 # MAFFL HQ App — design note
 
-VERSION: 0.1 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`**
+VERSION: 0.2 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`**
 Related: `TRADE_CENTER_DESIGN.md` (trades, PINs, guardrails §5b) · mockup `REEL_MOCKUP.html` (sample data)
 
 ## 1. Why
@@ -14,7 +14,7 @@ Bottom tabs: **Home · Match · Team · League · More**. The app replaces the c
 
 | Tab | Job | Contents |
 |---|---|---|
-| 🏠 Home | What happened + what needs you | **Pulse deck** (circles: Scores, Coach, Survivor, Headlines, Credits, Dates). Each circle is a stack of cards; react 🔥😂💀, swipe to the next; sub-rows react too; ends "You're caught up". **For you** cards: your matchup preview, deadlines, votes, Pick'em, trade offers. Full Pulse one tap away |
+| 🏠 Home | **Home IS the reel** (commish 11/2) | One card stack fills the screen. The category row on top (For you, Scores, Coach, Survivor, Headlines, Credits, Dates, Done) is the **key**: it highlights where you are, pips show progress, tap to jump. **For you** leads: your game, your result, could-have-won, Elite 5, deadlines, votes, Pick'em, trade offers. React 🔥😂💀 (reacting glides the card away) or swipe; sub-rows react too; ends "You're caught up". Remembers your spot per week. Full Pulse one tap away |
 | ⚔️ Match | Your game | Next opponent + stakes (Pulse preview), rivalry (series, last 5, biggest wins), last week's result + Coach of the Week lines, tier slate. **Every game links to its rivalry** (`rivalry.html#vs=A,B`) |
 | 🏈 Team | You | Record, rank, credits, points. Tabs: **Roster** (player sheet: stats + MAFFL draft/owner history), **Trades** (badge = open offers in/out), **Stats** (season + career), **Credits** (balance, history, **spend credits on perks**, e.g. player double bonus) |
 | 🏆 League | Everyone | Standings (credits column; no separate Credit Leaders), **Rulebook**, Pulse archive, Power Rankings, History, Draft, Rivals, Prizes & Dues |
@@ -53,9 +53,9 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 | Rosters, player stats | **New** daily roster pull (GitHub Action) → `rosters-data.js` (v2) |
 | Reactions, votes, offers, PIN requests | **New** Google Sheet + Apps Script (v1) |
 
-## 7. Build stages
+## 7. Build order (everything ships together at go-live; commish 11/2)
 
-| Stage | What | Who sees it |
+| Step | What | Who sees it |
 |---|---|---|
 | **v0 (now)** | `lab/` read-only app on real data; "pick your team" instead of a PIN | Mike (hidden URL, noindex) |
 | v1 | Test Sheet + Apps Script: PINs, request-access email, reactions, votes | Mike + 1 tester |

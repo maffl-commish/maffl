@@ -16,7 +16,7 @@
   MAFFL HQ app — PROTOTYPE v0 (lab). Read-only, real data, not linked from the site.
   Design: _ops/docs/APP_DESIGN.md. Reads: ../weekly.html (latest WEEKS object, at runtime),
   ../schedule-data.js, ../matchups-data.js, ../key-dates-data.js. Writes nothing.
-  Identity is "pick your team" (stored on this phone) until PINs arrive in v1.
+  Identity is "pick your team" (stored on this phone) until PINs are connected.
 -->
 <style>
   :root{--surface:#fff;--page-bg:#f8f9fb;--navy:#1a2e50;--navy-soft:rgba(26,46,80,.07);--navy-shadow:rgba(26,46,80,.10);
@@ -48,6 +48,7 @@
   .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:10px;box-shadow:0 1px 3px var(--navy-shadow)}
   .card.navy{background:linear-gradient(135deg,#243a62,#1a2e50 55%,#0f1d34);color:#fff;border:0;border-left:4px solid var(--gold)}
   .card.soon{border-style:dashed;box-shadow:none;background:transparent}
+  .card.soon .eb{color:var(--muted)}
   .eb{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--gold-dark)}
   .navy .eb{color:var(--gold)}
   .card h3{font:700 21px/1.1 var(--display);margin:4px 0 6px}
@@ -126,6 +127,20 @@
   nav.tabs button.on{color:var(--navy)}
   nav.tabs button.on span{filter:none;opacity:1}
   nav.tabs button.on::after{content:"";width:18px;height:3px;border-radius:2px;background:var(--gold)}
+  /* home reel (inline) */
+  #v-home.on{display:flex;flex-direction:column;overflow:hidden}
+  .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
+  .keys::-webkit-scrollbar{display:none}
+  .key{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;width:58px;font:700 10px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .key i{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:20px;background:var(--surface);box-shadow:0 0 0 2px var(--border);transition:transform .2s,box-shadow .2s}
+  .key.done i{opacity:.55}
+  .key.on{color:var(--navy)}
+  .key.on i{box-shadow:0 0 0 3px var(--gold);transform:scale(1.1)}
+  .key .pips{display:flex;gap:2px;height:3px}
+  .key .pips b{width:8px;height:3px;border-radius:2px;background:var(--border)}
+  .key .pips b.f{background:var(--gold)}
+  #hstack{flex:1;margin:4px 14px 10px}
+  .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   /* deck */
   .deck{position:fixed;inset:0;z-index:50;background:var(--page-bg);display:none;flex-direction:column;padding-top:env(safe-area-inset-top);overflow:hidden}
   .deck.on{display:flex}
@@ -139,6 +154,11 @@
   .dcard.back{transform:translateY(12px) scale(.95);opacity:.6;pointer-events:none}
   .dcard.back2{transform:translateY(24px) scale(.9);opacity:.3;pointer-events:none}
   .dcard.drag{transition:none}
+  .dcard.navyc{background:linear-gradient(160deg,#243a62,#1a2e50 55%,#0f1d34);color:#fff;border:0}
+  .dcard.navyc .dhead,.dcard.navyc .dfoot{border-color:rgba(255,255,255,.15)}
+  .dcard.navyc p{color:#c8d2e4}.dcard.navyc .eb{color:var(--gold)}
+  .dcard.navyc .b{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#fff}.dcard.navyc .b.pri{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+  .dcard.navyc .reacts button{border-color:rgba(255,255,255,.25)}
   .dhead{padding:14px 16px 8px;border-bottom:1px solid var(--border)}
   .dhead .eb{display:flex;justify-content:space-between;gap:8px}
   .dhead h3{font:700 24px/1.1 var(--display);margin-top:4px}
@@ -188,12 +208,6 @@
   <button data-tab="league"><span>🏆</span>League</button>
   <button data-tab="more"><span>☰</span>More</button>
 </nav>
-
-<div class="deck" id="deck">
-  <div class="dtop"><div class="segs" id="segs"></div><button id="dx" aria-label="Close">×</button></div>
-  <div class="stack" id="stack"></div>
-  <div class="dnav">← swipe either way for the next card →</div>
-</div>
 
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
@@ -279,6 +293,7 @@
     document.querySelectorAll(".view").forEach(function (v) { v.classList.toggle("on", v.id === "v-" + t); });
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === t); });
     $("ttl").textContent = TITLES[t]; window.scrollTo(0, 0);
+    document.querySelector(".app").style.paddingBottom = t === "home" ? "0" : ""; if (t === "home") sizeHome();
     if (location.hash !== "#" + t) try { history.replaceState(null, "", "#" + t); } catch (e) {}
   }
   document.querySelectorAll("#tabs button").forEach(function (b) { b.onclick = function () { tab(b.dataset.tab); }; });
@@ -343,53 +358,75 @@
       var days = Math.ceil((d.dueMs - now) / 864e5);
       return '<div class="row"><div><div class="nm">' + esc(d.label) + '</div><div class="meta">' + esc(d.when) + (d.note ? ' · ' + esc(d.note) : '') + '</div></div><div class="rt">' + days + '<small>days</small></div></div>'; }).join("") }] });
   }
-  function seenKey(k) { return "maffl_lab_seen_" + W.weekNumber + "_" + k; }
-  function renderHome() {
-    buildGroups();
-    var h = '<div class="sh"><h2>Week ' + W.weekNumber + ' in 30 seconds</h2><small>Tap a circle</small></div><div class="rings">' +
-      GROUPS.map(function (g) { var ic = g.label.split(" ")[0], nm = g.label.split(" ").slice(1).join(" ");
-        return '<button class="ring' + (store(seenKey(g.key)) ? " seen" : "") + '" data-story="' + g.key + '"><i>' + ic + '</i>' + nm + '</button>'; }).join("") + '</div>';
-    h += '<div class="sh"><h2>For you</h2></div><div class="pad">';
+  // "For you" category: personal cards lead the reel
+  function forYouCards() {
+    var out = [];
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
     if (prev) {
       var opp = isMe(prev.ownerA) ? prev.teamB : prev.teamA;
-      h += '<div class="card navy"><div class="eb">⚔️ Week ' + NEXT_WK + ' · your game</div><h3>You vs. ' + esc(opp) + '</h3><p>' + esc(prev.note) + '</p>' +
-        '<div class="btns"><a class="b" href="' + rivalryHref(prev.ownerA, prev.ownerB) + '">Rivalry</a><button class="b pri" data-go="match">Open Match</button></div></div>';
+      out.push({ eb: "Week " + NEXT_WK + " · your game", t: "You vs. " + opp, navy: true, body: '<p style="margin-top:8px">' + esc(prev.note) + '</p>' +
+        '<div class="btns"><a class="b" href="' + rivalryHref(prev.ownerA, prev.ownerB) + '">⚔️ Rivalry</a><button class="b pri" data-go="match">Open Match</button></div>' });
     }
-    var now = Date.now(), dl = (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; })[0];
-    if (dl) h += '<div class="card"><div class="eb">⏰ ' + Math.ceil((dl.dueMs - now) / 864e5) + ' days</div><h3>' + esc(dl.label) + ': ' + esc(dl.when) + '</h3><p>' + esc(dl.note || "") + '</p></div>';
-    var e5 = (W.elite5 || []).filter(function (x) { return isMe(x.owner); })[0];
-    if (e5) h += '<div class="card"><div class="eb">⭐ Elite 5 · #' + e5.rank + '</div><h3>You made the Elite 5</h3><p>' + esc(e5.note) + '</p><div class="reacts" style="margin-top:10px"><button>🔥</button><button>😎</button></div></div>';
+    var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
+    if (lw) {
+      var mineA = isMe(lw.ownerA), ms = mineA ? lw.scoreA : lw.scoreB, os = mineA ? lw.scoreB : lw.scoreA;
+      out.push({ eb: "Week " + W.weekNumber + " · your result", t: (ms > os ? "W " : "L ") + f2(ms) + " – " + f2(os) + " vs " + (mineA ? lw.teamB : lw.teamA), body: '<p style="margin-top:8px">' + esc(lw.note || "") + '</p>' +
+        '<div class="btns"><a class="b" href="' + rivalryHref(lw.ownerA, lw.ownerB) + '">⚔️ Rivalry</a></div>' });
+    }
     var cw = ((W.coachOfWeek || {}).couldHaveWon || []).filter(function (x) { return norm(teamOf(ME.owner).team) === norm(x.team); })[0];
-    if (cw) h += '<div class="card"><div class="eb">🔄 Could have won</div><h3>You lost by ' + f2(cw.lostBy) + ' and benched ' + f2(cw.leftOnBench) + '</h3><p>Against ' + esc(cw.opponent) + '.</p></div>';
-    h += '<div class="card soon"><div class="eb">Coming in v1</div><h3>Votes, Pick\'em and trade offers</h3><p>Once PINs and the league Sheet are hooked up, your reactions count and these cards go live.</p></div>';
-    h += '<div class="btns" style="margin:14px 0"><a class="b" href="../weekly.html">Read the full Pulse ›</a></div></div>';
-    $("v-home").innerHTML = h;
-    document.querySelectorAll(".ring").forEach(function (r) { r.onclick = function () { openDeck(r.dataset.story); }; });
+    if (cw) out.push({ eb: "🔄 Could have won", t: "You lost by " + f2(cw.lostBy) + " and benched " + f2(cw.leftOnBench), body: '<p style="margin-top:8px">Against ' + esc(cw.opponent) + '.</p>' });
+    var e5 = (W.elite5 || []).filter(function (x) { return isMe(x.owner); })[0];
+    if (e5) out.push({ eb: "⭐ Elite 5 · #" + e5.rank, t: "You made the Elite 5", body: '<p style="margin-top:8px">' + esc(e5.note) + '</p>' });
+    var now = Date.now(), dl = (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; })[0];
+    if (dl) out.push({ eb: "⏰ " + Math.ceil((dl.dueMs - now) / 864e5) + " days left", t: dl.label + ": " + dl.when, body: '<p style="margin-top:8px">' + esc(dl.note || "") + '</p>' });
+    return out;
   }
 
-  // ---------- deck ----------
+  // ---------- HOME = the reel ----------
   var FLAT = [], pos = 0;
+  function posKey() { return "maffl_lab_pos_" + W.weekNumber + "_" + norm(ME.owner); }
+  function renderHome() {
+    buildGroups();
+    var fy = forYouCards(); if (fy.length) GROUPS.unshift({ key: "you", label: "⭐ For you", cards: fy });
+    FLAT = [];
+    GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c, ci) { FLAT.push({ g: gi, c: c, n: ci + 1, of: g.cards.length }); }); });
+    FLAT.push({ g: GROUPS.length, done: true });
+    pos = Math.min(+(store(posKey()) || 0), FLAT.length - 1);
+    $("v-home").innerHTML = '<div class="keys" id="keys"></div><div class="stack" id="hstack"></div>';
+    drawDeck();
+  }
   function cardHTML(it) {
     if (it.done) return '<div class="dcard done-card"><div style="font-size:56px">✅</div><h3 style="font:700 28px var(--display)">You\'re caught up on Week ' + W.weekNumber + '</h3>' +
-      '<p class="p" style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><a class="b" href="../weekly.html">Full Pulse</a><button class="b pri" id="dhome">Back to Home</button></div></div>';
+      '<p class="p" style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><a class="b" href="../weekly.html">Full Pulse</a><button class="b pri" id="dagain">Start over</button></div></div>';
     var g = GROUPS[it.g];
-    return '<div class="dcard"><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
-      '<div class="dhead"><div class="eb"><span>' + g.label + ' · ' + esc(it.c.eb) + '</span><span style="color:var(--muted)">' + it.n + '/' + it.of + '</span></div><h3>' + esc(it.c.t) + '</h3></div>' +
+    return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + '"><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
+      '<div class="dhead"><div class="eb"><span>' + esc(it.c.eb) + '</span><span class="ctxt">' + g.label.split(" ").slice(1).join(" ") + ' ' + it.n + '/' + it.of + '</span></div><h3>' + esc(it.c.t) + '</h3></div>' +
       '<div class="dbody">' + it.c.body + '</div>' +
       '<div class="dfoot"><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div><span class="hint">Swipe ⇄</span></div></div>';
   }
+  function drawKeys(cur) {
+    var cnt = {}; FLAT.forEach(function (it, k) { if (!it.done) { cnt[it.g] = cnt[it.g] || []; cnt[it.g].push(k); } });
+    $("keys").innerHTML = GROUPS.map(function (g, gi) {
+      var idxs = cnt[gi] || [], ic = g.label.split(" ")[0], nm = g.label.split(" ").slice(1).join(" ");
+      var state = gi === cur ? " on" : (idxs.length && idxs[idxs.length - 1] < pos ? " done" : "");
+      return '<button class="key' + state + '" data-g="' + gi + '"><i>' + ic + '</i>' + nm +
+        '<span class="pips">' + idxs.map(function (k) { return '<b class="' + (k <= pos ? "f" : "") + '"></b>'; }).join("") + '</span></button>'; }).join("") +
+      '<button class="key' + (cur === GROUPS.length ? " on" : "") + '" data-g="' + GROUPS.length + '"><i>✅</i>Done<span class="pips"></span></button>';
+    $("keys").querySelectorAll(".key").forEach(function (k) { k.onclick = function () {
+      var gi = +k.dataset.g; pos = FLAT.findIndex(function (it) { return it.g === gi; }); drawDeck(); }; });
+    var on = $("keys").querySelector(".key.on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }
   function drawDeck() {
-    var it = FLAT[pos];
-    $("segs").innerHTML = GROUPS.map(function (_, k) { return '<i class="' + (k < it.g ? "done" : k === it.g ? "now" : "") + '"></i>'; }).join("");
+    var it = FLAT[pos]; store(posKey(), String(pos));
+    drawKeys(it.g);
     var html = "";
     if (FLAT[pos + 2]) html += cardHTML(FLAT[pos + 2]).replace('class="dcard', 'class="dcard back2');
     if (FLAT[pos + 1]) html += cardHTML(FLAT[pos + 1]).replace('class="dcard', 'class="dcard back');
     html += cardHTML(it);
-    $("stack").innerHTML = html;
-    var top = $("stack").lastElementChild, dh = $("dhome");
-    if (dh) dh.onclick = closeDeck;
-    if (!it.done) { wireSwipe(top); store(seenKey(GROUPS[it.g].key), "1"); }
+    $("hstack").innerHTML = html;
+    var top = $("hstack").lastElementChild, again = $("dagain");
+    if (again) again.onclick = function () { pos = 0; drawDeck(); };
+    if (!it.done) wireSwipe(top);
   }
   function advance(top, dir) {
     top.style.transform = "translateX(" + (dir * 520) + "px) rotate(" + (dir * 18) + "deg)"; top.style.opacity = "0";
@@ -410,15 +447,12 @@
     card.querySelectorAll(".dfoot .reacts button").forEach(function (b) { b.addEventListener("click", function () {
       setTimeout(function () { if (b.classList.contains("sel")) advance(card, 1); }, 380); }); });
   }
-  function openDeck(key) {
-    FLAT = [];
-    GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c, ci) { FLAT.push({ g: gi, c: c, n: ci + 1, of: g.cards.length }); }); });
-    FLAT.push({ g: GROUPS.length, done: true });
-    pos = Math.max(0, FLAT.findIndex(function (it) { return !it.done && GROUPS[it.g].key === key; }));
-    drawDeck(); $("deck").classList.add("on"); document.body.style.overflow = "hidden";
+  // Home fills the screen between the header and the tab bar; cards scroll inside.
+  function sizeHome() {
+    var hh = document.querySelector(".hdr").offsetHeight, th = $("tabs").offsetHeight;
+    $("v-home").style.height = (window.innerHeight - hh - th) + "px";
   }
-  function closeDeck() { $("deck").classList.remove("on"); document.body.style.overflow = ""; renderHome(); }
-  $("dx").onclick = closeDeck;
+  window.addEventListener("resize", sizeHome);
 
   // ---------- MATCH ----------
   function renderMatch() {
@@ -464,10 +498,10 @@
       '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>#' + t.rank + '</b><small>' + tierN + '</small></div>' +
       '<div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts for</small></div></div></div>' +
       '<div class="seg" id="tseg"><button data-sub="roster" class="on">Roster</button><button data-sub="trades">Trades</button><button data-sub="credits">Credits</button><button data-sub="stats">Stats</button></div>';
-    h += '<div class="sub-v on pad" id="s-roster"><div class="card soon"><div class="eb">Coming in v2</div><h3>Your roster</h3><p>Needs the new daily ESPN roster pull. Then: players by position, trade-block tags, and a player card with MAFFL draft and owner history.</p></div></div>';
-    h += '<div class="sub-v pad" id="s-trades"><div class="card soon"><div class="eb">Coming in v2</div><h3>Trades</h3><p>Pick a team → side by side → preview → send. Open offers show as a badge on this tab.</p></div></div>';
+    h += '<div class="sub-v on pad" id="s-roster"><div class="card soon"><div class="eb">🚧 In the build</div><h3>Your roster</h3><p>Players by position, trade-block tags, and a player card with stats plus MAFFL draft and owner history. Arrives with the daily roster pull.</p></div></div>';
+    h += '<div class="sub-v pad" id="s-trades"><div class="card soon"><div class="eb">🚧 In the build</div><h3>Trades</h3><p>Pick a team → side by side → preview → send. Open offers show as a badge on this tab.</p></div></div>';
     h += '<div class="sub-v pad" id="s-credits"><div class="card"><div class="eb">Balance</div><h3>' + t.credits + ' credits</h3><p>From the latest Pulse standings.</p></div>' +
-      '<div class="card soon"><div class="eb">Coming in v3</div><h3>Spend credits</h3><p>Perks like a player double bonus, requested here and approved by the commish. Replaces the Credit Request form.</p></div></div>';
+      '<div class="card soon"><div class="eb">🚧 In the build</div><h3>Spend credits</h3><p>Perks like a player double bonus, requested here and approved by the commish. Replaces the Credit Request form.</p></div></div>';
     h += '<div class="sub-v pad" id="s-stats"><div class="card"><div class="eb">2026</div><div class="stat3"><div><b>' + rec(t) + '</b><small>Record</small></div><div><b>' + f2(t.points / Math.max(1, t.w + t.l)) + '</b><small>Pts / week</small></div><div><b>' + (t.streak > 0 ? "W" + t.streak : t.streak < 0 ? "L" + (-t.streak) : "–") + '</b><small>Streak</small></div></div></div>' +
       '<div class="card"><div class="eb">Career since 2005 · record is regular season</div><div class="stat3"><div><b>' + c.w + '–' + c.l + '</b><small>Record</small></div><div><b>' + c.titles + '</b><small>Titles</small></div><div><b>' + c.playoffs + '</b><small>Playoff years</small></div></div>' +
       (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
@@ -501,12 +535,12 @@
   function renderMore() {
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests</a></div>' +
       '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>Switch team</button><button id="mReq"><span>🔑</span>PIN help</button></div>' +
-      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab v0: read-only, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. Reactions don\'t save yet. Nothing here changes league data.</p></div>';
+      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. Reactions don\'t save yet. Nothing here changes league data.</p></div>';
     $("mSwitch").onclick = function () { showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
   }
 
-  // ---------- WELCOME (pick team; PIN arrives in v1) ----------
+  // ---------- WELCOME (pick team; PINs connect to the league Sheet) ----------
   function showWelcome(requestMode) {
     var el = $("welcome"), h = '<img class="logo" src="../maffl-logo.png" alt=""><h1>MAFFL HQ</h1>';
     if (requestMode) {
@@ -514,10 +548,10 @@
         '<select class="field" id="rqOwner"><option value="">Which owner are you?</option>' + TEAMS.slice().sort(function (a, b) { return a.owner.localeCompare(b.owner); }).map(function (t) { return '<option>' + esc(t.owner) + '</option>'; }).join("") + '</select>' +
         '<input class="field" id="rqNote" placeholder="Anything else? (optional)">' +
         '<div class="btns"><button class="b" id="rqBack">Back</button><button class="b pri" id="rqSend">Send request</button></div>' +
-        '<p class="meta" style="margin-top:12px;text-align:center">Prototype: in v1 this emails the commish. Nothing is sent yet.</p>';
+        '<p class="meta" style="margin-top:12px;text-align:center">Prototype: this will email the commish. Nothing is sent yet.</p>';
       el.innerHTML = h; el.classList.add("on");
       $("rqBack").onclick = function () { showWelcome(); };
-      $("rqSend").onclick = function () { if (!$("rqOwner").value) { toast("Pick an owner first"); return; } toast("In v1 this emails the commish ✓"); showWelcome(); };
+      $("rqSend").onclick = function () { if (!$("rqOwner").value) { toast("Pick an owner first"); return; } toast("Will email the commish once the Sheet is connected ✓"); showWelcome(); };
       return;
     }
     h += '<p class="p">Which team is yours?</p><p class="meta" style="text-align:center;margin-top:4px">Prototype: no PIN yet. Your pick is remembered on this phone.</p>';
