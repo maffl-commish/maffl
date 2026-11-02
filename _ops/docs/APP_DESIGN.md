@@ -1,6 +1,6 @@
 # MAFFL HQ App — design note
 
-VERSION: 0.2 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`**
+VERSION: 0.3 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`**
 Related: `TRADE_CENTER_DESIGN.md` (trades, PINs, guardrails §5b) · mockup `REEL_MOCKUP.html` (sample data)
 
 ## 1. Why
@@ -19,6 +19,30 @@ Bottom tabs: **Home · Match · Team · League · More**. The app replaces the c
 | 🏈 Team | You | Record, rank, credits, points. Tabs: **Roster** (player sheet: stats + MAFFL draft/owner history), **Trades** (badge = open offers in/out), **Stats** (season + career), **Credits** (balance, history, **spend credits on perks**, e.g. player double bonus) |
 | 🏆 League | Everyone | Standings (credits column; no separate Credit Leaders), **Rulebook**, Pulse archive, Power Rankings, History, Draft, Rivals, Prizes & Dues |
 | ☰ More | Account + misc | Speak Up, switch team / PIN help, what shows on Home |
+
+## 2b. Card rules (commish 11/2)
+
+- **Never waste space.** Every card fills its height: a hero item on top (biggest type), then supporting items below.
+- **Everything on a card can be reacted to**, the card itself and its rows (stories, lineup calls, games).
+- Deadlines are headline items (top of Headlines when inside their lead window), not a separate category.
+
+## 2c. Pages dissolve into the app (commish 11/2, proposed mapping — confirm)
+
+Three building blocks only: **reel cards** (Home), **tab screens made of cards** (Match, Team, League),
+and **sheets** that slide up from anywhere (tap a team, owner, player, game or rivalry). No page-to-page browsing.
+
+| Page today | Where it lives in the app |
+|---|---|
+| Weekly Pulse | Its sections become reel card types. **No separate Pulse page.** Past weeks: League → pick a week, replays that week's reel |
+| Rivalry | Match tab (your game) + a **rivalry sheet** from any game/score; League → Rivals for any pair |
+| Power Rankings, Stats | League → All-time; tapping any owner opens an **owner sheet** (career, titles, rating, you vs. them) |
+| History | League → History (champions by year as cards; a year opens a season sheet) |
+| Auction Draft / Draft Day | Team → your drafts; player sheet → draft history; League → Auction recap; offseason reel cards |
+| Credits | Team → Credits (balance, history, spend); standings credits column; rules in Rulebook |
+| Prizes & Dues | Team → Money (your dues + winnings); League → Prizes (payouts) |
+| Rulebook | League → Rulebook, read in-app (searchable sections) |
+| Speak Up | More → Speak Up (saves to the Sheet); polls appear as reel cards |
+| Overview | More → About MAFFL |
 
 ## 3. Trade flow (Sleeper pattern, commish 11/2)
 

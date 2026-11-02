@@ -141,6 +141,20 @@
   .key .pips b.f{background:var(--gold)}
   #hstack{flex:1;margin:4px 14px 10px}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .hero{padding:12px 0 12px;border-bottom:1px solid var(--border)}
+  .hero .tagl{font:700 10px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark)}
+  .hero .big{font:700 22px/1.15 var(--display);margin:4px 0 6px}
+  .hero p{font-size:14px;line-height:1.45;color:var(--ink2)}
+  .hero .reacts{margin-top:8px}.hero .reacts button{font-size:14px;padding:3px 10px}
+  .item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--border)}
+  .item:first-of-type{border-top:0}
+  .item .ic{font-size:18px;line-height:1.2}
+  .item .tx{flex:1;font-size:14px;line-height:1.4;color:var(--ink2)}
+  .item .tx b{display:block;font:700 10px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .strip{display:flex;text-align:center;background:rgba(255,255,255,.07);border-radius:10px;padding:8px 0;margin-top:10px}
+  .strip>div{flex:1}.strip b{display:block;font:700 22px var(--display)}.strip small{font-size:11px;opacity:.75}
+  .mtab{width:100%;margin-top:6px;font-size:13px}
+  .mtab td{padding:7px 4px}
   /* deck */
   .deck{position:fixed;inset:0;z-index:50;background:var(--page-bg);display:none;flex-direction:column;padding-top:env(safe-area-inset-top);overflow:hidden}
   .deck.on{display:flex}
@@ -320,8 +334,7 @@
     GROUPS = [];
     GROUPS.push({ key: "scores", label: "📊 Scores", cards: [
       { eb: TN[myTier] + " · Week " + W.weekNumber, t: "Your tier's scoreboard", body: mine.concat(rest).map(scoreRow).join("") },
-      { eb: TN[other] + " · Week " + W.weekNumber, t: TN[other] + " tier scores", body: res(other).sort(byMargin).map(scoreRow).join("") },
-      { eb: "Week " + W.weekNumber, t: W.headline, body: '<p style="margin-top:8px">' + esc(W.subhead || "") + '</p>' }
+      { eb: TN[other] + " · Week " + W.weekNumber, t: TN[other] + " tier scores", body: res(other).sort(byMargin).map(scoreRow).join("") }
     ] });
     var c = W.coachOfWeek;
     if (c && c.upper) {
@@ -341,44 +354,56 @@
         '<div class="grp">Still alive · Upper</div><p>' + (s.upperActive || []).map(esc).join(" · ") + '</p>' +
         '<div class="grp">Still alive · Lower</div><p>' + (s.lowerActive || []).map(esc).join(" · ") + '</p>' }] });
     }
-    var news = (W.newsReel || []).filter(function (x) { return x.items && x.items.length; });
-    if (news.length) GROUPS.push({ key: "headlines", label: "📰 Headlines", cards: news.slice(0, 5).map(function (sec, k) {
-      return { eb: (sec.icon || "") + " " + sec.section + " · " + (k + 1) + "/" + Math.min(5, news.length), t: sec.section, body: sec.items.map(function (it) {
-        return '<div class="row" style="align-items:flex-start"><p style="flex:1">' + esc(it) + '</p><button class="mini">🔥</button></div>'; }).join("") }; }) });
-    var hw = W.highestWeekly && W.highestWeekly.weeks && W.highestWeekly.weeks[0];
-    var credBody = "";
-    if (hw && hw.week === W.weekNumber) credBody += '<div class="grp">Weekly high · +' + W.highestWeekly.credits + ' credit</div>' +
-      '<div class="row"><div><div class="nm">' + esc(hw.upper.team) + '</div><div class="meta">Upper · ' + f2(hw.upper.score) + '</div></div><div class="rt w">+1</div></div>' +
-      '<div class="row"><div><div class="nm">' + esc(hw.lower.team) + '</div><div class="meta">Lower · ' + f2(hw.lower.score) + '</div></div><div class="rt w">+1</div></div>';
-    credBody += '<div class="grp">Season awards · current leaders</div>' + (W.creditTracker || []).map(function (a) {
+    var hw = W.highestWeekly && W.highestWeekly.weeks && W.highestWeekly.weeks[0], credBody = "";
+    if (hw && hw.week === W.weekNumber) credBody += '<div class="hero" style="padding-top:4px"><div class="tagl">Weekly high · +' + W.highestWeekly.credits + ' credit each</div>' +
+      '<div class="item"><span class="ic">💳</span><div class="tx"><b>Upper · ' + f2(hw.upper.score) + '</b>' + esc(hw.upper.team) + '</div><button class="mini">🔥</button></div>' +
+      '<div class="item"><span class="ic">💳</span><div class="tx"><b>Lower · ' + f2(hw.lower.score) + '</b>' + esc(hw.lower.team) + '</div><button class="mini">🔥</button></div></div>';
+    credBody += '<div class="grp">Season awards · leaders now</div>' + (W.creditTracker || []).map(function (a) {
       return '<div class="row"><div><div class="nm">' + esc(a.leaderTeam) + '</div><div class="meta">' + esc(a.award) + ' · ' + esc(a.value) + '</div></div><div class="rt">' + a.credits + '<small>credits</small></div></div>'; }).join("");
     GROUPS.push({ key: "credits", label: "💳 Credits", cards: [{ eb: "Credits · Week " + W.weekNumber, t: "Who's earning", body: credBody }] });
-    var now = Date.now(), dates = (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now; }).slice(0, 3);
-    if (dates.length) GROUPS.push({ key: "dates", label: "🗓️ Dates", cards: [{ eb: "Coming up", t: dates[0].label, body: dates.map(function (d) {
-      var days = Math.ceil((d.dueMs - now) / 864e5);
-      return '<div class="row"><div><div class="nm">' + esc(d.label) + '</div><div class="meta">' + esc(d.when) + (d.note ? ' · ' + esc(d.note) : '') + '</div></div><div class="rt">' + days + '<small>days</small></div></div>'; }).join("") }] });
+    // Headlines: one hero story per card, more stories below it; every story can be reacted to.
+    var items = [], now = Date.now();
+    (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; }).forEach(function (d) {
+      items.push({ ic: "⏰", sec: Math.ceil((d.dueMs - now) / 864e5) + " days left", head: d.label + ": " + d.when, tx: d.note || "" }); });
+    (W.newsReel || []).forEach(function (sec) { (sec.items || []).forEach(function (it) { items.push({ ic: sec.icon || "📰", sec: sec.section, tx: it }); }); });
+    function heroHTML(it) { return '<div class="hero"><div class="tagl">' + esc(it.ic + " " + it.sec) + '</div>' + (it.head ? '<div class="big">' + esc(it.head) + '</div>' : '') +
+      '<p' + (it.head ? '' : ' style="font-size:16px;color:var(--navy)"') + '>' + esc(it.tx) + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>'; }
+    function itemHTML(it) { return '<div class="item"><span class="ic">' + it.ic + '</span><div class="tx"><b>' + esc(it.sec) + '</b>' + esc(it.head ? it.head + ". " + it.tx : it.tx) + '</div><button class="mini">🔥</button></div>'; }
+    var hcards = [{ eb: "Week " + W.weekNumber + " · top story", t: W.headline, body: '<div class="hero" style="padding-top:4px"><p>' + esc(W.subhead || "") + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>' + items.slice(0, 3).map(itemHTML).join("") }];
+    for (var k = 3; k < items.length; k += 4) {
+      var chunk = items.slice(k, k + 4);
+      hcards.push({ eb: "Week " + W.weekNumber + " · more stories", t: chunk[0].head || chunk[0].sec, body: heroHTML(chunk[0]) + chunk.slice(1).map(itemHTML).join("") });
+    }
+    GROUPS.splice(0, 0, { key: "headlines", label: "📰 Headlines", cards: hcards });
   }
   // "For you" category: personal cards lead the reel
   function forYouCards() {
-    var out = [];
+    var out = [], me = teamOf(ME.owner);
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
     if (prev) {
-      var opp = isMe(prev.ownerA) ? prev.teamB : prev.teamA;
-      out.push({ eb: "Week " + NEXT_WK + " · your game", t: "You vs. " + opp, navy: true, body: '<p style="margin-top:8px">' + esc(prev.note) + '</p>' +
-        '<div class="btns"><a class="b" href="' + rivalryHref(prev.ownerA, prev.ownerB) + '">⚔️ Rivalry</a><button class="b pri" data-go="match">Open Match</button></div>' });
+      var oppOwner = isMe(prev.ownerA) ? prev.ownerB : prev.ownerA, opp = teamOf(oppOwner), r = h2h(ME.owner, oppOwner);
+      out.push({ eb: "Week " + NEXT_WK + " · your game", t: "You vs. " + opp.team, navy: true, body:
+        '<div class="strip"><div><b>' + rec(me) + '</b><small>You · #' + me.rank + '</small></div><div><b>' + rec(opp) + '</b><small>Them · #' + (opp.rank || "–") + '</small></div></div>' +
+        '<p style="margin-top:12px">' + esc(prev.note) + '</p>' +
+        (r.n ? '<div class="strip"><div><b>' + r.aw + '–' + r.bw + '</b><small>Series</small></div><div><b>' + r.streak + '</b><small>Streak</small></div><div><b>' + r.n + '</b><small>Meetings</small></div></div>' +
+          '<div class="dots" style="justify-content:center;margin-top:10px">' + r.last.map(function (x) { return '<i class="' + (x.aWon ? "W" : "L") + '">' + (x.aWon ? "W" : "L") + '</i>'; }).join("") + '</div>' : '') +
+        '<div class="btns"><a class="b" href="' + rivalryHref(ME.owner, oppOwner) + '">⚔️ Rivalry</a><button class="b pri" data-go="match">Open Match</button></div>' });
     }
     var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
     if (lw) {
       var mineA = isMe(lw.ownerA), ms = mineA ? lw.scoreA : lw.scoreB, os = mineA ? lw.scoreB : lw.scoreA;
-      out.push({ eb: "Week " + W.weekNumber + " · your result", t: (ms > os ? "W " : "L ") + f2(ms) + " – " + f2(os) + " vs " + (mineA ? lw.teamB : lw.teamA), body: '<p style="margin-top:8px">' + esc(lw.note || "") + '</p>' +
-        '<div class="btns"><a class="b" href="' + rivalryHref(lw.ownerA, lw.ownerB) + '">⚔️ Rivalry</a></div>' });
+      var cw = ((W.coachOfWeek || {}).couldHaveWon || []).filter(function (x) { return norm(me.team) === norm(x.team); })[0];
+      var e5 = (W.elite5 || []).filter(function (x) { return isMe(x.owner); })[0];
+      var tier = TEAMS.filter(function (t) { return t.tier === me.tier; }).sort(function (a, b) { return a.rank - b.rank; });
+      var i0 = Math.max(0, Math.min(tier.length - 5, me.rank - 3)), near = tier.slice(i0, i0 + 5);
+      out.push({ eb: "Week " + W.weekNumber + " · your result", t: (ms > os ? "W " : "L ") + f2(ms) + " – " + f2(os) + " vs " + (mineA ? lw.teamB : lw.teamA), body:
+        '<div class="hero" style="padding-top:4px"><p>' + esc(lw.note || "") + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>' +
+        (cw ? '<div class="item"><span class="ic">🔄</span><div class="tx"><b>Could have won</b>Lost by ' + f2(cw.lostBy) + ' and benched ' + f2(cw.leftOnBench) + '.</div></div>' : '') +
+        (e5 ? '<div class="item"><span class="ic">⭐</span><div class="tx"><b>Elite 5 · #' + e5.rank + '</b>' + esc(e5.note) + '</div><button class="mini">😎</button></div>' : '') +
+        '<div class="grp">Where you stand</div><table class="mtab">' + near.map(function (t) {
+          return '<tr' + (isMe(t.owner) ? ' class="me"' : '') + '><td>' + t.rank + '</td><td>' + esc(t.team) + '</td><td class="n">' + rec(t) + '</td><td class="n">' + Math.round(t.points) + '</td></tr>'; }).join("") + '</table>' +
+        '<div class="btns"><a class="b" href="' + rivalryHref(lw.ownerA, lw.ownerB) + '">⚔️ Rivalry</a><button class="b" data-go="league">Standings</button></div>' });
     }
-    var cw = ((W.coachOfWeek || {}).couldHaveWon || []).filter(function (x) { return norm(teamOf(ME.owner).team) === norm(x.team); })[0];
-    if (cw) out.push({ eb: "🔄 Could have won", t: "You lost by " + f2(cw.lostBy) + " and benched " + f2(cw.leftOnBench), body: '<p style="margin-top:8px">Against ' + esc(cw.opponent) + '.</p>' });
-    var e5 = (W.elite5 || []).filter(function (x) { return isMe(x.owner); })[0];
-    if (e5) out.push({ eb: "⭐ Elite 5 · #" + e5.rank, t: "You made the Elite 5", body: '<p style="margin-top:8px">' + esc(e5.note) + '</p>' });
-    var now = Date.now(), dl = (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; })[0];
-    if (dl) out.push({ eb: "⏰ " + Math.ceil((dl.dueMs - now) / 864e5) + " days left", t: dl.label + ": " + dl.when, body: '<p style="margin-top:8px">' + esc(dl.note || "") + '</p>' });
     return out;
   }
 
@@ -397,7 +422,7 @@
   }
   function cardHTML(it) {
     if (it.done) return '<div class="dcard done-card"><div style="font-size:56px">✅</div><h3 style="font:700 28px var(--display)">You\'re caught up on Week ' + W.weekNumber + '</h3>' +
-      '<p class="p" style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><a class="b" href="../weekly.html">Full Pulse</a><button class="b pri" id="dagain">Start over</button></div></div>';
+      '<p class="p" style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><button class="b" data-go="league">Standings</button><button class="b pri" id="dagain">Start over</button></div></div>';
     var g = GROUPS[it.g];
     return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + '"><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
       '<div class="dhead"><div class="eb"><span>' + esc(it.c.eb) + '</span><span class="ctxt">' + g.label.split(" ").slice(1).join(" ") + ' ' + it.n + '/' + it.of + '</span></div><h3>' + esc(it.c.t) + '</h3></div>' +
