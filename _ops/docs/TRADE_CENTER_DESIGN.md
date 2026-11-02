@@ -1,6 +1,6 @@
 # Trade Center — design note
 
-VERSION: 0.1 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **idea / design only, nothing built**
+VERSION: 0.2 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **idea / design only, nothing built**
 
 ## 1. Why
 
@@ -21,7 +21,7 @@ commish keeps control over everything that touches gold.
 | Deadline 12:00 PM ET Wed Dec 2, 2026 (from `key-dates-data.js`); no postseason trades | Offer and Accept buttons turn off at the deadline |
 | 24-hour review after acceptance; credit trades are approved or negated as a whole | States: Proposed → Accepted (24h review) → Commish approved / Negated |
 | Player leg runs on ESPN and doesn't wait on the commish | The app never touches ESPN. It shows "Now send this on ESPN" with the exact players |
-| MAFFL Ghost doesn't earn credits | 👻 has no credits card (can it trade players? **commish to confirm**) |
+| MAFFL Ghost doesn't earn credits | 👻 can't trade at all (commish 11/2): no column, no credits card |
 
 ## 3. Screens (copying Sleeper's layout, adapted)
 
@@ -79,6 +79,12 @@ commish keeps control over everything that touches gold.
 GitHub Pages is public, so the lab page is hidden but not private. That's fine, because the test Sheet can't
 touch real credits or gold.
 
+## 6b. Direction change (commish 11/2)
+
+The Trade Center becomes part of the **MAFFL Reel**: a personalized, swipeable card feed alongside the base
+site. Trade-block tags, offers, and accepted deals become Reel cards; the roster grid stays a full screen
+opened from a card. Reel design note to follow.
+
 ## 7. Later (not v1)
 
 Counter-offers with history; multi-team trades; a Pulse "Trade Wire" section (accepted trades of the
@@ -86,8 +92,8 @@ week, read from approved rows); push notifications (only through a group text fo
 
 ## 8. Open questions for the commish
 
-1. Can 👻 MAFFL Ghost trade players (it can't trade credits)?
-2. Should open trade-block tags and pending offers be visible to the whole tier, or only to the two parties
-   (Sleeper shows block tags to all, offers to the parties only)?
+1. ~~Can 👻 trade?~~ **No** (commish 11/2).
+2. ~~Visibility?~~ **Offers are private to the two teams until both agree.** Once accepted (in the 24h
+   review / awaiting commish), the deal is visible to the whole tier. Trade-block tags are visible tier-wide.
 3. Does the Trade Center replace the Credit Request form for trade credit legs, or run alongside it?
 4. v1 tier scope: both tiers at once, or one tier first?
