@@ -705,7 +705,8 @@
   function renderMore() {
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
       '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button></div>' +
-      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p></div>';
+      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>';
+    if (API_URL) apiGet({}).then(function (r) { if (r && r.version) $("srvver").textContent = "League server v" + r.version + (r.logic === "repo" ? " (auto-updates from the repo)" : ""); }).catch(function () {});
     $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
   }

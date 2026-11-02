@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · App backend: script split into a stable loader (`Code.gs`, @OnlyCurrentDoc, pasted once more by commish) + `logic.js` loaded from main at runtime (5-min cache; Sheet menu "Load latest logic now"). Backend changes now ship by push, no redeploys. CLAUDE.md "App backend" section. Lab → More shows the server version.
 - 2026-11-02 · App backend v0.3: sign in with the passphrase alone (server matches it to the owner; no team picker). League-wide limit of 25 wrong guesses/hour, then pause + email to commish. Word lists ~95×95 (~9,000 pairs); new passphrases are unique across owners.
 - 2026-11-02 · App backend v0.2: two-word football passphrases (GRONK-PISTOL style; caps/dashes ignored) replace 4-digit PINs; lab connected to the deployed web app (API_URL set), so the lab now asks for a passphrase.
 - 2026-11-02 · `APP_DESIGN.md` §6b ESPN refresh rhythm confirmed by commish; open item added: a short in-app note on the sync pattern. Doc only.

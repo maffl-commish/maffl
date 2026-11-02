@@ -202,7 +202,8 @@ interactions (trades for now, §4b).
 ## 7b. Backend (built 11/2)
 
 - Sheet: **MAFFL HQ App — TEST backend (lab)** in the commish's Drive (tabs Owners, Events, Requests, Polls, README).
-- Script: `_ops/apps-script/Code.gs` (bound to that Sheet, deployed as a web app). Actions: `login`, `request`
+- Script: `_ops/apps-script/Code.gs` is a stable **loader** (bound to that Sheet, deployed once as a web app) that
+  fetches `_ops/apps-script/logic.js` from GitHub main (5-min cache) and runs it. Backend changes ship by push; no redeploys. Actions: `login`, `request`
   (logs + emails the commish), `react`, `vote` (POST, text/plain JSON); `summary` (GET: reaction counts, your
   reactions, poll tallies, active polls).
 - Passphrases: two football words (GRONK-PISTOL), case/dashes ignored; salted SHA-256 only; 5 wrong tries locks.

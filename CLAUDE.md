@@ -128,3 +128,13 @@ nobody edits files on the computer.
   `validate.ps1`, `gen-*.ps1`) and reach ESPN. ESPN goes through the `ESPN weekly pull` workflow (Run workflow,
   `week` + `force` inputs). For a change that needs a `build\` script, stop and say so; don't approximate the
   generator by hand.
+
+## App backend (added 2026-11-02)
+
+- `_ops/apps-script/logic.js` is **live backend code**: the Apps Script loader (`Code.gs`, bound to the
+  "MAFFL HQ App" Sheet) fetches it from `main` and runs it. **Pushing logic.js = deploying it** (live within
+  ~5 min; Sheet menu MAFFL → "Load latest logic now" forces it). `node --check` it and keep the `M.*` exports
+  at the bottom intact; a syntax error takes the app's sign-in, reactions and votes down.
+- `Code.gs` (the loader) should not change. If it must, the commissioner re-pastes it and redeploys a new version.
+- Backend rules: passphrases only as salted hashes; Events is append-only; the backend never writes gold data.
+
