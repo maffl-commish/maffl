@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>MAFFL Reel — mockup (sample data)</title>
+<style>
+  :root{--navy:#1a2e50;--navy2:#243a62;--gold:#f5a623;--win:#1d9e75;--loss:#c04a4a;--muted:#8a9ab5;--bg:#0f1c33;--card:#1a2e50;--line:rgba(255,255,255,.12);
+    --display:"Barlow Condensed",system-ui,sans-serif;--body:"Barlow",system-ui,sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:#fff;font-family:var(--body);-webkit-font-smoothing:antialiased}
+  .app{height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+  /* top bar */
+  .top{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 14px 8px;background:var(--bg);z-index:3}
+  .logo{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.5px}
+  .logo b{color:var(--gold)}
+  .me{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+  .me i{width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-style:normal;font-weight:800}
+  .modes{display:flex;gap:6px;padding:0 14px 8px}
+  .modes button{flex:1;border:1px solid var(--line);background:none;color:var(--muted);border-radius:999px;padding:6px 0;font:600 13px var(--body)}
+  .modes button.on{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+  /* main area */
+  main{flex:1;overflow:hidden;position:relative}
+  .pane{position:absolute;inset:0;overflow-y:auto;display:none}
+  .pane.on{display:block}
+  /* anchor bar */
+  nav.anchor{display:flex;justify-content:space-around;border-top:1px solid var(--line);background:#0b1628;padding:6px 0 calc(env(safe-area-inset-bottom) + 6px)}
+  nav.anchor a{color:var(--muted);text-decoration:none;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:56px}
+  nav.anchor a span{font-size:20px}
+  nav.anchor a.on{color:var(--gold)}
+  /* shared card bits */
+  .tag{display:inline-block;font:700 11px var(--body);letter-spacing:1px;text-transform:uppercase;color:var(--gold)}
+  h2{font-family:var(--display);font-size:30px;line-height:1.05;margin:6px 0}
+  .sub{color:#c8d2e4;font-size:15px;line-height:1.4}
+  .score{display:flex;align-items:center;justify-content:space-between;margin:14px 0;font-family:var(--display)}
+  .score div{text-align:center;flex:1}
+  .score b{display:block;font-size:40px}
+  .score small{color:var(--muted);font-family:var(--body);font-size:12px}
+  .w{color:var(--win)}.l{color:var(--loss)}
+  .acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .acts button{flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;border-radius:12px;padding:10px 6px;font:600 14px var(--body)}
+  .acts button.pri{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+  .acts button.sel{background:var(--win);border-color:var(--win)}
+  .poll button{display:flex;justify-content:space-between;width:100%;text-align:left;margin-top:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:#fff;border-radius:12px;padding:11px 12px;font:600 14px var(--body)}
+  .player{display:flex;align-items:center;gap:10px;background:#6b1d3f;border-radius:12px;padding:10px 12px;margin-top:10px}
+  .player .pos{font-size:12px;color:#e8a9c4}
+  .player .nm{font-family:var(--display);font-size:22px;font-weight:700}
+  .block{margin-left:auto;background:#fff;color:#111;font:800 10px var(--body);padding:3px 6px;border-radius:4px}
+  .credit{display:flex;align-items:center;gap:10px;background:#1d4d3f;border-radius:12px;padding:10px 12px;margin-top:8px;font-weight:700}
+  .bar{height:8px;border-radius:4px;background:rgba(255,255,255,.12);margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--gold)}
+  /* A: reel (full-screen snap) */
+  #reel{scroll-snap-type:y mandatory}
+  #reel section{height:100%;scroll-snap-align:start;padding:16px 60px 18px 18px;display:flex;flex-direction:column;justify-content:center;position:relative;border-bottom:1px solid var(--line)}
+  #reel section .big{font-size:64px;text-align:center;margin-bottom:6px}
+  #reel .rail{position:absolute;right:10px;bottom:22px;display:flex;flex-direction:column;gap:14px;font-size:24px;text-align:center}
+  #reel .rail small{display:block;font-size:11px;color:var(--muted)}
+  #reel .hint{position:absolute;bottom:6px;left:0;right:0;text-align:center;color:var(--muted);font-size:11px}
+  /* B: feed */
+  #feed{padding:4px 12px 16px}
+  .fc{background:var(--card);border-radius:16px;padding:14px;margin-top:12px;border:1px solid var(--line)}
+  .fc h2{font-size:24px}
+  /* C: hybrid stories strip */
+  .stories{display:flex;gap:12px;overflow-x:auto;padding:8px 12px 4px}
+  .st{flex:0 0 auto;text-align:center;font-size:11px;color:#c8d2e4;width:64px}
+  .st i{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 4px;border-radius:50%;border:3px solid var(--gold);font-style:normal;font-size:26px;background:var(--navy)}
+  .st.seen i{border-color:var(--muted)}
+  .sample{position:fixed;top:4px;left:50%;transform:translateX(-50%);background:var(--loss);font:700 9px var(--body);padding:1px 6px;border-radius:4px;z-index:9;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="sample">MOCKUP · SAMPLE DATA</div>
+<div class="app">
+  <div class="top">
+    <div class="logo">MAFFL <b>HQ</b></div>
+    <div class="me">Week 9 · <i>M</i></div>
+  </div>
+  <div class="modes">
+    <button data-m="reel">A · Reel</button>
+    <button data-m="feed">B · Cards</button>
+    <button data-m="hybrid">C · Hybrid</button>
+  </div>
+
+  <main>
+    <!-- A: full-screen reel -->
+    <div class="pane" id="reel">
+      <section>
+        <div class="big">🏈</div>
+        <span class="tag">Your Week 9</span>
+        <h2>You won by 4.2. Barely.</h2>
+        <div class="score"><div><b class="w">128.4</b><small>You</small></div><div style="flex:0">vs</div><div><b class="l">124.2</b><small>Your opponent</small></div></div>
+        <p class="sub">Your bench left 11.6 on the table. You'd have won anyway.</p>
+        <div class="rail"><div>👍<small>12</small></div><div>👎<small>3</small></div><div>💬<small>4</small></div><div>↗︎<small>Share</small></div></div>
+        <div class="hint">Swipe up ↑</div>
+      </section>
+      <section>
+        <div class="big">🏷️</div>
+        <span class="tag">Trade block · your tier</span>
+        <h2>A WR just hit the block</h2>
+        <p class="sub">You're thin at WR this week (2 on bye).</p>
+        <div class="player"><div><div class="pos">WR · PIT · bye 9</div><div class="nm">Sample Receiver</div></div><span class="block">TRADE BLOCK</span></div>
+        <p class="sub" style="margin-top:8px">“Selling for RB depth.”</p>
+        <div class="acts"><button>♡ Watch</button><button class="pri">Start offer</button></div>
+        <div class="rail"><div>👍<small>5</small></div><div>💬<small>2</small></div></div>
+      </section>
+      <section>
+        <div class="big">🗳️</div>
+        <span class="tag">Vote · closes Tue</span>
+        <h2>Game of the Week?</h2>
+        <div class="poll">
+          <button>Upper · 151.3 vs 149.8 <span>41%</span></button>
+          <button>Lower · OT-style 0.2 finish <span>35%</span></button>
+          <button>Upper · 88-pt beatdown <span>24%</span></button>
+        </div>
+      </section>
+      <section>
+        <div class="big">⏰</div>
+        <span class="tag">Last call</span>
+        <h2>Trade deadline in 30 days</h2>
+        <p class="sub">Wed Dec 2 · 12:00 PM ET. Credits can ride along.</p>
+        <div class="acts"><button>Rules</button><button class="pri">Trade Center</button></div>
+      </section>
+    </div>
+
+    <!-- B: card feed -->
+    <div class="pane" id="feed">
+      <div class="fc">
+        <span class="tag">Your Week 9</span>
+        <h2>You won by 4.2. Barely.</h2>
+        <div class="score"><div><b class="w">128.4</b><small>You</small></div><div style="flex:0">vs</div><div><b class="l">124.2</b><small>Opponent</small></div></div>
+        <div class="acts"><button>👍 12</button><button>👎 3</button><button>Full Pulse ›</button></div>
+      </div>
+      <div class="fc">
+        <span class="tag">📨 Offer for you</span>
+        <h2>2-for-1 + 3 credits</h2>
+        <div class="player"><div><div class="pos">You get · RB · DEN</div><div class="nm">Sample Back</div></div></div>
+        <div class="credit">💳 +3 credits</div>
+        <div class="player" style="background:#123f4f"><div><div class="pos">You send · WR · KC</div><div class="nm">Sample Wideout</div></div></div>
+        <div class="acts"><button>Decline</button><button>Counter</button><button class="pri">Accept</button></div>
+      </div>
+      <div class="fc">
+        <span class="tag">🗳️ Vote · closes Tue</span>
+        <h2>Game of the Week?</h2>
+        <div class="poll"><button>Upper · 151.3 vs 149.8 <span>41%</span></button><button>Lower · 0.2-pt finish <span>35%</span></button></div>
+      </div>
+      <div class="fc">
+        <span class="tag">⚔️ Rivalry · this week</span>
+        <h2>You vs. your nemesis</h2>
+        <p class="sub">Series 7–9. You've lost the last 3.</p>
+        <div class="bar"><i style="width:44%"></i></div>
+        <div class="acts"><button>🔥 Bring it</button><button>Open rivalry ›</button></div>
+      </div>
+      <div class="fc">
+        <span class="tag">🧠 Trivia</span>
+        <h2>Who won the 2011 title?</h2>
+        <div class="acts"><button>Team A</button><button>Team B</button><button>Team C</button></div>
+      </div>
+    </div>
+
+    <!-- C: hybrid -->
+    <div class="pane" id="hybrid">
+      <div class="stories">
+        <div class="st"><i>🏈</i>Your week</div>
+        <div class="st"><i>🏆</i>Coach</div>
+        <div class="st"><i>📰</i>Headlines</div>
+        <div class="st"><i>⏰</i>Deadlines</div>
+        <div class="st seen"><i>📊</i>Standings</div>
+        <div class="st seen"><i>🔄</i>Could've won</div>
+      </div>
+      <div id="feed2" style="padding:0 12px 16px"></div>
+    </div>
+  </main>
+
+  <nav class="anchor">
+    <a class="on" href="#"><span>🏠</span>Reel</a>
+    <a href="#"><span>📰</span>Pulse</a>
+    <a href="#"><span>📊</span>Standings</a>
+    <a href="#"><span>⚔️</span>Rivalry</a>
+    <a href="#"><span>☰</span>More</a>
+  </nav>
+</div>
+<script>
+  // Hybrid reuses the interactive cards from B (after the first, which the stories cover).
+  document.getElementById("feed2").innerHTML =
+    Array.from(document.querySelectorAll("#feed .fc")).slice(1).map(function (c) { return c.outerHTML; }).join("");
+  function setMode(m) {
+    document.querySelectorAll(".pane").forEach(function (p) { p.classList.toggle("on", p.id === m); });
+    document.querySelectorAll(".modes button").forEach(function (b) { b.classList.toggle("on", b.dataset.m === m); });
+  }
+  document.querySelectorAll(".modes button").forEach(function (b) { b.onclick = function () { setMode(b.dataset.m); }; });
+  // Tap-to-select feedback on any action/poll button (mockup only; nothing is saved).
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest(".acts button, .poll button");
+    if (b) b.classList.toggle("sel");
+  });
+  setMode((location.hash || "#reel").slice(1));
+</script>
+</body>
+</html>

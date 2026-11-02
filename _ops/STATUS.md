@@ -30,6 +30,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · Mockup `_ops/docs/REEL_MOCKUP.html` (sample data, noindex, not linked): Reel replaces home; compares A full-screen Reel / B interactive Cards / C Hybrid (story rings + cards), with an anchor tab bar. No page changes.
 - 2026-11-02 · Trade Center note v0.2: 👻 can't trade; offers private until both agree, then visible to the tier; direction: Trade Center folds into a personalized card feed ("MAFFL Reel"). Doc only.
 - 2026-11-02 · Design note `_ops/docs/TRADE_CENTER_DESIGN.md`: trade block + offers (players + credits, own tier only, no picks), Sheet/Apps Script backend, per-owner PINs, rosters + credit-balance generators, sandbox → go-live plan. Doc only; no page changes.
 - 2026-10-27 · Weekly Pulse: 🗓️ Key Dates strip under the News card (⏰ Last call / 📅 Coming up / ✅ Just closed), built from `key-dates-data.js` against each Week's date, so old Pulses show what mattered then (Wk 2 coming up, Wk 3 last call, Wk 4 just closed for Relegation Insurance; Wk 7 shows the Dec 2 trade deadline). Robot writes nothing. No VERSION given, so date only; stays v6.3.
