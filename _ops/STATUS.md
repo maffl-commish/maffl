@@ -30,6 +30,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · App mockup v3 (`_ops/docs/REEL_MOCKUP.html`): new structure Home · Match · Team · League · More. Home = Pulse rings (Scores, Coach, Survivor, Headlines, Credits, Dates; info-dense tap-through) + "For you" action cards; Match = this week + rivalry + last week's COTW + tier slate; Team = roster (player sheet with MAFFL draft history), trades, stats; League = standings + explore; More = reference. Sample data; no page changes.
 - 2026-11-02 · Reel mockup v2 (`_ops/docs/REEL_MOCKUP.html`): commish picked C (Hybrid); Reel = Pulse. MAFFL light theme (navy/gold, Barlow), Pulse rings (tap-through stories with reactions), Quick Access staple chips, interactive feed (offer, vote, trade block, rivalry, trivia), bottom anchor bar. Sample data; no page changes.
 - 2026-11-02 · Mockup `_ops/docs/REEL_MOCKUP.html` (sample data, noindex, not linked): Reel replaces home; compares A full-screen Reel / B interactive Cards / C Hybrid (story rings + cards), with an anchor tab bar. No page changes.
 - 2026-11-02 · Trade Center note v0.2: 👻 can't trade; offers private until both agree, then visible to the tier; direction: Trade Center folds into a personalized card feed ("MAFFL Reel"). Doc only.
