@@ -1,7 +1,32 @@
-# MAFFL HQ App — design note
+# MAFFL HQ App — governing doc (redesign · Reel · login)
 
-VERSION: 0.3 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`**
-Related: `TRADE_CENTER_DESIGN.md` (trades, PINs, guardrails §5b) · mockup `REEL_MOCKUP.html` (sample data)
+VERSION: 0.4 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+
+> **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
+> trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
+> rivals: `TRADE_CENTER_DESIGN.md` (trade rules, Sheet tabs, guardrails §5b) · `REEL_MOCKUP.html` (old
+> mockups, sample data) · `lab/` (working prototype). If they disagree, this doc wins; fix the other one.
+> Nothing here touches the live site until **§9 Go-live** says so; then it moves through MAFFL HQ Ops as normal.
+
+## 0. Journal (newest on top; one line per decision, dated)
+
+- 2026-11-02 · **Login = PIN up front, mapped straight to your team.** No team picker. Welcome screen asks
+  for the PIN with a small **"Just browsing"** link; guests get the league-wide app. Details §4.
+- 2026-11-02 · Made this the governing doc (commish worried about sprawl across two chats).
+- 2026-11-02 · Pages dissolve into the app: reel cards, tab screens, slide-up sheets (§2c, mapping to confirm).
+- 2026-11-02 · Card rules: never waste space; everything reactable; deadlines are headline items (§2b).
+- 2026-11-02 · Home IS the reel; category row is the key. Everything ships together at go-live (no "coming in vN").
+- 2026-11-02 · Tabs: Home · Match · Team · League · More. Rules under League; no separate Credit Leaders.
+- 2026-11-02 · Retire Google Forms: credit trades via offers, perk spending from Team → Credits.
+- 2026-11-02 · Reel replaces the home page; hybrid (rings + cards) chosen; Reel and Pulse become one.
+- 2026-11-02 · Trades: own tier only, 👻 can't trade, no picks, offers private until both agree, commish approves credits.
+- 2026-11-02 · Ultra careful at go-live: confirm sheets, undo toasts, append-only log; Mike feels it on his phone first.
+
+## Working rules for this project
+
+- Mockups and prototypes live in `lab/` or `_ops/docs/` only (noindex, unlinked). No live page changes until §9.
+- Each session: read this doc, add a Journal line per decision, update the section it changes, bump VERSION.
+- Settled questions get struck through in §8 with the answer, not deleted.
 
 ## 1. Why
 
@@ -50,13 +75,25 @@ All rosters view → **pick a team** → side-by-side (your roster | theirs) →
 **Preview trade** → **Send** → "Yes, send it" confirm → undo toast. Team tab's Trades shows a count badge
 for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESIGN.md`.
 
-## 4. Getting in (PINs)
+## 4. Getting in (PINs) — decided 11/2
 
-- **Welcome screen:** pick your team, enter your PIN; remembered on that phone.
-- **Request access link** on the welcome screen: owner picks who they are (+ optional note) → the Apps Script
-  logs it and **emails the commish** → commish texts the PIN → marks the request done. Rare after go-live.
+**The PIN is the login and maps to your team.** No "pick your team" step (v0 `lab/` still uses one as a stand-in).
+
+| State | How you get there | What you see / can do |
+|---|---|---|
+| **Signed in** | Enter PIN once on the welcome screen; remembered on that phone | Personalized: For-you cards lead the reel, Team tab is yours, Match is your game. Can react, vote, trade, spend credits |
+| **Guest** | Tap **"Just browsing"** under the PIN box | Same app, league-wide only: reel without For-you cards (scores, Coach, Survivor, headlines), all of League and Match slates. Team tab = "Sign in to see your team". A slim **Sign in** button stays on top |
+| Private to PIN holders | — | Trade offers, your trade block notes, your credit/dues detail, anything that writes |
+
+- Personalization **reorders, it doesn't wall off**: your cards first, shared league content still underneath.
+- **Request access** link on the welcome screen: owner says who they are (+ optional note) → Apps Script logs it
+  and **emails the commish** → commish texts the PIN → marks it done. Also reachable from More → PIN help.
 - Go-live: commish emails each owner their PIN.
-- More → "PIN help / switch team" opens the same request flow.
+- More → **Sign out** (shared family devices).
+- **iPhone note:** a Home-Screen web app keeps separate storage from Safari, so an owner who signed in in Safari
+  enters the PIN once more after "Add to Home Screen". New phone / cleared data = asked again. Expected.
+- Server side (from `TRADE_CENTER_DESIGN.md` §5): salted PIN hash in the Sheet, every write checks the PIN,
+  5 wrong tries locks it until the commish resets.
 
 ## 5. Forms this retires
 
@@ -89,5 +126,19 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 
 ## 8. Open
 
+- Confirm the §2c page → app mapping.
+- Trades: both tiers at once at go-live, or one first? (trade note §8 Q4)
+- ~~Trade Center replaces the Credit Request form for trade credit legs?~~ **Yes** (§5).
+- ~~Team picker or PIN?~~ **PIN up front, guest "Just browsing"** (§4).
 - Which Pulse sections stay as the "full Pulse" page vs. live only in cards (decide after v0 feel test).
 - Offseason Home: circles become What's New; Match shows next season's schedule.
+
+## 9. Go-live checklist (fold into MAFFL HQ Ops when ready)
+
+- [ ] Mike has used the full app on his phone (Home-Screen standalone) and signed off
+- [ ] Dry run passed: fake trades incl. negate, deadline lockout, over-balance block, wrong PIN, undo
+- [ ] Production Sheet + Apps Script deployed; test data wiped
+- [ ] Roster and credit-balance generators live (derived data, never hand-edited)
+- [ ] Guest view checked logged out
+- [ ] App becomes `index.html`; old home folds into League; old links still resolve
+- [ ] PINs emailed; Pulse announces the launch

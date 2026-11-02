@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-02 by Claude (chat), App prototype v0 (lab/)
+**Last updated:** 2026-11-02 by Claude (chat), APP_DESIGN is the redesign's governing doc
 
 ## Now
 
@@ -19,6 +19,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Planned (not written yet)
 
+- **MAFFL HQ app redesign (Reel, PIN login, trades): governing doc `_ops/docs/APP_DESIGN.md`. Read it first; log decisions in its §0 Journal.**
 - **MAFFL HQ app (prototype):** `lab/` v0 live (hidden, read-only). Next: v1 test Sheet + Apps Script (PINs, request-access email, reactions, votes); v2 roster pull + trades; v3 credit perks. Design: `_ops/docs/APP_DESIGN.md`.
 - **Trade Center (sandbox first):** Sleeper-style trade block + offers with players + credits, per-owner PINs, Google Sheet + Apps Script backend, commish approves the credit leg. Design: `_ops/docs/TRADE_CENTER_DESIGN.md` (open questions §8).
 - **Key Dates, phase 2:** home "Next up" carousel slide for the offseason, from `key-dates-data.js` (`_ops/docs/KEY_DATES_DESIGN.md` §5).
@@ -31,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · `APP_DESIGN.md` v0.4 becomes the redesign's governing doc: decision journal, working rules, login decided (PIN up front maps to your team, no picker; "Just browsing" guest mode; private items PIN-only; iOS Home-Screen re-entry note), open list, go-live checklist. Trade note points to it. Doc only.
 - 2026-11-02 · Lab: cards fill the screen (hero item + supporting items, each reactable). Headlines = top story + stories, deadlines as headline items (Dates category gone); For you = your game (records, series, streak, last 5) and your result (note, could-have-won, Elite 5, where you stand); Done card drops "Full Pulse". APP_DESIGN v0.3: card rules + proposed page→app mapping.
 - 2026-11-02 · Lab: Home is now the reel itself (no separate circles + overlay): category key row (For you → Dates → Done) highlights the current card's category with progress pips, tap to jump; For-you cards lead (your game, your result, could-have-won, Elite 5, deadline); spot remembered per week. "Coming in vN" copy removed (all features ship at go-live). APP_DESIGN v0.2.
 - 2026-11-02 · App prototype v0 at `lab/` (noindex, not linked): Home (Pulse deck circles from the latest WEEKS object: Scores w/ rivalry links, Coach, Survivor, Headlines, Credits, Dates; For-you cards), Match (next game from schedule-data, H2H from matchups-data, last week, tier slate), Team (KPIs, career; roster/trades/perks marked v2/v3), League (standings + credits, Rulebook first), More (Speak Up, switch team, PIN help mock). Pick-your-team stands in for PINs. Reads weekly.html at runtime; writes nothing. Design note `_ops/docs/APP_DESIGN.md`. No existing page changed.

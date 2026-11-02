@@ -1,5 +1,7 @@
 # Trade Center — design note
 
+> **Governed by `APP_DESIGN.md`** (the redesign's one governing doc). Record decisions there; this note holds trade detail.
+
 VERSION: 0.2 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **idea / design only, nothing built**
 
 ## 1. Why
@@ -106,5 +108,5 @@ week, read from approved rows); push notifications (only through a group text fo
 1. ~~Can 👻 trade?~~ **No** (commish 11/2).
 2. ~~Visibility?~~ **Offers are private to the two teams until both agree.** Once accepted (in the 24h
    review / awaiting commish), the deal is visible to the whole tier. Trade-block tags are visible tier-wide.
-3. Does the Trade Center replace the Credit Request form for trade credit legs, or run alongside it?
+3. ~~Replace the Credit Request form for trade credit legs?~~ **Yes** (APP_DESIGN §5).
 4. v1 tier scope: both tiers at once, or one tier first?
