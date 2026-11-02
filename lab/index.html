@@ -142,6 +142,12 @@
   .rbody .rule-tag{font:700 9px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--gold-soft);color:var(--gold-dark);border:1px solid var(--gold);border-radius:3px;padding:1px 4px;margin-left:4px;white-space:nowrap}
   .rbody mark{background:rgba(245,166,35,.35)}
   .money{font-variant-numeric:tabular-nums}
+  .opt{position:relative;display:flex;align-items:center;gap:8px;width:100%;margin-top:7px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);text-align:left;overflow:hidden;font:600 14px var(--body)}
+  .opt .ob{position:absolute;left:0;top:0;bottom:0;background:rgba(245,166,35,.18)}
+  .opt .ol,.opt .op{position:relative}.opt .op{margin-left:auto;font:700 14px var(--display);color:var(--ink2)}
+  .opt small{color:var(--muted);font-weight:500}
+  .opt.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+  .pinpad{font:700 32px var(--display);letter-spacing:.5em;text-align:center}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -274,6 +280,19 @@
   function rivalryHref(a, b) { return "../rivalry.html#vs=" + encodeURIComponent(a) + "," + encodeURIComponent(b); }
   function toast(m) { var t = $("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("on"); }, 2600); }
 
+  // Backend: Google Apps Script web app bound to the "MAFFL HQ App — TEST backend (lab)" Sheet.
+  // Empty = offline demo (pick a team, reactions stay on this phone). See _ops/apps-script/Code.gs.
+  var API_URL = "";
+  try { API_URL = localStorage.getItem("maffl_lab_api") || API_URL; } catch (e) {}
+  var SUM = { counts: {}, mine: {}, tallies: {}, myVotes: {}, polls: [] };
+  function api(action, body) {
+    body = Object.assign({ action: action }, body || {});
+    return fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+  }
+  function apiGet(q) { return fetch(API_URL + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }); }
+  function creds() { return { owner: ME && ME.owner, pin: store("maffl_lab_pin") || "" }; }
+  function R(x) { return "w" + W.weekNumber + ":" + x; }
+  function DR(x) { return ' data-ref="' + esc(R(x)) + '"'; }
   var W, WEEKS = [], LATEST, TEAMS = [], BY_OWNER = {}, ME = null, NEXT_WK, PRIZE = null, CREDIT_LOG = [], RULES_HTML = null;
 
   // ---------- load latest Pulse week from weekly.html ----------
@@ -360,14 +379,56 @@
   document.querySelectorAll("#tabs button").forEach(function (b) { b.onclick = function () { tab(b.dataset.tab); }; });
   document.addEventListener("click", function (e) {
     var g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); tab(g.dataset.go); }
-    var r = e.target.closest(".mini, .reacts button"); if (r) { r.classList.toggle("sel"); }
+    var r = e.target.closest(".mini, .reacts button"); if (r) react(r);
+    var v = e.target.closest("[data-vote]"); if (v) vote(v);
   });
+
+  // ---------- reactions + votes ----------
+  function emojiOf(b) { if (!b.dataset.e) b.dataset.e = b.textContent.trim().split(" ")[0]; return b.dataset.e; }
+  function owned(el, b) { return b.closest("[data-ref]") === el; }
+  function paint(root) {
+    (root || document).querySelectorAll("[data-ref]").forEach(function (el) {
+      var ref = el.dataset.ref, c = SUM.counts[ref] || {}, m = SUM.mine[ref] || {};
+      el.querySelectorAll(".mini, .reacts button").forEach(function (b) {
+        if (!owned(el, b)) return; var e = emojiOf(b);
+        b.textContent = e + (c[e] ? " " + c[e] : ""); b.classList.toggle("sel", !!m[e]);
+      });
+    });
+  }
+  function react(b) {
+    var el = b.closest("[data-ref]"); if (!el) { b.classList.toggle("sel"); return; }
+    var ref = el.dataset.ref, e = emojiOf(b), on = !b.classList.contains("sel");
+    SUM.mine[ref] = SUM.mine[ref] || {}; SUM.counts[ref] = SUM.counts[ref] || {};
+    SUM.mine[ref][e] = on; SUM.counts[ref][e] = Math.max(0, (SUM.counts[ref][e] || 0) + (on ? 1 : -1));
+    paint(el.parentNode || document);
+    if (!API_URL) return;
+    api("react", Object.assign(creds(), { ref: ref, emoji: e, on: on, week: W.weekNumber })).then(function (r) {
+      if (!r.ok) { SUM.mine[ref][e] = !on; SUM.counts[ref][e] += on ? -1 : 1; paint(); toast(r.error || "Didn't save"); }
+    }).catch(function () { toast("Offline: reaction not saved"); });
+  }
+  function vote(b) {
+    var poll = b.dataset.vote, ch = b.dataset.choice, prev = SUM.myVotes[poll];
+    if (prev === ch) return;
+    var t = SUM.tallies[poll] = SUM.tallies[poll] || {};
+    if (prev) t[prev] = Math.max(0, (t[prev] || 1) - 1); t[ch] = (t[ch] || 0) + 1; SUM.myVotes[poll] = ch;
+    renderHome();
+    if (!API_URL) return;
+    api("vote", Object.assign(creds(), { poll: poll, choice: ch, week: W.weekNumber })).then(function (r) {
+      if (!r.ok) { toast(r.error || "Vote didn't save"); loadSummary(); } else toast("Vote saved ✓");
+    }).catch(function () { toast("Offline: vote not saved"); });
+  }
+  function loadSummary() {
+    if (!API_URL || !ME) return;
+    apiGet({ action: "summary", owner: ME.owner }).then(function (r) {
+      if (!r.ok) return; SUM = r; renderHome(); paint();
+    }).catch(function () {});
+  }
 
   // ---------- HOME ----------
   var GROUPS = [];
   function scoreRow(g) {
     var aWon = g.scoreA >= g.scoreB, mine = isMe(g.ownerA) || isMe(g.ownerB);
-    return '<div class="game' + (mine ? " mine" : "") + '">' +
+    return '<div class="game' + (mine ? " mine" : "") + '"' + DR("g:" + g.ownerA + "~" + g.ownerB) + '>' +
       '<div class="ln' + (aWon ? " won" : "") + '"><button class="tl2" data-owner="' + esc(g.ownerA) + '">' + esc(g.teamA) + '</button><b class="' + (aWon ? "w" : "") + '">' + f2(g.scoreA) + '</b></div>' +
       '<div class="ln' + (!aWon ? " won" : "") + '"><button class="tl2" data-owner="' + esc(g.ownerB) + '">' + esc(g.teamB) + '</button><b class="' + (!aWon ? "w" : "") + '">' + f2(g.scoreB) + '</b></div>' +
       '<div class="gfoot"><a class="rv" href="' + rivalryHref(g.ownerA, g.ownerB) + '">⚔️ Rivalry ›</a><button class="mini">🔥</button></div></div>';
@@ -385,12 +446,12 @@
     ] });
     var c = W.coachOfWeek;
     if (c && c.upper) {
-      var coachRow = function (x, tier) { var o = ownerOfTeam(x.team); return '<div class="row"><div><div class="nm">' + (o ? '<button class="tl2" data-owner="' + esc(o) + '">' + esc(x.team) + '</button>' : esc(x.team)) + '</div><div class="meta">' + tier + ' · ' + f2(x.leftOnBench) + ' left on the bench</div></div><button class="mini">👏</button></div>'; };
+      var coachRow = function (x, tier) { var o = ownerOfTeam(x.team); return '<div class="row"' + DR("coach:" + x.team) + '><div><div class="nm">' + (o ? '<button class="tl2" data-owner="' + esc(o) + '">' + esc(x.team) + '</button>' : esc(x.team)) + '</div><div class="meta">' + tier + ' · ' + f2(x.leftOnBench) + ' left on the bench</div></div><button class="mini">👏</button></div>'; };
       var cards = [{ eb: "Coach of the Week", t: "Fewest points left on the bench", body:
         '<div class="grp">Upper</div>' + coachRow(c.upper, "Winner") + (c.upper.runnersUp || []).map(function (x) { return coachRow(x, "Runner-up"); }).join("") +
         '<div class="grp">Lower</div>' + coachRow(c.lower, "Winner") + (c.lower.runnersUp || []).map(function (x) { return coachRow(x, "Runner-up"); }).join("") }];
       if ((c.couldHaveWon || []).length) cards.push({ eb: "🔄 Could have won", t: "Lost by less than they benched", body: c.couldHaveWon.map(function (x) {
-        return '<div class="row"><div><div class="nm">' + esc(x.team) + '</div><div class="meta">Lost to ' + esc(x.opponent) + ' by ' + f2(x.lostBy) + ' · benched ' + f2(x.leftOnBench) + '</div></div><button class="mini">😬</button></div>'; }).join("") });
+        return '<div class="row"' + DR("chw:" + x.team) + '><div><div class="nm">' + esc(x.team) + '</div><div class="meta">Lost to ' + esc(x.opponent) + ' by ' + f2(x.lostBy) + ' · benched ' + f2(x.leftOnBench) + '</div></div><button class="mini">😬</button></div>'; }).join("") });
       GROUPS.push({ key: "coach", label: "🏆 Coach", cards: cards });
     }
     var s = W.survivor;
@@ -403,20 +464,20 @@
     }
     var hw = W.highestWeekly && W.highestWeekly.weeks && W.highestWeekly.weeks[0], credBody = "";
     if (hw && hw.week === W.weekNumber) credBody += '<div class="hero" style="padding-top:4px"><div class="tagl">Weekly high · +' + W.highestWeekly.credits + ' credit each</div>' +
-      '<div class="item"><span class="ic">💳</span><div class="tx"><b>Upper · ' + f2(hw.upper.score) + '</b>' + esc(hw.upper.team) + '</div><button class="mini">🔥</button></div>' +
-      '<div class="item"><span class="ic">💳</span><div class="tx"><b>Lower · ' + f2(hw.lower.score) + '</b>' + esc(hw.lower.team) + '</div><button class="mini">🔥</button></div></div>';
+      '<div class="item"' + DR("hw:U") + '><span class="ic">💳</span><div class="tx"><b>Upper · ' + f2(hw.upper.score) + '</b>' + esc(hw.upper.team) + '</div><button class="mini">🔥</button></div>' +
+      '<div class="item"' + DR("hw:L") + '><span class="ic">💳</span><div class="tx"><b>Lower · ' + f2(hw.lower.score) + '</b>' + esc(hw.lower.team) + '</div><button class="mini">🔥</button></div></div>';
     credBody += '<div class="grp">Season awards · leaders now</div>' + (W.creditTracker || []).map(function (a) {
       return '<div class="row"><div><div class="nm">' + esc(a.leaderTeam) + '</div><div class="meta">' + esc(a.award) + ' · ' + esc(a.value) + '</div></div><div class="rt">' + a.credits + '<small>credits</small></div></div>'; }).join("");
     GROUPS.push({ key: "credits", label: "💳 Credits", cards: [{ eb: "Credits · Week " + W.weekNumber, t: "Who's earning", body: credBody }] });
     // Headlines: one hero story per card, more stories below it; every story can be reacted to.
     var items = [], now = Date.now();
     (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; }).forEach(function (d) {
-      items.push({ ic: "⏰", sec: Math.ceil((d.dueMs - now) / 864e5) + " days left", head: d.label + ": " + d.when, tx: d.note || "" }); });
-    (W.newsReel || []).forEach(function (sec) { (sec.items || []).forEach(function (it) { items.push({ ic: sec.icon || "📰", sec: sec.section, tx: it }); }); });
-    function heroHTML(it) { return '<div class="hero"><div class="tagl">' + esc(it.ic + " " + it.sec) + '</div>' + (it.head ? '<div class="big">' + esc(it.head) + '</div>' : '') +
+      items.push({ ref: "dl:" + d.id, ic: "⏰", sec: Math.ceil((d.dueMs - now) / 864e5) + " days left", head: d.label + ": " + d.when, tx: d.note || "" }); });
+    (W.newsReel || []).forEach(function (sec) { (sec.items || []).forEach(function (it) { items.push({ ref: "news:" + items.length, ic: sec.icon || "📰", sec: sec.section, tx: it }); }); });
+    function heroHTML(it) { return '<div class="hero"' + DR(it.ref) + '><div class="tagl">' + esc(it.ic + " " + it.sec) + '</div>' + (it.head ? '<div class="big">' + esc(it.head) + '</div>' : '') +
       '<p' + (it.head ? '' : ' style="font-size:16px;color:var(--navy)"') + '>' + esc(it.tx) + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>'; }
-    function itemHTML(it) { return '<div class="item"><span class="ic">' + it.ic + '</span><div class="tx"><b>' + esc(it.sec) + '</b>' + esc(it.head ? it.head + ". " + it.tx : it.tx) + '</div><button class="mini">🔥</button></div>'; }
-    var hcards = [{ eb: "Week " + W.weekNumber + " · top story", t: W.headline, body: '<div class="hero" style="padding-top:4px"><p>' + esc(W.subhead || "") + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>' + items.slice(0, 3).map(itemHTML).join("") }];
+    function itemHTML(it) { return '<div class="item"' + DR(it.ref) + '><span class="ic">' + it.ic + '</span><div class="tx"><b>' + esc(it.sec) + '</b>' + esc(it.head ? it.head + ". " + it.tx : it.tx) + '</div><button class="mini">🔥</button></div>'; }
+    var hcards = [{ eb: "Week " + W.weekNumber + " · top story", t: W.headline, body: '<div class="hero" style="padding-top:4px"' + DR("top") + '><p>' + esc(W.subhead || "") + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>' + items.slice(0, 3).map(itemHTML).join("") }];
     for (var k = 3; k < items.length; k += 4) {
       var chunk = items.slice(k, k + 4);
       hcards.push({ eb: "Week " + W.weekNumber + " · more stories", t: chunk[0].head || chunk[0].sec, body: heroHTML(chunk[0]) + chunk.slice(1).map(itemHTML).join("") });
@@ -444,12 +505,21 @@
       var tier = TEAMS.filter(function (t) { return t.tier === me.tier; }).sort(function (a, b) { return a.rank - b.rank; });
       var i0 = Math.max(0, Math.min(tier.length - 5, me.rank - 3)), near = tier.slice(i0, i0 + 5);
       out.push({ eb: "Week " + W.weekNumber + " · your result", t: (ms > os ? "W " : "L ") + f2(ms) + " – " + f2(os) + " vs " + (mineA ? lw.teamB : lw.teamA), body:
-        '<div class="hero" style="padding-top:4px"><p>' + esc(lw.note || "") + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>' +
+        '<div class="hero" style="padding-top:4px"' + DR("res:" + ME.owner) + '><p>' + esc(lw.note || "") + '</p><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div></div>' +
         (cw ? '<div class="item"><span class="ic">🔄</span><div class="tx"><b>Could have won</b>Lost by ' + f2(cw.lostBy) + ' and benched ' + f2(cw.leftOnBench) + '.</div></div>' : '') +
-        (e5 ? '<div class="item"><span class="ic">⭐</span><div class="tx"><b>Elite 5 · #' + e5.rank + '</b>' + esc(e5.note) + '</div><button class="mini">😎</button></div>' : '') +
+        (e5 ? '<div class="item"' + DR("e5:" + ME.owner) + '><span class="ic">⭐</span><div class="tx"><b>Elite 5 · #' + e5.rank + '</b>' + esc(e5.note) + '</div><button class="mini">😎</button></div>' : '') +
         '<div class="grp">Where you stand</div><table class="mtab">' + near.map(function (t) {
           return '<tr' + (isMe(t.owner) ? ' class="me"' : '') + '><td>' + t.rank + '</td><td>' + esc(t.team) + '</td><td class="n">' + rec(t) + '</td><td class="n">' + Math.round(t.points) + '</td></tr>'; }).join("") + '</table>' +
         '<div class="btns"><a class="b" href="' + rivalryHref(lw.ownerA, lw.ownerB) + '">⚔️ Rivalry</a><button class="b" data-go="league">Standings</button></div>' });
+    }
+    var poll = (SUM.polls || []).filter(function (p) { return String(p.week) === String(W.weekNumber); })[0];
+    if (poll) {
+      var opts = String(poll.options) === "auto" ? W.results.map(function (g) { return { v: g.ownerA + "~" + g.ownerB, l: g.teamA + " vs " + g.teamB, m: Math.abs(g.scoreA - g.scoreB) }; }).sort(function (a, b) { return a.m - b.m; })
+        : String(poll.options).split("|").map(function (o) { return { v: o.trim(), l: o.trim() }; });
+      var tal = SUM.tallies[poll.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mineV = SUM.myVotes[poll.id];
+      out.unshift({ eb: "🗳️ Vote · Week " + W.weekNumber, t: poll.q, body: '<p class="meta" style="margin:6px 0 4px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · you can change yours until it closes</p>' + opts.map(function (o) {
+        var n = tal[o.v] || 0, pct = tot ? Math.round(100 * n / tot) : 0;
+        return '<button class="opt' + (mineV === o.v ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '"><span class="ob" style="width:' + pct + '%"></span><span class="ol">' + esc(o.l) + (o.m != null ? ' <small>· by ' + f2(o.m) + '</small>' : '') + '</span><span class="op">' + (tot ? pct + '%' : '') + '</span></button>'; }).join("") });
     }
     return out;
   }
@@ -471,7 +541,7 @@
     if (it.done) return '<div class="dcard done-card"><div style="font-size:56px">✅</div><h3 style="font:700 28px var(--display)">You\'re caught up on Week ' + W.weekNumber + '</h3>' +
       '<p class="p" style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><button class="b" data-go="league">Standings</button><button class="b pri" id="dagain">Start over</button></div></div>';
     var g = GROUPS[it.g];
-    return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + '"><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
+    return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + '"' + DR("card:" + g.key + ":" + it.n) + '><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
       '<div class="dhead"><div class="eb"><span>' + esc(it.c.eb) + '</span><span class="ctxt">' + g.label.split(" ").slice(1).join(" ") + ' ' + it.n + '/' + it.of + '</span></div><h3>' + esc(it.c.t) + '</h3></div>' +
       '<div class="dbody">' + it.c.body + '</div>' +
       '<div class="dfoot"><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div><span class="hint">Swipe ⇄</span></div></div>';
@@ -499,6 +569,7 @@
     var top = $("hstack").lastElementChild, again = $("dagain");
     if (again) again.onclick = function () { pos = 0; drawDeck(); };
     if (!it.done) wireSwipe(top);
+    paint($("hstack"));
   }
   function advance(top, dir) {
     top.style.transform = "translateX(" + (dir * 520) + "px) rotate(" + (dir * 18) + "deg)"; top.style.opacity = "0";
@@ -633,34 +704,62 @@
   // ---------- MORE ----------
   function renderMore() {
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
-      '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>Switch team</button><button id="mReq"><span>🔑</span>PIN help</button></div>' +
-      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. Reactions don\'t save yet. Nothing here changes league data.</p></div>';
-    $("mSwitch").onclick = function () { showWelcome(); };
+      '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>PIN help</button></div>' +
+      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p></div>';
+    $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
   }
 
   // ---------- WELCOME (pick team; PINs connect to the league Sheet) ----------
   function showWelcome(requestMode) {
     var el = $("welcome"), h = '<img class="logo" src="../maffl-logo.png" alt=""><h1>MAFFL HQ</h1>';
-    if (requestMode) {
+    if (requestMode === true) {
       h += '<p class="p">Need your PIN? Tell the commish who you are and he\'ll text it to you.</p>' +
         '<select class="field" id="rqOwner"><option value="">Which owner are you?</option>' + TEAMS.slice().sort(function (a, b) { return a.owner.localeCompare(b.owner); }).map(function (t) { return '<option>' + esc(t.owner) + '</option>'; }).join("") + '</select>' +
         '<input class="field" id="rqNote" placeholder="Anything else? (optional)">' +
         '<div class="btns"><button class="b" id="rqBack">Back</button><button class="b pri" id="rqSend">Send request</button></div>' +
-        '<p class="meta" style="margin-top:12px;text-align:center">Prototype: this will email the commish. Nothing is sent yet.</p>';
+        '<p class="meta" style="margin-top:12px;text-align:center">' + (API_URL ? 'The commish gets an email and texts you your PIN.' : 'Demo mode: nothing is sent.') + '</p>';
       el.innerHTML = h; el.classList.add("on");
       $("rqBack").onclick = function () { showWelcome(); };
-      $("rqSend").onclick = function () { if (!$("rqOwner").value) { toast("Pick an owner first"); return; } toast("Will email the commish once the Sheet is connected ✓"); showWelcome(); };
+      $("rqSend").onclick = function () {
+        if (!$("rqOwner").value) { toast("Pick an owner first"); return; }
+        if (!API_URL) { toast("Demo mode: nothing sent"); showWelcome(); return; }
+        $("rqSend").disabled = true;
+        api("request", { owner: $("rqOwner").value, note: $("rqNote").value }).then(function (r) {
+          if (r.ok) { toast("Sent ✓ The commish will text you your PIN."); showWelcome(); } else { toast(r.error || "Didn't send"); $("rqSend").disabled = false; }
+        }).catch(function () { toast("Couldn't reach the league server"); $("rqSend").disabled = false; });
+      };
       return;
     }
-    h += '<p class="p">Which team is yours?</p><p class="meta" style="text-align:center;margin-top:4px">Prototype: no PIN yet. Your pick is remembered on this phone.</p>';
+    if (requestMode === "pin") {
+      var t0 = teamOf(store("maffl_lab_owner"));
+      h += '<p class="p">Welcome back, <b>' + esc(t0.team) + '</b>.</p><p class="meta" style="text-align:center">' + esc(t0.owner) + '</p>' +
+        '<input class="field pinpad" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="PIN">' +
+        '<div class="btns"><button class="b" id="pBack">Not me</button><button class="b pri" id="pGo">Sign in</button></div>' +
+        '<p style="text-align:center;margin-top:18px"><button class="rv" id="wReq">Need your PIN? Request access ›</button></p>';
+      el.innerHTML = h; el.classList.add("on"); setTimeout(function () { $("pin").focus(); }, 50);
+      $("pBack").onclick = function () { store("maffl_lab_owner", ""); showWelcome(); };
+      $("wReq").onclick = function () { showWelcome(true); };
+      $("pGo").onclick = function () {
+        var pin = $("pin").value.trim(); if (!pin) return; $("pGo").disabled = true;
+        api("login", { owner: t0.owner, pin: pin }).then(function (r) {
+          if (r.ok) { store("maffl_lab_pin", pin); el.classList.remove("on"); start(); toast("Signed in ✓"); }
+          else { toast(r.error || "Wrong PIN"); $("pGo").disabled = false; $("pin").value = ""; }
+        }).catch(function () { toast("Couldn't reach the league server"); $("pGo").disabled = false; });
+      };
+      return;
+    }
+    h += '<p class="p">Which team is yours?</p><p class="meta" style="text-align:center;margin-top:4px">' + (API_URL ? 'Next you\'ll enter your PIN.' : 'Demo mode: no PIN. Your pick is remembered on this phone.') + '</p>';
     ["U", "L"].forEach(function (tier) {
       h += '<div class="grp">' + (tier === "U" ? "Upper" : "Lower") + ' tier</div>' + TEAMS.filter(function (t) { return t.tier === tier; }).sort(function (a, b) { return a.team.localeCompare(b.team); })
         .map(function (t) { return '<button class="pick" data-owner="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b><small>' + esc(t.owner) + '</small></button>'; }).join("");
     });
     h += '<p style="text-align:center;margin-top:18px"><button class="rv" id="wReq">Need your PIN? Request access ›</button></p>';
     el.innerHTML = h; el.classList.add("on"); el.scrollTop = 0;
-    el.querySelectorAll(".pick").forEach(function (b) { b.onclick = function () { store("maffl_lab_owner", b.dataset.owner); el.classList.remove("on"); start(); }; });
+    el.querySelectorAll(".pick").forEach(function (b) { b.onclick = function () {
+      store("maffl_lab_owner", b.dataset.owner); store("maffl_lab_pin", "");
+      if (API_URL) { showWelcome("pin"); return; }
+      el.classList.remove("on"); start(); }; });
     $("wReq").onclick = function () { showWelcome(true); };
   }
 
@@ -671,6 +770,7 @@
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
     $("sb").innerHTML = kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : rivalrySheet(a, b); $("sb").scrollTop = 0;
+    paint($("sb"));
     if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
     $("psheet").classList.add("on"); $("sscrim").classList.add("on"); document.body.style.overflow = "hidden";
@@ -678,8 +778,8 @@
   function closeSheet() { $("psheet").classList.remove("on"); $("sscrim").classList.remove("on"); document.body.style.overflow = ""; stackS = []; }
   $("sx").onclick = closeSheet; $("sscrim").onclick = closeSheet;
   $("sback").onclick = function () { stackS.pop(); var t = stackS.pop(); if (t) openSheet(t[0], t[1], t[2], true); };
-  function gameRow(owner, g) { // g from h2h(owner, other)
-    return '<div class="row"><span class="wl ' + (g.aWon ? "W" : "L") + '">' + (g.aWon ? "W" : "L") + '</span><div><div class="nm">' + f2(g.as) + ' – ' + f2(g.bs) + '</div><div class="meta">' + g.y + ' Wk ' + g.wk + (g.type !== "R" ? ' · ' + ({ Q: "Quarterfinal", S: "Semifinal", C: "Championship", T: "3rd place" }[g.type] || "Playoffs") : '') + '</div></div><button class="mini">🔥</button></div>';
+  function gameRow(owner, g, other) { // g from h2h(owner, other); ref is the same from either side
+    return '<div class="row" data-ref="h2h:' + g.y + ':' + g.wk + ':' + esc([norm(owner), norm(other)].sort().join("~")) + '"><span class="wl ' + (g.aWon ? "W" : "L") + '">' + (g.aWon ? "W" : "L") + '</span><div><div class="nm">' + f2(g.as) + ' – ' + f2(g.bs) + '</div><div class="meta">' + g.y + ' Wk ' + g.wk + (g.type !== "R" ? ' · ' + ({ Q: "Quarterfinal", S: "Semifinal", C: "Championship", T: "3rd place" }[g.type] || "Playoffs") : '') + '</div></div><button class="mini">🔥</button></div>';
   }
   function rivalrySheet(a, b) {
     var A = teamOf(a), B = teamOf(b), r = h2h(a, b);
@@ -694,7 +794,7 @@
       h += '<div class="card"><div class="eb">Biggest wins</div>' +
         (r.bigA ? '<div class="item"><span class="ic">💥</span><div class="tx"><b>' + esc(A.team) + '</b>by ' + f2(r.bigA.m) + ' · ' + r.bigA.g.y + ' Wk ' + r.bigA.g.wk + '</div></div>' : '') +
         (r.bigB ? '<div class="item"><span class="ic">💥</span><div class="tx"><b>' + esc(B.team) + '</b>by ' + f2(r.bigB.m) + ' · ' + r.bigB.g.y + ' Wk ' + r.bigB.g.wk + '</div></div>' : '') + '</div>';
-      h += '<div class="card glist"><div class="eb">Every meeting · ' + esc(A.team) + '\'s view</div>' + r.all.slice().reverse().map(function (g) { return gameRow(a, g); }).join("") + '</div>';
+      h += '<div class="card glist"><div class="eb">Every meeting · ' + esc(A.team) + '\'s view</div>' + r.all.slice().reverse().map(function (g) { return gameRow(a, g, b); }).join("") + '</div>';
     }
     h += '<div class="btns"><button class="b" data-owner-push="' + esc(a) + '">' + esc(A.team) + '</button><button class="b" data-owner-push="' + esc(b) + '">' + esc(B.team) + '</button></div>';
     return h;
@@ -764,6 +864,7 @@
   // One click handler for every owner/rivalry tap in the app
   document.addEventListener("click", function (e) {
     var el;
+    if (!e.target.isConnected || e.target.closest("#welcome")) return; // a tap that re-rendered the welcome screen
     if ((el = e.target.closest("[data-rules]"))) { openSheet("rules"); return; }
     if ((el = e.target.closest("[data-prizes]"))) { openSheet("prizes"); return; }
     if ((el = e.target.closest("[data-rule]"))) { openSheet("rule", el.dataset.rule, null, true); return; }
@@ -788,6 +889,7 @@
     var saved = store("maffl_lab_owner");
     ME = saved && BY_OWNER[norm(saved)];
     if (!ME) { showWelcome(); return; }
+    if (API_URL && !store("maffl_lab_pin")) { showWelcome("pin"); return; }
     $("hdrwk").innerHTML = '<b>Week ' + W.weekNumber + '</b>' + (ME.tier === "U" ? "Upper" : "Lower") + ' Tier';
     var pb = $("pastbar"); pb.style.display = W === LATEST ? "none" : "flex";
     pb.innerHTML = '📅 Replaying Week ' + W.weekNumber + ' (' + esc(W.dateString) + ')<button id="pbback">Back to now</button>';
@@ -795,6 +897,7 @@
     $("chip").textContent = initials(ME.owner);
     $("chip").onclick = function () { showWelcome(); };
     renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
+    loadSummary();
     var h = location.hash.slice(1);
     tab(TITLES[h] ? h : "home");
   }

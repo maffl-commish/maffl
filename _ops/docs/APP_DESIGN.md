@@ -124,6 +124,19 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 | v3 | Credit perk spending; Pick'em | Same |
 | Go-live | Production Sheet, PINs emailed, app becomes the home page (`index.html`), old home → League | League |
 
+## 7b. Backend (built 11/2)
+
+- Sheet: **MAFFL HQ App — TEST backend (lab)** in the commish's Drive (tabs Owners, Events, Requests, Polls, README).
+- Script: `_ops/apps-script/Code.gs` (bound to that Sheet, deployed as a web app). Actions: `login`, `request`
+  (logs + emails the commish), `react`, `vote` (POST, text/plain JSON); `summary` (GET: reaction counts, your
+  reactions, poll tallies, active polls).
+- PINs: salted SHA-256 only; 5 wrong tries locks. Commish menu in the Sheet: **MAFFL → Set / reset a PIN**
+  (shows the PIN once to text it), **Mark request done**, **Unlock an owner**.
+- Events is append-only (reactions toggle by appending on/off; last write wins).
+- Client: `lab/index.html` `API_URL` (empty = demo mode). A phone can point at a test URL via
+  `localStorage.maffl_lab_api`.
+- Polls: a row per poll; `options = auto` builds Game of the Week from that week's games.
+
 ## 8. Open
 
 - Confirm the §2c page → app mapping.
