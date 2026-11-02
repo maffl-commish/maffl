@@ -1,6 +1,6 @@
 # MAFFL HQ App — governing doc (redesign · Reel · login)
 
-VERSION: 0.4 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.5 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -10,6 +10,10 @@ VERSION: 0.4 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-02 · **Contacts + notifications (§4b).** Owner emails and phones live in the backend Sheet only (never the
+  repo), shown to signed-in owners. Owners already share these, so no hiding between owners. Trade nudges = a
+  prefilled **Text them / Email them** button the owner sends himself, plus **opt-in automatic emails** set in
+  each owner's own Settings. **No robot-sent texts or push**, ever (commish: not wanted).
 - 2026-11-02 · **Login = PIN up front, mapped straight to your team.** No team picker. Welcome screen asks
   for the PIN with a small **"Just browsing"** link; guests get the league-wide app. Details §4.
 - 2026-11-02 · Made this the governing doc (commish worried about sprawl across two chats).
@@ -43,7 +47,7 @@ Bottom tabs: **Home · Match · Team · League · More**. The app replaces the c
 | ⚔️ Match | Your game | Next opponent + stakes (Pulse preview), rivalry (series, last 5, biggest wins), last week's result + Coach of the Week lines, tier slate. **Every game links to its rivalry** (`rivalry.html#vs=A,B`) |
 | 🏈 Team | You | Record, rank, credits, points. Tabs: **Roster** (player sheet: stats + MAFFL draft/owner history), **Trades** (badge = open offers in/out), **Stats** (season + career), **Credits** (balance, history, **spend credits on perks**, e.g. player double bonus) |
 | 🏆 League | Everyone | Standings (credits column; no separate Credit Leaders), **Rulebook**, Pulse archive, Power Rankings, History, Draft, Rivals, Prizes & Dues |
-| ☰ More | Account + misc | Speak Up, switch team / PIN help, what shows on Home |
+| ☰ More | Account + misc | **Settings** (your email/phone, notification toggles), Speak Up, PIN help, sign out, what shows on Home |
 
 ## 2b. Card rules (commish 11/2)
 
@@ -95,6 +99,32 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 - Server side (from `TRADE_CENTER_DESIGN.md` §5): salted PIN hash in the Sheet, every write checks the PIN,
   5 wrong tries locks it until the commish resets.
 
+## 4b. Contacts + notifications (decided 11/2)
+
+**Where contact info lives.** Each owner's email and phone sit in the backend Sheet (Owners tab), **never** in the
+repo or any page's JS: the site is public on GitHub Pages, so a PIN can't hide anything shipped with it. Apps Script
+returns contact info only to a request carrying a valid PIN. Guests never see it.
+
+**Who sees what.** Signed-in owners see every owner's email and phone (owner sheet, trade screens). The league
+already shares these; the rule is only "not on the open internet". Each owner can edit his own email/phone in
+More → Settings (writes need the PIN, like everything else).
+
+**Nudging someone about a trade (two ways, both at go-live):**
+
+1. **Text them / Email them button** (after Send, Counter, Accept, Decline, and on any open offer). Opens the
+   phone's Messages (`sms:`) or Mail (`mailto:`) app with the message written for you, e.g. *"Mike sent you a trade
+   offer on MAFFL HQ: [player + credits summary] 👉 [link]"*. The link deep-links to Team → Trades → that offer.
+   The owner taps Send himself; it comes from his own number/email. Free, no setup. Check `sms:` body prefill on
+   iOS standalone and Android.
+2. **Opt-in automatic emails.** More → Settings toggles, all **off by default**: offer received · accepted ·
+   declined · countered · commish approved/rejected the credit leg. Apps Script `MailApp` sends them on the
+   matching write, with the same deep link. Mind the free daily email cap (fine for 20-some owners).
+
+**Not doing:** robot-sent texts (paid SMS service + carrier registration) and web push. Commish: not wanted.
+
+**PIN form (open, §8).** Proposal: a fun two-word passphrase per owner (e.g. `blitz-pickle`) instead of 4 digits.
+Easier to remember, far harder to guess. Not case-sensitive, dash optional. Same salted hash + 5-try lockout (§7b).
+
 ## 5. Forms this retires
 
 | Google Form today | Replaced by |
@@ -112,7 +142,7 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 | Rivalry + career | `matchups-data.js` |
 | Dates | `key-dates-data.js` |
 | Rosters, player stats | **New** daily roster pull (GitHub Action) → `rosters-data.js` (v2) |
-| Reactions, votes, offers, PIN requests | **New** Google Sheet + Apps Script (v1) |
+| Reactions, votes, offers, PIN requests, owner email/phone, notification settings | **New** Google Sheet + Apps Script (v1). Contacts never in the repo |
 
 ## 7. Build order (everything ships together at go-live; commish 11/2)
 
@@ -140,6 +170,7 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 ## 8. Open
 
 - Confirm the §2c page → app mapping.
+- PIN form: 4 digits or a fun two-word passphrase per owner (§4b)?
 - Trades: both tiers at once at go-live, or one first? (trade note §8 Q4)
 - ~~Trade Center replaces the Credit Request form for trade credit legs?~~ **Yes** (§5).
 - ~~Team picker or PIN?~~ **PIN up front, guest "Just browsing"** (§4).
@@ -154,4 +185,5 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 - [ ] Roster and credit-balance generators live (derived data, never hand-edited)
 - [ ] Guest view checked logged out
 - [ ] App becomes `index.html`; old home folds into League; old links still resolve
+- [ ] Every owner's email + phone in the production Sheet (not the repo); Text/Email buttons tested on iPhone + Android
 - [ ] PINs emailed; Pulse announces the launch
