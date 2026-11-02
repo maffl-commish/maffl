@@ -30,6 +30,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · Reel mockup v2 (`_ops/docs/REEL_MOCKUP.html`): commish picked C (Hybrid); Reel = Pulse. MAFFL light theme (navy/gold, Barlow), Pulse rings (tap-through stories with reactions), Quick Access staple chips, interactive feed (offer, vote, trade block, rivalry, trivia), bottom anchor bar. Sample data; no page changes.
 - 2026-11-02 · Mockup `_ops/docs/REEL_MOCKUP.html` (sample data, noindex, not linked): Reel replaces home; compares A full-screen Reel / B interactive Cards / C Hybrid (story rings + cards), with an anchor tab bar. No page changes.
 - 2026-11-02 · Trade Center note v0.2: 👻 can't trade; offers private until both agree, then visible to the tier; direction: Trade Center folds into a personalized card feed ("MAFFL Reel"). Doc only.
 - 2026-11-02 · Design note `_ops/docs/TRADE_CENTER_DESIGN.md`: trade block + offers (players + credits, own tier only, no picks), Sheet/Apps Script backend, per-owner PINs, rosters + credit-balance generators, sandbox → go-live plan. Doc only; no page changes.
