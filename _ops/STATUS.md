@@ -30,6 +30,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · App mockup v4: Pulse circles become a swipeable card deck (react 🔥 then swipe; per-row reactions; "caught up" end card); rivalry links on every score/match tile; Build a Trade roster grid (your roster pinned, credits steppers, trade-block tags); confirm sheets for send/accept/decline + undo toast. Trade note §5b Guardrails. Sample data; no page changes.
 - 2026-11-02 · App mockup v3 (`_ops/docs/REEL_MOCKUP.html`): new structure Home · Match · Team · League · More. Home = Pulse rings (Scores, Coach, Survivor, Headlines, Credits, Dates; info-dense tap-through) + "For you" action cards; Match = this week + rivalry + last week's COTW + tier slate; Team = roster (player sheet with MAFFL draft history), trades, stats; League = standings + explore; More = reference. Sample data; no page changes.
 - 2026-11-02 · Reel mockup v2 (`_ops/docs/REEL_MOCKUP.html`): commish picked C (Hybrid); Reel = Pulse. MAFFL light theme (navy/gold, Barlow), Pulse rings (tap-through stories with reactions), Quick Access staple chips, interactive feed (offer, vote, trade block, rivalry, trivia), bottom anchor bar. Sample data; no page changes.
 - 2026-11-02 · Mockup `_ops/docs/REEL_MOCKUP.html` (sample data, noindex, not linked): Reel replaces home; compares A full-screen Reel / B interactive Cards / C Hybrid (story rings + cards), with an anchor tab bar. No page changes.

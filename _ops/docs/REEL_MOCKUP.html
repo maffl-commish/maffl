@@ -131,20 +131,82 @@
   .badge{position:relative}
   .badge::before{content:"1";position:absolute;top:-2px;left:calc(50% + 6px);background:var(--loss);color:#fff;font:700 10px var(--body);width:16px;height:16px;border-radius:50%;display:grid;place-items:center}
 
-  /* story viewer: white, info-dense */
-  .story{position:fixed;inset:0;z-index:50;background:var(--page-bg);display:none;flex-direction:column;padding-top:env(safe-area-inset-top)}
-  .story.on{display:flex}
-  .stop{background:var(--surface);padding:10px 14px 10px;border-bottom:1px solid var(--border)}
-  .bars{display:flex;gap:4px}
-  .bars i{flex:1;height:3px;border-radius:2px;background:var(--border)}
-  .bars i.done{background:var(--gold)}
-  .stitle{display:flex;align-items:center;gap:8px;margin-top:10px;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.08em}
-  .stitle small{font:500 12px var(--body);color:var(--muted);text-transform:none;letter-spacing:0}
-  .stitle button{margin-left:auto;font-size:26px;line-height:1;color:var(--muted)}
-  .sbody{flex:1;overflow:auto;padding:4px 14px 14px;position:relative}
-  .sfoot{padding:10px 14px calc(env(safe-area-inset-bottom) + 12px);background:var(--surface);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
-  .sfoot .reacts{margin:0}
-  .sfoot .next{margin-left:auto;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--gold-dark)}
+  /* ===== Card deck (Pulse circles) ===== */
+  .deck{position:fixed;inset:0;z-index:50;background:var(--page-bg);display:none;flex-direction:column;padding-top:env(safe-area-inset-top);overflow:hidden}
+  .deck.on{display:flex}
+  .dtop{display:flex;align-items:center;gap:10px;padding:10px 14px 4px}
+  .segs{flex:1;display:flex;gap:4px}
+  .segs i{flex:1;height:4px;border-radius:2px;background:var(--border)}
+  .segs i.done{background:var(--gold)}.segs i.now{background:linear-gradient(90deg,var(--gold) 50%,var(--border) 50%)}
+  .dtop button{font-size:26px;line-height:1;color:var(--muted)}
+  .stack{flex:1;position:relative;margin:8px 16px 0}
+  .dcard{position:absolute;inset:0 0 10px 0;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 8px 24px var(--navy-shadow);
+    display:flex;flex-direction:column;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .3s ease,opacity .3s}
+  .dcard.back{transform:translateY(12px) scale(.95);opacity:.6;pointer-events:none}
+  .dcard.back2{transform:translateY(24px) scale(.9);opacity:.3;pointer-events:none}
+  .dcard.drag{transition:none}
+  .dhead{padding:14px 16px 8px;border-bottom:1px solid var(--border)}
+  .dhead .eb{display:flex;justify-content:space-between}
+  .dhead h3{font:700 24px/1.1 var(--display);margin-top:4px}
+  .dbody{flex:1;overflow:auto;padding:4px 16px 10px}
+  .dfoot{display:flex;align-items:center;gap:8px;padding:10px 16px 14px;border-top:1px solid var(--border)}
+  .dfoot .reacts{margin:0}
+  .dfoot .reacts button{font-size:18px;padding:6px 12px}
+  .hint{margin-left:auto;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+  .stamp-like{position:absolute;top:22px;font:700 22px var(--display);letter-spacing:.1em;padding:4px 10px;border:3px solid;border-radius:8px;opacity:0;text-transform:uppercase}
+  .stamp-like.r{right:18px;color:var(--win);transform:rotate(12deg)}.stamp-like.l{left:18px;color:var(--muted);transform:rotate(-12deg)}
+  .dnav{display:flex;justify-content:center;gap:16px;padding:6px 0 calc(env(safe-area-inset-bottom) + 12px);font:600 12px var(--body);color:var(--muted)}
+  .mini{border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:12px;margin-left:6px}
+  .mini.sel{background:var(--gold);border-color:var(--gold)}
+  .rv{display:inline-block;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--gold-dark);margin-top:2px}
+  .gfoot{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border)}
+  .game{flex-wrap:wrap}
+  .done-card{align-items:center;justify-content:center;text-align:center;padding:20px}
+  .done-card .big{font-size:56px}
+
+  /* ===== Trade grid ===== */
+  .tgrid{position:fixed;inset:0;z-index:55;background:var(--page-bg);display:none;flex-direction:column;padding-top:env(safe-area-inset-top)}
+  .tgrid.on{display:flex}
+  .thead{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px}
+  .thead .row1{display:flex;align-items:center}
+  .thead h2{font:700 24px var(--display)}
+  .thead button{margin-left:auto;font-size:26px;color:var(--muted)}
+  .thead p{font-size:12px;color:var(--muted);margin-top:2px}
+  .cols{flex:1;overflow:auto;display:flex;gap:8px;padding:10px 0 10px 10px}
+  .col{flex:0 0 148px;display:flex;flex-direction:column;gap:6px}
+  .col.mine{position:sticky;left:0;z-index:3;background:var(--page-bg);padding-right:6px;box-shadow:6px 0 8px -6px var(--navy-shadow)}
+  .ch{background:var(--navy);color:#fff;border-radius:10px;padding:8px;display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:2}
+  .col.mine .ch{background:var(--gold);color:var(--navy)}
+  .ch b{font:700 14px/1.05 var(--display);display:block}
+  .ch small{font-size:10px;opacity:.75}
+  .ch .sel-dot{margin-left:auto;width:18px;height:18px;border-radius:50%;border:2px solid currentColor;flex:0 0 auto}
+  .ch.picked .sel-dot{background:var(--gold);border-color:var(--gold)}
+  .pc{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--muted);border-radius:8px;padding:6px 8px;position:relative}
+  .pc.QB{border-left-color:#7a3e9d}.pc.RB{border-left-color:var(--win)}.pc.WR{border-left-color:#3b6fb6}.pc.TE{border-left-color:#c46a1b}
+  .pc .pn{font:700 15px/1.1 var(--display)}
+  .pc .pm{font-size:10px;color:var(--muted)}
+  .pc.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);background:#fffaf0}
+  .pc.on::after{content:"✓";position:absolute;right:6px;top:4px;font:700 14px var(--display);color:var(--gold-dark)}
+  .pc .tb{margin:3px 0 0;display:inline-block}
+  .cr{background:#fffaf0;border:1px dashed var(--gold);border-radius:8px;padding:6px 8px;font:700 13px var(--display);display:flex;align-items:center;gap:4px}
+  .cr .stp{margin-left:auto;display:flex;align-items:center;gap:4px}
+  .cr .stp button{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:var(--surface);font:700 14px var(--body);line-height:1}
+  .cr .stp span{min-width:16px;text-align:center}
+  .tbar{background:var(--surface);border-top:1px solid var(--border);padding:10px 14px calc(env(safe-area-inset-bottom) + 10px)}
+  .tbar .sum{font-size:12px;color:var(--ink2);line-height:1.4;margin-bottom:8px}
+  .tbar .sum b{color:var(--navy)}
+
+  /* ===== Confirm sheet + toast (guardrails) ===== */
+  .confirm{z-index:71}
+  .cscrim{position:fixed;inset:0;background:rgba(15,29,52,.5);z-index:70;display:none}.cscrim.on{display:block}
+  .confirm h3{font:700 24px var(--display);margin-bottom:4px}
+  .checks{margin:10px 0;font-size:13px;line-height:1.7;color:var(--ink2)}
+  .note{background:var(--navy-soft);border-radius:8px;padding:10px;font-size:12px;color:var(--ink2);line-height:1.45}
+  .b.danger{background:var(--loss);border-color:var(--loss);color:#fff}
+  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%) translateY(20px);opacity:0;z-index:80;
+    background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;display:flex;gap:14px;align-items:center;font:600 14px var(--body);transition:.25s;width:max-content;max-width:90vw}
+  .toast.on{opacity:1;transform:translateX(-50%)}
+  .toast button{color:var(--gold);font:700 13px var(--display);text-transform:uppercase;letter-spacing:.08em}
   .game{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-top:8px}
   .game .tm{flex:1;font:600 14px var(--body);line-height:1.5}
   .game .tm b{font-weight:700}
@@ -192,7 +254,7 @@
         <div class="eb">📨 Trade offer · expires in 2 days</div>
         <h3>Sample Team B wants your WR</h3>
         <p>They send an RB + 3 credits for one of your WRs.</p>
-        <div class="btns"><button class="b">Decline</button><button class="b pri" data-go="team:trades">Review</button></div>
+        <div class="btns"><button class="b" data-confirm="decline">Decline</button><button class="b pri" data-go="team:trades">Review</button></div>
       </div>
 
       <div class="card">
@@ -256,9 +318,9 @@
 
     <div class="sh"><h2>Upper · Week 10</h2></div>
     <div class="pad" style="padding-bottom:14px">
-      <div class="game mine"><div class="tm"><b>Your Team</b> 6–3<br>Sample Team C 5–4</div><div class="flag">Your game</div></div>
-      <div class="game"><div class="tm">Sample Team A 8–1<br>Sample Team F 2–7</div><div class="meta">Series 9–3</div></div>
-      <div class="game"><div class="tm">Sample Team B 5–4<br>Sample Team G 5–4</div><div class="flag">Playoff swing</div></div>
+      <div class="game mine"><div class="tm"><b>Your Team</b> 6–3<br>Sample Team C 5–4</div><div class="flag">Your game</div><div class="gfoot"><a class="rv" href="#">⚔️ Rivalry · 7–9 ›</a></div></div>
+      <div class="game"><div class="tm">Sample Team A 8–1<br>Sample Team F 2–7</div><div class="gfoot"><a class="rv" href="#">⚔️ Rivalry · 9–3 ›</a></div></div>
+      <div class="game"><div class="tm">Sample Team B 5–4<br>Sample Team G 5–4</div><div class="flag">Playoff swing</div><div class="gfoot"><a class="rv" href="#">⚔️ Rivalry · 6–6 ›</a></div></div>
     </div>
   </section>
 
@@ -305,14 +367,14 @@
           <div class="row"><span class="pos WR">WR</span><div class="nm">Sample Wideout</div><div class="rt" style="font-size:13px">KC</div></div>
           <div class="row"><span class="pos WR">WR</span><div class="nm">Sample Rookie</div><div class="rt" style="font-size:13px">CHI</div></div>
         </div>
-        <div class="btns"><button class="b">Decline</button><button class="b">Counter</button><button class="b pri">Accept</button></div>
+        <div class="btns"><button class="b" data-confirm="decline">Decline</button><button class="b" data-grid>Counter</button><button class="b pri" data-confirm="accept">Accept</button></div>
       </div>
       <div class="card">
         <div class="eb">🏷️ On the block in your tier</div>
         <div class="row"><span class="pos QB">QB</span><div><div class="nm">Sample QB2</div><div class="meta">Sample Team F · “want WR”</div></div></div>
         <div class="row"><span class="pos RB">RB</span><div><div class="nm">Sample Vet RB</div><div class="meta">Sample Team A · “open to offers”</div></div></div>
       </div>
-      <div class="btns" style="margin-bottom:14px"><button class="b pri">See all rosters</button><button class="b">New offer</button></div>
+      <div class="btns" style="margin-bottom:14px"><button class="b pri" data-grid>See all rosters</button><button class="b" data-grid>New offer</button></div>
     </div>
 
     <div class="sub-v pad" id="s-stats">
@@ -380,13 +442,25 @@
   <button data-tab="more"><span>☰</span>More</button>
 </nav>
 
-<!-- Story viewer -->
-<div class="story" id="story">
-  <div class="stop"><div class="bars" id="bars"></div>
-    <div class="stitle" id="stitle"></div></div>
-  <div class="sbody" id="sbody"></div>
-  <div class="sfoot"><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div><button class="next" id="snext">Next ›</button></div>
+<!-- Card deck (Pulse circles) -->
+<div class="deck" id="deck">
+  <div class="dtop"><div class="segs" id="segs"></div><button id="dx" aria-label="Close">×</button></div>
+  <div class="stack" id="stack"></div>
+  <div class="dnav">← swipe either way for the next card →</div>
 </div>
+
+<!-- Trade grid -->
+<div class="tgrid" id="tgrid">
+  <div class="thead"><div class="row1"><h2>Build a Trade</h2><button id="tgx" aria-label="Close">×</button></div>
+    <p>Upper tier · tap players to add them · your roster stays pinned on the left</p></div>
+  <div class="cols" id="cols"></div>
+  <div class="tbar"><div class="sum" id="tsum"></div><button class="b pri" id="treview" style="width:100%">Review offer</button></div>
+</div>
+
+<!-- Confirm sheet (guardrail) -->
+<div class="cscrim" id="cscrim"></div>
+<div class="sheet confirm" id="confirm"><div class="grab"></div><div id="cbody"></div></div>
+<div class="toast" id="toast"><span id="tmsg"></span><button id="tundo">Undo</button></div>
 
 <!-- Player sheet -->
 <div class="scrim" id="scrim"></div>
@@ -400,53 +474,159 @@
     <div class="row"><span class="pos">↔︎</span><div><div class="nm">2023 · Sample Team A</div><div class="meta">Drafted $12 · traded to Team F, Wk 8</div></div></div>
     <div class="row"><span class="pos">★</span><div><div class="nm">Best MAFFL game: 38.2</div><div class="meta">2025 Wk 11 · for you</div></div></div>
   </div>
-  <div class="btns"><button class="b">Remove from block</button><button class="b pri">Find a trade</button></div>
+  <div class="btns"><button class="b">Remove from block</button><button class="b pri" data-grid>Find a trade</button></div>
 </div>
 
 <script>
-  var STORIES = {
-    scores: { t: "📊 Scores", s: "Upper · Week 9", slides: [
-      '<div class="game mine"><div class="tm"><b>Your Team</b><br>Sample Team D</div><div class="sc w">128.4<br><span style="color:var(--muted)">124.2</span></div></div>' +
-      '<div class="game"><div class="tm"><b>Sample Team A</b><br>Sample Team B</div><div class="sc">151.3<br>149.8</div></div><div class="flag">Closest game of the week</div>' +
-      '<div class="game"><div class="tm"><b>Sample Team G</b><br>Sample Team F</div><div class="sc">162.0<br>74.0</div></div><div class="flag">Biggest blowout · 88.0</div>' +
-      '<div class="game"><div class="tm"><b>Sample Team C</b><br>Sample Team H</div><div class="sc">131.9<br>118.6</div></div>' +
-      '<div class="game"><div class="tm"><b>Sample Team I</b><br>Sample Team J</div><div class="sc">120.2<br>101.5</div></div>' +
-      '<div class="game"><div class="tm"><b>Sample Team K</b><br>Sample Team L</div><div class="sc">109.7<br>99.0</div></div>',
-      '<div class="card"><div class="eb">Top scorer</div><h3>Sample Team G · 162.0</h3><p>Weekly high: +1 credit and a share of the weekly pool.</p></div>' +
-      '<div class="card"><div class="eb">Lower tier</div><h3>Sample Lower Team · 147.2</h3><p>Lower\'s best score of the season so far.</p></div>' ] },
-    coach: { t: "🏆 Coach of the Week", s: "Fewest points left on the bench", slides: [
-      '<div class="card navy"><div class="eb">Upper winner</div><h3>Sample Team E · 3.2</h3><p>Nearly a perfect lineup.</p></div><div class="card"><div class="eb">Lower winner</div><h3>Sample Lower Team · 1.8</h3></div>',
-      '<div class="card"><div class="eb">Biggest lineup calls</div><div class="row"><span class="pos RB">RB</span><div><div class="nm">Sample Team F · 31.6</div><div class="meta">Benched RB scored 31.6 · cost the game</div></div></div><div class="row"><span class="pos WR">WR</span><div><div class="nm">Your Team · 11.6</div><div class="meta">Bench RB over your flex WR</div></div></div></div>' ] },
-    survivor: { t: "🛟 Survivor", s: "Lowest score each week is out", slides: [
-      '<div class="card navy"><div class="eb">Out this week</div><h3>Sample Team F · 74.0</h3></div><div class="card"><div class="eb">Still alive · 4 left</div><p>Your Team · Sample Team A · Sample Team C · Sample Team G</p></div>' ] },
-    headlines: { t: "📰 Headlines", s: "From the Week 9 Pulse", slides: [
-      '<div class="card"><div class="eb">1 of 3</div><h3>The 👻 wins again. Four straight.</h3><p>The ghost is 4–5 and two games out of the last playoff spot.</p></div>',
-      '<div class="card"><div class="eb">2 of 3</div><h3>Team A stays perfect in the division</h3><p>8–1 and a 3-game lead with 5 to play.</p></div>',
-      '<div class="card"><div class="eb">3 of 3</div><h3>A 0.2-point finish in Lower</h3><p>Decided by a kicker\'s extra point on Monday night.</p></div>' ] },
-    credits: { t: "💳 Credits", s: "Earned this week", slides: [
-      '<div class="card"><div class="row"><div><div class="nm">Sample Team G</div><div class="meta">Weekly high score</div></div><div class="rt w">+1</div></div><div class="row"><div><div class="nm">Sample Lower Team</div><div class="meta">Weekly high, Lower</div></div><div class="rt w">+1</div></div></div>' ] },
-    dates: { t: "🗓️ Dates", s: "What's closing", slides: [
-      '<div class="card navy"><div class="eb">⏰ 30 days</div><h3>Trade deadline</h3><p>Wed Dec 2, 12:00 PM ET.</p></div>' ] }
-  };
-  var cur = null, idx = 0, story = document.getElementById("story");
-  function render() {
-    var st = STORIES[cur];
-    document.getElementById("bars").innerHTML = st.slides.map(function (_, k) { return '<i class="' + (k <= idx ? "done" : "") + '"></i>'; }).join("");
-    document.getElementById("stitle").innerHTML = st.t + ' <small>' + st.s + '</small><button id="sx" aria-label="Close">×</button>';
-    document.getElementById("sbody").innerHTML = st.slides[idx];
-    document.getElementById("sx").onclick = closeStory;
-    var keys = Object.keys(STORIES), next = keys[keys.indexOf(cur) + 1];
-    document.getElementById("snext").textContent = idx < st.slides.length - 1 ? "Next ›" : (next ? STORIES[next].t.split(" ").slice(1).join(" ") + " ›" : "Done");
+  // ===== Pulse deck: every circle is a group of cards; swipe a card away to get the next one =====
+  function G(top, bot, s1, s2, mine, series, fire) {
+    return '<div class="game' + (mine ? ' mine' : '') + '"><div class="tm"><b>' + top + '</b><br>' + bot + '</div><div class="sc">' + s1 + '<br><span style="color:var(--muted)">' + s2 + '</span></div>' +
+      '<div class="gfoot"><a class="rv" href="#">⚔️ Rivalry · ' + series + ' ›</a><button class="mini">🔥 ' + fire + '</button></div></div>';
   }
-  function openStory(k) { cur = k; idx = 0; render(); story.classList.add("on");
-    var r = document.querySelector('.ring[data-story="' + k + '"]'); if (r) r.classList.add("seen"); }
-  function closeStory() { story.classList.remove("on"); }
-  document.getElementById("snext").onclick = function () {
-    var st = STORIES[cur], keys = Object.keys(STORIES);
-    if (idx < st.slides.length - 1) { idx++; render(); }
-    else { var n = keys[keys.indexOf(cur) + 1]; if (n) openStory(n); else closeStory(); }
+  var GROUPS = [
+    { key: "scores", label: "📊 Scores", cards: [
+      { eb: "Upper · Week 9", t: "Your tier's scoreboard", body:
+        G("Your Team", "Sample Team D", '<span class="w">128.4</span>', "124.2", true, "11–6", 4) +
+        G("Sample Team A", "Sample Team B", "151.3", "149.8", false, "9–8", 12) + '<div class="flag" style="margin-top:4px">Closest game of the week</div>' +
+        G("Sample Team G", "Sample Team F", "162.0", "74.0", false, "5–10", 21) + '<div class="flag" style="margin-top:4px">Biggest blowout · 88.0</div>' +
+        G("Sample Team C", "Sample Team H", "131.9", "118.6", false, "7–7", 1) },
+      { eb: "Both tiers", t: "Top scores", body:
+        '<div class="row"><span class="pos CR">1</span><div><div class="nm">Sample Team G · 162.0</div><div class="meta">Upper · weekly high: +1 credit</div></div><button class="mini">🔥 9</button></div>' +
+        '<div class="row"><span class="pos CR">1</span><div><div class="nm">Sample Lower Team · 147.2</div><div class="meta">Lower · season best so far</div></div><button class="mini">🔥 3</button></div>' } ] },
+    { key: "coach", label: "🏆 Coach", cards: [
+      { eb: "Coach of the Week", t: "Sample Team E: 3.2 left on the bench", body:
+        '<p style="margin-top:8px">Fewest points left on the bench in Upper. Lower: Sample Lower Team (1.8).</p>' +
+        '<div class="grp">Biggest lineup calls · react</div>' +
+        '<div class="row"><span class="pos RB">RB</span><div><div class="nm">Sample Team F · 31.6</div><div class="meta">Benched RB · cost the game</div></div><button class="mini">😬 11</button></div>' +
+        '<div class="row"><span class="pos WR">WR</span><div><div class="nm">Your Team · 11.6</div><div class="meta">Bench RB over your flex WR</div></div><button class="mini">😬 2</button></div>' +
+        '<div class="row"><span class="pos QB">QB</span><div><div class="nm">Sample Team K · 9.8</div><div class="meta">Started the wrong QB</div></div><button class="mini">😬 5</button></div>' } ] },
+    { key: "survivor", label: "🛟 Survivor", cards: [
+      { eb: "Survivor · Week 9", t: "Sample Team F is out (74.0)", body:
+        '<div class="grp">Still alive · 4</div>' +
+        '<div class="row"><div class="nm">Your Team</div><div class="rt" style="font-size:13px">safe by 12.1</div></div>' +
+        '<div class="row"><div class="nm">Sample Team A</div><div class="rt" style="font-size:13px">safe by 38.4</div></div>' +
+        '<div class="row"><div class="nm">Sample Team C</div><div class="rt" style="font-size:13px">safe by 1.9 😅</div></div>' +
+        '<div class="row"><div class="nm">Sample Team G</div><div class="rt" style="font-size:13px">safe by 52.7</div></div>' } ] },
+    { key: "headlines", label: "📰 Headlines", cards: [
+      { eb: "Headline 1 of 2", t: "The 👻 wins again. Four straight.", body: '<p style="margin-top:8px">The ghost is 4–5 and two games out of the last playoff spot. Nobody wants to be next.</p><p style="margin-top:12px"><a class="rv" href="#">Read it in the Pulse ›</a></p>' },
+      { eb: "Headline 2 of 2", t: "A 0.2-point finish in Lower", body: '<p style="margin-top:8px">Decided by a kicker on Monday night.</p><p style="margin-top:12px"><a class="rv" href="#">⚔️ That rivalry ›</a></p>' } ] },
+    { key: "credits", label: "💳 Credits", cards: [
+      { eb: "Credits · Week 9", t: "Two teams got paid", body:
+        '<div class="row"><div><div class="nm">Sample Team G</div><div class="meta">Weekly high score</div></div><div class="rt w">+1</div></div>' +
+        '<div class="row"><div><div class="nm">Sample Lower Team</div><div class="meta">Weekly high, Lower</div></div><div class="rt w">+1</div></div>' } ] },
+    { key: "dates", label: "🗓️ Dates", cards: [
+      { eb: "⏰ 30 days", t: "Trade deadline: Wed Dec 2, noon", body: '<p style="margin-top:8px">Credits can ride along in any player trade. No trades in the postseason.</p>' } ] }
+  ];
+  var FLAT = [];
+  GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c, ci) { FLAT.push({ g: gi, c: c, n: ci + 1, of: g.cards.length }); }); });
+  FLAT.push({ g: GROUPS.length, done: true });
+  var pos = 0, deck = document.getElementById("deck"), stack = document.getElementById("stack");
+
+  function cardHTML(it) {
+    if (it.done) return '<div class="dcard done-card"><div class="big">✅</div><h3 style="font:700 28px var(--display)">You\'re caught up on Week 9</h3>' +
+      '<p style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><button class="b pri" id="dhome">Back to Home</button></div></div>';
+    var g = GROUPS[it.g];
+    return '<div class="dcard"><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
+      '<div class="dhead"><div class="eb"><span>' + g.label + ' · ' + it.c.eb + '</span><span style="color:var(--muted)">' + it.n + '/' + it.of + '</span></div><h3>' + it.c.t + '</h3></div>' +
+      '<div class="dbody">' + it.c.body + '</div>' +
+      '<div class="dfoot"><div class="reacts"><button>🔥</button><button>😂</button><button>💀</button></div><span class="hint">Swipe ⇄</span></div></div>';
+  }
+  function drawDeck() {
+    var it = FLAT[pos];
+    document.getElementById("segs").innerHTML = GROUPS.map(function (_, k) {
+      return '<i class="' + (k < it.g ? "done" : k === it.g ? "now" : "") + '"></i>'; }).join("");
+    var html = "";
+    if (FLAT[pos + 2]) html += cardHTML(FLAT[pos + 2]).replace('class="dcard', 'class="dcard back2');
+    if (FLAT[pos + 1]) html += cardHTML(FLAT[pos + 1]).replace('class="dcard', 'class="dcard back');
+    html += cardHTML(it);
+    stack.innerHTML = html;
+    var top = stack.lastElementChild;
+    var dh = document.getElementById("dhome"); if (dh) dh.onclick = closeDeck;
+    if (!it.done) { wireSwipe(top); var r = document.querySelector('.ring[data-story="' + GROUPS[it.g].key + '"]'); if (r) r.classList.add("seen"); }
+  }
+  function advance(top, dir) {
+    top.style.transform = "translateX(" + (dir * 520) + "px) rotate(" + (dir * 18) + "deg)"; top.style.opacity = "0";
+    setTimeout(function () { pos = Math.min(pos + 1, FLAT.length - 1); drawDeck(); }, 220);
+  }
+  function wireSwipe(card) {
+    var x0 = null, dx = 0, r = card.querySelector(".stamp-like.r"), l = card.querySelector(".stamp-like.l");
+    card.addEventListener("pointerdown", function (e) { if (e.target.closest("button,a")) return; x0 = e.clientX; dx = 0; card.classList.add("drag"); card.setPointerCapture(e.pointerId); });
+    card.addEventListener("pointermove", function (e) { if (x0 === null) return; dx = e.clientX - x0;
+      card.style.transform = "translateX(" + dx + "px) rotate(" + (dx / 20) + "deg)";
+      r.style.opacity = Math.max(0, Math.min(1, dx / 90)); l.style.opacity = Math.max(0, Math.min(1, -dx / 90)); });
+    function end() { if (x0 === null) return; x0 = null; card.classList.remove("drag");
+      if (Math.abs(dx) > 90) advance(card, dx > 0 ? 1 : -1); else { card.style.transform = ""; r.style.opacity = l.style.opacity = 0; } }
+    card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+    // reacting to the whole card: mark it, then glide it away
+    card.querySelectorAll(".dfoot .reacts button").forEach(function (b) { b.addEventListener("click", function () {
+      setTimeout(function () { if (b.classList.contains("sel")) advance(card, 1); }, 350); }); });
+  }
+  function openDeck(key) { pos = FLAT.findIndex(function (it) { return !it.done && GROUPS[it.g].key === key; }); if (pos < 0) pos = 0; drawDeck(); deck.classList.add("on"); }
+  function closeDeck() { deck.classList.remove("on"); }
+  document.getElementById("dx").onclick = closeDeck;
+  document.querySelectorAll(".ring").forEach(function (r) { r.onclick = function () { openDeck(r.dataset.story); }; });
+
+  // ===== Trade grid =====
+  var TEAMS = [
+    { n: "Your Team", r: "6–3 · 2nd", cr: 18, mine: true, ps: [["QB","Sample Passer","BUF · 7"],["RB","Sample Back","DET · 8"],["RB","Sample Runner","ATL · 5"],["WR","Sample Wideout","KC · 10",1],["WR","Sample Slot","PIT · 10"],["TE","Sample Tight End","LV · 11"],["RB","Sample Backup","DEN · 12"],["WR","Sample Rookie","CHI · 14"]] },
+    { n: "Sample Team A", r: "8–1 · 1st", cr: 22, ps: [["QB","Sample QB A","CIN · 6"],["RB","Sample Vet RB","GB · 11",1],["RB","Sample RB A2","NYJ · 13"],["WR","Sample WR A","MIN · 6"],["WR","Sample WR A2","SEA · 11"],["TE","Sample TE A","PHI · 10"]] },
+    { n: "Sample Team F", r: "2–7 · 12th", cr: 9, ps: [["QB","Sample QB2","MIA · 6",1],["QB","Sample QB F","SF · 8"],["RB","Sample RB F","ARI · 14"],["WR","Sample WR F","HOU · 8"],["WR","Sample WR F2","LAC · 7"],["TE","Sample TE F","IND · 13"]] },
+    { n: "Sample Team G", r: "5–4 · 4th", cr: 14, ps: [["QB","Sample QB G","NYG · 8"],["RB","Sample RB G","DEN · 10"],["RB","Sample RB G2","CLE · 11"],["WR","Sample WR G","DAL · 10",1],["TE","Sample TE G","KC · 10"]] }
+  ];
+  var pick = { 0: { "Sample Wideout": 1 }, 1: { "Sample Vet RB": 1 } }, credits = { 0: 0, 1: 3 };
+  function drawGrid() {
+    document.getElementById("cols").innerHTML = TEAMS.map(function (t, ti) {
+      var picked = ti > 0 && pick[ti] && Object.keys(pick[ti]).length;
+      return '<div class="col' + (t.mine ? ' mine' : '') + '">' +
+        '<div class="ch' + (picked ? ' picked' : '') + '"><div><b>' + t.n + '</b><small>' + t.r + '</small></div>' + (t.mine ? '' : '<span class="sel-dot"></span>') + '</div>' +
+        '<div class="cr">💳 ' + t.cr + '<span class="stp"><button data-cr="' + ti + '" data-d="-1">−</button><span>' + (credits[ti] || 0) + '</span><button data-cr="' + ti + '" data-d="1">+</button></span></div>' +
+        t.ps.map(function (p) { var on = pick[ti] && pick[ti][p[1]];
+          return '<div class="pc ' + p[0] + (on ? ' on' : '') + '" data-t="' + ti + '" data-p="' + p[1] + '"><div class="pm">' + p[0] + ' · ' + p[2] + '</div><div class="pn">' + p[1] + '</div>' + (p[3] ? '<span class="tb">TRADE BLOCK</span>' : '') + '</div>'; }).join("") +
+        '</div>'; }).join("");
+    var give = Object.keys(pick[0] || {}), get = [];
+    for (var k = 1; k < TEAMS.length; k++) Object.keys(pick[k] || {}).forEach(function (p) { get.push(p); });
+    var cg = credits[0] || 0, cget = 0; for (k = 1; k < TEAMS.length; k++) cget += credits[k] || 0;
+    document.getElementById("tsum").innerHTML = '<b>You give:</b> ' + (give.join(", ") || "—") + (cg ? " + " + cg + " credits" : "") +
+      '<br><b>You get:</b> ' + (get.join(", ") || "—") + (cget ? " + " + cget + " credits" : "");
+  }
+  document.getElementById("cols").addEventListener("click", function (e) {
+    var c = e.target.closest(".pc"), st = e.target.closest("[data-cr]");
+    if (st) { var ti = +st.dataset.cr, max = TEAMS[ti].cr; credits[ti] = Math.max(0, Math.min(max, (credits[ti] || 0) + (+st.dataset.d))); drawGrid(); return; }
+    if (c) { var t = c.dataset.t; pick[t] = pick[t] || {}; if (pick[t][c.dataset.p]) delete pick[t][c.dataset.p]; else pick[t][c.dataset.p] = 1; drawGrid(); }
+  });
+  function openGrid() { drawGrid(); document.getElementById("tgrid").classList.add("on"); }
+  document.getElementById("tgx").onclick = function () { document.getElementById("tgrid").classList.remove("on"); };
+  document.querySelectorAll("[data-grid]").forEach(function (b) { b.addEventListener("click", function (e) { e.stopPropagation(); sheet.classList.remove("on"); scrim.classList.remove("on"); openGrid(); }); });
+
+  // ===== Guardrails: confirm sheet + undo toast =====
+  var conf = document.getElementById("confirm"), cscrim = document.getElementById("cscrim");
+  function closeConfirm() { conf.classList.remove("on"); cscrim.classList.remove("on"); }
+  cscrim.onclick = closeConfirm;
+  function toast(msg) { var t = document.getElementById("toast"); document.getElementById("tmsg").textContent = msg; t.classList.add("on");
+    clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("on"); }, 6000); }
+  document.getElementById("tundo").onclick = function () { document.getElementById("toast").classList.remove("on"); };
+  var CONFIRMS = {
+    send: function () { return '<h3>Send this offer?</h3><p class="meta">To Sample Team A · they have 48 hours to answer</p>' +
+      '<div class="card" style="padding:4px 12px"><div class="meta" style="padding-top:8px">You give</div><div class="row"><span class="pos WR">WR</span><div class="nm">Sample Wideout</div></div>' +
+      '<div class="meta" style="padding-top:8px">You get</div><div class="row"><span class="pos RB">RB</span><div class="nm">Sample Vet RB</div></div><div class="row"><span class="pos CR">💳</span><div class="nm">+3 credits</div></div></div>' +
+      '<div class="checks">✅ Same tier (Upper)<br>✅ At least one player each way<br>✅ Sample Team A has 22 credits available<br>✅ Before the Dec 2 deadline</div>' +
+      '<div class="note">You can withdraw it any time until they accept.</div>' +
+      '<div class="btns"><button class="b" data-cx>Go back</button><button class="b pri" data-ok="Offer sent to Sample Team A">Send offer</button></div>'; },
+    accept: function () { return '<h3>Accept this trade?</h3><p class="meta">From Sample Team B</p>' +
+      '<div class="card" style="padding:4px 12px"><div class="meta" style="padding-top:8px">You get</div><div class="row"><span class="pos RB">RB</span><div class="nm">Sample Back 2</div></div><div class="row"><span class="pos CR">💳</span><div class="nm">+3 credits</div></div>' +
+      '<div class="meta" style="padding-top:8px">You send</div><div class="row"><span class="pos WR">WR</span><div class="nm">Sample Wideout</div></div><div class="row"><span class="pos WR">WR</span><div class="nm">Sample Rookie</div></div></div>' +
+      '<div class="note" style="margin-top:10px">What happens next: the 24-hour review starts and the deal shows up for your tier. Players move on ESPN. Credits move only after the commish approves.</div>' +
+      '<div class="btns"><button class="b" data-cx>Not yet</button><button class="b pri" data-ok="Accepted · 24-hour review started">Yes, accept</button></div>'; },
+    decline: function () { return '<h3>Decline this offer?</h3><p class="meta">Sample Team B will see that you declined.</p>' +
+      '<div class="btns"><button class="b" data-cx>Keep it</button><button class="b danger" data-ok="Offer declined">Decline</button></div>'; }
   };
-  document.querySelectorAll(".ring").forEach(function (r) { r.onclick = function () { openStory(r.dataset.story); }; });
+  function openConfirm(kind) { document.getElementById("cbody").innerHTML = CONFIRMS[kind](); conf.classList.add("on"); cscrim.classList.add("on"); }
+  document.getElementById("cbody").addEventListener("click", function (e) {
+    if (e.target.closest("[data-cx]")) closeConfirm();
+    var ok = e.target.closest("[data-ok]"); if (ok) { closeConfirm(); document.getElementById("tgrid").classList.remove("on"); toast(ok.dataset.ok); }
+  });
+  document.querySelectorAll("[data-confirm]").forEach(function (b) { b.addEventListener("click", function (e) { e.stopPropagation(); openConfirm(b.dataset.confirm); }); });
+  document.getElementById("treview").onclick = function () { openConfirm("send"); };
 
   var TITLES = { home: "MAFFL HQ", match: "Match", team: "Team", league: "League", more: "More" };
   function tab(t, sub) {
@@ -472,13 +652,16 @@
   document.querySelectorAll("[data-player]").forEach(function (r) { r.onclick = openSheet; });
 
   document.addEventListener("click", function (e) {
-    var b = e.target.closest(".opt, .reacts button:not(.more), .btns .b:not(.pri)");
-    if (b && !b.closest(".sheet")) b.classList.toggle("sel");
+    var b = e.target.closest(".opt, .reacts button:not(.more), .mini");
+    if (b) b.classList.toggle("sel");
   });
 
   // Deep links for screenshots: #home #match #team #team-trades #team-stats #league #more #story-scores #story-coach #player
   var h = location.hash.slice(1) || "home";
-  if (h.indexOf("story-") === 0) { tab("home"); openStory(h.slice(6)); }
+  if (h.indexOf("story-") === 0) { tab("home"); openDeck(h.slice(6)); }
+  else if (h === "grid") { tab("team", "trades"); openGrid(); }
+  else if (h === "confirm-send") { tab("team", "trades"); openGrid(); openConfirm("send"); }
+  else if (h === "confirm-accept") { tab("team", "trades"); openConfirm("accept"); }
   else if (h === "player") { tab("team"); openSheet(); }
   else if (h.indexOf("team-") === 0) tab("team", h.slice(5));
   else tab(TITLES[h] ? h : "home");

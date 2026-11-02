@@ -79,6 +79,17 @@ commish keeps control over everything that touches gold.
 GitHub Pages is public, so the lab page is hidden but not private. That's fine, because the test Sheet can't
 touch real credits or gold.
 
+## 5b. Guardrails (commish 11/2: "ultra careful" about interactions and data)
+
+| Action | Guardrail |
+|---|---|
+| Reactions, votes, trade-block ♡ | No prompt (reversible; tap again to undo) |
+| Send / accept / decline / withdraw an offer | **Confirm sheet** that repeats the exact deal, the rule checks, and what happens next |
+| After any confirmed action | **Undo toast** (about 10 s) before it's written to the Sheet |
+| Accepted trade | 24h review; credits move only after commish approval (gold via commit) |
+| Commish approve / negate | Confirm sheet + reason field; every action logged in `Events` |
+| Data | Sheet is append-only (`Events`); nothing deletes rows; gold is never written by the Sheet |
+
 ## 6b. Direction change (commish 11/2)
 
 The Trade Center becomes part of the **MAFFL Reel**: a personalized, swipeable card feed alongside the base
