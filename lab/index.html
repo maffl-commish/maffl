@@ -23,12 +23,14 @@
     --gold:#f5a623;--gold-dark:#d98e10;--gold-soft:#fffaf0;--muted:#8a9ab5;--ink2:#4a5a78;--border:#e2e6ed;--win:#1d9e75;--loss:#c04a4a;
     --display:"Barlow Condensed",system-ui,sans-serif;--body:"Barlow",system-ui,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--page-bg);color:var(--navy);font-family:var(--body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:var(--page-bg);color:var(--navy);font-family:var(--body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   a{color:inherit;text-decoration:none}
-  .app{max-width:480px;margin:0 auto;min-height:100dvh;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+  body{position:fixed;inset:0}
+  .app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+  #views{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .view{display:none}.view.on{display:block}
-  .hdr{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top)}
+  .hdr{flex:0 0 auto;background:var(--surface);border-bottom:1px solid var(--border);z-index:20;padding-top:env(safe-area-inset-top)}
   .hdr-in{display:flex;align-items:center;gap:8px;padding:8px 14px}
   .hdr img{height:36px;width:36px}
   .hdr .t{font:700 22px var(--display)}
@@ -121,7 +123,7 @@
   .list a,.list button{display:flex;width:100%;align-items:center;gap:12px;padding:14px;background:var(--surface);border-bottom:1px solid var(--border);font:700 16px var(--display);text-transform:uppercase;letter-spacing:.04em;text-align:left}
   .list a::after,.list button::after{content:"›";margin-left:auto;color:var(--muted);font-size:22px}
   .list span{font-size:20px}
-  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:480px;margin:0 auto;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(env(safe-area-inset-bottom) + 6px)}
+  nav.tabs{flex:0 0 auto;z-index:30;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:6px 0 calc(env(safe-area-inset-bottom) + 6px)}
   nav.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   nav.tabs button span{font-size:21px;filter:grayscale(1);opacity:.55}
   nav.tabs button.on{color:var(--navy)}
@@ -148,8 +150,45 @@
   .opt small{color:var(--muted);font-weight:500}
   .opt.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
   .pinpad{font:700 26px var(--display);letter-spacing:.06em;text-align:center;text-transform:uppercase}
+  .pos{display:inline-grid;place-items:center;min-width:34px;font:700 12px var(--display);border-radius:4px;padding:2px 4px;color:#fff;background:#6b778d;flex:0 0 auto}
+  .pos.p-QB{background:#7a3e9d}.pos.p-RB{background:var(--win)}.pos.p-WR{background:#3b6fb6}.pos.p-TE{background:#c46a1b}.pos.p-CR{background:var(--gold);color:var(--navy)}
+  .pos.big{min-width:54px;height:54px;font-size:18px;border-radius:12px}
+  .tb{font:700 9px var(--display);letter-spacing:.1em;background:var(--gold);color:var(--navy);padding:2px 5px;border-radius:3px;margin-left:6px;vertical-align:2px}
+  .prow{width:100%}
+  .note{background:var(--navy-soft);border-radius:8px;padding:10px;font-size:12px;color:var(--ink2);line-height:1.45}
+  .checks{margin:10px 2px;font-size:13px;line-height:1.8;color:var(--ink2)}
+  .leg{font:700 10px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:8px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .two .row{gap:6px}.two .nm{font-size:15px}
+  .b.danger{background:var(--loss);border-color:var(--loss);color:#fff}
+  .b[disabled]{opacity:.4}
+  .stp{font:700 10px var(--display);letter-spacing:.08em;text-transform:uppercase;border-radius:4px;padding:2px 6px;background:var(--navy-soft);color:var(--ink2)}
+  .stp.gold{background:var(--gold);color:var(--navy)}.stp.ok{background:var(--win);color:#fff}.stp.bad{background:var(--loss);color:#fff}
+  .steps{display:flex;gap:6px;margin:10px 0 4px;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .steps span{flex:1;text-align:center;padding:6px 0;border-bottom:3px solid var(--border)}
+  .steps .on{color:var(--navy);border-color:var(--gold)}.steps .done{border-color:var(--navy)}
+  .sbs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .colh{font:700 12px var(--display);text-transform:uppercase;letter-spacing:.06em;background:var(--navy);color:#fff;border-radius:8px;padding:7px 8px;position:sticky;top:0;z-index:2}
+  .colh.me{background:var(--gold);color:var(--navy)}
+  .crs{display:flex;align-items:center;gap:6px;margin:6px 0;background:var(--gold-soft);border:1px dashed var(--gold);border-radius:8px;padding:5px 6px;font:700 13px var(--display)}
+  .crs button{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:var(--surface);font:700 15px var(--body)}
+  .crs small{margin-left:auto;font:500 10px var(--body);color:var(--muted)}
+  .pc2{display:flex;gap:6px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;margin-top:5px}
+  .pc2.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold);background:var(--gold-soft)}
+  .pc2 .pos{min-width:28px;font-size:10px}
+  .pn2{font:700 13px/1.15 var(--display);min-width:0}.pn2 small{display:block;font:500 10px var(--body);color:var(--muted)}
+  .sticky{position:sticky;bottom:0;background:var(--page-bg);padding:10px 0 4px;border-top:1px solid var(--border);margin-top:10px}
+  .cwrap{position:fixed;inset:0;z-index:85;background:rgba(15,29,52,.5);display:none;align-items:flex-end;justify-content:center}
+  .cwrap.on{display:flex}
+  .cbox{width:100%;max-width:480px;max-height:85dvh;overflow:auto;background:var(--page-bg);border-radius:18px 18px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 16px)}
+  .cbox h3{font:700 24px var(--display);margin-bottom:6px}
+  .sb2{font-style:normal;background:var(--loss);color:#fff;border-radius:999px;padding:0 6px;font-size:11px;margin-left:2px}
+  .tbadge{position:relative}
+  .tbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
+  body.busy{cursor:progress}body.busy .b{pointer-events:none;opacity:.6}
+  .card.offer .two{margin-top:4px}
   /* home reel (inline) */
-  #v-home.on{display:flex;flex-direction:column;overflow:hidden}
+  #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
   .keys::-webkit-scrollbar{display:none}
   .key{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;width:58px;font:700 10px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
@@ -236,31 +275,33 @@
 <body>
 <div class="app">
   <header class="hdr">
-    <div class="lab">Lab prototype · read-only · real data</div>
+    <div class="lab">Lab · real league data · trades and reactions are test-only</div>
     <div class="pastbar" id="pastbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
       <div class="wk" id="hdrwk"></div><button class="chip" id="chip" aria-label="Switch team">··</button>
     </div>
   </header>
-  <div id="boot" class="loading">Loading the league…</div>
-  <section class="view" id="v-home"></section>
-  <section class="view" id="v-match"></section>
-  <section class="view" id="v-team"></section>
-  <section class="view" id="v-league"></section>
-  <section class="view" id="v-more"></section>
+  <main id="views">
+    <div id="boot" class="loading">Loading the league…</div>
+    <section class="view" id="v-home"></section>
+    <section class="view" id="v-match"></section>
+    <section class="view" id="v-team"></section>
+    <section class="view" id="v-league"></section>
+    <section class="view" id="v-more"></section>
+  </main>
+  <nav class="tabs" id="tabs">
+    <button data-tab="home"><span>🏠</span>Home</button>
+    <button data-tab="match"><span>⚔️</span>Match</button>
+    <button data-tab="team"><span class="tbadge">🏈</span>Team</button>
+    <button data-tab="league"><span>🏆</span>League</button>
+    <button data-tab="more"><span>☰</span>More</button>
+  </nav>
 </div>
-
-<nav class="tabs" id="tabs">
-  <button data-tab="home"><span>🏠</span>Home</button>
-  <button data-tab="match"><span>⚔️</span>Match</button>
-  <button data-tab="team"><span>🏈</span>Team</button>
-  <button data-tab="league"><span>🏆</span>League</button>
-  <button data-tab="more"><span>☰</span>More</button>
-</nav>
 
 <div class="sscrim" id="sscrim"></div>
 <div class="psheet" id="psheet"><div class="shd"><span class="grabber"></span><button id="sback" style="visibility:hidden">‹ Back</button><button class="x" id="sx" aria-label="Close">×</button></div><div class="sb" id="sb"></div></div>
+<div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
 
@@ -308,7 +349,8 @@
     var side = Promise.all([
       getText("../prize.html").then(function (t) { PRIZE = extract(t, "const MAFFL = "); }).catch(function () {}),
       getText("../credits.html").then(function (t) { CREDIT_LOG = extract(t, "const REGISTRY_DATA = ") || []; }).catch(function () {}),
-      getText("../rules.html").then(function (t) { RULES_HTML = t; }).catch(function () {})
+      getText("../rules.html").then(function (t) { RULES_HTML = t; }).catch(function () {}),
+      loadRosters()
     ]);
     var main = getText("../weekly.html").then(function (t) {
       WEEKS = extract(t, "const WEEKS = ").slice().sort(function (a, b) { return a.weekNumber - b.weekNumber; });
@@ -372,8 +414,7 @@
   function tab(t) {
     document.querySelectorAll(".view").forEach(function (v) { v.classList.toggle("on", v.id === "v-" + t); });
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === t); });
-    $("ttl").textContent = TITLES[t]; window.scrollTo(0, 0);
-    document.querySelector(".app").style.paddingBottom = t === "home" ? "0" : ""; if (t === "home") sizeHome();
+    $("ttl").textContent = TITLES[t]; $("views").scrollTop = 0;
     if (location.hash !== "#" + t) try { history.replaceState(null, "", "#" + t); } catch (e) {}
   }
   document.querySelectorAll("#tabs button").forEach(function (b) { b.onclick = function () { tab(b.dataset.tab); }; });
@@ -419,8 +460,8 @@
   }
   function loadSummary() {
     if (!API_URL || !ME) return;
-    apiGet({ action: "summary", owner: ME.owner }).then(function (r) {
-      if (!r.ok) return; SUM = r; renderHome(); paint();
+    api("summary", creds()).then(function (r) {
+      if (!r.ok) return; SUM = r; ME.commish = !!r.commish; renderHome(); refreshTeam(); paint();
     }).catch(function () {});
   }
 
@@ -591,7 +632,7 @@
       setTimeout(function () { if (b.classList.contains("sel")) advance(card, 1); }, 380); }); });
   }
   // Home fills the screen between the header and the tab bar; cards scroll inside.
-  function sizeHome() {
+  function sizeHome() { return; // layout is now pure flexbox; kept so old calls are harmless
     var hh = document.querySelector(".hdr").offsetHeight, th = $("tabs").offsetHeight;
     $("v-home").style.height = (window.innerHeight - hh - th) + "px";
   }
@@ -640,9 +681,9 @@
     var h = '<div class="thero"><div class="tn">' + esc(t.team) + '</div><div class="sub">' + esc(t.owner) + ' · ' + tierN + (t.div ? ' · Div ' + t.div : '') + '</div>' +
       '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>#' + t.rank + '</b><small>' + tierN + '</small></div>' +
       '<div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts for</small></div></div></div>' +
-      '<div class="seg" id="tseg"><button data-sub="roster" class="on">Roster</button><button data-sub="trades">Trades</button><button data-sub="credits">Credits</button><button data-sub="money">Money</button><button data-sub="stats">Stats</button></div>';
-    h += '<div class="sub-v on pad" id="s-roster"><div class="card soon"><div class="eb">🚧 In the build</div><h3>Your roster</h3><p>Players by position, trade-block tags, and a player card with stats plus MAFFL draft and owner history. Arrives with the daily roster pull.</p></div></div>';
-    h += '<div class="sub-v pad" id="s-trades"><div class="card soon"><div class="eb">🚧 In the build</div><h3>Trades</h3><p>Pick a team → side by side → preview → send. Open offers show as a badge on this tab.</p></div></div>';
+      '<div class="seg" id="tseg"><button data-sub="roster">Roster</button><button data-sub="trades">Trades' + (badgeCount() ? ' <i class="sb2">' + badgeCount() + '</i>' : '') + '</button><button data-sub="credits">Credits</button><button data-sub="money">Money</button><button data-sub="stats">Stats</button></div>';
+    h += '<div class="sub-v pad" id="s-roster">' + rosterHTML() + '</div>';
+    h += '<div class="sub-v pad" id="s-trades">' + tradesHTML() + '</div>';
     var log = CREDIT_LOG.filter(function (r) { return norm(r.owner) === norm(ME.owner) && r.approved !== false; }).sort(function (a, b) { return b.season - a.season; });
     var earned = log.filter(function (r) { return r.amount > 0; }).reduce(function (s2, r) { return s2 + r.amount; }, 0), spent = log.filter(function (r) { return r.amount < 0; }).reduce(function (s2, r) { return s2 - r.amount; }, 0);
     h += '<div class="sub-v pad" id="s-credits"><div class="card navy"><div class="eb">Balance · Week ' + W.weekNumber + '</div><h3 style="font-size:34px">' + t.credits + ' credits</h3>' +
@@ -670,7 +711,10 @@
       (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
       '<div class="btns"><a class="b" href="../power-rankings.html">Power Rankings profile ›</a></div></div></div>';
     $("v-team").innerHTML = h;
-    document.querySelectorAll("#tseg button").forEach(function (b) { b.onclick = function () {
+    var cur = TEAM_SUB;
+    document.querySelectorAll("#tseg button").forEach(function (x) { x.classList.toggle("on", x.dataset.sub === cur); });
+    document.querySelectorAll("#v-team .sub-v").forEach(function (v) { v.classList.toggle("on", v.id === "s-" + cur); });
+    document.querySelectorAll("#tseg button").forEach(function (b) { b.onclick = function () { TEAM_SUB = b.dataset.sub;
       document.querySelectorAll("#tseg button").forEach(function (x) { x.classList.toggle("on", x === b); });
       document.querySelectorAll("#v-team .sub-v").forEach(function (v) { v.classList.toggle("on", v.id === "s-" + b.dataset.sub); }); }; });
   }
@@ -764,13 +808,269 @@
     $("wReq").onclick = function () { showWelcome(true); };
   }
 
+  // =====================================================================
+  // ROSTERS + TRADES (lab). Rosters are STAGED: the 2026 auction draft (data/MAFFL_Draft_History_Clean_v3.csv)
+  // plus any trades approved in the test Sheet. Weekly points: data/MAFFL_Top_Performers_2026.csv (top 3 per team).
+  // Nothing here touches ESPN or gold data.
+  // =====================================================================
+  var DRAFT = [], TOPS = [], TEAM_SUB = "roster", BLD = null;
+  var POS_ORDER = ["QB", "RB", "WR", "TE", "K", "D/ST", "DST", "DEF"];
+  function parseCSV(t) {
+    var rows = [], row = [], cur = "", q = false;
+    for (var i = 0; i < t.length; i++) {
+      var ch = t[i];
+      if (q) { if (ch === '"') { if (t[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === ",") { row.push(cur); cur = ""; }
+      else if (ch === "\n" || ch === "\r") { if (ch === "\r" && t[i + 1] === "\n") i++; row.push(cur); rows.push(row); row = []; cur = ""; }
+      else cur += ch;
+    }
+    if (cur || row.length) { row.push(cur); rows.push(row); }
+    var head = rows.shift().map(function (h) { return h.replace(/^﻿/, "").trim(); });
+    return rows.filter(function (r) { return r.length > 1; }).map(function (r) { var o = {}; head.forEach(function (h, k) { o[h] = r[k]; }); return o; });
+  }
+  function loadRosters() {
+    return Promise.all([
+      getText("../data/MAFFL_Draft_History_Clean_v3.csv").then(function (t) { DRAFT = parseCSV(t); }),
+      getText("../data/MAFFL_Top_Performers_2026.csv").then(function (t) { TOPS = parseCSV(t); }).catch(function () {})
+    ]).catch(function () {});
+  }
+  function pkey(tier, name) { return tier + ":" + name; }
+  // Current rosters = draft picks, then approved test trades applied in order.
+  function rosters() {
+    var y = (window.SCHEDULE_DATA && SCHEDULE_DATA.year) || 2026, R = {};
+    DRAFT.filter(function (d) { return +d.Year === y; }).forEach(function (d) {
+      var t = teamOf(d.Owner); if (!BY_OWNER[norm(d.Owner)]) return;
+      (R[norm(d.Owner)] = R[norm(d.Owner)] || []).push({ name: d.Player || d.Player_Raw, pos: d.Position_Actual || d.Draft_Slot, nfl: d.NFL_Team, price: +d.Price || 0, owner: t.owner, tier: t.tier });
+    });
+    (SUM.offers || []).filter(function (o) { return o.status === "APPROVED"; }).sort(function (a, b) { return new Date(a.updated) - new Date(b.updated); }).forEach(function (o) {
+      var F = R[norm(o.from)] = R[norm(o.from)] || [], T = R[norm(o.to)] = R[norm(o.to)] || [];
+      function move(list, from, to, toOwner) { list.forEach(function (nm) { var i = from.findIndex(function (p) { return p.name === nm; }); if (i >= 0) { var p = from.splice(i, 1)[0]; p.owner = toOwner; to.push(p); } }); }
+      move(o.give, F, T, o.to); move(o.get, T, F, o.from);
+    });
+    return R;
+  }
+  function rosterOf(owner) { var r = rosters()[norm(owner)] || []; return r.slice().sort(function (a, b) {
+    var pa = POS_ORDER.indexOf(a.pos), pb = POS_ORDER.indexOf(b.pos); return (pa < 0 ? 9 : pa) - (pb < 0 ? 9 : pb) || b.price - a.price; }); }
+  // A block tag only counts while the player is still on the roster of the owner who tagged him.
+  function blockOf(tier, name, owner) { var b = (SUM.block || {})[pkey(tier, name)]; return b && (!owner || norm(b.owner) === norm(owner)) ? b : null; }
+  // "B. Purdy" (Top Performers) → the roster's "Brock Purdy"
+  function topWeeks(p) {
+    var parts = p.name.split(" "), init = (parts[0] || "")[0], last = parts.slice(1).join(" ");
+    return TOPS.filter(function (r) { return norm(r.Owner) === norm(p.owner) && r.Player && r.Player[0] === init && r.Player.slice(r.Player.indexOf(" ") + 1) === last; })
+      .map(function (r) { return { wk: +r.Week, pts: +r.Points, rank: +r.Rank }; }).sort(function (a, b) { return b.wk - a.wk; });
+  }
+  function posChip(pos) { return '<span class="pos p-' + esc(String(pos).replace("/", "")) + '">' + esc(pos) + '</span>'; }
+  function playerRow(p, extra) {
+    var b = blockOf(p.tier, p.name, p.owner);
+    return '<button class="row prow" data-player="' + esc(p.owner) + '|' + esc(p.name) + '">' + posChip(p.pos) +
+      '<div style="flex:1;text-align:left"><div class="nm">' + esc(p.name) + (b ? '<span class="tb">TRADE BLOCK</span>' : '') + '</div><div class="meta">' + esc(p.nfl || "FA") + ' · $' + p.price + (b && b.note ? ' · “' + esc(b.note) + '”' : '') + '</div></div>' + (extra || '<span class="rv">›</span>') + '</button>';
+  }
+
+  // ---------- Team → Roster ----------
+  function rosterHTML() {
+    var list = rosterOf(ME.owner);
+    if (!DRAFT.length) return '<div class="card"><p>Loading rosters…</p></div>';
+    var onBlock = list.filter(function (p) { return blockOf(p.tier, p.name, p.owner); }).length;
+    return '<div class="note" style="margin-top:12px">🧪 Staged roster: your 2026 auction draft plus any trades approved in the test. Tap a player to see his MAFFL history or put him on the block.</div>' +
+      '<div class="sh" style="padding-left:0"><h2>' + list.length + ' players</h2><small>' + onBlock + ' on the block</small></div>' +
+      '<div class="card" style="margin-top:0;padding:2px 12px">' + list.map(function (p) { return playerRow(p); }).join("") + '</div>';
+  }
+
+  // ---------- Player sheet ----------
+  function playerSheet(key) {
+    var k = key.split("|"), owner = k[0], name = k.slice(1).join("|");
+    var p = rosterOf(owner).filter(function (x) { return x.name === name; })[0];
+    if (!p) return '<p class="p">Player not found.</p>';
+    var mine = isMe(p.owner), b = blockOf(p.tier, p.name, p.owner), tw = topWeeks(p);
+    var hist = DRAFT.filter(function (d) { return (d.Player || d.Player_Raw) === p.name; }).sort(function (a, b2) { return b2.Year - a.Year; });
+    var h = '<div class="card navy"><div style="display:flex;gap:12px;align-items:center">' + posChip(p.pos).replace('class="pos', 'class="pos big') +
+      '<div><h3 style="margin:0">' + esc(p.name) + '</h3><p>' + esc(p.nfl || "FA") + ' · ' + esc(teamOf(p.owner).team) + '</p></div></div>' +
+      '<div class="strip"><div><b>$' + p.price + '</b><small>2026 price</small></div><div><b>' + tw.length + '</b><small>Top-3 weeks</small></div><div><b>' + (tw.length ? f2(Math.max.apply(null, tw.map(function (x) { return x.pts; }))) : "–") + '</b><small>Best week</small></div></div></div>';
+    if (mine) {
+      h += '<div class="card"><div class="eb">🏷️ Trade block</div>' + (b ? '<p>On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '. Everyone in your tier sees the tag.</p>' : '<p>Not on the block. Add a note so people know what you want.</p>') +
+        '<input class="field" id="bnote" maxlength="80" placeholder="What do you want? (e.g. RB depth)" value="' + esc(b && b.note || "") + '">' +
+        '<div class="btns">' + (b ? '<button class="b" data-blk="off" data-pk="' + esc(p.name) + '">Take off the block</button>' : '') + '<button class="b pri" data-blk="on" data-pk="' + esc(p.name) + '">' + (b ? 'Update note' : 'Put on the block') + '</button></div></div>';
+    } else if (p.tier === ME.tier && API_URL) {
+      h += '<div class="btns"><button class="b pri" data-trade-with="' + esc(p.owner) + '" data-trade-want="' + esc(p.name) + '">Start a trade for him</button></div>';
+    }
+    if (tw.length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
+      return '<div class="row"><div class="nm">Week ' + x.wk + '</div><div class="rt">' + f2(x.pts) + '<small>#' + x.rank + ' on the team</small></div></div>'; }).join("") + '</div>';
+    h += '<div class="card glist"><div class="eb">MAFFL auction history</div>' + (hist.length ? hist.map(function (d) {
+      return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + d.Year + '</div><div style="flex:1"><button class="tl2 nm" data-owner-push="' + esc(d.Owner) + '">' + esc(d.Owner) + '</button><div class="meta">' + esc(d.NFL_Team || "") + '</div></div><div class="rt">$' + (+d.Price || 0) + '</div></div>'; }).join("") : '<p>First time in a MAFFL auction.</p>') + '</div>';
+    return h;
+  }
+
+  // ---------- offers ----------
+  function offersFor(me) { return (SUM.offers || []).filter(function (o) { return isMe(o.from) || isMe(o.to) || o.tier === ME.tier || ME.commish; }); }
+  function needsMe(o) { return (o.status === "PROPOSED" && isMe(o.to)) || (o.status === "ACCEPTED" && ME.commish); }
+  function badgeCount() { return (SUM.offers || []).filter(needsMe).length; }
+  function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; }).reduce(function (n, o) {
+    return n + (norm(o.from) === norm(owner) ? o.giveCredits : 0) + (norm(o.to) === norm(owner) ? o.getCredits : 0); }, 0); }
+  function availCredits(owner) { return Math.max(0, (teamOf(owner).credits || 0) - committedCredits(owner)); }
+  var ST = { PROPOSED: ["Waiting", ""], ACCEPTED: ["In 24h review", "gold"], APPROVED: ["Approved ✓", "ok"], NEGATED: ["Negated", "bad"], DECLINED: ["Declined", "bad"], WITHDRAWN: ["Withdrawn", ""] };
+  function legHTML(label, team, players, credits) {
+    return '<div class="leg">' + esc(label) + '</div>' + players.map(function (nm) {
+      var p = findPlayer(team, nm);
+      return '<div class="row" style="padding:6px 0">' + posChip(p.pos) + '<div class="nm">' + esc(nm) + '</div></div>'; }).join("") +
+      (credits ? '<div class="row" style="padding:6px 0"><span class="pos p-CR">💳</span><div class="nm">' + credits + ' credit' + (credits === 1 ? '' : 's') + '</div></div>' : '') +
+      (!players.length && !credits ? '<p class="meta">Nothing</p>' : '');
+  }
+  function findPlayer(team, nm) { // on that team, or (after an approved trade) anywhere
+    var R = rosters(), hit = (R[norm(team)] || []).filter(function (x) { return x.name === nm; })[0];
+    if (!hit) Object.keys(R).some(function (k) { hit = R[k].filter(function (x) { return x.name === nm; })[0]; return !!hit; });
+    return hit || { name: nm, pos: "?", nfl: "" };
+  }
+  function offerCard(o) {
+    var iAmFrom = isMe(o.from), iAmTo = isMe(o.to), other = iAmFrom ? o.to : o.from, st = ST[o.status] || [o.status, ""];
+    var youSend = iAmFrom ? [o.give, o.giveCredits, o.from] : [o.get, o.getCredits, o.to], youGet = iAmFrom ? [o.get, o.getCredits, o.to] : [o.give, o.giveCredits, o.from];
+    var mineOffer = iAmFrom || iAmTo;
+    var h = '<div class="card offer"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mineOffer ? (iAmFrom ? "You → " : "From ") + esc(teamOf(other).team) : esc(teamOf(o.from).team) + " ↔ " + esc(teamOf(o.to).team)) +
+      '</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>';
+    if (mineOffer) h += '<div class="two"><div>' + legHTML("You send", youSend[2], youSend[0], youSend[1]) + '</div><div>' + legHTML("You get", youGet[2], youGet[0], youGet[1]) + '</div></div>';
+    else h += '<div class="two"><div>' + legHTML(teamOf(o.from).team + " sends", o.from, o.give, o.giveCredits) + '</div><div>' + legHTML(teamOf(o.to).team + " sends", o.to, o.get, o.getCredits) + '</div></div>';
+    if (o.note) h += '<p class="meta" style="margin-top:6px">“' + esc(o.note) + '”</p>';
+    if (o.reason) h += '<p class="meta">Commish: ' + esc(o.reason) + '</p>';
+    var btn = "";
+    if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
+    else if (o.status === "PROPOSED" && iAmFrom) btn = '<button class="b" data-act="withdraw" data-id="' + o.id + '">Withdraw</button>';
+    else if (o.status === "ACCEPTED" && ME.commish) btn = '<button class="b" data-act="negate" data-id="' + o.id + '">Negate</button><button class="b pri" data-act="approve" data-id="' + o.id + '">Approve</button>';
+    if (btn) h += '<div class="btns">' + btn + '</div>';
+    if (o.status === "ACCEPTED" && mineOffer) h += '<p class="meta" style="margin-top:8px">Next: send the player side on ESPN. Credits move when the commish approves.</p>';
+    return h + '</div>';
+  }
+  function tradesHTML() {
+    if (!API_URL) return '<div class="card"><p>Trades need the league server (demo mode is off-line).</p></div>';
+    var all = offersFor(ME), dead = new Date(SUM.deadline || "2026-12-02T17:00:00Z"), days = Math.ceil((dead - Date.now()) / 864e5);
+    var waitingMe = all.filter(needsMe), waitingThem = all.filter(function (o) { return o.status === "PROPOSED" && isMe(o.from); });
+    var review = all.filter(function (o) { return o.status === "ACCEPTED" && !needsMe(o); }), done = all.filter(function (o) { return ["APPROVED", "NEGATED", "DECLINED", "WITHDRAWN"].indexOf(o.status) >= 0; }).slice(-8).reverse();
+    var block = Object.keys(SUM.block || {}).filter(function (k) { return k.indexOf(ME.tier + ":") === 0 && !isMe(SUM.block[k].owner); });
+    var h = '<div class="card navy"><div class="eb">⏰ Trade deadline · ' + (days > 0 ? days + ' days' : 'passed') + '</div><h3>Make a deal</h3><p>' + availCredits(ME.owner) + ' of your ' + teamOf(ME.owner).credits + ' credits are free to trade.</p>' +
+      '<div class="btns"><button class="b pri" data-newtrade="1">Start a trade</button></div></div>';
+    function sec(t, list) { return list.length ? '<div class="sh" style="padding-left:0"><h2>' + t + '</h2><small>' + list.length + '</small></div>' + list.map(offerCard).join("") : ''; }
+    h += sec("Needs you", waitingMe) + sec("Waiting on them", waitingThem) + sec("In review · your tier", review);
+    h += '<div class="sh" style="padding-left:0"><h2>🏷️ On the block · your tier</h2><small>' + block.length + '</small></div><div class="card" style="margin-top:0;padding:2px 12px">' +
+      (block.length ? block.map(function (k) { var nm = k.slice(2), ow = SUM.block[k].owner; var p = rosterOf(ow).filter(function (x) { return x.name === nm; })[0];
+        return p ? playerRow(p, '<span class="rv">' + esc(teamOf(ow).team.split(" ")[0]) + ' ›</span>') : ''; }).join("") : '<p class="meta" style="padding:10px 0">Nobody yet. Put one of yours up from Roster.</p>') + '</div>';
+    h += sec("Recent", done);
+    return h;
+  }
+
+  // ---------- builder: pick team → side by side → preview → send ----------
+  function startBuilder(withOwner, wantName, fromOffer) {
+    BLD = { step: withOwner ? 2 : 1, with: withOwner || null, give: {}, get: {}, gc: 0, tc: 0, note: "" };
+    if (wantName) BLD.get[wantName] = 1;
+    if (fromOffer) { // counter: flip the original
+      BLD.with = fromOffer.from; BLD.step = 2; fromOffer.get.forEach(function (n) { BLD.give[n] = 1; }); fromOffer.give.forEach(function (n) { BLD.get[n] = 1; });
+      BLD.gc = fromOffer.getCredits; BLD.tc = fromOffer.giveCredits; BLD.counterOf = fromOffer.id;
+    }
+    openSheet("builder", null, null, false);
+  }
+  function builderSheet() {
+    var h = '<div class="steps">' + ["Team", "Pick players", "Preview"].map(function (t, i) { return '<span class="' + (BLD.step === i + 1 ? "on" : BLD.step > i + 1 ? "done" : "") + '">' + (i + 1) + '. ' + t + '</span>'; }).join("") + '</div>';
+    if (BLD.step === 1) {
+      var mates = TEAMS.filter(function (t) { return t.tier === ME.tier && !isMe(t.owner) && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.rank - b.rank; });
+      return h + '<div class="sh" style="padding-left:0"><h2>Who are you dealing with?</h2></div><div class="card" style="padding:2px 12px;margin-top:0">' + mates.map(function (t) {
+        var nb = Object.keys(SUM.block || {}).filter(function (k) { return norm(SUM.block[k].owner) === norm(t.owner) && k.indexOf(ME.tier + ":") === 0; }).length;
+        return '<button class="row" style="width:100%;text-align:left" data-bteam="' + esc(t.owner) + '"><div style="flex:1"><div class="nm">' + esc(t.team) + '</div><div class="meta">' + esc(t.owner) + ' · ' + rec(t) + ' · 💳 ' + availCredits(t.owner) + (nb ? ' · 🏷️ ' + nb + ' on the block' : '') + '</div></div><span class="rv">›</span></button>'; }).join("") + '</div>';
+    }
+    var them = teamOf(BLD.with), mineR = rosterOf(ME.owner), theirR = rosterOf(BLD.with), gN = Object.keys(BLD.give), tN = Object.keys(BLD.get);
+    if (BLD.step === 2) {
+      function col(list, sel, side) { return list.map(function (p) { var b = blockOf(p.tier, p.name, p.owner);
+        return '<button class="pc2' + (sel[p.name] ? ' on' : '') + '" data-pick="' + side + '" data-name="' + esc(p.name) + '">' + posChip(p.pos) + '<span class="pn2">' + esc(p.name) + (b ? ' 🏷️' : '') + '<small>' + esc(p.nfl || "") + ' · $' + p.price + '</small></span></button>'; }).join(""); }
+      function stepper(side, val, max) { return '<div class="crs"><span>💳 ' + val + '</span><button data-cr2="' + side + '" data-d="-1">−</button><button data-cr2="' + side + '" data-d="1">+</button><small>of ' + max + '</small></div>'; }
+      return h + '<div class="sbs"><div><div class="colh me">You send</div>' + stepper("give", BLD.gc, availCredits(ME.owner)) + col(mineR, BLD.give, "give") + '</div>' +
+        '<div><div class="colh">' + esc(them.team) + ' sends</div>' + stepper("get", BLD.tc, availCredits(BLD.with)) + col(theirR, BLD.get, "get") + '</div></div>' +
+        '<div class="sticky"><div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
+        '<div class="btns" style="margin-top:6px"><button class="b" data-bstep="1">Back</button><button class="b pri" data-bstep="3"' + ((gN.length + tN.length) && (gN.length || BLD.gc) && (tN.length || BLD.tc) ? '' : ' disabled') + '>Preview trade</button></div></div>';
+    }
+    var checks = [
+      [true, "Same tier (" + (ME.tier === "U" ? "Upper" : "Lower") + ")"],
+      [gN.length + tN.length > 0, "At least one player moves"],
+      [BLD.gc <= availCredits(ME.owner), "You have " + availCredits(ME.owner) + " free credits"],
+      [BLD.tc <= availCredits(BLD.with), them.team + " has " + availCredits(BLD.with) + " free credits"],
+      [Date.now() < new Date(SUM.deadline || "2026-12-02T17:00:00Z").getTime(), "Before the Dec 2 deadline"]];
+    var ok = checks.every(function (c) { return c[0]; });
+    return h + '<div class="card"><div class="eb">Trade with ' + esc(them.team) + (BLD.counterOf ? ' · counteroffer' : '') + '</div><div class="two"><div>' + legHTML("You send", ME.owner, gN, BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, tN, BLD.tc) + '</div></div></div>' +
+      '<div class="checks">' + checks.map(function (c) { return (c[0] ? "✅ " : "❌ ") + esc(c[1]); }).join("<br>") + '</div>' +
+      '<input class="field" id="bnote2" maxlength="200" placeholder="Add a note (optional)" value="' + esc(BLD.note) + '">' +
+      '<div class="btns"><button class="b" data-bstep="2">Edit</button><button class="b pri" data-bsend="1"' + (ok ? '' : ' disabled') + '>Send offer</button></div>';
+  }
+
+  // ---------- confirm (guardrail) ----------
+  function confirmBox(title, html, okLabel, danger, withReason) {
+    return new Promise(function (resolve) {
+      $("cbox").innerHTML = '<h3>' + esc(title) + '</h3>' + html + (withReason ? '<input class="field" id="creason" maxlength="200" placeholder="Reason (shown to both teams)">' : '') +
+        '<div class="btns"><button class="b" id="cno">Not yet</button><button class="b ' + (danger ? 'danger' : 'pri') + '" id="cyes">' + esc(okLabel) + '</button></div>';
+      $("cwrap").classList.add("on");
+      $("cno").onclick = function () { $("cwrap").classList.remove("on"); resolve(null); };
+      $("cyes").onclick = function () { var r = withReason ? $("creason").value : true; $("cwrap").classList.remove("on"); resolve(r || true); };
+    });
+  }
+  function busy(on) { document.body.classList.toggle("busy", !!on); }
+  function afterChange(msg) {
+    return api("summary", creds()).then(function (r) { if (r.ok) SUM = r; refreshTeam(); paint(); if (msg) toast(msg); });
+  }
+  function refreshTeam() { renderTeam(); var c = badgeCount(); document.querySelector(".tbadge").setAttribute("data-n", c || ""); }
+
+  document.addEventListener("click", function (e) {
+    var el;
+    if ((el = e.target.closest("[data-player]"))) { openSheet("player", el.dataset.player, null, $("psheet").classList.contains("on")); return; }
+    if ((el = e.target.closest("[data-blk]"))) {
+      var on = el.dataset.blk === "on", note = ($("bnote") || {}).value || "";
+      busy(1); api("block", Object.assign(creds(), { player: pkey(ME.tier, el.dataset.pk), on: on, note: note })).then(function (r) {
+        busy(0); if (!r.ok) { toast(r.error); return; } afterChange(on ? "On the block 🏷️" : "Off the block").then(function () { closeSheet(); });
+      }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
+      return;
+    }
+    if ((el = e.target.closest("[data-newtrade]"))) { startBuilder(); return; }
+    if ((el = e.target.closest("[data-trade-with]"))) { startBuilder(el.dataset.tradeWith, el.dataset.tradeWant); return; }
+    if ((el = e.target.closest("[data-counter]"))) { var co = (SUM.offers || []).filter(function (o) { return o.id === el.dataset.counter; })[0]; if (co) startBuilder(null, null, co); return; }
+    if ((el = e.target.closest("[data-bteam]"))) { BLD.with = el.dataset.bteam; BLD.step = 2; openSheet("builder", null, null, false); return; }
+    if ((el = e.target.closest("[data-pick]"))) { var side = BLD[el.dataset.pick]; if (side[el.dataset.name]) delete side[el.dataset.name]; else side[el.dataset.name] = 1; el.classList.toggle("on");
+      var keep = $("sb").scrollTop; openSheet("builder", null, null, false); $("sb").scrollTop = keep; return; }
+    if ((el = e.target.closest("[data-cr2]"))) { var g = el.dataset.cr2 === "give", max = availCredits(g ? ME.owner : BLD.with), k2 = g ? "gc" : "tc";
+      BLD[k2] = Math.max(0, Math.min(max, BLD[k2] + (+el.dataset.d))); var keep2 = $("sb").scrollTop; openSheet("builder", null, null, false); $("sb").scrollTop = keep2; return; }
+    if ((el = e.target.closest("[data-bstep]"))) { if ($("bnote2")) BLD.note = $("bnote2").value; BLD.step = +el.dataset.bstep; openSheet("builder", null, null, false); return; }
+    if ((el = e.target.closest("[data-bsend]"))) {
+      BLD.note = $("bnote2").value;
+      var them2 = teamOf(BLD.with);
+      confirmBox("Send this offer?", '<p class="p">To <b>' + esc(them2.team) + '</b>. They can accept, decline or counter. You can withdraw it until they answer.</p><div class="card two" style="margin-top:8px"><div>' + legHTML("You send", ME.owner, Object.keys(BLD.give), BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, Object.keys(BLD.get), BLD.tc) + '</div></div>', "Yes, send it").then(function (yes) {
+        if (!yes) return; busy(1);
+        var send = api("offer", Object.assign(creds(), { to: BLD.with, give: Object.keys(BLD.give), get: Object.keys(BLD.get), giveCredits: BLD.gc, getCredits: BLD.tc, note: BLD.note }));
+        var prev = BLD.counterOf ? api("respond", Object.assign(creds(), { offer_id: BLD.counterOf, decision: "decline" })) : Promise.resolve({ ok: true });
+        Promise.all([send, prev]).then(function (rs) { busy(0); if (!rs[0].ok) { toast(rs[0].error); return; } closeSheet(); TEAM_SUB = "trades"; afterChange("Offer sent to " + them2.team + " ✓"); })
+          .catch(function () { busy(0); toast("Couldn't reach the league server"); });
+      });
+      return;
+    }
+    if ((el = e.target.closest("[data-act]"))) {
+      var o = (SUM.offers || []).filter(function (x) { return x.id === el.dataset.id; })[0]; if (!o) return;
+      var act = el.dataset.act, T = {
+        accept: ["Accept this trade?", "The 24-hour review starts and the deal shows up for your tier. Players move on ESPN; credits move only after the commish approves.", "Yes, accept", false],
+        decline: ["Decline this offer?", teamOf(o.from).team + " will see that you declined.", "Decline", true],
+        withdraw: ["Withdraw your offer?", "It disappears for " + teamOf(o.to).team + ".", "Withdraw", true],
+        approve: ["Approve this trade?", "Final. In the real app this queues the credit rows for the Credit Log.", "Approve", false],
+        negate: ["Negate this trade?", "Both legs come back. Give a reason; both teams see it.", "Negate", true] }[act];
+      var me2 = isMe(o.from) || isMe(o.to);
+      confirmBox(T[0], '<p class="p">' + esc(T[1]) + '</p>' + offerCard(o).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), T[2], T[3], act === "negate").then(function (yes) {
+        if (!yes) return; busy(1);
+        var call = act === "approve" || act === "negate" ? api("commish", Object.assign(creds(), { offer_id: o.id, decision: act, reason: typeof yes === "string" ? yes : "" }))
+          : api("respond", Object.assign(creds(), { offer_id: o.id, decision: act }));
+        call.then(function (r) { busy(0); if (!r.ok) { toast(r.error); return; } afterChange({ accept: "Accepted · 24h review started", decline: "Declined", withdraw: "Withdrawn", approve: "Approved ✓", negate: "Negated" }[act]); })
+          .catch(function () { busy(0); toast("Couldn't reach the league server"); });
+      });
+      return;
+    }
+  });
+
   // ---------- sheets: owner + rivalry (replace page jumps) ----------
   function ownerOfTeam(team) { var t = TEAMS.filter(function (x) { return norm(x.team) === norm(team); })[0]; return t && t.owner; }
   var stackS = [];
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
-    $("sb").innerHTML = kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : rivalrySheet(a, b); $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : rivalrySheet(a, b); $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";

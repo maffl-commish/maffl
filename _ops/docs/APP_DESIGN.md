@@ -213,6 +213,13 @@ interactions (trades for now, §4b).
   `localStorage.maffl_lab_api`.
 - Polls: a row per poll; `options = auto` builds Game of the Week from that week's games.
 
+## 7c. Trades in the lab (11/2)
+
+Rosters are staged from the 2026 auction draft (gold CSV) with approved test trades applied on top; weekly points
+from Top Performers (top 3 per team). Real rosters come from the daily ESPN roster pull before go-live.
+Offer lifecycle and guardrails as in `TRADE_CENTER_DESIGN.md` (confirm sheet on every send/accept/decline/withdraw/
+approve/negate). Private offers are only returned to a signed-in owner (POST summary with passphrase).
+
 ## 8. Open
 
 - ~~Confirm the §6b ESPN refresh rhythm?~~ **Yes** (11/2).

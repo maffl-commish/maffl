@@ -7,7 +7,9 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.4";
+var VERSION = "0.5";
+var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
+var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason"];
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
 
 // Passphrases are two football words, e.g. GRONK-PISTOL. Case, spaces and dashes don't matter when typing.
@@ -37,7 +39,7 @@ var MAX_TRIES = 5;
 function doGet(e) {
   var p = (e && e.parameter) || {};
   try {
-    if (p.action === "summary") return json(summary_(p.week, p.owner));
+    if (p.action === "summary") return json(summary_(p.week, null)); // public counts only; private data needs POST + passphrase
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
   } catch (err) { return json({ ok: false, error: String(err) }); }
@@ -55,6 +57,11 @@ function doPost(e) {
       case "request": return json(request_(b.owner, b.note));
       case "react":   return json(withAuth_(b, function (o) { return log_(o.owner, "react", b.ref, b.emoji, b.week, b.on ? "on" : "off"); }));
       case "vote":    return json(withAuth_(b, function (o) { return vote_(o.owner, b.poll, b.choice, b.week); }));
+      case "summary": return json(withAuth_(b, function (o) { return summary_(b.week, o.owner); }));
+      case "block":   return json(withAuth_(b, function (o) { return log_(o.owner, "block", b.player, b.on ? "on" : "off", "", String(b.note || "").slice(0, 80)); }));
+      case "offer":   return json(withAuth_(b, function (o) { return offer_(o, b); }));
+      case "respond": return json(withAuth_(b, function (o) { return respond_(o, b.offer_id, b.decision); }));
+      case "commish": return json(withAuth_(b, function (o) { return commish_(o, b.offer_id, b.decision, b.reason); }));
       default:        return json({ ok: false, error: "unknown action" });
     }
   } catch (err) {
@@ -65,7 +72,11 @@ function doPost(e) {
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 // ---------------------------------------------------------------- data helpers
-function sheet_(name) { return SpreadsheetApp.getActive().getSheetByName(name); }
+function sheet_(name) {
+  var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName(name);
+  if (!sh && name === "Offers") { sh = ss.insertSheet("Offers"); sh.appendRow(OFFER_HEAD); sh.setFrozenRows(1); }
+  return sh;
+}
 function rows_(name) {
   var v = sheet_(name).getDataRange().getValues(), head = v.shift();
   return v.map(function (r, i) {
@@ -147,6 +158,65 @@ function request_(owner, note) {
   return { ok: true };
 }
 
+// ---------------------------------------------------------------- trades (test Sheet only; never gold)
+// Statuses: PROPOSED → ACCEPTED (24h review, visible to the tier) → APPROVED | NEGATED; or DECLINED / WITHDRAWN.
+function offer_(me, b) {
+  if (new Date() > TRADE_DEADLINE) return { ok: false, error: "The trade deadline has passed" };
+  var to = ownerRow_(b.to), from = ownerRow_(me.owner);
+  if (!to || norm_(to.owner) === norm_(me.owner)) return { ok: false, error: "Pick a trade partner" };
+  if (String(to.tier) !== String(from.tier)) return { ok: false, error: "Trades stay inside your tier" };
+  var give = (b.give || []).slice(0, 20), get = (b.get || []).slice(0, 20);
+  var gc = Math.max(0, Math.floor(Number(b.giveCredits) || 0)), tc = Math.max(0, Math.floor(Number(b.getCredits) || 0));
+  if (!give.length && !get.length) return { ok: false, error: "Every trade needs at least one player" };
+  if (!give.length && !gc) return { ok: false, error: "You have to send something" };
+  if (!get.length && !tc) return { ok: false, error: "You have to get something back" };
+  var id = "T" + Utilities.getUuid().slice(0, 8).toUpperCase(), now = new Date();
+  sheet_("Offers").appendRow([id, now, from.owner, to.owner, from.tier, JSON.stringify(give), JSON.stringify(get), gc, tc, String(b.note || "").slice(0, 200), "PROPOSED", now, ""]);
+  log_(me.owner, "offer", id, "PROPOSED", "", to.owner);
+  return { ok: true, offer_id: id };
+}
+function offerRow_(id) { return rows_("Offers").filter(function (r) { return String(r.offer_id) === String(id); })[0]; }
+function setOffer_(o, status, reason) {
+  setCell_("Offers", o._row, "status", status); setCell_("Offers", o._row, "updated_ts", new Date());
+  if (reason) setCell_("Offers", o._row, "reason", String(reason).slice(0, 200));
+}
+function respond_(me, id, decision) {
+  var o = offerRow_(id); if (!o) return { ok: false, error: "Offer not found" };
+  if (o.status !== "PROPOSED") return { ok: false, error: "That offer is already " + String(o.status).toLowerCase() };
+  var isTo = norm_(o.to_owner) === norm_(me.owner), isFrom = norm_(o.from_owner) === norm_(me.owner);
+  var next = { accept: isTo && "ACCEPTED", decline: isTo && "DECLINED", withdraw: isFrom && "WITHDRAWN" }[decision];
+  if (!next) return { ok: false, error: "You can't do that to this offer" };
+  if (next === "ACCEPTED" && new Date() > TRADE_DEADLINE) return { ok: false, error: "The trade deadline has passed" };
+  setOffer_(o, next); log_(me.owner, "offer", id, next, "", "");
+  return { ok: true, status: next };
+}
+function commish_(me, id, decision, reason) {
+  if (!me.commish) return { ok: false, error: "Commish only" };
+  var o = offerRow_(id); if (!o) return { ok: false, error: "Offer not found" };
+  if (o.status !== "ACCEPTED") return { ok: false, error: "Only accepted trades can be approved or negated" };
+  var next = decision === "approve" ? "APPROVED" : decision === "negate" ? "NEGATED" : null;
+  if (!next) return { ok: false, error: "approve or negate" };
+  setOffer_(o, next, reason); log_(me.owner, "commish", id, next, "", String(reason || ""));
+  return { ok: true, status: next };
+}
+function trades_(owner) {
+  var me = owner ? ownerRow_(owner) : null, commish = me && String(me.is_commish) === "Y";
+  var offers = (sheet_("Offers") ? rows_("Offers") : []).filter(function (o) {
+    var mine = me && (norm_(o.from_owner) === norm_(me.owner) || norm_(o.to_owner) === norm_(me.owner));
+    var tierPublic = me && String(o.tier) === String(me.tier) && ["ACCEPTED", "APPROVED", "NEGATED"].indexOf(o.status) >= 0;
+    return mine || tierPublic || (commish && o.status === "ACCEPTED");
+  }).map(function (o) {
+    return { id: o.offer_id, ts: o.ts, from: o.from_owner, to: o.to_owner, tier: o.tier, give: JSON.parse(o.give || "[]"), get: JSON.parse(o.get || "[]"),
+      giveCredits: Number(o.give_credits) || 0, getCredits: Number(o.get_credits) || 0, note: o.note, status: o.status, updated: o.updated_ts, reason: o.reason };
+  });
+  var block = {}; // player -> {owner, note} (last write wins)
+  rows_("Events").forEach(function (e) {
+    if (e.type !== "block") return;
+    if (e.value === "on") block[e.ref] = { owner: e.owner, note: e.meta }; else if (block[e.ref] && norm_(block[e.ref].owner) === norm_(e.owner)) delete block[e.ref];
+  });
+  return { offers: offers, block: block };
+}
+
 // ---------------------------------------------------------------- reads
 // Reaction counts per ref, which ones this owner has on, and poll tallies.
 function summary_(week, owner) {
@@ -172,7 +242,10 @@ function summary_(week, owner) {
   });
   var polls = rows_("Polls").filter(function (p) { return String(p.active) === "Y" && (!week || String(p.week) === String(week)); })
     .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"] }; });
-  return { ok: true, counts: counts, mine: mine, tallies: tallies, myVotes: myVotes, polls: polls };
+  var t = trades_(owner);
+  var meRow = owner ? ownerRow_(owner) : null;
+  return { ok: true, counts: counts, mine: mine, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
+    commish: !!(meRow && String(meRow.is_commish) === "Y") };
 }
 
 // ---------------------------------------------------------------- commish menu
