@@ -1,6 +1,6 @@
 # MAFFL HQ App — governing doc (redesign · Reel · login)
 
-VERSION: 0.5 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -10,6 +10,9 @@ VERSION: 0.5 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-02 · **Fresh ESPN data (§6b, proposed).** Not real time, but on a rhythm: rosters/lineups/moves
+  every 30 min (every 10 before kickoffs), live scores every 5 min in game windows. Fresh data goes through
+  Apps Script → Sheet, not git commits; the Tuesday robot stays the official final. Confirm §8.
 - 2026-11-02 · **Contacts + notifications (§4b).** Owner emails and phones live in the backend Sheet only (never the
   repo), shown to signed-in owners. Owners already share these, so no hiding between owners. Trade nudges = a
   prefilled **Text them / Email them** button the owner sends himself, plus **opt-in automatic emails** set in
@@ -141,8 +144,43 @@ Easier to remember, far harder to guess. Not case-sensitive, dash optional. Same
 | Schedule | `schedule-data.js` |
 | Rivalry + career | `matchups-data.js` |
 | Dates | `key-dates-data.js` |
-| Rosters, player stats | **New** daily roster pull (GitHub Action) → `rosters-data.js` (v2) |
+| Rosters, lineups, moves, live scores | **New** ESPN refresh, see §6b (v2) |
 | Reactions, votes, offers, PIN requests, owner email/phone, notification settings | **New** Google Sheet + Apps Script (v1). Contacts never in the repo |
+
+## 6b. Fresh ESPN data (proposed 11/2, commish idea)
+
+Goal: an owner changes a lineup, adds a player or makes a trade on ESPN and HQ shows it soon after; on game
+days scores tick up a few times an hour. **Not real time; on a rhythm.**
+
+**Why not GitHub Actions schedules for this.** On Oct 6 every Tuesday cron ran 6½–7 h late. GitHub only
+promises "best effort" for schedules, minimum 5 min. Also every refresh would be a commit + Pages rebuild
+(1–2 min each, dozens a day) burying real history. Actions stay for the official weekly pull.
+
+**Plan: Apps Script does the fetching (same backend as §7b).**
+- A time trigger in the backend Sheet's script calls ESPN's league API for both tiers (cookies `espn_s2` + `SWID`
+  in Script Properties, never the repo) and writes a compact snapshot to a **Live** tab (and cache).
+- The app reads it via the web app's `summary`-style GET (`live` action). Each card shows **"Updated 7 min ago"**.
+- Browser can't call ESPN itself (private league cookies + CORS), so the script is the go-between.
+
+**Rhythm (ET):**
+
+| What | When | How often |
+|---|---|---|
+| Rosters, lineups, adds/drops, trades | 8 AM–midnight daily | every 30 min |
+| Same, lineup-lock rush | 1 h before Thu, Sun 1 PM, Sun night, Mon kickoffs (+ Sun 9:30 AM London games) | every 10 min |
+| Live scores + projections | Thu 8 PM–12:30 AM · Sun 9:30 AM–12:30 AM · Mon 8 PM–12:30 AM (+ Sat games late season) | every 5 min |
+| Overnight / no games | | hourly (cheap check) |
+| Official final, Pulse | Tuesday robot (unchanged) | weekly |
+
+Rough load: ~250 ESPN calls on a Sunday, well inside Apps Script's free daily limits (trigger run time is the
+one to watch; keep each run small). Apps Script triggers are also not to-the-minute, but drift is minutes, not hours.
+
+**Rules.** Live numbers are labeled "live" and never feed gold, credits, Coach of the Week or the Pulse; the
+Tuesday pull stays the record. If ESPN fails, keep the last snapshot and show its age. Cookies expire about
+yearly: script emails the commish when ESPN says no.
+
+**Unlocks:** live matchup card (score, who's still to play), "your lineup has a bye/empty slot" nudge before
+kickoff, a moves feed (trades, adds/drops) as reel cards, trade block that knows current rosters.
 
 ## 7. Build order (everything ships together at go-live; commish 11/2)
 
@@ -169,6 +207,7 @@ Easier to remember, far harder to guess. Not case-sensitive, dash optional. Same
 
 ## 8. Open
 
+- Confirm the §6b ESPN refresh rhythm (and: lineup-hole nudge as an opt-in email?).
 - Confirm the §2c page → app mapping.
 - PIN form: 4 digits or a fun two-word passphrase per owner (§4b)?
 - Trades: both tiers at once at go-live, or one first? (trade note §8 Q4)
