@@ -706,7 +706,7 @@
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
       '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button></div>' +
       '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p></div>';
-    $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); showWelcome(); };
+    $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
   }
 
@@ -731,26 +731,25 @@
       };
       return;
     }
-    if (requestMode === "pin") {
-      var t0 = teamOf(store("maffl_lab_owner"));
-      h += '<p class="p">Welcome back, <b>' + esc(t0.team) + '</b>.</p><p class="meta" style="text-align:center">' + esc(t0.owner) + '</p>' +
+    if (requestMode === "pin" || (API_URL && !requestMode)) {
+      h += '<p class="p">Enter your passphrase.</p>' +
         '<input class="field pinpad" id="pin" type="text" autocapitalize="characters" autocorrect="off" autocomplete="off" spellcheck="false" maxlength="40" placeholder="GRONK-PISTOL">' +
         '<p class="meta" style="text-align:center;margin-top:6px">Your two-word passphrase from the commish. Caps and dashes don\'t matter.</p>' +
-        '<div class="btns"><button class="b" id="pBack">Not me</button><button class="b pri" id="pGo">Sign in</button></div>' +
+        '<div class="btns"><button class="b pri" id="pGo">Sign in</button></div>' +
         '<p style="text-align:center;margin-top:18px"><button class="rv" id="wReq">Need your passphrase? Request it ›</button></p>';
       el.innerHTML = h; el.classList.add("on"); setTimeout(function () { $("pin").focus(); }, 50);
-      $("pBack").onclick = function () { store("maffl_lab_owner", ""); showWelcome(); };
       $("wReq").onclick = function () { showWelcome(true); };
+      $("pin").onkeydown = function (ev) { if (ev.key === "Enter") $("pGo").click(); };
       $("pGo").onclick = function () {
         var pin = $("pin").value.trim(); if (!pin) return; $("pGo").disabled = true;
-        api("login", { owner: t0.owner, pin: pin }).then(function (r) {
-          if (r.ok) { store("maffl_lab_pin", pin); el.classList.remove("on"); start(); toast("Signed in ✓"); }
+        api("login", { pin: pin }).then(function (r) {
+          if (r.ok) { store("maffl_lab_owner", r.owner); store("maffl_lab_pin", pin); el.classList.remove("on"); start(); toast("Welcome, " + teamOf(r.owner).team + " ✓"); }
           else { toast(r.error || "Wrong passphrase"); $("pGo").disabled = false; $("pin").value = ""; }
         }).catch(function () { toast("Couldn't reach the league server"); $("pGo").disabled = false; });
       };
       return;
     }
-    h += '<p class="p">Which team is yours?</p><p class="meta" style="text-align:center;margin-top:4px">' + (API_URL ? 'Next you\'ll enter your passphrase.' : 'Demo mode: no PIN. Your pick is remembered on this phone.') + '</p>';
+    h += '<p class="p">Which team is yours?</p><p class="meta" style="text-align:center;margin-top:4px">' + (API_URL ? '' : 'Demo mode: no PIN. Your pick is remembered on this phone.') + '</p>';
     ["U", "L"].forEach(function (tier) {
       h += '<div class="grp">' + (tier === "U" ? "Upper" : "Lower") + ' tier</div>' + TEAMS.filter(function (t) { return t.tier === tier; }).sort(function (a, b) { return a.team.localeCompare(b.team); })
         .map(function (t) { return '<button class="pick" data-owner="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b><small>' + esc(t.owner) + '</small></button>'; }).join("");
@@ -889,14 +888,14 @@
   function start() {
     var saved = store("maffl_lab_owner");
     ME = saved && BY_OWNER[norm(saved)];
-    if (!ME) { showWelcome(); return; }
     if (API_URL && !store("maffl_lab_pin")) { showWelcome("pin"); return; }
+    if (!ME) { showWelcome(); return; }
     $("hdrwk").innerHTML = '<b>Week ' + W.weekNumber + '</b>' + (ME.tier === "U" ? "Upper" : "Lower") + ' Tier';
     var pb = $("pastbar"); pb.style.display = W === LATEST ? "none" : "flex";
     pb.innerHTML = '📅 Replaying Week ' + W.weekNumber + ' (' + esc(W.dateString) + ')<button id="pbback">Back to now</button>';
     if (W !== LATEST) $("pbback").onclick = function () { setWeek(LATEST.weekNumber); };
     $("chip").textContent = initials(ME.owner);
-    $("chip").onclick = function () { showWelcome(); };
+    $("chip").onclick = function () { if (API_URL) tab("team"); else showWelcome(); };
     renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
     loadSummary();
     var h = location.hash.slice(1);

@@ -10,17 +10,24 @@
  *  - Events is append-only. Nothing here deletes or edits a logged row.
  *  - Nothing here writes league gold data. Credits/trades are approved by the commish elsewhere.
  */
-var VERSION = "0.2";
+var VERSION = "0.3";
+var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
 
 // Passphrases are two football words, e.g. GRONK-PISTOL. Case, spaces and dashes don't matter when typing.
 var WORDS_A = ["GRONK","BLITZ","PISTOL","HAIL","WILDCAT","SHOTGUN","NICKEL","DIME","REDZONE","AUDIBLE","SPIKE","LAMBEAU",
   "PYLON","STIFFARM","JUKE","SACK","PICKSIX","ONSIDE","FLEAFLICKER","BOOTLEG","CHEESE","FROZEN","TUNDRA","PRIMETIME",
   "TURKEY","GRIDIRON","TOUCHBACK","FUMBLE","WAIVER","BYEWEEK","SLEEPER","HANDCUFF","FLEX","STACK","BOOM","BUST",
-  "MONEYBALL","BULLDOZER","TRUCK","HURDLE","DIVE","BLINDSIDE","GOALLINE","HASHMARK","HUDDLE","ENDZONE","BOMB","COUNTER"];
+  "MONEYBALL","BULLDOZER","TRUCK","HURDLE","DIVE","BLINDSIDE","GOALLINE","HASHMARK","HUDDLE","ENDZONE","BOMB","COUNTER",
+  "BLOCKBUSTER","CHAINGANG","COFFIN","DRAWPLAY","FAIRCATCH","FIRSTDOWN","FOURTHDOWN","HAILMARY","HOTROUTE","JUMBO","KNEEL",
+  "LATERAL","MUDDY","PLAYBOOK","POCKET","PUNTRETURN","QBSNEAK","REVERSE","ROOKIE","RUSHER","SCRAMBLE","SNAP","SWEEP",
+  "TAILGATE","TRICKPLAY","TWOMINUTE","UPBACK","WISHBONE","ZEBRA","SIDELINE","FACEMASK","CHINSTRAP","SUNDAY","MONDAY"];
 var WORDS_B = ["PISTOL","HAMMER","TORNADO","EXPRESS","RAMPAGE","CANNON","THUNDER","STAMPEDE","LIGHTNING","BULLDOG","MACHINE",
   "ROCKET","BLIZZARD","GRIZZLY","HURRICANE","JACKPOT","WRECKER","DYNAMO","PRESSURE","FURY","STALLION","TITAN","VORTEX",
   "COMET","AVALANCHE","RHINO","TANK","SPARTAN","VIKING","OUTLAW","MAVERICK","BANDIT","PANTHER","COBRA","FALCON","GLADIATOR",
-  "WARHORSE","JUGGERNAUT","BOOMSTICK","DAGGER","HAYMAKER","SLINGSHOT","BRAWLER","ROCKSLIDE","FIREBALL","SNOWPLOW","MONSOON","GOLIATH"];
+  "WARHORSE","JUGGERNAUT","BOOMSTICK","DAGGER","HAYMAKER","SLINGSHOT","BRAWLER","ROCKSLIDE","FIREBALL","SNOWPLOW","MONSOON","GOLIATH",
+  "BARRACUDA","BISON","BOBCAT","BRONCO","BUZZSAW","CHAINSAW","CYCLONE","DRAGON","EAGLE","EARTHQUAKE","FREIGHTTRAIN","GATOR",
+  "GHOST","HAWK","HYENA","JAGUAR","KRAKEN","LANDSLIDE","LION","MAMMOTH","MONGOOSE","MUSTANG","PHANTOM","PIRATE","PYTHON",
+  "RAPTOR","RATTLER","SHARK","SLEDGEHAMMER","SPITFIRE","STORM","TIGER","TOMAHAWK","TYPHOON","WOLF","WOLVERINE","YETI"];
 function newPhrase_() {
   var a = WORDS_A[Math.floor(Math.random() * WORDS_A.length)], b;
   do { b = WORDS_B[Math.floor(Math.random() * WORDS_B.length)]; } while (b === a);
@@ -81,7 +88,22 @@ function setCell_(name, row, header, value) {
 }
 
 // ---------------------------------------------------------------- auth
+// Sign in with the passphrase alone: try it against every owner's salted hash.
+function loginByPhrase_(pin) {
+  var cache = CacheService.getScriptCache(), fails = Number(cache.get("fails") || 0);
+  if (fails >= MAX_FAILS_PER_HOUR) return { ok: false, error: "Too many wrong tries. Wait an hour, or ask the commish." };
+  if (normPin_(pin).length < 4) return { ok: false, error: "Type your two-word passphrase" };
+  var hit = owners_().filter(function (o) { return o.pin_hash && String(o.locked) !== "Y" && hash_(o.salt, pin) === o.pin_hash; })[0];
+  if (!hit) {
+    cache.put("fails", String(fails + 1), 3600);
+    if (fails + 1 === MAX_FAILS_PER_HOUR) MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: sign-in guesses paused",
+      MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour. Sign-in is paused for an hour. If that wasn't owners fumbling, consider resetting passphrases.");
+    return { ok: false, error: "That passphrase doesn't match anyone" };
+  }
+  return { ok: true, owner: hit.owner, team: hit.team, tier: hit.tier, commish: String(hit.is_commish) === "Y" };
+}
 function login_(owner, pin) {
+  if (!owner) return loginByPhrase_(pin);
   var o = ownerRow_(owner);
   if (!o) return { ok: false, error: "Unknown owner" };
   if (String(o.locked) === "Y") return { ok: false, error: "Locked after too many tries. Ask the commish for a new passphrase." };
@@ -175,7 +197,9 @@ function menuSetPin() {
   var ui = SpreadsheetApp.getUi(), o = pickOwner_("Set / reset a passphrase");
   if (!o) return;
   if (o.pin_hash && ui.alert("Replace " + o.owner + "'s existing passphrase?", ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
-  var pin = newPhrase_(), salt = Utilities.getUuid();
+  var others = owners_().filter(function (x) { return x.pin_hash && x._row !== o._row; }), pin, tries = 0;
+  do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return hash_(x.salt, pin) === x.pin_hash; }));
+  var salt = Utilities.getUuid();
   setCell_("Owners", o._row, "salt", salt);
   setCell_("Owners", o._row, "pin_hash", hash_(salt, pin));
   setCell_("Owners", o._row, "failed_tries", 0);
