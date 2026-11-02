@@ -106,7 +106,7 @@
   .kpi{flex:1;background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center}
   .kpi b{display:block;font:700 20px var(--display)}.kpi small{font-size:11px;color:var(--muted)}
   .seg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 14px 0}
-  .seg button{flex:1;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .seg button{flex:1;min-width:0;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .seg button.on{background:var(--surface);color:var(--navy);box-shadow:0 1px 3px var(--navy-shadow)}
   .sub-v{display:none}.sub-v.on{display:block}
   table{width:100%;border-collapse:collapse;font-size:14px}
@@ -127,6 +127,21 @@
   nav.tabs button.on{color:var(--navy)}
   nav.tabs button.on span{filter:none;opacity:1}
   nav.tabs button.on::after{content:"";width:18px;height:3px;border-radius:2px;background:var(--gold)}
+  .pastbar{display:none;align-items:center;gap:8px;background:var(--navy);color:#fff;font:600 12px var(--body);padding:6px 14px}
+  .pastbar button{margin-left:auto;background:var(--gold);color:var(--navy);border-radius:6px;padding:4px 8px;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em}
+  .wkchips{display:flex;gap:6px;overflow-x:auto;padding:2px 14px 4px;scrollbar-width:none}
+  .wkchips::-webkit-scrollbar{display:none}
+  .wkchips button{flex:0 0 auto;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 12px;font:700 13px var(--display);letter-spacing:.04em}
+  .wkchips button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .rbody{font-size:14px;line-height:1.5;color:var(--ink2)}
+  .rbody ul,.rbody ol{padding-left:18px;margin:6px 0}.rbody li{margin:4px 0}
+  .rbody h3,.rbody h4{font:700 16px var(--display);color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 4px}
+  .rbody p{margin:6px 0}.rbody strong{color:var(--navy)}
+  .rbody table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;display:block;overflow-x:auto}
+  .rbody th,.rbody td{border-top:1px solid var(--border);padding:6px 4px;text-align:left;vertical-align:top}
+  .rbody .rule-tag{font:700 9px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--gold-soft);color:var(--gold-dark);border:1px solid var(--gold);border-radius:3px;padding:1px 4px;margin-left:4px;white-space:nowrap}
+  .rbody mark{background:rgba(245,166,35,.35)}
+  .money{font-variant-numeric:tabular-nums}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -216,6 +231,7 @@
 <div class="app">
   <header class="hdr">
     <div class="lab">Lab prototype · read-only · real data</div>
+    <div class="pastbar" id="pastbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
       <div class="wk" id="hdrwk"></div><button class="chip" id="chip" aria-label="Switch team">··</button>
@@ -258,20 +274,32 @@
   function rivalryHref(a, b) { return "../rivalry.html#vs=" + encodeURIComponent(a) + "," + encodeURIComponent(b); }
   function toast(m) { var t = $("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("on"); }, 2600); }
 
-  var W, TEAMS = [], BY_OWNER = {}, ME = null, NEXT_WK;
+  var W, WEEKS = [], LATEST, TEAMS = [], BY_OWNER = {}, ME = null, NEXT_WK, PRIZE = null, CREDIT_LOG = [], RULES_HTML = null;
 
   // ---------- load latest Pulse week from weekly.html ----------
+  // Pull an embedded data literal (array or object) out of one of the site's own pages.
+  function extract(src, marker) {
+    var i = src.indexOf(marker); if (i < 0) return null;
+    var k = i + marker.length, open = src[k], close = open === "[" ? "]" : "}", d = 0, j = k;
+    for (; j < src.length; j++) { if (src[j] === open) d++; if (src[j] === close) { d--; if (!d) break; } }
+    return new Function("return " + src.slice(k, j + 1))();
+  }
+  function getText(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { return r.text(); }); }
   function loadPulse() {
-    return fetch("../weekly.html", { cache: "no-cache" }).then(function (r) { return r.text(); }).then(function (s) {
-      var i = s.indexOf("const WEEKS = ["), d = 0, j = i + 14;
-      for (; j < s.length; j++) { if (s[j] === "[") d++; if (s[j] === "]") { d--; if (!d) break; } }
-      var weeks = new Function("return " + s.slice(i + 14, j + 1))();
-      W = weeks.reduce(function (a, b) { return b.weekNumber > a.weekNumber ? b : a; });
+    var side = Promise.all([
+      getText("../prize.html").then(function (t) { PRIZE = extract(t, "const MAFFL = "); }).catch(function () {}),
+      getText("../credits.html").then(function (t) { CREDIT_LOG = extract(t, "const REGISTRY_DATA = ") || []; }).catch(function () {}),
+      getText("../rules.html").then(function (t) { RULES_HTML = t; }).catch(function () {})
+    ]);
+    var main = getText("../weekly.html").then(function (t) {
+      WEEKS = extract(t, "const WEEKS = ").slice().sort(function (a, b) { return a.weekNumber - b.weekNumber; });
+      W = LATEST = WEEKS[WEEKS.length - 1];
     });
+    return Promise.all([main, side]);
   }
 
   function buildTeams() {
-    TEAMS = [];
+    TEAMS = []; BY_OWNER = {};
     Object.keys(W.upperTier).forEach(function (div) {
       W.upperTier[div].forEach(function (t) { TEAMS.push(Object.assign({ tier: "U", div: div.replace("div", "") }, t)); });
     });
@@ -289,9 +317,11 @@
   function rec(t) { return t.w + "–" + t.l; }
 
   // ---------- history (matchups-data.js) ----------
+  function future(r) { var y = (window.SCHEDULE_DATA && SCHEDULE_DATA.year) || 2026; return r[0] === y && r[1] > W.weekNumber; }
   function h2h(a, b) {
     var A = norm(a), B = norm(b), games = [];
     (window.MATCHUPS_DATA || []).forEach(function (r) {
+      if (future(r)) return;
       var w = norm(r[3]), l = norm(r[5]);
       if ((w === A && l === B) || (w === B && l === A)) games.push({ y: r[0], wk: r[1], aWon: w === A, as: w === A ? r[4] : r[6], bs: w === A ? r[6] : r[4], type: r[7] });
     });
@@ -305,6 +335,7 @@
   function career(owner) {
     var O = norm(owner), w = 0, l = 0, titles = 0, best = null, po = {};
     (window.MATCHUPS_DATA || []).forEach(function (r) {
+      if (future(r)) return;
       var win = norm(r[3]) === O, lose = norm(r[5]) === O; if (!win && !lose) return;
       if (r[7] === "R") { if (win) w++; else l++; } else po[r[0]] = 1;
       if (r[7] === "C" && win) titles++;
@@ -538,11 +569,31 @@
     var h = '<div class="thero"><div class="tn">' + esc(t.team) + '</div><div class="sub">' + esc(t.owner) + ' · ' + tierN + (t.div ? ' · Div ' + t.div : '') + '</div>' +
       '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>#' + t.rank + '</b><small>' + tierN + '</small></div>' +
       '<div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts for</small></div></div></div>' +
-      '<div class="seg" id="tseg"><button data-sub="roster" class="on">Roster</button><button data-sub="trades">Trades</button><button data-sub="credits">Credits</button><button data-sub="stats">Stats</button></div>';
+      '<div class="seg" id="tseg"><button data-sub="roster" class="on">Roster</button><button data-sub="trades">Trades</button><button data-sub="credits">Credits</button><button data-sub="money">Money</button><button data-sub="stats">Stats</button></div>';
     h += '<div class="sub-v on pad" id="s-roster"><div class="card soon"><div class="eb">🚧 In the build</div><h3>Your roster</h3><p>Players by position, trade-block tags, and a player card with stats plus MAFFL draft and owner history. Arrives with the daily roster pull.</p></div></div>';
     h += '<div class="sub-v pad" id="s-trades"><div class="card soon"><div class="eb">🚧 In the build</div><h3>Trades</h3><p>Pick a team → side by side → preview → send. Open offers show as a badge on this tab.</p></div></div>';
-    h += '<div class="sub-v pad" id="s-credits"><div class="card"><div class="eb">Balance</div><h3>' + t.credits + ' credits</h3><p>From the latest Pulse standings.</p></div>' +
+    var log = CREDIT_LOG.filter(function (r) { return norm(r.owner) === norm(ME.owner) && r.approved !== false; }).sort(function (a, b) { return b.season - a.season; });
+    var earned = log.filter(function (r) { return r.amount > 0; }).reduce(function (s2, r) { return s2 + r.amount; }, 0), spent = log.filter(function (r) { return r.amount < 0; }).reduce(function (s2, r) { return s2 - r.amount; }, 0);
+    h += '<div class="sub-v pad" id="s-credits"><div class="card navy"><div class="eb">Balance · Week ' + W.weekNumber + '</div><h3 style="font-size:34px">' + t.credits + ' credits</h3>' +
+      '<div class="strip"><div><b>' + earned + '</b><small>Earned (log)</small></div><div><b>' + spent + '</b><small>Spent (log)</small></div><div><b>' + log.length + '</b><small>Entries</small></div></div></div>' +
+      '<div class="card glist"><div class="eb">Credit history</div>' + (log.length ? log.map(function (r) {
+        return '<div class="row"><div><div class="nm">' + esc(r.creditType) + '</div><div class="meta">' + r.season + ' · ' + esc(r.creditCategory) + (r.notes ? ' · ' + esc(r.notes) : '') + '</div></div><div class="rt ' + (r.amount > 0 ? "w" : "l") + '">' + (r.amount > 0 ? "+" : "") + r.amount + '</div></div>'; }).join("") : '<p>No logged entries yet.</p>') + '</div>' +
       '<div class="card soon"><div class="eb">🚧 In the build</div><h3>Spend credits</h3><p>Perks like a player double bonus, requested here and approved by the commish. Replaces the Credit Request form.</p></div></div>';
+    var dues = PRIZE && (PRIZE.dues_seasons || []).filter(function (d) { return d.rows && d.rows.length; }).sort(function (a, b) { return b.year - a.year; })[0];
+    var myDue = dues && dues.rows.filter(function (r) { return norm(r.owner) === norm(ME.owner); })[0];
+    var wins = PRIZE ? PRIZE.prize_events.filter(function (e) { return norm(e.owner) === norm(ME.owner); }) : [];
+    var total = wins.reduce(function (s2, e) { return s2 + (e.amount || 0); }, 0), byType = {};
+    wins.forEach(function (e) { byType[e.prize_type] = (byType[e.prize_type] || 0) + e.amount; });
+    var byYear = {}; wins.forEach(function (e) { byYear[e.year] = (byYear[e.year] || 0) + e.amount; });
+    h += '<div class="sub-v pad" id="s-money">' +
+      (myDue ? '<div class="card ' + (myDue.status === "PAID" ? "" : "navy") + '"><div class="eb">' + dues.year + ' dues</div><h3>' + (myDue.status === "PAID" ? "✅ Paid · $" + myDue.amount : "Owed · $" + myDue.owed) + '</h3><p>' +
+        (myDue.paid_date ? 'Paid ' + esc(myDue.paid_date) + (myDue.method ? ' · ' + esc(myDue.method) : '') : 'Pay the commish; he records it.') + '</p></div>' : '') +
+      '<div class="card navy"><div class="eb">Lifetime winnings · since ' + ((PRIZE && PRIZE.meta && PRIZE.meta.data_start) || 2013) + '</div><h3 class="money" style="font-size:34px">$' + total.toLocaleString() + '</h3>' +
+      '<div class="strip">' + Object.keys(byType).slice(0, 3).map(function (k) { return '<div><b class="money">$' + byType[k].toLocaleString() + '</b><small>' + esc(k) + '</small></div>'; }).join("") + '</div></div>' +
+      '<div class="card glist"><div class="eb">By season</div>' + Object.keys(byYear).sort(function (a, b) { return b - a; }).map(function (y) {
+        var ev = wins.filter(function (e) { return String(e.year) === y; });
+        return '<div class="row"><div><div class="nm">' + y + '</div><div class="meta">' + ev.map(function (e) { return esc(e.prize_type) + (e.place ? ' #' + e.place : ''); }).join(" · ") + '</div></div><div class="rt money">$' + byYear[y].toLocaleString() + '</div></div>'; }).join("") +
+      (wins.length ? '' : '<p>No prize money yet. Soon.</p>') + '</div></div>';
     h += '<div class="sub-v pad" id="s-stats"><div class="card"><div class="eb">2026</div><div class="stat3"><div><b>' + rec(t) + '</b><small>Record</small></div><div><b>' + f2(t.points / Math.max(1, t.w + t.l)) + '</b><small>Pts / week</small></div><div><b>' + (t.streak > 0 ? "W" + t.streak : t.streak < 0 ? "L" + (-t.streak) : "–") + '</b><small>Streak</small></div></div></div>' +
       '<div class="card"><div class="eb">Career since 2005 · record is regular season</div><div class="stat3"><div><b>' + c.w + '–' + c.l + '</b><small>Record</small></div><div><b>' + c.titles + '</b><small>Titles</small></div><div><b>' + c.playoffs + '</b><small>Playoff years</small></div></div>' +
       (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
@@ -563,22 +614,25 @@
       '<tr><th>#</th><th>Team</th><th class="n">W-L</th><th class="n">PF</th><th class="n">💳</th></tr>' +
       rows.map(function (t) { return '<tr data-owner="' + esc(t.owner) + '"' + (isMe(t.owner) ? ' class="me"' : '') + '><td>' + t.rank + '</td><td>' + esc(t.team) + (t.div ? ' <span class="pill">' + t.div + '</span>' : '') + '</td><td class="n">' + rec(t) + '</td><td class="n">' + Math.round(t.points) + '</td><td class="n">' + t.credits + '</td></tr>'; }).join("") +
       '</table></div><p class="meta" style="margin-top:6px">Tap a team for its owner card. Sorted by record, then points; official seeding is in the Pulse.</p></div>';
+    h += '<div class="sh"><h2>📅 Weeks</h2><small>Replay any week</small></div><div class="wkchips" id="wkchips">' + WEEKS.slice().reverse().map(function (w) {
+      return '<button data-wk="' + w.weekNumber + '"' + (w === W ? ' class="on"' : '') + '>' + (w.weekNumber ? "Wk " + w.weekNumber : "Preseason") + '</button>'; }).join("") + '</div>';
+    h += '<div class="pad"><div class="list" style="margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"><button data-rules="1"><span>📋</span>Rulebook</button><button data-prizes="1"><span>💰</span>Prizes &amp; payouts</button></div></div>';
     var champs = (window.MATCHUPS_DATA || []).filter(function (r) { return r[7] === "C" && r[2] === "U"; }).sort(function (a, b) { return b[0] - a[0]; });
     h += '<div class="sh"><h2>🏆 Champions</h2><small>Tap an owner</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + champs.slice(0, 6).map(function (r) {
       return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + r[0] + '</div><div><div class="nm"><button class="tl2" data-owner="' + esc(r[3]) + '">' + esc(r[3]) + '</button></div><div class="meta">beat <button class="tl2" data-owner="' + esc(r[5]) + '">' + esc(r[5]) + '</button> ' + f2(r[4]) + '–' + f2(r[6]) + '</div></div></div>'; }).join("") +
       '<details><summary class="rv" style="padding:10px 0;list-style:none">All ' + champs.length + ' title games ›</summary>' + champs.slice(6).map(function (r) {
       return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + r[0] + '</div><div><div class="nm"><button class="tl2" data-owner="' + esc(r[3]) + '">' + esc(r[3]) + '</button></div><div class="meta">beat ' + esc(r[5]) + '</div></div></div>'; }).join("") + '</details></div></div>';
     h += '<div class="sh"><h2>Explore</h2><small>Still on the classic site</small></div><div class="pad"><div class="tiles" style="margin-bottom:14px">' +
-      [["📋", "Rulebook", "Official rules", "../rules.html"], ["📈", "Pulse archive", "Past weeks", "../weekly.html"], ["🏆", "Power Rankings", "Ratings", "../power-rankings.html"],
-       ["📚", "History", "Since 2002", "../history.html"], ["🎯", "Auction Draft", "Every draft", "../draft.html"], ["💰", "Prizes & Dues", "The money", "../prize.html"]]
+      [["🏆", "Power Rankings", "Ratings", "../power-rankings.html"], ["📚", "History", "Since 2002", "../history.html"], ["🎯", "Auction Draft", "Every draft", "../draft.html"], ["📈", "Pulse page", "Long form", "../weekly.html"]]
       .map(function (x) { return '<a class="tile" href="' + x[3] + '"><span>' + x[0] + '</span><b>' + x[1] + '</b><small>' + x[2] + '</small></a>'; }).join("") + '</div></div>';
     $("v-league").innerHTML = h;
     document.querySelectorAll("#lseg button").forEach(function (b) { b.onclick = function () { leagueTier = b.dataset.t; renderLeague(); }; });
+    document.querySelectorAll("#wkchips button").forEach(function (b) { b.onclick = function () { setWeek(+b.dataset.wk); toast(+b.dataset.wk === LATEST.weekNumber ? "Back to this week" : "Replaying Week " + b.dataset.wk); }; });
   }
 
   // ---------- MORE ----------
   function renderMore() {
-    $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests</a></div>' +
+    $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
       '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>Switch team</button><button id="mReq"><span>🔑</span>PIN help</button></div>' +
       '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. Reactions don\'t save yet. Nothing here changes league data.</p></div>';
     $("mSwitch").onclick = function () { showWelcome(); };
@@ -616,7 +670,8 @@
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
-    $("sb").innerHTML = kind === "owner" ? ownerSheet(a) : rivalrySheet(a, b); $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : rivalrySheet(a, b); $("sb").scrollTop = 0;
+    if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
     $("psheet").classList.add("on"); $("sscrim").classList.add("on"); document.body.style.overflow = "hidden";
   }
@@ -651,7 +706,8 @@
     var h = '<div class="thero" style="margin:0 -14px;border-radius:0"><div class="tn">' + esc(active ? t.team : o) + '</div><div class="sub">' + esc(o) + (active ? ' · ' + (t.tier === "U" ? "Upper" : "Lower") + (t.div ? ' · Div ' + t.div : '') : ' · former owner') + '</div>' +
       (active ? '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>#' + t.rank + '</b><small>' + (t.tier === "U" ? "Upper" : "Lower") + '</small></div><div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts for</small></div></div>' : '') + '</div>';
     h += '<div class="card"><div class="eb">Career since 2005</div><div class="stat3"><div><b>' + c.w + '–' + c.l + '</b><small>Reg. season</small></div><div><b>' + c.titles + '</b><small>Titles</small></div><div><b>' + c.playoffs + '</b><small>Playoff years</small></div></div>' +
-      (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') + '</div>';
+      (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
+      (PRIZE ? '<p>Prize money since ' + PRIZE.meta.data_start + ': <b class="money">$' + PRIZE.prize_events.filter(function (e) { return norm(e.owner) === norm(o); }).reduce(function (s2, e) { return s2 + e.amount; }, 0).toLocaleString() + '</b></p>' : '') + '</div>';
     if (!isMe(o)) {
       var r = h2h(ME.owner, o);
       h += '<div class="card navy"><div class="eb">You vs. them</div><h3>' + (r.n ? r.aw + '–' + r.bw + (r.aw > r.bw ? ' · you lead' : r.aw < r.bw ? ' · they lead' : ' · even') : 'Never played') + '</h3>' +
@@ -663,9 +719,55 @@
       return '<div class="row"><span class="wl ' + (won ? "W" : "L") + '">' + (won ? "W" : "L") + '</span><div><div class="nm">' + f2(won ? r[4] : r[6]) + ' – ' + f2(won ? r[6] : r[4]) + '</div><div class="meta">Wk ' + r[1] + ' vs <button class="tl2" data-riv-push="' + esc(o) + '|' + esc(opp) + '">' + esc(teamOf(opp).team) + '</button></div></div></div>'; }).join("") + '</div>';
     return h;
   }
+  // Rulebook, read in the app straight from rules.html (always current)
+  var RULES = null;
+  function rules() {
+    if (RULES || !RULES_HTML) return RULES || [];
+    var doc = new DOMParser().parseFromString(RULES_HTML, "text/html");
+    RULES = Array.prototype.map.call(doc.querySelectorAll(".rule-section"), function (sec, k) {
+      var t = sec.querySelector(".rule-title"), b = sec.querySelector(".rule-body");
+      return { k: k, title: t ? t.textContent.trim() : "Section", html: b ? b.innerHTML : "", text: b ? b.textContent.replace(/\s+/g, " ") : "" };
+    }).filter(function (r) { return r.text.trim().length > 20; });
+    return RULES;
+  }
+  function ruleList(q) {
+    q = (q || "").trim().toLowerCase();
+    return rules().filter(function (r) { return !q || r.title.toLowerCase().indexOf(q) >= 0 || r.text.toLowerCase().indexOf(q) >= 0; }).map(function (r) {
+      var snip = "";
+      if (q) { var i = r.text.toLowerCase().indexOf(q); if (i >= 0) snip = '<div class="meta">…' + esc(r.text.slice(Math.max(0, i - 40), i + 70)) + '…</div>'; }
+      return '<button class="row" style="width:100%;text-align:left" data-rule="' + r.k + '"><div style="flex:1"><div class="nm">' + esc(r.title) + '</div>' + snip + '</div><span class="rv">›</span></button>'; }).join("") || '<p class="p">Nothing matches.</p>';
+  }
+  function rulesSheet() {
+    return '<div class="sh" style="padding-left:0"><h2>📋 Rulebook</h2></div><input class="field" id="rq" placeholder="Search the rules (e.g. trade, credits, tiebreak)" autocomplete="off">' +
+      '<div class="card" style="padding:4px 12px" id="rlist">' + ruleList("") + '</div>';
+  }
+  function ruleSheet(k) {
+    var r = rules().filter(function (x) { return String(x.k) === String(k); })[0];
+    if (!r) return '<p class="p">Section not found.</p>';
+    return '<div class="sh" style="padding-left:0"><h2>📋 Rulebook</h2></div><div class="card"><h3>' + esc(r.title) + '</h3><div class="rbody">' + r.html + '</div></div>';
+  }
+  function prizesSheet() {
+    if (!PRIZE) return '<p class="p">Prize data unavailable.</p>';
+    var tot = {}; PRIZE.prize_events.forEach(function (e) { tot[e.owner] = (tot[e.owner] || 0) + e.amount; });
+    var top = Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a]; });
+    var lastY = Math.max.apply(null, PRIZE.prize_events.map(function (e) { return e.year; }));
+    var last = PRIZE.prize_events.filter(function (e) { return e.year === lastY; }).sort(function (a, b) { return b.amount - a.amount; });
+    return '<div class="sh" style="padding-left:0"><h2>💰 Prizes &amp; payouts</h2></div>' +
+      '<div class="card navy"><div class="eb">Paid out since ' + PRIZE.meta.data_start + '</div><h3 class="money" style="font-size:34px">$' + (PRIZE.meta.grand_total || 0).toLocaleString() + '</h3></div>' +
+      '<div class="card glist"><div class="eb">' + lastY + ' payouts</div>' + last.map(function (e) {
+        return '<div class="row"><div><div class="nm"><button class="tl2" data-owner-push="' + esc(e.owner) + '">' + esc(e.owner) + '</button></div><div class="meta">' + esc(e.prize_type) + (e.place ? ' · #' + e.place : '') + (e.era ? ' · ' + esc(e.era) : '') + '</div></div><div class="rt money">$' + e.amount + '</div></div>'; }).join("") + '</div>' +
+      '<div class="card glist"><div class="eb">All-time earnings</div>' + top.map(function (o, k) {
+        return '<div class="row"><div class="rt" style="margin:0;min-width:26px;text-align:left">' + (k + 1) + '</div><div style="flex:1"><button class="tl2 nm" data-owner-push="' + esc(o) + '">' + esc(o) + '</button></div><div class="rt money">$' + tot[o].toLocaleString() + '</div></div>'; }).join("") + '</div>' +
+      '<div class="btns"><button class="b" data-rule-title="Prize Schedule">Prize rules</button></div>';
+  }
+
   // One click handler for every owner/rivalry tap in the app
   document.addEventListener("click", function (e) {
     var el;
+    if ((el = e.target.closest("[data-rules]"))) { openSheet("rules"); return; }
+    if ((el = e.target.closest("[data-prizes]"))) { openSheet("prizes"); return; }
+    if ((el = e.target.closest("[data-rule]"))) { openSheet("rule", el.dataset.rule, null, true); return; }
+    if ((el = e.target.closest("[data-rule-title]"))) { var rr = rules().filter(function (x) { return x.title === el.dataset.ruleTitle; })[0]; if (rr) openSheet("rule", rr.k, null, true); return; }
     if ((el = e.target.closest("[data-owner-push]"))) { e.preventDefault(); openSheet("owner", el.dataset.ownerPush, null, true); return; }
     if ((el = e.target.closest("[data-riv-push]"))) { e.preventDefault(); var p = el.dataset.rivPush.split("|"); openSheet("rivalry", p[0], p[1], true); return; }
     if ((el = e.target.closest("a[href*='rivalry.html#vs=']"))) {
@@ -676,12 +778,20 @@
       e.preventDefault(); openSheet("owner", el.dataset.owner, null, $("psheet").classList.contains("on")); }
   });
 
+  function setWeek(n) {
+    W = WEEKS.filter(function (w) { return w.weekNumber === n; })[0] || LATEST;
+    buildTeams(); ME = BY_OWNER[norm(ME.owner)] || ME; closeSheet(); start(); tab("home");
+  }
+
   // ---------- boot ----------
   function start() {
     var saved = store("maffl_lab_owner");
     ME = saved && BY_OWNER[norm(saved)];
     if (!ME) { showWelcome(); return; }
     $("hdrwk").innerHTML = '<b>Week ' + W.weekNumber + '</b>' + (ME.tier === "U" ? "Upper" : "Lower") + ' Tier';
+    var pb = $("pastbar"); pb.style.display = W === LATEST ? "none" : "flex";
+    pb.innerHTML = '📅 Replaying Week ' + W.weekNumber + ' (' + esc(W.dateString) + ')<button id="pbback">Back to now</button>';
+    if (W !== LATEST) $("pbback").onclick = function () { setWeek(LATEST.weekNumber); };
     $("chip").textContent = initials(ME.owner);
     $("chip").onclick = function () { showWelcome(); };
     renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
