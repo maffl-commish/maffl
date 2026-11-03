@@ -941,6 +941,16 @@
     .lb-row__val { font-size: 14px; }
   }
 </style>
+<!-- Embedded mode (?embed=1): the MAFFL HQ app shows one rivalry inside a card. Hides the page chrome and
+     the pickers; everything else (stakes, form, story, charts, big games, log) is the same page. -->
+<script>if (/[?&]embed=1/.test(location.search)) document.documentElement.classList.add("embed");</script>
+<style>
+  html.embed .site-header, html.embed .page-header, html.embed .gold-rule, html.embed .portal-tabs,
+  html.embed #slateSection, html.embed #filterSection, html.embed section[aria-label="Owner selection"],
+  html.embed #explainH2H, html.embed .site-footer, html.embed section[aria-label="Head to head result"] > .section-label { display: none !important; }
+  html.embed main { padding-top: 0 !important; margin-top: 0 !important; }
+  html.embed body { background: transparent; }
+</style>
 </head>
 <body>
 
@@ -975,7 +985,7 @@
     </div>
     <div class="page-header__meta" aria-label="Rivalry Engine version metadata">
       <span class="meta-pill">v2.0</span>
-      <span class="meta-pill">Last Updated October 3, 2026</span>
+      <span class="meta-pill">Last Updated November 2, 2026</span>
     </div>
   </header>
   <hr class="gold-rule">

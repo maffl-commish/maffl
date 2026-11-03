@@ -271,6 +271,10 @@
   .pool-list li.recent{color:var(--loss);font-weight:700}.pool-list li.recent .dot{background:var(--loss)}
   .pool-list .out-tag,.pool-list .winner-tag{margin-left:auto;font:700 10px var(--display);color:#fff;background:var(--loss);padding:2px 6px;border-radius:4px;letter-spacing:.06em;text-decoration:none}
   .pool-list .winner-tag{background:var(--gold);color:var(--navy)}
+  .rivf{display:block;width:100%;border:0;background:var(--page-bg)}
+  .dbody.flush{padding:0;overflow:hidden}.dbody.flush .rivf{height:100%}
+  .rivcard{padding:0;overflow:hidden}.rivf.tall{height:70dvh}
+  .rivsheet{margin:0 -14px}.rivf.sheet{height:calc(92dvh - 60px)}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -403,6 +407,8 @@
   function f2(n) { return (Math.round(n * 100) / 100).toFixed(2); }
   function initials(owner) { var p = String(owner).split("/")[0].trim().split(/\s+/); return (p[0][0] + (p[1] ? p[1][0] : "")).toUpperCase(); }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  // The rivalry page itself, embedded (rivalry.html?embed=1 hides its header and pickers).
+  function rivalryFrame(a, b, cls) { return '<iframe class="rivf ' + (cls || '') + '" loading="lazy" title="Rivalry" src="../rivalry.html?embed=1#vs=' + encodeURIComponent(a) + ',' + encodeURIComponent(b) + '"></iframe>'; }
   function rivalryHref(a, b) { return "../rivalry.html#vs=" + encodeURIComponent(a) + "," + encodeURIComponent(b); }
   function toast(m) { var t = $("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove("on"); }, 2600); }
 
@@ -784,12 +790,8 @@
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
     if (prev) {
       var oppOwner = isMe(prev.ownerA) ? prev.ownerB : prev.ownerA, opp = teamOf(oppOwner), r = h2h(ME.owner, oppOwner);
-      out.push({ eb: "Week " + NEXT_WK + " · your game", t: "You vs. " + opp.team, navy: true, body:
-        '<div class="strip"><div><b>' + rec(me) + '</b><small>You · #' + me.rank + '</small></div><div><b>' + rec(opp) + '</b><small>Them · #' + (opp.rank || "–") + '</small></div></div>' +
-        '<p style="margin-top:12px">' + esc(prev.note) + '</p>' +
-        (r.n ? '<div class="strip"><div><b>' + r.aw + '–' + r.bw + '</b><small>Series</small></div><div><b>' + r.streak + '</b><small>Streak</small></div><div><b>' + r.n + '</b><small>Meetings</small></div></div>' +
-          '<div class="dots" style="justify-content:center;margin-top:10px">' + r.last.map(function (x) { return '<i class="' + (x.aWon ? "W" : "L") + '">' + (x.aWon ? "W" : "L") + '</i>'; }).join("") + '</div>' : '') +
-        '<div class="btns"><a class="b" href="' + rivalryHref(ME.owner, oppOwner) + '">⚔️ Rivalry</a><button class="b pri" data-go="match">Open Match</button></div>' });
+      out.push({ eb: "Week " + NEXT_WK + " · your game · " + rec(me) + " vs " + rec(opp), t: "You vs. " + opp.team, flush: true,
+        body: rivalryFrame(ME.owner, oppOwner) });
     }
     var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
     if (lw) {
@@ -867,7 +869,7 @@
     var g = GROUPS[it.g];
     return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + '"' + DR("card:" + g.key + ":" + it.n) + '><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
       '<div class="dhead"><div class="eb"><span>' + esc(it.c.eb) + '</span><span class="ctxt">' + g.label.split(" ").slice(1).join(" ") + ' ' + it.n + '/' + it.of + '</span></div><h3>' + esc(it.c.t) + '</h3></div>' +
-      '<div class="dbody">' + (it.c.quiz ? quizBody(it.c.quiz) : it.c.body) + '</div>' +
+      '<div class="dbody' + (it.c.flush ? ' flush' : '') + '">' + (it.c.quiz ? quizBody(it.c.quiz) : it.c.body) + '</div>' +
       '<div class="dfoot"><div class="reacts">' + (REACTS[g.key] || REACTS.headlines).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div></div>';
   }
   function drawKeys(cur) {
@@ -931,15 +933,7 @@
       '<div><div class="av">' + initials(ME.owner) + '</div><div class="tn">' + esc(me.team) + '</div><div class="rec">' + rec(me) + ' · #' + me.rank + '</div></div><div class="mid">VS</div>' +
       '<div><div class="av opp">' + initials(oppOwner) + '</div><div class="tn">' + esc(opp.team) + '</div><div class="rec">' + rec(opp) + (opp.rank ? ' · #' + opp.rank : '') + '</div></div></div>' +
       (prev ? '<div class="stakes">' + esc(prev.note) + '</div>' : '') + '</div></div>';
-    var r = h2h(ME.owner, oppOwner);
-    h += '<div class="sh"><h2>⚔️ Rivalry</h2><a href="' + rivalryHref(ME.owner, oppOwner) + '">Full history ›</a></div><div class="pad"><div class="card" style="margin-top:0">';
-    if (r.n) {
-      h += '<div class="stat3"><div><b>' + r.aw + '–' + r.bw + '</b><small>Series</small></div><div><b class="' + (r.streak[0] === "W" ? "w" : "l") + '">' + r.streak + '</b><small>Streak</small></div><div><b>' + r.n + '</b><small>Meetings</small></div></div>' +
-        '<div class="meter"><i style="width:' + Math.round(100 * r.aw / r.n) + '%"></i></div><div class="meta" style="margin-top:10px">Last ' + r.last.length + '</div><div class="dots">' +
-        r.last.map(function (x) { return '<i class="' + (x.aWon ? "W" : "L") + '" title="' + x.y + ' Wk ' + x.wk + '">' + (x.aWon ? "W" : "L") + '</i>'; }).join("") + '</div>';
-      if (r.bigA) h += '<p style="margin-top:10px">Your biggest win: ' + r.bigA.g.y + ' Wk ' + r.bigA.g.wk + ', by ' + f2(r.bigA.m) + '.' + (r.bigB ? ' Theirs: ' + r.bigB.g.y + ' Wk ' + r.bigB.g.wk + ', by ' + f2(r.bigB.m) + '.' : '') + '</p>';
-    } else h += '<p>First-ever meeting.</p>';
-    h += '</div></div>';
+    h += '<div class="sh"><h2>⚔️ Rivalry</h2><small>The full rivalry page</small></div><div class="pad"><div class="card rivcard">' + rivalryFrame(ME.owner, oppOwner, "tall") + '</div></div>';
     var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
     if (lw) {
       var mineA = isMe(lw.ownerA), ms = mineA ? lw.scoreA : lw.scoreB, os = mineA ? lw.scoreB : lw.scoreA, won = ms > os;
@@ -1407,11 +1401,11 @@
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
-    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : rivalrySheet(a, b); $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
-    $("psheet").classList.toggle("full", kind === "builder");
+    $("psheet").classList.toggle("full", kind === "builder" || kind === "rivalry");
     $("psheet").classList.add("on"); $("sscrim").classList.add("on"); document.body.style.overflow = "hidden";
   }
   function closeSheet() { $("psheet").classList.remove("on"); $("sscrim").classList.remove("on"); document.body.style.overflow = ""; stackS = []; }

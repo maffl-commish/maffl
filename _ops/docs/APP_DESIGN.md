@@ -244,6 +244,12 @@ Order: ⭐ You → 🛡️ Your division (Upper) / 📈 Your race (Lower, promot
 📊 Scores (your tier; Game of the Week vote) → 🏆 Coach → 🛟 Survivor (strikethrough board) → 💸 Wire → 💳 Credits →
 🌎 the other tier in one look. Pulse prose only appears as a one-line reveal after you answer.
 
+## 7g. Recycle the goods (11/2)
+
+Where the site already has a great view, the app embeds it instead of rebuilding it. First: the rivalry page via
+`rivalry.html?embed=1#vs=A,B` (page chrome hidden; same accordions, charts and taps). Used on the "your game" card,
+the Match tab and every rivalry panel. Swipe the card from its header or reaction bar (the page scrolls inside).
+
 ## 8. Open
 
 - ~~Confirm the §6b ESPN refresh rhythm?~~ **Yes** (11/2).
