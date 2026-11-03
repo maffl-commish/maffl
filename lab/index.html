@@ -490,8 +490,13 @@
         .forEach(function (t, k) { t.rank = k + 1; });
     });
     TEAMS.forEach(function (t) { BY_OWNER[norm(t.owner)] = t; });
+    // Live balances: the official credit record (credits.html registry, kept current by the credit sync robot).
+    // Older weeks keep the Pulse snapshot.
+    if (W === LATEST && CREDIT_LOG.length) TEAMS.forEach(function (t) { var b = logBalance(t.owner); if (b !== null) t.credits = b; });
     NEXT_WK = W.weekNumber + 1;
   }
+  function logBalance(owner) { var hit = false, n = 0; CREDIT_LOG.forEach(function (r) { if (norm(r.owner) === norm(owner) && r.approved !== false) { hit = true; n += r.amount || 0; } }); return hit ? n : null; }
+  function logged(id) { return CREDIT_LOG.some(function (r) { return String(r.notes || "").indexOf("[app L-" + id) >= 0; }); } // robot tags each row with its ledger id
   function teamOf(owner) { return BY_OWNER[norm(owner)] || { team: owner, owner: owner, w: 0, l: 0, tier: "?" }; }
   function isMe(owner) { return ME && norm(owner) === norm(ME.owner); }
   function rec(t) { return t.w + "–" + t.l; }
@@ -1024,7 +1029,7 @@
     var log = CREDIT_LOG.filter(function (r) { return norm(r.owner) === norm(ME.owner) && r.approved !== false; }).sort(function (a, b) { return b.season - a.season; });
     var earned = log.filter(function (r) { return r.amount > 0; }).reduce(function (s2, r) { return s2 + r.amount; }, 0), spent = log.filter(function (r) { return r.amount < 0; }).reduce(function (s2, r) { return s2 - r.amount; }, 0);
     var held = t.credits - availCredits(ME.owner);
-    h += '<div class="sub-v pad" id="s-credits"><div class="card navy"><div class="eb">Balance · Week ' + W.weekNumber + '</div><h3 style="font-size:34px">' + t.credits + ' credits</h3>' +
+    h += '<div class="sub-v pad" id="s-credits"><div class="card navy"><div class="eb">Balance · official record</div><h3 style="font-size:34px">' + t.credits + ' credits</h3>' +
       (held > 0 ? '<p>' + availCredits(ME.owner) + ' free to spend · ' + held + ' held for open trades and perk requests</p>' : '') +
       '<div class="strip"><div><b>' + earned + '</b><small>Earned (log)</small></div><div><b>' + spent + '</b><small>Spent (log)</small></div><div><b>' + log.length + '</b><small>Entries</small></div></div></div>' +
       perksHTML() +
@@ -1246,9 +1251,9 @@
   function needsMe(o) { return (o.status === "PROPOSED" && isMe(o.to)) || (o.status === "ACCEPTED" && ME.commish); }
   function badgeCount() { return (SUM.offers || []).filter(needsMe).length + perkBadge(); }
   function perkBadge() { return ME && ME.commish ? (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }).length : 0; }
-  function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; }).reduce(function (n, o) {
+  function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0 || (o.status === "APPROVED" && (o.giveCredits || o.getCredits) && !logged(o.id)); }).reduce(function (n, o) {
     return n + (norm(o.from) === norm(owner) ? o.giveCredits : 0) + (norm(o.to) === norm(owner) ? o.getCredits : 0); }, 0); }
-  function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && ["REQUESTED", "APPROVED"].indexOf(p.status) >= 0; }).reduce(function (n, p) { return n + p.cost; }, 0); }
+  function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && (p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id))); }).reduce(function (n, p) { return n + p.cost; }, 0); }
   function availCredits(owner) { return Math.max(0, (teamOf(owner).credits || 0) - committedCredits(owner) - perkCredits(owner)); }
   var ST = { PROPOSED: ["Waiting", ""], ACCEPTED: ["In 24h review", "gold"], APPROVED: ["Approved ✓", "ok"], NEGATED: ["Negated", "bad"], DECLINED: ["Declined", "bad"], WITHDRAWN: ["Withdrawn", ""] };
   function legHTML(label, team, players, credits) {
@@ -1332,7 +1337,7 @@
       : p.perk === "swap" ? "Wk " + p.week + " · swap opponents with " + esc(teamOf(p.swapWith).team) : p.perk === "insurance" ? "2026 season" : "";
   }
   function perkCard(p) {
-    var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = PST[p.status] || [p.status, ""], mine = isMe(p.owner);
+    var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = p.status === "APPROVED" ? (logged(p.id) ? ["Logged ✓", "ok"] : ["Approved · posting", "gold"]) : PST[p.status] || [p.status, ""], mine = isMe(p.owner);
     var h = '<div class="card offer"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mine ? "You" : esc(teamOf(p.owner).team)) + ' · −' + p.cost + ' cr</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>' +
       '<div class="row" style="padding:6px 0"><span class="pos p-CR">' + P.ic + '</span><div><div class="nm">' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + '</div></div></div>';
     if (p.note) h += '<p class="meta">“' + esc(p.note) + '”</p>';
@@ -1353,7 +1358,11 @@
       var why = perkBlock(P.k);
       return '<button class="ptile' + (why ? ' off' : '') + '" data-perk="' + P.k + '"><span class="pic">' + P.ic + '</span><b>' + esc(P.name) + '</b><span class="pcost">' + P.cost + ' cr' + (P.unit ? ' ' + P.unit : '') + '</span>' +
         '<small>' + esc(why || (P.k === "double" || P.k === "swap" ? "Wk " + openWeeks()[0] + " locks " + deadlineLabel(openWeeks()[0]) : P.k === "insurance" ? SUM.insuranceLeft + " of 3 left" : "Open")) + '</small></button>'; }).join("") + '</div>' +
-      '<p class="meta" style="margin:6px 2px 0">The commish approves every request. Credits come off when he logs it; until then they\'re held so you can\'t spend them twice.</p>';
+      '<p class="meta" style="margin:6px 2px 0">The commish approves every request. Approved credits post to the official record (Credits page, standings, the Pulse) automatically within a few minutes; until then they\'re held so you can\'t spend them twice.</p>';
+    if (ME.commish) { var sy = SUM.sync || {}, L = sy.last || {};
+      h += '<div class="card' + (L.ok === false ? ' navy' : '') + '"><div class="eb">🤖 Credit sync · ' + (sy.mode === "live" ? "LIVE" : "TEST (dry run, gold untouched)") + '</div>' +
+        '<p>' + (L.at ? (L.ok ? '✅ Last post ' : '⚠️ Last post failed ') + new Date(L.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + ' · ' + (L.rows || 0) + ' ledger rows' + (L.error ? '<br>' + esc(L.error) : '') : 'Nothing posted yet.') + '</p>' +
+        '<div class="btns"><button class="b" data-resync="1">Re-send ledger</button></div></div>'; }
     if (vs.length) h += '<div class="sh" style="padding-left:0"><h2>⚠️ Coming at you</h2><small>' + vs.length + '</small></div>' + vs.map(perkCard).join("");
     if (mine.length) h += '<div class="sh" style="padding-left:0"><h2>Your requests</h2><small>' + mine.length + '</small></div>' + mine.slice(0, 10).map(perkCard).join("");
     return h;
@@ -1560,7 +1569,7 @@
     }
     if ((el = e.target.closest("[data-pact]"))) {
       var pk = (SUM.perks || []).filter(function (x) { return x.id === el.dataset.id; })[0]; if (!pk) return;
-      var pa = el.dataset.pact, PT = { cancel: ["Cancel this request?", "Your held credits are freed.", "Cancel it", true], approve: ["Approve this perk?", "Final. Log the credits on the Credits page and handle the ESPN side (FAAB, scoring adjustment, schedule).", "Approve", false],
+      var pa = el.dataset.pact, PT = { cancel: ["Cancel this request?", "Your held credits are freed.", "Cancel it", true], approve: ["Approve this perk?", "Final. The credits post to the official record automatically. You still do the ESPN side (FAAB, scoring adjustment, schedule) until ESPN automation exists.", "Approve", false],
         deny: ["Deny this perk?", "Give a reason; the owner sees it.", "Deny", true] }[pa];
       confirmBox(PT[0], '<p class="p">' + esc(PT[1]) + '</p>' + perkCard(pk).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), PT[2], PT[3], pa === "deny").then(function (yes) {
         if (!yes) return; busy(1);
@@ -1570,6 +1579,7 @@
       });
       return;
     }
+    if ((el = e.target.closest("[data-resync]"))) { busy(1); api("resync", creds()).then(function (r) { busy(0); afterChange(r.ok ? "Ledger sent (" + r.rows + " rows) ✓" : (r.error || "Didn't post")); }).catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     if ((el = e.target.closest("[data-newtrade]"))) { startBuilder(); return; }
     if ((el = e.target.closest("[data-trade-with]"))) { startBuilder(el.dataset.tradeWith, el.dataset.tradeWant); return; }
     if ((el = e.target.closest("[data-counter]"))) { var co = (SUM.offers || []).filter(function (o) { return o.id === el.dataset.counter; })[0]; if (co) startBuilder(null, null, co); return; }
@@ -1598,7 +1608,7 @@
         accept: ["Accept this trade?", "The 24-hour review starts and the deal shows up for your tier. Players move on ESPN; credits move only after the commish approves.", "Yes, accept", false],
         decline: ["Decline this offer?", teamOf(o.from).team + " will see that you declined.", "Decline", true],
         withdraw: ["Withdraw your offer?", "It disappears for " + teamOf(o.to).team + ".", "Withdraw", true],
-        approve: ["Approve this trade?", "Final. In the real app this queues the credit rows for the Credit Log.", "Approve", false],
+        approve: ["Approve this trade?", "Final. Any credits in it post to the official record automatically.", "Approve", false],
         negate: ["Negate this trade?", "Both legs come back. Give a reason; both teams see it.", "Negate", true] }[act];
       var me2 = isMe(o.from) || isMe(o.to);
       confirmBox(T[0], '<p class="p">' + esc(T[1]) + '</p>' + offerCard(o).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), T[2], T[3], act === "negate").then(function (yes) {

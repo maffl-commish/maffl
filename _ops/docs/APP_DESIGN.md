@@ -28,6 +28,7 @@ VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 - 2026-11-02 · Card rules: never waste space; everything reactable; deadlines are headline items (§2b).
 - 2026-11-02 · Home IS the reel; category row is the key. Everything ships together at go-live (no "coming in vN").
 - 2026-11-02 · Tabs: Home · Match · Team · League · More. Rules under League; no separate Credit Leaders.
+- 2026-11-03 · Full credit reconciliation (commish): app approval → credit sync robot → Credit_Log, balances, credits.html, app, next Pulse. No manual logging. Lab runs in TEST (dry run) until go-live flips CREDIT_SYNC=live. ESPN writes: experiment, Ghost score first (§10).
 - 2026-11-03 · Credit perks live in the lab (Team → Credits → Spend): request → commish approves/denies; credits held until logged on the Credits page; ESPN side (FAAB, scoring adjustment, schedule swap) stays manual for the commish.
 - 2026-11-02 · Retire Google Forms: credit trades via offers, perk spending from Team → Credits.
 - 2026-11-02 · Reel replaces the home page; hybrid (rings + cards) chosen; Reel and Pulse become one.
@@ -270,7 +271,53 @@ the Match tab and every rivalry panel. Swipe the card from its header or reactio
 - [ ] Dry run passed: fake trades incl. negate, deadline lockout, over-balance block, wrong PIN, undo
 - [ ] Production Sheet + Apps Script deployed; test data wiped
 - [ ] Roster and credit-balance generators live (derived data, never hand-edited)
+- [ ] Credit sync: Script properties GITHUB_TOKEN set; one TEST approval ran the robot's dry run green; then CREDIT_SYNC=live and a real 1-credit FAAB request round-trips to credits.html (§10)
 - [ ] Guest view checked logged out
 - [ ] App becomes `index.html`; old home folds into League; old links still resolve
 - [ ] Every owner's email + phone in the production Sheet (not the repo); Text/Email buttons tested on iPhone + Android
 - [ ] PINs emailed; Pulse announces the launch
+
+## 10. Automation: the league runs itself (commish 11/3)
+
+**Goal:** the commish's job is tapping Approve/Deny in his own signed-in view. Everything downstream is a robot.
+
+### 10a. Credit sync (built 11/3)
+
+```
+Approve in app ──▶ backend (logic.js) ──push──▶ _ops/inbox/credit_ledger.json ──▶ Credit sync workflow
+  (perk, or trade       stamps the row, builds         whole ledger, idempotent      apply_credit_ledger.py → Credit_Log.csv
+   with credits)        the ledger, emails owner                                     + Owners Sheet balance → gen-credits.ps1
+                                                                                     → validate (Gate 4) → commit to main
+                                                                                         │
+     app balances (read credits.html registry) ◀──────────────────────────────────────┘ next Pulse reads Owners Sheet
+```
+
+- Ledger row ids `L-<request id>` ride in Credit_Log Notes as `[app L-…]`; that's how re-runs skip rows and how the app shows **Logged ✓**.
+  Until logged, approved credits stay held (no double spending); status reads "Approved · posting".
+- Trades with credits: two rows per credit leg (−n sender, +n receiver), category Trade. Perks: one row, category Spend.
+- **TEST vs LIVE.** Script property `CREDIT_SYNC=live` → `credit_ledger.json`, robot commits. Anything else → `credit_ledger_test.json`,
+  robot does the full run and shows the result in the Actions summary but commits nothing. Each approval remembers its mode,
+  so lab tests never reach real credits.
+- Setup (commish, once): Apps Script → Project Settings → Script properties → `GITHUB_TOKEN` = fine-grained token for
+  `maffl-commish/maffl`, Contents read/write. Without it approvals still work; the push fails, you get an email, and Team → Credits shows
+  ⚠️ with a **Re-send ledger** button.
+- Robot rules: appends only (never edits or deletes a Credit_Log row); unknown owner name = stop; validate must pass or nothing commits;
+  credits.html gets a Last Updated date stamp (no version bump).
+- Notifications: owners get an email on approve/deny when the Owners tab has an `email` column filled (§4b). Opponents see perks aimed at
+  them in the app.
+
+### 10b. ESPN writes (experiment, not built)
+
+ESPN has no official API; its own site writes through `lm-api-writes.fantasy.espn.com` with the same espn_s2/SWID cookies the robot
+already uses. Others have proven lineup and add/drop writes; League Manager tools (score adjustments, FAAB, schedule) are undocumented.
+Plan: commish does one Ghost score adjustment in Chrome while Claude records the request; if it can be replayed, the Tuesday robot posts
+the Ghost adjustment, then reads it back and reports. No retries (a retry can apply twice), confirm step first season.
+Candidates after that: approved Extra FAAB, Double Player Bonus adjustment, Matchup Swap schedule edit.
+
+### 10c. Other jobs to automate (queue)
+
+- Approved trade → player side reminder until ESPN shows the move (backend checks rosters in the 30-min refresh, §6b).
+- Perk ESPN to-do list for the commish (until 10b exists): each approved perk lists the ESPN step with a "Done" tap.
+- Weekly: Highest Weekly Score credit and season-end awards written to the ledger by the robot instead of by hand.
+- Nightly reconciliation: ledger vs Credit_Log vs credits.html vs Owners Sheet; email only on a mismatch.
+

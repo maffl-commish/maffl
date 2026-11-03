@@ -7,10 +7,10 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.9";
+var VERSION = "0.10";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
-var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons"];
-var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason"];
+var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
+var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
 // Credit perks (rules.html → Credit System → Spending Credits). Commish approves every one.
 var PERKS = { faab: { name: "Extra FAAB $", cost: 1 }, double: { name: "Double Player Bonus", cost: 10 }, swap: { name: "Matchup Swap", cost: 10 },
   insurance: { name: "Relegation Insurance", cost: 25 }, divswap: { name: "Division Swap", cost: 10 } };
@@ -53,6 +53,7 @@ function doGet(e) {
   try {
     if (p.action === "summary") return json(summary_(p.week, null));
     if (p.action === "live") { try { return json(live_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
+    if (p.action === "ledger") return json({ ok: true, mode: syncMode_(), rows: ledger_(p.mode === "live" ? "live" : p.mode === "test" ? "test" : syncMode_()) }); // credit moves are public anyway
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
   } catch (err) { return json({ ok: false, error: String(err) }); }
@@ -77,6 +78,7 @@ function doPost(e) {
       case "commish": return json(withAuth_(b, function (o) { return commish_(o, b.offer_id, b.decision, b.reason); }));
       case "perk":    return json(withAuth_(b, function (o) { return perk_(o, b); }));
       case "perkact": return json(withAuth_(b, function (o) { return perkAct_(o, b.perk_id, b.decision, b.reason); }));
+      case "resync":  return json(withAuth_(b, function (o) { return o.commish ? pushLedger_() : { ok: false, error: "Commish only" }; }));
       default:        return json({ ok: false, error: "unknown action" });
     }
   } catch (err) {
@@ -92,6 +94,7 @@ function sheet_(name) {
   if (!sh && name === "Offers") { sh = ss.insertSheet("Offers"); sh.appendRow(OFFER_HEAD); sh.setFrozenRows(1); }
   if (!sh && name === "Perks") { sh = ss.insertSheet("Perks"); sh.appendRow(PERK_HEAD); sh.setFrozenRows(1); }
   if (sh && name === "Offers" && sh.getLastColumn() < OFFER_HEAD.length) sh.getRange(1, 1, 1, OFFER_HEAD.length).setValues([OFFER_HEAD]); // add new columns
+  if (sh && name === "Perks" && sh.getLastColumn() < PERK_HEAD.length) sh.getRange(1, 1, 1, PERK_HEAD.length).setValues([PERK_HEAD]);
   return sh;
 }
 function rows_(name) {
@@ -214,7 +217,11 @@ function commish_(me, id, decision, reason) {
   var next = decision === "approve" ? "APPROVED" : decision === "negate" ? "NEGATED" : null;
   if (!next) return { ok: false, error: "approve or negate" };
   setOffer_(o, next, reason); log_(me.owner, "commish", id, next, "", String(reason || ""));
-  return { ok: true, status: next };
+  var out = { ok: true, status: next };
+  if (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits))) { setCell_("Offers", o._row, "sync", syncMode_()); out.sync = pushLedger_(); }
+  notify_([o.from_owner, o.to_owner], "MAFFL HQ: trade " + next.toLowerCase(), teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + " was " + next.toLowerCase() + " by the commish." +
+    (reason ? "\nReason: " + reason : "") + (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits)) ? "\nThe credits post to the official record automatically." : ""));
+  return out;
 }
 function trades_(owner) {
   var me = owner ? ownerRow_(owner) : null, commish = me && String(me.is_commish) === "Y";
@@ -292,7 +299,12 @@ function perkAct_(me, id, decision, reason) {
   setCell_("Perks", r._row, "status", next); setCell_("Perks", r._row, "updated_ts", new Date());
   if (reason) setCell_("Perks", r._row, "reason", String(reason).slice(0, 200));
   log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
-  return { ok: true, status: next };
+  var out = { ok: true, status: next };
+  if (next === "APPROVED") { setCell_("Perks", r._row, "sync", syncMode_()); out.sync = pushLedger_(); }
+  if (next !== "CANCELED") notify_([r.owner], "MAFFL HQ: " + (PERKS[r.perk] || {}).name + " " + next.toLowerCase(),
+    "Your " + (PERKS[r.perk] || {}).name + " request (" + r.cost + " credits" + (r.week ? ", Week " + r.week : "") + (r.player ? ", " + r.player : "") + ") was " + next.toLowerCase() + "." +
+    (reason ? "\nCommish: " + reason : "") + (next === "APPROVED" ? "\nThe credits post to the official record automatically." : ""));
+  return out;
 }
 // Yours, ones that touch you (your opponent's Double Bonus, a swap that moves you), and for the commish everything open.
 function perks_(owner) {
@@ -307,6 +319,71 @@ function perks_(owner) {
   });
   var ins = all.filter(function (r) { return r.perk === "insurance" && ["REQUESTED", "APPROVED"].indexOf(r.status) >= 0; }).length;
   return { perks: list, insuranceLeft: Math.max(0, INSURANCE_MAX - ins) };
+}
+
+// ---------------------------------------------------------------- credit ledger → repo (credit sync robot)
+// Every approved perk and every approved trade with credits becomes ledger rows. After each approval the backend
+// pushes the WHOLE ledger (idempotent) to the repo; .github/workflows/credit-sync.yml applies new rows to
+// data/Credit_Log.csv, balances and credits.html. Script properties:
+//   GITHUB_TOKEN  fine-grained token, repo maffl-commish/maffl, Contents: read & write (needed to push)
+//   CREDIT_SYNC   "live" = real credits (credit_ledger.json). Anything else = TEST (credit_ledger_test.json, robot dry run).
+// Rows remember the mode they were approved in, so lab tests never leak into the live ledger.
+var REPO = "maffl-commish/maffl";
+function syncMode_() { return String(PropertiesService.getScriptProperties().getProperty("CREDIT_SYNC") || "").toLowerCase() === "live" ? "live" : "test"; }
+function teamName_(owner) { var o = ownerRow_(owner); return o ? o.team : owner; }
+function ledger_(mode) {
+  var out = [];
+  rows_("Perks").forEach(function (r) {
+    if (r.status !== "APPROVED" || (r.sync || "test") !== mode) return;
+    var P = PERKS[r.perk] || { name: r.perk };
+    out.push({ id: "L-" + r.perk_id, season: 2026, owner: r.owner, category: "Spend", type: P.name, amount: -Math.abs(Number(r.cost) || 0),
+      notes: (r.perk === "faab" ? "+$" + 20 * (Number(r.qty) || 1) + " FAAB" : r.perk === "double" ? "Wk " + r.week + " · " + r.player + (r.pos ? " (" + r.pos + ")" : "")
+        : r.perk === "swap" ? "Wk " + r.week + " · swapped opponents with " + r.swap_with : r.perk === "insurance" ? "2026 season" : "") + " · app request " + r.perk_id,
+      approved: r.updated_ts });
+  });
+  rows_("Offers").forEach(function (o) {
+    if (o.status !== "APPROVED" || (o.sync || "test") !== mode) return;
+    var gc = Number(o.give_credits) || 0, tc = Number(o.get_credits) || 0, note = "trade " + o.offer_id + " · " + o.from_owner + " ↔ " + o.to_owner;
+    if (gc) { out.push({ id: "L-" + o.offer_id + "A", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: -gc, notes: "to " + o.to_owner + " · " + note, approved: o.updated_ts });
+              out.push({ id: "L-" + o.offer_id + "B", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: gc, notes: "from " + o.from_owner + " · " + note, approved: o.updated_ts }); }
+    if (tc) { out.push({ id: "L-" + o.offer_id + "C", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: -tc, notes: "to " + o.from_owner + " · " + note, approved: o.updated_ts });
+              out.push({ id: "L-" + o.offer_id + "D", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: tc, notes: "from " + o.to_owner + " · " + note, approved: o.updated_ts }); }
+  });
+  return out.sort(function (a, b) { return new Date(a.approved) - new Date(b.approved); });
+}
+function pushLedger_() {
+  var props = PropertiesService.getScriptProperties(), token = props.getProperty("GITHUB_TOKEN"), mode = syncMode_();
+  var path = "_ops/inbox/credit_ledger" + (mode === "live" ? "" : "_test") + ".json";
+  var rows = ledger_(mode), body = JSON.stringify({ mode: mode, generated: new Date().toISOString(), source: "logic.js v" + VERSION, rows: rows }, null, 1);
+  var res = { ok: false, mode: mode, rows: rows.length };
+  try {
+    if (!token) throw new Error("SETUP: add Script property GITHUB_TOKEN so approvals post automatically");
+    var url = "https://api.github.com/repos/" + REPO + "/contents/" + path, h = { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" };
+    var cur = UrlFetchApp.fetch(url + "?ref=main", { headers: h, muteHttpExceptions: true }), sha = null;
+    if (cur.getResponseCode() === 200) { var c = JSON.parse(cur.getContentText()); sha = c.sha;
+      if (Utilities.newBlob(Utilities.base64Decode(c.content.replace(/\n/g, ""))).getDataAsString().replace(/"generated":"[^"]*",?/, "") === body.replace(/"generated":"[^"]*",?/, "")) { res.ok = true; res.same = true; }
+    }
+    if (!res.same) {
+      var put = UrlFetchApp.fetch(url, { method: "put", headers: h, contentType: "application/json", muteHttpExceptions: true,
+        payload: JSON.stringify({ message: "Credit ledger (" + mode + "): " + rows.length + " row" + (rows.length === 1 ? "" : "s") + " from the app", branch: "main",
+          content: Utilities.base64Encode(body, Utilities.Charset.UTF_8), sha: sha || undefined,
+          committer: { name: "maffl-app-backend", email: "41898282+github-actions[bot]@users.noreply.github.com" } }) });
+      if (put.getResponseCode() >= 300) throw new Error("GitHub said " + put.getResponseCode() + ": " + put.getContentText().slice(0, 140));
+      res.ok = true;
+    }
+  } catch (err) {
+    res.error = String(err.message || err).replace(/^SETUP: /, "");
+    try { MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: credit sync didn't post", res.error + "\n\nThe approval stands. Fix it, then tap Re-send ledger in the app (Team → Credits)."); } catch (e) {}
+  }
+  props.setProperty("LAST_SYNC", JSON.stringify({ at: new Date().toISOString(), ok: res.ok, mode: mode, rows: rows.length, error: res.error || "" }));
+  return res;
+}
+// Best-effort email to owners who have an email on the Owners tab (column "email"). Never blocks the action.
+function notify_(owners, subject, text) {
+  try {
+    owners.forEach(function (n) { var o = ownerRow_(n); var to = o && String(o.email || "").trim();
+      if (to && /@/.test(to)) MailApp.sendEmail(to, subject, text + "\n\nOpen MAFFL HQ → Team → Credits."); });
+  } catch (err) {}
 }
 
 // ---------------------------------------------------------------- LIVE scoring (ESPN → compact JSON, 45 s cache)
@@ -419,7 +496,8 @@ function summary_(week, owner) {
     .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"] }; });
   var t = trades_(owner);
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
-  return { ok: true, perks: pk.perks, insuranceLeft: pk.insuranceLeft, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
+  var last = {}; try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
+  return { ok: true, perks: pk.perks, insuranceLeft: pk.insuranceLeft, sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
     commish: !!(meRow && String(meRow.is_commish) === "Y") };
 }
 

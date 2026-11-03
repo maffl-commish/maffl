@@ -1,0 +1,101 @@
+# MAFFL Credit sync — the robot that turns an app approval into the official credit record.
+#
+# The app backend (Apps Script, _ops/apps-script/logic.js) pushes its whole approved credit ledger to
+# _ops/inbox/credit_ledger.json (LIVE) or _ops/inbox/credit_ledger_test.json (TEST, before go-live) every
+# time the commish approves a perk or a trade with credits. That push starts this workflow.
+#
+#   1. apply_credit_ledger.py appends new ledger rows to data/Credit_Log.csv and recomputes
+#      "Current Credit Balance" in data/MAFFL_Owners_Sheet_revised.csv (Pulse + Gate 4 read it)
+#   2. build\gen-credits.ps1 -Write regenerates credits.html (balances + registry); date pill stamped
+#   3. build\validate.ps1 must pass (Gate 4: balances == sum of the log)
+#   4. LIVE: commit straight to main. TEST: dry run, nothing committed; the run summary shows what would change.
+#
+# The app reads credits.html's registry, so balances everywhere in the app follow within a minute or two;
+# the next Weekly Pulse picks the new balances up from the Owners Sheet. Design: _ops/docs/APP_DESIGN.md §9.
+name: Credit sync
+
+on:
+  push:
+    branches: [main]
+    paths: ['_ops/inbox/credit_ledger.json', '_ops/inbox/credit_ledger_test.json']
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'live = write gold from credit_ledger.json; test = dry run on credit_ledger_test.json'
+        required: true
+        default: test
+        type: choice
+        options: [test, live]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: credit-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: windows-latest   # build\ scripts need Windows PowerShell 5.1
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0   # to see which ledger file the push changed
+
+      - name: Which ledger?
+        id: mode
+        shell: pwsh
+        run: |
+          $mode = '${{ inputs.mode }}'
+          if (-not $mode) {
+            $changed = git diff --name-only ${{ github.event.before }} ${{ github.sha }} 2>$null
+            $mode = if ($changed -match 'credit_ledger\.json$') { 'live' } else { 'test' }
+          }
+          $file = if ($mode -eq 'live') { '_ops/inbox/credit_ledger.json' } else { '_ops/inbox/credit_ledger_test.json' }
+          if (-not (Test-Path $file)) { Write-Output "::notice::No $file yet; nothing to do."; "skip=1" >> $env:GITHUB_OUTPUT; exit 0 }
+          "mode=$mode" >> $env:GITHUB_OUTPUT; "file=$file" >> $env:GITHUB_OUTPUT
+
+      - name: Apply ledger to gold, regenerate, validate
+        if: steps.mode.outputs.skip != '1'
+        shell: pwsh
+        run: |
+          $sum = @("## Credit sync · ${{ steps.mode.outputs.mode }}", '')
+          $out = python _ops/scripts/apply_credit_ledger.py "${{ steps.mode.outputs.file }}" 2>&1
+          $code = $LASTEXITCODE
+          $sum += '```'; $sum += $out; $sum += '```'
+          if ($code -eq 1) { $sum | Out-File $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append; Write-Output "::error::apply_credit_ledger.py failed"; $out; exit 1 }
+          if ($code -eq 0) { $sum += 'Gold already matches the ledger.'; $sum | Out-File $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append; exit 0 }
+          $g = powershell -ExecutionPolicy Bypass -File build\gen-credits.ps1 -Write 2>&1
+          $g2 = powershell -ExecutionPolicy Bypass -File build\gen-credits.ps1 2>&1; $gc = $LASTEXITCODE
+          $v = powershell -ExecutionPolicy Bypass -File build\validate.ps1 2>&1; $vc = $LASTEXITCODE
+          $sum += '', "gen-credits re-check exit $gc · validate exit $vc (0 = all gates pass)", '<details><summary>Logs</summary>', '', '```'
+          $sum += ($g + $g2 + $v | ForEach-Object { ($_ | Out-String).TrimEnd() -replace "`e\[[0-9;]*m", '' }); $sum += '```', '</details>'
+          $sum | Out-File $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+          if ($gc -ne 0 -or $vc -ne 0) { Write-Output "::error::credits.html not in sync or validate failed; nothing committed"; exit 1 }
+          # Standing rule: data refresh = Last Updated date only (no version bump)
+          $d = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'Eastern Standard Time')
+          $stamp = $d.ToString('MMMM d, yyyy', [Globalization.CultureInfo]::InvariantCulture)
+          $p = 'credits.html'; $t = [IO.File]::ReadAllText($p)
+          $t = [regex]::Replace($t, '(<span class="meta-pill">Last Updated )[^<]*(</span>)', "`${1}$stamp`${2}", 1)
+          [IO.File]::WriteAllText($p, $t)
+          "changed=1" >> $env:GITHUB_ENV
+
+      - name: Commit (live only)
+        if: steps.mode.outputs.mode == 'live' && env.changed == '1'
+        shell: pwsh
+        run: |
+          git config user.name "maffl-credit-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/Credit_Log.csv data/MAFFL_Owners_Sheet_revised.csv credits.html
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) { Write-Output "Nothing to commit."; exit 0 }
+          git commit -m "Credit sync: app-approved credit moves -> Credit_Log, balances, credits.html"
+          for ($i = 0; $i -lt 3; $i++) { git pull --rebase origin main; git push origin HEAD:main; if ($LASTEXITCODE -eq 0) { exit 0 }; Start-Sleep 10 }
+          exit 1
+
+      - name: Test mode note
+        if: steps.mode.outputs.mode == 'test' && env.changed == '1'
+        shell: pwsh
+        run: Write-Output "::notice::TEST ledger dry run passed. Nothing committed. Flip the backend to live (Script property CREDIT_SYNC=live) at go-live."

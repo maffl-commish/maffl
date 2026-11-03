@@ -170,6 +170,9 @@ Finish flags per §7.5: `MAFFL_Division_History_2005_2025.csv` (division ranks) 
 `Credit_Log.csv` (append entry, Approved?=Y)
 → recompute balance → `MAFFL_Owners_Sheet_revised.csv` + `2025_League_Status`
 → `credits.html` embed
+App-approved perks and trade credit legs (2026+) arrive through the **Credit sync** workflow (`credit-sync.yml` +
+`_ops/scripts/apply_credit_ledger.py`): append-only rows tagged `[app L-…]`, Owners Sheet balance recomputed, gen-credits + validate,
+commit. Hand-entered rows still follow the steps above. Design: `_ops/docs/APP_DESIGN.md` §10a.
 
 ### CE-5 — New draft year
 `MAFFL_Draft_History_Clean_v3.csv` (append picks)
