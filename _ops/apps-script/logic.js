@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.8";
+var VERSION = "0.8.1";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons"];
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
@@ -225,8 +225,19 @@ function trades_(owner) {
 var LEAGUES = { U: 34467, L: 1587593698 }, SEASON = 2026;
 var POS = { 1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 7: "P", 9: "DT", 10: "DE", 11: "LB", 12: "CB", 13: "S", 14: "HC", 16: "D/ST" };
 var SLOT = { 0: "QB", 1: "TQB", 2: "RB", 3: "RB/WR", 4: "WR", 5: "WR/TE", 6: "TE", 7: "OP", 8: "DT", 9: "DE", 10: "LB", 11: "DL", 12: "CB", 13: "S", 14: "DB", 15: "DP", 16: "D/ST", 17: "K", 18: "P", 19: "HC", 20: "BE", 21: "IR", 23: "FLEX", 24: "ER" };
+// Accepts one shared cookie pair (ESPN_S2 / SWID) or one per league: any property whose name starts with
+// ESPN_S2 or SWID and mentions the tier (U/UPPER/34467 or L/LOWER/1587593698) wins for that tier.
+function cookie_(all, base, tier, lid) {
+  var keys = Object.keys(all).filter(function (k) { return k.toUpperCase().replace(/[^A-Z0-9]/g, "").indexOf(base) === 0; });
+  var tierTags = tier === "L" ? ["LOWER", "L", String(lid)] : ["UPPER", "U", String(lid)];
+  var mine = keys.filter(function (k) { var rest = k.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(base.length); return tierTags.indexOf(rest) >= 0; })[0];
+  var plain = keys.filter(function (k) { return k.toUpperCase().replace(/[^A-Z0-9]/g, "") === base; })[0];
+  var v = all[mine || plain || keys[0]];
+  return v ? String(v).trim() : "";
+}
 function espn_(lid, query) {
-  var p = PropertiesService.getScriptProperties(), s2 = p.getProperty("ESPN_S2"), swid = p.getProperty("SWID");
+  var all = PropertiesService.getScriptProperties().getProperties(), tier = lid === LEAGUES.L ? "L" : "U";
+  var s2 = cookie_(all, "ESPNS2", tier, lid), swid = cookie_(all, "SWID", tier, lid);
   if (!s2 || !swid) throw new Error("SETUP: add ESPN_S2 and SWID in Apps Script → Project Settings → Script properties");
   var url = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "/segments/0/leagues/" + lid + "?" + query;
   var r = UrlFetchApp.fetch(url, { headers: { Cookie: "espn_s2=" + s2 + "; SWID=" + swid }, muteHttpExceptions: true });
