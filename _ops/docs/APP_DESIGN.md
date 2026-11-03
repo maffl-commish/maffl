@@ -238,6 +238,12 @@ approve/negate). Private offers are only returned to a signed-in owner (POST sum
 - Reactions: one tray per card, 5 emojis matched to the card type, plus who reacted. No per-row reactions.
 - Source: `lab/weekfacts-data.js` (derived by `_ops/scripts/gen_lab_weekfacts.py` from `_ops/inbox/*_espn.md`).
 
+## 7f. Every category is about you (11/2)
+
+Order: ⭐ You → 🛡️ Your division (Upper) / 📈 Your race (Lower, promotion window) → 🔥 Hot & Not (Q&A, no paragraphs) →
+📊 Scores (your tier; Game of the Week vote) → 🏆 Coach → 🛟 Survivor (strikethrough board) → 💸 Wire → 💳 Credits →
+🌎 the other tier in one look. Pulse prose only appears as a one-line reveal after you answer.
+
 ## 8. Open
 
 - ~~Confirm the §6b ESPN refresh rhythm?~~ **Yes** (11/2).

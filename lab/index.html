@@ -255,6 +255,22 @@
   .ct-weekly-row{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
   .ct-weekly-wk{font:700 11px var(--display);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
   .ct-reminder{margin-top:12px;font-size:12px;font-style:italic;color:var(--muted);text-align:center}
+  .trr{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border)}
+  .trr.me{background:rgba(245,166,35,.12);margin:0 -8px;padding:9px 8px;border-radius:8px}
+  .trr .nm{font-size:16px}
+  .strip.lt{background:var(--navy-soft);color:var(--navy)}
+  .survivor-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+  .survivor-pool{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--page-bg)}
+  .pool-head{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+  .pool-head-left{display:flex;align-items:center;gap:8px}.pool-count{font:700 12px var(--body);color:var(--muted)}
+  .pool-list{list-style:none}
+  .pool-list li{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:13px;border-top:1px solid var(--border)}
+  .pool-list li:first-child{border-top:0}
+  .pool-list .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--win)}
+  .pool-list li.eliminated{color:var(--muted);text-decoration:line-through}.pool-list li.eliminated .dot{background:var(--muted)}
+  .pool-list li.recent{color:var(--loss);font-weight:700}.pool-list li.recent .dot{background:var(--loss)}
+  .pool-list .out-tag,.pool-list .winner-tag{margin-left:auto;font:700 10px var(--display);color:#fff;background:var(--loss);padding:2px 6px;border-radius:4px;letter-spacing:.06em;text-decoration:none}
+  .pool-list .winner-tag{background:var(--gold);color:var(--navy)}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -622,48 +638,89 @@
     return h + '</ul><div class="ct-reminder">Reminder: Credits are awarded in the offseason.</div>';
   }
 
+  // Survivor board, as on today's site: alive first, then knocked out (struck through), newest out in red.
+  function survivorPool(title, active, eliminated, concluded, winner) {
+    var rows = active.map(function (t) { var w = concluded && winner === t;
+      return '<li class="' + (w ? "winner" : "") + '"><span class="dot"></span><span>' + tw(t) + '</span>' + (w ? '<span class="winner-tag">WINNER</span>' : '') + '</li>'; }).join("") +
+      eliminated.slice().sort(function (a, b) { return b.week - a.week; }).map(function (e) {
+        return '<li class="' + (e.recent ? "recent" : "eliminated") + '"><span class="dot"></span><span>' + esc(e.team) + '</span><span class="out-tag"' + (e.recent ? '' : ' style="background:var(--muted)"') + '>' + (e.recent ? "OUT" : "WK " + e.week) + '</span></li>'; }).join("");
+    return '<div class="survivor-pool"><div class="pool-head"><span class="pool-head-left"><span>' + esc(title) + '</span><span class="credit-pill">+5 credits</span></span><span class="pool-count">' + active.length + ' alive</span></div><ul class="pool-list">' + rows + '</ul></div>';
+  }
+  function resultFor(owner) { return W.results.filter(function (g) { return norm(g.ownerA) === norm(owner) || norm(g.ownerB) === norm(owner); })[0]; }
+  // One line per team: their result this week, from their side.
+  function teamResultRow(t, extra) {
+    var g = resultFor(t.owner); if (!g) return '';
+    var a = norm(g.ownerA) === norm(t.owner), ms = a ? g.scoreA : g.scoreB, os = a ? g.scoreB : g.scoreA, opp = a ? g.teamB : g.teamA, won = ms > os;
+    return '<div class="trr' + (isMe(t.owner) ? ' me' : '') + '"><span class="wl ' + (won ? "W" : "L") + '">' + (won ? "W" : "L") + '</span><div style="flex:1;min-width:0"><div class="nm"><button class="tl2" data-owner="' + esc(t.owner) + '">' + esc(t.team) + '</button></div>' +
+      '<div class="meta">' + f2(ms) + '–' + f2(os) + ' vs ' + esc(opp) + '</div></div><div class="rt">' + rec(t) + '<small>' + (extra || ("#" + t.rank)) + '</small></div></div>';
+  }
+  function newsAbout(team) { // the shortest Pulse sentence that mentions this team, for a reveal
+    var hits = []; (W.newsReel || []).forEach(function (s) { (s.items || []).forEach(function (it) { if (it.indexOf(team) >= 0) hits.push(it.split(/(?<=[.!?])\s/)[0]); }); });
+    return hits.sort(function (a, b) { return a.length - b.length; })[0] || "";
+  }
+
   function buildGroups() {
-    var myTier = ME.tier, other = myTier === "U" ? "L" : "U", TN = { U: "Upper", L: "Lower" }, F = (window.WEEKFACTS || {})[W.weekNumber] || null;
+    var myTier = ME.tier, other = myTier === "U" ? "L" : "U", TN = { U: "Upper", L: "Lower" }, F = (window.WEEKFACTS || {})[W.weekNumber] || null, me = teamOf(ME.owner);
     var res = function (t) { return W.results.filter(function (g) { return g.tier === t; }); };
     var byMargin = function (a, b) { return Math.abs(a.scoreA - a.scoreB) - Math.abs(b.scoreA - b.scoreB); };
-    var mine = res(myTier).filter(function (g) { return isMe(g.ownerA) || isMe(g.ownerB); });
-    var rest = res(myTier).filter(function (g) { return mine.indexOf(g) < 0; }).sort(byMargin);
+    var tierTeams = function (t) { return TEAMS.filter(function (x) { return x.tier === t && !/ghost/i.test(x.team); }).sort(function (a, b) { return a.rank - b.rank; }); };
     GROUPS = [];
 
-    // 📰 Headlines: the top story, then stories (one hero each)
-    var items = [], now = Date.now();
-    (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; }).forEach(function (d) {
-      items.push({ ic: "⏰", sec: Math.ceil((d.dueMs - now) / 864e5) + " days left", head: d.label + ": " + d.when, tx: d.note || "" }); });
-    (W.newsReel || []).forEach(function (sec) { (sec.items || []).forEach(function (it) { items.push({ ic: sec.icon || "📰", sec: sec.section, tx: it }); }); });
-    function heroHTML(it) { return '<div class="hero"><div class="tagl">' + esc(it.ic + " " + it.sec) + '</div>' + (it.head ? '<div class="big">' + esc(it.head) + '</div>' : '') + '<p' + (it.head ? '' : ' style="font-size:16px;color:var(--navy)"') + '>' + esc(it.tx) + '</p></div>'; }
-    function itemHTML(it) { return '<div class="item"><span class="ic">' + it.ic + '</span><div class="tx"><b>' + esc(it.sec) + '</b>' + esc(it.head ? it.head + ". " + it.tx : it.tx) + '</div></div>'; }
-    var hcards = [{ eb: "Week " + W.weekNumber + " · top story", t: W.headline, body: '<div class="hero" style="padding-top:4px"><p>' + esc(W.subhead || "") + '</p></div>' + items.slice(0, 3).map(itemHTML).join("") }];
-    for (var k = 3; k < items.length; k += 4) { var chunk = items.slice(k, k + 4); hcards.push({ eb: "Week " + W.weekNumber + " · more stories", t: chunk[0].head || chunk[0].sec, body: heroHTML(chunk[0]) + chunk.slice(1).map(itemHTML).join("") }); }
-    GROUPS.push({ key: "headlines", label: "📰 Headlines", cards: hcards });
+    // ⭐ You: your result, your next game, what's due
+    var you = forYouCards(), now = Date.now();
+    (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; }).slice(0, 1).forEach(function (d) {
+      you.push({ eb: "⏰ " + Math.ceil((d.dueMs - now) / 864e5) + " days left", t: d.label + ": " + d.when, body: '<p style="margin-top:8px">' + esc(d.note || "") + '</p>' + (d.id === "trade-deadline" ? '<div class="btns"><button class="b pri" data-go="team">Open Trades</button></div>' : '') }); });
+    if (you.length) GROUPS.push({ key: "you", label: "⭐ You", cards: you });
 
-    // 📊 Scores: guess the week's top score, then the boards
-    var all = W.results.filter(function (g) { return !/ghost/i.test(g.teamA + g.teamB); }), best = null;
-    all.forEach(function (g) { [["teamA", "scoreA"], ["teamB", "scoreB"]].forEach(function (s) { if (!best || g[s[1]] > best.s) best = { team: g[s[0]], s: g[s[1]], tier: g.tier }; }); });
-    var scoreCards = [];
-    if (best) {
-      var tp = F ? F.top.filter(function (p) { return p.team === best.team; }).sort(function (a, b) { return a.rank - b.rank; }) : [];
-      scoreCards.push(quiz("topscore", "🧠 Quiz · Week " + W.weekNumber, "Who put up the week's top score: " + f2(best.s) + "?", teamOptions(best.team, best.tier, "ts" + W.weekNumber), best.team,
-        tw(best.team) + ' did it' + (tp.length ? ', led by ' + tp.map(function (p) { return esc(p.player) + ' ' + f2(p.pts); }).join(", ") : '') + '.'));
+    // 🛡️ Your division (Upper) or 📈 Your race (Lower)
+    if (myTier === "U" && me.div) {
+      var div = tierTeams("U").filter(function (t) { return t.div === me.div; }).sort(function (a, b) { return b.w - a.w || b.points - a.points; });
+      var foes = div.filter(function (t) { return !isMe(t.owner); }), foeWins = foes.filter(function (t) { var g = resultFor(t.owner); return g && ((norm(g.ownerA) === norm(t.owner)) === (g.scoreA > g.scoreB)); }).length;
+      GROUPS.push({ key: "div", label: "🛡️ Division " + me.div, cards: [{ eb: "Division " + me.div + " · Week " + W.weekNumber, t: foeWins === foes.length ? "Your division rivals all won" : foeWins ? foeWins + " of " + foes.length + " division rivals won" : "Your division rivals all lost",
+        body: '<div class="grp">How your rivals did</div>' + foes.map(function (t) { return teamResultRow(t); }).join("") +
+          '<div class="grp">Division ' + me.div + ' standings</div>' + div.map(function (t, i) { return teamResultRow(t, (i === 0 ? "🥇 " : "") + "#" + (i + 1) + " in div"); }).join("") }] });
+    } else if (myTier === "L") {
+      var lt = tierTeams("L"), i0 = Math.max(0, Math.min(lt.length - 5, me.rank - 3)), win = lt.slice(i0, i0 + 5);
+      GROUPS.push({ key: "race", label: "📈 Your race", cards: [{ eb: "Promotion race · Wk " + W.weekNumber, t: me.rank <= 3 ? "You're in a promotion spot (#" + me.rank + ")" : "You're #" + me.rank + ", " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion",
+        body: '<p class="meta" style="margin-top:6px">Top 3 in Lower move up next season.</p>' + win.map(function (t) { return teamResultRow(t, t.rank <= 3 ? "⬆️ #" + t.rank : "#" + t.rank); }).join("") }] });
     }
-    scoreCards.push({ eb: TN[myTier] + " · Week " + W.weekNumber, t: "Your tier's scoreboard", body: mine.concat(rest).map(scoreRow).join("") });
-    scoreCards.push({ eb: TN[other] + " · Week " + W.weekNumber, t: TN[other] + " tier scores", body: res(other).sort(byMargin).map(scoreRow).join("") });
+
+    // 🔥 Hot & Not: Q&A, not paragraphs
+    var tt = tierTeams(myTier), hot = tt.slice().sort(function (a, b) { return b.streak - a.streak || b.points - a.points; })[0], cold = tt.slice().sort(function (a, b) { return a.streak - b.streak || a.points - b.points; })[0];
+    var hotCards = [];
+    if (hot && hot.streak >= 2) hotCards.push(quiz("hot", "🔥 Hot · Week " + W.weekNumber, "Who's on the longest win streak in " + TN[myTier] + ": " + hot.streak + " straight?", teamOptions(hot.team, myTier, "hot" + W.weekNumber), hot.team,
+      tw(hot.team) + ' is ' + rec(hot) + '. ' + esc(newsAbout(hot.team))));
+    if (cold && cold.streak <= -2) hotCards.push(quiz("cold", "🧊 Not · Week " + W.weekNumber, "Who has lost " + (-cold.streak) + " straight in " + TN[myTier] + "?", teamOptions(cold.team, myTier, "cold" + W.weekNumber), cold.team,
+      tw(cold.team) + ' is ' + rec(cold) + '. ' + esc(newsAbout(cold.team))));
+    var lows = []; res(myTier).forEach(function (g) { if (!/ghost/i.test(g.teamA)) lows.push({ team: g.teamA, s: g.scoreA }); if (!/ghost/i.test(g.teamB)) lows.push({ team: g.teamB, s: g.scoreB }); });
+    var low = lows.sort(function (a, b) { return a.s - b.s; })[0];
+    if (low) hotCards.push(quiz("low", "🥶 Not · Week " + W.weekNumber, "Who laid the " + TN[myTier] + " egg with " + f2(low.s) + "?", teamOptions(low.team, myTier, "low" + W.weekNumber), low.team, tw(low.team) + '. ' + esc(newsAbout(low.team))));
+    var blow = res(myTier).slice().sort(function (a, b) { return Math.abs(b.scoreA - b.scoreB) - Math.abs(a.scoreA - a.scoreB); })[0];
+    if (blow) { var bw = blow.scoreA > blow.scoreB ? blow.teamA : blow.teamB, bl = blow.scoreA > blow.scoreB ? blow.teamB : blow.teamA;
+      hotCards.push(quiz("blowout", "🔨 Hot · Week " + W.weekNumber, "Who won " + TN[myTier] + "'s biggest blowout, by " + f2(Math.abs(blow.scoreA - blow.scoreB)) + "?", teamOptions(bw, myTier, "bo" + W.weekNumber), bw,
+        tw(bw) + ' beat ' + esc(bl) + ' ' + f2(Math.max(blow.scoreA, blow.scoreB)) + '–' + f2(Math.min(blow.scoreA, blow.scoreB)) + '.')); }
+    if (hotCards.length) GROUPS.push({ key: "hot", label: "🔥 Hot & Not", cards: hotCards });
+
+    // 📊 Scores (your tier): vote, guess the top score, then the board
+    var scoreCards = [];
+    if (GOTW) scoreCards.push(GOTW);
+    var best = null; res(myTier).forEach(function (g) { [["teamA", "scoreA"], ["teamB", "scoreB"]].forEach(function (s) { if (!/ghost/i.test(g[s[0]]) && (!best || g[s[1]] > best.s)) best = { team: g[s[0]], s: g[s[1]] }; }); });
+    if (best) { var tp = F ? F.top.filter(function (p) { return p.team === best.team; }).sort(function (a, b) { return a.rank - b.rank; }) : [];
+      scoreCards.push(quiz("topscore", "🧠 Quiz · Week " + W.weekNumber, "Who put up " + TN[myTier] + "'s top score: " + f2(best.s) + "?", teamOptions(best.team, myTier, "ts" + W.weekNumber), best.team,
+        tw(best.team) + ' did it' + (tp.length ? ', led by ' + tp.map(function (p) { return esc(p.player) + ' ' + f2(p.pts); }).join(", ") : '') + '.')); }
+    scoreCards.push({ eb: TN[myTier] + " · Week " + W.weekNumber, t: "Your tier's scoreboard", body: res(myTier).slice().sort(byMargin).map(scoreRow).join("") });
     GROUPS.push({ key: "scores", label: "📊 Scores", cards: scoreCards });
 
-    // 🏆 Coach: bench-blunder quizzes, then the board
+    // 🏆 Coach: bench-blunder quizzes (your tier first), then the board
     var c = W.coachOfWeek, coachCards = [];
     if (F && F.missed.length) {
-      var lostCalls = F.missed.filter(function (m) { return (c && c.couldHaveWon || []).some(function (x) { return x.team === m.team; }); });
-      var worst = (lostCalls.length ? lostCalls : F.missed).slice().sort(function (a, b) { return b.cost - a.cost; })[0];
+      var calls = F.missed.filter(function (m) { return m.tier === myTier; }); if (!calls.length) calls = F.missed;
+      var lostCalls = calls.filter(function (m) { return (c && c.couldHaveWon || []).some(function (x) { return x.team === m.team; }); });
+      var worst = (lostCalls.length ? lostCalls : calls).slice().sort(function (a, b) { return b.cost - a.cost; })[0];
       var chw = (c && c.couldHaveWon || []).filter(function (x) { return x.team === worst.team; })[0];
       coachCards.push(quiz("blunder", "🧠 Bench blunder · Week " + W.weekNumber, "Who benched " + worst.player + " (" + f2(worst.pts) + ")" + (chw ? " and lost by " + f2(chw.lostBy) : "") + "?",
         teamOptions(worst.team, worst.tier, "bl" + W.weekNumber), worst.team,
         tw(worst.team) + ' started ' + esc(worst.over || "nobody") + ' (' + f2(worst.overPts) + ') instead. That one call cost ' + f2(worst.cost) + (chw ? ', and the game: they left ' + f2(chw.leftOnBench) + ' on the bench in a ' + f2(chw.lostBy) + '-point loss.' : '.')));
-      // which player? the bench guy who outscored every starter
       var bba = F.benchBeatAll.filter(function (b) { return b.team !== worst.team || b.player !== worst.player; })[0] || F.benchBeatAll[0];
       if (bba) {
         var team2 = TEAMS.filter(function (t) { return t.team === bba.team; })[0], pos2 = (F.missed.filter(function (m) { return m.team === bba.team && m.player === bba.player; })[0] || {}).pos;
@@ -676,38 +733,54 @@
     }
     if (c && c.upper) {
       var coachRow = function (x, tier) { var o = ownerOfTeam(x.team); return '<div class="row"><div><div class="nm">' + (o ? '<button class="tl2" data-owner="' + esc(o) + '">' + esc(x.team) + '</button>' : esc(x.team)) + '</div><div class="meta">' + tier + ' · ' + f2(x.leftOnBench) + ' left on the bench</div></div></div>'; };
+      var cu = c[myTier === "U" ? "upper" : "lower"], co = c[myTier === "U" ? "lower" : "upper"];
       coachCards.push({ eb: "Coach of the Week", t: "Fewest points left on the bench", body:
-        '<div class="grp">Upper</div>' + coachRow(c.upper, "Winner") + (c.upper.runnersUp || []).map(function (x) { return coachRow(x, "Runner-up"); }).join("") +
-        '<div class="grp">Lower</div>' + coachRow(c.lower, "Winner") + (c.lower.runnersUp || []).map(function (x) { return coachRow(x, "Runner-up"); }).join("") });
+        '<div class="grp">' + TN[myTier] + '</div>' + coachRow(cu, "Winner") + (cu.runnersUp || []).map(function (x) { return coachRow(x, "Runner-up"); }).join("") +
+        '<div class="grp">' + TN[other] + '</div>' + coachRow(co, "Winner") });
     }
     if (coachCards.length) GROUPS.push({ key: "coach", label: "🏆 Coach", cards: coachCards });
 
-    // 🛟 Survivor: who went home?
+    // 🛟 Survivor: who went home, then the board with strikethroughs
     var s = W.survivor;
     if (s) {
-      var outU = (s.upperEliminated || []).filter(function (x) { return x.recent; })[0], survCards = [];
-      if (outU) survCards.push(quiz("survivor", "🧠 Survivor · Week " + W.weekNumber, "Who got voted off the Upper island this week?", teamOptions(outU.team, "U", "sv" + W.weekNumber), outU.team, esc(W.survivorNote || "")));
-      var out = function (arr) { return (arr || []).filter(function (x) { return x.recent; }).map(function (x) { return esc(x.team); }).join(", ") || "—"; };
-      survCards.push({ eb: "Survivor · Week " + W.weekNumber, t: "Still standing", body:
-        '<div class="grp">Out this week</div><p>' + out(s.upperEliminated) + ' · ' + out(s.lowerEliminated) + '</p>' +
-        '<div class="grp">Alive · Upper</div><p>' + (s.upperActive || []).map(esc).join(" · ") + '</p><div class="grp">Alive · Lower</div><p>' + (s.lowerActive || []).map(esc).join(" · ") + '</p>' });
+      var mineOut = (s[myTier === "U" ? "upperEliminated" : "lowerEliminated"] || []).filter(function (x) { return x.recent; })[0], survCards = [];
+      if (mineOut) survCards.push(quiz("survivor", "🧠 Survivor · Week " + W.weekNumber, "Who got knocked out of " + TN[myTier] + " Survivor?", teamOptions(mineOut.team, myTier, "sv" + W.weekNumber), mineOut.team, esc(W.survivorNote || "")));
+      var pools = [survivorPool("Upper-Tier", s.upperActive || [], s.upperEliminated || [], s.upperConcluded, s.upperWinner), survivorPool("Lower-Tier", s.lowerActive || [], s.lowerEliminated || [], s.lowerConcluded, s.lowerWinner)];
+      if (myTier === "L") pools.reverse();
+      survCards.push({ eb: "Survivor · Week " + W.weekNumber, t: (s.upperActive || []).length + (s.lowerActive || []).length + " teams still alive", body: '<div class="survivor-grid">' + pools.join("") + '</div>' });
       GROUPS.push({ key: "survivor", label: "🛟 Survivor", cards: survCards });
     }
 
-    // 💸 Waiver wire: guess the big spender
+    // 💸 Waiver wire
     if (F && F.bids.length) {
-      var bid = F.bids[0];
+      var bid = F.bids.filter(function (b) { return b.tier === myTier; })[0] || F.bids[0];
       GROUPS.push({ key: "wire", label: "💸 Wire", cards: [
         quiz("bid", "🧠 Big spender · Week " + W.weekNumber, "Who dropped $" + bid.amount + " of FAAB on " + bid.player + "?", teamOptions(bid.team, bid.tier, "bd" + W.weekNumber), bid.team,
-          tw(bid.team) + ' paid $' + bid.amount + '. The rest of the week\'s biggest bids: ' + F.bids.slice(1).map(function (b) { return '$' + b.amount + ' ' + esc(b.player) + ' (' + esc(shortOf(ownerOfTeam(b.team))) + ')'; }).join(", ") + '.')] });
+          tw(bid.team) + ' paid $' + bid.amount + '. The rest of the week\'s biggest bids: ' + F.bids.filter(function (b) { return b !== bid; }).map(function (b) { return '$' + b.amount + ' ' + esc(b.player) + ' (' + esc(shortOf(ownerOfTeam(b.team))) + ')'; }).join(", ") + '.')] });
     }
 
     // 💳 Credits: the whole Credit Tracker
     if ((W.creditTracker || []).length) GROUPS.push({ key: "credits", label: "💳 Credits", cards: [{ eb: "Credit Tracker · Week " + W.weekNumber, t: "The credit board", body: creditTrackerHTML() }] });
+
+    // 🌎 The other league, in one look
+    var ot = tierTeams(other);
+    if (ot.length) {
+      var oBest = null; res(other).forEach(function (g) { [["teamA", "scoreA"], ["teamB", "scoreB"]].forEach(function (x) { if (!/ghost/i.test(g[x[0]]) && (!oBest || g[x[1]] > oBest.s)) oBest = { team: g[x[0]], s: g[x[1]] }; }); });
+      var oHot = ot.slice().sort(function (a, b) { return b.streak - a.streak; })[0];
+      GROUPS.push({ key: "other", label: "🌎 " + TN[other], cards: [
+        quiz("otherlead", "🌎 Meanwhile in " + TN[other], "Who's leading the " + TN[other] + " tier after Week " + W.weekNumber + "?", teamOptions(ot[0].team, other, "ol" + W.weekNumber), ot[0].team,
+          tw(ot[0].team) + ' is ' + rec(ot[0]) + ' with ' + Math.round(ot[0].points) + ' points.'),
+        { eb: "🌎 " + TN[other] + " · Week " + W.weekNumber, t: TN[other] + " in one look", body:
+          '<div class="strip lt"><div><b>' + esc(shortOf(ot[0].owner)) + '</b><small>Leader · ' + rec(ot[0]) + '</small></div>' + (oBest ? '<div><b>' + f2(oBest.s) + '</b><small>Top score · ' + esc(shortOf(ownerOfTeam(oBest.team))) + '</small></div>' : '') +
+          (oHot && oHot.streak >= 2 ? '<div><b>W' + oHot.streak + '</b><small>Hottest · ' + esc(shortOf(oHot.owner)) + '</small></div>' : '') + '</div>' +
+          '<div class="grp">Standings</div>' + ot.slice(0, 5).map(function (t) { return teamResultRow(t, (other === "L" && t.rank <= 3 ? "⬆️ " : "") + "#" + t.rank); }).join("") +
+          '<div class="grp">Scores</div>' + res(other).slice().sort(byMargin).map(scoreRow).join("") }] });
+    }
   }
   // "For you" category: personal cards lead the reel
+  var GOTW = null;
   function forYouCards() {
-    var out = [], me = teamOf(ME.owner);
+    var out = [], me = teamOf(ME.owner); GOTW = null;
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
     if (prev) {
       var oppOwner = isMe(prev.ownerA) ? prev.ownerB : prev.ownerA, opp = teamOf(oppOwner), r = h2h(ME.owner, oppOwner);
@@ -737,7 +810,7 @@
     if (poll) {
       var tal = SUM.tallies[poll.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mineV = SUM.myVotes[poll.id];
       var opts = String(poll.options) === "auto" ? gotwPicks() : String(poll.options).split("|").map(function (o) { return { v: o.trim(), plain: o.trim() }; });
-      out.unshift({ eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · tap a game to vote · you can change it until Tuesday</p>' + opts.map(function (o) {
+      GOTW = ({ eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · tap a game to vote · you can change it until Tuesday</p>' + opts.map(function (o) {
         var n = tal[o.v] || 0, pct = tot ? Math.round(100 * n / tot) : 0, sel = mineV === o.v;
         if (o.plain) return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '"><span class="ob" style="width:' + pct + '%"></span><span class="ol">' + esc(o.plain) + '</span><span class="op">' + (tot ? pct + '%' : '') + '</span></button>';
         return '<button class="gotw' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '">' +
@@ -772,7 +845,7 @@
   }
 
   // One reaction tray per card, with emojis that fit what the card is about.
-  var REACTS = { you: ["🔥", "😎", "😬", "🤝", "👀"], headlines: ["🔥", "😂", "🤯", "🤡", "💀"], scores: ["🔥", "😱", "🥱", "👏", "🤡"],
+  var REACTS = { you: ["🔥", "😎", "😬", "🤝", "👀"], div: ["😤", "🙏", "😂", "👀", "🔥"], race: ["📈", "😤", "🙏", "👀", "🔥"], hot: ["🔥", "🥶", "😂", "🤡", "💀"], other: ["👀", "😂", "🔥", "🥱", "🤡"], headlines: ["🔥", "😂", "🤯", "🤡", "💀"], scores: ["🔥", "😱", "🥱", "👏", "🤡"],
     coach: ["🤦", "😬", "😂", "🧠", "👏"], survivor: ["💀", "😅", "🫡", "😂", "🔥"], wire: ["💸", "🤑", "🤡", "👀", "🔥"], credits: ["💰", "👀", "😤", "🙌", "🔥"] };
 
   // ---------- HOME = the reel ----------
@@ -780,7 +853,7 @@
   function posKey() { return "maffl_lab_pos_" + W.weekNumber + "_" + norm(ME.owner); }
   function renderHome() {
     buildGroups();
-    var fy = forYouCards(); if (fy.length) GROUPS.unshift({ key: "you", label: "⭐ For you", cards: fy });
+
     FLAT = [];
     GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c, ci) { FLAT.push({ g: gi, c: c, n: ci + 1, of: g.cards.length }); }); });
     FLAT.push({ g: GROUPS.length, done: true });
