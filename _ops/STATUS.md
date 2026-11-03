@@ -19,6 +19,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Planned (not written yet)
 
+- **Lab week facts:** `python3 _ops/scripts/gen_lab_weekfacts.py` must run after each weekly ESPN pull (not yet wired into the robot; add to pulse-draft before go-live).
 - **MAFFL HQ app redesign (Reel, PIN login, trades): governing doc `_ops/docs/APP_DESIGN.md`. Read it first; log decisions in its §0 Journal.**
 - **MAFFL HQ app (prototype):** `lab/` v0 live (hidden, read-only). Next: v1 test Sheet + Apps Script (PINs, request-access email, reactions, votes); v2 roster pull + trades; v3 credit perks. Design: `_ops/docs/APP_DESIGN.md`.
 - **Trade Center (sandbox first):** Sleeper-style trade block + offers with players + credits, per-owner PINs, Google Sheet + Apps Script backend, commish approves the credit leg. Design: `_ops/docs/TRADE_CENTER_DESIGN.md` (open questions §8).
@@ -32,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-02 · Lab reel reimagined: categories open with a quiz built from the week's facts (Scores: who posted the top score · Coach: bench blunder + name the bench guy who outscored every starter · Survivor: who went home · new 💸 Wire: who made the top FAAB bid), one shot, reveal with the story + how many owners got it right. 💳 Credits card = the full Pulse Credit Tracker (legend, Upper/Lower leaders, statuses, weekly high + history). Reactions reworked: no more lone 🔥 on rows; one tray per card with 5 emojis that fit the card + who reacted (quiz picks stay anonymous). New derived file `lab/weekfacts-data.js` from `_ops/scripts/gen_lab_weekfacts.py` (reads robot inbox). Backend logic v0.7 (who-reacted).
 - 2026-11-02 · Lab Game of the Week: curated to 3 games (⏱️ thriller = smallest margin, 😱 upset = worse prior record beat better, 💥 shootout = most combined points; fallbacks top score / beatdown), each with winner/loser scores, the week's one-line highlight from the Pulse note, and a vote bar; your pick marked. Replaces the full list with "by 19.29".
 - 2026-11-02 · Lab iPhone fix: frame was zooming/panning (double-tap zoom on buttons, auto-zoom on <16px inputs). Viewport maximum-scale=1, touch-action: manipulation, 16px inputs, overflow-x hidden, overscroll contained on sideways rows. Header + tab bar stay fixed.
 - 2026-11-02 · Lab trades: step 1 is now the all-rosters grid (your column pinned, tier scrolls across, grouped by position, block tags; tap a team); live trade grade for both sides (value + positional fit, APP_DESIGN §7d) while picking, on preview and on received offers; reason chips (Need depth, Win now, Selling for the future, Want credits, Bye-week fix, Just a deal) + note. Backend logic v0.6 stores reasons (Offers gets a `reasons` column).

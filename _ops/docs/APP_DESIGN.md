@@ -229,6 +229,15 @@ approve/negate). Private offers are only returned to a signed-in owner (POST sum
 - Reason chips on every offer: Need depth · Win now · Selling for the future · Want credits · Bye-week fix · Just a deal (+ free text).
 - Step 1 of a trade is the all-rosters grid (your column pinned, scroll across the tier, positions grouped, 🏷️ tags); tap a team to go to the side-by-side.
 
+## 7e. Reel v2: do something, then learn (11/2)
+
+- Each category leads with a one-shot quiz from the week's data, then the facts: top score (Scores), bench blunder +
+  name-the-bench-guy (Coach), who went home (Survivor), top FAAB bid (💸 Wire). Options are the answer + 2 tier mates
+  chosen by a stable hash, so every owner sees the same question. The reveal tells the story and shows how many owners got it.
+- Credits = the whole Pulse Credit Tracker in one card.
+- Reactions: one tray per card, 5 emojis matched to the card type, plus who reacted. No per-row reactions.
+- Source: `lab/weekfacts-data.js` (derived by `_ops/scripts/gen_lab_weekfacts.py` from `_ops/inbox/*_espn.md`).
+
 ## 8. Open
 
 - ~~Confirm the §6b ESPN refresh rhythm?~~ **Yes** (11/2).

@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.6";
+var VERSION = "0.7";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons"];
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
@@ -228,11 +228,13 @@ function summary_(week, owner) {
     if (e.type === "react") state[norm_(e.owner) + "|" + e.ref + "|" + e.value] = e.meta === "on";
     if (e.type === "vote") votes[e.ref + "|" + norm_(e.owner)] = e.value;
   });
-  var counts = {}, mine = {};
+  var counts = {}, mine = {}, who = {}, display = {};
+  owners_().forEach(function (o) { display[norm_(o.owner)] = o.owner; });
   Object.keys(state).forEach(function (k) {
     if (!state[k]) return;
     var p = k.split("|"), ref = p.slice(1, -1).join("|"), emo = p[p.length - 1];
     counts[ref] = counts[ref] || {}; counts[ref][emo] = (counts[ref][emo] || 0) + 1;
+    if (ref.indexOf(":quiz:") < 0) { who[ref] = who[ref] || {}; (who[ref][emo] = who[ref][emo] || []).push(display[p[0]] || p[0]); } // quiz picks stay anonymous
     if (owner && p[0] === norm_(owner)) { mine[ref] = mine[ref] || {}; mine[ref][emo] = true; }
   });
   var tallies = {}, myVotes = {};
@@ -245,7 +247,7 @@ function summary_(week, owner) {
     .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"] }; });
   var t = trades_(owner);
   var meRow = owner ? ownerRow_(owner) : null;
-  return { ok: true, counts: counts, mine: mine, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
+  return { ok: true, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
     commish: !!(meRow && String(meRow.is_commish) === "Y") };
 }
 
