@@ -28,6 +28,7 @@ VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 - 2026-11-02 · Card rules: never waste space; everything reactable; deadlines are headline items (§2b).
 - 2026-11-02 · Home IS the reel; category row is the key. Everything ships together at go-live (no "coming in vN").
 - 2026-11-02 · Tabs: Home · Match · Team · League · More. Rules under League; no separate Credit Leaders.
+- 2026-11-03 · Credit perks live in the lab (Team → Credits → Spend): request → commish approves/denies; credits held until logged on the Credits page; ESPN side (FAAB, scoring adjustment, schedule swap) stays manual for the commish.
 - 2026-11-02 · Retire Google Forms: credit trades via offers, perk spending from Team → Credits.
 - 2026-11-02 · Reel replaces the home page; hybrid (rings + cards) chosen; Reel and Pulse become one.
 - 2026-11-02 · Trades: own tier only, 👻 can't trade, no picks, offers private until both agree, commish approves credits.

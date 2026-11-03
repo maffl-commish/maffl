@@ -7,9 +7,21 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.8.1";
+var VERSION = "0.9";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons"];
+var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason"];
+// Credit perks (rules.html → Credit System → Spending Credits). Commish approves every one.
+var PERKS = { faab: { name: "Extra FAAB $", cost: 1 }, double: { name: "Double Player Bonus", cost: 10 }, swap: { name: "Matchup Swap", cost: 10 },
+  insurance: { name: "Relegation Insurance", cost: 25 }, divswap: { name: "Division Swap", cost: 10 } };
+var INSURANCE_CLOSES = new Date("2026-10-01T20:15:00-04:00"), INSURANCE_MAX = 3, REG_WEEKS = 14;
+// Double Bonus / Matchup Swap deadline: Thursday 6:00 PM ET of that week, or 1 hour before the week's first game if earlier
+// (Wk 12 = Thanksgiving, first game 12:30 PM → 11:30 AM). Week 1 Thursday = Sep 10, 2026.
+function perkDeadline_(week) {
+  var d = new Date(Date.UTC(2026, 8, 10 + 7 * (week - 1))), dst = d < new Date(Date.UTC(2026, 10, 1));
+  var ymd = d.toISOString().slice(0, 10), hm = week === 12 ? "11:30" : "18:00";
+  return new Date(ymd + "T" + hm + ":00" + (dst ? "-04:00" : "-05:00"));
+}
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
 
 // Passphrases are two football words, e.g. GRONK-PISTOL. Case, spaces and dashes don't matter when typing.
@@ -63,6 +75,8 @@ function doPost(e) {
       case "offer":   return json(withAuth_(b, function (o) { return offer_(o, b); }));
       case "respond": return json(withAuth_(b, function (o) { return respond_(o, b.offer_id, b.decision); }));
       case "commish": return json(withAuth_(b, function (o) { return commish_(o, b.offer_id, b.decision, b.reason); }));
+      case "perk":    return json(withAuth_(b, function (o) { return perk_(o, b); }));
+      case "perkact": return json(withAuth_(b, function (o) { return perkAct_(o, b.perk_id, b.decision, b.reason); }));
       default:        return json({ ok: false, error: "unknown action" });
     }
   } catch (err) {
@@ -76,6 +90,7 @@ function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 function sheet_(name) {
   var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName(name);
   if (!sh && name === "Offers") { sh = ss.insertSheet("Offers"); sh.appendRow(OFFER_HEAD); sh.setFrozenRows(1); }
+  if (!sh && name === "Perks") { sh = ss.insertSheet("Perks"); sh.appendRow(PERK_HEAD); sh.setFrozenRows(1); }
   if (sh && name === "Offers" && sh.getLastColumn() < OFFER_HEAD.length) sh.getRange(1, 1, 1, OFFER_HEAD.length).setValues([OFFER_HEAD]); // add new columns
   return sh;
 }
@@ -219,6 +234,81 @@ function trades_(owner) {
   return { offers: offers, block: block };
 }
 
+// ---------------------------------------------------------------- credit perks (test Sheet only; never gold)
+// Statuses: REQUESTED → APPROVED | DENIED (commish), or CANCELED (owner, while still REQUESTED).
+// Balance is checked in the app and by the commish at approval (the backend doesn't hold credit totals).
+function livePerks_() { return rows_("Perks").filter(function (r) { return ["REQUESTED", "APPROVED"].indexOf(r.status) >= 0; }); }
+function perk_(me, b) {
+  var P = PERKS[b.perk]; if (!P) return { ok: false, error: "Unknown perk" };
+  var now = new Date(), week = Math.floor(Number(b.week) || 0), qty = 1, player = "", pos = "", swapWith = "", affects = [];
+  var mine = livePerks_().filter(function (r) { return norm_(r.owner) === norm_(me.owner); });
+  if (b.perk === "faab") {
+    qty = Math.floor(Number(b.qty) || 0); if (qty < 1 || qty > 20) return { ok: false, error: "Pick 1 to 20 ($20 each)" };
+  } else if (b.perk === "double" || b.perk === "swap") {
+    if (week < 1 || week > REG_WEEKS) return { ok: false, error: "Regular season weeks only (1–" + REG_WEEKS + "). Consolation weeks: ask the commish." };
+    if (now > perkDeadline_(week)) return { ok: false, error: "Week " + week + " is locked (Thursday 6 PM ET deadline)" };
+    var same = mine.filter(function (r) { return r.perk === b.perk && Number(r.week) === week; });
+    if (b.perk === "double") {
+      player = String(b.player || "").slice(0, 60); pos = String(b.pos || "").slice(0, 8);
+      if (!player) return { ok: false, error: "Pick a player" };
+      if (same.length >= 2) return { ok: false, error: "Max 2 Double Bonuses per week" };
+      if (same.some(function (r) { return r.player === player; })) return { ok: false, error: player + " already has one that week" };
+    } else {
+      var to = ownerRow_(b.swapWith);
+      if (!to || norm_(to.owner) === norm_(me.owner)) return { ok: false, error: "Pick a team to swap with" };
+      if (String(to.tier) !== String(me.tier)) return { ok: false, error: "Swaps stay inside your tier" };
+      if (same.length) return { ok: false, error: "1 Matchup Swap per week" };
+      swapWith = to.owner;
+    }
+    affects = (b.affects || []).slice(0, 4).map(function (x) { return String(x).slice(0, 60); });
+  } else if (b.perk === "insurance") {
+    if (String(me.tier) !== "U") return { ok: false, error: "Relegation Insurance is an Upper-Tier perk" };
+    if (now > INSURANCE_CLOSES) return { ok: false, error: "Closed at Week 4 kickoff (Oct 1)" };
+    var taken = livePerks_().filter(function (r) { return r.perk === "insurance"; });
+    if (taken.length >= INSURANCE_MAX) return { ok: false, error: "All " + INSURANCE_MAX + " are taken this season" };
+    if (taken.some(function (r) { return norm_(r.owner) === norm_(me.owner); })) return { ok: false, error: "You already have it" };
+  } else if (b.perk === "divswap") {
+    return { ok: false, error: "Division Swaps are off-season only (open when provisional divisions post; lock Labor Day Eve)" };
+  }
+  var cost = P.cost * qty, id = "P" + Utilities.getUuid().slice(0, 8).toUpperCase();
+  sheet_("Perks").appendRow([id, now, me.owner, me.tier, b.perk, cost, qty, week || "", player, pos, swapWith, JSON.stringify(affects), String(b.note || "").slice(0, 200), "REQUESTED", now, ""]);
+  log_(me.owner, "perk", id, "REQUESTED", week || "", b.perk);
+  try {
+    MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: " + P.name + " request from " + me.owner,
+      me.owner + " (" + me.team + ") requested " + P.name + " for " + cost + " credit" + (cost === 1 ? "" : "s") +
+      (b.perk === "faab" ? " (+$" + 20 * qty + " FAAB)" : "") + (week ? ", Week " + week : "") + (player ? ", " + player + (pos ? " (" + pos + ")" : "") : "") +
+      (swapWith ? ", swap opponents with " + swapWith : "") + (b.note ? "\nNote: " + b.note : "") +
+      "\n\nApprove or deny in the app: Team → Credits.");
+  } catch (err) {} // email is a nudge; the request stands either way
+  return { ok: true, perk_id: id, cost: cost };
+}
+function perkAct_(me, id, decision, reason) {
+  var r = rows_("Perks").filter(function (x) { return String(x.perk_id) === String(id); })[0];
+  if (!r) return { ok: false, error: "Request not found" };
+  if (r.status !== "REQUESTED") return { ok: false, error: "That request is already " + String(r.status).toLowerCase() };
+  var next = decision === "cancel" && norm_(r.owner) === norm_(me.owner) ? "CANCELED"
+    : me.commish && decision === "approve" ? "APPROVED" : me.commish && decision === "deny" ? "DENIED" : null;
+  if (!next) return { ok: false, error: "You can't do that to this request" };
+  setCell_("Perks", r._row, "status", next); setCell_("Perks", r._row, "updated_ts", new Date());
+  if (reason) setCell_("Perks", r._row, "reason", String(reason).slice(0, 200));
+  log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
+  return { ok: true, status: next };
+}
+// Yours, ones that touch you (your opponent's Double Bonus, a swap that moves you), and for the commish everything open.
+function perks_(owner) {
+  var me = owner ? ownerRow_(owner) : null, commish = me && String(me.is_commish) === "Y", all = rows_("Perks");
+  var list = !me ? [] : all.filter(function (r) {
+    var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
+    return norm_(r.owner) === norm_(me.owner) || (r.status !== "CANCELED" && (norm_(r.swap_with) === norm_(me.owner) || aff.some(function (a) { return norm_(a) === norm_(me.owner); }))) || (commish && r.status === "REQUESTED");
+  }).map(function (r) {
+    var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
+    return { id: r.perk_id, ts: r.ts, owner: r.owner, tier: r.tier, perk: r.perk, cost: Number(r.cost) || 0, qty: Number(r.qty) || 1, week: Number(r.week) || null,
+      player: r.player, pos: r.pos, swapWith: r.swap_with, affects: aff, note: r.note, status: r.status, updated: r.updated_ts, reason: r.reason };
+  });
+  var ins = all.filter(function (r) { return r.perk === "insurance" && ["REQUESTED", "APPROVED"].indexOf(r.status) >= 0; }).length;
+  return { perks: list, insuranceLeft: Math.max(0, INSURANCE_MAX - ins) };
+}
+
 // ---------------------------------------------------------------- LIVE scoring (ESPN → compact JSON, 45 s cache)
 // Needs Script Properties ESPN_S2 and SWID (Apps Script → Project Settings → Script properties). Same cookies
 // the Tuesday robot uses. Read-only: nothing here writes anywhere.
@@ -328,8 +418,8 @@ function summary_(week, owner) {
   var polls = rows_("Polls").filter(function (p) { return String(p.active) === "Y" && (!week || String(p.week) === String(week)); })
     .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"] }; });
   var t = trades_(owner);
-  var meRow = owner ? ownerRow_(owner) : null;
-  return { ok: true, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
+  var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
+  return { ok: true, perks: pk.perks, insuranceLeft: pk.insuranceLeft, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
     commish: !!(meRow && String(meRow.is_commish) === "Y") };
 }
 

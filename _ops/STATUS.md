@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-02 by Claude (chat), APP_DESIGN v0.6 adds fresh ESPN data plan (§6b)
+**Last updated:** 2026-11-03 by Claude (chat), lab credit perk buttons (Team → Credits)
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · Lab Team → Credits: perk buttons replace the "In the build" card. Tiles for Extra FAAB (1 cr per $20, stepper), Double Player Bonus (10; pick week + player, max 2/week, different players), Matchup Swap (10; pick week + team, division games/Ghost blocked, shows who you'd play), Relegation Insurance (closed Oct 1, x of 3 left) and Division Swap (off-season). Each opens a request sheet → confirm → commish approves/denies (reason) or owner cancels; credits held against "free" balance (trades too) until logged; Thursday 6 PM ET lock (Wk 12 Thanksgiving 11:30 AM); opponents see perks aimed at them ("Coming at you"); commish gets an email + Credits badge. Backend logic v0.9 (`perk`, `perkact`; Perks tab auto-created). Tested against a simulated Sheet.
 - 2026-11-02 · Backend logic v0.8.1: ESPN cookies read from Script properties by prefix — one shared ESPN_S2/SWID pair, or per league (suffix UPPER/LOWER, U/L, or the league ID). Commish saved the cookies 11/2.
 - 2026-11-02 · Lab Match tab = your live game. Backend logic v0.8 `live` action: Apps Script reads ESPN (same leagues/cookies as the robot; needs Script properties ESPN_S2 + SWID), 45 s cache, returns each matchup's live/projected points, lineups, players yet to play, and best-lineup bench points (same exact solver as Coach of the Week). App: live hero with win share by projection, MAFFL scoring live (Coach of the Week bench gap + rank, Survivor safe/danger, weekly-high race), side-by-side lineups by slot + benches, auto-refresh every 60 s, Rivalry history button. Rivalry/last-week/slate removed from Match. Tested against a simulated ESPN feed; real feed pending the cookies.
 - 2026-11-02 · Rivalry page gets an embedded mode (`rivalry.html?embed=1#vs=A,B` hides header, tabs, pickers, footer; content unchanged). Date stamp only, stays v2.0. The app now shows the real rivalry page inside the "your game" reel card, on the Match tab, and in every rivalry panel (from scores, slate, owner panels), so This Week stakes, Recent Form, The Story, Big Games, Streaks, Shared History and the full log come straight from the page.

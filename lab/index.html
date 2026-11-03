@@ -209,6 +209,14 @@
   .gl{display:flex;gap:8px}
   .grade{flex:1;text-align:center;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.04em;border-radius:6px;padding:5px 0;background:var(--navy-soft)}
   .grade.gAp,.grade.gA{background:var(--win);color:#fff}.grade.gB{background:#3b6fb6;color:#fff}.grade.gC{background:var(--gold);color:var(--navy)}.grade.gD,.grade.gF{background:var(--loss);color:#fff}
+  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ptile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--gold);border-radius:12px;padding:10px;min-height:112px}
+  .ptile .pic{font-size:22px;line-height:1}
+  .ptile b{font:700 16px/1.1 var(--display);margin-top:4px}
+  .ptile .pcost{font:700 12px var(--display);color:var(--gold-dark);text-transform:uppercase;letter-spacing:.04em}
+  .ptile small{font-size:11px;color:var(--muted);margin-top:auto}
+  .ptile.off{border-top-color:var(--border);opacity:.55}
+  .pc2[disabled]{opacity:.45}
   .chips{display:flex;flex-wrap:wrap;gap:6px}
   .chip2{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 11px;font:600 13px var(--body)}
   .chip2.on{background:var(--navy);color:#fff;border-color:var(--navy)}
@@ -1010,16 +1018,19 @@
     var h = '<div class="thero"><div class="tn">' + esc(t.team) + '</div><div class="sub">' + esc(t.owner) + ' · ' + tierN + (t.div ? ' · Div ' + t.div : '') + '</div>' +
       '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>#' + t.rank + '</b><small>' + tierN + '</small></div>' +
       '<div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts for</small></div></div></div>' +
-      '<div class="seg" id="tseg"><button data-sub="roster">Roster</button><button data-sub="trades">Trades' + (badgeCount() ? ' <i class="sb2">' + badgeCount() + '</i>' : '') + '</button><button data-sub="credits">Credits</button><button data-sub="money">Money</button><button data-sub="stats">Stats</button></div>';
+      '<div class="seg" id="tseg"><button data-sub="roster">Roster</button><button data-sub="trades">Trades' + ((badgeCount() - perkBadge()) ? ' <i class="sb2">' + (badgeCount() - perkBadge()) + '</i>' : '') + '</button><button data-sub="credits">Credits' + (perkBadge() ? ' <i class="sb2">' + perkBadge() + '</i>' : '') + '</button><button data-sub="money">Money</button><button data-sub="stats">Stats</button></div>';
     h += '<div class="sub-v pad" id="s-roster">' + rosterHTML() + '</div>';
     h += '<div class="sub-v pad" id="s-trades">' + tradesHTML() + '</div>';
     var log = CREDIT_LOG.filter(function (r) { return norm(r.owner) === norm(ME.owner) && r.approved !== false; }).sort(function (a, b) { return b.season - a.season; });
     var earned = log.filter(function (r) { return r.amount > 0; }).reduce(function (s2, r) { return s2 + r.amount; }, 0), spent = log.filter(function (r) { return r.amount < 0; }).reduce(function (s2, r) { return s2 - r.amount; }, 0);
+    var held = t.credits - availCredits(ME.owner);
     h += '<div class="sub-v pad" id="s-credits"><div class="card navy"><div class="eb">Balance · Week ' + W.weekNumber + '</div><h3 style="font-size:34px">' + t.credits + ' credits</h3>' +
+      (held > 0 ? '<p>' + availCredits(ME.owner) + ' free to spend · ' + held + ' held for open trades and perk requests</p>' : '') +
       '<div class="strip"><div><b>' + earned + '</b><small>Earned (log)</small></div><div><b>' + spent + '</b><small>Spent (log)</small></div><div><b>' + log.length + '</b><small>Entries</small></div></div></div>' +
+      perksHTML() +
       '<div class="card glist"><div class="eb">Credit history</div>' + (log.length ? log.map(function (r) {
         return '<div class="row"><div><div class="nm">' + esc(r.creditType) + '</div><div class="meta">' + r.season + ' · ' + esc(r.creditCategory) + (r.notes ? ' · ' + esc(r.notes) : '') + '</div></div><div class="rt ' + (r.amount > 0 ? "w" : "l") + '">' + (r.amount > 0 ? "+" : "") + r.amount + '</div></div>'; }).join("") : '<p>No logged entries yet.</p>') + '</div>' +
-      '<div class="card soon"><div class="eb">🚧 In the build</div><h3>Spend credits</h3><p>Perks like a player double bonus, requested here and approved by the commish. Replaces the Credit Request form.</p></div></div>';
+      '</div>';
     var dues = PRIZE && (PRIZE.dues_seasons || []).filter(function (d) { return d.rows && d.rows.length; }).sort(function (a, b) { return b.year - a.year; })[0];
     var myDue = dues && dues.rows.filter(function (r) { return norm(r.owner) === norm(ME.owner); })[0];
     var wins = PRIZE ? PRIZE.prize_events.filter(function (e) { return norm(e.owner) === norm(ME.owner); }) : [];
@@ -1233,10 +1244,12 @@
   // ---------- offers ----------
   function offersFor(me) { return (SUM.offers || []).filter(function (o) { return isMe(o.from) || isMe(o.to) || o.tier === ME.tier || ME.commish; }); }
   function needsMe(o) { return (o.status === "PROPOSED" && isMe(o.to)) || (o.status === "ACCEPTED" && ME.commish); }
-  function badgeCount() { return (SUM.offers || []).filter(needsMe).length; }
+  function badgeCount() { return (SUM.offers || []).filter(needsMe).length + perkBadge(); }
+  function perkBadge() { return ME && ME.commish ? (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }).length : 0; }
   function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; }).reduce(function (n, o) {
     return n + (norm(o.from) === norm(owner) ? o.giveCredits : 0) + (norm(o.to) === norm(owner) ? o.getCredits : 0); }, 0); }
-  function availCredits(owner) { return Math.max(0, (teamOf(owner).credits || 0) - committedCredits(owner)); }
+  function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && ["REQUESTED", "APPROVED"].indexOf(p.status) >= 0; }).reduce(function (n, p) { return n + p.cost; }, 0); }
+  function availCredits(owner) { return Math.max(0, (teamOf(owner).credits || 0) - committedCredits(owner) - perkCredits(owner)); }
   var ST = { PROPOSED: ["Waiting", ""], ACCEPTED: ["In 24h review", "gold"], APPROVED: ["Approved ✓", "ok"], NEGATED: ["Negated", "bad"], DECLINED: ["Declined", "bad"], WITHDRAWN: ["Withdrawn", ""] };
   function legHTML(label, team, players, credits) {
     return '<div class="leg">' + esc(label) + '</div>' + players.map(function (nm) {
@@ -1287,6 +1300,130 @@
     h += sec("Recent", done);
     return h;
   }
+
+
+  // ---------- Team → Credits → Spend (perks; rules.html Spending Credits; commish approves) ----------
+  // Double Bonus / Matchup Swap lock Thursday 6 PM ET of that week (Wk 12 Thanksgiving: 11:30 AM). Same rule as logic.js perkDeadline_.
+  function perkDeadline(week) {
+    var d = new Date(Date.UTC(2026, 8, 10 + 7 * (week - 1))), dst = d < new Date(Date.UTC(2026, 10, 1));
+    return new Date(d.toISOString().slice(0, 10) + "T" + (week === 12 ? "11:30" : "18:00") + ":00" + (dst ? "-04:00" : "-05:00"));
+  }
+  function deadlineLabel(week) { var d = perkDeadline(week); return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York" }) + " · " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }) + " ET"; }
+  function openWeeks() { var out = []; for (var w = W.weekNumber + 1; w <= 14; w++) if (perkDeadline(w) > new Date()) out.push(w); return out; }
+  var INSURANCE_CLOSES = new Date("2026-10-01T20:15:00-04:00");
+  var PERKS = [
+    { k: "faab", ic: "💵", name: "Extra FAAB", cost: 1, unit: "per $20", blurb: "$20 added to your FAAB. Anytime in season." },
+    { k: "double", ic: "✖️2", name: "Double Player Bonus", cost: 10, blurb: "Double one player's points for one week. Max 2 a week, different players." },
+    { k: "swap", ic: "🔀", name: "Matchup Swap", cost: 10, blurb: "Trade opponents with another team for one regular-season week. Not division games." },
+    { k: "insurance", ic: "🛡️", name: "Relegation Insurance", cost: 25, blurb: "Safe from relegation this season. 3 a season, by Week 4 kickoff." },
+    { k: "divswap", ic: "🔁", name: "Division Swap", cost: 10, blurb: "Swap divisions in the off-season. Locks Labor Day Eve." }];
+  var PERK_BY = {}; PERKS.forEach(function (p) { PERK_BY[p.k] = p; });
+  // Why a perk can't be requested right now ("" = open).
+  function perkBlock(k) {
+    if (k === "divswap") return "Off-season only";
+    if (k === "insurance") return ME.tier !== "U" ? "Upper Tier only" : new Date() > INSURANCE_CLOSES ? "Closed Oct 1 (Wk 4)" : SUM.insuranceLeft === 0 ? "All 3 taken" : "";
+    if ((k === "double" || k === "swap") && !openWeeks().length) return "Regular season is over";
+    if (!API_URL) return "Needs the league server";
+    return availCredits(ME.owner) < PERK_BY[k].cost ? "Need " + PERK_BY[k].cost + " free credits" : "";
+  }
+  var PST = { REQUESTED: ["Waiting on commish", "gold"], APPROVED: ["Approved ✓", "ok"], DENIED: ["Denied", "bad"], CANCELED: ["Canceled", ""] };
+  function perkLine(p) {
+    return p.perk === "faab" ? "+$" + 20 * p.qty + " FAAB" : p.perk === "double" ? "Wk " + p.week + " · " + esc(p.player) + (p.pos ? " (" + esc(p.pos) + ")" : "")
+      : p.perk === "swap" ? "Wk " + p.week + " · swap opponents with " + esc(teamOf(p.swapWith).team) : p.perk === "insurance" ? "2026 season" : "";
+  }
+  function perkCard(p) {
+    var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = PST[p.status] || [p.status, ""], mine = isMe(p.owner);
+    var h = '<div class="card offer"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mine ? "You" : esc(teamOf(p.owner).team)) + ' · −' + p.cost + ' cr</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>' +
+      '<div class="row" style="padding:6px 0"><span class="pos p-CR">' + P.ic + '</span><div><div class="nm">' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + '</div></div></div>';
+    if (p.note) h += '<p class="meta">“' + esc(p.note) + '”</p>';
+    if (p.reason) h += '<p class="meta">Commish: ' + esc(p.reason) + '</p>';
+    var btn = p.status !== "REQUESTED" ? "" : (mine ? '<button class="b" data-pact="cancel" data-id="' + p.id + '">Cancel' + (ME.commish ? '' : ' request') + '</button>' : '') +
+      (ME.commish ? '<button class="b" data-pact="deny" data-id="' + p.id + '">Deny</button><button class="b pri" data-pact="approve" data-id="' + p.id + '">Approve</button>' : '');
+    if (ME.commish && p.status === "REQUESTED") { var left = (teamOf(p.owner).credits || 0) - committedCredits(p.owner) - perkCredits(p.owner);
+      h += '<p class="meta">' + (left < 0 ? '⚠️ ' : '') + esc(p.owner) + ': ' + teamOf(p.owner).credits + ' credits, ' + left + ' left after open trades and perk holds.</p>'; }
+    return h + (btn ? '<div class="btns">' + btn + '</div>' : '') + '</div>';
+  }
+  function perksHTML() {
+    var all = SUM.perks || [], mine = all.filter(function (p) { return isMe(p.owner); }).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); });
+    var queue = ME.commish ? all.filter(function (p) { return p.status === "REQUESTED" && !isMe(p.owner); }) : [];
+    var vs = all.filter(function (p) { return !isMe(p.owner) && (isMe(p.swapWith) || (p.affects || []).some(isMe)) && p.status !== "CANCELED" && p.status !== "DENIED" && (p.week || 0) > W.weekNumber && queue.indexOf(p) < 0; });
+    var h = '';
+    if (queue.length) h += '<div class="sh" style="padding-left:0"><h2>🧑‍⚖️ Perk requests to review</h2><small>' + queue.length + '</small></div>' + queue.map(perkCard).join("");
+    h += '<div class="sh" style="padding-left:0"><h2>Spend credits</h2><small>' + availCredits(ME.owner) + ' free</small></div><div class="pgrid">' + PERKS.map(function (P) {
+      var why = perkBlock(P.k);
+      return '<button class="ptile' + (why ? ' off' : '') + '" data-perk="' + P.k + '"><span class="pic">' + P.ic + '</span><b>' + esc(P.name) + '</b><span class="pcost">' + P.cost + ' cr' + (P.unit ? ' ' + P.unit : '') + '</span>' +
+        '<small>' + esc(why || (P.k === "double" || P.k === "swap" ? "Wk " + openWeeks()[0] + " locks " + deadlineLabel(openWeeks()[0]) : P.k === "insurance" ? SUM.insuranceLeft + " of 3 left" : "Open")) + '</small></button>'; }).join("") + '</div>' +
+      '<p class="meta" style="margin:6px 2px 0">The commish approves every request. Credits come off when he logs it; until then they\'re held so you can\'t spend them twice.</p>';
+    if (vs.length) h += '<div class="sh" style="padding-left:0"><h2>⚠️ Coming at you</h2><small>' + vs.length + '</small></div>' + vs.map(perkCard).join("");
+    if (mine.length) h += '<div class="sh" style="padding-left:0"><h2>Your requests</h2><small>' + mine.length + '</small></div>' + mine.slice(0, 10).map(perkCard).join("");
+    return h;
+  }
+  // Matchup Swap: who you'd play instead, and whether the swap is legal (no division game touched; Ghost games stay put).
+  function opponentOf(week, owner) { var g = scheduleFor(week, owner)[0]; if (!g) return null; return { opp: norm(g[2]) === norm(owner) ? g[3] : g[2], cls: g[4] }; }
+  function swapCheck(week, other) {
+    var a = opponentOf(week, ME.owner), b = opponentOf(week, other), dv = function (x) { return teamOf(x).div || ""; }, sameDiv = function (x, y) { return ME.tier === "U" && dv(x) && dv(x) === dv(y); };
+    if (!a || !b) return "No game found";
+    if (/ghost/i.test(a.opp) || /ghost/i.test(b.opp) || /ghost/i.test(other)) return "Ghost games can't move";
+    if (norm(a.opp) === norm(other)) return "Already your opponent";
+    if (a.cls === "Divisional") return "Your game is a division game";
+    if (b.cls === "Divisional") return "Their game is a division game";
+    if (sameDiv(ME.owner, other)) return "You'd make a division game";
+    if (sameDiv(a.opp, b.opp)) return "Would pair two division rivals";
+    return "";
+  }
+  function perkSheet(k) {
+    var P = PERK_BY[k], free = availCredits(ME.owner), why = perkBlock(k), F = PF;
+    var h = '<div class="card navy" style="margin-top:12px"><div class="eb">' + P.ic + ' ' + P.cost + ' credit' + (P.cost === 1 ? '' : 's') + (P.unit ? ' ' + P.unit : '') + ' · you have ' + free + ' free</div><h3>' + esc(P.name) + '</h3><p>' + esc(P.blurb) + '</p></div>';
+    var rule = ruleLink(k);
+    if (why) return h + '<div class="card"><p>🔒 ' + esc(why) + '.</p>' + rule + '</div>';
+    var ok = true, cost = P.cost, summary = "";
+    if (k === "faab") {
+      var max = Math.min(20, free); F.qty = Math.max(1, Math.min(max, F.qty || 1)); cost = F.qty;
+      h += '<div class="grp">How much?</div><div class="crs" style="padding:8px"><span style="font-size:18px">+$' + 20 * F.qty + ' FAAB</span><button data-pq="-1">−</button><button data-pq="1">+</button><small>' + F.qty + ' credit' + (F.qty === 1 ? '' : 's') + '</small></div>';
+      summary = "+$" + 20 * F.qty + " FAAB for " + F.qty + " credit" + (F.qty === 1 ? "" : "s");
+    } else if (k === "double" || k === "swap") {
+      var wks = openWeeks(); if (wks.indexOf(F.week) < 0) F.week = wks[0];
+      h += '<div class="grp">Which week?</div><div class="chips">' + wks.slice(0, 6).map(function (w) { return '<button class="chip2' + (w === F.week ? ' on' : '') + '" data-pw="' + w + '">Wk ' + w + '</button>'; }).join("") + '</div>' +
+        '<p class="meta" style="margin-top:6px">Locks ' + deadlineLabel(F.week) + '.</p>';
+      var me = opponentOf(F.week, ME.owner);
+      if (k === "double") {
+        var used = (SUM.perks || []).filter(function (p) { return isMe(p.owner) && p.perk === "double" && p.week === F.week && ["REQUESTED", "APPROVED"].indexOf(p.status) >= 0; });
+        if (used.length >= 2) { h += '<div class="card"><p>You already have 2 Double Bonuses in Week ' + F.week + '.</p></div>'; ok = false; }
+        h += (me ? '<p class="meta">Week ' + F.week + ' opponent: <b>' + esc(teamOf(me.opp).team.replace(/\.$/, "")) + '</b>. They\'ll see it in the app.</p>' : '') + '<div class="grp">Which player?</div>' +
+          rosterOf(ME.owner).map(function (p) { var dup = used.some(function (u) { return u.player === p.name; });
+            return '<button class="pc2' + (F.player === p.name ? ' on' : '') + '" data-pp="' + esc(p.name) + '"' + (dup ? ' disabled' : '') + '>' + posChip(p.pos) + '<span class="pn2">' + esc(p.name) + (dup ? ' · already doubled' : '') + '<small>' + esc(p.nfl || "") + '</small></span></button>'; }).join("");
+        if (!F.player) ok = false;
+        var pl = rosterOf(ME.owner).filter(function (p) { return p.name === F.player; })[0];
+        summary = F.player ? "Double " + F.player + (pl ? " (" + pl.pos + ")" : "") + " in Week " + F.week : "";
+        F.pos = pl ? pl.pos : ""; F.affects = me ? [me.opp] : [];
+      } else {
+        var mySwap = (SUM.perks || []).some(function (p) { return isMe(p.owner) && p.perk === "swap" && p.week === F.week && ["REQUESTED", "APPROVED"].indexOf(p.status) >= 0; });
+        if (mySwap) { h += '<div class="card"><p>You already have a swap in Week ' + F.week + ' (limit 1).</p></div>'; ok = false; }
+        if (me) h += '<div class="card"><div class="eb">Week ' + F.week + ' now</div><p>You play <b>' + esc(teamOf(me.opp).team) + '</b>' + (me.cls !== "Open" ? ' · ' + esc(me.cls) : '') + '.</p></div>';
+        var teams = TEAMS.filter(function (t) { return t.tier === ME.tier && !isMe(t.owner) && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.rank - b.rank; });
+        h += '<div class="grp">Who do you want to play instead?</div>' + teams.map(function (t) {
+          var bad = swapCheck(F.week, t.owner), o = opponentOf(F.week, t.owner);
+          return '<button class="pc2' + (F.swapWith === t.owner ? ' on' : '') + '" data-ps="' + esc(t.owner) + '"' + (bad ? ' disabled' : '') + '><span class="pos">' + rec(t) + '</span><span class="pn2">' + esc(t.team) +
+            '<small>' + (bad ? '🚫 ' + esc(bad) : 'Now plays ' + esc(o ? teamOf(o.opp).team : "?")) + '</small></span></button>'; }).join("");
+        if (!F.swapWith || swapCheck(F.week, F.swapWith)) ok = false;
+        if (F.swapWith && me && ok) { var o2 = opponentOf(F.week, F.swapWith);
+          summary = "Week " + F.week + ": you play " + teamOf(F.swapWith).team + "; " + teamOf(o2.opp).team + " plays " + teamOf(me.opp).team;
+          F.affects = [me.opp, o2.opp]; }
+      }
+    } else if (k === "insurance") {
+      summary = "Relegation Insurance for 2026";
+      h += '<div class="card"><p>If you miss the playoffs you take the #7 seed; non-insured teams shift down. ' + SUM.insuranceLeft + ' of 3 left, first come first served.</p></div>';
+    }
+    if (cost > free) ok = false;
+    h += '<input class="field" id="pnote" maxlength="200" placeholder="Note to the commish (optional)" value="' + esc(F.note || "") + '">' +
+      (summary ? '<div class="note" style="margin-top:8px">' + esc(summary) + ' · <b>' + cost + ' credit' + (cost === 1 ? '' : 's') + '</b> · ' + (free - cost) + ' free after</div>' : '') +
+      '<div class="btns"><button class="b pri" data-preq="' + k + '"' + (ok ? '' : ' disabled') + '>Request it</button></div>' + rule;
+    F.cost = cost; F.summary = summary;
+    return h;
+  }
+  function ruleLink(k) { return '<p class="meta" style="margin-top:10px"><a class="inline-link" href="../rules.html#credit-system">Full rule: Credit System → Spending Credits ›</a></p>'; }
+  var PF = {};
+  function openPerk(k, keepScroll) { if (!keepScroll) PF = { k: k }; var y = $("sb").scrollTop; openSheet("perk", k, null, false); if (keepScroll) $("sb").scrollTop = y; }
 
   // ---------- builder: pick team → side by side → preview → send ----------
   // ---------- trade grade (lab formula; see APP_DESIGN §7d) ----------
@@ -1405,6 +1542,34 @@
       }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
       return;
     }
+    if ((el = e.target.closest("[data-perk]"))) { openPerk(el.dataset.perk); return; }
+    if ((el = e.target.closest("[data-pq]"))) { PF.qty = (PF.qty || 1) + (+el.dataset.pq); PF.note = ($("pnote") || {}).value; openPerk(PF.k, true); return; }
+    if ((el = e.target.closest("[data-pw]"))) { PF.week = +el.dataset.pw; PF.note = ($("pnote") || {}).value; openPerk(PF.k, true); return; }
+    if ((el = e.target.closest("[data-pp]"))) { PF.player = el.dataset.pp; PF.note = ($("pnote") || {}).value; openPerk(PF.k, true); return; }
+    if ((el = e.target.closest("[data-ps]"))) { PF.swapWith = el.dataset.ps; PF.note = ($("pnote") || {}).value; openPerk(PF.k, true); return; }
+    if ((el = e.target.closest("[data-preq]"))) {
+      PF.note = ($("pnote") || {}).value || ""; var P2 = PERK_BY[PF.k], F2 = PF;
+      confirmBox("Request " + P2.name + "?", '<p class="p">' + esc(F2.summary) + '.</p><p class="p"><b>' + F2.cost + ' credit' + (F2.cost === 1 ? '' : 's') + '</b> are held now and come off when the commish approves and logs it. You can cancel until he does.</p>' +
+        (PF.k === "double" || PF.k === "swap" ? '<p class="meta">Locks ' + deadlineLabel(F2.week) + '. Your opponent' + (PF.k === "swap" ? 's see' : ' sees') + ' it in the app.</p>' : ''), "Yes, request it").then(function (yes) {
+        if (!yes) return; busy(1);
+        api("perk", Object.assign(creds(), { perk: F2.k, qty: F2.qty, week: F2.week, player: F2.player, pos: F2.pos, swapWith: F2.swapWith, affects: F2.affects, note: F2.note })).then(function (r) {
+          busy(0); if (!r.ok) { toast(r.error); return; } closeSheet(); TEAM_SUB = "credits"; afterChange(P2.name + " requested ✓");
+        }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
+      });
+      return;
+    }
+    if ((el = e.target.closest("[data-pact]"))) {
+      var pk = (SUM.perks || []).filter(function (x) { return x.id === el.dataset.id; })[0]; if (!pk) return;
+      var pa = el.dataset.pact, PT = { cancel: ["Cancel this request?", "Your held credits are freed.", "Cancel it", true], approve: ["Approve this perk?", "Final. Log the credits on the Credits page and handle the ESPN side (FAAB, scoring adjustment, schedule).", "Approve", false],
+        deny: ["Deny this perk?", "Give a reason; the owner sees it.", "Deny", true] }[pa];
+      confirmBox(PT[0], '<p class="p">' + esc(PT[1]) + '</p>' + perkCard(pk).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), PT[2], PT[3], pa === "deny").then(function (yes) {
+        if (!yes) return; busy(1);
+        api("perkact", Object.assign(creds(), { perk_id: pk.id, decision: pa, reason: typeof yes === "string" ? yes : "" })).then(function (r) {
+          busy(0); if (!r.ok) { toast(r.error); return; } TEAM_SUB = "credits"; afterChange({ cancel: "Request canceled", approve: "Approved ✓", deny: "Denied" }[pa]);
+        }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
+      });
+      return;
+    }
     if ((el = e.target.closest("[data-newtrade]"))) { startBuilder(); return; }
     if ((el = e.target.closest("[data-trade-with]"))) { startBuilder(el.dataset.tradeWith, el.dataset.tradeWant); return; }
     if ((el = e.target.closest("[data-counter]"))) { var co = (SUM.offers || []).filter(function (o) { return o.id === el.dataset.counter; })[0]; if (co) startBuilder(null, null, co); return; }
@@ -1453,7 +1618,7 @@
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
-    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
