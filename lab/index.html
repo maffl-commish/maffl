@@ -275,6 +275,25 @@
   .dbody.flush{padding:0;overflow:hidden}.dbody.flush .rivf{height:100%}
   .rivcard{padding:0;overflow:hidden}.rivf.tall{height:70dvh}
   .rivsheet{margin:0 -14px}.rivf.sheet{height:calc(92dvh - 60px)}
+  .mhero.live .tn{font-size:16px}
+  .lsc{font:700 40px/1 var(--display);margin:6px 0 4px;color:#fff}.lsc.w{color:#4fd1a5}
+  .ldot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff5a5a;margin-right:5px;animation:pulse 1.4s infinite}
+  @keyframes pulse{50%{opacity:.3}}
+  .wp{height:8px;border-radius:4px;background:rgba(255,255,255,.18);margin-top:12px;overflow:hidden}.wp i{display:block;height:100%;background:var(--gold)}
+  .wpl{display:flex;justify-content:space-between;font-size:11px;color:#c8d2e4;margin-top:4px}
+  .mlive{display:flex;flex-direction:column;gap:8px}
+  .ml{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  .ml span{font-size:20px}.ml b{font:700 14px var(--display);text-transform:uppercase;letter-spacing:.05em}.ml p{font-size:13px;color:var(--ink2);line-height:1.4}
+  .lineup{padding:4px 10px}
+  .lrow{display:grid;grid-template-columns:34px 1fr 1fr;gap:6px;align-items:center;padding:6px 0;border-top:1px solid var(--border)}
+  .lrow:first-child{border-top:0}
+  .ls{font:700 10px var(--display);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .lp{display:grid;grid-template-columns:1fr auto;column-gap:4px;min-width:0}
+  .lp b{font:700 13px/1.1 var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lp small{font-size:10px;color:var(--muted);grid-row:2}
+  .lp span{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font:700 15px var(--display)}
+  .lp span i{display:block;font:500 10px var(--body);color:var(--muted);font-style:normal}
+  .lp.wait b{color:var(--ink2)}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -923,34 +942,67 @@
   }
   window.addEventListener("resize", sizeHome);
 
-  // ---------- MATCH ----------
+  // ---------- MATCH: your game, live from ESPN, with MAFFL's own scoring on top ----------
+  var LIVE = null, LIVE_AT = 0, LIVE_TIMER = null;
+  function sameTeam(a, b) { var x = norm(a).replace(/[^a-z0-9]/g, ""), y = norm(b).replace(/[^a-z0-9]/g, ""); return x === y || (x.length > 5 && (x.indexOf(y) >= 0 || y.indexOf(x) >= 0)); }
   function renderMatch() {
-    var me = teamOf(ME.owner), g = scheduleFor(NEXT_WK, ME.owner)[0], h = '<div class="pad">';
-    if (!g) { $("v-match").innerHTML = '<div class="pad"><div class="card"><h3>No game on the schedule for Week ' + NEXT_WK + '</h3><p>Regular season may be over. Playoff matchups come from the Pulse.</p></div></div>'; return; }
-    var oppOwner = norm(g[2]) === norm(ME.owner) ? g[3] : g[2], opp = teamOf(oppOwner);
-    var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
-    h += '<div class="mhero"><div class="eb" style="color:var(--gold)">Week ' + NEXT_WK + ' · ' + esc(g[4]) + (g[5] ? ' · Div ' + esc(g[5]) : '') + '</div><div class="vs">' +
-      '<div><div class="av">' + initials(ME.owner) + '</div><div class="tn">' + esc(me.team) + '</div><div class="rec">' + rec(me) + ' · #' + me.rank + '</div></div><div class="mid">VS</div>' +
-      '<div><div class="av opp">' + initials(oppOwner) + '</div><div class="tn">' + esc(opp.team) + '</div><div class="rec">' + rec(opp) + (opp.rank ? ' · #' + opp.rank : '') + '</div></div></div>' +
-      (prev ? '<div class="stakes">' + esc(prev.note) + '</div>' : '') + '</div></div>';
-    h += '<div class="sh"><h2>⚔️ Rivalry</h2><small>The full rivalry page</small></div><div class="pad"><div class="card rivcard">' + rivalryFrame(ME.owner, oppOwner, "tall") + '</div></div>';
-    var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
-    if (lw) {
-      var mineA = isMe(lw.ownerA), ms = mineA ? lw.scoreA : lw.scoreB, os = mineA ? lw.scoreB : lw.scoreA, won = ms > os;
-      h += '<div class="sh"><h2>Last week · Wk ' + W.weekNumber + '</h2><a href="' + rivalryHref(lw.ownerA, lw.ownerB) + '">Rivalry ›</a></div><div class="pad"><div class="card" style="margin-top:0">' +
-        '<div class="nm ' + (won ? "w" : "l") + '">' + (won ? "W " : "L ") + f2(ms) + ' – ' + f2(os) + '</div><div class="meta">vs ' + esc(mineA ? lw.teamB : lw.teamA) + '</div>' +
-        '<p style="margin-top:8px">' + esc(lw.note || "") + '</p></div></div>';
+    if (!API_URL) { $("v-match").innerHTML = '<div class="pad"><div class="card"><h3>Live scores need the league server</h3></div></div>'; return; }
+    if (!LIVE) $("v-match").innerHTML = '<div class="pad"><div class="card"><div class="eb">Week ' + NEXT_WK + ' · live</div><h3>Loading your game from ESPN…</h3></div></div>';
+    else drawMatch();
+    loadLive();
+    clearInterval(LIVE_TIMER);
+    LIVE_TIMER = setInterval(function () { if ($("v-match").classList.contains("on") && !document.hidden) loadLive(); }, 60000);
+  }
+  function loadLive() {
+    if (Date.now() - LIVE_AT < 20000 && LIVE) return;
+    apiGet({ action: "live", tier: ME.tier }).then(function (r) { LIVE = r; LIVE_AT = Date.now(); drawMatch(); })
+      .catch(function () { LIVE = { ok: false, error: "Couldn't reach the league server" }; drawMatch(); });
+  }
+  function drawMatch() {
+    var r = LIVE, h = '<div class="pad">';
+    if (!r || !r.ok) {
+      h += '<div class="card"><div class="eb">Live scores</div><h3>' + (r && r.setup ? "Live scoring isn't switched on yet" : "Live scores are unavailable right now") + '</h3><p>' + esc((r && r.error) || "") + '</p>' +
+        (r && r.setup && ME.commish ? '<div class="note" style="margin-top:8px">Commish, one-time setup: Apps Script → ⚙️ Project Settings → Script properties → add <b>ESPN_S2</b> and <b>SWID</b> (the same values as the GitHub secrets, SWID with its { } braces). No redeploy needed.</div>' : '') +
+        '</div>' + matchFooter(null) + '</div>';
+      $("v-match").innerHTML = h; return;
     }
-    h += '<div class="sh"><h2>' + (ME.tier === "U" ? "Upper" : "Lower") + ' · Week ' + NEXT_WK + '</h2></div><div class="pad" style="padding-bottom:14px">';
-    scheduleFor(NEXT_WK).filter(function (x) { return x[1] === ME.tier; }).forEach(function (x) {
-      var a = teamOf(x[2]), b = teamOf(x[3]), mine = isMe(x[2]) || isMe(x[3]), s = h2h(x[2], x[3]);
-      h += '<div class="game' + (mine ? " mine" : "") + '"><div class="ln"><button class="tl2" data-owner="' + esc(x[2]) + '">' + esc(a.team) + '</button><span class="meta">' + rec(a) + '</span></div>' +
-        '<div class="ln"><button class="tl2" data-owner="' + esc(x[3]) + '">' + esc(b.team) + '</button><span class="meta">' + rec(b) + '</span></div>' +
-        '<div class="gfoot"><a class="rv" href="' + rivalryHref(x[2], x[3]) + '">⚔️ Rivalry' + (s.n ? ' · ' + s.aw + '–' + s.bw : ' · first meeting') + ' ›</a>' + (mine ? '<span class="flag">Your game</span>' : '') + '</div></div>';
-    });
-    h += '</div>';
+    var myName = teamOf(ME.owner).team, g = null, mine = null, opp = null;
+    r.games.forEach(function (x) { ["home", "away"].forEach(function (s) { if (x[s] && sameTeam(x[s].team, myName)) { g = x; mine = x[s]; opp = x[s === "home" ? "away" : "home"]; } }); });
+    var ago = Math.max(0, Math.round((Date.now() - new Date(r.at).getTime()) / 1000));
+    if (!mine) { $("v-match").innerHTML = h + '<div class="card"><h3>No game for ' + esc(myName) + ' in Week ' + r.week + '</h3></div>' + matchFooter(null) + '</div>'; return; }
+    var lead = mine.pts - (opp ? opp.pts : 0), pm = mine.proj || mine.pts, po = opp ? (opp.proj || opp.pts) : 0, share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
+    h += '<div class="mhero live"><div class="eb" style="color:var(--gold);display:flex;justify-content:space-between"><span>Week ' + r.week + ' · <span class="ldot"></span>Live</span><span style="color:#c8d2e4;text-transform:none;letter-spacing:0">updated ' + (ago < 60 ? ago + "s" : Math.round(ago / 60) + "m") + ' ago</span></div>' +
+      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div><div class="lsc ' + (lead >= 0 ? "w" : "") + '">' + f2(mine.pts) + '</div><div class="rec">proj ' + (mine.proj != null ? mine.proj : "–") + ' · ' + mine.left + ' to play</div></div><div class="mid">VS</div>' +
+      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div><div class="lsc ' + (lead < 0 ? "w" : "") + '">' + f2(opp.pts) + '</div><div class="rec">proj ' + (opp.proj != null ? opp.proj : "–") + ' · ' + opp.left + ' to play</div></div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
+      '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% by projection</span><span>' + (100 - share) + '%</span></div></div>';
+    // MAFFL scoring, live
+    var all = []; r.games.forEach(function (x) { ["home", "away"].forEach(function (s) { if (x[s] && !/ghost/i.test(x[s].team)) all.push(x[s]); }); });
+    var benchRank = all.slice().sort(function (a, b) { return a.bench - b.bench; }).findIndex(function (x) { return x === mine; }) + 1;
+    var top = all.slice().sort(function (a, b) { return b.pts - a.pts; })[0];
+    var s = W.survivor || {}, alive = (ME.tier === "U" ? s.upperActive : s.lowerActive) || [], amAlive = alive.some(function (t) { return sameTeam(t, myName); });
+    var aliveNow = all.filter(function (x) { return alive.some(function (t) { return sameTeam(t, x.team); }); }).sort(function (a, b) { return a.pts - b.pts; });
+    var low = aliveNow[0], survLine = !amAlive ? "You're out of Survivor." : low === mine ? "You're the lowest alive right now: in the danger zone." : "Safe by " + f2(mine.pts - low.pts) + " over " + esc(low.team) + " (lowest alive).";
+    h += '<div class="sh"><h2>MAFFL scoring · live</h2></div><div class="mlive">' +
+      '<div class="ml"><span>🏆</span><div><b>Coach of the Week</b><p>You\'d score ' + f2(mine.bench) + ' more with your best lineup · #' + benchRank + ' of ' + all.length + '</p></div></div>' +
+      '<div class="ml"><span>🛟</span><div><b>Survivor</b><p>' + survLine + '</p></div></div>' +
+      '<div class="ml"><span>💳</span><div><b>Weekly high (+1 credit)</b><p>' + (top === mine ? "You're the top score in " + (ME.tier === "U" ? "Upper" : "Lower") + " right now." : esc(top.team) + " leads with " + f2(top.pts) + " · you're " + f2(top.pts - mine.pts) + " back") + '</p></div></div></div>';
+    // Lineups side by side
+    function ln(p) { return p ? '<div class="lp' + (p.played ? '' : ' wait') + '"><b>' + esc(p.n) + '</b><small>' + esc(p.pos) + (p.played ? '' : ' · ⏳') + '</small><span>' + f2(p.pts) + (p.proj != null ? '<i>' + p.proj + '</i>' : '') + '</span></div>' : '<div class="lp"></div>'; }
+    var ORDER = ["QB", "TQB", "RB", "RB/WR", "WR", "WR/TE", "TE", "FLEX", "OP", "DT", "DE", "DL", "LB", "CB", "S", "DB", "DP", "D/ST", "K", "P", "HC"];
+    var bySlot = function (a, b) { var i = ORDER.indexOf(a.slot), j = ORDER.indexOf(b.slot); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); };
+    var ms = mine.players.filter(function (p) { return p.slot !== "BE" && p.slot !== "IR"; }).sort(bySlot), os = opp ? opp.players.filter(function (p) { return p.slot !== "BE" && p.slot !== "IR"; }).sort(bySlot) : [];
+    h += '<div class="sh"><h2>Lineups</h2><small>⏳ yet to play · small = projection</small></div><div class="card lineup" style="margin-top:0">' +
+      ms.map(function (p, i) { return '<div class="lrow"><div class="ls">' + esc(p.slot) + '</div>' + ln(p) + ln(os[i]) + '</div>'; }).join("") +
+      '<details><summary class="rv" style="padding:10px 0">Benches ›</summary>' + mine.players.filter(function (p) { return p.slot === "BE"; }).map(function (p, i) {
+        var ob = opp ? opp.players.filter(function (q) { return q.slot === "BE"; })[i] : null; return '<div class="lrow"><div class="ls">BE</div>' + ln(p) + ln(ob) + '</div>'; }).join("") + '</details></div>';
+    h += matchFooter(opp) + '</div>';
     $("v-match").innerHTML = h;
   }
+  function matchFooter(opp) {
+    var oppOwner = opp ? ownerOfTeam(opp.team) : null;
+    return '<div class="btns" style="margin:12px 0 16px">' + (oppOwner ? '<button class="b" data-riv-push="' + esc(ME.owner) + '|' + esc(oppOwner) + '">⚔️ Rivalry history</button>' : '') + '<button class="b" id="mrefresh">↻ Refresh</button></div>';
+  }
+  document.addEventListener("click", function (e) { if (e.target.closest("#mrefresh")) { LIVE_AT = 0; loadLive(); toast("Refreshing…"); } });
 
   // ---------- TEAM ----------
   function renderTeam() {

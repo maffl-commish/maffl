@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.7";
+var VERSION = "0.8";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons"];
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
@@ -39,7 +39,8 @@ var MAX_TRIES = 5;
 function doGet(e) {
   var p = (e && e.parameter) || {};
   try {
-    if (p.action === "summary") return json(summary_(p.week, null)); // public counts only; private data needs POST + passphrase
+    if (p.action === "summary") return json(summary_(p.week, null));
+    if (p.action === "live") { try { return json(live_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
   } catch (err) { return json({ ok: false, error: String(err) }); }
@@ -216,6 +217,76 @@ function trades_(owner) {
     if (e.value === "on") block[e.ref] = { owner: e.owner, note: e.meta }; else if (block[e.ref] && norm_(block[e.ref].owner) === norm_(e.owner)) delete block[e.ref];
   });
   return { offers: offers, block: block };
+}
+
+// ---------------------------------------------------------------- LIVE scoring (ESPN → compact JSON, 45 s cache)
+// Needs Script Properties ESPN_S2 and SWID (Apps Script → Project Settings → Script properties). Same cookies
+// the Tuesday robot uses. Read-only: nothing here writes anywhere.
+var LEAGUES = { U: 34467, L: 1587593698 }, SEASON = 2026;
+var POS = { 1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 7: "P", 9: "DT", 10: "DE", 11: "LB", 12: "CB", 13: "S", 14: "HC", 16: "D/ST" };
+var SLOT = { 0: "QB", 1: "TQB", 2: "RB", 3: "RB/WR", 4: "WR", 5: "WR/TE", 6: "TE", 7: "OP", 8: "DT", 9: "DE", 10: "LB", 11: "DL", 12: "CB", 13: "S", 14: "DB", 15: "DP", 16: "D/ST", 17: "K", 18: "P", 19: "HC", 20: "BE", 21: "IR", 23: "FLEX", 24: "ER" };
+function espn_(lid, query) {
+  var p = PropertiesService.getScriptProperties(), s2 = p.getProperty("ESPN_S2"), swid = p.getProperty("SWID");
+  if (!s2 || !swid) throw new Error("SETUP: add ESPN_S2 and SWID in Apps Script → Project Settings → Script properties");
+  var url = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "/segments/0/leagues/" + lid + "?" + query;
+  var r = UrlFetchApp.fetch(url, { headers: { Cookie: "espn_s2=" + s2 + "; SWID=" + swid }, muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) throw new Error("ESPN said " + r.getResponseCode());
+  return JSON.parse(r.getContentText());
+}
+// Best legal lineup (exact, Hungarian); same rule as the robot's Coach of the Week. slots: [slotId...], players: [[pts, [eligibleSlotIds]]]
+function bestLineup_(slots, players) {
+  var n = slots.length; if (!n) return { pts: 0, used: [] };
+  var cols = players.map(function (p) { return [p[0], p[1]]; }); for (var e = 0; e < n; e++) cols.push([0, null]);
+  var m = cols.length, BIG = 1e9, INF = Infinity;
+  var cost = slots.map(function (s) { return cols.map(function (c) { return (c[1] === null || c[1].indexOf(s) >= 0) ? -c[0] : BIG; }); });
+  var u = new Array(n + 1).fill(0), v = new Array(m + 1).fill(0), p = new Array(m + 1).fill(0), way = new Array(m + 1).fill(0);
+  for (var i = 1; i <= n; i++) {
+    p[0] = i; var j0 = 0, minv = new Array(m + 1).fill(INF), used = new Array(m + 1).fill(false);
+    do {
+      used[j0] = true; var i0 = p[j0], delta = INF, j1 = 0;
+      for (var j = 1; j <= m; j++) if (!used[j]) { var cur = cost[i0 - 1][j - 1] - u[i0] - v[j]; if (cur < minv[j]) { minv[j] = cur; way[j] = j0; } if (minv[j] < delta) { delta = minv[j]; j1 = j; } }
+      for (j = 0; j <= m; j++) { if (used[j]) { u[p[j]] += delta; v[j] -= delta; } else minv[j] -= delta; }
+      j0 = j1;
+    } while (p[j0] !== 0);
+    do { var jj = way[j0]; p[j0] = p[jj]; j0 = jj; } while (j0);
+  }
+  var pts = 0, usedIdx = [];
+  for (var k = 1; k <= m; k++) if (p[k]) { pts += cols[k - 1][0]; if (k - 1 < players.length) usedIdx.push(k - 1); }
+  return { pts: pts, used: usedIdx };
+}
+function live_(tier) {
+  tier = tier === "L" ? "L" : "U";
+  var cache = CacheService.getScriptCache(), hit = cache.get("live_" + tier);
+  if (hit) return JSON.parse(hit);
+  var lid = LEAGUES[tier], base = espn_(lid, "view=mSettings&view=mTeam");
+  var mp = (base.status && base.status.currentMatchupPeriod) || base.scoringPeriodId, sp = base.scoringPeriodId || mp;
+  var counts = ((base.settings || {}).rosterSettings || {}).lineupSlotCounts || {}, slots = [];
+  Object.keys(counts).forEach(function (s) { var id = +s; if (id !== 20 && id !== 21) for (var c = 0; c < counts[s]; c++) slots.push(id); });
+  var names = {}; (base.teams || []).forEach(function (t) { names[t.id] = t.name || ((t.location || "") + " " + (t.nickname || "")).trim(); });
+  var box = espn_(lid, "view=mMatchupScore&view=mBoxscore&view=mScoreboard&scoringPeriodId=" + sp);
+  function side(sd) {
+    if (!sd) return null;
+    var ents = ((sd.rosterForCurrentScoringPeriod || sd.rosterForMatchupPeriod || {}).entries) || [];
+    var players = ents.map(function (e) {
+      var pl = (e.playerPoolEntry || {}).player || {}, st = pl.stats || [];
+      var act = st.filter(function (x) { return x.scoringPeriodId === sp && x.statSourceId === 0; })[0], prj = st.filter(function (x) { return x.scoringPeriodId === sp && x.statSourceId === 1; })[0];
+      var pts = act ? act.appliedTotal : ((e.playerPoolEntry || {}).appliedStatTotal || 0);
+      return { n: pl.fullName || "?", pos: POS[pl.defaultPositionId] || "", slot: SLOT[e.lineupSlotId] || String(e.lineupSlotId), sid: e.lineupSlotId,
+        pts: Math.round((pts || 0) * 100) / 100, proj: prj ? Math.round(prj.appliedTotal * 10) / 10 : null, played: !!act, el: pl.eligibleSlots || [] };
+    });
+    var starters = players.filter(function (x) { return x.sid !== 20 && x.sid !== 21; }), pool = players.filter(function (x) { return x.sid !== 21; });
+    var score = sd.totalPointsLive != null ? sd.totalPointsLive : (sd.totalPoints != null ? sd.totalPoints : starters.reduce(function (a, x) { return a + x.pts; }, 0));
+    var best = bestLineup_(slots, pool.map(function (x) { return [x.pts, x.el]; }));
+    players.forEach(function (x) { delete x.el; delete x.sid; });
+    return { team: names[sd.teamId] || ("Team " + sd.teamId), pts: Math.round(score * 100) / 100,
+      proj: sd.totalProjectedPointsLive != null ? Math.round(sd.totalProjectedPointsLive * 10) / 10 : null,
+      bench: Math.round((best.pts - starters.reduce(function (a, x) { return a + x.pts; }, 0)) * 100) / 100,
+      left: starters.filter(function (x) { return !x.played; }).length, players: players };
+  }
+  var games = (box.schedule || []).filter(function (g) { return g.matchupPeriodId === mp; }).map(function (g) { return { home: side(g.home), away: side(g.away) }; });
+  var out = { ok: true, tier: tier, week: mp, at: new Date().toISOString(), games: games };
+  var str = JSON.stringify(out); if (str.length < 95000) cache.put("live_" + tier, str, 45);
+  return out;
 }
 
 // ---------------------------------------------------------------- reads
