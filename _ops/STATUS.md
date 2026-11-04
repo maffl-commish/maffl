@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-03 by Claude (chat), REEL codename + hub doc
+**Last updated:** 2026-11-03 by Claude (chat), lab chat (APP_DESIGN §4c)
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · Lab chat (Sleeper-style, APP_DESIGN §4c): 💬 header button with unread count opens a pull-up sheet over the app. League chat (everyone), Upper/Lower Tier groups (commish sees both), DMs between any two owners. Trade offers post themselves into the two owners' DM as cards (offer, counter, accept, decline, withdraw, commish approve/negate) with live action buttons on the newest card; accepted trades post to the tier group, approved trades to the league room. ⇄ starts a trade from a DM; Team → Trades offers get 💬 Chat. Reel For you leads with "💬 Trade talk" cards that open the thread. @mentions + Mentions tab, emoji reactions, delete own, commish pin/delete. Backend logic v0.11 (`chat`, `chatsend`, `chatmod`, `inbox`; Chat + Reads tabs auto-created; counters decline the original server-side). Tested against a simulated Sheet (31 checks) and at 390px.
 - 2026-11-03 · REEL · Codename "REEL" for the app redesign. New `_ops/docs/REEL.md` front door: documented, built, roadmap, backlog (incl. the DM/league chat idea). CLAUDE.md REEL section; APP_DESIGN v0.7 journal line. Doc only.
 - 2026-11-03 · Credit sync robot (full reconciliation): approving a perk or a trade with credits in the app pushes the backend's ledger to `_ops/inbox/credit_ledger(_test).json`; new `credit-sync.yml` runs `apply_credit_ledger.py` (append to Credit_Log tagged `[app L-…]`, recompute Owners Sheet balance) → gen-credits → validate → commit. TEST mode (default) = dry run, commits nothing; `CREDIT_SYNC=live` at go-live. Backend logic v0.10 (ledger, push via Script property GITHUB_TOKEN, owner emails on approve/deny, `resync`, public `?action=ledger`). App balances now read the official record; approved-not-yet-logged credits stay held; "Approved · posting" → "Logged ✓"; commish sync card with Re-send. APP_DESIGN §10 (credit sync, ESPN write experiment, automation queue); governance CE-4 note. **Needs:** GITHUB_TOKEN Script property.
 - 2026-11-03 · Lab Team → Credits: perk buttons replace the "In the build" card. Tiles for Extra FAAB (1 cr per $20, stepper), Double Player Bonus (10; pick week + player, max 2/week, different players), Matchup Swap (10; pick week + team, division games/Ghost blocked, shows who you'd play), Relegation Insurance (closed Oct 1, x of 3 left) and Division Swap (off-season). Each opens a request sheet → confirm → commish approves/denies (reason) or owner cancels; credits held against "free" balance (trades too) until logged; Thursday 6 PM ET lock (Wk 12 Thanksgiving 11:30 AM); opponents see perks aimed at them ("Coming at you"); commish gets an email + Credits badge. Backend logic v0.9 (`perk`, `perkact`; Perks tab auto-created). Tested against a simulated Sheet.

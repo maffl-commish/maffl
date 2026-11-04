@@ -385,6 +385,86 @@
   .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%) translateY(20px);opacity:0;z-index:95;background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;font:600 14px var(--body);transition:.25s;max-width:90vw;pointer-events:none}
   .toast.on{opacity:1;transform:translateX(-50%)}
   .loading{padding:60px 20px;text-align:center;color:var(--muted)}
+  /* chat (pop-out sheet over the reel; trade sheets and confirms open above it) */
+  .hbtn{position:relative;width:36px;height:36px;border-radius:50%;background:var(--navy-soft);display:none;place-items:center;font-size:18px}
+  .hbtn.on{display:grid}
+  .hbtn[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-3px;right:-4px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:17px;height:17px;padding:0 4px;border-radius:9px;display:grid;place-items:center;border:2px solid var(--surface)}
+  .cscrim{position:fixed;inset:0;background:rgba(15,29,52,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+  .cscrim.on{opacity:1;pointer-events:auto}
+  .chat{position:fixed;left:0;right:0;top:0;height:var(--vvh,100dvh);z-index:61;max-width:480px;margin:0 auto;display:flex;flex-direction:column;pointer-events:none}
+  .chat .cpan{margin-top:calc(env(safe-area-inset-top) + 14px);flex:1;min-height:0;display:flex;flex-direction:column;background:var(--page-bg);border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgba(15,29,52,.18);transform:translateY(105%);transition:transform .28s ease;pointer-events:auto;overflow:hidden}
+  .chat.on .cpan{transform:none}
+  .chd{position:relative;display:flex;align-items:center;gap:8px;padding:14px 12px 10px;background:var(--surface);border-bottom:1px solid var(--border);flex:0 0 auto}
+  .chd .grabber{position:absolute;left:50%;top:6px;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--border)}
+  .chd .cb{font:700 20px var(--display);color:var(--gold-dark);padding:2px 8px 2px 2px;visibility:hidden}
+  .chd .ct{flex:1;min-width:0;font:700 20px/1.05 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chd .ct small{display:block;font:500 12px var(--body);color:var(--muted)}
+  .chd .cx{font-size:26px;color:var(--muted);padding:0 4px}
+  .chd .cnew{font:700 12px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy);background:var(--gold);border-radius:999px;padding:7px 11px}
+  .cbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px 14px}
+  .cseg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 0 4px}
+  .cseg button{flex:1;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .cseg button.on{background:var(--surface);color:var(--navy);box-shadow:0 1px 3px var(--navy-shadow)}
+  .cseg em{font-style:normal;background:var(--loss);color:#fff;border-radius:999px;padding:0 6px;font:700 10px var(--body);margin-left:4px}
+  .croom{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:11px 0;border-top:1px solid var(--border)}
+  .croom:first-child{border-top:0}
+  .cav{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--display);color:#fff;background:var(--navy)}
+  .cav.sm{width:34px;height:34px;font-size:13px}
+  .cav.ic{background:var(--gold-soft);color:var(--navy);font-size:22px;box-shadow:inset 0 0 0 1px var(--border)}
+  .cav.bot{background:var(--gold);color:var(--navy);font-size:17px}
+  .croom .cm{flex:1;min-width:0}
+  .croom .cn{display:flex;justify-content:space-between;gap:8px;font:700 17px/1.15 var(--display)}
+  .croom .cn small{font:500 12px var(--body);color:var(--muted);flex:0 0 auto}
+  .croom .cp{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .croom.un .cp{color:var(--navy);font-weight:700}
+  .croom .dot{flex:0 0 auto;min-width:20px;height:20px;border-radius:10px;background:var(--loss);color:#fff;font:700 11px var(--body);display:grid;place-items:center;padding:0 5px}
+  .cgrp{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:16px 0 2px}
+  .cpin{background:var(--gold-soft);border:1px solid #f3dfb5;border-radius:10px;padding:8px 10px;margin-top:10px;font-size:13px;line-height:1.35}
+  .cpin b{font:700 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dark);display:block}
+  .cmsg{display:flex;gap:10px;padding:10px 0 2px}
+  .cmsg .cmb{flex:1;min-width:0}
+  .cmsg .cmh{display:flex;align-items:baseline;gap:6px;font:700 15px var(--display)}
+  .cmsg .cmh small{font:500 11px var(--body);color:var(--muted)}
+  .cmsg .cmh .opt3{margin-left:auto;color:var(--muted);font-size:17px;padding:2px 6px;line-height:1}
+  .cmsg .cmh .opt3.o2{margin-left:0}
+  .cmsg .ctx{font-size:15px;line-height:1.42;color:var(--navy);white-space:pre-wrap;word-wrap:break-word;margin-top:1px}
+  .cmsg.me .cmh{color:var(--gold-dark)}
+  .cmsg.gone .ctx{color:var(--muted);font-style:italic}
+  .ctx .at{color:var(--gold-dark);font-weight:700}
+  .cevt{font:700 14px/1.3 var(--body);margin-top:1px}
+  .ctrade{margin-top:6px;border:1px solid var(--border);border-left:4px solid var(--gold);background:var(--surface);border-radius:10px;padding:9px 11px}
+  .ctrade .two{gap:10px}
+  .ctrade .leg{margin-top:2px}
+  .ctrade .row{padding:4px 0;border:0;gap:7px}
+  .ctrade .row .nm{font-size:15px}
+  .ctrade .row .pos{min-width:28px;font-size:10px}
+  .ctrade .cst{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;font:700 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .ctrade .btns{margin-top:8px}
+  .ctrade .btns .b{padding:9px 4px}
+  .crx{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;align-items:center}
+  .crx button{border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:13px;background:var(--surface)}
+  .crx button.sel{background:var(--gold);border-color:var(--gold)}
+  .crx .add{color:var(--muted);font-size:14px}
+  .crx .whos{font-size:11px;color:var(--muted)}
+  .cpick{display:flex;gap:6px;margin-top:5px}
+  .cpick button{font-size:20px;padding:4px 7px;border-radius:10px;background:var(--surface);border:1px solid var(--border)}
+  .cday{text-align:center;font:700 11px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+  .cempty{text-align:center;color:var(--muted);font-size:14px;padding:40px 10px;line-height:1.5}
+  .ccomp{flex:0 0 auto;display:flex;align-items:flex-end;gap:6px;padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);background:var(--surface);border-top:1px solid var(--border)}
+  .ccomp textarea{flex:1;min-width:0;resize:none;border:1px solid var(--border);border-radius:20px;padding:9px 14px;font:500 16px/1.3 var(--body);color:var(--navy);background:var(--page-bg);max-height:120px;outline:none}
+  .ccomp textarea:focus{border-color:var(--gold)}
+  .ccomp .ci{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:700 17px var(--display);color:var(--navy);background:var(--navy-soft)}
+  .ccomp .ci.send{background:var(--navy);color:var(--gold);font-size:18px}
+  .ccomp .ci.send:disabled{opacity:.35}
+  .catlist{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;padding:8px 10px 0;background:var(--surface);border-top:1px solid var(--border);scrollbar-width:none}
+  .catlist::-webkit-scrollbar{display:none}
+  .catlist button{flex:0 0 auto;border:1px solid var(--border);border-radius:999px;padding:6px 11px;font:600 13px var(--body)}
+  .cmenu{display:flex;gap:6px;margin-top:6px}
+  .cmenu button{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:var(--surface)}
+  .cmenu button.bad{color:var(--loss)}
+  .reelchat .ctrade{margin-top:8px}
+  .reelchat .last{display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)}
+  .reelchat .last p{font-size:14px;line-height:1.4;color:var(--navy)}
 </style>
 </head>
 <body>
@@ -394,7 +474,7 @@
     <div class="pastbar" id="pastbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
-      <div class="wk" id="hdrwk"></div><button class="chip" id="chip" aria-label="Switch team">··</button>
+      <div class="wk" id="hdrwk"></div><button class="hbtn" id="chatbtn" aria-label="Messages">💬</button><button class="chip" id="chip" aria-label="Switch team">··</button>
     </div>
   </header>
   <main id="views">
@@ -414,6 +494,8 @@
   </nav>
 </div>
 
+<div class="cscrim" id="cscrim"></div>
+<div class="chat" id="chat"><div class="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cnew" id="cnew">+ New</button><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><div id="cfoot"></div></div></div>
 <div class="sscrim" id="sscrim"></div>
 <div class="psheet" id="psheet"><div class="shd"><span class="grabber"></span><button id="sback" style="visibility:hidden">‹ Back</button><button class="x" id="sx" aria-label="Close">×</button></div><div class="sb" id="sb"></div></div>
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
@@ -597,7 +679,7 @@
   function loadSummary() {
     if (!API_URL || !ME) return;
     api("summary", creds()).then(function (r) {
-      if (!r.ok) return; SUM = r; ME.commish = !!r.commish; renderHome(); refreshTeam(); paint();
+      if (!r.ok) return; SUM = r; ME.commish = !!r.commish; renderHome(); refreshTeam(); paint(); chatBadge();
     }).catch(function () {});
   }
 
@@ -818,7 +900,7 @@
   // "For you" category: personal cards lead the reel
   var GOTW = null;
   function forYouCards() {
-    var out = [], me = teamOf(ME.owner); GOTW = null;
+    var out = chatCards(), me = teamOf(ME.owner); GOTW = null;
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
     if (prev) {
       var oppOwner = isMe(prev.ownerA) ? prev.ownerB : prev.ownerA, opp = teamOf(oppOwner), r = h2h(ME.owner, oppOwner);
@@ -1285,6 +1367,7 @@
     if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
     else if (o.status === "PROPOSED" && iAmFrom) btn = '<button class="b" data-act="withdraw" data-id="' + o.id + '">Withdraw</button>';
     else if (o.status === "ACCEPTED" && ME.commish) btn = '<button class="b" data-act="negate" data-id="' + o.id + '">Negate</button><button class="b pri" data-act="approve" data-id="' + o.id + '">Approve</button>';
+    if (mineOffer && chatOn()) btn += '<button class="b" data-chat-room="' + esc(dmRoom(o.from, o.to)) + '">💬 Chat</button>';
     if (btn) h += '<div class="btns">' + btn + '</div>';
     if (o.status === "ACCEPTED" && mineOffer) h += '<p class="meta" style="margin-top:8px">Next: send the player side on ESPN. Credits move when the commish approves.</p>';
     return h + '</div>';
@@ -1537,7 +1620,8 @@
   }
   function busy(on) { document.body.classList.toggle("busy", !!on); }
   function afterChange(msg) {
-    return api("summary", creds()).then(function (r) { if (r.ok) SUM = r; refreshTeam(); paint(); if (msg) toast(msg); });
+    return api("summary", creds()).then(function (r) { if (r.ok) SUM = r; refreshTeam(); paint(); if (msg) toast(msg);
+      chatBadge(); if (CH.open) { if (CH.view === "thread") { CH.sig = null; loadRoom(); } else if (CH.view === "inbox") drawInbox(); } else if ($("v-home").classList.contains("on")) renderHome(); });
   }
   function refreshTeam() { renderTeam(); var c = badgeCount(); document.querySelector(".tbadge").setAttribute("data-n", c || ""); }
 
@@ -1595,9 +1679,10 @@
       var them2 = teamOf(BLD.with);
       confirmBox("Send this offer?", '<p class="p">To <b>' + esc(them2.team) + '</b>. They can accept, decline or counter. You can withdraw it until they answer.</p><div class="card two" style="margin-top:8px"><div>' + legHTML("You send", ME.owner, Object.keys(BLD.give), BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, Object.keys(BLD.get), BLD.tc) + '</div></div>', "Yes, send it").then(function (yes) {
         if (!yes) return; busy(1);
-        var send = api("offer", Object.assign(creds(), { to: BLD.with, give: Object.keys(BLD.give), get: Object.keys(BLD.get), giveCredits: BLD.gc, getCredits: BLD.tc, note: BLD.note, reasons: Object.keys(BLD.reasons) }));
-        var prev = BLD.counterOf ? api("respond", Object.assign(creds(), { offer_id: BLD.counterOf, decision: "decline" })) : Promise.resolve({ ok: true });
-        Promise.all([send, prev]).then(function (rs) { busy(0); if (!rs[0].ok) { toast(rs[0].error); return; } closeSheet(); TEAM_SUB = "trades"; afterChange("Offer sent to " + them2.team + " ✓"); })
+        // a counter declines the offer it answers on the server, in the same step (logic v0.11)
+        var send = api("offer", Object.assign(creds(), { to: BLD.with, give: Object.keys(BLD.give), get: Object.keys(BLD.get), giveCredits: BLD.gc, getCredits: BLD.tc, note: BLD.note, reasons: Object.keys(BLD.reasons), counterOf: BLD.counterOf || "" }));
+        Promise.all([send]).then(function (rs) { busy(0); if (!rs[0].ok) { toast(rs[0].error); return; } closeSheet(); TEAM_SUB = "trades";
+          if (!CH.open && rs[0].room && chatOn()) openChat(rs[0].room); afterChange("Offer sent to " + them2.team + " ✓"); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); });
       });
       return;
@@ -1739,6 +1824,288 @@
       e.preventDefault(); openSheet("owner", el.dataset.owner, null, $("psheet").classList.contains("on")); }
   });
 
+  // ---------- CHAT: league room, tier groups, DMs. Trade offers post themselves into the two owners' DM ----------
+  // Backend: logic.js chat_/chatSend_/chatMod_/inbox_ (v0.11). Design: APP_DESIGN.md §4c.
+  var CH = { open: false, view: "inbox", seg: "chats", room: null, data: null, sig: null, at: false, ment: {}, draft: {}, menu: null, picker: null, q: "" };
+  var CHAT_EMO = ["🔥", "😂", "💀", "👀", "👏"], BOTN = "MAFFL HQ";
+  var AVC = ["#1a2e50", "#2f6f9f", "#1d9e75", "#8e5bb5", "#c0603a", "#3a7d8c", "#a8862a", "#6b778d", "#b5476b", "#45629b"];
+  var EVT = { PROPOSED: "proposed a trade", COUNTER: "countered", ACCEPTED: "accepted the trade", DECLINED: "declined the trade", WITHDRAWN: "withdrew the offer",
+    REVIEW: "Trade accepted · 24-hour review", APPROVED: "Trade completed ✅", NEGATED: "Trade negated by the commish" };
+  function chatOn() { return !!(API_URL && ME && store("maffl_lab_pin")); }
+  function inboxOf() { return (SUM && SUM.chat) || { rooms: [], unread: 0, mentions: [], mentionsUnread: 0 }; }
+  function dmRoom(a, b) { return "dm:" + [norm(a), norm(b)].sort().join("|"); }
+  function avatar(o, sm) {
+    if (o === BOTN) return '<span class="cav bot' + (sm ? ' sm' : '') + '">🏈</span>';
+    return '<span class="cav' + (sm ? ' sm' : '') + '" style="background:' + AVC[hashStr(norm(o)) % AVC.length] + '">' + esc(initials(o)) + '</span>';
+  }
+  function ago(ts) {
+    var s = (Date.now() - new Date(ts).getTime()) / 1000;
+    if (s < 60) return "now"; if (s < 3600) return Math.floor(s / 60) + "m"; if (s < 86400) return Math.floor(s / 3600) + "h"; if (s < 6 * 86400) return Math.floor(s / 86400) + "d";
+    return new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  }
+  function otherOf(room) {
+    var parts = room.slice(3).split("|"), o = parts.filter(function (p) { return p !== norm(ME.owner); })[0] || parts[0];
+    var hit = TEAMS.filter(function (t) { return norm(t.owner) === o; })[0]; return hit ? hit.owner : o;
+  }
+  function roomInfo(room) {
+    if (room === "league") return { t: "League chat", s: "Everyone in MAFFL", ic: '<span class="cav ic">🏈</span>' };
+    if (room.indexOf("tier:") === 0) { var u = room === "tier:U", mine = room === "tier:" + ME.tier;
+      return { t: (u ? "Upper" : "Lower") + " Tier group", s: mine ? "Your tier only" : "Commish view (other tier)", ic: '<span class="cav ic">' + (u ? "🛡️" : "📈") + '</span>' }; }
+    var other = otherOf(room), t = teamOf(other);
+    return { t: t.team || other, s: other, ic: avatar(other), with: other };
+  }
+  function evtLine(m) {
+    if (m.owner === BOTN) return m.room.indexOf("dm:") === 0 ? (m.event === "APPROVED" ? "The commish approved the trade ✅" : m.event === "NEGATED" ? "The commish negated the trade" : EVT[m.event] || "") : EVT[m.event] || "";
+    return (isMe(m.owner) ? "You" : shortOf(m.owner)) + " " + (EVT[m.event] || m.event);
+  }
+  function previewOf(r) {
+    var l = r.last;
+    if (!l) return r.room === "league" ? "Say something to the league" : r.room.indexOf("tier:") === 0 ? (r.room === "tier:" + ME.tier ? "Talk to your tier" : "Commish view · nothing yet") : "Start the conversation";
+    if (l.kind === "offer") return (l.owner === BOTN ? "🏈 " + (EVT[l.event] || "Trade update") : "💱 " + evtLine({ owner: l.owner, event: l.event, room: r.room }));
+    return (l.owner === BOTN ? "" : isMe(l.owner) ? "You: " : shortOf(l.owner) + ": ") + l.text;
+  }
+  function chatBadge() {
+    var n = inboxOf().unread || 0, b = $("chatbtn"); if (!b) return;
+    b.classList.toggle("on", chatOn()); b.setAttribute("data-n", n ? (n > 9 ? "9+" : String(n)) : "");
+  }
+  function fmtText(t) { return esc(t).replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, '$1<span class="at">@$2</span>'); }
+  function tradeMini(o, latest) {
+    if (!o) return '<div class="ctrade"><p class="meta">Trade details unavailable.</p></div>';
+    var cur = (SUM.offers || []).filter(function (x) { return x.id === o.id; })[0] || o, st = ST[cur.status] || [cur.status, ""];
+    var h = '<div class="ctrade"><div class="cst"><span>' + esc(shortOf(o.from)) + ' ↔ ' + esc(shortOf(o.to)) + '</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>' +
+      '<div class="two"><div>' + legHTML(shortOf(o.from) + " sends", o.from, o.give, o.giveCredits) + '</div><div>' + legHTML(shortOf(o.to) + " sends", o.to, o.get, o.getCredits) + '</div></div>';
+    if ((o.reasons || []).length) h += '<div class="chips" style="margin-top:6px">' + o.reasons.map(function (r) { return '<span class="chip2 on">' + esc(r) + '</span>'; }).join("") + '</div>';
+    var btn = "";
+    if (latest && W === LATEST) {
+      if (cur.status === "PROPOSED" && isMe(cur.to)) btn = '<button class="b" data-act="decline" data-id="' + cur.id + '">Decline</button><button class="b" data-counter="' + cur.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + cur.id + '">Accept</button>';
+      else if (cur.status === "PROPOSED" && isMe(cur.from)) btn = '<button class="b" data-act="withdraw" data-id="' + cur.id + '">Withdraw</button>';
+      else if (cur.status === "ACCEPTED" && ME.commish) btn = '<button class="b" data-act="negate" data-id="' + cur.id + '">Negate</button><button class="b pri" data-act="approve" data-id="' + cur.id + '">Approve</button>';
+    }
+    return h + (btn ? '<div class="btns">' + btn + '</div>' : '') + '</div>';
+  }
+  function dayLabel(ts) {
+    var d = new Date(ts), t = new Date(), d0 = new Date(ts); t.setHours(0, 0, 0, 0); d0.setHours(0, 0, 0, 0); var diff = Math.round((t - d0) / 864e5);
+    return diff === 0 ? "Today" : diff === 1 ? "Yesterday" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  }
+  function msgHTML(m, latestOf) {
+    var ref = "chat:" + m.id, d = CH.data || {}, bot = m.owner === BOTN, mine = isMe(m.owner);
+    var canDel = !m.deleted && m.kind !== "offer" && !m.pending && (mine || ME.commish), canPin = ME.commish && !m.deleted && !m.pending;
+    var h = '<div class="cmsg' + (mine ? ' me' : '') + (m.deleted ? ' gone' : '') + '">' + avatar(m.owner, true) + '<div class="cmb"><div class="cmh">' +
+      (bot ? 'MAFFL HQ' : '<button class="tl2" data-owner="' + esc(m.owner) + '">' + esc(mine ? "You" : shortOf(m.owner)) + '</button>') +
+      '<small>' + (m.pending ? "sending…" : ago(m.ts)) + (m.pinned ? ' · 📌 pinned' : '') + '</small>' + (m.deleted || m.pending ? '' : '<button class="opt3" data-cadd="' + m.id + '" aria-label="React">☺︎</button>') +
+      (canDel || canPin ? '<button class="opt3 o2" data-cmenu="' + m.id + '" aria-label="More">⋯</button>' : '') + '</div>';
+    if (m.kind === "offer") h += '<div class="cevt">' + esc(bot ? evtLine(m) : "💱 " + (EVT[m.event] || m.event).replace(/^./, function (c) { return c.toUpperCase(); })) + '</div>' + tradeMini(m.offer, latestOf[m.ref] === m.id) + (m.text ? '<div class="ctx" style="margin-top:6px">' + fmtText(m.text) + '</div>' : '');
+    else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text)) + '</div>';
+    if (CH.menu === m.id) h += '<div class="cmenu">' + (canPin ? '<button data-cmod="' + (m.pinned ? "unpin" : "pin") + '" data-mid="' + m.id + '">' + (m.pinned ? "Unpin" : "📌 Pin") + '</button>' : '') +
+      (canDel ? '<button class="bad" data-cmod="delete" data-mid="' + m.id + '">Delete</button>' : '') + '</div>';
+    if (!m.deleted && !m.pending) {
+      var cnt = (d.counts || {})[ref] || {}, my = (d.mine || {})[ref] || {}, who = (d.who || {})[ref] || {}, names = [];
+      Object.keys(who).forEach(function (e) { who[e].forEach(function (o) { names.push(isMe(o) ? "You" : shortOf(o)); }); });
+      var live = Object.keys(cnt).filter(function (e) { return cnt[e] > 0; });
+      if (live.length) h += '<div class="crx">' + live.map(function (e) { return '<button class="' + (my[e] ? 'sel' : '') + '" data-creact="' + m.id + '" data-e="' + e + '">' + e + ' ' + cnt[e] + '</button>'; }).join("") +
+        (names.length ? '<span class="whos">' + esc(names.slice(0, 4).join(", ")) + (names.length > 4 ? " +" + (names.length - 4) : "") + '</span>' : '') + '</div>';
+      if (CH.picker === m.id) h += '<div class="cpick">' + CHAT_EMO.map(function (e) { return '<button class="' + (my[e] ? 'sel' : '') + '" data-creact="' + m.id + '" data-e="' + e + '">' + e + '</button>'; }).join("") + '</div>';
+    }
+    return h + '</div></div>';
+  }
+  function drawThread() {
+    var body = $("cbody"), d = CH.data, nearBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 90;
+    if (!d) { body.innerHTML = '<div class="cempty">Loading…</div>'; return; }
+    var latestOf = {}; d.messages.forEach(function (m) { if (m.kind === "offer") latestOf[m.ref] = m.id; });
+    var h = (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : fmtText(p.text)) + '</div>'; }).join("");
+    if (d.more) h += '<p class="meta" style="text-align:center;margin-top:10px">Showing the latest ' + d.messages.length + ' messages</p>';
+    if (!d.messages.length) {
+      var dm = CH.room.indexOf("dm:") === 0;
+      h += '<div class="cempty">' + (dm ? "No messages yet. Say hi, or tap ⇄ to send a trade offer. Every offer, counter and answer between you two shows up here."
+        : CH.room === "league" ? "The whole league reads this room. Completed trades post here automatically." : "Only your tier sees this group. Accepted trades post here for the 24-hour review.") + '</div>';
+    }
+    var lastDay = "";
+    d.messages.forEach(function (m) { var dl = dayLabel(m.ts); if (dl !== lastDay) { h += '<div class="cday">' + dl + '</div>'; lastDay = dl; } h += msgHTML(m, latestOf); });
+    var keep = body.scrollTop; body.innerHTML = h;
+    if (CH.forceBottom || nearBottom) body.scrollTop = body.scrollHeight; else body.scrollTop = keep;
+    CH.forceBottom = false;
+  }
+  function mentionable(room) {
+    if (room.indexOf("dm:") === 0) return [otherOf(room)];
+    return TEAMS.filter(function (t) { return t.owner !== "—" && !isMe(t.owner) && (room === "league" || "tier:" + t.tier === room); })
+      .map(function (t) { return t.owner; }).sort(function (a, b) { return shortOf(a).localeCompare(shortOf(b)); });
+  }
+  function drawComposer() {
+    var room = CH.room, ta = $("cinput"); if (ta) CH.draft[room] = ta.value;
+    var other = room.indexOf("dm:") === 0 ? otherOf(room) : null, ot = other ? teamOf(other) : null;
+    var canTrade = ot && ot.tier === ME.tier && !/ghost/i.test(ot.team || "") && W === LATEST;
+    $("cfoot").innerHTML = (CH.at ? '<div class="catlist">' + mentionable(room).map(function (o) { return '<button data-cat="' + esc(o) + '">@' + esc(shortOf(o)) + '</button>'; }).join("") + '</div>' : '') +
+      '<div class="ccomp"><button class="ci" id="cat" aria-label="Mention someone">@</button>' + (canTrade ? '<button class="ci" data-trade-with="' + esc(other) + '" aria-label="Propose a trade">⇄</button>' : '') +
+      '<textarea id="cinput" rows="1" maxlength="500" enterkeyhint="send" placeholder="' + (room === "league" ? "Message the league" : room.indexOf("tier:") === 0 ? "Message your tier" : "Message " + esc(shortOf(other))) + '"></textarea>' +
+      '<button class="ci send" id="csend" aria-label="Send">➤</button></div>';
+    ta = $("cinput"); ta.value = CH.draft[room] || ""; grow(ta);
+    ta.oninput = function () { CH.draft[room] = ta.value; grow(ta); };
+    ta.onkeydown = function (ev) { if (ev.key === "Enter" && !ev.shiftKey && !("ontouchstart" in window)) { ev.preventDefault(); sendMsg(); } };
+    $("csend").onclick = sendMsg;
+    $("cat").onclick = function () { CH.at = !CH.at; drawComposer(); $("cinput").focus(); };
+  }
+  function grow(ta) { ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight + 2) + "px"; }
+  function sendMsg() {
+    var ta = $("cinput"), text = (ta.value || "").trim(), room = CH.room; if (!text || CH.sending) return;
+    var mentions = Object.keys(CH.ment).filter(function (o) { return text.indexOf("@" + shortOf(o)) >= 0; });
+    CH.sending = true; $("csend").disabled = true;
+    var tmp = { id: "tmp" + Date.now(), ts: new Date().toISOString(), room: room, owner: ME.owner, kind: "text", text: text, pending: true };
+    if (CH.data) { CH.data.messages.push(tmp); CH.forceBottom = true; drawThread(); }
+    ta.value = ""; CH.draft[room] = ""; grow(ta); CH.ment = {};
+    function undo(msg) { toast(msg); if (CH.data) CH.data.messages = CH.data.messages.filter(function (m) { return m !== tmp; }); if (CH.room === room) { drawThread(); $("cinput").value = text; } }
+    api("chatsend", Object.assign(creds(), { room: room, text: text, mentions: mentions })).then(function (r) {
+      CH.sending = false; if ($("csend")) $("csend").disabled = false;
+      if (!r.ok) { undo(r.error || "Didn't send"); return; } CH.sig = null; if (CH.room === room) loadRoom();
+    }).catch(function () { CH.sending = false; if ($("csend")) $("csend").disabled = false; undo("Couldn't reach the league server"); });
+  }
+  function drawInbox() {
+    var ib = inboxOf(), body = $("cbody");
+    var h = '<div class="cseg"><button data-cseg="chats" class="' + (CH.seg === "chats" ? "on" : "") + '">Chats</button><button data-cseg="mentions" class="' + (CH.seg === "mentions" ? "on" : "") + '">@ Mentions' + (ib.mentionsUnread ? '<em>' + ib.mentionsUnread + '</em>' : '') + '</button></div>';
+    if (CH.seg === "mentions") {
+      h += ib.mentions.length ? ib.mentions.map(function (m) {
+        return '<button class="croom' + (m.unread ? ' un' : '') + '" data-croom="' + esc(m.room) + '">' + avatar(m.owner) + '<div class="cm"><div class="cn"><span>' + esc(shortOf(m.owner)) + ' · ' + esc(roomInfo(m.room).t) + '</span><small>' + ago(m.ts) + '</small></div><div class="cp">' + esc(m.text) + '</div></div></button>'; }).join("")
+        : '<div class="cempty">Nobody has @mentioned you yet.</div>';
+    } else {
+      var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
+      if (!rooms.length) rooms = [{ room: "league", unread: 0 }, { room: "tier:" + ME.tier, unread: 0 }];
+      var row = function (r) { var info = roomInfo(r.room);
+        return '<button class="croom' + (r.unread ? ' un' : '') + '" data-croom="' + esc(r.room) + '">' + info.ic + '<div class="cm"><div class="cn"><span>' + esc(info.t) + '</span><small>' + (r.last ? ago(r.last.ts) : '') + '</small></div><div class="cp">' + esc(previewOf(r)) + '</div></div>' +
+          (r.unread ? '<span class="dot">' + (r.unread > 9 ? "9+" : r.unread) + '</span>' : '') + '</button>'; };
+      h += '<div class="cgrp">Group chats</div>' + rooms.map(row).join("") + '<div class="cgrp">Direct messages</div>' +
+        (dms.length ? dms.map(row).join("") : '<p class="meta" style="padding:8px 0">Tap <b>+ New</b> to message any owner. Trade offers you send or get land in that owner\'s chat automatically.</p>');
+    }
+    body.innerHTML = h;
+  }
+  function drawNew() {
+    var q = norm(CH.q), h = '<input class="field" id="csearch" placeholder="Search owners or teams" autocomplete="off" value="' + esc(CH.q) + '">';
+    ["U", "L"].forEach(function (tier) {
+      var list = TEAMS.filter(function (t) { return t.tier === tier && t.owner !== "—" && !isMe(t.owner) && (!q || norm(t.owner + " " + t.team).indexOf(q) >= 0); })
+        .sort(function (a, b) { return a.team.localeCompare(b.team); });
+      if (!list.length) return;
+      h += '<div class="cgrp">' + (tier === "U" ? "Upper" : "Lower") + ' tier</div>' + list.map(function (t) {
+        return '<button class="croom" data-croom="' + esc(dmRoom(ME.owner, t.owner)) + '">' + avatar(t.owner) + '<div class="cm"><div class="cn"><span>' + esc(t.team) + '</span></div><div class="cp">' + esc(t.owner) + (t.tier === ME.tier ? ' · can trade' : '') + '</div></div></button>'; }).join("");
+    });
+    $("cbody").innerHTML = h;
+    var s = $("csearch"); s.oninput = function () { CH.q = s.value; var pos2 = s.selectionStart; drawNew(); var s2 = $("csearch"); s2.focus(); s2.setSelectionRange(pos2, pos2); };
+  }
+  function chatHeader() {
+    var inThread = CH.view === "thread", info = inThread ? roomInfo(CH.room) : null;
+    $("cback").style.visibility = CH.view === "inbox" ? "hidden" : "visible";
+    $("cnew").style.display = CH.view === "inbox" ? "" : "none";
+    $("ctitle").innerHTML = CH.view === "new" ? "New message<small>Any owner, either tier</small>" : inThread ? (info.with ? '<button class="tl2" data-owner="' + esc(info.with) + '">' + esc(info.t) + '</button>' : esc(info.t)) + '<small>' + esc(info.s) + '</small>' : "Messages<small>League · your tier · DMs</small>";
+  }
+  function openChat(room) {
+    if (!chatOn()) { toast(API_URL ? "Sign in with your passphrase to chat" : "Chat needs the league server"); return; }
+    CH.open = true; sizeChat(); $("chat").classList.add("on"); $("cscrim").classList.add("on");
+    if (room) openRoom(room); else showInbox();
+    refreshInbox();
+  }
+  function closeChat() {
+    var ta = $("cinput"); if (ta && CH.room) CH.draft[CH.room] = ta.value;
+    CH.open = false; CH.room = null; CH.view = "inbox"; $("chat").classList.remove("on"); $("cscrim").classList.remove("on"); $("cpan").style.transform = "";
+    setTimeout(function () { if (!CH.open) $("cfoot").innerHTML = ""; }, 300);
+  }
+  function showInbox() { CH.view = "inbox"; CH.room = null; CH.data = null; CH.at = false; $("cfoot").innerHTML = ""; chatHeader(); drawInbox(); $("cbody").scrollTop = 0; }
+  function openRoom(room) {
+    CH.view = "thread"; CH.room = room; CH.data = null; CH.sig = null; CH.forceBottom = true; CH.menu = CH.picker = null; CH.at = false; CH.ment = {};
+    chatHeader(); drawThread(); drawComposer(); loadRoom();
+  }
+  function loadRoom() {
+    var room = CH.room; if (!room || CH.loading) return; CH.loading = true;
+    api("chat", Object.assign(creds(), { room: room })).then(function (r) {
+      CH.loading = false; if (CH.room !== room || !CH.open) return;
+      if (!r.ok) { $("cbody").innerHTML = '<div class="cempty">' + esc(r.error || "Couldn't open this chat") + '</div>'; return; }
+      var sig = JSON.stringify([r.messages.map(function (m) { return m.id + (m.deleted ? "d" : "") + (m.pinned ? "p" : "") + (m.offer ? m.offer.status : ""); }), r.counts, r.pinned.length]);
+      var pend = CH.data ? CH.data.messages.filter(function (m) { return m.pending; }) : [];
+      if (sig !== CH.sig || pend.length) { CH.sig = sig; CH.data = r; drawThread(); } else CH.data = Object.assign(r, {});
+      var ib = inboxOf(); (ib.rooms || []).forEach(function (x) { if (x.room === room) x.unread = 0; });
+      ib.unread = (ib.rooms || []).reduce(function (n, x) { return n + (x.unread || 0); }, 0); chatBadge();
+    }).catch(function () { CH.loading = false; });
+  }
+  function refreshInbox() {
+    if (!chatOn() || CH.inboxBusy) return; CH.inboxBusy = true;
+    api("inbox", creds()).then(function (r) {
+      CH.inboxBusy = false; if (!r.ok) return; var before = inboxOf().unread; SUM.chat = r.chat; chatBadge();
+      if (CH.open && CH.view === "inbox") drawInbox();
+      if (r.chat.unread !== before && $("v-home").classList.contains("on") && !CH.open) renderHome();
+    }).catch(function () { CH.inboxBusy = false; });
+  }
+  function sizeChat() {
+    var vv = window.visualViewport, c = $("chat"); if (!vv) return;
+    var body = $("cbody"), near = body && body.scrollHeight - body.scrollTop - body.clientHeight < 90;
+    c.style.setProperty("--vvh", vv.height + "px"); c.style.top = vv.offsetTop + "px";
+    if (near && CH.view === "thread") body.scrollTop = body.scrollHeight;
+  }
+  if (window.visualViewport) { visualViewport.addEventListener("resize", sizeChat); visualViewport.addEventListener("scroll", sizeChat); }
+  setInterval(function () { if (document.hidden || !CH.open || CH.view !== "thread") return; loadRoom(); }, 8000);
+  setInterval(function () { if (!document.hidden) refreshInbox(); }, 30000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { refreshInbox(); if (CH.open && CH.view === "thread") loadRoom(); } });
+  $("chatbtn").onclick = function () { openChat(); };
+  $("cclose").onclick = closeChat; $("cscrim").onclick = closeChat;
+  $("cback").onclick = function () { showInbox(); refreshInbox(); };
+  $("cnew").onclick = function () { CH.view = "new"; CH.q = ""; $("cfoot").innerHTML = ""; chatHeader(); drawNew(); };
+  (function () { // drag the header down to close
+    var hd = document.querySelector("#chat .chd"), pan = document.querySelector("#chat .cpan"), y0 = null, dy = 0;
+    pan.id = "cpan";
+    hd.addEventListener("pointerdown", function (e) { if (e.target.closest("button")) return; y0 = e.clientY; dy = 0; pan.style.transition = "none"; });
+    hd.addEventListener("pointermove", function (e) { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); pan.style.transform = "translateY(" + dy + "px)"; });
+    function end() { if (y0 === null) return; y0 = null; pan.style.transition = ""; if (dy > 110) closeChat(); else pan.style.transform = ""; }
+    hd.addEventListener("pointerup", end); hd.addEventListener("pointercancel", end);
+  })();
+  document.addEventListener("click", function (e) {
+    var el;
+    if ((el = e.target.closest("[data-chat-room]"))) { e.preventDefault(); openChat(el.dataset.chatRoom); return; }
+    if (!e.target.closest("#chat")) return;
+    if ((el = e.target.closest("[data-cseg]"))) { CH.seg = el.dataset.cseg; drawInbox(); return; }
+    if ((el = e.target.closest("[data-croom]"))) { openRoom(el.dataset.croom); return; }
+    if ((el = e.target.closest("[data-cat]"))) {
+      var ta = $("cinput"), ins = "@" + shortOf(el.dataset.cat) + " ", p = ta.selectionStart || ta.value.length;
+      CH.ment[el.dataset.cat] = 1; ta.value = ta.value.slice(0, p) + (p && !/\s$/.test(ta.value.slice(0, p)) ? " " : "") + ins + ta.value.slice(p); CH.draft[CH.room] = ta.value;
+      CH.at = false; drawComposer(); var t2 = $("cinput"); t2.focus(); t2.setSelectionRange(t2.value.length, t2.value.length); return;
+    }
+    if ((el = e.target.closest("[data-cmenu]"))) { CH.menu = CH.menu === el.dataset.cmenu ? null : el.dataset.cmenu; CH.picker = null; drawThread(); return; }
+    if ((el = e.target.closest("[data-cadd]"))) { CH.picker = CH.picker === el.dataset.cadd ? null : el.dataset.cadd; CH.menu = null; drawThread(); return; }
+    if ((el = e.target.closest("[data-creact]"))) {
+      var id = el.dataset.creact, emo = el.dataset.e, ref = "chat:" + id, d = CH.data; if (!d) return;
+      d.counts = d.counts || {}; d.mine = d.mine || {}; d.who = d.who || {};
+      var mn = d.mine[ref] = d.mine[ref] || {}, on = !mn[emo], c = d.counts[ref] = d.counts[ref] || {}, w = d.who[ref] = d.who[ref] || {};
+      mn[emo] = on; c[emo] = Math.max(0, (c[emo] || 0) + (on ? 1 : -1)); w[emo] = (w[emo] || []).filter(function (o) { return !isMe(o); }); if (on) w[emo].push(ME.owner);
+      CH.picker = null; CH.sig = null; drawThread();
+      api("react", Object.assign(creds(), { ref: ref, emoji: emo, on: on, week: "chat" })).then(function (r) { if (!r.ok) toast(r.error); }).catch(function () { toast("Offline: reaction not saved"); });
+      return;
+    }
+    if ((el = e.target.closest("[data-cmod]"))) {
+      var op = el.dataset.cmod, mid = el.dataset.mid;
+      var go = function () { busy(1); api("chatmod", Object.assign(creds(), { msg_id: mid, op: op })).then(function (r) { busy(0); CH.menu = null; if (!r.ok) { toast(r.error); return; } toast({ delete: "Deleted", pin: "Pinned 📌", unpin: "Unpinned" }[op]); CH.sig = null; loadRoom(); })
+        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+      if (op === "delete") confirmBox("Delete this message?", '<p class="p">It shows as "Message removed" for everyone. This can\'t be undone.</p>', "Delete", true).then(function (yes) { if (yes) go(); }); else go();
+      return;
+    }
+  });
+  // Reel: "a card that's a DM". Trade talk that needs you (or has new messages) leads For you; tap opens the thread.
+  function chatCards() {
+    if (!chatOn() || W !== LATEST) return [];
+    var ib = inboxOf(), out = [];
+    var live = function (other) { return (SUM.offers || []).filter(function (o) { return ((isMe(o.from) && norm(o.to) === norm(other)) || (isMe(o.to) && norm(o.from) === norm(other))) && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; })
+      .sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); })[0]; };
+    (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; }).forEach(function (r) {
+      var other = r.with || otherOf(r.room), o = live(other), needs = o && needsMe(o);
+      if (!r.unread && !needs) return;
+      var who = shortOf(other), t = needs && o.status === "PROPOSED" ? who + " sent you a trade" : r.unread ? r.unread + " new message" + (r.unread === 1 ? "" : "s") + " from " + who : "Trade talk with " + who;
+      var l = r.last;
+      out.push({ eb: "💬 Trade talk · " + teamOf(other).team, t: t, body: '<div class="reelchat">' + (o ? tradeMini(o, true) : '') +
+        (l && l.kind !== "offer" ? '<div class="last">' + avatar(l.owner, true) + '<p><b>' + esc(isMe(l.owner) ? "You" : shortOf(l.owner)) + '</b> ' + fmtText(l.text) + '</p></div>' : '') + '</div>' +
+        '<div class="btns"><button class="b pri" data-chat-room="' + esc(r.room) + '">💬 Open the chat' + (r.unread ? ' · ' + r.unread + ' new' : '') + '</button></div>' });
+    });
+    (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.unread; }).slice(0, 2).forEach(function (r) {
+      var info = roomInfo(r.room), l = r.last;
+      out.push({ eb: "💬 " + info.t, t: r.unread + " new in the " + (r.room === "league" ? "league chat" : "tier group"), body: '<div class="reelchat">' +
+        (l ? '<div class="last" style="border:0;margin-top:4px">' + avatar(l.owner, true) + '<p>' + esc(previewOf(r)) + '</p></div>' : '') + '</div>' +
+        '<div class="btns"><button class="b pri" data-chat-room="' + esc(r.room) + '">💬 Open ' + esc(info.t) + '</button></div>' });
+    });
+    return out.slice(0, 4);
+  }
+
   function setWeek(n) {
     W = WEEKS.filter(function (w) { return w.weekNumber === n; })[0] || LATEST;
     buildTeams(); ME = BY_OWNER[norm(ME.owner)] || ME; closeSheet(); start(); tab("home");
@@ -1757,9 +2124,10 @@
     $("chip").textContent = initials(ME.owner);
     $("chip").onclick = function () { if (API_URL) tab("team"); else showWelcome(); };
     renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
-    loadSummary();
+    loadSummary(); chatBadge();
     var h = location.hash.slice(1);
     tab(TITLES[h] ? h : "home");
+    if (/^chat/.test(h)) setTimeout(function () { openChat(decodeURIComponent(h.split("=")[1] || "") || null); }, 400); // #chat or #chat=<room> deep link
   }
   loadPulse().then(function () { buildTeams(); $("boot").style.display = "none"; start(); })
     .catch(function (e) { $("boot").textContent = "Couldn't load the league data (" + e.message + ")."; });

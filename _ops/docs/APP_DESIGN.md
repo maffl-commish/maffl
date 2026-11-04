@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.7 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.8 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,8 +12,11 @@ VERSION: 0.7 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Chat, Sleeper-style (§4c), built in the lab.** One league room for everyone, a group per tier
+  (listed with DMs), and DMs between any two owners. Trade offers post themselves into the two owners' DM as cards;
+  the thread is the whole back-and-forth. A For-you reel card opens that thread ("a card that's a DM"). Skipped:
+  wallet, GIFs, voice, read receipts.
 - 2026-11-03 · **Codename REEL** (commish) for the whole redesign. `REEL.md` is the map; this doc still governs.
-- 2026-11-03 · **Chat** (commish, from another chat): a DM thread per owner pair where trade offers land as cards (tap → history), plus league chat. Sleeper-inspired; no wallet/GIFs. Sandbox in the lab. Not built.
 - 2026-11-02 · **§6b refresh rhythm confirmed** (commish). Still to design: a short way to tell owners how
   often the app syncs with ESPN (§8).
 - 2026-11-02 · **No lineup nudges.** Alerts only for direct interactions (trades for now; maybe more later).
@@ -138,6 +141,30 @@ More → Settings (writes need the PIN, like everything else).
 **PIN form (open, §8).** Proposal: a fun two-word passphrase per owner (e.g. `blitz-pickle`) instead of 4 digits.
 Easier to remember, far harder to guess. Not case-sensitive, dash optional. Same salted hash + 5-try lockout (§7b).
 
+## 4c. Chat (built 11/3 in the lab, commish idea from Sleeper)
+
+**Where.** 💬 button in the header (red count = unread). It slides up as a sheet over whatever you're on; trade
+sheets, owner sheets and confirms open on top of it, so you never lose your place. Deep link: `lab/#chat` or `#chat=<room>`.
+
+| Room | Who reads and posts | Gets automatic posts |
+|---|---|---|
+| **League chat** | Every signed-in owner | Approved trades ("Trade completed ✅" card) |
+| **Upper / Lower Tier group** | That tier only (the commish sees both, to moderate) | Accepted trades (24-hour review card; commish gets Approve/Negate right on it) |
+| **DM** | Just the two owners, any tier. Not the commish (the Sheet holds them, so say so at go-live) | Every offer, counter, accept, decline, withdraw and the commish's approve/negate |
+
+- **Trade threads.** Sending an offer drops a trade card in the DM with your note and reason chips, then opens the thread.
+  The newest card for an offer carries the live buttons (Accept / Counter / Decline, Withdraw, commish Approve / Negate),
+  each with the usual confirm. A counter declines the original in the same step, so the thread shows one "countered" card.
+  DMs with a tier-mate have a ⇄ button to start a trade with them; Team → Trades offers get a 💬 Chat button.
+- **Reel.** For you leads with "💬 Trade talk" cards (an offer that needs you, or new messages in a DM) showing the trade
+  card and the last line, and a card for unread league or tier chat. Tap to open the thread.
+- **Messages:** text up to 500 characters, @mentions (tap @, pick an owner; Mentions tab + counts), emoji reactions
+  (🔥😂💀👀👏, who reacted). Delete your own; commish deletes any and pins up to 3 per room. Trade cards can't be deleted.
+- **Fresh enough, not instant.** An open thread refreshes every 8 s; unread counts every 30 s and when the app comes back.
+- **Not yet:** opt-in email for DMs/mentions (§4b toggles), robot posts for Pulse drops and Coach of the Week, older-message paging (keeps the last 150).
+- Backend: Sheet tabs **Chat** (msg_id, ts, room, owner, kind text|offer, text, ref, event, mentions, reply_to,
+  deleted, pinned) and **Reads** (owner, room, last read). Both auto-created. Text is stored formula-safe.
+
 ## 5. Forms this retires
 
 | Google Form today | Replaced by |
@@ -211,7 +238,8 @@ interactions (trades for now, §4b).
 - Script: `_ops/apps-script/Code.gs` is a stable **loader** (bound to that Sheet, deployed once as a web app) that
   fetches `_ops/apps-script/logic.js` from GitHub main (5-min cache) and runs it. Backend changes ship by push; no redeploys. Actions: `login`, `request`
   (logs + emails the commish), `react`, `vote` (POST, text/plain JSON); `summary` (GET: reaction counts, your
-  reactions, poll tallies, active polls).
+  reactions, poll tallies, active polls; POST adds your chat inbox). Chat (v0.11): `chat` (one room + mark read),
+  `chatsend`, `chatmod` (delete / pin), `inbox` (§4c).
 - Passphrases: two football words (GRONK-PISTOL), case/dashes ignored; salted SHA-256 only; 5 wrong tries locks.
   Commish menu in the Sheet: **MAFFL → Set / reset a passphrase** (shows it once to text it), **Mark request done**, **Unlock an owner**.
 - Events is append-only (reactions toggle by appending on/off; last write wins).
