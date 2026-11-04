@@ -1,6 +1,8 @@
 # MAFFL HQ App — governing doc (redesign · Reel · login)
 
-VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+**Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
+
+VERSION: 0.7 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -10,6 +12,8 @@ VERSION: 0.6 (2026-11-02, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Codename REEL** (commish) for the whole redesign. `REEL.md` is the map; this doc still governs.
+- 2026-11-03 · **Chat** (commish, from another chat): a DM thread per owner pair where trade offers land as cards (tap → history), plus league chat. Sleeper-inspired; no wallet/GIFs. Sandbox in the lab. Not built.
 - 2026-11-02 · **§6b refresh rhythm confirmed** (commish). Still to design: a short way to tell owners how
   often the app syncs with ESPN (§8).
 - 2026-11-02 · **No lineup nudges.** Alerts only for direct interactions (trades for now; maybe more later).

@@ -129,6 +129,13 @@ nobody edits files on the computer.
   `week` + `force` inputs). For a change that needs a `build\` script, stop and say so; don't approximate the
   generator by hand.
 
+## REEL (added 2026-11-03)
+
+"REEL" is the commissioner's name for the app redesign (`lab/`, passphrase login, trades, credit perks, Apps Script
+backend, credit sync). A message starting with **REEL** is about it: read `_ops/docs/REEL.md` (map: documented,
+built, roadmap, backlog) and `_ops/docs/APP_DESIGN.md` (governing doc) before anything else, and update REEL.md in
+the same commit when something is built, decided or dropped.
+
 ## App backend (added 2026-11-02)
 
 - `_ops/apps-script/logic.js` is **live backend code**: the Apps Script loader (`Code.gs`, bound to the

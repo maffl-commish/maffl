@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-03 by Claude (chat), credit sync robot (APP_DESIGN §10)
+**Last updated:** 2026-11-03 by Claude (chat), REEL codename + hub doc
 
 ## Now
 
@@ -20,7 +20,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 ## Planned (not written yet)
 
 - **Lab week facts:** `python3 _ops/scripts/gen_lab_weekfacts.py` must run after each weekly ESPN pull (not yet wired into the robot; add to pulse-draft before go-live).
-- **MAFFL HQ app redesign (Reel, PIN login, trades): governing doc `_ops/docs/APP_DESIGN.md`. Read it first; log decisions in its §0 Journal.**
+- **REEL = the MAFFL HQ app redesign (lab, passphrase login, trades, perks). Map: `_ops/docs/REEL.md`; governing doc `_ops/docs/APP_DESIGN.md` (log decisions in its §0 Journal).**
 - **MAFFL HQ app (prototype):** `lab/` v0 live (hidden, read-only). Next: v1 test Sheet + Apps Script (PINs, request-access email, reactions, votes); v2 roster pull + trades; v3 credit perks. Design: `_ops/docs/APP_DESIGN.md`.
 - **Trade Center (sandbox first):** Sleeper-style trade block + offers with players + credits, per-owner PINs, Google Sheet + Apps Script backend, commish approves the credit leg. Design: `_ops/docs/TRADE_CENTER_DESIGN.md` (open questions §8).
 - **Key Dates, phase 2:** home "Next up" carousel slide for the offseason, from `key-dates-data.js` (`_ops/docs/KEY_DATES_DESIGN.md` §5).
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · REEL · Codename "REEL" for the app redesign. New `_ops/docs/REEL.md` front door: documented, built, roadmap, backlog (incl. the DM/league chat idea). CLAUDE.md REEL section; APP_DESIGN v0.7 journal line. Doc only.
 - 2026-11-03 · Credit sync robot (full reconciliation): approving a perk or a trade with credits in the app pushes the backend's ledger to `_ops/inbox/credit_ledger(_test).json`; new `credit-sync.yml` runs `apply_credit_ledger.py` (append to Credit_Log tagged `[app L-…]`, recompute Owners Sheet balance) → gen-credits → validate → commit. TEST mode (default) = dry run, commits nothing; `CREDIT_SYNC=live` at go-live. Backend logic v0.10 (ledger, push via Script property GITHUB_TOKEN, owner emails on approve/deny, `resync`, public `?action=ledger`). App balances now read the official record; approved-not-yet-logged credits stay held; "Approved · posting" → "Logged ✓"; commish sync card with Re-send. APP_DESIGN §10 (credit sync, ESPN write experiment, automation queue); governance CE-4 note. **Needs:** GITHUB_TOKEN Script property.
 - 2026-11-03 · Lab Team → Credits: perk buttons replace the "In the build" card. Tiles for Extra FAAB (1 cr per $20, stepper), Double Player Bonus (10; pick week + player, max 2/week, different players), Matchup Swap (10; pick week + team, division games/Ghost blocked, shows who you'd play), Relegation Insurance (closed Oct 1, x of 3 left) and Division Swap (off-season). Each opens a request sheet → confirm → commish approves/denies (reason) or owner cancels; credits held against "free" balance (trades too) until logged; Thursday 6 PM ET lock (Wk 12 Thanksgiving 11:30 AM); opponents see perks aimed at them ("Coming at you"); commish gets an email + Credits badge. Backend logic v0.9 (`perk`, `perkact`; Perks tab auto-created). Tested against a simulated Sheet.
 - 2026-11-02 · Backend logic v0.8.1: ESPN cookies read from Script properties by prefix — one shared ESPN_S2/SWID pair, or per league (suffix UPPER/LOWER, U/L, or the league ID). Commish saved the cookies 11/2.
