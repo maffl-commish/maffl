@@ -346,15 +346,41 @@
   .dcard.actc{box-shadow:0 0 0 2px var(--loss),0 8px 24px var(--navy-shadow)}
   .dcard.playc{box-shadow:0 0 0 2px var(--gold),0 8px 24px var(--navy-shadow)}
   .dcard.back{box-shadow:0 8px 24px var(--navy-shadow)}
-  .dcard.lightc .dhead{border-bottom:0}
-  .lbody{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 22px 20px}
-  .lbody .lic{font-size:46px;line-height:1}
-  .lbody h3{font:700 32px/1.08 var(--display);margin-top:14px}
-  .lbody p{font-size:16px;line-height:1.45;color:var(--ink2);margin-top:10px}
-  .lbody .more{flex:0 0 auto;align-self:flex-start;margin-top:18px}
+  .dcard.facec .dhead{border-bottom:0;padding-bottom:0}
+  /* inbox cards are as tall as their story, centered; a stacked edge shows when more are waiting */
+  #hstack{display:flex;flex-direction:column;justify-content:center;min-height:0}
+  #hstack .dcard{position:relative;inset:auto;flex:0 1 auto;max-height:calc(100% - 14px);margin-bottom:14px}
+  #hstack .dcard .dbody{flex:0 1 auto}
+  #hstack .dcard.more{box-shadow:0 8px 24px var(--navy-shadow),0 7px 0 -3px var(--surface),0 7px 0 -2px var(--border),0 14px 0 -7px var(--surface),0 14px 0 -6px var(--border)}
+  #hstack .dcard.actc.more{box-shadow:0 0 0 2px var(--loss),0 7px 0 -1px var(--surface),0 7px 0 0 var(--border)}
+  #hstack .dcard.playc.more{box-shadow:0 0 0 2px var(--gold),0 7px 0 -1px var(--surface),0 7px 0 0 var(--border)}
+  #hstack .dcard.done-card{flex:1;max-height:none}
   .orow{display:flex;align-items:center;gap:10px;width:100%;padding:12px 2px;border:0;border-top:1px solid var(--border);background:none;text-align:left}
   .orow .ot{flex:1;min-width:0}.orow .ot b{display:block;font:700 16px var(--display);color:var(--ink)}.orow .ot small{font-size:13px;color:var(--muted)}
   .orow .og{font:700 12px var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--loss)}
+  .fc{display:flex;flex-direction:column;padding:10px 4px 14px}
+  .fc h3{font:700 34px/1.06 var(--display)}
+  .fc .fl{font:700 15px var(--display);color:var(--ink2);margin-top:8px}
+  .fc .fs{font-size:15px;line-height:1.45;color:var(--ink2);margin-top:12px}
+  .fc .btns{margin-top:16px}
+  .sbug{margin-top:14px;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .sbug .sl{display:flex;align-items:center;gap:10px;padding:12px 14px;font:700 16px var(--display);color:var(--muted)}
+  .sbug .sl+.sl{border-top:1px solid var(--border)}
+  .sbug .sl>span:nth-child(2),.sbug .sl>button{flex:1;min-width:0;text-align:left;line-height:1.2}
+  .sbug .sl b{font:800 24px var(--display)}
+  .sbug .sl.w{color:var(--ink);background:var(--gold-soft)}.sbug .sl.w b{color:var(--navy)}
+  .fchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .fchips span{font:700 12px var(--display);letter-spacing:.03em;padding:6px 10px;border-radius:99px;background:var(--page-bg);border:1px solid var(--border);color:var(--ink2)}
+  .vs2{display:flex;align-items:center;gap:8px;text-align:center}
+  .vs2>div{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .vs2 .cav{width:64px;height:64px;font-size:22px}
+  .vs2 b{font:700 17px/1.15 var(--display)}.vs2 small{font-size:12px;color:var(--muted)}
+  .vs2>i{font:800 16px var(--display);font-style:normal;color:var(--gold-dark)}
+  .alive{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .alive span{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:99px;background:var(--page-bg);border:1px solid var(--border);font:700 13px var(--display)}
+  .alive span.me{background:var(--gold-soft);border-color:var(--gold)}.alive i{font-style:normal}
+  .frows{margin-top:12px}
+  .cd{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.cd b{font:800 64px/1 var(--display);color:var(--loss)}.cd small{font:700 14px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .ofr{padding:10px 0;border-top:1px solid var(--border)}.ofr:first-child{border-top:0}
   .dcard.nope{animation:nope .35s}
   @keyframes nope{25%{transform:translateY(-18px)}60%{transform:translateY(4px)}}
@@ -474,6 +500,7 @@
   .croom:first-child{border-top:0}
   .cav{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:700 16px var(--display);color:#fff;background:var(--navy)}
   .cav.sm{width:34px;height:34px;font-size:13px}
+  .cav.opp{background:var(--gold);color:var(--navy)}
   .cav.ic{background:var(--gold-soft);color:var(--navy);font-size:22px;box-shadow:inset 0 0 0 1px var(--border)}
   .cav.bot{background:var(--gold);color:var(--navy);font-size:17px}
   .croom .cm{flex:1;min-width:0}
@@ -1173,21 +1200,59 @@
           '<small>' + (o.status === "ACCEPTED" ? "Accepted · needs your review" : "You get " + esc(legs(o.give || [], o.giveCredits)) + " · they get " + esc(legs(o.get || [], o.getCredits))) + '</small></span><span class="og">Review ›</span></button>'; });
       all.push({ id: "offers", action: true, icon: "⚡", c: { eb: "⚡ Trade offers", t: rows.length + " trade offers waiting on you", body: '<p class="meta" style="margin:6px 0 4px">Newest first. Each one opens its chat thread.</p>' + rows.join("") } });
     }
-    by("deadline").forEach(function (c) { all.push({ id: "deadline", alert: true, icon: "⏰", c: c }); });
+    var me = teamOf(ME.owner), TN = { U: "Upper", L: "Lower" }, sent = function (t) { return String(t || "").split(/(?<=[.!?])\s/)[0]; };
+    // Every story card is complete on its face (commish 11/4): no "see the full card" tap.
+    by("deadline").forEach(function (c) {
+      var d = (window.MAFFL_KEY_DATES || []).filter(function (k) { return k.label && c.t.indexOf(k.label) === 0; })[0], days = d ? Math.ceil((d.dueMs - Date.now()) / 864e5) : null;
+      all.push({ id: "deadline", alert: true, c: { eb: "Key date", t: c.t, face: '<div class="fc"><div class="cd"><b>' + (days == null ? "⏰" : days) + '</b><small>' + (days == null ? "" : "day" + (days === 1 ? "" : "s") + " left") + '</small></div>' +
+        '<h3>' + esc(d ? d.label : c.t) + '</h3><p class="fl">' + esc(d ? d.when : "") + '</p>' + (d && d.note ? '<p class="fs">' + esc(d.note) + '</p>' : '') +
+        (d && d.id === "trade-deadline" ? '<div class="btns"><button class="b pri" data-go="team">Open Trades</button></div>' : '') + '</div>' } }); });
     if (GOTW && !GOTW.voted) all.push({ id: "gotw", action: true, icon: "🗳️", c: GOTW });
     // stories, most personal first
-    by("result").forEach(function (c) { all.push({ id: "result", icon: c.t.charAt(0) === "W" ? "✅" : "❌", c: c, light: true }); });
-    by("next").forEach(function (c) { all.push({ id: "next", icon: "⚔️", c: c, light: true }); });
+    var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
+    if (lw) {
+      var mA = isMe(lw.ownerA), ms = mA ? lw.scoreA : lw.scoreB, os = mA ? lw.scoreB : lw.scoreA, oo = mA ? lw.ownerB : lw.ownerA, ot = mA ? lw.teamB : lw.teamA, won = ms > os;
+      var cw = ((W.coachOfWeek || {}).couldHaveWon || []).filter(function (x) { return norm(me.team) === norm(x.team); })[0], e5 = (W.elite5 || []).filter(function (x) { return isMe(x.owner); })[0];
+      var chips = ['#' + me.rank + ' ' + TN[me.tier] + ' · ' + rec(me)];
+      if (me.streak >= 2) chips.push('🔥 W' + me.streak); if (me.streak <= -2) chips.push('🧊 L' + (-me.streak));
+      if (e5) chips.push('⭐ Elite 5 #' + e5.rank); if (cw) chips.push('🔄 ' + f2(cw.leftOnBench) + ' left on bench');
+      all.push({ id: "result", c: { eb: "Week " + W.weekNumber + " · your result", t: (won ? "W " : "L ") + f2(ms) + "–" + f2(os), face: '<div class="fc">' +
+        '<h3>' + (won ? "You won by " : "You lost by ") + f2(Math.abs(ms - os)) + '</h3>' +
+        '<div class="sbug"><div class="sl' + (won ? ' w' : '') + '"><span class="cav sm">' + initials(ME.owner) + '</span><span>' + esc(me.team) + '</span><b>' + f2(ms) + '</b></div>' +
+        '<div class="sl' + (won ? '' : ' w') + '"><span class="cav sm opp">' + initials(oo) + '</span><button class="tl2" data-owner="' + esc(oo) + '">' + esc(ot) + '</button><b>' + f2(os) + '</b></div></div>' +
+        (lw.note ? '<p class="fs">' + esc(sent(lw.note)) + '</p>' : '') +
+        '<div class="fchips">' + chips.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join("") + '</div></div>' } });
+    }
+    var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
+    if (prev) {
+      var po = isMe(prev.ownerA) ? prev.ownerB : prev.ownerA, pt = teamOf(po), r = h2h(ME.owner, po), lastG = r.n ? r.all[r.n - 1] : null;
+      all.push({ id: "next", c: { eb: "Week " + NEXT_WK + " · up next", t: "You vs. " + pt.team, face: '<div class="fc">' +
+        '<div class="vs2"><div><span class="cav">' + initials(ME.owner) + '</span><b>' + esc(me.team) + '</b><small>' + rec(me) + ' · #' + me.rank + '</small></div><i>VS</i>' +
+        '<div><span class="cav opp">' + initials(po) + '</span><button class="tl2" data-owner="' + esc(po) + '"><b>' + esc(pt.team) + '</b></button><small>' + rec(pt) + ' · #' + pt.rank + '</small></div></div>' +
+        '<p class="fl">' + (r.n ? 'Series ' + r.aw + '–' + r.bw + (r.aw > r.bw ? ', you lead' : r.aw < r.bw ? ', ' + esc(shortOf(po)) + ' leads' : ', dead even') + (lastG ? ' · last met ' + lastG.y : '') : 'First-ever meeting') + '</p>' +
+        (prev.note && (r.n || !/first/i.test(prev.note)) ? '<p class="fs">' + esc(sent(prev.note)) + '</p>' : '') +
+        '<div class="btns"><button class="b pri" data-go="match">⚔️ Match</button>' + (r.n ? '<a class="b" href="' + rivalryHref(ME.owner, po) + '">Rivalry</a>' : '') + '</div></div>' } });
+    }
     var dms = by("dm").concat(by("group"));
     if (dms.length) all.push({ id: "msgs", icon: "💬", c: dms.length === 1 ? dms[0] : { eb: "💬 Chat", t: dms.length + " chats with new messages", body: dms.map(function (d) { return '<div class="ofr"><div class="eb">' + esc(d.t) + '</div>' + d.body + '</div>'; }).join("") } });
     var q = null; ["blunder", "benchbeat", "topscore", "survivor", "hot", "bid"].some(function (k) {
       GROUPS.some(function (g) { return g.cards.some(function (c) { if (c.quiz && c.quiz.ref.indexOf("quiz:" + k) > 0) { q = c; return true; } }); }); return !!q; });
     if (q) all.push({ id: "quiz:" + q.quiz.ref, icon: "🎯", c: q, play: true });
-    var sv = W.survivor, me = teamOf(ME.owner);
-    if (sv) { var act = sv[ME.tier === "U" ? "upperActive" : "lowerActive"] || [], alive = act.indexOf(me.team) >= 0, board = GROUPS.filter(function (g) { return g.key === "survivor"; })[0];
-      all.push({ id: "surv", icon: "🛟", light: true, c: { eb: "🛟 Survivor · Week " + W.weekNumber, t: alive ? "You're still alive" : "You're out of Survivor",
-        line: act.length + " " + (ME.tier === "U" ? "Upper" : "Lower") + " team" + (act.length === 1 ? "" : "s") + " left" + (alive ? " · keep clearing the low score" : ""), body: board ? board.cards[board.cards.length - 1].body : "" } }); }
-    var dv = findCard("div"); if (dv) all.push({ id: "div", icon: ME.tier === "U" ? "🛡️" : "📈", light: true, c: dv });
+    // Survivor only when it's about you: still alive, or knocked out this week
+    var sv = W.survivor;
+    if (sv) { var act = sv[me.tier === "U" ? "upperActive" : "lowerActive"] || [], outNow = (sv[me.tier === "U" ? "upperEliminated" : "lowerEliminated"] || []).filter(function (x) { return x.recent; })[0], alive = act.indexOf(me.team) >= 0;
+      if (alive || (outNow && outNow.team === me.team)) all.push({ id: "surv", c: { eb: "🛟 Survivor · Week " + W.weekNumber, t: alive ? "Still alive" : "Knocked out", face: '<div class="fc">' +
+        '<h3>' + (alive ? "You're still alive" : "You're out of Survivor") + '</h3><p class="fl">' + act.length + ' of ' + TEAMS.filter(function (t) { return t.tier === me.tier && !/ghost/i.test(t.team); }).length + ' ' + TN[me.tier] + ' teams left</p>' +
+        '<div class="alive">' + act.map(function (t) { var o = ownerOfTeam(t); return '<span class="' + (t === me.team ? 'me' : '') + '"><i class="cav sm">' + initials(o || t) + '</i>' + esc(shortOf(o || t)) + '</span>'; }).join("") + '</div>' +
+        (outNow ? '<p class="fs">💀 ' + esc(outNow.team) + ' went home this week.</p>' : '') + '</div>' } }); }
+    // Your division (Upper) / promotion race (Lower): how the people you're chasing did
+    var mine = TEAMS.filter(function (t) { return t.tier === me.tier && !/ghost/i.test(t.team) && (me.tier === "U" ? t.div === me.div : Math.abs(t.rank - me.rank) <= 2); }).sort(function (a, b) { return a.rank - b.rank; });
+    if (mine.length > 1) { var foes = mine.filter(function (t) { return !isMe(t.owner); }), fw = foes.filter(function (t) { var g = resultFor(t.owner); return g && ((norm(g.ownerA) === norm(t.owner)) === (g.scoreA > g.scoreB)); }).length;
+      all.push({ id: "div", c: { eb: me.tier === "U" ? "🛡️ Division " + me.div : "📈 Promotion race", t: "", face: '<div class="fc">' +
+        '<h3>' + (me.tier === "U" ? (fw === foes.length ? "Your division rivals all won" : fw ? fw + " of " + foes.length + " division rivals won" : "Your division rivals all lost") :
+          me.rank <= 3 ? "You're in a promotion spot" : "You're " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion") + '</h3>' +
+        '<div class="frows">' + mine.map(function (t) { return teamResultRow(t, me.tier === "L" && t.rank <= 3 ? "⬆️ #" + t.rank : "#" + t.rank); }).join("") + '</div>' +
+        (me.tier === "L" ? '<p class="fs">Top 3 move up to Upper next season.</p>' : '') + '</div>' } }); }
     if (GOTW && GOTW.voted) all.push({ id: "gotw", icon: "🗳️", c: GOTW });
     var gone = tossed();
     INBOX = all.filter(function (x) { return x.action || !gone[x.id]; }).slice(0, INBOX_MAX);
@@ -1205,12 +1270,11 @@
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
       '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🏆 Standings &amp; more</button></div>' +
       (Object.keys(tossed()).length ? '<button class="again" id="dagain">Bring back cleared cards</button>' : '') + '</div>';
-    var c = x.c, light = x.light && c.body;
-    return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (light ? ' lightc' : '') + '"' + DR("inbox:" + x.id) + '>' +
+    var c = x.c;
+    return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (c.face ? ' facec' : '') + '"' + DR("inbox:" + x.id) + '>' +
       '<div class="dhead"><div class="sec">' + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
-      (light ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
-      (light ? '<div class="lbody"><div class="lic">' + x.icon + '</div><h3>' + esc(c.t) + '</h3>' + (c.line ? '<p>' + esc(c.line) + '</p>' : '') + '<button class="b more" data-open="1">See the full card ›</button></div>'
-        : '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.quiz ? quizBody(c.quiz) : c.body) + '</div>') +
+      (c.face ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
+      '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.face || (c.quiz ? quizBody(c.quiz) : c.body)) + '</div>' +
       (x.action ? '' : '<div class="dfoot"><div class="reacts">' + (REACTS[x.id] || REACTS.you).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div>') + '</div>';
   }
   function drawDeck() {
@@ -1218,14 +1282,12 @@
     $("idots").innerHTML = INBOX.map(function (y, k) { return '<i class="' + (k === pos ? "on" : "") + (y.action ? " a" : "") + '"></i>'; }).join("");
     $("icount").textContent = n ? n + " card" + (n === 1 ? "" : "s") : "All clear";
     $("ihint").textContent = !x ? "" : x.action ? "← → browse · handle this one to clear it" : "← → browse · swipe ↑ to clear";
-    var html = "";
-    if (INBOX[pos + 1]) html += cardHTML(INBOX[pos + 1]).replace('class="dcard', 'class="dcard back');
-    html += cardHTML(x);
+    var html = cardHTML(x);
+    if (INBOX[pos + 1]) html = html.replace('class="dcard', 'class="dcard more');
     $("hstack").innerHTML = html;
-    var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat"), mo = top.querySelector("[data-open]");
+    var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat");
     if (again) again.onclick = function () { store(tossKey(), "{}"); pos = 0; renderHome(); };
     if (dc) dc.onclick = function () { openChat(); };
-    if (mo) mo.onclick = function () { openSheet("card", '<div class="eb" style="margin-top:8px">' + esc(x.c.eb) + '</div><h3 style="font:700 24px/1.1 var(--display);margin:4px 0 6px">' + esc(x.c.t) + '</h3>' + x.c.body); };
     if (x) wireSwipe(top, x);
     paint($("hstack"));
   }

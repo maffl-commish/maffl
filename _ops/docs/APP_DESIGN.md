@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.16 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.17 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,10 @@ VERSION: 0.16 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-04 · **Inbox cards are complete on their face** (commish: "see the full card" opened to almost nothing). No tap-through.
+  Each card is built for its job: result = score bug + one line + chips (rank, streak, Elite 5, bench); up next = VS block +
+  series + preview line; deadline = big countdown; Survivor only if you're alive or went out this week; division/race =
+  just your rivals' rows. Cards are as tall as their story, centered, with a stacked edge when more are waiting.
 - 2026-11-03 · **⏱️ 15-minute robot** (commish: keep building). Apps Script time trigger calls `tick()`; it only reminds, checks and
   reports into the desk (never approves or changes anything). Commish set DESK_KEY in both places; first robot card posted 11/3.
 - 2026-11-03 · **Home = your inbox, not a feed** (commish: 16 cards was noise; less is more). At most **8 cards** a week, picked for
