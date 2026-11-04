@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.11 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.12 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,11 @@ VERSION: 0.11 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **No category row on Home** (commish: the circles felt like a menu). The reel is one stack: thin progress bar on top
+  (tap → Jump to sections), each card names its section, 🎯 Play cards (quizzes, Game of the Week) spread through the stack
+  (never more than 2 in a row; scoreboard-spoiling quizzes stay before the scoreboard). Done circle → "You're caught up" card
+  (your quiz score, 💬 Open chat, ⚔️ Your game). Custom tab icons dropped: a fixed tab bar keeps the app familiar.
+  **Offseason mode** = same five tabs, different contents (reel → draft, keepers, rankings, history; Match → schedule/draft).
 - 2026-11-03 · **Match = the scoreboard** (commish). No MAFFL-scoring section (Coach, Survivor, weekly high come post-match in the reel); DPB shown only on the score itself (flash + ×2), no spotlight card; Rivalry button lives in the scoreboard; lineups look like ESPN's (opponent, kickoff, stat line).
 - 2026-11-03 · **Chat gets a bottom tab** (commish): Home · Match · 💬 Chat · Team · League, unread count on the tab; it opens the chat sheet over whatever you're on. More moved behind your avatar (top right, screen titled "You"). Header no longer shows Week/Tier.
 - 2026-11-03 · **Double Player Bonus on the live scoreboard** (commish asked to showcase it). ESPN doesn't know about perks, so the app adds approved (and pending, labeled) DPBs to the live score itself; the commish still makes the official ESPN adjustment. Lab-only **test scores** fill in while ESPN shows all zeros (pretend opponent DPB included); never saved.
@@ -65,7 +70,7 @@ Bottom tabs: **Home · Match · Team · League · More**. The app replaces the c
 
 | Tab | Job | Contents |
 |---|---|---|
-| 🏠 Home | **Home IS the reel** (commish 11/2) | One card stack fills the screen. The category row on top (For you, Scores, Coach, Survivor, Headlines, Credits, Dates, Done) is the **key**: it highlights where you are, pips show progress, tap to jump. **For you** leads: your game, your result, could-have-won, Elite 5, deadlines, votes, Pick'em, trade offers. React 🔥😂💀 (reacting glides the card away) or swipe; sub-rows react too; ends "You're caught up". Remembers your spot per week. Full Pulse one tap away |
+| 🏠 Home | **Home IS the reel** (commish 11/2) | One card stack fills the screen. No category row (11/3): a thin progress bar on top (tap → Jump to), each card names its own section, 🎯 Play cards spread through the stack. **For you** leads: your game, your result, could-have-won, Elite 5, deadlines, votes, Pick'em, trade offers. React 🔥😂💀 (reacting glides the card away) or swipe; sub-rows react too; ends "You're caught up". Remembers your spot per week. Full Pulse one tap away |
 | ⚔️ Match | **Your live game** (commish 11/2): ESPN live scores via the backend, MAFFL scoring live (Coach of the Week bench gap, Survivor danger, weekly high), lineups side by side, Rivalry history button. Was: | Next opponent + stakes (Pulse preview), rivalry (series, last 5, biggest wins), last week's result + Coach of the Week lines, tier slate. **Every game links to its rivalry** (`rivalry.html#vs=A,B`) |
 | 🏈 Team | You | Record, rank, credits, points. Tabs: **Roster** (player sheet: stats + MAFFL draft/owner history), **Trades** (badge = open offers in/out), **Stats** (season + career), **Credits** (balance, history, **spend credits on perks**, e.g. player double bonus) |
 | 🏆 League | Everyone | Standings (credits column; no separate Credit Leaders), **Rulebook**, Pulse archive, Power Rankings, History, Draft, Rivals, Prizes & Dues |
@@ -301,7 +306,7 @@ the Match tab and every rivalry panel. Swipe the card from its header or reactio
 - ~~Trade Center replaces the Credit Request form for trade credit legs?~~ **Yes** (§5).
 - ~~Team picker or PIN?~~ **PIN up front, guest "Just browsing"** (§4).
 - Which Pulse sections stay as the "full Pulse" page vs. live only in cards (decide after v0 feel test).
-- Offseason Home: circles become What's New; Match shows next season's schedule.
+- Offseason mode: same tabs; the reel carries draft, keeper, rankings and history cards; Match shows next season's schedule / the draft.
 
 ## 9. Go-live checklist (fold into MAFFL HQ Ops when ready)
 

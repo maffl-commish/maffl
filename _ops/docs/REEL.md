@@ -29,7 +29,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 |---|---|
 | Shell | Pinned header + tab bar, iPhone zoom/pan fixed, Home-Screen friendly |
 | Sign-in | Two-word passphrase (GRONK-PISTOL), no team picker, 25 wrong/hour league limit, request-access email |
-| 🏠 Home (reel) | Personalized order: ⭐ You → Division/Race → Hot & Not Q&A → Scores (Game of the Week vote) → Coach → Survivor → Wire → Credits → other tier. Quiz-first cards, one reaction tray per card + who reacted |
+| 🏠 Home (reel) | One stack, no category row: progress bar on top (tap → Jump to), section name on each card, 🎯 Play cards (quizzes, Game of the Week) spread through it, "You're caught up" end card. Personalized order: ⭐ You → Division/Race → Scores → Coach → Survivor → Wire → Credits → other tier, Hot & Not quizzes woven in. One reaction tray per card + who reacted |
 | ⚔️ Match | Just the scoreboard: live score from ESPN (backend `live`, 60 s auto-refresh, tap "↻ Ns ago" to pull now), ⚔️ Rivalry button between the teams, ESPN-style lineups (NFL team, opponent, kickoff, stat line). **✖️2 Double Player Bonus**: bonus score flashes gold with ×2 + player chip, doubled player highlighted. **🧪 Test scores** while ESPN is all 0 (opponent gets a pretend DPB; pill turns it off) |
 | 🏈 Team | Trades end to end (all-rosters grid → side by side → live grade + reason chips → confirm → accept/decline/counter → commish approve/negate). Credits: balance, history, **perk requests** (Extra FAAB, Double Player Bonus, Matchup Swap, Relegation Insurance, Division Swap). Money: dues + winnings |
 | 🏆 League | Standings, Weeks (time-travel any week), Rulebook in-app, Prizes, Champions; classic tiles for Power Rankings, History, Draft |
@@ -68,7 +68,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Confirm the §2c page → app mapping.
 - Trades at go-live: both tiers or one first?
 - What, if anything, stays as a "full Pulse" page.
-- Offseason Home and Match.
+- Offseason mode (decided: same tabs, different contents): which cards and what Match shows.
 
 **Known issues**
 - _(none logged)_

@@ -330,16 +330,24 @@
   @media (prefers-reduced-motion:reduce){.lsc.dbl .sv{animation:none}}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
-  .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
-  .keys::-webkit-scrollbar{display:none}
-  .key{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;width:58px;font:700 10px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-  .key i{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:20px;background:var(--surface);box-shadow:0 0 0 2px var(--border);transition:transform .2s,box-shadow .2s}
-  .key.done i{opacity:.55}
-  .key.on{color:var(--navy)}
-  .key.on i{box-shadow:0 0 0 3px var(--gold);transform:scale(1.1)}
-  .key .pips{display:flex;gap:2px;height:3px}
-  .key .pips b{width:8px;height:3px;border-radius:2px;background:var(--border)}
-  .key .pips b.f{background:var(--gold)}
+  #v-home{position:relative}
+  .prog{flex:0 0 auto;display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px 6px;background:none;border:0}
+  .segs2{flex:1;display:flex;gap:3px}
+  .segs2 i{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background .25s}
+  .segs2 i.f{background:var(--gold)}
+  .segs2 i.now{background:var(--navy)}
+  .pcount{flex:0 0 auto;font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:44px;text-align:right}
+  .jump{display:none;position:absolute;z-index:30;top:34px;left:12px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 32px var(--navy-shadow);padding:8px}
+  .jump.on{display:block}
+  .jr{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 10px;border:0;border-radius:9px;background:none;font:700 15px var(--display);color:var(--ink);text-align:left}
+  .jr small{font:600 12px var(--body,inherit);color:var(--muted)}
+  .jr.on{background:var(--gold-soft)}.jr.seen span{color:var(--muted)}
+  .dhead .sec{display:flex;align-items:center;gap:8px;font:700 12px var(--display);letter-spacing:.04em;color:var(--navy);margin-bottom:3px}
+  .dcard.navyc .dhead .sec{color:#fff}
+  .playtag{font:800 10px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--navy);background:var(--gold);border-radius:99px;padding:3px 8px}
+  .dcard.playc{box-shadow:0 0 0 2px var(--gold),0 8px 24px var(--navy-shadow)}
+  .dcard.playc.back,.dcard.playc.back2{box-shadow:0 8px 24px var(--navy-shadow)}
+  .done-card .again{margin-top:14px;background:none;border:0;font:600 13px inherit;color:var(--muted);text-decoration:underline}
   #hstack{flex:1;margin:4px 14px 10px}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .hero{padding:12px 0 12px;border-bottom:1px solid var(--border)}
@@ -1025,7 +1033,7 @@
     if (poll) {
       var tal = SUM.tallies[poll.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mineV = SUM.myVotes[poll.id];
       var opts = String(poll.options) === "auto" ? gotwPicks() : String(poll.options).split("|").map(function (o) { return { v: o.trim(), plain: o.trim() }; });
-      GOTW = ({ eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · tap a game to vote · you can change it until Tuesday</p>' + opts.map(function (o) {
+      GOTW = ({ play: true, eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · tap a game to vote · you can change it until Tuesday</p>' + opts.map(function (o) {
         var n = tal[o.v] || 0, pct = tot ? Math.round(100 * n / tot) : 0, sel = mineV === o.v;
         if (o.plain) return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '"><span class="ob" style="width:' + pct + '%"></span><span class="ol">' + esc(o.plain) + '</span><span class="op">' + (tot ? pct + '%' : '') + '</span></button>';
         return '<button class="gotw' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '">' +
@@ -1064,49 +1072,79 @@
     coach: ["🤦", "😬", "😂", "🧠", "👏"], survivor: ["💀", "😅", "🫡", "😂", "🔥"], wire: ["💸", "🤑", "🤡", "👀", "🔥"], credits: ["💰", "👀", "😤", "🙌", "🔥"] };
 
   // ---------- HOME = the reel ----------
+  // No category menu (commish 11/3): one stack of cards, a thin progress bar on top, each card names its own
+  // section, and play cards (quizzes, votes) are spread through the stack. Tap the bar to jump.
   var FLAT = [], pos = 0;
   function posKey() { return "maffl_lab_pos_" + W.weekNumber + "_" + norm(ME.owner); }
+  function secName(g) { return g.label + (g.key === "other" ? " tier" : ""); }
+  function isPlay(c) { return !!(c.quiz || c.play); }
   function renderHome() {
     buildGroups();
-
-    FLAT = [];
-    GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c, ci) { FLAT.push({ g: gi, c: c, n: ci + 1, of: g.cards.length }); }); });
-    FLAT.push({ g: GROUPS.length, done: true });
+    // Hot & Not quizzes stand alone, so they get spread out between read cards. The two the scoreboard would
+    // give away (low score, blowout) go first and must land before it; the streak ones can go anywhere.
+    var early = [], late = [], items = [];
+    GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c) {
+      if (g.key !== "hot") return items.push({ g: gi, c: c });
+      (/quiz:(low|blowout)/.test(c.quiz.ref) ? early : late).push({ g: gi, c: c }); }); });
+    FLAT = []; var reads = 0;
+    items.forEach(function (it) {
+      if (GROUPS[it.g].key === "scores") while (early.length) FLAT.push(early.shift());
+      var gap = early.length ? 1 : 2, next = early.length ? early : late;
+      if (reads >= gap && next.length) { FLAT.push(next.shift()); reads = 0; }
+      FLAT.push(it); reads = isPlay(it.c) ? 0 : reads + 1;
+    });
+    early.concat(late).forEach(function (it) { FLAT.push(it); });
+    FLAT.push({ done: true });
     pos = Math.min(+(store(posKey()) || 0), FLAT.length - 1);
-    $("v-home").innerHTML = '<div class="keys" id="keys"></div><div class="stack" id="hstack"></div>';
+    $("v-home").innerHTML = '<button class="prog" id="prog" aria-label="Jump to a section"><span class="segs2" id="segs2"></span><span class="pcount" id="pcount"></span></button>' +
+      '<div class="jump" id="jump"></div><div class="stack" id="hstack"></div>';
+    $("prog").onclick = toggleJump;
+    $("hstack").addEventListener("pointerdown", function () { $("jump").classList.remove("on"); }, true);
     drawDeck();
   }
   function cardHTML(it) {
-    if (it.done) return '<div class="dcard done-card"><div style="font-size:56px">✅</div><h3 style="font:700 28px var(--display)">You\'re caught up on Week ' + W.weekNumber + '</h3>' +
-      '<p class="p" style="margin-top:6px">Next Pulse: Tuesday morning.</p><div class="btns" style="width:100%"><button class="b" data-go="league">Standings</button><button class="b pri" id="dagain">Start over</button></div></div>';
-    var g = GROUPS[it.g];
-    return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + '"' + DR("card:" + g.key + ":" + it.n) + '><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
-      '<div class="dhead"><div class="eb"><span>' + esc(it.c.eb) + '</span><span class="ctxt">' + g.label.split(" ").slice(1).join(" ") + ' ' + it.n + '/' + it.of + '</span></div><h3>' + esc(it.c.t) + '</h3></div>' +
+    if (it.done) {
+      var plays = FLAT.filter(function (x) { var m = x.c && x.c.quiz && SUM.mine[x.c.quiz.ref] || {}; return Object.keys(m).some(function (k) { return m[k]; }); }),
+          got = plays.filter(function (x) { return SUM.mine[x.c.quiz.ref][x.c.quiz.answer]; }).length;
+      return '<div class="dcard done-card"><div class="eb">Week ' + W.weekNumber + ' · that\'s the reel</div><h3 style="font:700 30px/1.1 var(--display);margin-top:6px">You\'re caught up</h3>' +
+        (plays.length ? '<p class="p" style="margin-top:8px">You got <b>' + got + ' of ' + plays.length + '</b> right this week.</p>' : '') +
+        '<p class="meta" style="margin-top:4px">New cards land Tuesday morning with the Pulse.</p>' +
+        '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Open chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
+        '<button class="again" id="dagain">↺ Start the reel over</button></div>';
+    }
+    var g = GROUPS[it.g], play = isPlay(it.c);
+    return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + (play ? ' playc' : '') + '"' + DR("card:" + g.key + ":" + it.g + ":" + norm(it.c.t).slice(0, 40)) + '><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
+      '<div class="dhead"><div class="sec">' + (play ? '<span class="playtag">🎯 Play</span>' : '') + '<span>' + esc(secName(g)) + '</span></div>' +
+      '<div class="eb">' + esc(it.c.eb) + '</div><h3>' + esc(it.c.t) + '</h3></div>' +
       '<div class="dbody' + (it.c.flush ? ' flush' : '') + '">' + (it.c.quiz ? quizBody(it.c.quiz) : it.c.body) + '</div>' +
       '<div class="dfoot"><div class="reacts">' + (REACTS[g.key] || REACTS.headlines).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div></div>';
   }
-  function drawKeys(cur) {
-    var cnt = {}; FLAT.forEach(function (it, k) { if (!it.done) { cnt[it.g] = cnt[it.g] || []; cnt[it.g].push(k); } });
-    $("keys").innerHTML = GROUPS.map(function (g, gi) {
-      var idxs = cnt[gi] || [], ic = g.label.split(" ")[0], nm = g.label.split(" ").slice(1).join(" ");
-      var state = gi === cur ? " on" : (idxs.length && idxs[idxs.length - 1] < pos ? " done" : "");
-      return '<button class="key' + state + '" data-g="' + gi + '"><i>' + ic + '</i>' + nm +
-        '<span class="pips">' + idxs.map(function (k) { return '<b class="' + (k <= pos ? "f" : "") + '"></b>'; }).join("") + '</span></button>'; }).join("") +
-      '<button class="key' + (cur === GROUPS.length ? " on" : "") + '" data-g="' + GROUPS.length + '"><i>✅</i>Done<span class="pips"></span></button>';
-    $("keys").querySelectorAll(".key").forEach(function (k) { k.onclick = function () {
-      var gi = +k.dataset.g; pos = FLAT.findIndex(function (it) { return it.g === gi; }); drawDeck(); }; });
-    var on = $("keys").querySelector(".key.on"); if (on) on.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  function drawProgress() {
+    var n = FLAT.length - 1;
+    $("segs2").innerHTML = FLAT.slice(0, n).map(function (it, k) { return '<i class="' + (k < pos ? "f" : k === pos ? "now" : "") + (isPlay(it.c) ? " pl" : "") + '"></i>'; }).join("");
+    $("pcount").textContent = pos >= n ? "Done" : (pos + 1) + " / " + n;
+  }
+  function toggleJump() {
+    var j = $("jump"); if (j.classList.contains("on")) { j.classList.remove("on"); return; }
+    var seen = {}, rows = [];
+    FLAT.forEach(function (it, k) { if (it.done || seen[it.g] != null) return; seen[it.g] = k;
+      var last = FLAT.reduce(function (m, x, i) { return x.g === it.g ? i : m; }, k), cnt = FLAT.filter(function (x) { return x.g === it.g; }).length;
+      rows.push('<button class="jr' + (FLAT[pos].g === it.g ? " on" : pos > last ? " seen" : "") + '" data-k="' + k + '"><span>' + esc(secName(GROUPS[it.g])) + '</span><small>' + (pos > last ? "✓ seen" : cnt + " card" + (cnt === 1 ? "" : "s")) + '</small></button>'); });
+    j.innerHTML = '<div class="eb" style="padding:4px 4px 6px">Jump to</div>' + rows.join("");
+    j.classList.add("on");
+    j.querySelectorAll(".jr").forEach(function (b) { b.onclick = function () { pos = +b.dataset.k; j.classList.remove("on"); drawDeck(); }; });
   }
   function drawDeck() {
     var it = FLAT[pos]; store(posKey(), String(pos));
-    drawKeys(it.g);
+    drawProgress(); $("jump").classList.remove("on");
     var html = "";
     if (FLAT[pos + 2]) html += cardHTML(FLAT[pos + 2]).replace('class="dcard', 'class="dcard back2');
     if (FLAT[pos + 1]) html += cardHTML(FLAT[pos + 1]).replace('class="dcard', 'class="dcard back');
     html += cardHTML(it);
     $("hstack").innerHTML = html;
-    var top = $("hstack").lastElementChild, again = $("dagain");
+    var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat");
     if (again) again.onclick = function () { pos = 0; drawDeck(); };
+    if (dc) dc.onclick = function () { openChat(); };
     if (!it.done) wireSwipe(top);
     paint($("hstack"));
   }
