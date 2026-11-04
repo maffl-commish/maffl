@@ -503,6 +503,15 @@
   .cpick{display:flex;gap:6px;margin-top:5px}
   .cpick button{font-size:20px;padding:4px 7px;border-radius:10px;background:var(--surface);border:1px solid var(--border)}
   .cday{text-align:center;font:700 11px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+  .dsk{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--navy);border-radius:12px;padding:10px 12px;margin-top:10px}
+  .dsk h4{font:700 12px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--navy);margin:0 0 2px;display:flex;justify-content:space-between;align-items:center}
+  .dsk .dsec{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:12px 0 4px}
+  .dsk .ditem{border-top:1px solid var(--border);padding:8px 0}.dsk .ditem:first-of-type{border-top:0}
+  .dsk .ditem .btns{margin-top:6px}.dsk .card{margin:6px 0 0;box-shadow:none}
+  .dsk.clear{border-left-color:var(--win);text-align:center;color:var(--ink2);font-size:14px}
+  .dsk details summary{cursor:pointer;font-size:13px;color:var(--ink2);padding:6px 0}
+  .cbot{margin-top:4px;border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--surface);font-size:14px;line-height:1.4;white-space:pre-line}
+  .cbot.fail{border-color:#f0c4c4;background:#fdf3f3}.cbot.ok{border-color:#cdebdf}
   .cempty{text-align:center;color:var(--muted);font-size:14px;padding:40px 10px;line-height:1.5}
   .ccomp{flex:0 0 auto;display:flex;align-items:flex-end;gap:6px;padding:8px 10px calc(env(safe-area-inset-bottom) + 8px);background:var(--surface);border-top:1px solid var(--border)}
   .ccomp textarea{flex:1;min-width:0;resize:none;border:1px solid var(--border);border-radius:20px;padding:9px 14px;font:500 16px/1.3 var(--body);color:var(--navy);background:var(--page-bg);max-height:120px;outline:none}
@@ -842,7 +851,7 @@
     var early = EARLY_SUM && norm(store("maffl_lab_owner")) === norm(ME.owner) ? EARLY_SUM : null; EARLY_SUM = null; // already on its way
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
-      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; renderHome(); refreshTeam(); paint(); chatBadge();
+      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
@@ -2164,6 +2173,7 @@
     var hit = TEAMS.filter(function (t) { return norm(t.owner) === o; })[0]; return hit ? hit.owner : o;
   }
   function roomInfo(room) {
+    if (room === "desk") return { t: "Commish desk", s: "Only you · approvals, alerts, robots", ic: '<span class="cav ic">📥</span>' };
     if (room === "league") return { t: "League chat", s: "Everyone in MAFFL", ic: '<span class="cav ic">🏈</span>' };
     if (room.indexOf("tier:") === 0) { var u = room === "tier:U", mine = room === "tier:" + ME.tier;
       return { t: (u ? "Upper" : "Lower") + " Tier group", s: mine ? "Your tier only" : "Commish view (other tier)", ic: '<span class="cav ic">' + (u ? "🛡️" : "📈") + '</span>' }; }
@@ -2176,6 +2186,7 @@
   }
   function previewOf(r) {
     var l = r.last;
+    if (r.room === "desk") return deskTodo() ? deskTodo() + " to do" + (l ? " · " + deskLine(l) : "") : l ? deskLine(l) : "All clear. Approvals and alerts land here";
     if (!l) return r.room === "league" ? "Say something to the league" : r.room.indexOf("tier:") === 0 ? (r.room === "tier:" + ME.tier ? "Talk to your tier" : "Commish view · nothing yet") : "Start the conversation";
     if (l.kind === "offer") return (l.owner === BOTN ? "🏈 " + (EVT[l.event] || "Trade update") : "💱 " + evtLine({ owner: l.owner, event: l.event, room: r.room }));
     return (l.owner === BOTN ? "" : isMe(l.owner) ? "You: " : shortOf(l.owner) + ": ") + l.text;
@@ -2199,6 +2210,111 @@
     }
     return h + (btn ? '<div class="btns">' + btn + '</div>' : '') + '</div>';
   }
+  // ---------- 📥 Commish desk (APP_DESIGN §10d): a room only the commish sees. Robots and owner actions post here;
+  // the top of the room is the live to-do list (logic.js desk_ / deskAct_ v0.14). ----------
+  var DESK_KINDS = { perk: 1, access: 1, lock: 1, alert: 1, robot: 1, note: 1 }, DESK = null;
+  var ALERT_T = { SYNC: "💳 Credit sync problem", ESPN: "🏈 ESPN connection problem", GUESSES: "🔐 Sign-in paused" };
+  function deskOpenPerks() { return (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }); }
+  function deskReview() { return (SUM.offers || []).filter(function (o) { return o.status === "ACCEPTED"; }); }
+  function deskTodo() {
+    if (!ME || !ME.commish) return 0; var d = DESK || {};
+    return deskOpenPerks().length + deskReview().length + (d.access || []).length + (d.locked || []).length + (d.espn || []).length + (d.sync && d.sync.last && d.sync.last.ok === false ? 1 : 0);
+  }
+  function deskLine(l) {
+    if (l.kind === "offer") return "🤝 Trade waiting for your review";
+    if (l.kind === "perk") return l.event === "CANCELED" ? "Perk request canceled" : "🎟️ New perk request";
+    if (l.kind === "access") return "🔑 Passphrase request";
+    if (l.kind === "lock") return "🔒 Owner locked out";
+    if (l.kind === "alert") return ALERT_T[l.event] || "⚠️ Alert";
+    if (l.kind === "robot") return (l.event === "FAIL" ? "❌ " : "🤖 ") + String(l.text || "").split("\n")[0];
+    return l.owner === BOTN ? String(l.text || "") : "You: " + l.text;
+  }
+  function espnStep(p) {
+    var t = teamOf(p.owner).team || p.owner;
+    return p.perk === "faab" ? "Give " + t + " +$" + 20 * p.qty + " FAAB budget"
+      : p.perk === "double" ? "Week " + p.week + ": add " + p.player + "'s points again as a score adjustment for " + t + " (after his game)"
+      : p.perk === "swap" ? "Week " + p.week + ": swap opponents between " + t + " and " + (teamOf(p.swapWith).team || p.swapWith) + " in the schedule"
+      : p.perk === "divswap" ? "Offseason: move " + t + " to the other division" : (PERK_BY[p.perk] || {}).name + " for " + t;
+  }
+  function deskHomeList() { // the reel card lists what's waiting (never waste space)
+    var d = DESK || {}, L = [];
+    deskOpenPerks().forEach(function (p) { L.push(["🎟️", (teamOf(p.owner).team || p.owner) + " · " + ((PERK_BY[p.perk] || {}).name || p.perk), p.cost + " cr"]); });
+    deskReview().forEach(function (o) { L.push(["🤝", shortOf(o.from) + " ↔ " + shortOf(o.to), "24h review"]); });
+    (d.access || []).forEach(function (a) { L.push(["🔑", (a.team || a.owner) + " needs a passphrase", ago(a.ts)]); });
+    (d.locked || []).forEach(function (o) { L.push(["🔒", (teamOf(o).team || o) + " is locked out", ""]); });
+    (d.espn || []).forEach(function (p) { L.push(["🏈", espnStep(p), "ESPN"]); });
+    if (d.sync && d.sync.last && d.sync.last.ok === false) L.push(["💳", "Credit sync didn't post", "fix"]);
+    return '<div class="list" style="margin-top:6px">' + L.slice(0, 7).map(function (x) { return '<div class="row" style="padding:9px 0;border-top:1px solid var(--border)"><span style="font-size:20px;width:30px">' + x[0] + '</span><div style="flex:1;font-size:15px;line-height:1.3">' + esc(x[1]) + '</div><small class="meta" style="white-space:nowrap;margin-left:8px">' + esc(x[2]) + '</small></div>'; }).join("") +
+      (L.length > 7 ? '<p class="meta">+' + (L.length - 7) + ' more</p>' : '') + '</div>';
+  }
+  function deskBtn(op, target, label, pri, extra) { return '<button class="b' + (pri ? ' pri' : '') + '" data-dact="' + op + '" data-target="' + esc(target) + '"' + (extra || '') + '>' + label + '</button>'; }
+  function deskTop() {
+    if (!DESK) return '<div class="dsk"><h4>To do</h4><p class="meta">Loading…</p></div>';
+    var d = DESK, n = deskTodo(), h = "";
+    if (!n) h += '<div class="dsk clear">✅ <b>All clear.</b> Nothing waiting on you.</div>';
+    else {
+      h += '<div class="dsk"><h4><span>To do</span><span class="stp gold">' + n + '</span></h4>';
+      var ps = deskOpenPerks(); if (ps.length) h += '<div class="dsec">🎟️ Perks to approve · ' + ps.length + '</div>' + ps.map(perkCard).join("");
+      var rv = deskReview(); if (rv.length) h += '<div class="dsec">🤝 Trades in review · ' + rv.length + '</div>' + rv.map(function (o) { return tradeMini(o, true); }).join("");
+      if ((d.access || []).length) h += '<div class="dsec">🔑 Passphrase requests · ' + d.access.length + '</div>' + d.access.map(function (a) {
+        return '<div class="ditem"><b>' + esc(a.team || a.owner) + '</b> <span class="meta">' + esc(a.owner) + ' · ' + ago(a.ts) + (a.hasPin ? ' · has one (forgot?)' : '') + '</span>' +
+          (a.note ? '<p class="meta">“' + esc(a.note) + '”</p>' : '') + '<div class="btns">' + deskBtn("dismiss", a.owner, "Dismiss") + deskBtn("issue", a.owner, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("");
+      if ((d.locked || []).length) h += '<div class="dsec">🔒 Locked out · ' + d.locked.length + '</div>' + d.locked.map(function (o) {
+        return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + ' · 5 wrong tries</span><div class="btns">' + deskBtn("unlock", o, "Unlock") + deskBtn("issue", o, "New passphrase", 1) + '</div></div>'; }).join("");
+      if ((d.espn || []).length) h += '<div class="dsec">🏈 Do on ESPN · ' + d.espn.length + '</div>' + d.espn.map(function (p) {
+        return '<div class="ditem">' + esc(espnStep(p)) + '<div class="meta">' + esc((PERK_BY[p.perk] || {}).name || p.perk) + ' · approved ' + ago(p.approved) + '</div><div class="btns">' +
+          '<a class="b" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"') + '</div></div>'; }).join("");
+      var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += '<div class="dsec">💳 Credit sync</div><div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>';
+      h += '</div>';
+    }
+    if ((d.noPin || []).length) h += '<div class="dsk"><details><summary>👥 ' + d.noPin.length + ' owner' + (d.noPin.length === 1 ? '' : 's') + ' without a passphrase yet</summary>' + d.noPin.map(function (o) {
+      return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("") + '</details></div>';
+    var ls2 = d.sync && d.sync.last;
+    h += '<p class="meta" style="text-align:center;margin:8px 0 2px">Backend v' + esc(d.version || "?") + ' · credits ' + esc((d.sync || {}).mode || "test").toUpperCase() + (ls2 && ls2.at ? ' · last ledger push ' + ago(ls2.at) + (ls2.ok ? ' ✓' : ' ⚠️') : '') + '</p>';
+    return h + '<div class="cgrp">Log</div>';
+  }
+  function deskMsg(m) {
+    var hd = deskLine(m), body = "";
+    if (m.kind === "perk" && m.perk) { var p = m.perk, live = p.status === "REQUESTED" && deskOpenPerks().some(function (x) { return x.id === p.id; });
+      hd = m.event === "CANCELED" ? "Perk request canceled" : "🎟️ " + (teamOf(p.owner).team || p.owner) + " wants " + ((PERK_BY[p.perk] || {}).name || p.perk);
+      body = '<div class="cbot">' + esc(((PERK_BY[p.perk] || {}).name || p.perk) + " · " + p.cost + " cr") + (perkLine(p) ? " · " + perkLine(p) : "") + '\n<b>' + esc(live ? "Waiting on you · see To do above" : (PST[p.status] || [p.status])[0]) + '</b></div>'; }
+    else if (m.kind === "access") { hd = "🔑 " + (teamOf(m.ref).team || m.ref) + " asked for a passphrase"; body = m.text ? '<div class="cbot">“' + esc(m.text) + '”</div>' : ''; }
+    else if (m.kind === "lock") hd = "🔒 " + (teamOf(m.ref).team || m.ref) + " is locked out (5 wrong tries)";
+    else if (m.kind === "alert") body = '<div class="cbot fail">' + esc(m.text) + '</div>';
+    else if (m.kind === "robot") { var parts = String(m.text || "").split("\n"); hd = (m.event === "FAIL" ? "❌ " : m.event === "OK" ? "✅ " : "🤖 ") + parts[0];
+      body = (parts.length > 1 ? '<div class="cbot' + (m.event === "FAIL" ? " fail" : m.event === "OK" ? " ok" : "") + '">' + esc(parts.slice(1).join("\n")) + '</div>' : '') +
+        (/^https:\/\//.test(m.ref || "") ? '<div class="btns"><a class="b" href="' + esc(m.ref) + '" target="_blank" rel="noopener">Open ↗</a></div>' : ''); }
+    else if (m.kind === "note") { hd = m.text; body = ""; }
+    return '<div class="cevt">' + esc(hd) + '</div>' + body;
+  }
+  function loadDesk() {
+    if (!ME || !ME.commish || CH.deskBusy) return Promise.resolve(); CH.deskBusy = true;
+    return api("desk", creds()).then(function (r) { CH.deskBusy = false; if (!r.ok) return; var sig = JSON.stringify(r) !== JSON.stringify(DESK); DESK = r;
+      if (sig && CH.open && CH.room === "desk") drawThread(); if (CH.open && CH.view === "inbox") drawInbox(); }).catch(function () { CH.deskBusy = false; });
+  }
+  function issueBox(r) {
+    var msg = "Your MAFFL HQ passphrase: " + r.pin + "\nSign in at " + APP_LINK + " (caps and dashes don't matter).";
+    $("cbox").innerHTML = '<h3>Passphrase for ' + esc(r.team || r.owner) + '</h3><p class="p" style="font:700 22px var(--display);letter-spacing:.06em;text-align:center;margin:10px 0">' + esc(r.pin) + '</p>' +
+      '<p class="meta">Shown once. It isn\'t stored anywhere readable. Their old one (if any) stopped working.</p><div class="nudge"><a href="' + esc(smsHref(r.phone, msg)) + '">💬 Text it to them</a><a href="' + esc(mailHref(r.email, "Your MAFFL HQ passphrase", msg)) + '">✉️ Email it</a></div>' +
+      (r.phone || r.email ? '' : '<p class="meta" style="margin-top:4px">No number or email on file; you\'ll pick the contact.</p>') + '<div class="btns"><button class="b pri" id="cno">Done</button></div>';
+    $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); };
+  }
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-dact]"); if (!el) return;
+    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" ? null : teamOf(who).team || who;
+    var C = { issue: ["Issue a new passphrase?", "For " + t + ". Any old passphrase stops working. You'll see the new one once, with a button to text it.", "Issue it", false],
+      unlock: ["Unlock " + t + "?", "Their passphrase stays the same; the wrong-try count resets.", "Unlock", false],
+      dismiss: ["Dismiss this request?", "Marks it done without issuing anything.", "Dismiss", true],
+      espn: ["Done on ESPN?", "Ticks it off your list. Nothing else changes.", "Yes, it's done", false] }[op];
+    confirmBox(C[0], '<p class="p">' + esc(C[1]) + '</p>', C[2], C[3]).then(function (yes) {
+      if (!yes) return; busy(1);
+      api("deskact", Object.assign(creds(), { op: op, target: who, perk_id: el.dataset.pid || "" })).then(function (r) {
+        busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
+        if (op === "issue") issueBox(r); else toast({ unlock: "Unlocked ✓", dismiss: "Dismissed", espn: "Ticked off ✓" }[op]);
+        DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom();
+      }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
+    });
+  });
   function dayLabel(ts) {
     var d = new Date(ts), t = new Date(), d0 = new Date(ts); t.setHours(0, 0, 0, 0); d0.setHours(0, 0, 0, 0); var diff = Math.round((t - d0) / 864e5);
     return diff === 0 ? "Today" : diff === 1 ? "Yesterday" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -2211,6 +2327,7 @@
       '<small>' + (m.pending ? "sending…" : ago(m.ts)) + (m.pinned ? ' · 📌 pinned' : '') + '</small>' + (m.deleted || m.pending ? '' : '<button class="opt3" data-cadd="' + m.id + '" aria-label="React">☺︎</button>') +
       (canDel || canPin ? '<button class="opt3 o2" data-cmenu="' + m.id + '" aria-label="More">⋯</button>' : '') + '</div>';
     if (m.kind === "offer") h += '<div class="cevt">' + esc(bot ? evtLine(m) : "💱 " + (EVT[m.event] || m.event).replace(/^./, function (c) { return c.toUpperCase(); })) + '</div>' + tradeMini(m.offer, latestOf[m.ref] === m.id) + (m.text ? '<div class="ctx" style="margin-top:6px">' + fmtText(m.text) + '</div>' : '');
+    else if (m.owner === BOTN && DESK_KINDS[m.kind]) h += deskMsg(m);
     else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text)) + '</div>';
     if (CH.menu === m.id) h += '<div class="cmenu">' + (canPin ? '<button data-cmod="' + (m.pinned ? "unpin" : "pin") + '" data-mid="' + m.id + '">' + (m.pinned ? "Unpin" : "📌 Pin") + '</button>' : '') +
       (canDel ? '<button class="bad" data-cmod="delete" data-mid="' + m.id + '">Delete</button>' : '') + '</div>';
@@ -2225,13 +2342,15 @@
     return h + '</div></div>';
   }
   function drawThread() {
-    var body = $("cbody"), d = CH.data, nearBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 90;
+    var body = $("cbody"), d = CH.data, nearBottom = CH.room !== "desk" && body.scrollHeight - body.scrollTop - body.clientHeight < 90;
     if (!d) { body.innerHTML = ld("Loading messages…"); return; }
-    var latestOf = {}; d.messages.forEach(function (m) { if (m.kind === "offer") latestOf[m.ref] = m.id; });
-    var h = (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : fmtText(p.text)) + '</div>'; }).join("");
+    var latestOf = {}; if (CH.room !== "desk") d.messages.forEach(function (m) { if (m.kind === "offer") latestOf[m.ref] = m.id; });
+    var h = CH.room === "desk" ? deskTop() : "";
+    h += (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : fmtText(p.text)) + '</div>'; }).join("");
     if (d.more) h += '<p class="meta" style="text-align:center;margin-top:10px">Showing the latest ' + d.messages.length + ' messages</p>';
     if (!d.messages.length) {
       var dm = CH.room.indexOf("dm:") === 0;
+      if (CH.room === "desk") h += '<div class="cempty">Nothing logged yet. Perk requests, trades in review, access requests, lockouts, credit-sync and ESPN problems, and robot reports all post here.</div>'; else
       h += '<div class="cempty">' + (dm ? "No messages yet. Say hi, or tap ⇄ to send a trade offer. Every offer, counter and answer between you two shows up here."
         : CH.room === "league" ? "The whole league reads this room. Completed trades post here automatically." : "Only your tier sees this group. Accepted trades post here for the 24-hour review.") + '</div>';
     }
@@ -2252,7 +2371,7 @@
     var canTrade = ot && ot.tier === ME.tier && !/ghost/i.test(ot.team || "") && W === LATEST;
     $("cfoot").innerHTML = (CH.at ? '<div class="catlist">' + mentionable(room).map(function (o) { return '<button data-cat="' + esc(o) + '">@' + esc(shortOf(o)) + '</button>'; }).join("") + '</div>' : '') +
       '<div class="ccomp"><button class="ci" id="cat" aria-label="Mention someone">@</button>' + (canTrade ? '<button class="ci" data-trade-with="' + esc(other) + '" aria-label="Propose a trade">⇄</button>' : '') +
-      '<textarea id="cinput" rows="1" maxlength="500" enterkeyhint="send" placeholder="' + (room === "league" ? "Message the league" : room.indexOf("tier:") === 0 ? "Message your tier" : "Message " + esc(shortOf(other))) + '"></textarea>' +
+      '<textarea id="cinput" rows="1" maxlength="500" enterkeyhint="send" placeholder="' + (room === "desk" ? "Note to self (only you see this)" : room === "league" ? "Message the league" : room.indexOf("tier:") === 0 ? "Message your tier" : "Message " + esc(shortOf(other))) + '"></textarea>' +
       '<button class="ci send" id="csend" aria-label="Send">➤</button></div>';
     ta = $("cinput"); ta.value = CH.draft[room] || ""; grow(ta);
     ta.oninput = function () { CH.draft[room] = ta.value; grow(ta); };
@@ -2310,7 +2429,7 @@
     if (!chatOn()) { toast(API_URL ? "Sign in with your passphrase to chat" : "Chat needs the league server"); return; }
     CH.open = true; sizeChat(); $("chat").classList.add("on"); $("cscrim").classList.add("on");
     if (room) openRoom(room); else showInbox();
-    refreshInbox();
+    refreshInbox(); if (ME.commish) loadDesk();
   }
   function closeChat() {
     var ta = $("cinput"); if (ta && CH.room) CH.draft[CH.room] = ta.value;
@@ -2319,11 +2438,12 @@
   }
   function showInbox() { CH.view = "inbox"; CH.room = null; CH.data = null; CH.at = false; $("cfoot").innerHTML = ""; chatHeader(); drawInbox(); $("cbody").scrollTop = 0; }
   function openRoom(room) {
-    CH.view = "thread"; CH.room = room; CH.data = null; CH.sig = null; CH.forceBottom = true; CH.menu = CH.picker = null; CH.at = false; CH.ment = {};
+    CH.view = "thread"; CH.room = room; CH.data = null; CH.sig = null; CH.forceBottom = room !== "desk"; // the desk opens on its To do list CH.menu = CH.picker = null; CH.at = false; CH.ment = {};
     chatHeader(); drawThread(); drawComposer(); loadRoom();
   }
   function loadRoom() {
     var room = CH.room; if (!room || CH.loading) return; CH.loading = true;
+    if (room === "desk") loadDesk();
     api("chat", Object.assign(creds(), { room: room }), !!CH.data).then(function (r) { // polls of an open thread stay quiet
       CH.loading = false; if (CH.room !== room || !CH.open) return;
       if (!r.ok) { $("cbody").innerHTML = '<div class="cempty">' + esc(r.error || "Couldn't open this chat") + '</div>'; return; }
@@ -2398,6 +2518,10 @@
   function chatCards() {
     if (!chatOn() || W !== LATEST) return [];
     var ib = inboxOf(), out = [];
+    if (ME.commish && deskTodo()) { var dk = DESK || {}, bits = [];
+      [[deskOpenPerks().length, "perk"], [deskReview().length, "trade"], [(dk.access || []).length, "passphrase request"], [(dk.locked || []).length, "lockout"], [(dk.espn || []).length, "ESPN step"]].forEach(function (x) { if (x[0]) bits.push(x[0] + " " + x[1] + (x[0] === 1 ? "" : "s")); });
+      out.push({ eb: "📥 Commish desk", t: deskTodo() + " thing" + (deskTodo() === 1 ? "" : "s") + " waiting on you", body: '<p class="meta">' + esc(bits.join(" · ") || "Credit sync needs a look") + '</p>' + deskHomeList() +
+        '<div class="btns"><button class="b pri" data-chat-room="desk">📥 Open the desk</button></div>' }); }
     var live = function (other) { return (SUM.offers || []).filter(function (o) { return ((isMe(o.from) && norm(o.to) === norm(other)) || (isMe(o.to) && norm(o.from) === norm(other))) && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; })
       .sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); })[0]; };
     (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; }).forEach(function (r) {

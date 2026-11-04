@@ -1,0 +1,48 @@
+# MAFFL Desk notify — posts each robot's result to the 📥 Commish desk in the REEL app (APP_DESIGN.md §10d).
+#
+# Runs after the ESPN weekly pull, Pulse draft and Credit sync workflows finish, and sends one short card
+# (✅ / ❌ + a link to the run) to the app backend's "botpost" action. Read-only: never touches the repo.
+#
+# Setup (commish, once): pick any long random string and save it in BOTH places:
+#   1. GitHub → repo Settings → Secrets and variables → Actions → New secret  DESK_KEY
+#   2. Apps Script → Project Settings → Script properties                     DESK_KEY
+# Until DESK_KEY exists this workflow does nothing (it skips quietly).
+name: Desk notify
+
+on:
+  workflow_run:
+    workflows: ["ESPN weekly pull", "Pulse draft", "Credit sync"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Post the result to the Commish desk
+        env:
+          DESK_KEY: ${{ secrets.DESK_KEY }}
+          APP_API: https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec
+          WF: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          EVENT: ${{ github.event.workflow_run.event }}
+          URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          if [ -z "$DESK_KEY" ]; then echo "::notice::DESK_KEY not set; skipping."; exit 0; fi
+          case "$CONCLUSION" in
+            success) status=ok;   word="finished" ;;
+            skipped|cancelled) echo "Run was $CONCLUSION; nothing to post."; exit 0 ;;
+            *)       status=fail; word="FAILED ($CONCLUSION)" ;;
+          esac
+          case "$WF" in
+            "Pulse draft") hint=$([ "$status" = ok ] && echo "The Weekly Pulse draft PR should be open. Review and merge it before next Tuesday." || echo "No Pulse draft PR this time. Open the run to see why, or ask Claude to re-run it.") ;;
+            "ESPN weekly pull") hint=$([ "$status" = ok ] && echo "ESPN data is in. The Pulse draft robot runs next." || echo "ESPN didn't come through (cookies expired or the week isn't final). The Pulse can't draft until this works.") ;;
+            "Credit sync") hint=$([ "$status" = ok ] && echo "App-approved credits checked against the official record (TEST runs commit nothing)." || echo "Credits from the app did NOT post. Approvals still stand; open the run.") ;;
+            *) hint="" ;;
+          esac
+          jq -n --arg k "$DESK_KEY" --arg t "$WF $word" --arg x "$hint (started by $EVENT)" --arg l "$URL" --arg s "$status" \
+            '{action:"botpost",key:$k,title:$t,text:$x,link:$l,status:$s}' > body.json
+          curl -sSL --max-time 60 -H "Content-Type: text/plain;charset=utf-8" --data @body.json "$APP_API" | head -c 300; echo

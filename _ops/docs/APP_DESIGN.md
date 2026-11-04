@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.13 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.14 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,10 @@ VERSION: 0.13 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **📥 Commish desk** (commish): a chat room only the commish's login sees, first in Chat. Live **To do** on top
+  (perks to approve, trades in review, passphrase requests, lockouts, ESPN steps, credit-sync trouble) with the action buttons
+  right there; a log underneath where every robot and owner action that needs him posts a card. Passphrases are issued and
+  owners unlocked from the app (no Sheet menu needed). Goal stated: **REEL as automated as humanly possible** (§10e map).
 - 2026-11-03 · **Loading + speed** (commish: too many blank loading moments). One spinner style everywhere + a thin gold bar under the header whenever the league server is working (background polls stay quiet). The app opens as soon as the Pulse, credits and prizes are in; rulebook and the 375 KB draft CSV (rosters) load behind. The signed-in summary starts at launch and the phone shows its last copy until the fresh one lands; Match shows the last live score (< 2 h) while ESPN is asked. Backend v0.14: each tab read once per call (summary 14 → 7 reads) and summary/inbox skip the script lock, so owners stop queueing behind each other. Watch: the loader caches `logic.js` only under 95 KB (now ~60 KB).
 - 2026-11-03 · **Inbox simplified** (commish): no Chats / @ Mentions tabs, just Group chats and Direct messages.
 - 2026-11-03 · **No category row on Home** (commish: the circles felt like a menu). The reel is one stack: thin progress bar on top
@@ -358,6 +362,55 @@ already uses. Others have proven lineup and add/drop writes; League Manager tool
 Plan: commish does one Ghost score adjustment in Chrome while Claude records the request; if it can be replayed, the Tuesday robot posts
 the Ghost adjustment, then reads it back and reports. No retries (a retry can apply twice), confirm step first season.
 Candidates after that: approved Extra FAAB, Double Player Bonus adjustment, Matchup Swap schedule edit.
+
+### 10d. 📥 Commish desk (built 11/3, backend v0.15)
+
+**Where.** Chat → first row, "Commish desk" (room `desk`, only `is_commish = Y`; the server refuses anyone else). A For-you reel card
+("N things waiting on you", with the list) leads Home whenever something is open. Deep link `lab/#chat=desk`.
+
+**Top of the room = To do, computed live** (backend `desk` action + the signed-in summary), each with its buttons:
+
+| Section | Source | Buttons |
+|---|---|---|
+| 🎟️ Perks to approve | Perks tab, REQUESTED | Deny (reason) · Approve (same confirm as Team → Credits) |
+| 🤝 Trades in review | Offers, ACCEPTED | Negate (reason) · Approve |
+| 🔑 Passphrase requests | Requests tab, OPEN | Dismiss · **Issue passphrase** → shown once + 💬 Text it / ✉️ Email it (prefilled, from your phone) |
+| 🔒 Locked out | Owners, locked = Y | Unlock · New passphrase |
+| 🏈 Do on ESPN | Approved perks without an `espn_done` event | Open ESPN · ✓ Done (logs it) |
+| 💳 Credit sync | LAST_SYNC failed | Re-send ledger |
+
+Plus a folded list of owners without a passphrase yet (Issue buttons, for go-live day) and a status line (backend version,
+credits TEST/LIVE, last ledger push).
+
+**Below = the log.** MAFFL HQ posts a card when: a perk is requested or canceled · a trade is accepted (review) · someone asks for a
+passphrase · an owner locks himself out · 25 wrong guesses pause sign-in · a ledger push fails · ESPN refuses the cookies (once per 6 h) ·
+a robot finishes. You can type notes to yourself there. Unread counts ride the Chat tab like any room.
+
+**Robots → desk.** `desk-notify.yml` runs after ESPN weekly pull, Pulse draft and Credit sync and posts ✅/❌ + a hint + a run link
+(backend `botpost`, guarded by a shared key). **Setup (commish, once):** the same random string as GitHub secret `DESK_KEY` and Apps
+Script property `DESK_KEY`. Without it the workflow skips quietly. Any other robot (a Claude scheduled task, a future Apps Script
+trigger) can post the same way.
+
+### 10e. Automation map: every commish duty → who does it (11/3)
+
+| Duty | Today | Target |
+|---|---|---|
+| Weekly Pulse | ✅ Robot drafts PR (Tue), Claude scheduled task kicks it off; you merge | Desk card when the PR is up (✅ desk-notify) |
+| Credit perk requests | ✅ App request → desk → approve → credit sync robot → Credit_Log, credits.html | Same, LIVE at go-live |
+| Trade credit legs | ✅ Offer → accept → desk review → approve → credit sync | Same |
+| Passphrases / lockouts | ✅ Desk (issue, text, unlock) | — |
+| ESPN side of perks (FAAB, DPB adjustment, swap) | Desk checklist, you do it on ESPN | §10b ESPN writes: robot does it, desk shows the read-back |
+| Ghost weekly score | Manual on ESPN | §10b, first experiment |
+| Weekly-high credit, season awards | By hand in Credit_Log | Tuesday robot writes ledger rows; desk "approve" card first season |
+| Trade player side on ESPN | Owners | Desk reminder until the 30-min ESPN refresh sees the move (§6b, needs Apps Script trigger) |
+| Dues | Hand-logged | Desk card per unpaid owner near deadlines; Venmo/notes stay manual |
+| Key dates / deadlines | Pulse strip | Desk heads-up 24 h before each perk / trade deadline (needs trigger) |
+| Robot failures | You find out late | ✅ desk-notify ❌ cards |
+| Nightly reconciliation | — | Ledger vs Credit_Log vs credits.html; desk card only on a mismatch (needs trigger) |
+
+**One small unlock for the "needs trigger" rows:** Apps Script time triggers must call a function in the bound loader, so `Code.gs` needs
+one more line (`function tick() { logic_().tick(); }`), pasted once by the commish, plus a 15-min trigger. Until then, GitHub Actions
+or a Claude scheduled task can hit the web app on a schedule instead (Actions schedules run late, so not for anything time-critical).
 
 ### 10c. Other jobs to automate (queue)
 

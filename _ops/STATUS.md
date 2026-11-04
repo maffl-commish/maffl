@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-03 by Claude (chat), REEL loading + speed
+**Last updated:** 2026-11-03 by Claude (chat), REEL Commish desk
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · REEL · 📥 Commish desk: commish-only chat room (first in Chat) + For-you card. Live To do with action buttons (perks, trades in review, passphrase requests → issue in-app + text it, lockouts → unlock, ESPN steps → ✓ Done, credit-sync → Re-send) over a log the backend posts to (perk requests, accepted trades, access requests, lockouts, guess pause, ledger failures, ESPN cookie failures). New `desk-notify.yml` posts ESPN pull / Pulse draft / Credit sync results (needs DESK_KEY secret + Script property). Backend logic v0.15 (`desk`, `deskact`, `botpost`). APP_DESIGN v0.14 §10d–e (automation map). Tested against a simulated Sheet (26 checks) and at 390px.
 - 2026-11-03 · REEL · Loading + speed: logo boot screen, one spinner for every loading spot (settings, Match, rosters, trade builder, trades, perks, rulebook, chat, rivalry frames), gold bar under the header while the league server works (polls stay quiet). App opens once Pulse + credits + prizes are in; rulebook and the 375 KB draft CSV load behind. Summary call starts at launch; last summary and last live score kept on the phone for instant paint. Backend logic v0.14: one Sheet read per tab per call (summary 14 → 7), summary/inbox skip the script lock. APP_DESIGN v0.13, REEL.md.
 - 2026-11-03 · Lab chat inbox: Chats / @ Mentions tabs removed (commish: too much); just Group chats + Direct messages. @mentions still work in messages.
 - 2026-11-03 · Lab chat: "+ New" moved off the header to a big floating ✎ New button (bottom-right of the inbox); × close gets a 44px thumb target. Commish feedback: the two were too close to tap.

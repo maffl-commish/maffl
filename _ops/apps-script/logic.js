@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.14";
+var VERSION = "0.15";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -95,6 +95,9 @@ function doPost(e) {
       case "chatsend": return json(withAuth_(b, function (o) { return chatSend_(o, b); }));
       case "chatmod":  return json(withAuth_(b, function (o) { return chatMod_(o, b); }));
       case "inbox":    return json(withAuth_(b, function (o) { return { ok: true, chat: inbox_(o) }; }));
+      case "desk":     return json(withAuth_(b, function (o) { return o.commish ? desk_(o) : { ok: false, error: "Commish only" }; }));
+      case "deskact":  return json(withAuth_(b, function (o) { return o.commish ? deskAct_(o, b) : { ok: false, error: "Commish only" }; }));
+      case "botpost":  return json(botPost_(b));
       default:        return json({ ok: false, error: "unknown action" });
     }
   } catch (err) {
@@ -149,8 +152,9 @@ function loginByPhrase_(pin) {
   var hit = owners_().filter(function (o) { return o.pin_hash && String(o.locked) !== "Y" && hash_(o.salt, pin) === o.pin_hash; })[0];
   if (!hit) {
     cache.put("fails", String(fails + 1), 3600);
-    if (fails + 1 === MAX_FAILS_PER_HOUR) MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: sign-in guesses paused",
+    if (fails + 1 === MAX_FAILS_PER_HOUR) { MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: sign-in guesses paused",
       MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour. Sign-in is paused for an hour. If that wasn't owners fumbling, consider resetting passphrases.");
+      deskPost_("alert", MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour, so sign-in is paused for an hour. If that wasn't owners fumbling, reset passphrases.", "", "GUESSES"); }
     return { ok: false, error: "That passphrase doesn't match anyone" };
   }
   return { ok: true, owner: hit.owner, team: hit.team, tier: hit.tier, commish: String(hit.is_commish) === "Y" };
@@ -164,7 +168,7 @@ function login_(owner, pin) {
   if (hash_(o.salt, pin) !== o.pin_hash) {
     var n = Number(o.failed_tries || 0) + 1;
     setCell_("Owners", o._row, "failed_tries", n);
-    if (n >= MAX_TRIES) setCell_("Owners", o._row, "locked", "Y");
+    if (n >= MAX_TRIES) { setCell_("Owners", o._row, "locked", "Y"); deskPost_("lock", "", o.owner, "LOCKED"); }
     return { ok: false, error: n >= MAX_TRIES ? "Locked. Ask the commish for a new passphrase." : "Wrong passphrase (" + (MAX_TRIES - n) + " tries left)" };
   }
   if (Number(o.failed_tries)) setCell_("Owners", o._row, "failed_tries", 0);
@@ -209,6 +213,7 @@ function request_(owner, note) {
     o.owner + " (" + o.team + ") asked for their PIN.\n\nNote: " + (note || "—") +
     "\n\nTo finish: open the MAFFL HQ App Sheet → MAFFL menu → Set / reset a passphrase, text it to them, then MAFFL → Mark request done.\n" +
     SpreadsheetApp.getActive().getUrl());
+  deskPost_("access", String(note || "").slice(0, 300), o.owner, "REQUEST");
   return { ok: true };
 }
 
@@ -255,7 +260,7 @@ function respond_(me, id, decision, quiet) {
   if (next === "ACCEPTED" && new Date() > TRADE_DEADLINE) return { ok: false, error: "The trade deadline has passed" };
   setOffer_(o, next); log_(me.owner, "offer", id, next, "", "");
   post_(roomDM_(o.from_owner, o.to_owner), me.owner, "offer", "", id, next);
-  if (next === "ACCEPTED") post_("tier:" + o.tier, BOT, "offer", "", id, "REVIEW"); // accepted trades are public to the tier
+  if (next === "ACCEPTED") { post_("tier:" + o.tier, BOT, "offer", "", id, "REVIEW"); deskPost_("offer", "", id, "REVIEW"); } // accepted trades are public to the tier
   if (!quiet && (next === "ACCEPTED" || next === "DECLINED")) notify_([o.from_owner], next.toLowerCase(), "MAFFL HQ: " + teamName_(o.to_owner) + " " + next.toLowerCase() + " your offer",
     teamName_(o.to_owner) + " " + next.toLowerCase() + " your trade offer." + (next === "ACCEPTED" ? "\nNext: send the player side on ESPN. Credits move when the commish approves." : ""), APP_URL + "#offer-" + id, me.owner);
   return { ok: true, status: next };
@@ -332,6 +337,7 @@ function perk_(me, b) {
   var cost = P.cost * qty, id = "P" + Utilities.getUuid().slice(0, 8).toUpperCase();
   sheet_("Perks").appendRow([id, now, me.owner, me.tier, b.perk, cost, qty, week || "", player, pos, swapWith, JSON.stringify(affects), String(b.note || "").slice(0, 200), "REQUESTED", now, ""]);
   log_(me.owner, "perk", id, "REQUESTED", week || "", b.perk);
+  deskPost_("perk", String(b.note || "").slice(0, 200), id, "REQUESTED");
   try {
     MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: " + P.name + " request from " + me.owner,
       me.owner + " (" + me.team + ") requested " + P.name + " for " + cost + " credit" + (cost === 1 ? "" : "s") +
@@ -351,6 +357,7 @@ function perkAct_(me, id, decision, reason) {
   setCell_("Perks", r._row, "status", next); setCell_("Perks", r._row, "updated_ts", new Date());
   if (reason) setCell_("Perks", r._row, "reason", String(reason).slice(0, 200));
   log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
+  if (next === "CANCELED") deskPost_("perk", "", id, "CANCELED");
   var out = { ok: true, status: next };
   if (next === "APPROVED") { setCell_("Perks", r._row, "sync", syncMode_()); out.sync = pushLedger_(); }
   if (next !== "CANCELED") notify_([r.owner], "perks", "MAFFL HQ: " + (PERKS[r.perk] || {}).name + " " + next.toLowerCase(),
@@ -425,6 +432,7 @@ function pushLedger_() {
     }
   } catch (err) {
     res.error = String(err.message || err).replace(/^SETUP: /, "");
+    deskPost_("alert", "Credit sync didn't post: " + res.error.replace(/\.?$/, ".") + " The approval stands. Fix it, then tap Re-send ledger.", "", "SYNC");
     try { MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: credit sync didn't post", res.error + "\n\nThe approval stands. Fix it, then tap Re-send ledger in the app (Team → Credits)."); } catch (e) {}
   }
   props.setProperty("LAST_SYNC", JSON.stringify({ at: new Date().toISOString(), ok: res.ok, mode: mode, rows: rows.length, error: res.error || "" }));
@@ -525,7 +533,12 @@ function espn_(lid, query) {
   if (!s2 || !swid) throw new Error("SETUP: add ESPN_S2 and SWID in Apps Script → Project Settings → Script properties");
   var url = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "/segments/0/leagues/" + lid + "?" + query;
   var r = UrlFetchApp.fetch(url, { headers: { Cookie: "espn_s2=" + s2 + "; SWID=" + swid }, muteHttpExceptions: true });
-  if (r.getResponseCode() !== 200) throw new Error("ESPN said " + r.getResponseCode());
+  if (r.getResponseCode() !== 200) {
+    var c6 = CacheService.getScriptCache();
+    if ([401, 403].indexOf(r.getResponseCode()) >= 0 && !c6.get("desk_espn")) { c6.put("desk_espn", "1", 21600);
+      deskPost_("alert", "ESPN said " + r.getResponseCode() + " to the live feed. The espn_s2 / SWID cookies probably expired: copy fresh ones from your browser into Apps Script → Project Settings → Script properties (and the GitHub secrets ESPN_S2 / SWID).", "", "ESPN"); }
+    throw new Error("ESPN said " + r.getResponseCode());
+  }
   return JSON.parse(r.getContentText());
 }
 // Best legal lineup (exact, Hungarian); same rule as the robot's Coach of the Week. slots: [slotId...], players: [[pts, [eligibleSlotIds]]]
@@ -600,6 +613,7 @@ function meOf_(o) { return { owner: o.owner, tier: String(o.tier), commish: Stri
 function canRoom_(me, room) {
   room = String(room || "");
   if (room === "league") return true;
+  if (room === "desk") return !!me.commish; // 🛡️ Commish desk: the robots' to-do feed, commish only
   if (room === "tier:U" || room === "tier:L") return String(me.tier) === room.slice(5) || !!me.commish;
   if (room.indexOf("dm:") === 0) return room.slice(3).split("|").indexOf(norm_(me.owner)) >= 0;
   return false;
@@ -645,7 +659,11 @@ function chat_(meRaw, b) {
   });
   if (b.mark !== false && list.length) markRead_(me.owner, room, new Date(list[list.length - 1].ts));
   var pinned = all.filter(function (r) { return String(r.pinned) === "Y" && String(r.deleted) !== "Y"; }).slice(-3).map(function (r) { return msgOut_(r, offers); });
-  return { ok: true, room: room, messages: list.map(function (r) { return msgOut_(r, offers); }), pinned: pinned, counts: counts, mine: mine, who: who, more: all.length > list.length };
+  var msgs = list.map(function (r) { return msgOut_(r, offers); });
+  if (room === "desk") { var pk = {}; rows_("Perks").forEach(function (r) { pk[r.perk_id] = r; });
+    msgs.forEach(function (m) { var r = m.kind === "perk" && pk[m.ref]; if (r) m.perk = { id: r.perk_id, ts: r.ts, owner: r.owner, tier: r.tier, perk: r.perk, cost: Number(r.cost) || 0, qty: Number(r.qty) || 1,
+      week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, note: r.note, status: r.status, reason: r.reason }; }); }
+  return { ok: true, room: room, messages: msgs, pinned: pinned, counts: counts, mine: mine, who: who, more: all.length > list.length };
 }
 function chatSend_(meRaw, b) {
   var me = meOf_(meRaw), room = String(b.room || "");
@@ -683,7 +701,7 @@ function inbox_(meRaw) {
   var me = meOf_(meRaw), reads = {}, names = {}, rooms = {}, mentions = [];
   rows_("Reads").forEach(function (r) { if (norm_(r.owner) === norm_(me.owner)) reads[r.room] = new Date(r.ts).getTime(); });
   owners_().forEach(function (o) { names[norm_(o.owner)] = o.owner; });
-  ["league", "tier:" + me.tier].concat(me.commish ? ["tier:" + (me.tier === "U" ? "L" : "U")] : []).forEach(function (k) { rooms[k] = { room: k, unread: 0, at: 0, mentions: 0 }; });
+  (me.commish ? ["desk"] : []).concat(["league", "tier:" + me.tier], me.commish ? ["tier:" + (me.tier === "U" ? "L" : "U")] : []).forEach(function (k) { rooms[k] = { room: k, unread: 0, at: 0, mentions: 0 }; });
   rows_("Chat").forEach(function (r) {
     if (!canRoom_(me, r.room)) return;
     var x = rooms[r.room] = rooms[r.room] || { room: r.room, unread: 0, at: 0, mentions: 0 }, t = new Date(r.ts).getTime(), mineMsg = norm_(r.owner) === norm_(me.owner);
@@ -700,7 +718,7 @@ function inbox_(meRaw) {
   var list = Object.keys(rooms).map(function (k) {
     var x = rooms[k]; if (k.indexOf("dm:") === 0) { var other = k.slice(3).split("|").filter(function (n) { return n !== norm_(me.owner); })[0]; x.with = names[other] || other; }
     return x;
-  }).sort(function (a, b) { var fixed = function (x) { return x.room === "league" ? 0 : x.room.indexOf("tier:") === 0 ? 1 : 2; }; return fixed(a) - fixed(b) || b.at - a.at; });
+  }).sort(function (a, b) { var fixed = function (x) { return x.room === "desk" ? -1 : x.room === "league" ? 0 : x.room.indexOf("tier:") === 0 ? 1 : 2; }; return fixed(a) - fixed(b) || b.at - a.at; });
   var unread = list.reduce(function (n, x) { return n + x.unread; }, 0);
   return { rooms: list, unread: unread, mentions: mentions.slice(-30).reverse(), mentionsUnread: mentions.filter(function (m) { return m.unread; }).length };
 }
@@ -739,6 +757,67 @@ function summary_(week, owner) {
     commish: !!(meRow && String(meRow.is_commish) === "Y"), chat: meRow ? inbox_(meRow) : null };
 }
 
+// ---------------------------------------------------------------- 🛡️ Commish desk (APP_DESIGN §10d)
+// One chat room only the commish sees. Every robot and every owner action that needs him posts a card here
+// (kind perk | offer | access | lock | alert | robot | note). desk_ returns the live to-do list on top of it;
+// deskAct_ does the jobs that used to need the Sheet menu (issue a passphrase, unlock) and ticks off ESPN steps.
+function deskPost_(kind, text, ref, event) { try { post_("desk", BOT, kind, text, ref, event, [], ""); } catch (e) {} }
+function setPhrase_(o) {
+  var others = owners_().filter(function (x) { return x.pin_hash && x._row !== o._row; }), pin, tries = 0;
+  do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return hash_(x.salt, pin) === x.pin_hash; }));
+  var salt = Utilities.getUuid();
+  setCell_("Owners", o._row, "salt", salt);
+  setCell_("Owners", o._row, "pin_hash", hash_(salt, pin));
+  setCell_("Owners", o._row, "failed_tries", 0);
+  setCell_("Owners", o._row, "locked", "");
+  sheet_("Events").appendRow([new Date(), "commish", "pin_set", o.owner, "", "", ""]);
+  return pin;
+}
+function openRequests_() { // Requests tab: ts, owner, note, status, done_ts (by position; header names vary)
+  var sh = sheet_("Requests"), v = sh.getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) if (v[i][1] && String(v[i][3]).toUpperCase() === "OPEN") out.push({ row: i + 1, ts: v[i][0], owner: v[i][1], note: v[i][2] });
+  return out;
+}
+function closeRequests_(owner) {
+  var sh = sheet_("Requests"); openRequests_().forEach(function (r) { if (norm_(r.owner) === norm_(owner)) sh.getRange(r.row, 4, 1, 2).setValues([["DONE", new Date()]]); });
+}
+function desk_(me) {
+  var done = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = e.meta || "Y"; });
+  var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id]; }).map(function (r) {
+    return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts };
+  });
+  var owners = owners_(), last = {};
+  try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
+  return { ok: true, version: VERSION,
+    access: openRequests_().map(function (r) { var o = ownerRow_(r.owner) || {}; return { owner: r.owner, team: o.team, ts: r.ts, note: String(r.note || ""), hasPin: !!o.pin_hash }; }),
+    locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
+    noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
+    espn: espn, sync: { mode: syncMode_(), last: last } };
+}
+function deskAct_(me, b) {
+  if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
+  var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
+  if (b.op === "issue") {
+    var pin = setPhrase_(o); closeRequests_(o.owner);
+    deskPost_("note", "New passphrase issued to " + o.owner + ".", o.owner, "ISSUED");
+    var c = contacts_().filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0] || {};
+    return { ok: true, owner: o.owner, team: o.team, pin: pin, phone: c.phone || "", email: c.email || "" }; // shown once, to the commish only
+  }
+  if (b.op === "unlock") { setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", ""); deskPost_("note", o.owner + " unlocked (same passphrase).", o.owner, "UNLOCKED"); return { ok: true }; }
+  if (b.op === "dismiss") { closeRequests_(o.owner); return { ok: true }; }
+  return { ok: false, error: "issue, unlock, dismiss or espn" };
+}
+// Robots (GitHub Actions, Claude scheduled tasks) post to the desk with the shared key in Script property DESK_KEY.
+// No key set = closed. Body: { action:"botpost", key, title, text, link, status: ok|fail|info }
+function botPost_(b) {
+  var key = PropertiesService.getScriptProperties().getProperty("DESK_KEY");
+  if (!key || String(b.key || "") !== key) return { ok: false, error: "bad key" };
+  var title = String(b.title || "Robot").slice(0, 80), text = String(b.text || "").slice(0, 400), link = String(b.link || "");
+  if (link && !/^https:\/\//.test(link)) link = "";
+  post_("desk", BOT, "robot", (title + (text ? "\n" + text : "")).slice(0, CHAT_MAX), link.slice(0, 300), String(b.status || "info").slice(0, 8).toUpperCase());
+  return { ok: true };
+}
+
 // ---------------------------------------------------------------- commish menu
 function pickOwner_(title) {
   var ui = SpreadsheetApp.getUi(), r = ui.prompt(title, "Owner name exactly as in the Owners tab:", ui.ButtonSet.OK_CANCEL);
@@ -751,14 +830,7 @@ function menuSetPin() {
   var ui = SpreadsheetApp.getUi(), o = pickOwner_("Set / reset a passphrase");
   if (!o) return;
   if (o.pin_hash && ui.alert("Replace " + o.owner + "'s existing passphrase?", ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
-  var others = owners_().filter(function (x) { return x.pin_hash && x._row !== o._row; }), pin, tries = 0;
-  do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return hash_(x.salt, pin) === x.pin_hash; }));
-  var salt = Utilities.getUuid();
-  setCell_("Owners", o._row, "salt", salt);
-  setCell_("Owners", o._row, "pin_hash", hash_(salt, pin));
-  setCell_("Owners", o._row, "failed_tries", 0);
-  setCell_("Owners", o._row, "locked", "");
-  sheet_("Events").appendRow([new Date(), "commish", "pin_set", o.owner, "", "", ""]);
+  var pin = setPhrase_(o);
   ui.alert("Passphrase for " + o.owner + ":\n\n" + pin + "\n\nText it to them now. It isn't stored anywhere, so this is the only time you'll see it.");
 }
 function menuRequestDone() {
