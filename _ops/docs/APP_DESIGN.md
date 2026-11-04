@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.12 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.13 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,7 @@ VERSION: 0.12 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Loading + speed** (commish: too many blank loading moments). One spinner style everywhere + a thin gold bar under the header whenever the league server is working (background polls stay quiet). The app opens as soon as the Pulse, credits and prizes are in; rulebook and the 375 KB draft CSV (rosters) load behind. The signed-in summary starts at launch and the phone shows its last copy until the fresh one lands; Match shows the last live score (< 2 h) while ESPN is asked. Backend v0.14: each tab read once per call (summary 14 → 7 reads) and summary/inbox skip the script lock, so owners stop queueing behind each other. Watch: the loader caches `logic.js` only under 95 KB (now ~60 KB).
 - 2026-11-03 · **Inbox simplified** (commish): no Chats / @ Mentions tabs, just Group chats and Direct messages.
 - 2026-11-03 · **No category row on Home** (commish: the circles felt like a menu). The reel is one stack: thin progress bar on top
   (tap → Jump to sections), each card names its section, 🎯 Play cards (quizzes, Game of the Week) spread through the stack

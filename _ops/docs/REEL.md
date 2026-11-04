@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-03 (chat) · Match = scoreboard
+Last updated: 2026-11-03 (chat) · loading + speed
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -23,11 +23,11 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 ## 2. Built (in the lab sandbox, not live)
 
-Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.12**, TEST Sheet.
+Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.14**, TEST Sheet.
 
 | Area | What works today |
 |---|---|
-| Shell | Pinned header + tab bar, iPhone zoom/pan fixed, Home-Screen friendly |
+| Shell | Pinned header + tab bar, iPhone zoom/pan fixed, Home-Screen friendly. **Loading:** logo boot screen, one spinner everywhere, gold bar under the header while the league server works; opens before rulebook/rosters arrive; last summary + last live score kept on the phone for instant paint |
 | Sign-in | Two-word passphrase (GRONK-PISTOL), no team picker, 25 wrong/hour league limit, request-access email |
 | 🏠 Home (reel) | One stack, no category row: progress bar on top (tap → Jump to), section name on each card, 🎯 Play cards (quizzes, Game of the Week) spread through it, "You're caught up" end card. Personalized order: ⭐ You → Division/Race → Scores → Coach → Survivor → Wire → Credits → other tier, Hot & Not quizzes woven in. One reaction tray per card + who reacted |
 | ⚔️ Match | Just the scoreboard: live score from ESPN (backend `live`, 60 s auto-refresh, tap "↻ Ns ago" to pull now), ⚔️ Rivalry button between the teams, ESPN-style lineups (NFL team, opponent, kickoff, stat line). **✖️2 Double Player Bonus**: bonus score flashes gold with ×2 + player chip, doubled player highlighted. **🧪 Test scores** while ESPN is all 0 (opponent gets a pretend DPB; pill turns it off) |
@@ -52,7 +52,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - 💬 Chat follow-ups: opt-in email for DMs/@mentions (add a toggle to Settings), robot posts for Pulse drop + Coach of the Week, older-message paging (APP_DESIGN §4c).
 - Guest "Just browsing" mode (§4).
 - ESPN refresh on a rhythm via Apps Script trigger (§6b), "Updated N min ago" label.
-- Real rosters from ESPN (replace draft-staged rosters).
+- Real rosters from ESPN (replace draft-staged rosters). Ship them as a small generated rosters file, not the 375 KB draft CSV the lab reads today.
 - `gen_lab_weekfacts.py` added to the Tuesday robot.
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
 
@@ -71,7 +71,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Offseason mode (decided: same tabs, different contents): which cards and what Match shows.
 
 **Known issues**
-- _(none logged)_
+- Watch: `Code.gs` caches `logic.js` only while it is under 95 KB (Apps Script cache limit). It is ~60 KB now; past 95 KB every call would re-download it from GitHub (slow). Split it before then.
 
 ---
 

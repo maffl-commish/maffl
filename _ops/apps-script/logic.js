@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.13";
+var VERSION = "0.14";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -66,6 +66,13 @@ function doGet(e) {
 function doPost(e) {
   var b = {};
   try { b = JSON.parse((e && e.postData && e.postData.contents) || "{}"); } catch (err) { return json({ ok: false, error: "bad json" }); }
+  // Reads that change nothing (summary, inbox) skip the script lock, so one owner's slow call never queues the
+  // whole league behind it. Only when the passphrase checks out cleanly (no failed-try counter to write).
+  var fast = LOCK_FREE[b.action] && cleanAuth_(b);
+  if (fast) {
+    try { return json(b.action === "summary" ? summary_(b.week, fast.owner) : { ok: true, chat: inbox_(fast) }); }
+    catch (err) { return json({ ok: false, error: String(err) }); }
+  }
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
@@ -98,7 +105,11 @@ function doPost(e) {
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 // ---------------------------------------------------------------- data helpers
-function sheet_(name) {
+// Each web request evaluates this file fresh, so MEMO_ lives for one request: a tab is read from the Sheet once
+// per call (summary used to read Owners five times). Asking for a tab with sheet_() (every write does) drops its memo.
+var MEMO_ = {};
+function sheet_(name) { delete MEMO_[name]; return sheetGet_(name); }
+function sheetGet_(name) {
   var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName(name);
   if (!sh && name === "Offers") { sh = ss.insertSheet("Offers"); sh.appendRow(OFFER_HEAD); sh.setFrozenRows(1); }
   if (!sh && name === "Perks") { sh = ss.insertSheet("Perks"); sh.appendRow(PERK_HEAD); sh.setFrozenRows(1); }
@@ -109,10 +120,13 @@ function sheet_(name) {
   return sh;
 }
 function rows_(name) {
-  var v = sheet_(name).getDataRange().getValues(), head = v.shift();
-  return v.map(function (r, i) {
-    var o = { _row: i + 2, _blank: r.join("") === "" }; head.forEach(function (h, k) { o[h] = r[k]; }); return o;
-  }).filter(function (o) { return !o._blank; });
+  if (!MEMO_[name]) {
+    var v = sheetGet_(name).getDataRange().getValues(), head = v.shift();
+    MEMO_[name] = v.map(function (r, i) {
+      var o = { _row: i + 2, _blank: r.join("") === "" }; head.forEach(function (h, k) { o[h] = r[k]; }); return o;
+    }).filter(function (o) { return !o._blank; });
+  }
+  return MEMO_[name].map(function (o) { return Object.assign({}, o); }); // copies: callers may change their rows
 }
 function norm_(s) { return String(s || "").replace(/\s*\/\s*/g, "/").trim().toLowerCase(); }
 function owners_() { return rows_("Owners"); }
@@ -154,6 +168,15 @@ function login_(owner, pin) {
     return { ok: false, error: n >= MAX_TRIES ? "Locked. Ask the commish for a new passphrase." : "Wrong passphrase (" + (MAX_TRIES - n) + " tries left)" };
   }
   if (Number(o.failed_tries)) setCell_("Owners", o._row, "failed_tries", 0);
+  return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" };
+}
+var LOCK_FREE = { summary: 1, inbox: 1 };
+// Passphrase check that writes nothing: right owner, right passphrase, not locked, no failed tries to reset.
+// Anything else falls through to the normal locked path (login_), which keeps the counters honest.
+function cleanAuth_(b) {
+  if (!b.owner || !b.pin) return null;
+  var o = ownerRow_(b.owner);
+  if (!o || !o.pin_hash || String(o.locked) === "Y" || Number(o.failed_tries) || hash_(o.salt, b.pin) !== o.pin_hash) return null;
   return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" };
 }
 function withAuth_(b, fn) {
@@ -254,7 +277,7 @@ function commish_(me, id, decision, reason) {
 }
 function trades_(owner) {
   var me = owner ? ownerRow_(owner) : null, commish = me && String(me.is_commish) === "Y";
-  var offers = (sheet_("Offers") ? rows_("Offers") : []).filter(function (o) {
+  var offers = (sheetGet_("Offers") ? rows_("Offers") : []).filter(function (o) {
     var mine = me && (norm_(o.from_owner) === norm_(me.owner) || norm_(o.to_owner) === norm_(me.owner));
     var tierPublic = me && String(o.tier) === String(me.tier) && ["ACCEPTED", "APPROVED", "NEGATED"].indexOf(o.status) >= 0;
     return mine || tierPublic || (commish && o.status === "ACCEPTED");

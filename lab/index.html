@@ -9,6 +9,8 @@
 <title>MAFFL HQ · Lab</title>
 <link rel="icon" href="../maffl-logo.png">
 <link rel="apple-touch-icon" href="../maffl-logo.png">
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -287,7 +289,7 @@
   .pool-list li.recent{color:var(--loss);font-weight:700}.pool-list li.recent .dot{background:var(--loss)}
   .pool-list .out-tag,.pool-list .winner-tag{margin-left:auto;font:700 10px var(--display);color:#fff;background:var(--loss);padding:2px 6px;border-radius:4px;letter-spacing:.06em;text-decoration:none}
   .pool-list .winner-tag{background:var(--gold);color:var(--navy)}
-  .rivf{display:block;width:100%;border:0;background:var(--page-bg)}
+  .rivf{display:block;width:100%;border:0;min-height:160px;background:var(--page-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Ccircle cx='15' cy='15' r='12' fill='none' stroke='%23e7eaf0' stroke-width='3.5'/%3E%3Cpath d='M15 3a12 12 0 0 1 12 12' fill='none' stroke='%23f5a623' stroke-width='3.5' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 15 15' to='360 15 15' dur='.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E") center 48px no-repeat}
   .dbody.flush{padding:0;overflow:hidden}.dbody.flush .rivf{height:100%}
   .rivcard{padding:0;overflow:hidden}.rivf.tall{height:70dvh}
   .rivsheet{margin:0 -14px}.rivf.sheet{height:calc(92dvh - 60px)}
@@ -419,6 +421,22 @@
   .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%) translateY(20px);opacity:0;z-index:95;background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;font:600 14px var(--body);transition:.25s;max-width:90vw;pointer-events:none}
   .toast.on{opacity:1;transform:translateX(-50%)}
   .loading{padding:60px 20px;text-align:center;color:var(--muted)}
+  /* loading: one spinner everywhere (boot, cards, sheets, chat), a thin bar under the header while the league server works */
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spin{display:inline-block;width:22px;height:22px;border-radius:50%;border:3px solid var(--navy-soft);border-top-color:var(--gold);animation:spin .8s linear infinite;flex:0 0 auto}
+  .spin.sm{width:14px;height:14px;border-width:2px}.spin.lg{width:34px;height:34px;border-width:4px}
+  .ld{display:flex;align-items:center;justify-content:center;gap:10px;padding:26px 12px;color:var(--muted);font:600 14px var(--body);text-align:left}
+  .card .ld{padding:14px 4px}
+  .boot{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22vh 20px 0}
+  .boot img{width:72px;height:72px;animation:bootp 1.6s ease-in-out infinite}
+  @keyframes bootp{50%{transform:scale(.94);opacity:.85}}
+  .boot b{font:700 20px var(--display);letter-spacing:.02em}.boot small{color:var(--muted);font:500 13px var(--body);min-height:1.2em}
+  .hdr{position:relative}
+  .netbar{position:absolute;left:0;right:0;bottom:-1px;height:3px;overflow:hidden;opacity:0;transition:opacity .2s;pointer-events:none}
+  .netbar.on{opacity:1}
+  .netbar::before{content:"";position:absolute;top:0;bottom:0;width:35%;background:var(--gold);border-radius:3px;animation:netb 1.1s ease-in-out infinite}
+  @keyframes netb{from{left:-35%}to{left:100%}}
+  @media (prefers-reduced-motion:reduce){.spin,.netbar::before,.boot img{animation-duration:2.4s}}
   /* chat (pop-out sheet over the reel; trade sheets and confirms open above it) */
   .hbtn{position:relative;width:36px;height:36px;border-radius:50%;background:var(--navy-soft);display:none;place-items:center;font-size:18px}
   .hbtn.on{display:grid}
@@ -508,13 +526,14 @@
   <header class="hdr">
     <div class="lab">Lab · trades &amp; reactions are test-only</div>
     <div class="pastbar" id="pastbar"></div>
+    <div class="netbar" id="netbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
       <div class="wk" id="hdrwk" hidden></div><button class="chip" id="chip" aria-label="You: settings, help, sign out">··</button>
     </div>
   </header>
   <main id="views">
-    <div id="boot" class="loading">Loading the league…</div>
+    <div id="boot" class="boot"><img alt="" src="../maffl-logo.png"><span class="spin lg"></span><b>Loading the league…</b><small id="bootmsg">Getting this week's Pulse</small></div>
     <section class="view" id="v-home"></section>
     <section class="view" id="v-match"></section>
     <section class="view" id="v-team"></section>
@@ -562,11 +581,32 @@
   var API_URL = "https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec";
   try { API_URL = localStorage.getItem("maffl_lab_api") || API_URL; } catch (e) {}
   var SUM = { counts: {}, mine: {}, tallies: {}, myVotes: {}, polls: [] };
-  function api(action, body) {
-    body = Object.assign({ action: action }, body || {});
-    return fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+  // Every league-server call shows the gold bar under the header (after 250 ms, so quick ones don't flicker).
+  // Background polls (chat inbox, live auto-refresh, optimistic reactions/votes) pass quiet and stay invisible.
+  var NET = 0, NET_T = null;
+  function net(d) {
+    NET = Math.max(0, NET + d); clearTimeout(NET_T);
+    if (NET) NET_T = setTimeout(function () { var b = $("netbar"); if (b && NET) b.classList.add("on"); }, 250);
+    else { var b = $("netbar"); if (b) b.classList.remove("on"); }
   }
-  function apiGet(q) { return fetch(API_URL + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }); }
+  function tracked(p, quiet) { if (quiet) return p; net(1); return p.then(function (x) { net(-1); return x; }, function (e) { net(-1); throw e; }); }
+  var QUIET = { react: 1, vote: 1, inbox: 1 };
+  function api(action, body, quiet) {
+    body = Object.assign({ action: action }, body || {});
+    return tracked(fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }), quiet || QUIET[action]);
+  }
+  function apiGet(q, quiet) { return tracked(fetch(API_URL + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }), quiet); }
+  function ld(msg, cls) { return '<div class="ld' + (cls ? " " + cls : "") + '"><span class="spin"></span><span>' + esc(msg || "Loading…") + '</span></div>'; }
+  // The signed-in summary is the slowest call (Apps Script + the Sheet). Start it right away, alongside the
+  // static files, and paint from this phone's last copy until the fresh one lands.
+  var SUM_OK = false, SUM_KEY = "maffl_lab_sum", EARLY_SUM = null;
+  (function () {
+    var o = store("maffl_lab_owner"), pin = store("maffl_lab_pin"); if (!API_URL || !o || !pin) return;
+    EARLY_SUM = api("summary", { owner: o, pin: pin });
+    try { var c = JSON.parse(localStorage.getItem(SUM_KEY) || "null");
+      if (c && c.owner === o && Date.now() - c.at < 3 * 864e5 && c.sum && c.sum.ok) { SUM = c.sum; SUM_OK = true; } } catch (e) {}
+  })();
+  function saveSum(r) { try { localStorage.setItem(SUM_KEY, JSON.stringify({ owner: ME && ME.owner, at: Date.now(), sum: r })); } catch (e) {} }
   function creds() { return { owner: ME && ME.owner, pin: store("maffl_lab_pin") || "" }; }
   // ---------- contacts + nudges (APP_DESIGN §4b): owner email/phone come from the backend, signed-in only ----------
   var APP_LINK = "https://maffl-commish.github.io/maffl/lab/";
@@ -606,7 +646,7 @@
     ["commish", "Commish decision", "A trade you're in is approved or negated"], ["perks", "Credit perk decision", "Your perk request is approved or denied"]];
   var SET = null;
   function settingsSheet() {
-    if (!SET) return '<div class="card"><p>Loading your settings…</p></div>';
+    if (!SET) return '<div class="card">' + ld("Loading your settings…") + '</div>';
     if (SET.error) return '<div class="card"><p>' + esc(SET.error) + '</p></div>';
     return '<div class="sh" style="padding-left:0"><h2>⚙️ Settings</h2></div>' +
       '<div class="card"><div class="eb">Your contact info</div><p class="meta">Only signed-in owners see it (never the public site). Used for trade texts and emails.</p>' +
@@ -644,19 +684,33 @@
     return new Function("return " + src.slice(k, j + 1))();
   }
   function getText(u) { return fetch(u, { cache: "no-cache" }).then(function (r) { return r.text(); }); }
+  // SIDE.x: "loading" until it lands, then "ok" or "fail" (views show a spinner or a can't-load note).
+  var SIDE = { prize: "loading", credits: "loading", rules: "loading", rosters: "loading" };
+  function bootMsg(m) { var b = $("bootmsg"); if (b) b.textContent = m; }
   function loadPulse() {
     var side = Promise.all([
-      getText("../prize.html").then(function (t) { PRIZE = extract(t, "const MAFFL = "); }).catch(function () {}),
-      getText("../credits.html").then(function (t) { CREDIT_LOG = extract(t, "const REGISTRY_DATA = ") || []; }).catch(function () {}),
-      getText("../rules.html").then(function (t) { RULES_HTML = t; }).catch(function () {}),
-      loadRosters()
+      getText("../prize.html").then(function (t) { PRIZE = extract(t, "const MAFFL = "); SIDE.prize = "ok"; }).catch(function () { SIDE.prize = "fail"; }),
+      getText("../credits.html").then(function (t) { CREDIT_LOG = extract(t, "const REGISTRY_DATA = ") || []; SIDE.credits = "ok"; }).catch(function () { SIDE.credits = "fail"; })
     ]);
+    // Not needed for the first screen: start now, don't wait. Views that use them refresh when they land.
+    getText("../rules.html").then(function (t) { RULES_HTML = t; SIDE.rules = "ok"; }).catch(function () { SIDE.rules = "fail"; }).then(function () { sideLanded("rules"); });
+    loadRosters().then(function () { SIDE.rosters = DRAFT.length ? "ok" : "fail"; sideLanded("rosters"); });
     var main = getText("../weekly.html").then(function (t) {
+      bootMsg("Setting up your reel");
       SHORT = extract(t, "const SHORT_NAMES = ") || {};
       WEEKS = extract(t, "const WEEKS = ").slice().sort(function (a, b) { return a.weekNumber - b.weekNumber; });
       W = LATEST = WEEKS[WEEKS.length - 1];
     });
     return Promise.all([main, side]);
+  }
+  // A background file arrived: redraw whatever is showing it (Team tab, an open rulebook / builder / player sheet).
+  function sideLanded(kind) {
+    if (!ME || !W) return;
+    if (kind === "rosters") refreshTeam();
+    var top = stackS[stackS.length - 1];
+    if (top && $("psheet").classList.contains("on") && (kind === "rules" ? /^rule/.test(top[0]) : ["builder", "player"].indexOf(top[0]) >= 0)) {
+      stackS.pop(); openSheet(top[0], top[1], top[2], true);
+    }
   }
 
   function buildTeams() {
@@ -785,8 +839,11 @@
   window.addEventListener("hashchange", function () { if (/^#offer-/.test(location.hash)) deepLink(); }); // app already open
   function loadSummary() {
     if (!API_URL || !ME) return;
-    api("summary", creds()).then(function (r) {
-      if (!r.ok) return; SUM = r; ME.commish = !!r.commish; renderHome(); refreshTeam(); paint(); chatBadge();
+    var early = EARLY_SUM && norm(store("maffl_lab_owner")) === norm(ME.owner) ? EARLY_SUM : null; EARLY_SUM = null; // already on its way
+    (early || api("summary", creds())).then(function (r) {
+      if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
+      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; renderHome(); refreshTeam(); paint(); chatBadge();
+      if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
     }).catch(function () {});
@@ -1181,15 +1238,18 @@
   function sameTeam(a, b) { var x = norm(a).replace(/[^a-z0-9]/g, ""), y = norm(b).replace(/[^a-z0-9]/g, ""); return x === y || (x.length > 5 && (x.indexOf(y) >= 0 || y.indexOf(x) >= 0)); }
   function renderMatch() {
     if (!API_URL) { $("v-match").innerHTML = '<div class="pad"><div class="card"><h3>Live scores need the league server</h3></div></div>'; return; }
-    if (!LIVE) $("v-match").innerHTML = '<div class="pad"><div class="card"><div class="eb">Week ' + NEXT_WK + ' · live</div><h3>Loading your game from ESPN…</h3></div></div>';
+    if (!LIVE) { try { var c = JSON.parse(localStorage.getItem("maffl_lab_live_" + ME.tier) || "null"); // last copy: show it while ESPN is asked
+      if (c && c.ok && Date.now() - new Date(c.at).getTime() < 2 * 3600e3) LIVE = c; } catch (e) {} }
+    if (!LIVE) $("v-match").innerHTML = '<div class="pad"><div class="card"><div class="eb">Week ' + NEXT_WK + ' · live</div><h3>Your game</h3>' + ld("Getting live scores from ESPN…") + '</div></div>';
     else drawMatch();
     loadLive();
     clearInterval(LIVE_TIMER);
-    LIVE_TIMER = setInterval(function () { if ($("v-match").classList.contains("on") && !document.hidden) loadLive(); }, 60000);
+    LIVE_TIMER = setInterval(function () { if ($("v-match").classList.contains("on") && !document.hidden) loadLive(true); }, 60000);
   }
-  function loadLive() {
+  function loadLive(quiet) {
     if (Date.now() - LIVE_AT < 20000 && LIVE) return;
-    apiGet({ action: "live", tier: ME.tier }).then(function (r) { LIVE = r; LIVE_AT = Date.now(); drawMatch(); })
+    apiGet({ action: "live", tier: ME.tier }, quiet).then(function (r) { LIVE = r; LIVE_AT = Date.now(); drawMatch();
+      if (r && r.ok) try { localStorage.setItem("maffl_lab_live_" + ME.tier, JSON.stringify(r)); } catch (e) {} })
       .catch(function () { LIVE = { ok: false, error: "Couldn't reach the league server" }; drawMatch(); });
   }
   // ---- 🧪 Test scores (lab only). While ESPN shows every team at 0 (week not kicked off), fill in fake points so
@@ -1540,7 +1600,7 @@
   // ---------- Team → Roster ----------
   function rosterHTML() {
     var list = rosterOf(ME.owner);
-    if (!DRAFT.length) return '<div class="card"><p>Loading rosters…</p></div>';
+    if (!DRAFT.length) return '<div class="card">' + (SIDE.rosters === "fail" ? '<p>Couldn\'t load rosters. Pull down or reopen the app to try again.</p>' : ld("Loading rosters…")) + '</div>';
     var onBlock = list.filter(function (p) { return blockOf(p.tier, p.name, p.owner); }).length;
     return '<div class="note" style="margin-top:12px">🧪 Staged roster: your 2026 auction draft plus any trades approved in the test. Tap a player to see his MAFFL history or put him on the block.</div>' +
       '<div class="sh" style="padding-left:0"><h2>' + list.length + ' players</h2><small>' + onBlock + ' on the block</small></div>' +
@@ -1618,6 +1678,7 @@
   }
   function tradesHTML() {
     if (!API_URL) return '<div class="card"><p>Trades need the league server (demo mode is off-line).</p></div>';
+    if (!SUM_OK) return '<div class="card">' + ld("Loading trades…") + '</div>';
     var all = offersFor(ME), dead = new Date(SUM.deadline || "2026-12-02T17:00:00Z"), days = Math.ceil((dead - Date.now()) / 864e5);
     var waitingMe = all.filter(needsMe), waitingThem = all.filter(function (o) { return o.status === "PROPOSED" && isMe(o.from); });
     var review = all.filter(function (o) { return o.status === "ACCEPTED" && !needsMe(o); }), done = all.filter(function (o) { return ["APPROVED", "NEGATED", "DECLINED", "WITHDRAWN"].indexOf(o.status) >= 0; }).slice(-8).reverse();
@@ -1676,6 +1737,7 @@
     return h + (btn ? '<div class="btns">' + btn + '</div>' : '') + '</div>';
   }
   function perksHTML() {
+    if (API_URL && !SUM_OK) return '<div class="card">' + ld("Loading your perks…") + '</div>';
     var all = SUM.perks || [], mine = all.filter(function (p) { return isMe(p.owner); }).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); });
     var queue = ME.commish ? all.filter(function (p) { return p.status === "REQUESTED" && !isMe(p.owner); }) : [];
     var vs = all.filter(function (p) { return !isMe(p.owner) && (isMe(p.swapWith) || (p.affects || []).some(isMe)) && p.status !== "CANCELED" && p.status !== "DENIED" && (p.week || 0) > W.weekNumber && queue.indexOf(p) < 0; });
@@ -1820,6 +1882,7 @@
   }
   function builderSheet() {
     var h = '<div class="steps">' + ["Team", "Pick players", "Preview"].map(function (t, i) { return '<span class="' + (BLD.step === i + 1 ? "on" : BLD.step > i + 1 ? "done" : "") + '">' + (i + 1) + '. ' + t + '</span>'; }).join("") + '</div>';
+    if (!DRAFT.length) return h + '<div class="card">' + ld("Loading rosters…") + '</div>';
     if (BLD.step === 1) return h + gridHTML();
     if (false) {
       var mates = TEAMS.filter(function (t) { return t.tier === ME.tier && !isMe(t.owner) && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.rank - b.rank; });
@@ -1864,7 +1927,7 @@
   }
   function busy(on) { document.body.classList.toggle("busy", !!on); }
   function afterChange(msg) {
-    return api("summary", creds()).then(function (r) { if (r.ok) SUM = r; refreshTeam(); paint(); if (msg) toast(msg);
+    return api("summary", creds()).then(function (r) { if (r.ok) { SUM = r; SUM_OK = true; saveSum(r); } refreshTeam(); paint(); if (msg) toast(msg);
       chatBadge(); if (CH.open) { if (CH.view === "thread") { CH.sig = null; loadRoom(); } else if (CH.view === "inbox") drawInbox(); } else if ($("v-home").classList.contains("on")) renderHome(); });
   }
   function refreshTeam() { renderTeam(); var c = badgeCount(); document.querySelector(".tbadge").setAttribute("data-n", c || ""); }
@@ -1963,7 +2026,7 @@
     if (!push) stackS = []; stackS.push([kind, a, b]);
     $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
-    if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
+    if (kind === "rules" && $("rq")) { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
     $("psheet").classList.toggle("full", kind === "builder" || kind === "rivalry");
     $("psheet").classList.add("on"); $("sscrim").classList.add("on"); document.body.style.overflow = "hidden";
@@ -2035,6 +2098,7 @@
       return '<button class="row" style="width:100%;text-align:left" data-rule="' + r.k + '"><div style="flex:1"><div class="nm">' + esc(r.title) + '</div>' + snip + '</div><span class="rv">›</span></button>'; }).join("") || '<p class="p">Nothing matches.</p>';
   }
   function rulesSheet() {
+    if (!RULES_HTML) return '<div class="sh" style="padding-left:0"><h2>📋 Rulebook</h2></div><div class="card">' + (SIDE.rules === "fail" ? '<p>Couldn\'t load the rulebook. Try again in a minute.</p>' : ld("Loading the rulebook…")) + '</div>';
     return '<div class="sh" style="padding-left:0"><h2>📋 Rulebook</h2></div><input class="field" id="rq" placeholder="Search the rules (e.g. trade, credits, tiebreak)" autocomplete="off">' +
       '<div class="card" style="padding:4px 12px" id="rlist">' + ruleList("") + '</div>';
   }
@@ -2162,7 +2226,7 @@
   }
   function drawThread() {
     var body = $("cbody"), d = CH.data, nearBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 90;
-    if (!d) { body.innerHTML = '<div class="cempty">Loading…</div>'; return; }
+    if (!d) { body.innerHTML = ld("Loading messages…"); return; }
     var latestOf = {}; d.messages.forEach(function (m) { if (m.kind === "offer") latestOf[m.ref] = m.id; });
     var h = (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : fmtText(p.text)) + '</div>'; }).join("");
     if (d.more) h += '<p class="meta" style="text-align:center;margin-top:10px">Showing the latest ' + d.messages.length + ' messages</p>';
@@ -2212,6 +2276,7 @@
   }
   function drawInbox() {
     var ib = inboxOf(), body = $("cbody"), h = "";
+    if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = ld("Loading your chats…"); return; }
     {
       var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
       if (!rooms.length) rooms = [{ room: "league", unread: 0 }, { room: "tier:" + ME.tier, unread: 0 }];
@@ -2259,7 +2324,7 @@
   }
   function loadRoom() {
     var room = CH.room; if (!room || CH.loading) return; CH.loading = true;
-    api("chat", Object.assign(creds(), { room: room })).then(function (r) {
+    api("chat", Object.assign(creds(), { room: room }), !!CH.data).then(function (r) { // polls of an open thread stay quiet
       CH.loading = false; if (CH.room !== room || !CH.open) return;
       if (!r.ok) { $("cbody").innerHTML = '<div class="cempty">' + esc(r.error || "Couldn't open this chat") + '</div>'; return; }
       var sig = JSON.stringify([r.messages.map(function (m) { return m.id + (m.deleted ? "d" : "") + (m.pinned ? "p" : "") + (m.offer ? m.offer.status : ""); }), r.counts, r.pinned.length]);
