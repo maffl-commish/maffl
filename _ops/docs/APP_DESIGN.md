@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.8 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.9 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,9 @@ VERSION: 0.8 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **proto
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Settings built (§4b).** More → Settings (email, mobile, 6 opt-in emails, all off). Automatic emails now go
+  only to owners who turned that one on (perk emails included; before, anyone with an email got them). Contacts reach the app
+  only in the signed-in summary. Text/Email nudge on open offers + after Send/Counter/Accept/Decline; `#offer-ID` deep link. Backend v0.12. Counter emails ride the chat change (server declines the countered offer).
 - 2026-11-03 · **Chat, Sleeper-style (§4c), built in the lab.** One league room for everyone, a group per tier
   (listed with DMs), and DMs between any two owners. Trade offers post themselves into the two owners' DM as cards;
   the thread is the whole back-and-forth. A For-you reel card opens that thread ("a card that's a DM"). Skipped:

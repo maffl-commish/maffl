@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-03 by Claude (chat), lab chat (APP_DESIGN §4c)
+**Last updated:** 2026-11-03 by Claude (chat), REEL Settings (after lab chat)
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · REEL · Settings: More → Settings (your email + mobile, 6 opt-in emails, all off by default; contacts live only in the backend Sheet). Owner panel Text/Call/Email; 💬 Text them / ✉️ Email them on open offers and after Send/Counter/Accept/Decline (prefilled, link opens the offer via `#offer-ID`). Backend logic v0.12 (`settings`, `savesettings`, contacts in signed-in summary, opt-in `notify_`, counter emails). Perk emails now opt-in too. Lab only; no live page changed.
 - 2026-11-03 · Lab chat (Sleeper-style, APP_DESIGN §4c): 💬 header button with unread count opens a pull-up sheet over the app. League chat (everyone), Upper/Lower Tier groups (commish sees both), DMs between any two owners. Trade offers post themselves into the two owners' DM as cards (offer, counter, accept, decline, withdraw, commish approve/negate) with live action buttons on the newest card; accepted trades post to the tier group, approved trades to the league room. ⇄ starts a trade from a DM; Team → Trades offers get 💬 Chat. Reel For you leads with "💬 Trade talk" cards that open the thread. @mentions + Mentions tab, emoji reactions, delete own, commish pin/delete. Backend logic v0.11 (`chat`, `chatsend`, `chatmod`, `inbox`; Chat + Reads tabs auto-created; counters decline the original server-side). Tested against a simulated Sheet (31 checks) and at 390px.
 - 2026-11-03 · REEL · Codename "REEL" for the app redesign. New `_ops/docs/REEL.md` front door: documented, built, roadmap, backlog (incl. the DM/league chat idea). CLAUDE.md REEL section; APP_DESIGN v0.7 journal line. Doc only.
 - 2026-11-03 · Credit sync robot (full reconciliation): approving a perk or a trade with credits in the app pushes the backend's ledger to `_ops/inbox/credit_ledger(_test).json`; new `credit-sync.yml` runs `apply_credit_ledger.py` (append to Credit_Log tagged `[app L-…]`, recompute Owners Sheet balance) → gen-credits → validate → commit. TEST mode (default) = dry run, commits nothing; `CREDIT_SYNC=live` at go-live. Backend logic v0.10 (ledger, push via Script property GITHUB_TOKEN, owner emails on approve/deny, `resync`, public `?action=ledger`). App balances now read the official record; approved-not-yet-logged credits stay held; "Approved · posting" → "Logged ✓"; commish sync card with Re-send. APP_DESIGN §10 (credit sync, ESPN write experiment, automation queue); governance CE-4 note. **Needs:** GITHUB_TOKEN Script property.

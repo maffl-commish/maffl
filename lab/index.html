@@ -189,6 +189,13 @@
   .sb2{font-style:normal;background:var(--loss);color:#fff;border-radius:999px;padding:0 6px;font-size:11px;margin-left:2px}
   .tbadge{position:relative}
   .tbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
+  .tg{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.tg:last-child{border-bottom:0}
+  .tg div{flex:1}.tg b{display:block;font:700 15px var(--body);color:var(--navy)}.tg small{color:var(--muted);font-size:13px}
+  .tg input{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:15px;background:var(--border);position:relative;flex:none;transition:background .15s}
+  .tg input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s}
+  .tg input:checked{background:var(--navy)}.tg input:checked::after{left:23px}
+  .nudge{display:flex;gap:8px;margin-top:10px}.nudge a{flex:1;text-align:center;font:700 12px var(--display);text-transform:uppercase;letter-spacing:.05em;padding:9px 4px;border-radius:8px;border:1px dashed var(--border);color:var(--navy)}
+  .lbl{font:700 12px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:12px;display:block}
   body.busy{cursor:progress}body.busy .b{pointer-events:none;opacity:.6}
   .card.offer .two{margin-top:4px}
   .psheet.full{height:92dvh;max-height:92dvh}
@@ -532,6 +539,69 @@
   }
   function apiGet(q) { return fetch(API_URL + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }); }
   function creds() { return { owner: ME && ME.owner, pin: store("maffl_lab_pin") || "" }; }
+  // ---------- contacts + nudges (APP_DESIGN §4b): owner email/phone come from the backend, signed-in only ----------
+  var APP_LINK = "https://maffl-commish.github.io/maffl/lab/";
+  function contactOf(owner) { return (SUM.contacts || []).filter(function (c) { return norm(c.owner) === norm(owner); })[0] || {}; }
+  function fmtPhone(d) { d = String(d || ""); return d.length === 10 ? "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6) : d; }
+  function smsHref(phone, body) { return "sms:" + (phone || "") + "?&body=" + encodeURIComponent(body); } // ?& works on iOS and Android
+  function mailHref(email, subject, body) { return "mailto:" + encodeURIComponent(email || "") + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body); }
+  function listText(players, credits) { var p = (players || []).slice(); if (credits) p.push(credits + " credit" + (credits === 1 ? "" : "s")); return p.join(", ") || "nothing"; }
+  // kind: sent | countered | accepted | declined. youGet/youSend are from the OTHER owner's side (what they'd get).
+  function nudgeMsg(kind, id, theyGet, theySend) {
+    var link = APP_LINK + "#offer-" + id;
+    var lead = { sent: "I sent you a trade offer on MAFFL HQ.", countered: "I countered your offer on MAFFL HQ.", accepted: "I accepted your trade on MAFFL HQ. I'll do my side on ESPN.",
+      declined: "I passed on your trade offer on MAFFL HQ. Open to other ideas.", seen: "Got your trade offer on MAFFL HQ. Looking it over.", espn: "Our trade is accepted on MAFFL HQ. Let's send the player side on ESPN." }[kind];
+    var body = lead + (kind === "declined" ? "" : "\nYou'd get: " + theyGet + "\nI'd get: " + theySend) + "\n👉 " + link;
+    return { body: body, subject: "MAFFL HQ trade: " + teamOf(ME.owner).team };
+  }
+  function nudgeLinks(other, m) {
+    var c = contactOf(other);
+    return '<div class="nudge"><a href="' + esc(smsHref(c.phone, m.body)) + '">💬 Text them</a><a href="' + esc(mailHref(c.email, m.subject, m.body)) + '">✉️ Email them</a></div>' +
+      (c.phone || c.email ? '' : '<p class="meta" style="margin-top:4px">No number or email on file for them yet; you\'ll pick the contact.</p>');
+  }
+  function nudgeBox(other, m, title, onDone) {
+    $("cbox").innerHTML = '<h3>' + esc(title) + '</h3><p class="p">Give ' + esc(teamOf(other).team) + ' a heads-up. It sends from your phone, with a link to the offer.</p>' + nudgeLinks(other, m) +
+      '<div class="btns"><button class="b" id="cno">Done</button></div>';
+    $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); if (onDone) onDone(); };
+  }
+  function offerNudge(o) { // from my side of an offer
+    var iAmFrom = isMe(o.from), other = iAmFrom ? o.to : o.from;
+    var theyGet = iAmFrom ? listText(o.give, o.giveCredits) : listText(o.get, o.getCredits), theySend = iAmFrom ? listText(o.get, o.getCredits) : listText(o.give, o.giveCredits);
+    var kind = o.status === "ACCEPTED" ? (iAmFrom ? "espn" : "accepted") : (iAmFrom ? "sent" : "seen");
+    return { other: other, m: nudgeMsg(kind, o.id, theyGet, theySend) };
+  }
+
+  // ---------- More → Settings ----------
+  var NOTIFY = [["received", "Offer received", "Someone sends you a trade offer"], ["countered", "Counter-offer", "They counter your offer"],
+    ["accepted", "Offer accepted", "They accept your offer"], ["declined", "Offer declined", "They pass on your offer"],
+    ["commish", "Commish decision", "A trade you're in is approved or negated"], ["perks", "Credit perk decision", "Your perk request is approved or denied"]];
+  var SET = null;
+  function settingsSheet() {
+    if (!SET) return '<div class="card"><p>Loading your settings…</p></div>';
+    if (SET.error) return '<div class="card"><p>' + esc(SET.error) + '</p></div>';
+    return '<div class="sh" style="padding-left:0"><h2>⚙️ Settings</h2></div>' +
+      '<div class="card"><div class="eb">Your contact info</div><p class="meta">Only signed-in owners see it (never the public site). Used for trade texts and emails.</p>' +
+      '<label class="lbl" for="stEmail">Email</label><input class="field" id="stEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" value="' + esc(SET.email) + '" placeholder="you@example.com">' +
+      '<label class="lbl" for="stPhone">Mobile</label><input class="field" id="stPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" value="' + esc(fmtPhone(SET.phone)) + '" placeholder="(412) 555-0123"></div>' +
+      '<div class="card"><div class="eb">Email me when…</div><p class="meta">All off unless you turn them on. No texts or push, ever.</p>' +
+      NOTIFY.map(function (n) { return '<label class="tg"><div><b>' + n[1] + '</b><small>' + n[2] + '</small></div><input type="checkbox" data-nt="' + n[0] + '"' + (SET.notify && SET.notify[n[0]] ? ' checked' : '') + '></label>'; }).join("") + '</div>' +
+      '<div class="btns" style="margin-bottom:16px"><button class="b pri" id="stSave">Save settings</button></div>';
+  }
+  function openSettings() {
+    SET = null; openSheet("settings");
+    api("settings", creds()).then(function (r) { SET = r.ok ? r : { error: r.error || "Couldn't load settings" }; openSheet("settings"); wireSettings(); })
+      .catch(function () { SET = { error: "Couldn't reach the league server" }; openSheet("settings"); });
+  }
+  function wireSettings() {
+    var b = $("stSave"); if (!b) return;
+    b.onclick = function () {
+      var n = {}; document.querySelectorAll("[data-nt]").forEach(function (x) { n[x.dataset.nt] = x.checked; });
+      busy(1); api("savesettings", Object.assign(creds(), { email: $("stEmail").value, phone: $("stPhone").value, notify: n })).then(function (r) {
+        busy(0); if (!r.ok) { toast(r.error); return; } SET = r; closeSheet(); afterChange("Settings saved ✓");
+      }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
+    };
+  }
+
   function R(x) { return "w" + W.weekNumber + ":" + x; }
   function DR(x) { return ' data-ref="' + esc(R(x)) + '"'; }
   var W, WEEKS = [], LATEST, TEAMS = [], BY_OWNER = {}, ME = null, NEXT_WK, PRIZE = null, CREDIT_LOG = [], RULES_HTML = null;
@@ -676,10 +746,20 @@
     drawDeck();
     if (API_URL) api("react", Object.assign(creds(), { ref: ref, emoji: choice, on: true, week: W.weekNumber })).catch(function () { toast("Offline: answer not saved"); });
   }
+  var DEEP_OFFER = null;
+  // #offer-ID (from a trade text/email) opens Team → Trades on that offer. Scrolls once the summary arrives.
+  function deepLink() {
+    var m = /^#offer-(\w+)$/.exec(location.hash); if (!m || !ME) return false;
+    closeSheet(); TEAM_SUB = "trades"; renderTeam(); tab("team"); DEEP_OFFER = m[1];
+    if (SUM.offers) loadSummary(); return true;
+  }
+  window.addEventListener("hashchange", function () { if (/^#offer-/.test(location.hash)) deepLink(); }); // app already open
   function loadSummary() {
     if (!API_URL || !ME) return;
     api("summary", creds()).then(function (r) {
       if (!r.ok) return; SUM = r; ME.commish = !!r.commish; renderHome(); refreshTeam(); paint(); chatBadge();
+      if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
+        if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
     }).catch(function () {});
   }
 
@@ -1175,11 +1255,12 @@
   // ---------- MORE ----------
   function renderMore() {
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
-      '<div class="sh"><h2>You</h2></div><div class="list"><button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button></div>' +
+      '<div class="sh"><h2>You</h2></div><div class="list">' + (API_URL ? '<button id="mSet"><span>⚙️</span>Settings</button>' : '') + '<button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button></div>' +
       '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>';
     if (API_URL) apiGet({}).then(function (r) { if (r && r.version) $("srvver").textContent = "League server v" + r.version + (r.logic === "repo" ? " (auto-updates from the repo)" : ""); }).catch(function () {});
     $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
+    if ($("mSet")) $("mSet").onclick = openSettings;
   }
 
   // ---------- WELCOME (pick team; PINs connect to the league Sheet) ----------
@@ -1350,11 +1431,11 @@
     if (!hit) Object.keys(R).some(function (k) { hit = R[k].filter(function (x) { return x.name === nm; })[0]; return !!hit; });
     return hit || { name: nm, pos: "?", nfl: "" };
   }
-  function offerCard(o) {
+  function offerCard(o, preview) {
     var iAmFrom = isMe(o.from), iAmTo = isMe(o.to), other = iAmFrom ? o.to : o.from, st = ST[o.status] || [o.status, ""];
     var youSend = iAmFrom ? [o.give, o.giveCredits, o.from] : [o.get, o.getCredits, o.to], youGet = iAmFrom ? [o.get, o.getCredits, o.to] : [o.give, o.giveCredits, o.from];
     var mineOffer = iAmFrom || iAmTo;
-    var h = '<div class="card offer"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mineOffer ? (iAmFrom ? "You → " : "From ") + esc(teamOf(other).team) : esc(teamOf(o.from).team) + " ↔ " + esc(teamOf(o.to).team)) +
+    var h = '<div class="card offer" data-oid="' + esc(o.id) + '"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mineOffer ? (iAmFrom ? "You → " : "From ") + esc(teamOf(other).team) : esc(teamOf(o.from).team) + " ↔ " + esc(teamOf(o.to).team)) +
       '</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>';
     if (mineOffer) h += '<div class="two"><div>' + legHTML("You send", youSend[2], youSend[0], youSend[1]) + '</div><div>' + legHTML("You get", youGet[2], youGet[0], youGet[1]) + '</div></div>';
     else h += '<div class="two"><div>' + legHTML(teamOf(o.from).team + " sends", o.from, o.give, o.giveCredits) + '</div><div>' + legHTML(teamOf(o.to).team + " sends", o.to, o.get, o.getCredits) + '</div></div>';
@@ -1370,6 +1451,7 @@
     if (mineOffer && chatOn()) btn += '<button class="b" data-chat-room="' + esc(dmRoom(o.from, o.to)) + '">💬 Chat</button>';
     if (btn) h += '<div class="btns">' + btn + '</div>';
     if (o.status === "ACCEPTED" && mineOffer) h += '<p class="meta" style="margin-top:8px">Next: send the player side on ESPN. Credits move when the commish approves.</p>';
+    if (!preview && mineOffer && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0) { var nd = offerNudge(o); h += nudgeLinks(nd.other, nd.m); }
     return h + '</div>';
   }
   function tradesHTML() {
@@ -1680,9 +1762,11 @@
       confirmBox("Send this offer?", '<p class="p">To <b>' + esc(them2.team) + '</b>. They can accept, decline or counter. You can withdraw it until they answer.</p><div class="card two" style="margin-top:8px"><div>' + legHTML("You send", ME.owner, Object.keys(BLD.give), BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, Object.keys(BLD.get), BLD.tc) + '</div></div>', "Yes, send it").then(function (yes) {
         if (!yes) return; busy(1);
         // a counter declines the offer it answers on the server, in the same step (logic v0.11)
+        var wasCounter = !!BLD.counterOf, sent = { give: Object.keys(BLD.give), get: Object.keys(BLD.get), gc: BLD.gc, tc: BLD.tc, with: BLD.with };
         var send = api("offer", Object.assign(creds(), { to: BLD.with, give: Object.keys(BLD.give), get: Object.keys(BLD.get), giveCredits: BLD.gc, getCredits: BLD.tc, note: BLD.note, reasons: Object.keys(BLD.reasons), counterOf: BLD.counterOf || "" }));
         Promise.all([send]).then(function (rs) { busy(0); if (!rs[0].ok) { toast(rs[0].error); return; } closeSheet(); TEAM_SUB = "trades";
-          if (!CH.open && rs[0].room && chatOn()) openChat(rs[0].room); afterChange("Offer sent to " + them2.team + " ✓"); })
+          afterChange().then(function () { nudgeBox(sent.with, nudgeMsg(wasCounter ? "countered" : "sent", rs[0].offer_id, listText(sent.give, sent.gc), listText(sent.get, sent.tc)), (wasCounter ? "Counter sent to " : "Offer sent to ") + them2.team + " ✓",
+            function () { if (!CH.open && rs[0].room && chatOn()) openChat(rs[0].room); }); }); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); });
       });
       return;
@@ -1696,11 +1780,13 @@
         approve: ["Approve this trade?", "Final. Any credits in it post to the official record automatically.", "Approve", false],
         negate: ["Negate this trade?", "Both legs come back. Give a reason; both teams see it.", "Negate", true] }[act];
       var me2 = isMe(o.from) || isMe(o.to);
-      confirmBox(T[0], '<p class="p">' + esc(T[1]) + '</p>' + offerCard(o).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), T[2], T[3], act === "negate").then(function (yes) {
+      confirmBox(T[0], '<p class="p">' + esc(T[1]) + '</p>' + offerCard(o, true).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), T[2], T[3], act === "negate").then(function (yes) {
         if (!yes) return; busy(1);
         var call = act === "approve" || act === "negate" ? api("commish", Object.assign(creds(), { offer_id: o.id, decision: act, reason: typeof yes === "string" ? yes : "" }))
           : api("respond", Object.assign(creds(), { offer_id: o.id, decision: act }));
-        call.then(function (r) { busy(0); if (!r.ok) { toast(r.error); return; } afterChange({ accept: "Accepted · 24h review started", decline: "Declined", withdraw: "Withdrawn", approve: "Approved ✓", negate: "Negated" }[act]); })
+        call.then(function (r) { busy(0); if (!r.ok) { toast(r.error); return; } var nudge = act === "accept" || act === "decline";
+          afterChange(nudge ? null : { withdraw: "Withdrawn", approve: "Approved ✓", negate: "Negated" }[act]).then(function () {
+          if (nudge) nudgeBox(o.from, nudgeMsg(act === "accept" ? "accepted" : "declined", o.id, listText(o.give, o.giveCredits), listText(o.get, o.getCredits)), act === "accept" ? "Accepted · 24h review started" : "Declined"); }); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); });
       });
       return;
@@ -1713,7 +1799,7 @@
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
-    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules") { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
@@ -1753,6 +1839,10 @@
     h += '<div class="card"><div class="eb">Career since 2005</div><div class="stat3"><div><b>' + c.w + '–' + c.l + '</b><small>Reg. season</small></div><div><b>' + c.titles + '</b><small>Titles</small></div><div><b>' + c.playoffs + '</b><small>Playoff years</small></div></div>' +
       (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
       (PRIZE ? '<p>Prize money since ' + PRIZE.meta.data_start + ': <b class="money">$' + PRIZE.prize_events.filter(function (e) { return norm(e.owner) === norm(o); }).reduce(function (s2, e) { return s2 + e.amount; }, 0).toLocaleString() + '</b></p>' : '') + '</div>';
+    var ct = contactOf(o);
+    if (!isMe(o) && (ct.phone || ct.email)) h += '<div class="card"><div class="eb">Reach them · owners only</div>' +
+      (ct.phone ? '<p>📱 ' + esc(fmtPhone(ct.phone)) + '</p>' : '') + (ct.email ? '<p>✉️ ' + esc(ct.email) + '</p>' : '') +
+      '<div class="btns">' + (ct.phone ? '<a class="b" href="sms:' + esc(ct.phone) + '">Text</a><a class="b" href="tel:' + esc(ct.phone) + '">Call</a>' : '') + (ct.email ? '<a class="b" href="mailto:' + esc(ct.email) + '">Email</a>' : '') + '</div></div>';
     if (!isMe(o)) {
       var r = h2h(ME.owner, o);
       h += '<div class="card navy"><div class="eb">You vs. them</div><h3>' + (r.n ? r.aw + '–' + r.bw + (r.aw > r.bw ? ' · you lead' : r.aw < r.bw ? ' · they lead' : ' · even') : 'Never played') + '</h3>' +
@@ -2126,7 +2216,7 @@
     renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
     loadSummary(); chatBadge();
     var h = location.hash.slice(1);
-    tab(TITLES[h] ? h : "home");
+    if (!deepLink()) tab(TITLES[h] ? h : "home");
     if (/^chat/.test(h)) setTimeout(function () { openChat(decodeURIComponent(h.split("=")[1] || "") || null); }, 400); // #chat or #chat=<room> deep link
   }
   loadPulse().then(function () { buildTeams(); $("boot").style.display = "none"; start(); })

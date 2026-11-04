@@ -7,13 +7,16 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.11";
+var VERSION = "0.12";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
 // Credit perks (rules.html → Credit System → Spending Credits). Commish approves every one.
 var PERKS = { faab: { name: "Extra FAAB $", cost: 1 }, double: { name: "Double Player Bonus", cost: 10 }, swap: { name: "Matchup Swap", cost: 10 },
   insurance: { name: "Relegation Insurance", cost: 25 }, divswap: { name: "Division Swap", cost: 10 } };
+// More → Settings (APP_DESIGN §4b): owner email/phone + opt-in emails, all OFF by default. Contacts live only in the Owners tab.
+var APP_URL = "https://maffl-commish.github.io/maffl/lab/";
+var NOTIFY_KEYS = ["received", "countered", "accepted", "declined", "commish", "perks"];
 var INSURANCE_CLOSES = new Date("2026-10-01T20:15:00-04:00"), INSURANCE_MAX = 3, REG_WEEKS = 14;
 // Double Bonus / Matchup Swap deadline: Thursday 6:00 PM ET of that week, or 1 hour before the week's first game if earlier
 // (Wk 12 = Thanksgiving, first game 12:30 PM → 11:30 AM). Week 1 Thursday = Sep 10, 2026.
@@ -74,10 +77,12 @@ function doPost(e) {
       case "summary": return json(withAuth_(b, function (o) { return summary_(b.week, o.owner); }));
       case "block":   return json(withAuth_(b, function (o) { return log_(o.owner, "block", b.player, b.on ? "on" : "off", "", String(b.note || "").slice(0, 80)); }));
       case "offer":   return json(withAuth_(b, function (o) { return offer_(o, b); }));
-      case "respond": return json(withAuth_(b, function (o) { return respond_(o, b.offer_id, b.decision); }));
+      case "respond": return json(withAuth_(b, function (o) { return respond_(o, b.offer_id, b.decision, !!b.counter); }));
       case "commish": return json(withAuth_(b, function (o) { return commish_(o, b.offer_id, b.decision, b.reason); }));
       case "perk":    return json(withAuth_(b, function (o) { return perk_(o, b); }));
       case "perkact": return json(withAuth_(b, function (o) { return perkAct_(o, b.perk_id, b.decision, b.reason); }));
+      case "settings": return json(withAuth_(b, function (o) { return settings_(o); }));
+      case "savesettings": return json(withAuth_(b, function (o) { return saveSettings_(o, b); }));
       case "resync":  return json(withAuth_(b, function (o) { return o.commish ? pushLedger_() : { ok: false, error: "Commish only" }; }));
       case "chat":     return json(withAuth_(b, function (o) { return chat_(o, b); }));
       case "chatsend": return json(withAuth_(b, function (o) { return chatSend_(o, b); }));
@@ -203,6 +208,9 @@ function offer_(me, b) {
   log_(me.owner, "offer", id, "PROPOSED", "", to.owner);
   if (isCounter) { setOffer_(co, "DECLINED", "Countered"); log_(me.owner, "offer", co.offer_id, "DECLINED", "", "counter " + id); }
   post_(roomDM_(from.owner, to.owner), from.owner, "offer", b.note, id, isCounter ? "COUNTER" : "PROPOSED");
+  notify_([to.owner], isCounter ? "countered" : "received", "MAFFL HQ: " + (isCounter ? from.team + " countered your offer" : "trade offer from " + from.team),
+    from.team + (isCounter ? " sent a counter." : " sent you a trade offer.") + "\nYou'd get: " + legText_(give, gc) + "\nThey'd get: " + legText_(get, tc) + (b.note ? "\nNote: " + String(b.note).slice(0, 200) : ""),
+    APP_URL + "#offer-" + id, me.owner);
   return { ok: true, offer_id: id, room: roomDM_(from.owner, to.owner) };
 }
 function offerRow_(id) { return rows_("Offers").filter(function (r) { return String(r.offer_id) === String(id); })[0]; }
@@ -210,7 +218,12 @@ function setOffer_(o, status, reason) {
   setCell_("Offers", o._row, "status", status); setCell_("Offers", o._row, "updated_ts", new Date());
   if (reason) setCell_("Offers", o._row, "reason", String(reason).slice(0, 200));
 }
-function respond_(me, id, decision) {
+function legText_(players, credits) {
+  var p = (players || []).map(String), c = Number(credits) || 0;
+  if (c) p.push(c + " credit" + (c === 1 ? "" : "s"));
+  return p.length ? p.join(", ") : "nothing";
+}
+function respond_(me, id, decision, quiet) {
   var o = offerRow_(id); if (!o) return { ok: false, error: "Offer not found" };
   if (o.status !== "PROPOSED") return { ok: false, error: "That offer is already " + String(o.status).toLowerCase() };
   var isTo = norm_(o.to_owner) === norm_(me.owner), isFrom = norm_(o.from_owner) === norm_(me.owner);
@@ -220,6 +233,8 @@ function respond_(me, id, decision) {
   setOffer_(o, next); log_(me.owner, "offer", id, next, "", "");
   post_(roomDM_(o.from_owner, o.to_owner), me.owner, "offer", "", id, next);
   if (next === "ACCEPTED") post_("tier:" + o.tier, BOT, "offer", "", id, "REVIEW"); // accepted trades are public to the tier
+  if (!quiet && (next === "ACCEPTED" || next === "DECLINED")) notify_([o.from_owner], next.toLowerCase(), "MAFFL HQ: " + teamName_(o.to_owner) + " " + next.toLowerCase() + " your offer",
+    teamName_(o.to_owner) + " " + next.toLowerCase() + " your trade offer." + (next === "ACCEPTED" ? "\nNext: send the player side on ESPN. Credits move when the commish approves." : ""), APP_URL + "#offer-" + id, me.owner);
   return { ok: true, status: next };
 }
 function commish_(me, id, decision, reason) {
@@ -233,8 +248,8 @@ function commish_(me, id, decision, reason) {
   post_(next === "APPROVED" ? "league" : "tier:" + o.tier, BOT, "offer", reason, id, next); // completed trades go to the whole league
   var out = { ok: true, status: next };
   if (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits))) { setCell_("Offers", o._row, "sync", syncMode_()); out.sync = pushLedger_(); }
-  notify_([o.from_owner, o.to_owner], "MAFFL HQ: trade " + next.toLowerCase(), teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + " was " + next.toLowerCase() + " by the commish." +
-    (reason ? "\nReason: " + reason : "") + (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits)) ? "\nThe credits post to the official record automatically." : ""));
+  notify_([o.from_owner, o.to_owner], "commish", "MAFFL HQ: trade " + next.toLowerCase(), teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + " was " + next.toLowerCase() + " by the commish." +
+    (reason ? "\nReason: " + reason : "") + (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits)) ? "\nThe credits post to the official record automatically." : ""), APP_URL + "#offer-" + id);
   return out;
 }
 function trades_(owner) {
@@ -315,9 +330,9 @@ function perkAct_(me, id, decision, reason) {
   log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
   var out = { ok: true, status: next };
   if (next === "APPROVED") { setCell_("Perks", r._row, "sync", syncMode_()); out.sync = pushLedger_(); }
-  if (next !== "CANCELED") notify_([r.owner], "MAFFL HQ: " + (PERKS[r.perk] || {}).name + " " + next.toLowerCase(),
+  if (next !== "CANCELED") notify_([r.owner], "perks", "MAFFL HQ: " + (PERKS[r.perk] || {}).name + " " + next.toLowerCase(),
     "Your " + (PERKS[r.perk] || {}).name + " request (" + r.cost + " credits" + (r.week ? ", Week " + r.week : "") + (r.player ? ", " + r.player : "") + ") was " + next.toLowerCase() + "." +
-    (reason ? "\nCommish: " + reason : "") + (next === "APPROVED" ? "\nThe credits post to the official record automatically." : ""));
+    (reason ? "\nCommish: " + reason : "") + (next === "APPROVED" ? "\nThe credits post to the official record automatically." : ""), APP_URL + "#team");
   return out;
 }
 // Yours, ones that touch you (your opponent's Double Bonus, a swap that moves you), and for the commish everything open.
@@ -392,12 +407,48 @@ function pushLedger_() {
   props.setProperty("LAST_SYNC", JSON.stringify({ at: new Date().toISOString(), ok: res.ok, mode: mode, rows: rows.length, error: res.error || "" }));
   return res;
 }
-// Best-effort email to owners who have an email on the Owners tab (column "email"). Never blocks the action.
-function notify_(owners, subject, text) {
+// Best-effort email, only to owners who turned that email on in More → Settings (all off by default; §4b).
+// Never emails the person who did the action. Never blocks the action.
+function notify_(owners, key, subject, text, link, actor) {
   try {
     owners.forEach(function (n) { var o = ownerRow_(n); var to = o && String(o.email || "").trim();
-      if (to && /@/.test(to)) MailApp.sendEmail(to, subject, text + "\n\nOpen MAFFL HQ → Team → Credits."); });
+      if (!to || !/@/.test(to) || !prefs_(o)[key] || (actor && norm_(o.owner) === norm_(actor))) return;
+      MailApp.sendEmail(to, subject, text + "\n\nOpen MAFFL HQ: " + (link || APP_URL) + "\n\n(Turn these emails off in MAFFL HQ → More → Settings.)"); });
   } catch (err) {}
+}
+
+// ---------------------------------------------------------------- settings + contacts (§4b)
+function ensureCol_(name, header) {
+  var sh = sheet_(name), last = sh.getLastColumn(), head = sh.getRange(1, 1, 1, last).getValues()[0];
+  if (head.indexOf(header) < 0) sh.getRange(1, last + 1).setValue(header);
+}
+function prefs_(o) {
+  var p = {}; try { p = JSON.parse((o && o.notify) || "{}"); } catch (e) {}
+  var out = {}; NOTIFY_KEYS.forEach(function (k) { out[k] = p[k] === true; }); return out;
+}
+function settings_(me) {
+  var o = ownerRow_(me.owner); if (!o) return { ok: false, error: "Unknown owner" };
+  return { ok: true, email: String(o.email || ""), phone: String(o.phone || ""), notify: prefs_(o), keys: NOTIFY_KEYS };
+}
+function saveSettings_(me, b) {
+  var email = String(b.email || "").trim().slice(0, 120), digits = String(b.phone || "").replace(/\D/g, "");
+  if (digits.length === 11 && digits[0] === "1") digits = digits.slice(1);
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok: false, error: "That email doesn't look right" };
+  if (digits && digits.length !== 10) return { ok: false, error: "Phone needs 10 digits" };
+  var n = {}, any = false; NOTIFY_KEYS.forEach(function (k) { n[k] = !!(b.notify || {})[k]; any = any || n[k]; });
+  if (any && !email) return { ok: false, error: "Add your email to turn on emails" };
+  ["email", "phone", "notify"].forEach(function (h) { ensureCol_("Owners", h); });
+  var o = ownerRow_(me.owner);
+  setCell_("Owners", o._row, "email", email);
+  setCell_("Owners", o._row, "phone", digits ? "'" + digits : ""); // keep it text in the Sheet
+  setCell_("Owners", o._row, "notify", JSON.stringify(n));
+  log_(me.owner, "settings", "settings", "saved", "", NOTIFY_KEYS.filter(function (k) { return n[k]; }).join(",")); // no contact data in Events
+  return settings_(me);
+}
+// Signed-in owners only (summary POST): every owner's email + phone. Never on the public GET.
+function contacts_() {
+  return owners_().filter(function (o) { return o.email || o.phone; }).map(function (o) {
+    return { owner: o.owner, email: String(o.email || "").trim(), phone: String(o.phone || "").replace(/\D/g, "") }; });
 }
 
 // ---------------------------------------------------------------- LIVE scoring (ESPN → compact JSON, 45 s cache)
@@ -630,7 +681,7 @@ function summary_(week, owner) {
   var t = trades_(owner);
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
   var last = {}; try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
-  return { ok: true, perks: pk.perks, insuranceLeft: pk.insuranceLeft, sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
+  return { ok: true, contacts: owner ? contacts_() : [], perks: pk.perks, insuranceLeft: pk.insuranceLeft, sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
     commish: !!(meRow && String(meRow.is_commish) === "Y"), chat: meRow ? inbox_(meRow) : null };
 }
 

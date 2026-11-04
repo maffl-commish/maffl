@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-03 (chat)
+Last updated: 2026-11-03 (chat) · Settings shipped
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -23,7 +23,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 ## 2. Built (in the lab sandbox, not live)
 
-Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.11**, TEST Sheet.
+Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.12**, TEST Sheet.
 
 | Area | What works today |
 |---|---|
@@ -34,6 +34,8 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 | 🏈 Team | Trades end to end (all-rosters grid → side by side → live grade + reason chips → confirm → accept/decline/counter → commish approve/negate). Credits: balance, history, **perk requests** (Extra FAAB, Double Player Bonus, Matchup Swap, Relegation Insurance, Division Swap). Money: dues + winnings |
 | 🏆 League | Standings, Weeks (time-travel any week), Rulebook in-app, Prizes, Champions; classic tiles for Power Rankings, History, Draft |
 | 💬 Chat | Header 💬 + unread count → pull-up sheet. League chat, Upper/Lower Tier groups, DMs. Trade offers land in the DM as cards with live buttons; accepted → tier group, approved → league room. Reel "Trade talk" cards open the thread. @mentions, reactions, commish pin/delete (APP_DESIGN §4c) |
+| ☰ More | **Settings**: your email + mobile, six opt-in emails (offer received / countered / accepted / declined, commish decision, perk decision), all off by default. Contacts only in the backend Sheet, shown to signed-in owners |
+| Contacts + nudges | Owner panel shows Text / Call / Email. Every open offer has 💬 Text them / ✉️ Email them (prefilled from your phone, link to the offer); a heads-up box pops after Send, Counter, Accept, Decline. `#offer-ID` links open that offer |
 | Panels | Owner panel and rivalry panel from any name/game; real rivalry page embedded (`rivalry.html?embed=1`) |
 | Robots | Credit sync (`credit-sync.yml`): app approval → Credit_Log → balances → credits.html. TEST mode (dry run) |
 
@@ -47,8 +49,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 ## 4. Backlog
 
 **Next (decided, not built)**
-- 💬 Chat follow-ups: opt-in email for DMs/@mentions (with Settings), robot posts for Pulse drop + Coach of the Week, older-message paging (APP_DESIGN §4c).
-- More → Settings: own email/phone, opt-in trade emails; Text them / Email them buttons on offers (§4b).
+- 💬 Chat follow-ups: opt-in email for DMs/@mentions (add a toggle to Settings), robot posts for Pulse drop + Coach of the Week, older-message paging (APP_DESIGN §4c).
 - Guest "Just browsing" mode (§4).
 - ESPN refresh on a rhythm via Apps Script trigger (§6b), "Updated N min ago" label.
 - Real rosters from ESPN (replace draft-staged rosters).
