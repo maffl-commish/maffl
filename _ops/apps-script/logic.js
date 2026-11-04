@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.12";
+var VERSION = "0.13";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -456,6 +456,35 @@ function contacts_() {
 // the Tuesday robot uses. Read-only: nothing here writes anywhere.
 var LEAGUES = { U: 34467, L: 1587593698 }, SEASON = 2026;
 var POS = { 1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 7: "P", 9: "DT", 10: "DE", 11: "LB", 12: "CB", 13: "S", 14: "HC", 16: "D/ST" };
+var PRO = { 1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: "DEN", 8: "DET", 9: "GB", 10: "TEN", 11: "IND", 12: "KC", 13: "LV", 14: "LAR", 15: "MIA", 16: "MIN", 17: "NE", 18: "NO", 19: "NYG", 20: "NYJ", 21: "PHI", 22: "ARI", 23: "PIT", 24: "LAC", 25: "SF", 26: "SEA", 27: "TB", 28: "WSH", 29: "CAR", 30: "JAX", 33: "BAL", 34: "HOU" };
+// NFL games for a scoring period: proTeamId -> { opp: "@CIN" | "vs NE", kick: ms }. Public ESPN view, cached 6 h.
+function proGames_(sp) {
+  var cache = CacheService.getScriptCache(), key = "pro_" + SEASON + "_" + sp, hit = cache.get(key); if (hit) return JSON.parse(hit);
+  var out = {};
+  try {
+    var r = UrlFetchApp.fetch("https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "?view=proTeamSchedules_wl", { muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) (((JSON.parse(r.getContentText()).settings || {}).proTeams) || []).forEach(function (t) {
+      var g = ((t.proGamesByScoringPeriod || {})[sp] || [])[0]; if (!g) return;
+      var home = g.homeProTeamId === t.id, o = home ? g.awayProTeamId : g.homeProTeamId;
+      out[t.id] = { opp: (home ? "vs " : "@") + (PRO[o] || "?"), kick: g.date };
+    });
+  } catch (e) {}
+  cache.put(key, JSON.stringify(out), 21600); return out;
+}
+// One short ESPN-style stat line from the raw stat map (ESPN stat ids).
+function statLine_(pos, st) {
+  if (!st) return "";
+  function v(id) { return Math.round(Number(st[id]) || 0); }
+  var b = [];
+  if (pos === "QB") { if (v(0)) b.push(v(1) + "/" + v(0) + ", " + v(3) + " yd"); if (v(4)) b.push(v(4) + " TD"); if (v(20)) b.push(v(20) + " INT"); if (v(24)) b.push(v(23) + "-" + v(24) + " rush"); if (v(25)) b.push(v(25) + " rush TD"); }
+  else if (pos === "RB" || pos === "WR" || pos === "TE") {
+    var ru = v(23) ? v(23) + "-" + v(24) + " rush" : "", rc = v(53) || v(58) ? v(53) + "/" + v(58) + " rec, " + v(42) + " yd" : "";
+    (pos === "RB" ? [ru, rc] : [rc, ru]).forEach(function (x) { if (x) b.push(x); }); var td = v(25) + v(43); if (td) b.push(td + " TD");
+  } else if (pos === "K") { if (v(84)) b.push(v(83) + "/" + v(84) + " FG"); if (v(87)) b.push(v(86) + "/" + v(87) + " XP"); }
+  else if (pos === "D/ST") { if (v(120) || v(99) || v(95)) b.push(v(120) + " PA"); if (v(99)) b.push(v(99) + " sk"); if (v(95)) b.push(v(95) + " INT"); if (v(96)) b.push(v(96) + " FR"); if (v(105)) b.push(v(105) + " TD"); }
+  if (v(72)) b.push(v(72) + " FUM");
+  return b.join(" · ");
+}
 var SLOT = { 0: "QB", 1: "TQB", 2: "RB", 3: "RB/WR", 4: "WR", 5: "WR/TE", 6: "TE", 7: "OP", 8: "DT", 9: "DE", 10: "LB", 11: "DL", 12: "CB", 13: "S", 14: "DB", 15: "DP", 16: "D/ST", 17: "K", 18: "P", 19: "HC", 20: "BE", 21: "IR", 23: "FLEX", 24: "ER" };
 // Accepts one shared cookie pair (ESPN_S2 / SWID) or one per league: any property whose name starts with
 // ESPN_S2 or SWID and mentions the tier (U/UPPER/34467 or L/LOWER/1587593698) wins for that tier.
@@ -506,7 +535,7 @@ function live_(tier) {
   var counts = ((base.settings || {}).rosterSettings || {}).lineupSlotCounts || {}, slots = [];
   Object.keys(counts).forEach(function (s) { var id = +s; if (id !== 20 && id !== 21) for (var c = 0; c < counts[s]; c++) slots.push(id); });
   var names = {}; (base.teams || []).forEach(function (t) { names[t.id] = t.name || ((t.location || "") + " " + (t.nickname || "")).trim(); });
-  var box = espn_(lid, "view=mMatchupScore&view=mBoxscore&view=mScoreboard&scoringPeriodId=" + sp);
+  var box = espn_(lid, "view=mMatchupScore&view=mBoxscore&view=mScoreboard&scoringPeriodId=" + sp), pro = proGames_(sp);
   function side(sd) {
     if (!sd) return null;
     var ents = ((sd.rosterForCurrentScoringPeriod || sd.rosterForMatchupPeriod || {}).entries) || [];
@@ -514,7 +543,9 @@ function live_(tier) {
       var pl = (e.playerPoolEntry || {}).player || {}, st = pl.stats || [];
       var act = st.filter(function (x) { return x.scoringPeriodId === sp && x.statSourceId === 0; })[0], prj = st.filter(function (x) { return x.scoringPeriodId === sp && x.statSourceId === 1; })[0];
       var pts = act ? act.appliedTotal : ((e.playerPoolEntry || {}).appliedStatTotal || 0);
-      return { n: pl.fullName || "?", pos: POS[pl.defaultPositionId] || "", slot: SLOT[e.lineupSlotId] || String(e.lineupSlotId), sid: e.lineupSlotId,
+      var pg = pro[pl.proTeamId] || null, pos = POS[pl.defaultPositionId] || "";
+      return { n: pl.fullName || "?", pos: pos, slot: SLOT[e.lineupSlotId] || String(e.lineupSlotId), sid: e.lineupSlotId,
+        tm: PRO[pl.proTeamId] || "", opp: pg ? pg.opp : (pl.proTeamId ? "BYE" : ""), kick: pg ? pg.kick : null, st: act ? statLine_(pos, act.stats) : "",
         pts: Math.round((pts || 0) * 100) / 100, proj: prj ? Math.round(prj.appliedTotal * 10) / 10 : null, played: !!act, el: pl.eligibleSlots || [] };
     });
     var starters = players.filter(function (x) { return x.sid !== 20 && x.sid !== 21; }), pool = players.filter(function (x) { return x.sid !== 21; });

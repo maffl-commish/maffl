@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.10 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.11 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,7 @@ VERSION: 0.10 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Match = the scoreboard** (commish). No MAFFL-scoring section (Coach, Survivor, weekly high come post-match in the reel); DPB shown only on the score itself (flash + ×2), no spotlight card; Rivalry button lives in the scoreboard; lineups look like ESPN's (opponent, kickoff, stat line).
 - 2026-11-03 · **Chat gets a bottom tab** (commish): Home · Match · 💬 Chat · Team · League, unread count on the tab; it opens the chat sheet over whatever you're on. More moved behind your avatar (top right, screen titled "You"). Header no longer shows Week/Tier.
 - 2026-11-03 · **Double Player Bonus on the live scoreboard** (commish asked to showcase it). ESPN doesn't know about perks, so the app adds approved (and pending, labeled) DPBs to the live score itself; the commish still makes the official ESPN adjustment. Lab-only **test scores** fill in while ESPN shows all zeros (pretend opponent DPB included); never saved.
 - 2026-11-03 · **Settings built (§4b).** More → Settings (email, mobile, 6 opt-in emails, all off). Automatic emails now go

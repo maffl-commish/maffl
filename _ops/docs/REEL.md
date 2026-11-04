@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-03 (chat, Match test scores + DPB)
+Last updated: 2026-11-03 (chat) · Match = scoreboard
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -30,7 +30,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 | Shell | Pinned header + tab bar, iPhone zoom/pan fixed, Home-Screen friendly |
 | Sign-in | Two-word passphrase (GRONK-PISTOL), no team picker, 25 wrong/hour league limit, request-access email |
 | 🏠 Home (reel) | Personalized order: ⭐ You → Division/Race → Hot & Not Q&A → Scores (Game of the Week vote) → Coach → Survivor → Wire → Credits → other tier. Quiz-first cards, one reaction tray per card + who reacted |
-| ⚔️ Match | Live game from ESPN (backend `live`, 60 s refresh): MAFFL scoring live, lineups side by side, rivalry button. **✖️2 Double Player Bonus** added to the live score (hero ×2 chip, spotlight card, highlighted player). **🧪 Test scores** fill in while ESPN is all 0 (opponent gets a pretend DPB; pill turns it off) |
+| ⚔️ Match | Just the scoreboard: live score from ESPN (backend `live`, 60 s auto-refresh, tap "↻ Ns ago" to pull now), ⚔️ Rivalry button between the teams, ESPN-style lineups (NFL team, opponent, kickoff, stat line). **✖️2 Double Player Bonus**: bonus score flashes gold with ×2 + player chip, doubled player highlighted. **🧪 Test scores** while ESPN is all 0 (opponent gets a pretend DPB; pill turns it off) |
 | 🏈 Team | Trades end to end (all-rosters grid → side by side → live grade + reason chips → confirm → accept/decline/counter → commish approve/negate). Credits: balance, history, **perk requests** (Extra FAAB, Double Player Bonus, Matchup Swap, Relegation Insurance, Division Swap). Money: dues + winnings |
 | 🏆 League | Standings, Weeks (time-travel any week), Rulebook in-app, Prizes, Champions; classic tiles for Power Rankings, History, Draft |
 | 💬 Chat | Bottom tab (Home · Match · Chat · Team · League) with unread count → pull-up sheet; More lives behind your avatar. League chat, Upper/Lower Tier groups, DMs. Trade offers land in the DM as cards with live buttons; accepted → tier group, approved → league room. Reel "Trade talk" cards open the thread. @mentions, reactions, commish pin/delete (APP_DESIGN §4c) |
