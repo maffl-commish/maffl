@@ -309,6 +309,30 @@
   .lp span{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font:700 15px var(--display)}
   .lp span i{display:block;font:500 10px var(--body);color:var(--muted);font-style:normal}
   .lp.wait b{color:var(--ink2)}
+  /* test scores pill + Double Player Bonus on the scoreboard */
+  .simpill{display:inline-flex;align-items:center;gap:4px;font:700 10px var(--display);letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.12);color:#fff;border-radius:20px;padding:3px 8px;border:0}
+  .mhero.dpbon{position:relative;box-shadow:0 0 0 2px var(--gold),0 6px 24px rgba(245,166,35,.25)}
+  .dchip{display:inline-flex;align-items:center;gap:4px;margin-top:5px;font:700 11px var(--display);letter-spacing:.04em;color:var(--navy);background:linear-gradient(90deg,#ffd27a,var(--gold));border-radius:20px;padding:2px 8px}
+  .lsc .x2{display:inline-block;vertical-align:top;margin-left:3px;font:800 13px var(--display);color:var(--navy);background:var(--gold);border-radius:5px;padding:1px 4px;transform:rotate(-8deg)}
+  .dpb{position:relative;overflow:hidden;margin-top:12px;border-radius:14px;padding:14px 14px 12px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,#4a3510 0%,#1a2e50 45%,#0f1d34 100%);border:1.5px solid var(--gold)}
+  .dpb::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,215,130,.22) 48%,transparent 66%);transform:translateX(-100%);animation:dsweep 3.2s ease-in-out infinite;pointer-events:none}
+  @keyframes dsweep{60%,100%{transform:translateX(100%)}}
+  .dpb .eb{color:var(--gold);display:flex;justify-content:space-between;gap:8px}
+  .dpb .eb em{font-style:normal;color:#ffb3b3}.dpb.mine .eb em{color:#4fd1a5}
+  .dpbm{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .dstamp{flex:0 0 auto;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font:800 26px/1 var(--display);color:var(--navy);background:radial-gradient(circle at 35% 30%,#ffe2a3,var(--gold) 60%,var(--gold-dark));box-shadow:0 0 0 3px rgba(245,166,35,.35),0 0 22px rgba(245,166,35,.55);transform:rotate(-10deg);animation:dpop .7s cubic-bezier(.2,1.6,.4,1) both}
+  @keyframes dpop{0%{transform:scale(.2) rotate(-40deg);opacity:0}100%{transform:scale(1) rotate(-10deg);opacity:1}}
+  .dpl{font:700 22px/1.05 var(--display)}.dmeta{font-size:12px;color:#c8d2e4;margin-top:2px}
+  .dmath{display:flex;align-items:baseline;justify-content:center;gap:10px;margin:12px 0 6px;font-family:var(--display)}
+  .dmath .o{font-size:22px;color:#c8d2e4;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.4)}
+  .dmath .a{font-size:16px;color:var(--gold)}.dmath .n{font:800 40px/1 var(--display);color:var(--gold);text-shadow:0 0 18px rgba(245,166,35,.45)}
+  .dswing{font-size:13px;line-height:1.4;text-align:center;color:#fff;background:rgba(255,255,255,.08);border-radius:8px;padding:7px 10px}
+  .dswing b{color:var(--gold)}
+  .dpbf{display:flex;justify-content:space-between;font-size:11px;color:#c8d2e4;margin-top:8px}
+  .lp.dbl{background:linear-gradient(90deg,var(--gold-soft),#fff1d6);box-shadow:inset 0 0 0 1.5px var(--gold);border-radius:6px;padding:2px 4px;margin:-2px -4px}
+  .lp.dbl small b,.lp .x2t{display:inline;font:800 10px var(--display);color:var(--navy);background:var(--gold);border-radius:3px;padding:0 3px;margin-left:3px}
+  .lp.dbl span{color:var(--gold-dark)}
+  @media (prefers-reduced-motion:reduce){.dpb::after,.dstamp{animation:none}}
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   .keys{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 6px;scrollbar-width:none;flex:0 0 auto}
@@ -1133,8 +1157,109 @@
     apiGet({ action: "live", tier: ME.tier }).then(function (r) { LIVE = r; LIVE_AT = Date.now(); drawMatch(); })
       .catch(function () { LIVE = { ok: false, error: "Couldn't reach the league server" }; drawMatch(); });
   }
+  // ---- 🧪 Test scores (lab only). While ESPN shows every team at 0 (week not kicked off), fill in fake points so
+  // the Match tab can be tested. Seeded per player + week (same numbers on every phone); more players "finish"
+  // each minute you watch. Never written anywhere; turns itself off once real points show up.
+  var SIM_T0 = 0;
+  function allZero(r) { return !!(r && r.ok) && r.games.every(function (g) { return ["home", "away"].every(function (s) { return !g[s] || !g[s].pts; }); }); }
+  function simWanted(r) { return allZero(r) && store("maffl_lab_sim") !== "off"; }
+  function seeded(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return function () { h += 0x6D2B79F5; var t = h; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var SIM_BASE = { QB: 18, RB: 11, WR: 11, TE: 8, K: 8, "D/ST": 7 };
+  function isStarter(p) { return p.slot !== "BE" && p.slot !== "IR"; }
+  function retotal(sd) {
+    var st = sd.players.filter(isStarter);
+    sd.pts = Math.round(st.reduce(function (a, p) { return a + p.pts; }, 0) * 100) / 100;
+    sd.proj = Math.round(st.reduce(function (a, p) { return a + (p.played ? p.pts : (p.proj || 0)); }, 0) * 10) / 10;
+    sd.left = st.filter(function (p) { return !p.played; }).length;
+    // bench gap (greedy, test only): best bench swap per starter slot
+    var FLEX = { FLEX: ["RB", "WR", "TE"], "RB/WR": ["RB", "WR"], "WR/TE": ["WR", "TE"], OP: ["QB", "RB", "WR", "TE"] }, taken = {}, gap = 0;
+    sd.players.filter(function (p) { return p.slot === "BE" && p.played; }).sort(function (a, b) { return b.pts - a.pts; }).forEach(function (b) {
+      var best = null; st.forEach(function (s, i) { if (taken[i]) return; if (s.slot === b.pos || (FLEX[s.slot] || []).indexOf(b.pos) >= 0) if (b.pts > s.pts && (!best || s.pts < best.s.pts)) best = { s: s, i: i }; });
+      if (best) { taken[best.i] = 1; gap += b.pts - best.s.pts; }
+    });
+    sd.bench = Math.round(gap * 100) / 100;
+  }
+  function simLive(r, forced) {
+    if (!SIM_T0) SIM_T0 = Date.now();
+    var frac = Math.min(1, 0.55 + (Date.now() - SIM_T0) / 60000 * 0.05), out = JSON.parse(JSON.stringify(r));
+    out.games.forEach(function (g) { ["home", "away"].forEach(function (s) { var sd = g[s]; if (!sd) return;
+      sd.players.forEach(function (p) {
+        var rnd = seeded("w" + r.week + ":" + p.n), u = rnd(), m = rnd(), base = p.proj != null && p.proj > 0 ? p.proj : (SIM_BASE[p.pos] || 6);
+        if (p.proj == null || p.proj <= 0) p.proj = base;
+        var boom = forced && forced[norm(p.n)];
+        p.played = boom || u < frac;
+        p.pts = p.played ? Math.round(base * (boom ? 1.55 + 0.4 * m : 0.3 + 1.45 * Math.pow(m, 1.15)) * 100) / 100 : 0;
+      });
+      retotal(sd);
+    }); });
+    out.sim = true; return out;
+  }
+  // ---- ✖️2 Double Player Bonus: approved perks for this week double that player's points on the scoreboard.
+  // ESPN doesn't know about perks (the commish adjusts the score), so the app adds the bonus itself.
+  function liveOwner(team) { var t = TEAMS.filter(function (x) { return sameTeam(x.team, team); })[0]; return t && t.owner; }
+  function dpbFor(r) {
+    return (SUM.perks || []).filter(function (p) { return p.perk === "double" && Number(p.week) === Number(r.week) && (p.status === "APPROVED" || p.status === "REQUESTED"); });
+  }
+  function applyDpb(r, perks) {
+    r.games.forEach(function (g) { ["home", "away"].forEach(function (s) { var sd = g[s]; if (!sd) return;
+      var own = liveOwner(sd.team); sd.espn = sd.pts; sd.dpb = []; var projAdd = 0;
+      perks.filter(function (p) { return own && norm(p.owner) === norm(own); }).forEach(function (pk) {
+        var pl = sd.players.filter(function (x) { return norm(x.n) === norm(pk.player); })[0]; if (!pl) return;
+        pl.dbl = pk; var on = isStarter(pl), add = on ? pl.pts : 0;
+        sd.dpb.push({ perk: pk, p: pl, add: add, starter: on });
+        sd.pts = Math.round((sd.pts + add) * 100) / 100; if (on) projAdd += pl.played ? pl.pts : (pl.proj || 0);
+      });
+      if (sd.proj != null) sd.proj = Math.round((sd.proj + projAdd) * 10) / 10;
+    }); });
+    return r;
+  }
+  // What the scoreboard shows: the ESPN feed (or test scores) with any Double Bonus added.
+  function liveView() {
+    var r = LIVE; if (!r || !r.ok) return r;
+    var perks = dpbFor(r), sim = simWanted(r), forced = {};
+    if (sim) {
+      // Test scores: if your opponent hasn't got a real one this week, pretend he spent 10 credits on his best starter.
+      var myName = teamOf(ME.owner).team, opp = null;
+      r.games.forEach(function (x) { ["home", "away"].forEach(function (s) { if (x[s] && sameTeam(x[s].team, myName)) opp = x[s === "home" ? "away" : "home"]; }); });
+      var oppOwn = opp && liveOwner(opp.team);
+      if (oppOwn && !perks.some(function (p) { return norm(p.owner) === norm(oppOwn); })) {
+        var star = opp.players.filter(function (p) { return isStarter(p) && ["K", "D/ST"].indexOf(p.pos) < 0; })
+          .sort(function (a, b) { return (b.proj || SIM_BASE[b.pos] || 0) - (a.proj || SIM_BASE[a.pos] || 0); })[0];
+        if (star) perks = perks.concat([{ id: "sim", perk: "double", owner: oppOwn, week: r.week, player: star.n, pos: star.pos, status: "APPROVED", cost: 10, sim: true }]);
+      }
+      perks.forEach(function (p) { forced[norm(p.player)] = 1; });
+      var out = applyDpb(simLive(r, forced), perks);
+      // Make your test game a nail-biter where the opponent's bonus is the swing (his other guys scaled to fit).
+      out.games.forEach(function (x) { ["home", "away"].forEach(function (s) { var me = x[s], op = x[s === "home" ? "away" : "home"];
+        if (!me || !op || !sameTeam(me.team, myName) || !op.dpb.length) return;
+        var add = op.dpb.reduce(function (n, d) { return n + d.add; }, 0), dp = op.dpb.map(function (d) { return d.p; });
+        var rest = op.players.filter(function (p) { return isStarter(p) && p.played && dp.indexOf(p) < 0; }), restPts = rest.reduce(function (n, p) { return n + p.pts; }, 0);
+        var M = Math.max(me.pts, 2.2 * add), km = me.pts > 0 ? M / me.pts : 1;
+        if (km !== 1) { me.players.forEach(function (p) { if (p.played) p.pts = Math.round(p.pts * km * 100) / 100; }); retotal(me); me.espn = me.pts; me.pts = Math.round((me.pts + me.dpb.reduce(function (n, d) { return n + d.add; }, 0)) * 100) / 100; }
+        var target = me.pts - 0.45 * add - (op.espn - restPts); if (restPts <= 0 || target <= 0) return;
+        var k = target / restPts; op.players.forEach(function (p) { if (p.played && dp.indexOf(p) < 0) p.pts = Math.round(p.pts * k * 100) / 100; });
+        retotal(op); op.espn = op.pts; op.pts = Math.round((op.pts + add) * 100) / 100;
+        op.proj = Math.round((op.proj + op.dpb.reduce(function (n, d) { return n + (d.p.played ? d.p.pts : d.p.proj || 0); }, 0)) * 10) / 10;
+      }); });
+      return out;
+    }
+    return applyDpb(JSON.parse(JSON.stringify(r)), perks);
+  }
+  function dpbCard(sd, d, isMine, me, opp) {
+    var p = d.p, mineLead = me.pts - (opp ? opp.pts : 0), withoutLead = isMine ? mineLead - d.add : mineLead + d.add;
+    var who = isMine ? "Your" : esc(shortOf(liveOwner(sd.team) || sd.team)) + "'s";
+    var swing = !d.starter ? "He's on the bench, so it isn't counting. Get him in the lineup." :
+      !p.played ? "⏳ Yet to play. Projected " + f2(p.proj || 0) + " → <b>" + f2(2 * (p.proj || 0)) + "</b> doubled." :
+      isMine ? (mineLead >= 0 && withoutLead < 0 ? "It's the difference: without it you'd be <b>down " + f2(-withoutLead) + "</b>." : "Worth <b>+" + f2(d.add) + "</b> to you this week.") :
+      (mineLead < 0 && withoutLead >= 0 ? "It's the swing: without it you'd be <b>up " + f2(withoutLead) + "</b>." : "That's <b>+" + f2(d.add) + "</b> on the board against you.");
+    return '<div class="dpb' + (isMine ? " mine" : "") + '"><div class="eb"><span>✖️2 Double Player Bonus</span><em>' + (isMine ? "Yours" : "⚠️ Coming at you") + '</em></div>' +
+      '<div class="dpbm"><div class="dstamp">×2</div><div><div class="dpl">' + esc(p.n) + '</div><div class="dmeta">' + esc(p.pos) + ' · ' + who + ' pick · ' + esc(sd.team) + '</div></div></div>' +
+      '<div class="dmath"><span class="o">' + f2(p.played ? p.pts : (p.proj || 0)) + '</span><span class="a">×2 →</span><span class="n">' + f2(2 * (p.played ? p.pts : (p.proj || 0))) + '</span></div>' +
+      '<div class="dswing">' + swing + '</div>' +
+      '<div class="dpbf"><span>' + (d.perk.cost || 10) + ' credits · ' + (d.perk.status === "APPROVED" ? "approved" : "awaiting commish") + '</span><span>' + (d.perk.sim ? "🧪 test only" : "ESPN " + f2(sd.espn) + " + " + f2(d.add)) + '</span></div></div>';
+  }
   function drawMatch() {
-    var r = LIVE, h = '<div class="pad">';
+    var r = liveView(), h = '<div class="pad">';
     if (!r || !r.ok) {
       h += '<div class="card"><div class="eb">Live scores</div><h3>' + (r && r.setup ? "Live scoring isn't switched on yet" : "Live scores are unavailable right now") + '</h3><p>' + esc((r && r.error) || "") + '</p>' +
         (r && r.setup && ME.commish ? '<div class="note" style="margin-top:8px">Commish, one-time setup: Apps Script → ⚙️ Project Settings → Script properties → add <b>ESPN_S2</b> and <b>SWID</b> (the same values as the GitHub secrets, SWID with its { } braces). No redeploy needed.</div>' : '') +
@@ -1146,10 +1271,15 @@
     var ago = Math.max(0, Math.round((Date.now() - new Date(r.at).getTime()) / 1000));
     if (!mine) { $("v-match").innerHTML = h + '<div class="card"><h3>No game for ' + esc(myName) + ' in Week ' + r.week + '</h3></div>' + matchFooter(null) + '</div>'; return; }
     var lead = mine.pts - (opp ? opp.pts : 0), pm = mine.proj || mine.pts, po = opp ? (opp.proj || opp.pts) : 0, share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
-    h += '<div class="mhero live"><div class="eb" style="color:var(--gold);display:flex;justify-content:space-between"><span>Week ' + r.week + ' · <span class="ldot"></span>Live</span><span style="color:#c8d2e4;text-transform:none;letter-spacing:0">updated ' + (ago < 60 ? ago + "s" : Math.round(ago / 60) + "m") + ' ago</span></div>' +
-      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div><div class="lsc ' + (lead >= 0 ? "w" : "") + '">' + f2(mine.pts) + '</div><div class="rec">proj ' + (mine.proj != null ? mine.proj : "–") + ' · ' + mine.left + ' to play</div></div><div class="mid">VS</div>' +
-      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div><div class="lsc ' + (lead < 0 ? "w" : "") + '">' + f2(opp.pts) + '</div><div class="rec">proj ' + (opp.proj != null ? opp.proj : "–") + ' · ' + opp.left + ' to play</div></div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
+    var dOn = (mine.dpb.length || (opp && opp.dpb.length)) ? " dpbon" : "";
+    function bonusBits(sd) { var a = sd.dpb.reduce(function (n, d) { return n + d.add; }, 0); return sd.dpb.length ? '<div class="dchip">✖️2 ' + esc(sd.dpb.map(function (d) { return d.p.n.split(" ").slice(-1)[0]; }).join(" + ")) + ' · +' + f2(a) + '</div>' : ''; }
+    h += '<div class="mhero live' + dOn + '"><div class="eb" style="color:var(--gold);display:flex;justify-content:space-between;align-items:center"><span>Week ' + r.week + ' · <span class="ldot"></span>Live</span>' + (r.sim ? '<button class="simpill" id="simoff">🧪 Test scores · turn off</button>' : allZero(LIVE) ? '<button class="simpill" id="simon">🧪 Test scores · turn on</button>' : '<span style="color:#c8d2e4;text-transform:none;letter-spacing:0">updated ' + (ago < 60 ? ago + "s" : Math.round(ago / 60) + "m") + ' ago</span>') + '</div>' +
+      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div><div class="lsc ' + (lead >= 0 ? "w" : "") + '">' + f2(mine.pts) + (mine.dpb.length ? '<span class="x2">×2</span>' : '') + '</div><div class="rec">proj ' + (mine.proj != null ? mine.proj : "–") + ' · ' + mine.left + ' to play</div>' + bonusBits(mine) + '</div><div class="mid">VS</div>' +
+      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div><div class="lsc ' + (lead < 0 ? "w" : "") + '">' + f2(opp.pts) + (opp.dpb.length ? '<span class="x2">×2</span>' : '') + '</div><div class="rec">proj ' + (opp.proj != null ? opp.proj : "–") + ' · ' + opp.left + ' to play</div>' + bonusBits(opp) + '</div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
       '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% by projection</span><span>' + (100 - share) + '%</span></div></div>';
+    // Double Player Bonus spotlight (theirs first: that's the one you're sweating)
+    if (opp) opp.dpb.forEach(function (d) { h += dpbCard(opp, d, false, mine, opp); });
+    mine.dpb.forEach(function (d) { h += dpbCard(mine, d, true, mine, opp); });
     // MAFFL scoring, live
     var all = []; r.games.forEach(function (x) { ["home", "away"].forEach(function (s) { if (x[s] && !/ghost/i.test(x[s].team)) all.push(x[s]); }); });
     var benchRank = all.slice().sort(function (a, b) { return a.bench - b.bench; }).findIndex(function (x) { return x === mine; }) + 1;
@@ -1162,7 +1292,8 @@
       '<div class="ml"><span>🛟</span><div><b>Survivor</b><p>' + survLine + '</p></div></div>' +
       '<div class="ml"><span>💳</span><div><b>Weekly high (+1 credit)</b><p>' + (top === mine ? "You're the top score in " + (ME.tier === "U" ? "Upper" : "Lower") + " right now." : esc(top.team) + " leads with " + f2(top.pts) + " · you're " + f2(top.pts - mine.pts) + " back") + '</p></div></div></div>';
     // Lineups side by side
-    function ln(p) { return p ? '<div class="lp' + (p.played ? '' : ' wait') + '"><b>' + esc(p.n) + '</b><small>' + esc(p.pos) + (p.played ? '' : ' · ⏳') + '</small><span>' + f2(p.pts) + (p.proj != null ? '<i>' + p.proj + '</i>' : '') + '</span></div>' : '<div class="lp"></div>'; }
+    function ln(p) { if (!p) return '<div class="lp"></div>'; var d = p.dbl && isStarter(p);
+      return '<div class="lp' + (p.played ? '' : ' wait') + (d ? ' dbl' : '') + '"><b>' + esc(p.n) + '</b><small>' + esc(p.pos) + (p.played ? '' : ' · ⏳') + (d ? '<b>×2</b>' : '') + '</small><span>' + f2(d ? 2 * p.pts : p.pts) + (d ? '<i>' + f2(p.pts) + ' ×2</i>' : p.proj != null ? '<i>' + p.proj + '</i>' : '') + '</span></div>'; }
     var ORDER = ["QB", "TQB", "RB", "RB/WR", "WR", "WR/TE", "TE", "FLEX", "OP", "DT", "DE", "DL", "LB", "CB", "S", "DB", "DP", "D/ST", "K", "P", "HC"];
     var bySlot = function (a, b) { var i = ORDER.indexOf(a.slot), j = ORDER.indexOf(b.slot); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); };
     var ms = mine.players.filter(function (p) { return p.slot !== "BE" && p.slot !== "IR"; }).sort(bySlot), os = opp ? opp.players.filter(function (p) { return p.slot !== "BE" && p.slot !== "IR"; }).sort(bySlot) : [];
@@ -1177,7 +1308,9 @@
     var oppOwner = opp ? ownerOfTeam(opp.team) : null;
     return '<div class="btns" style="margin:12px 0 16px">' + (oppOwner ? '<button class="b" data-riv-push="' + esc(ME.owner) + '|' + esc(oppOwner) + '">⚔️ Rivalry history</button>' : '') + '<button class="b" id="mrefresh">↻ Refresh</button></div>';
   }
-  document.addEventListener("click", function (e) { if (e.target.closest("#mrefresh")) { LIVE_AT = 0; loadLive(); toast("Refreshing…"); } });
+  document.addEventListener("click", function (e) { if (e.target.closest("#mrefresh")) { LIVE_AT = 0; loadLive(); toast("Refreshing…"); }
+    if (e.target.closest("#simoff")) { store("maffl_lab_sim", "off"); drawMatch(); toast("Test scores off: real ESPN feed"); }
+    if (e.target.closest("#simon")) { store("maffl_lab_sim", "on"); drawMatch(); toast("Test scores on (lab only)"); } });
 
   // ---------- TEAM ----------
   function renderTeam() {
