@@ -433,8 +433,10 @@
   .chd .cb{font:700 20px var(--display);color:var(--gold-dark);padding:2px 8px 2px 2px;visibility:hidden}
   .chd .ct{flex:1;min-width:0;font:700 20px/1.05 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .chd .ct small{display:block;font:500 12px var(--body);color:var(--muted)}
-  .chd .cx{font-size:26px;color:var(--muted);padding:0 4px}
-  .chd .cnew{font:700 12px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy);background:var(--gold);border-radius:999px;padding:7px 11px}
+  .chd .cx{flex:0 0 auto;width:44px;height:44px;margin:-6px -6px -6px 0;display:grid;place-items:center;font-size:30px;line-height:1;color:var(--muted)}
+  .chd .cb{min-width:36px;min-height:44px}
+  .cpan{position:relative}
+  .cnew{position:absolute;right:16px;bottom:calc(env(safe-area-inset-bottom) + 18px);z-index:2;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy);background:var(--gold);border-radius:999px;padding:14px 20px;box-shadow:0 4px 14px rgba(15,29,52,.25)}
   .cbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px 14px}
   .cseg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 0 4px}
   .cseg button{flex:1;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
@@ -529,7 +531,7 @@
 </div>
 
 <div class="cscrim" id="cscrim"></div>
-<div class="chat" id="chat"><div class="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cnew" id="cnew">+ New</button><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><div id="cfoot"></div></div></div>
+<div class="chat" id="chat"><div class="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New</button><div id="cfoot"></div></div></div>
 <div class="sscrim" id="sscrim"></div>
 <div class="psheet" id="psheet"><div class="shd"><span class="grabber"></span><button id="sback" style="visibility:hidden">‹ Back</button><button class="x" id="sx" aria-label="Close">×</button></div><div class="sb" id="sb"></div></div>
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
@@ -2222,9 +2224,9 @@
         return '<button class="croom' + (r.unread ? ' un' : '') + '" data-croom="' + esc(r.room) + '">' + info.ic + '<div class="cm"><div class="cn"><span>' + esc(info.t) + '</span><small>' + (r.last ? ago(r.last.ts) : '') + '</small></div><div class="cp">' + esc(previewOf(r)) + '</div></div>' +
           (r.unread ? '<span class="dot">' + (r.unread > 9 ? "9+" : r.unread) + '</span>' : '') + '</button>'; };
       h += '<div class="cgrp">Group chats</div>' + rooms.map(row).join("") + '<div class="cgrp">Direct messages</div>' +
-        (dms.length ? dms.map(row).join("") : '<p class="meta" style="padding:8px 0">Tap <b>+ New</b> to message any owner. Trade offers you send or get land in that owner\'s chat automatically.</p>');
+        (dms.length ? dms.map(row).join("") : '<p class="meta" style="padding:8px 0">Tap <b>✎ New</b> to message any owner. Trade offers you send or get land in that owner\'s chat automatically.</p>');
     }
-    body.innerHTML = h;
+    body.innerHTML = h + '<div style="height:84px"></div>'; // room for the ✎ New button
   }
   function drawNew() {
     var q = norm(CH.q), h = '<input class="field" id="csearch" placeholder="Search owners or teams" autocomplete="off" value="' + esc(CH.q) + '">';
