@@ -2211,13 +2211,8 @@
     }).catch(function () { CH.sending = false; if ($("csend")) $("csend").disabled = false; undo("Couldn't reach the league server"); });
   }
   function drawInbox() {
-    var ib = inboxOf(), body = $("cbody");
-    var h = '<div class="cseg"><button data-cseg="chats" class="' + (CH.seg === "chats" ? "on" : "") + '">Chats</button><button data-cseg="mentions" class="' + (CH.seg === "mentions" ? "on" : "") + '">@ Mentions' + (ib.mentionsUnread ? '<em>' + ib.mentionsUnread + '</em>' : '') + '</button></div>';
-    if (CH.seg === "mentions") {
-      h += ib.mentions.length ? ib.mentions.map(function (m) {
-        return '<button class="croom' + (m.unread ? ' un' : '') + '" data-croom="' + esc(m.room) + '">' + avatar(m.owner) + '<div class="cm"><div class="cn"><span>' + esc(shortOf(m.owner)) + ' · ' + esc(roomInfo(m.room).t) + '</span><small>' + ago(m.ts) + '</small></div><div class="cp">' + esc(m.text) + '</div></div></button>'; }).join("")
-        : '<div class="cempty">Nobody has @mentioned you yet.</div>';
-    } else {
+    var ib = inboxOf(), body = $("cbody"), h = "";
+    {
       var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
       if (!rooms.length) rooms = [{ room: "league", unread: 0 }, { room: "tier:" + ME.tier, unread: 0 }];
       var row = function (r) { var info = roomInfo(r.room);

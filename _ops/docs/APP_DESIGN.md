@@ -12,6 +12,7 @@ VERSION: 0.12 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Inbox simplified** (commish): no Chats / @ Mentions tabs, just Group chats and Direct messages.
 - 2026-11-03 · **No category row on Home** (commish: the circles felt like a menu). The reel is one stack: thin progress bar on top
   (tap → Jump to sections), each card names its section, 🎯 Play cards (quizzes, Game of the Week) spread through the stack
   (never more than 2 in a row; scoreboard-spoiling quizzes stay before the scoreboard). Done circle → "You're caught up" card
@@ -169,7 +170,7 @@ sheets, owner sheets and confirms open on top of it, so you never lose your plac
   DMs with a tier-mate have a ⇄ button to start a trade with them; Team → Trades offers get a 💬 Chat button.
 - **Reel.** For you leads with "💬 Trade talk" cards (an offer that needs you, or new messages in a DM) showing the trade
   card and the last line, and a card for unread league or tier chat. Tap to open the thread.
-- **Messages:** text up to 500 characters, @mentions (tap @, pick an owner; Mentions tab + counts), emoji reactions
+- **Messages:** text up to 500 characters, @mentions (tap @, pick an owner; highlighted in the message, count toward unread), emoji reactions
   (🔥😂💀👀👏, who reacted). Delete your own; commish deletes any and pins up to 3 per room. Trade cards can't be deleted.
 - **Fresh enough, not instant.** An open thread refreshes every 8 s; unread counts every 30 s and when the app comes back.
 - **Not yet:** opt-in email for DMs/mentions (§4b toggles), robot posts for Pulse drops and Coach of the Week, older-message paging (keeps the last 150).

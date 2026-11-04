@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · Lab chat inbox: Chats / @ Mentions tabs removed (commish: too much); just Group chats + Direct messages. @mentions still work in messages.
 - 2026-11-03 · Lab chat: "+ New" moved off the header to a big floating ✎ New button (bottom-right of the inbox); × close gets a 44px thumb target. Commish feedback: the two were too close to tap.
 - 2026-11-03 · REEL · Home reel loses the category circles: progress bar (tap → Jump to), section name on each card, 🎯 Play cards woven through, "You're caught up" end card. APP_DESIGN v0.12, REEL.md.
 - 2026-11-03 · REEL · Match is just the scoreboard now: Double Player Bonus spotlight card and hero glow removed (the bonus score itself flashes gold with a ×2 tag + "×2 Hurts · +33.60" chip); MAFFL scoring section (Coach/Survivor/weekly high) removed; ⚔️ Rivalry button moved between the two teams; bottom Refresh replaced by a tappable "↻ 12s ago" stamp. Lineups ESPN-style: position · NFL team · opponent (PHI vs DAL), projection, and a stat line once he plays (34/52, 373 yd · 3 TD) or kickoff (Sun 1:00 PM / In progress / Final). Backend logic v0.13: live feed adds tm/opp/kick/st per player (public ESPN NFL schedule view, cached 6 h).
