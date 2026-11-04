@@ -23,7 +23,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 ## 2. Built (in the lab sandbox, not live)
 
-Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.15**, TEST Sheet.
+Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.16**, TEST Sheet.
 
 | Area | What works today |
 |---|---|
@@ -34,7 +34,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 | 🏈 Team | Trades end to end (all-rosters grid → side by side → live grade + reason chips → confirm → accept/decline/counter → commish approve/negate). Credits: balance, history, **perk requests** (Extra FAAB, Double Player Bonus, Matchup Swap, Relegation Insurance, Division Swap). Money: dues + winnings |
 | 🏆 League | Standings, Weeks (time-travel any week), Rulebook in-app, Prizes, Champions; classic tiles for Power Rankings, History, Draft |
 | 💬 Chat | Bottom tab (Home · Match · Chat · Team · League) with unread count → pull-up sheet; More lives behind your avatar. League chat, Upper/Lower Tier groups, DMs. Trade offers land in the DM as cards with live buttons; accepted → tier group, approved → league room. Reel "Trade talk" cards open the thread. @mentions, reactions, commish pin/delete (APP_DESIGN §4c) |
-| 📥 Commish desk | Commish-only room, first in Chat + a For-you card. Live To do (perks, trades in review, passphrase requests → issue + text it, lockouts → unlock, ESPN steps → ✓ Done, credit-sync trouble → Re-send) above a log every robot and owner action posts to. Robots post via `desk-notify.yml` (needs `DESK_KEY`) (APP_DESIGN §10d) |
+| 📥 Commish desk | Commish-only room, first in Chat + a For-you card. Live To do (perks, trades in review, passphrase requests → issue + text it, lockouts → unlock, ESPN steps → ✓ Done, credit-sync trouble → Re-send) above a log every robot and owner action posts to. Robots post via `desk-notify.yml` (DESK_KEY set 11/3 ✓) (APP_DESIGN §10d). **⏱️ 15-minute robot** (`tick`): perk nudges + lock warnings, review-over, trade-deadline heads-up, players-moved-on-ESPN check + DM reminder, nightly credit check; Run it now button (§10f) |
 | ☰ More | **Settings**: your email + mobile, six opt-in emails (offer received / countered / accepted / declined, commish decision, perk decision), all off by default. Contacts only in the backend Sheet, shown to signed-in owners |
 | Contacts + nudges | Owner panel shows Text / Call / Email. Every open offer has 💬 Text them / ✉️ Email them (prefilled from your phone, link to the offer); a heads-up box pops after Send, Counter, Accept, Decline. `#offer-ID` links open that offer |
 | Panels | Owner panel and rivalry panel from any name/game; real rivalry page embedded (`rivalry.html?embed=1`) |
@@ -58,7 +58,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
 
 **Automation queue (§10c, map §10e)**
-- `tick()` line in Code.gs + 15-min trigger → deadline heads-ups, nightly reconciliation, trade-on-ESPN reminders into the desk.
+- Commish: paste `Code.gs` (tick line) + add the 15-min trigger (§10f). Next robot jobs: weekly-high credit + season awards to the ledger (approve card), dues reminders, ESPN writes (§10b).
 - Approved trade → reminder until ESPN shows the move.
 - Perk ESPN to-do list for the commish (until ESPN writes exist).
 - Robot writes weekly-high credit + season awards to the ledger.

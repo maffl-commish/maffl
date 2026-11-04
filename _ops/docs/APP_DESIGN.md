@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.15 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.16 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,8 @@ VERSION: 0.15 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **⏱️ 15-minute robot** (commish: keep building). Apps Script time trigger calls `tick()`; it only reminds, checks and
+  reports into the desk (never approves or changes anything). Commish set DESK_KEY in both places; first robot card posted 11/3.
 - 2026-11-03 · **Home = your inbox, not a feed** (commish: 16 cards was noise; less is more). At most **8 cards** a week, picked for
   you. **Needs you** cards lead and can't be cleared until handled: trade offers (any number fold into ONE card, a row each →
   its chat thread), commish desk, an unvoted Game of the Week. **Heads up** (deadline) and story cards are light: headline +
@@ -414,7 +416,27 @@ trigger) can post the same way.
 | Robot failures | You find out late | ✅ desk-notify ❌ cards |
 | Nightly reconciliation | — | Ledger vs Credit_Log vs credits.html; desk card only on a mismatch (needs trigger) |
 
-**One small unlock for the "needs trigger" rows:** Apps Script time triggers must call a function in the bound loader, so `Code.gs` needs
+### 10f. ⏱️ The 15-minute robot (built 11/3, backend v0.16)
+
+`Code.gs` has `function tick() { logic_().tick(); }`; a time trigger runs it every 15 minutes. Each job runs on its own (one failing
+never stops the others), posts each thing to the desk **once** (Script property `TICK_SENT` remembers), and never approves, denies or
+changes anything.
+
+| Job | When | What it does |
+|---|---|---|
+| Perk nudges | every run | A request waiting 12 h → "⏳ has waited N hours". A Double Bonus / Matchup Swap still waiting with < 6 h to its lock → "⏰ locks in N hours" |
+| Review over | every run | Accepted trade past its 24-hour review → "approve or negate it" |
+| Trade deadline | every run | 24 h before → a desk note (with how many offers are open) and one heads-up in League chat |
+| Players moved on ESPN? | every 30 min, 8 AM–midnight ET | Reads both tiers' ESPN rosters for accepted/approved trades with players. Moved → logged + "✅ moved" note (the To do shows it next to the trade). Not moved 24 h after the offer → one reminder in the two owners' DM + a desk note. Team names must match ESPN's |
+| Nightly credit check | first run after 3 AM ET | Backend ledger vs the repo's ledger file (did every push land?); LIVE also vs Credit_Log `[app L-…]` tags. Quiet when it all matches |
+
+The desk shows **⏱️ 15-minute robot · Last ran N min ago** (⚠️ if > 1 h) with a **Run it now** button (`deskact` op `tick`).
+
+**Setup (commish, once):** in the Apps Script editor paste the new `Code.gs` (or just add the `tick` line), Save; then ⏰ Triggers →
+Add Trigger → function `tick` · deployment **Head** · event source **Time-driven** · **Minutes timer** · **Every 15 minutes** → Save
+(Google asks to allow it once). No redeploy: triggers run the saved code; the web app keeps its own deployed version.
+
+**Was the unlock for the "needs trigger" rows:** Apps Script time triggers must call a function in the bound loader, so `Code.gs` needs
 one more line (`function tick() { logic_().tick(); }`), pasted once by the commish, plus a 15-min trigger. Until then, GitHub Actions
 or a Claude scheduled task can hit the web app on a schedule instead (Actions schedules run late, so not for anything time-critical).
 

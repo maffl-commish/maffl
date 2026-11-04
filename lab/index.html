@@ -2178,7 +2178,7 @@
   var CHAT_EMO = ["🔥", "😂", "💀", "👀", "👏"], BOTN = "MAFFL HQ";
   var AVC = ["#1a2e50", "#2f6f9f", "#1d9e75", "#8e5bb5", "#c0603a", "#3a7d8c", "#a8862a", "#6b778d", "#b5476b", "#45629b"];
   var EVT = { PROPOSED: "proposed a trade", COUNTER: "countered", ACCEPTED: "accepted the trade", DECLINED: "declined the trade", WITHDRAWN: "withdrew the offer",
-    REVIEW: "Trade accepted · 24-hour review", APPROVED: "Trade completed ✅", NEGATED: "Trade negated by the commish" };
+    REVIEW: "Trade accepted · 24-hour review", REVIEWDONE: "24-hour review is over · approve or negate", APPROVED: "Trade completed ✅", NEGATED: "Trade negated by the commish" };
   function chatOn() { return !!(API_URL && ME && store("maffl_lab_pin")); }
   function inboxOf() { return (SUM && SUM.chat) || { rooms: [], unread: 0, mentions: [], mentionsUnread: 0 }; }
   function dmRoom(a, b) { return "dm:" + [norm(a), norm(b)].sort().join("|"); }
@@ -2236,7 +2236,7 @@
   // ---------- 📥 Commish desk (APP_DESIGN §10d): a room only the commish sees. Robots and owner actions post here;
   // the top of the room is the live to-do list (logic.js desk_ / deskAct_ v0.14). ----------
   var DESK_KINDS = { perk: 1, access: 1, lock: 1, alert: 1, robot: 1, note: 1 }, DESK = null;
-  var ALERT_T = { SYNC: "💳 Credit sync problem", ESPN: "🏈 ESPN connection problem", GUESSES: "🔐 Sign-in paused" };
+  var ALERT_T = { SYNC: "💳 Credit sync problem", ESPN: "🏈 ESPN connection problem", GUESSES: "🔐 Sign-in paused", RECONCILE: "🧮 Nightly credit check" };
   function deskOpenPerks() { return (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }); }
   function deskReview() { return (SUM.offers || []).filter(function (o) { return o.status === "ACCEPTED"; }); }
   function deskTodo() {
@@ -2278,7 +2278,8 @@
     else {
       h += '<div class="dsk"><h4><span>To do</span><span class="stp gold">' + n + '</span></h4>';
       var ps = deskOpenPerks(); if (ps.length) h += '<div class="dsec">🎟️ Perks to approve · ' + ps.length + '</div>' + ps.map(perkCard).join("");
-      var rv = deskReview(); if (rv.length) h += '<div class="dsec">🤝 Trades in review · ' + rv.length + '</div>' + rv.map(function (o) { return tradeMini(o, true); }).join("");
+      var rv = deskReview(); if (rv.length) h += '<div class="dsec">🤝 Trades in review · ' + rv.length + '</div>' + rv.map(function (o) { var hrs = (Date.now() - new Date(o.updated || o.ts).getTime()) / 36e5;
+        return '<p class="meta" style="margin-top:6px">' + (hrs >= 24 ? '✅ Review window over' : '⏳ Review ends in ' + Math.max(1, Math.ceil(24 - hrs)) + ' h') + ' · ' + ((d.moved || []).indexOf(o.id) >= 0 ? '✅ players moved on ESPN' : 'players not moved on ESPN yet') + '</p>' + tradeMini(o, true); }).join("");
       if ((d.access || []).length) h += '<div class="dsec">🔑 Passphrase requests · ' + d.access.length + '</div>' + d.access.map(function (a) {
         return '<div class="ditem"><b>' + esc(a.team || a.owner) + '</b> <span class="meta">' + esc(a.owner) + ' · ' + ago(a.ts) + (a.hasPin ? ' · has one (forgot?)' : '') + '</span>' +
           (a.note ? '<p class="meta">“' + esc(a.note) + '”</p>' : '') + '<div class="btns">' + deskBtn("dismiss", a.owner, "Dismiss") + deskBtn("issue", a.owner, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("");
@@ -2292,7 +2293,10 @@
     }
     if ((d.noPin || []).length) h += '<div class="dsk"><details><summary>👥 ' + d.noPin.length + ' owner' + (d.noPin.length === 1 ? '' : 's') + ' without a passphrase yet</summary>' + d.noPin.map(function (o) {
       return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("") + '</details></div>';
-    var ls2 = d.sync && d.sync.last;
+    var ls2 = d.sync && d.sync.last, tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
+    h += '<div class="dsk"><h4><span>⏱️ 15-minute robot</span>' + deskBtn("tick", "", "Run it now") + '</h4><p class="meta">' +
+      (tkAge === null ? '⚠️ Hasn\'t run yet. Add the time trigger (APP_DESIGN §10f).' : (tkAge > 60 ? '⚠️ ' : '✅ ') + 'Last ran ' + ago(tk.at) + (tkAge > 60 ? ' (should be every 15 min; check the trigger)' : '') +
+        ((tk.log || []).length ? ' · ' + esc(tk.log.join(" · ")) : ' · nothing new')) + '</p></div>';
     h += '<p class="meta" style="text-align:center;margin:8px 0 2px">Backend v' + esc(d.version || "?") + ' · credits ' + esc((d.sync || {}).mode || "test").toUpperCase() + (ls2 && ls2.at ? ' · last ledger push ' + ago(ls2.at) + (ls2.ok ? ' ✓' : ' ⚠️') : '') + '</p>';
     return h + '<div class="cgrp">Log</div>';
   }
@@ -2324,7 +2328,10 @@
   }
   document.addEventListener("click", function (e) {
     var el = e.target.closest("[data-dact]"); if (!el) return;
-    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" ? null : teamOf(who).team || who;
+    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" ? null : teamOf(who).team || who;
+    if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
+      toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+      .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     var C = { issue: ["Issue a new passphrase?", "For " + t + ". Any old passphrase stops working. You'll see the new one once, with a button to text it.", "Issue it", false],
       unlock: ["Unlock " + t + "?", "Their passphrase stays the same; the wrong-try count resets.", "Unlock", false],
       dismiss: ["Dismiss this request?", "Marks it done without issuing anything.", "Dismiss", true],

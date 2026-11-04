@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-03 by Claude (chat), REEL Commish desk
+**Last updated:** 2026-11-03 by Claude (chat), REEL 15-minute robot
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-03 · REEL · ⏱️ 15-minute robot: `tick()` (Code.gs line + Apps Script time trigger, commish to add) posts to the Commish desk once per thing: perk waiting 12 h, perk locking in < 6 h, 24 h review over, trade-deadline heads-up (desk + League chat), players-moved-on-ESPN check (reads rosters, ✅ note or one DM reminder), nightly ledger/Credit_Log check. Desk shows last run + Run it now. Backend logic v0.16. DESK_KEY confirmed end to end (test Credit sync → Desk notify → {"ok":true}). APP_DESIGN v0.16 §10f. Tested on a simulated Sheet (12 robot + 26 desk checks) and at 390px.
 - 2026-11-03 · REEL · Home becomes your inbox: max 8 cards, Needs-you cards first (trade offers folded into one), light story cards, ← → browse, swipe ↑ to clear, Inbox zero, count on the Home tab. APP_DESIGN v0.15, REEL.md.
 - 2026-11-03 · REEL · 📥 Commish desk: commish-only chat room (first in Chat) + For-you card. Live To do with action buttons (perks, trades in review, passphrase requests → issue in-app + text it, lockouts → unlock, ESPN steps → ✓ Done, credit-sync → Re-send) over a log the backend posts to (perk requests, accepted trades, access requests, lockouts, guess pause, ledger failures, ESPN cookie failures). New `desk-notify.yml` posts ESPN pull / Pulse draft / Credit sync results (needs DESK_KEY secret + Script property). Backend logic v0.15 (`desk`, `deskact`, `botpost`). APP_DESIGN v0.14 §10d–e (automation map). Tested against a simulated Sheet (26 checks) and at 390px.
 - 2026-11-03 · REEL · Loading + speed: logo boot screen, one spinner for every loading spot (settings, Match, rosters, trade builder, trades, perks, rulebook, chat, rivalry frames), gold bar under the header while the league server works (polls stay quiet). App opens once Pulse + credits + prizes are in; rulebook and the 375 KB draft CSV load behind. Summary call starts at launch; last summary and last live score kept on the phone for instant paint. Backend logic v0.14: one Sheet read per tab per call (summary 14 → 7), summary/inbox skip the script lock. APP_DESIGN v0.13, REEL.md.

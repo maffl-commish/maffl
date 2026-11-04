@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.15";
+var VERSION = "0.16";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -792,9 +792,12 @@ function desk_(me) {
     access: openRequests_().map(function (r) { var o = ownerRow_(r.owner) || {}; return { owner: r.owner, team: o.team, ts: r.ts, note: String(r.note || ""), hasPin: !!o.pin_hash }; }),
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
-    espn: espn, sync: { mode: syncMode_(), last: last } };
+    espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(),
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }) };
 }
+function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
+  if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
@@ -816,6 +819,115 @@ function botPost_(b) {
   if (link && !/^https:\/\//.test(link)) link = "";
   post_("desk", BOT, "robot", (title + (text ? "\n" + text : "")).slice(0, CHAT_MAX), link.slice(0, 300), String(b.status || "info").slice(0, 8).toUpperCase());
   return { ok: true };
+}
+
+// ---------------------------------------------------------------- ⏱️ tick: the 15-minute robot (APP_DESIGN §10f)
+// Called by a time trigger on Code.gs `tick()` every 15 minutes. Each job is independent (one failing never stops
+// the others), posts to the 📥 desk at most once per thing (keys remembered in Script property TICK_SENT), and
+// never changes a perk, trade or credit by itself: it reminds, checks and reports.
+var HOUR = 36e5;
+function tickSent_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("TICK_SENT") || "{}"); } catch (e) { return {}; } }
+function once_(sent, key, fn) { if (sent[key]) return false; fn(); sent[key] = Date.now(); return true; }
+function etHour_(d) { return Number(Utilities.formatDate(d || new Date(), "America/New_York", "H")); }
+function etDay_(d) { return Utilities.formatDate(d || new Date(), "America/New_York", "yyyy-MM-dd"); }
+function hrs_(ms) { var h = Math.round(ms / HOUR); return h <= 1 ? "1 hour" : h + " hours"; }
+function tick() {
+  var lock = LockService.getScriptLock(); if (!lock.tryLock(20000)) return { ok: false, error: "busy" };
+  try { return tickRun_(); } finally { lock.releaseLock(); }
+}
+function tickRun_() {
+  var props = PropertiesService.getScriptProperties(), sent = tickSent_(), now = new Date(), log = [];
+  function job(name, fn) { try { var n = fn(); if (n) log.push(name + " " + n); } catch (e) { log.push(name + " ERROR " + String(e.message || e).slice(0, 80)); } }
+  try {
+    job("perks", function () { return tickPerks_(sent, now); });
+    job("trades", function () { return tickTrades_(sent, now); });
+    job("deadline", function () { return tickDeadline_(sent, now); });
+    if (etHour_(now) >= 8 && Math.floor(now.getTime() / 9e5) % 2 === 0) job("espn", function () { return tickEspnMoves_(sent, now); }); // every 30 min, 8 AM–midnight
+    var day = etDay_(now);
+    if (etHour_(now) >= 3 && props.getProperty("TICK_DAILY") !== day) { props.setProperty("TICK_DAILY", day); job("reconcile", function () { return tickReconcile_(sent, now); }); }
+    Object.keys(sent).forEach(function (k) { if (now - sent[k] > 60 * 864e5) delete sent[k]; }); // forget after 60 days
+    props.setProperty("TICK_SENT", JSON.stringify(sent));
+    props.setProperty("LAST_TICK", JSON.stringify({ at: now.toISOString(), log: log.slice(0, 12) }));
+    return { ok: true, log: log };
+  } catch (e) { return { ok: false, error: String(e) }; }
+}
+// Perk requests: nudge when one has waited 12 h, and warn when a Double Bonus / Matchup Swap still waiting locks in < 6 h.
+function tickPerks_(sent, now) {
+  var n = 0;
+  rows_("Perks").filter(function (r) { return r.status === "REQUESTED"; }).forEach(function (r) {
+    var name = (PERKS[r.perk] || {}).name || r.perk, who = teamName_(r.owner), wait = now - new Date(r.ts);
+    if (wait > 12 * HOUR && once_(sent, "perkwait:" + r.perk_id, function () { deskPost_("note", "⏳ " + who + "'s " + name + " request has waited " + hrs_(wait) + ".", r.perk_id, "WAITING"); })) n++;
+    if ((r.perk === "double" || r.perk === "swap") && Number(r.week)) {
+      var left = perkDeadline_(Number(r.week)) - now;
+      if (left > 0 && left < 6 * HOUR && once_(sent, "perklock:" + r.perk_id, function () { deskPost_("note", "⏰ " + who + "'s Week " + r.week + " " + name + " locks in " + hrs_(left) + ". Approve or deny before then.", r.perk_id, "LOCKSOON"); })) n++;
+    }
+  });
+  return n;
+}
+// Trades: the 24-hour review is over → approve or negate now (the rule: commish decides after the review window).
+function tickTrades_(sent, now) {
+  var n = 0;
+  rows_("Offers").filter(function (o) { return o.status === "ACCEPTED" && now - new Date(o.updated_ts) > 24 * HOUR; }).forEach(function (o) {
+    if (once_(sent, "review:" + o.offer_id, function () { deskPost_("offer", "The 24-hour review is over. Approve or negate it.", o.offer_id, "REVIEWDONE"); })) n++;
+  });
+  return n;
+}
+// Trade deadline: heads-up 24 h before, to the desk and the league room (once each).
+function tickDeadline_(sent, now) {
+  var left = TRADE_DEADLINE - now, n = 0;
+  if (left > 0 && left < 24 * HOUR) {
+    var when = Utilities.formatDate(TRADE_DEADLINE, "America/New_York", "EEE MMM d 'at' h:mm a");
+    if (once_(sent, "tdl:desk", function () { var open = rows_("Offers").filter(function (o) { return o.status === "PROPOSED" || o.status === "ACCEPTED"; }).length;
+      deskPost_("note", "⏰ Trade deadline is " + when + " ET. " + open + " offer" + (open === 1 ? " is" : "s are") + " still open.", "", "DEADLINE"); })) n++;
+    if (once_(sent, "tdl:league", function () { post_("league", BOT, "text", "⏰ Trade deadline is " + when + " ET (less than 24 hours). Offers need to be accepted before then.", "", "", [], ""); })) n++;
+  }
+  return n;
+}
+// Accepted / approved trades with players: did the players actually move on ESPN? Reads both tiers' rosters, matches
+// ESPN team names to the Owners tab team names. Moved → logs `espn_moved` + a desk note. Not moved 24 h after the
+// accept → one reminder in the two owners' DM and one on the desk.
+function tickEspnMoves_(sent, now) {
+  var moved = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_moved") moved[e.ref] = 1; });
+  var open = rows_("Offers").filter(function (o) { return (o.status === "ACCEPTED" || o.status === "APPROVED") && !moved[o.offer_id] && now - new Date(o.updated_ts) < 14 * 864e5; })
+    .filter(function (o) { return JSON.parse(o.give || "[]").length + JSON.parse(o.get || "[]").length > 0; });
+  if (!open.length) return 0;
+  var rosters = {}, n = 0; // tier -> norm(team name) -> { norm(player): 1 }
+  ["U", "L"].forEach(function (t) {
+    if (!open.some(function (o) { return String(o.tier) === t; })) return;
+    var d = espn_(LEAGUES[t], "view=mTeam&view=mRoster"); rosters[t] = {};
+    (d.teams || []).forEach(function (tm) { var nm = norm_(tm.name || ((tm.location || "") + " " + (tm.nickname || "")).trim()), set = rosters[t][nm] = {};
+      (((tm.roster || {}).entries) || []).forEach(function (e) { set[norm_(((e.playerPoolEntry || {}).player || {}).fullName)] = 1; }); });
+  });
+  open.forEach(function (o) {
+    var R = rosters[String(o.tier)] || {}, fromR = R[norm_(teamName_(o.from_owner))], toR = R[norm_(teamName_(o.to_owner))];
+    if (!fromR || !toR) { once_(sent, "espnname:" + o.offer_id, function () { deskPost_("note", "🤷 Can't match " + teamName_(o.from_owner) + " or " + teamName_(o.to_owner) + " to an ESPN team name, so I can't check whether the players moved. Make the Owners tab team name match ESPN.", o.offer_id, "NOMATCH"); }); return; }
+    var give = JSON.parse(o.give || "[]"), get = JSON.parse(o.get || "[]");
+    var done = give.every(function (p) { return toR[norm_(p)]; }) && get.every(function (p) { return fromR[norm_(p)]; });
+    if (done) { log_("robot", "espn_moved", o.offer_id, "Y", "", ""); deskPost_("note", "✅ The players in " + teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + " moved on ESPN.", o.offer_id, "MOVED"); n++; return; }
+    if (now - new Date(o.ts) > 24 * HOUR) {
+      if (once_(sent, "espnwait:" + o.offer_id, function () {
+        post_(roomDM_(o.from_owner, o.to_owner), BOT, "text", "Reminder: ESPN doesn't show this trade's players on the new rosters yet. One of you propose it on ESPN and the other accept, so it matches MAFFL HQ.", "", "", [], "");
+        deskPost_("note", "⏳ " + teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + ": players still haven't moved on ESPN. I reminded them in their DM.", o.offer_id, "NOTMOVED"); })) n++;
+    }
+  });
+  return n;
+}
+// Nightly: does the repo hold the same ledger the backend has (did every push land)? LIVE also checks that every
+// ledger row approved 2+ hours ago is in data/Credit_Log.csv (tagged [app L-…]). Quiet when everything matches.
+function tickReconcile_(sent, now) {
+  var mode = syncMode_(), mine = ledger_(mode), raw = "https://raw.githubusercontent.com/" + REPO + "/main/";
+  var f = UrlFetchApp.fetch(raw + "_ops/inbox/credit_ledger" + (mode === "live" ? "" : "_test") + ".json?t=" + now.getTime(), { muteHttpExceptions: true });
+  var repoIds = {}; if (f.getResponseCode() === 200) (JSON.parse(f.getContentText()).rows || []).forEach(function (r) { repoIds[r.id] = 1; });
+  var problems = [], notPushed = mine.filter(function (r) { return !repoIds[r.id]; });
+  if (notPushed.length) problems.push(notPushed.length + " approved credit move" + (notPushed.length === 1 ? " isn't" : "s aren't") + " in the repo's ledger file (tap Re-send ledger)");
+  if (mode === "live") {
+    var c = UrlFetchApp.fetch(raw + "data/Credit_Log.csv?t=" + now.getTime(), { muteHttpExceptions: true }), txt = c.getResponseCode() === 200 ? c.getContentText() : "";
+    var missing = mine.filter(function (r) { return now - new Date(r.approved) > 2 * HOUR && txt.indexOf("[app " + r.id + "]") < 0; });
+    if (missing.length) problems.push(missing.length + " approved move" + (missing.length === 1 ? " isn't" : "s aren't") + " in Credit_Log yet (" + missing.slice(0, 3).map(function (r) { return r.id; }).join(", ") + "); check the Credit sync run");
+  }
+  if (!problems.length) return 0;
+  deskPost_("alert", "Nightly credit check (" + mode.toUpperCase() + "): " + problems.join("; ") + ".", "", "RECONCILE");
+  return problems.length;
 }
 
 // ---------------------------------------------------------------- commish menu
@@ -852,3 +964,4 @@ M.doPost = doPost;
 M.menuSetPin = menuSetPin;
 M.menuRequestDone = menuRequestDone;
 M.menuUnlock = menuUnlock;
+M.tick = tick;

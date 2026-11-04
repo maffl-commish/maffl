@@ -43,6 +43,9 @@ function onOpen() {
 function menuSetPin() { logic_().menuSetPin(); }
 function menuRequestDone() { logic_().menuRequestDone(); }
 function menuUnlock() { logic_().menuUnlock(); }
+// The 15-minute robot (reminders, ESPN trade check, nightly credit check). Run by a time trigger:
+// Apps Script → Triggers (⏰) → Add Trigger → tick · Head · Time-driven · Minutes timer · Every 15 minutes.
+function tick() { logic_().tick(); }
 function menuReload() {
   CacheService.getScriptCache().remove("logic");
   SpreadsheetApp.getUi().alert("Loaded logic v" + logic_(true).VERSION + " from the repo.");
