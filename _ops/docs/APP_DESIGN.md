@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.14 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.15 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,12 @@ VERSION: 0.14 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Home = your inbox, not a feed** (commish: 16 cards was noise; less is more). At most **8 cards** a week, picked for
+  you. **Needs you** cards lead and can't be cleared until handled: trade offers (any number fold into ONE card, a row each →
+  its chat thread), commish desk, an unvoted Game of the Week. **Heads up** (deadline) and story cards are light: headline +
+  one line, tap → full card in a sheet. ← → browses, **swipe ↑ clears** (remembered per week), "Inbox zero" at the end; Home
+  tab shows the count. Picks: your result, your next game, new chat, ONE quiz, your Survivor status, your division/race.
+  Hot & Not, full scoreboard, Credit board, other tier leave Home (League/Match). Supersedes the progress-bar reel below.
 - 2026-11-03 · **📥 Commish desk** (commish): a chat room only the commish's login sees, first in Chat. Live **To do** on top
   (perks to approve, trades in review, passphrase requests, lockouts, ESPN steps, credit-sync trouble) with the action buttons
   right there; a log underneath where every robot and owner action that needs him posts a card. Passphrases are issued and
@@ -76,7 +82,7 @@ Bottom tabs: **Home · Match · Team · League · More**. The app replaces the c
 
 | Tab | Job | Contents |
 |---|---|---|
-| 🏠 Home | **Home IS the reel** (commish 11/2) | One card stack fills the screen. No category row (11/3): a thin progress bar on top (tap → Jump to), each card names its own section, 🎯 Play cards spread through the stack. **For you** leads: your game, your result, could-have-won, Elite 5, deadlines, votes, Pick'em, trade offers. React 🔥😂💀 (reacting glides the card away) or swipe; sub-rows react too; ends "You're caught up". Remembers your spot per week. Full Pulse one tap away |
+| 🏠 Home | **Home IS the reel** (commish 11/2) | One card stack fills the screen. **Your inbox** (11/3): up to 8 cards; Needs-you cards first (stay until handled, trade offers folded into one); light story cards, tap for the full card; ← → browse, swipe ↑ to clear; Inbox zero. |
 | ⚔️ Match | **Your live game** (commish 11/2): ESPN live scores via the backend, MAFFL scoring live (Coach of the Week bench gap, Survivor danger, weekly high), lineups side by side, Rivalry history button. Was: | Next opponent + stakes (Pulse preview), rivalry (series, last 5, biggest wins), last week's result + Coach of the Week lines, tier slate. **Every game links to its rivalry** (`rivalry.html#vs=A,B`) |
 | 🏈 Team | You | Record, rank, credits, points. Tabs: **Roster** (player sheet: stats + MAFFL draft/owner history), **Trades** (badge = open offers in/out), **Stats** (season + career), **Credits** (balance, history, **spend credits on perks**, e.g. player double bonus) |
 | 🏆 League | Everyone | Standings (credits column; no separate Credit Leaders), **Rulebook**, Pulse archive, Power Rankings, History, Draft, Rivals, Prizes & Dues |

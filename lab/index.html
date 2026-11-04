@@ -189,9 +189,9 @@
   .cbox{width:100%;max-width:480px;max-height:85dvh;overflow:auto;background:var(--page-bg);border-radius:18px 18px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 16px)}
   .cbox h3{font:700 24px var(--display);margin-bottom:6px}
   .sb2{font-style:normal;background:var(--loss);color:#fff;border-radius:999px;padding:0 6px;font-size:11px;margin-left:2px}
-  .tbadge,.cbadge{position:relative}
+  .tbadge,.cbadge,.hbadge{position:relative}
   .hdr .chip{margin-left:auto}
-  .cbadge[data-n]:not([data-n=""])::after,.tbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
+  .cbadge[data-n]:not([data-n=""])::after,.tbadge[data-n]:not([data-n=""])::after,.hbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
   .tg{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.tg:last-child{border-bottom:0}
   .tg div{flex:1}.tg b{display:block;font:700 15px var(--body);color:var(--navy)}.tg small{color:var(--muted);font-size:13px}
   .tg input{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:15px;background:var(--border);position:relative;flex:none;transition:background .15s}
@@ -333,22 +333,32 @@
   /* home reel (inline) */
   #v-home.on{display:flex;flex-direction:column;overflow:hidden;height:100%}
   #v-home{position:relative}
-  .prog{flex:0 0 auto;display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px 6px;background:none;border:0}
-  .segs2{flex:1;display:flex;gap:3px}
-  .segs2 i{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background .25s}
-  .segs2 i.f{background:var(--gold)}
-  .segs2 i.now{background:var(--navy)}
-  .pcount{flex:0 0 auto;font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:44px;text-align:right}
-  .jump{display:none;position:absolute;z-index:30;top:34px;left:12px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 32px var(--navy-shadow);padding:8px}
-  .jump.on{display:block}
-  .jr{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 10px;border:0;border-radius:9px;background:none;font:700 15px var(--display);color:var(--ink);text-align:left}
-  .jr small{font:600 12px var(--body,inherit);color:var(--muted)}
-  .jr.on{background:var(--gold-soft)}.jr.seen span{color:var(--muted)}
-  .dhead .sec{display:flex;align-items:center;gap:8px;font:700 12px var(--display);letter-spacing:.04em;color:var(--navy);margin-bottom:3px}
-  .dcard.navyc .dhead .sec{color:#fff}
-  .playtag{font:800 10px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--navy);background:var(--gold);border-radius:99px;padding:3px 8px}
+  .ibar{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 18px 4px}
+  .idots{flex:1;display:flex;gap:6px}
+  .idots i{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s}
+  .idots i.a{background:#f3b6b6}.idots i.on{background:var(--navy);width:20px;border-radius:4px}.idots i.a.on{background:var(--loss)}
+  .icount{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .ihint{flex:0 0 auto;text-align:center;font-size:11px;color:var(--muted);padding:0 0 8px}
+  .dhead .sec{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .playtag,.acttag{font:800 10px var(--display);letter-spacing:.1em;text-transform:uppercase;border-radius:99px;padding:3px 8px}
+  .playtag{color:var(--navy);background:var(--gold)}
+  .acttag{color:#fff;background:var(--loss)}
+  .dcard.actc{box-shadow:0 0 0 2px var(--loss),0 8px 24px var(--navy-shadow)}
   .dcard.playc{box-shadow:0 0 0 2px var(--gold),0 8px 24px var(--navy-shadow)}
-  .dcard.playc.back,.dcard.playc.back2{box-shadow:0 8px 24px var(--navy-shadow)}
+  .dcard.back{box-shadow:0 8px 24px var(--navy-shadow)}
+  .dcard.lightc .dhead{border-bottom:0}
+  .lbody{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 22px 20px}
+  .lbody .lic{font-size:46px;line-height:1}
+  .lbody h3{font:700 32px/1.08 var(--display);margin-top:14px}
+  .lbody p{font-size:16px;line-height:1.45;color:var(--ink2);margin-top:10px}
+  .lbody .more{flex:0 0 auto;align-self:flex-start;margin-top:18px}
+  .orow{display:flex;align-items:center;gap:10px;width:100%;padding:12px 2px;border:0;border-top:1px solid var(--border);background:none;text-align:left}
+  .orow .ot{flex:1;min-width:0}.orow .ot b{display:block;font:700 16px var(--display);color:var(--ink)}.orow .ot small{font-size:13px;color:var(--muted)}
+  .orow .og{font:700 12px var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--loss)}
+  .ofr{padding:10px 0;border-top:1px solid var(--border)}.ofr:first-child{border-top:0}
+  .dcard.nope{animation:nope .35s}
+  @keyframes nope{25%{transform:translateY(-18px)}60%{transform:translateY(4px)}}
+  .done-card .zero{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font:800 36px var(--display);color:#fff;background:var(--win,#1f9d6a)}
   .done-card .again{margin-top:14px;background:none;border:0;font:600 13px inherit;color:var(--muted);text-decoration:underline}
   #hstack{flex:1;margin:4px 14px 10px}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -964,19 +974,19 @@
     // ⭐ You: your result, your next game, what's due
     var you = forYouCards(), now = Date.now();
     (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > now && d.dueMs - now < d.leadDays * 864e5; }).slice(0, 1).forEach(function (d) {
-      you.push({ eb: "⏰ " + Math.ceil((d.dueMs - now) / 864e5) + " days left", t: d.label + ": " + d.when, body: '<p style="margin-top:8px">' + esc(d.note || "") + '</p>' + (d.id === "trade-deadline" ? '<div class="btns"><button class="b pri" data-go="team">Open Trades</button></div>' : '') }); });
+      you.push({ key: "deadline", eb: "⏰ " + Math.ceil((d.dueMs - now) / 864e5) + " days left", t: d.label + ": " + d.when, body: '<p style="margin-top:8px">' + esc(d.note || "") + '</p>' + (d.id === "trade-deadline" ? '<div class="btns"><button class="b pri" data-go="team">Open Trades</button></div>' : '') }); });
     if (you.length) GROUPS.push({ key: "you", label: "⭐ You", cards: you });
 
     // 🛡️ Your division (Upper) or 📈 Your race (Lower)
     if (myTier === "U" && me.div) {
       var div = tierTeams("U").filter(function (t) { return t.div === me.div; }).sort(function (a, b) { return b.w - a.w || b.points - a.points; });
       var foes = div.filter(function (t) { return !isMe(t.owner); }), foeWins = foes.filter(function (t) { var g = resultFor(t.owner); return g && ((norm(g.ownerA) === norm(t.owner)) === (g.scoreA > g.scoreB)); }).length;
-      GROUPS.push({ key: "div", label: "🛡️ Division " + me.div, cards: [{ eb: "Division " + me.div + " · Week " + W.weekNumber, t: foeWins === foes.length ? "Your division rivals all won" : foeWins ? foeWins + " of " + foes.length + " division rivals won" : "Your division rivals all lost",
+      GROUPS.push({ key: "div", label: "🛡️ Division " + me.div, cards: [{ key: "div", eb: "Division " + me.div + " · Week " + W.weekNumber, t: foeWins === foes.length ? "Your division rivals all won" : foeWins ? foeWins + " of " + foes.length + " division rivals won" : "Your division rivals all lost",
         body: '<div class="grp">How your rivals did</div>' + foes.map(function (t) { return teamResultRow(t); }).join("") +
           '<div class="grp">Division ' + me.div + ' standings</div>' + div.map(function (t, i) { return teamResultRow(t, (i === 0 ? "🥇 " : "") + "#" + (i + 1) + " in div"); }).join("") }] });
     } else if (myTier === "L") {
       var lt = tierTeams("L"), i0 = Math.max(0, Math.min(lt.length - 5, me.rank - 3)), win = lt.slice(i0, i0 + 5);
-      GROUPS.push({ key: "race", label: "📈 Your race", cards: [{ eb: "Promotion race · Wk " + W.weekNumber, t: me.rank <= 3 ? "You're in a promotion spot (#" + me.rank + ")" : "You're #" + me.rank + ", " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion",
+      GROUPS.push({ key: "race", label: "📈 Your race", cards: [{ key: "div", eb: "Promotion race · Wk " + W.weekNumber, t: me.rank <= 3 ? "You're in a promotion spot (#" + me.rank + ")" : "You're #" + me.rank + ", " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion",
         body: '<p class="meta" style="margin-top:6px">Top 3 in Lower move up next season.</p>' + win.map(function (t) { return teamResultRow(t, t.rank <= 3 ? "⬆️ #" + t.rank : "#" + t.rank); }).join("") }] });
     }
 
@@ -1079,7 +1089,7 @@
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
     if (prev) {
       var oppOwner = isMe(prev.ownerA) ? prev.ownerB : prev.ownerA, opp = teamOf(oppOwner), r = h2h(ME.owner, oppOwner);
-      out.push({ eb: "Week " + NEXT_WK + " · your game · " + rec(me) + " vs " + rec(opp), t: "You vs. " + opp.team, flush: true,
+      out.push({ key: "next", line: r.n ? "Series " + r.aw + "–" + r.bw + " · last met " + r.all[r.n - 1].y : "First-ever meeting.", eb: "Week " + NEXT_WK + " · your game · " + rec(me) + " vs " + rec(opp), t: "You vs. " + opp.team, flush: true,
         body: rivalryFrame(ME.owner, oppOwner) });
     }
     var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
@@ -1089,7 +1099,7 @@
       var e5 = (W.elite5 || []).filter(function (x) { return isMe(x.owner); })[0];
       var tier = TEAMS.filter(function (t) { return t.tier === me.tier; }).sort(function (a, b) { return a.rank - b.rank; });
       var i0 = Math.max(0, Math.min(tier.length - 5, me.rank - 3)), near = tier.slice(i0, i0 + 5);
-      out.push({ eb: "Week " + W.weekNumber + " · your result", t: (ms > os ? "W " : "L ") + f2(ms) + " – " + f2(os) + " vs " + (mineA ? lw.teamB : lw.teamA), body:
+      out.push({ key: "result", line: String(lw.note || "").split(/(?<=[.!?])\s/)[0], eb: "Week " + W.weekNumber + " · your result", t: (ms > os ? "W " : "L ") + f2(ms) + " – " + f2(os) + " vs " + (mineA ? lw.teamB : lw.teamA), body:
         '<div class="hero" style="padding-top:4px"' + DR("res:" + ME.owner) + '><p>' + esc(lw.note || "") + '</p></div>' +
         (cw ? '<div class="item"><span class="ic">🔄</span><div class="tx"><b>Could have won</b>Lost by ' + f2(cw.lostBy) + ' and benched ' + f2(cw.leftOnBench) + '.</div></div>' : '') +
         (e5 ? '<div class="item"' + DR("e5:" + ME.owner) + '><span class="ic">⭐</span><div class="tx"><b>Elite 5 · #' + e5.rank + '</b>' + esc(e5.note) + '</div></div>' : '') +
@@ -1101,7 +1111,7 @@
     if (poll) {
       var tal = SUM.tallies[poll.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mineV = SUM.myVotes[poll.id];
       var opts = String(poll.options) === "auto" ? gotwPicks() : String(poll.options).split("|").map(function (o) { return { v: o.trim(), plain: o.trim() }; });
-      GOTW = ({ play: true, eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · tap a game to vote · you can change it until Tuesday</p>' + opts.map(function (o) {
+      GOTW = ({ key: "gotw", voted: !!mineV, play: true, eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + tot + ' vote' + (tot === 1 ? '' : 's') + ' so far · tap a game to vote · you can change it until Tuesday</p>' + opts.map(function (o) {
         var n = tal[o.v] || 0, pct = tot ? Math.round(100 * n / tot) : 0, sel = mineV === o.v;
         if (o.plain) return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '"><span class="ob" style="width:' + pct + '%"></span><span class="ol">' + esc(o.plain) + '</span><span class="op">' + (tot ? pct + '%' : '') + '</span></button>';
         return '<button class="gotw' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '">' +
@@ -1139,101 +1149,114 @@
   var REACTS = { you: ["🔥", "😎", "😬", "🤝", "👀"], div: ["😤", "🙏", "😂", "👀", "🔥"], race: ["📈", "😤", "🙏", "👀", "🔥"], hot: ["🔥", "🥶", "😂", "🤡", "💀"], other: ["👀", "😂", "🔥", "🥱", "🤡"], headlines: ["🔥", "😂", "🤯", "🤡", "💀"], scores: ["🔥", "😱", "🥱", "👏", "🤡"],
     coach: ["🤦", "😬", "😂", "🧠", "👏"], survivor: ["💀", "😅", "🫡", "😂", "🔥"], wire: ["💸", "🤑", "🤡", "👀", "🔥"], credits: ["💰", "👀", "😤", "🙌", "🔥"] };
 
-  // ---------- HOME = the reel ----------
-  // No category menu (commish 11/3): one stack of cards, a thin progress bar on top, each card names its own
-  // section, and play cards (quizzes, votes) are spread through the stack. Tap the bar to jump.
-  var FLAT = [], pos = 0;
-  function posKey() { return "maffl_lab_pos_" + W.weekNumber + "_" + norm(ME.owner); }
-  function secName(g) { return g.label + (g.key === "other" ? " tier" : ""); }
-  function isPlay(c) { return !!(c.quiz || c.play); }
-  function renderHome() {
+  // ---------- HOME = your inbox (commish 11/3) ----------
+  // At most 8 cards a week, picked for you. ⚡ Action cards (trade offers, the desk, an open vote) lead and
+  // stay until handled; story cards are light (headline + one line, tap for the full card) and you swipe them up to
+  // clear them. Left/right browses. Everything else lives in Match and League.
+  var INBOX = [], pos = 0, INBOX_MAX = 8;
+  function tossKey() { return "maffl_lab_toss_" + W.weekNumber + "_" + norm(ME.owner); }
+  function tossed() { try { return JSON.parse(store(tossKey()) || "{}"); } catch (e) { return {}; } }
+  function findCard(key) { var hit = null; GROUPS.forEach(function (g) { g.cards.forEach(function (c) { if (!hit && c.key === key) hit = c; }); }); return hit; }
+  function buildInbox() {
     buildGroups();
-    // Hot & Not quizzes stand alone, so they get spread out between read cards. The two the scoreboard would
-    // give away (low score, blowout) go first and must land before it; the streak ones can go anywhere.
-    var early = [], late = [], items = [];
-    GROUPS.forEach(function (g, gi) { g.cards.forEach(function (c) {
-      if (g.key !== "hot") return items.push({ g: gi, c: c });
-      (/quiz:(low|blowout)/.test(c.quiz.ref) ? early : late).push({ g: gi, c: c }); }); });
-    FLAT = []; var reads = 0;
-    items.forEach(function (it) {
-      if (GROUPS[it.g].key === "scores") while (early.length) FLAT.push(early.shift());
-      var gap = early.length ? 1 : 2, next = early.length ? early : late;
-      if (reads >= gap && next.length) { FLAT.push(next.shift()); reads = 0; }
-      FLAT.push(it); reads = isPlay(it.c) ? 0 : reads + 1;
-    });
-    early.concat(late).forEach(function (it) { FLAT.push(it); });
-    FLAT.push({ done: true });
-    pos = Math.min(+(store(posKey()) || 0), FLAT.length - 1);
-    $("v-home").innerHTML = '<button class="prog" id="prog" aria-label="Jump to a section"><span class="segs2" id="segs2"></span><span class="pcount" id="pcount"></span></button>' +
-      '<div class="jump" id="jump"></div><div class="stack" id="hstack"></div>';
-    $("prog").onclick = toggleJump;
-    $("hstack").addEventListener("pointerdown", function () { $("jump").classList.remove("on"); }, true);
+    var all = [], you = (GROUPS.filter(function (g) { return g.key === "you"; })[0] || { cards: [] }).cards;
+    var by = function (k) { return you.filter(function (c) { return c.key === k; }); };
+    // ⚡ actions
+    by("desk").forEach(function (c) { all.push({ id: "desk", action: true, icon: "📥", c: c }); });
+    var offers = by("offer");
+    if (offers.length === 1) all.push({ id: "offers", action: true, icon: "⚡", c: offers[0] });
+    else if (offers.length > 1) {
+      var legs = function (pl, cr) { var b = []; if (pl.length) b.push(pl.length === 1 ? pl[0] : pl.length + " players"); if (cr) b.push(cr + " cr"); return b.join(" + ") || "nothing"; };
+      var rows = (SUM.offers || []).filter(needsMe).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); }).map(function (o) {
+        var other = isMe(o.to) ? o.from : o.to;
+        return '<button class="orow" data-chat-room="' + esc(dmRoom(ME.owner, other)) + '"><span class="cav sm">' + initials(other) + '</span><span class="ot"><b>' + esc(teamOf(other).team) + '</b>' +
+          '<small>' + (o.status === "ACCEPTED" ? "Accepted · needs your review" : "You get " + esc(legs(o.give || [], o.giveCredits)) + " · they get " + esc(legs(o.get || [], o.getCredits))) + '</small></span><span class="og">Review ›</span></button>'; });
+      all.push({ id: "offers", action: true, icon: "⚡", c: { eb: "⚡ Trade offers", t: rows.length + " trade offers waiting on you", body: '<p class="meta" style="margin:6px 0 4px">Newest first. Each one opens its chat thread.</p>' + rows.join("") } });
+    }
+    by("deadline").forEach(function (c) { all.push({ id: "deadline", alert: true, icon: "⏰", c: c }); });
+    if (GOTW && !GOTW.voted) all.push({ id: "gotw", action: true, icon: "🗳️", c: GOTW });
+    // stories, most personal first
+    by("result").forEach(function (c) { all.push({ id: "result", icon: c.t.charAt(0) === "W" ? "✅" : "❌", c: c, light: true }); });
+    by("next").forEach(function (c) { all.push({ id: "next", icon: "⚔️", c: c, light: true }); });
+    var dms = by("dm").concat(by("group"));
+    if (dms.length) all.push({ id: "msgs", icon: "💬", c: dms.length === 1 ? dms[0] : { eb: "💬 Chat", t: dms.length + " chats with new messages", body: dms.map(function (d) { return '<div class="ofr"><div class="eb">' + esc(d.t) + '</div>' + d.body + '</div>'; }).join("") } });
+    var q = null; ["blunder", "benchbeat", "topscore", "survivor", "hot", "bid"].some(function (k) {
+      GROUPS.some(function (g) { return g.cards.some(function (c) { if (c.quiz && c.quiz.ref.indexOf("quiz:" + k) > 0) { q = c; return true; } }); }); return !!q; });
+    if (q) all.push({ id: "quiz:" + q.quiz.ref, icon: "🎯", c: q, play: true });
+    var sv = W.survivor, me = teamOf(ME.owner);
+    if (sv) { var act = sv[ME.tier === "U" ? "upperActive" : "lowerActive"] || [], alive = act.indexOf(me.team) >= 0, board = GROUPS.filter(function (g) { return g.key === "survivor"; })[0];
+      all.push({ id: "surv", icon: "🛟", light: true, c: { eb: "🛟 Survivor · Week " + W.weekNumber, t: alive ? "You're still alive" : "You're out of Survivor",
+        line: act.length + " " + (ME.tier === "U" ? "Upper" : "Lower") + " team" + (act.length === 1 ? "" : "s") + " left" + (alive ? " · keep clearing the low score" : ""), body: board ? board.cards[board.cards.length - 1].body : "" } }); }
+    var dv = findCard("div"); if (dv) all.push({ id: "div", icon: ME.tier === "U" ? "🛡️" : "📈", light: true, c: dv });
+    if (GOTW && GOTW.voted) all.push({ id: "gotw", icon: "🗳️", c: GOTW });
+    var gone = tossed();
+    INBOX = all.filter(function (x) { return x.action || !gone[x.id]; }).slice(0, INBOX_MAX);
+    var n = INBOX.length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); }
+  }
+  function renderHome() {
+    buildInbox();
+    pos = Math.max(0, Math.min(pos, INBOX.length - 1));
+    $("v-home").innerHTML = '<div class="ibar"><div class="idots" id="idots"></div><div class="icount" id="icount"></div></div><div class="stack" id="hstack"></div><div class="ihint" id="ihint"></div>';
     drawDeck();
   }
-  function cardHTML(it) {
-    if (it.done) {
-      var plays = FLAT.filter(function (x) { var m = x.c && x.c.quiz && SUM.mine[x.c.quiz.ref] || {}; return Object.keys(m).some(function (k) { return m[k]; }); }),
-          got = plays.filter(function (x) { return SUM.mine[x.c.quiz.ref][x.c.quiz.answer]; }).length;
-      return '<div class="dcard done-card"><div class="eb">Week ' + W.weekNumber + ' · that\'s the reel</div><h3 style="font:700 30px/1.1 var(--display);margin-top:6px">You\'re caught up</h3>' +
-        (plays.length ? '<p class="p" style="margin-top:8px">You got <b>' + got + ' of ' + plays.length + '</b> right this week.</p>' : '') +
-        '<p class="meta" style="margin-top:4px">New cards land Tuesday morning with the Pulse.</p>' +
-        '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Open chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
-        '<button class="again" id="dagain">↺ Start the reel over</button></div>';
-    }
-    var g = GROUPS[it.g], play = isPlay(it.c);
-    return '<div class="dcard' + (it.c.navy ? ' navyc' : '') + (play ? ' playc' : '') + '"' + DR("card:" + g.key + ":" + it.g + ":" + norm(it.c.t).slice(0, 40)) + '><span class="stamp-like r">🔥 Nice</span><span class="stamp-like l">Next</span>' +
-      '<div class="dhead"><div class="sec">' + (play ? '<span class="playtag">🎯 Play</span>' : '') + '<span>' + esc(secName(g)) + '</span></div>' +
-      '<div class="eb">' + esc(it.c.eb) + '</div><h3>' + esc(it.c.t) + '</h3></div>' +
-      '<div class="dbody' + (it.c.flush ? ' flush' : '') + '">' + (it.c.quiz ? quizBody(it.c.quiz) : it.c.body) + '</div>' +
-      '<div class="dfoot"><div class="reacts">' + (REACTS[g.key] || REACTS.headlines).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div></div>';
-  }
-  function drawProgress() {
-    var n = FLAT.length - 1;
-    $("segs2").innerHTML = FLAT.slice(0, n).map(function (it, k) { return '<i class="' + (k < pos ? "f" : k === pos ? "now" : "") + (isPlay(it.c) ? " pl" : "") + '"></i>'; }).join("");
-    $("pcount").textContent = pos >= n ? "Done" : (pos + 1) + " / " + n;
-  }
-  function toggleJump() {
-    var j = $("jump"); if (j.classList.contains("on")) { j.classList.remove("on"); return; }
-    var seen = {}, rows = [];
-    FLAT.forEach(function (it, k) { if (it.done || seen[it.g] != null) return; seen[it.g] = k;
-      var last = FLAT.reduce(function (m, x, i) { return x.g === it.g ? i : m; }, k), cnt = FLAT.filter(function (x) { return x.g === it.g; }).length;
-      rows.push('<button class="jr' + (FLAT[pos].g === it.g ? " on" : pos > last ? " seen" : "") + '" data-k="' + k + '"><span>' + esc(secName(GROUPS[it.g])) + '</span><small>' + (pos > last ? "✓ seen" : cnt + " card" + (cnt === 1 ? "" : "s")) + '</small></button>'); });
-    j.innerHTML = '<div class="eb" style="padding:4px 4px 6px">Jump to</div>' + rows.join("");
-    j.classList.add("on");
-    j.querySelectorAll(".jr").forEach(function (b) { b.onclick = function () { pos = +b.dataset.k; j.classList.remove("on"); drawDeck(); }; });
+  function cardHTML(x) {
+    if (!x) return '<div class="dcard done-card"><div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">Inbox zero</h3>' +
+      '<p class="p" style="margin-top:6px">That\'s everything for Week ' + W.weekNumber + '. New cards land Tuesday morning.</p>' +
+      '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
+      '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🏆 Standings &amp; more</button></div>' +
+      (Object.keys(tossed()).length ? '<button class="again" id="dagain">Bring back cleared cards</button>' : '') + '</div>';
+    var c = x.c, light = x.light && c.body;
+    return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (light ? ' lightc' : '') + '"' + DR("inbox:" + x.id) + '>' +
+      '<div class="dhead"><div class="sec">' + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
+      (light ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
+      (light ? '<div class="lbody"><div class="lic">' + x.icon + '</div><h3>' + esc(c.t) + '</h3>' + (c.line ? '<p>' + esc(c.line) + '</p>' : '') + '<button class="b more" data-open="1">See the full card ›</button></div>'
+        : '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.quiz ? quizBody(c.quiz) : c.body) + '</div>') +
+      (x.action ? '' : '<div class="dfoot"><div class="reacts">' + (REACTS[x.id] || REACTS.you).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div>') + '</div>';
   }
   function drawDeck() {
-    var it = FLAT[pos]; store(posKey(), String(pos));
-    drawProgress(); $("jump").classList.remove("on");
+    var n = INBOX.length, x = INBOX[pos];
+    $("idots").innerHTML = INBOX.map(function (y, k) { return '<i class="' + (k === pos ? "on" : "") + (y.action ? " a" : "") + '"></i>'; }).join("");
+    $("icount").textContent = n ? n + " card" + (n === 1 ? "" : "s") : "All clear";
+    $("ihint").textContent = !x ? "" : x.action ? "← → browse · handle this one to clear it" : "← → browse · swipe ↑ to clear";
     var html = "";
-    if (FLAT[pos + 2]) html += cardHTML(FLAT[pos + 2]).replace('class="dcard', 'class="dcard back2');
-    if (FLAT[pos + 1]) html += cardHTML(FLAT[pos + 1]).replace('class="dcard', 'class="dcard back');
-    html += cardHTML(it);
+    if (INBOX[pos + 1]) html += cardHTML(INBOX[pos + 1]).replace('class="dcard', 'class="dcard back');
+    html += cardHTML(x);
     $("hstack").innerHTML = html;
-    var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat");
-    if (again) again.onclick = function () { pos = 0; drawDeck(); };
+    var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat"), mo = top.querySelector("[data-open]");
+    if (again) again.onclick = function () { store(tossKey(), "{}"); pos = 0; renderHome(); };
     if (dc) dc.onclick = function () { openChat(); };
-    if (!it.done) wireSwipe(top);
+    if (mo) mo.onclick = function () { openSheet("card", '<div class="eb" style="margin-top:8px">' + esc(x.c.eb) + '</div><h3 style="font:700 24px/1.1 var(--display);margin:4px 0 6px">' + esc(x.c.t) + '</h3>' + x.c.body); };
+    if (x) wireSwipe(top, x);
     paint($("hstack"));
   }
-  function advance(top, dir) {
-    top.style.transform = "translateX(" + (dir * 520) + "px) rotate(" + (dir * 18) + "deg)"; top.style.opacity = "0";
-    setTimeout(function () { pos = Math.min(pos + 1, FLAT.length - 1); drawDeck(); }, 220);
+  function go(dir) { pos = Math.max(0, Math.min(INBOX.length - 1, pos + dir)); drawDeck(); }
+  function toss(top, x) {
+    if (x.action) { top.classList.add("nope"); setTimeout(function () { top.classList.remove("nope"); top.style.transform = ""; }, 400); toast("This one needs you first"); return; }
+    var t = tossed(); t[x.id] = 1; store(tossKey(), JSON.stringify(t));
+    top.style.transform = "translateY(-110%) scale(.9)"; top.style.opacity = "0";
+    setTimeout(function () { INBOX.splice(pos, 1); renderHome(); }, 220);
   }
-  function wireSwipe(card) {
-    var x0 = null, y0 = 0, dx = 0, horiz = false, r = card.querySelector(".stamp-like.r"), l = card.querySelector(".stamp-like.l");
-    card.addEventListener("pointerdown", function (e) { if (e.target.closest("button,a")) return; x0 = e.clientX; y0 = e.clientY; dx = 0; horiz = false; });
+  function wireSwipe(card, x) {
+    var x0 = null, y0 = 0, dx = 0, dy = 0, mode = null, dragged = false, db = card.querySelector(".dbody");
+    // A drag can start anywhere, buttons included; if it turns into a swipe, the button's click is swallowed.
+    card.addEventListener("click", function (e) { if (dragged) { e.stopPropagation(); e.preventDefault(); dragged = false; } }, true);
+    card.addEventListener("pointerdown", function (e) { if (e.target.closest("input,select,textarea")) return; x0 = e.clientX; y0 = e.clientY; dx = dy = 0; mode = null; dragged = false; });
     card.addEventListener("pointermove", function (e) {
-      if (x0 === null) return; dx = e.clientX - x0;
-      if (!horiz) { if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(e.clientY - y0)) { horiz = true; card.classList.add("drag"); try { card.setPointerCapture(e.pointerId); } catch (_) {} } else return; }
-      card.style.transform = "translateX(" + dx + "px) rotate(" + (dx / 20) + "deg)";
-      r.style.opacity = Math.max(0, Math.min(1, dx / 90)); l.style.opacity = Math.max(0, Math.min(1, -dx / 90));
+      if (x0 === null) return; dx = e.clientX - x0; dy = e.clientY - y0;
+      if (!mode) {
+        if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) mode = "h";
+        else if (dy < -14 && -dy > Math.abs(dx) && !(db && db.scrollTop + db.clientHeight < db.scrollHeight - 2)) mode = "v"; // up = clear, once there's nothing left to scroll
+        else if (Math.abs(dy) > 14) { x0 = null; return; } // a scroll inside the card
+        else return;
+        dragged = true; card.classList.add("drag"); try { card.setPointerCapture(e.pointerId); } catch (_) {}
+      }
+      card.style.transform = mode === "h" ? "translateX(" + dx + "px) rotate(" + (dx / 25) + "deg)" : "translateY(" + Math.min(0, dy) + "px)";
     });
     function end() { if (x0 === null) return; x0 = null; card.classList.remove("drag");
-      if (horiz && Math.abs(dx) > 90) advance(card, dx > 0 ? 1 : -1); else { card.style.transform = ""; r.style.opacity = l.style.opacity = 0; } }
+      if (mode === "h" && Math.abs(dx) > 80) { var d = dx < 0 ? 1 : -1; if (pos + d < 0 || pos + d > INBOX.length - 1) { card.style.transform = ""; return; } card.style.transform = "translateX(" + (-d * 520) + "px) rotate(" + (-d * 14) + "deg)"; card.style.opacity = "0"; setTimeout(function () { go(d); }, 200); }
+      else if (mode === "v" && dy < -90) toss(card, x);
+      else card.style.transform = ""; }
     card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
-    card.querySelectorAll(".dfoot .reacts button").forEach(function (b) { b.addEventListener("click", function () {
-      setTimeout(function () { if (b.classList.contains("sel")) advance(card, 1); }, 700); }); });
   }
   // Home fills the screen between the header and the tab bar; cards scroll inside.
   function sizeHome() { return; // layout is now pure flexbox; kept so old calls are harmless
@@ -2033,7 +2056,7 @@
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]);
-    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : kind === "card" ? a : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules" && $("rq")) { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
@@ -2520,7 +2543,7 @@
     var ib = inboxOf(), out = [];
     if (ME.commish && deskTodo()) { var dk = DESK || {}, bits = [];
       [[deskOpenPerks().length, "perk"], [deskReview().length, "trade"], [(dk.access || []).length, "passphrase request"], [(dk.locked || []).length, "lockout"], [(dk.espn || []).length, "ESPN step"]].forEach(function (x) { if (x[0]) bits.push(x[0] + " " + x[1] + (x[0] === 1 ? "" : "s")); });
-      out.push({ eb: "📥 Commish desk", t: deskTodo() + " thing" + (deskTodo() === 1 ? "" : "s") + " waiting on you", body: '<p class="meta">' + esc(bits.join(" · ") || "Credit sync needs a look") + '</p>' + deskHomeList() +
+      out.push({ key: "desk", eb: "📥 Commish desk", t: deskTodo() + " thing" + (deskTodo() === 1 ? "" : "s") + " waiting on you", body: '<p class="meta">' + esc(bits.join(" · ") || "Credit sync needs a look") + '</p>' + deskHomeList() +
         '<div class="btns"><button class="b pri" data-chat-room="desk">📥 Open the desk</button></div>' }); }
     var live = function (other) { return (SUM.offers || []).filter(function (o) { return ((isMe(o.from) && norm(o.to) === norm(other)) || (isMe(o.to) && norm(o.from) === norm(other))) && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; })
       .sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); })[0]; };
@@ -2529,13 +2552,13 @@
       if (!r.unread && !needs) return;
       var who = shortOf(other), t = needs && o.status === "PROPOSED" ? who + " sent you a trade" : r.unread ? r.unread + " new message" + (r.unread === 1 ? "" : "s") + " from " + who : "Trade talk with " + who;
       var l = r.last;
-      out.push({ eb: "💬 Trade talk · " + teamOf(other).team, t: t, body: '<div class="reelchat">' + (o ? tradeMini(o, true) : '') +
+      out.push({ key: needs ? "offer" : "dm", eb: "💬 Trade talk · " + teamOf(other).team, t: t, body: '<div class="reelchat">' + (o ? tradeMini(o, true) : '') +
         (l && l.kind !== "offer" ? '<div class="last">' + avatar(l.owner, true) + '<p><b>' + esc(isMe(l.owner) ? "You" : shortOf(l.owner)) + '</b> ' + fmtText(l.text) + '</p></div>' : '') + '</div>' +
         '<div class="btns"><button class="b pri" data-chat-room="' + esc(r.room) + '">💬 Open the chat' + (r.unread ? ' · ' + r.unread + ' new' : '') + '</button></div>' });
     });
     (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.unread; }).slice(0, 2).forEach(function (r) {
       var info = roomInfo(r.room), l = r.last;
-      out.push({ eb: "💬 " + info.t, t: r.unread + " new in the " + (r.room === "league" ? "league chat" : "tier group"), body: '<div class="reelchat">' +
+      out.push({ key: "group", eb: "💬 " + info.t, t: r.unread + " new in the " + (r.room === "league" ? "league chat" : "tier group"), body: '<div class="reelchat">' +
         (l ? '<div class="last" style="border:0;margin-top:4px">' + avatar(l.owner, true) + '<p>' + esc(previewOf(r)) + '</p></div>' : '') + '</div>' +
         '<div class="btns"><button class="b pri" data-chat-room="' + esc(r.room) + '">💬 Open ' + esc(info.t) + '</button></div>' });
     });
