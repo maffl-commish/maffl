@@ -187,8 +187,9 @@
   .cbox{width:100%;max-width:480px;max-height:85dvh;overflow:auto;background:var(--page-bg);border-radius:18px 18px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 16px)}
   .cbox h3{font:700 24px var(--display);margin-bottom:6px}
   .sb2{font-style:normal;background:var(--loss);color:#fff;border-radius:999px;padding:0 6px;font-size:11px;margin-left:2px}
-  .tbadge{position:relative}
-  .tbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
+  .tbadge,.cbadge{position:relative}
+  .hdr .chip{margin-left:auto}
+  .cbadge[data-n]:not([data-n=""])::after,.tbadge[data-n]:not([data-n=""])::after{content:attr(data-n);position:absolute;top:-4px;right:-10px;background:var(--loss);color:#fff;font:700 10px var(--body);min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;filter:none}
   .tg{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.tg:last-child{border-bottom:0}
   .tg div{flex:1}.tg b{display:block;font:700 15px var(--body);color:var(--navy)}.tg small{color:var(--muted);font-size:13px}
   .tg input{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:15px;background:var(--border);position:relative;flex:none;transition:background .15s}
@@ -505,7 +506,7 @@
     <div class="pastbar" id="pastbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
-      <div class="wk" id="hdrwk"></div><button class="hbtn" id="chatbtn" aria-label="Messages">💬</button><button class="chip" id="chip" aria-label="Switch team">··</button>
+      <div class="wk" id="hdrwk" hidden></div><button class="chip" id="chip" aria-label="You: settings, help, sign out">··</button>
     </div>
   </header>
   <main id="views">
@@ -519,9 +520,9 @@
   <nav class="tabs" id="tabs">
     <button data-tab="home"><span>🏠</span>Home</button>
     <button data-tab="match"><span>⚔️</span>Match</button>
+    <button id="chattab" aria-label="Chat"><span class="cbadge">💬</span>Chat</button>
     <button data-tab="team"><span class="tbadge">🏈</span>Team</button>
     <button data-tab="league"><span>🏆</span>League</button>
-    <button data-tab="more"><span>☰</span>More</button>
   </nav>
 </div>
 
@@ -710,7 +711,7 @@
   }
 
   // ---------- header + tabs ----------
-  var TITLES = { home: "MAFFL HQ", match: "Match", team: "Team", league: "League", more: "More" };
+  var TITLES = { home: "MAFFL HQ", match: "Match", team: "Team", league: "League", more: "You" };
   function tab(t) {
     document.querySelectorAll(".view").forEach(function (v) { v.classList.toggle("on", v.id === "v-" + t); });
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === t); });
@@ -2088,8 +2089,8 @@
     return (l.owner === BOTN ? "" : isMe(l.owner) ? "You: " : shortOf(l.owner) + ": ") + l.text;
   }
   function chatBadge() {
-    var n = inboxOf().unread || 0, b = $("chatbtn"); if (!b) return;
-    b.classList.toggle("on", chatOn()); b.setAttribute("data-n", n ? (n > 9 ? "9+" : String(n)) : "");
+    var n = chatOn() ? inboxOf().unread || 0 : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
+    b.setAttribute("data-n", n ? (n > 9 ? "9+" : String(n)) : "");
   }
   function fmtText(t) { return esc(t).replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, '$1<span class="at">@$2</span>'); }
   function tradeMini(o, latest) {
@@ -2263,7 +2264,7 @@
   setInterval(function () { if (document.hidden || !CH.open || CH.view !== "thread") return; loadRoom(); }, 8000);
   setInterval(function () { if (!document.hidden) refreshInbox(); }, 30000);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { refreshInbox(); if (CH.open && CH.view === "thread") loadRoom(); } });
-  $("chatbtn").onclick = function () { openChat(); };
+  $("chattab").onclick = function () { openChat(); };
   $("cclose").onclick = closeChat; $("cscrim").onclick = closeChat;
   $("cback").onclick = function () { showInbox(); refreshInbox(); };
   $("cnew").onclick = function () { CH.view = "new"; CH.q = ""; $("cfoot").innerHTML = ""; chatHeader(); drawNew(); };
@@ -2340,12 +2341,11 @@
     ME = saved && BY_OWNER[norm(saved)];
     if (API_URL && !store("maffl_lab_pin")) { showWelcome("pin"); return; }
     if (!ME) { showWelcome(); return; }
-    $("hdrwk").innerHTML = '<b>Week ' + W.weekNumber + '</b>' + (ME.tier === "U" ? "Upper" : "Lower") + ' Tier';
     var pb = $("pastbar"); pb.style.display = W === LATEST ? "none" : "flex";
     pb.innerHTML = '📅 Replaying Week ' + W.weekNumber + ' (' + esc(W.dateString) + ')<button id="pbback">Back to now</button>';
     if (W !== LATEST) $("pbback").onclick = function () { setWeek(LATEST.weekNumber); };
     $("chip").textContent = initials(ME.owner);
-    $("chip").onclick = function () { if (API_URL) tab("team"); else showWelcome(); };
+    $("chip").onclick = function () { if (API_URL) tab("more"); else showWelcome(); };
     renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
     loadSummary(); chatBadge();
     var h = location.hash.slice(1);

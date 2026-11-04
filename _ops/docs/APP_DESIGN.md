@@ -12,6 +12,7 @@ VERSION: 0.10 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-03 · **Chat gets a bottom tab** (commish): Home · Match · 💬 Chat · Team · League, unread count on the tab; it opens the chat sheet over whatever you're on. More moved behind your avatar (top right, screen titled "You"). Header no longer shows Week/Tier.
 - 2026-11-03 · **Double Player Bonus on the live scoreboard** (commish asked to showcase it). ESPN doesn't know about perks, so the app adds approved (and pending, labeled) DPBs to the live score itself; the commish still makes the official ESPN adjustment. Lab-only **test scores** fill in while ESPN shows all zeros (pretend opponent DPB included); never saved.
 - 2026-11-03 · **Settings built (§4b).** More → Settings (email, mobile, 6 opt-in emails, all off). Automatic emails now go
   only to owners who turned that one on (perk emails included; before, anyone with an email got them). Contacts reach the app
