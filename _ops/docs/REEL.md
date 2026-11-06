@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-06 (chat) · Commish desk
+Last updated: 2026-11-06 (chat) · Startup fix + App errors log
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -81,6 +81,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Offseason mode (decided: same tabs, different contents): which cards and what Match shows.
 
 **Known issues**
+- 11/6 startup bug (no screen after load, blank tabs): guarded startup + You → App errors shipped. If it recurs on the iPhone, the error list names the cause.
 - Watch: `Code.gs` caches `logic.js` only while it is under 95 KB (Apps Script cache limit). It is ~60 KB now; past 95 KB every call would re-download it from GitHub (slow). Split it before then.
 
 ---

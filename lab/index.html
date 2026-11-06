@@ -816,7 +816,27 @@
 
   // ---------- header + tabs ----------
   var TITLES = { home: "MAFFL HQ", match: "Match", team: "Team", league: "League", more: "You" };
+  // Startup safety: a crash in one screen's render must never strand the app on no screen (11/6 bug: after boot
+  // nothing showed, Home only on tap, other tabs blank). Each render runs guarded; an empty screen re-renders on tap;
+  // errors are kept on this phone (You → App errors) so we can see what broke.
+  var RENDER = {};
+  function logErr(where, e) {
+    var m = (e && (e.message || e.reason && e.reason.message || e.reason)) || String(e), list = [];
+    if (/Failed to fetch|Load failed|NetworkError|network connection/i.test(m)) return; // offline blips aren't bugs
+    try { list = JSON.parse(store("maffl_lab_errs") || "[]"); } catch (x) {}
+    list.unshift({ at: new Date().toISOString(), where: where, msg: String(m).slice(0, 200), line: String((e && (e.stack || e.reason && e.reason.stack)) || "").split("\n").slice(0, 2).join(" | ").slice(0, 240) });
+    store("maffl_lab_errs", JSON.stringify(list.slice(0, 12)));
+  }
+  window.addEventListener("error", function (e) { logErr("page", e.error || e.message); });
+  window.addEventListener("unhandledrejection", function (e) { logErr("promise", e.reason); });
+  function snag(k) { // a screen that crashed: drop what it was painting from this phone's copy, offer a retry
+    if (k === "match") { LIVE = null; try { localStorage.removeItem("maffl_lab_live_" + ME.tier); } catch (e) {} }
+    $("v-" + k).innerHTML = '<div class="pad"><div class="card"><h3>This screen hit a snag</h3><p class="meta">It\'s logged under You → App errors.</p><div class="btns"><button class="b pri" id="snag-' + k + '">↻ Try again</button></div></div></div>';
+    $("snag-" + k).onclick = function () { if (!guard(k, RENDER[k])) snag(k); };
+  }
+  function guard(where, fn) { try { fn(); return true; } catch (e) { logErr(where, e); return false; } }
   function tab(t) {
+    var v = $("v-" + t); if (v && !v.innerHTML.trim() && RENDER[t] && !guard(t, RENDER[t])) snag(t);
     document.querySelectorAll(".view").forEach(function (v) { v.classList.toggle("on", v.id === "v-" + t); });
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === t); });
     $("ttl").textContent = TITLES[t]; $("views").scrollTop = 0;
@@ -1572,11 +1592,19 @@
   function renderMore() {
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
       '<div class="sh"><h2>You</h2></div><div class="list">' + (API_URL ? '<button id="mSet"><span>⚙️</span>Settings</button>' : '') + '<button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button></div>' +
-      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>';
+      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>' + errsBlock();
     if (API_URL) apiGet({}).then(function (r) { if (r && r.version) $("srvver").textContent = "League server v" + r.version + (r.logic === "repo" ? " (auto-updates from the repo)" : ""); }).catch(function () {});
     $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
     if ($("mSet")) $("mSet").onclick = openSettings;
+    if ($("errClear")) $("errClear").onclick = function () { store("maffl_lab_errs", "[]"); renderMore(); toast("Cleared"); };
+  }
+  function errsBlock() {
+    var list = []; try { list = JSON.parse(store("maffl_lab_errs") || "[]"); } catch (e) {}
+    if (!list.length) return "";
+    return '<div class="sh"><h2>App errors on this phone</h2></div><div class="pad"><p class="meta">Screenshot this for the commish.</p>' +
+      list.map(function (x) { return '<p class="meta" style="margin-top:8px;word-break:break-word"><b>' + esc(x.where) + '</b> · ' + esc(new Date(x.at).toLocaleString()) + '<br>' + esc(x.msg) + (x.line ? '<br><small>' + esc(x.line) + '</small>' : '') + '</p>'; }).join("") +
+      '<div class="btns" style="margin-top:10px"><button class="b" id="errClear">Clear</button></div></div>';
   }
 
   // ---------- WELCOME (pick team; PINs connect to the league Sheet) ----------
@@ -2650,13 +2678,16 @@
     if (W !== LATEST) $("pbback").onclick = function () { setWeek(LATEST.weekNumber); };
     $("chip").textContent = initials(ME.owner);
     $("chip").onclick = function () { if (API_URL) tab("more"); else showWelcome(); };
-    renderHome(); renderMatch(); renderTeam(); renderLeague(); renderMore();
-    loadSummary(); chatBadge();
-    var h = location.hash.slice(1);
-    if (!deepLink()) tab(TITLES[h] ? h : "home");
+    RENDER = { home: renderHome, match: renderMatch, team: renderTeam, league: renderLeague, more: renderMore };
+    var h = location.hash.slice(1), first = TITLES[h] ? h : "home", bad = [];
+    tab(first); // pick the screen first, so a slow or broken render can't leave you on nothing
+    Object.keys(RENDER).forEach(function (k) { if (!guard(k, RENDER[k])) { bad.push(TITLES[k] === "MAFFL HQ" ? "Home" : TITLES[k]); snag(k); } });
+    guard("summary", loadSummary); guard("chat", chatBadge);
+    var dl = false; guard("deeplink", function () { dl = deepLink(); }); if (!dl) tab(first);
+    if (bad.length) toast(bad.join(", ") + " hit a snag. Tap it to retry.");
     if (/^chat/.test(h)) setTimeout(function () { openChat(decodeURIComponent(h.split("=")[1] || "") || null); }, 400); // #chat or #chat=<room> deep link
   }
-  loadPulse().then(function () { buildTeams(); $("boot").style.display = "none"; start(); })
+  loadPulse().then(function () { buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); })
     .catch(function (e) { $("boot").textContent = "Couldn't load the league data (" + e.message + ")."; });
 })();
 </script>

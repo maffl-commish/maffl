@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-06 by Claude (chat), REEL beta crew plan
+**Last updated:** 2026-11-06 by Claude (chat), REEL startup fix
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-06 · REEL · Startup can't strand you on a blank screen (commish: after load no screen showed, Home only on tap, other tabs blank). The app picks your screen first, then draws each one guarded: a screen that crashes shows "hit a snag · Try again" (and drops a bad saved live score) instead of taking the rest down. Errors are kept on the phone under You → App errors (screenshot for the commish). Couldn't reproduce in desktop Chrome; most likely trigger is the saved live score painted at startup. Lab only.
 - 2026-11-06 · REEL · Logged the beta plan: Charlie, Sam and Ben test the MVP first with beta-only in-app feedback + tap log (REEL.md roadmap 3b + backlog "Beta feedback kit"; APP_DESIGN §0). Docs only.
 - 2026-11-04 · REEL · Inbox cards complete on their face (no "see the full card"): score bug, VS block, countdown, rivals' rows; Survivor only when it's about you; cards sized to their story.
 - 2026-11-03 · REEL · ⏱️ 15-minute robot: `tick()` (Code.gs line + Apps Script time trigger, commish to add) posts to the Commish desk once per thing: perk waiting 12 h, perk locking in < 6 h, 24 h review over, trade-deadline heads-up (desk + League chat), players-moved-on-ESPN check (reads rosters, ✅ note or one DM reminder), nightly ledger/Credit_Log check. Desk shows last run + Run it now. Backend logic v0.16. DESK_KEY confirmed end to end (test Credit sync → Desk notify → {"ok":true}). APP_DESIGN v0.16 §10f. Tested on a simulated Sheet (12 robot + 26 desk checks) and at 390px.
