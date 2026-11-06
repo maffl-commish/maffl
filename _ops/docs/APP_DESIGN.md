@@ -12,6 +12,9 @@ VERSION: 0.17 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-06 · **Beta crew before go-live** (commish's plan, not built). Charlie, Sam and Ben (nephews, new members) test the MVP
+  first, with beta-only in-app feedback (in-the-moment prompts + Feedback button) and a tap log. League-wide feedback after
+  go-live is a separate, lighter loop. Details: REEL.md backlog "Beta feedback kit".
 - 2026-11-04 · **Inbox cards are complete on their face** (commish: "see the full card" opened to almost nothing). No tap-through.
   Each card is built for its job: result = score bug + one line + chips (rank, streak, Elite 5, bench); up next = VS block +
   series + preview line; deadline = big countdown; Survivor only if you're alive or went out this week; division/race =
