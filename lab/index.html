@@ -482,7 +482,14 @@
   .done-card .zero{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font:800 36px var(--display);color:#fff;background:var(--win,#1f9d6a)}
   .done-card .again{margin-top:14px;background:none;border:0;font:600 13px inherit;color:var(--muted);text-decoration:underline}
   #hstack{flex:1;margin:4px 0 0}
-  #hstack.feed{display:block;flex:1 1 0}
+  #hstack.feed{display:block;flex:1 1 0;height:100%;margin:0}
+  .fwrap{flex:1 1 0;min-height:0;position:relative;display:flex}
+  .fwrap .fslot{padding-right:26px}
+  .irail{position:absolute;right:7px;top:0;bottom:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;pointer-events:auto}
+  .irail i{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;cursor:pointer;font-style:normal}
+  .irail i.s{background:#b8c3d6}.irail i.on{background:var(--navy);height:20px;border-radius:4px}
+  .irail i.end{width:12px;height:12px;font:700 8px/12px var(--display);text-align:center;color:#fff;background:#b8c3d6}.irail i.end.on{background:var(--win);height:12px}
+  .ibar{justify-content:flex-end}
   .feed{flex:1;min-height:0;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}.feed::-webkit-scrollbar{display:none}
   .fslot{height:100%;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;padding:4px 14px 12px;display:flex;flex-direction:column}
   #hstack .fslot>.dcard{position:relative;inset:auto;flex:1 1 auto;min-height:0;max-height:none;margin:0}
@@ -1666,13 +1673,15 @@
   function renderHome() {
     var keep = pos; buildInbox();
     var nd = NEEDS.length ? '<button class="needs" id="needs"><span class="nb">⚡ ' + NEEDS.length + '</span><span class="nt"><b>' + (NEEDS.length === 1 ? "1 thing needs you" : NEEDS.length + " things need you") + '</b><small>' + esc(NEEDS.map(function (x) { return x.c.eb.replace(/^[^A-Za-z0-9]+/, ""); }).join(" · ")) + '</small></span><span class="rv">›</span></button>' : '';
-    $("v-home").innerHTML = nd + '<div class="ibar"><div class="idots" id="idots"></div><div class="icount" id="icount"></div></div><div class="feed" id="hstack">' +
-      INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '">' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div>';
+    // Progress runs down the right edge, like the feed itself (commish 11/7: the old dots ran sideways).
+    $("v-home").innerHTML = nd + '<div class="ibar"><div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
+      INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '">' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div><div class="irail" id="idots"></div></div>';
     var f = $("hstack"); pos = Math.max(0, Math.min(keep, INBOX.length));
     f.scrollTop = pos * f.clientHeight; drawDeck(true);
     var t0 = null; f.onscroll = function () { var k = Math.round(f.scrollTop / Math.max(1, f.clientHeight)); if (k !== pos) { pos = k; drawDeck(true); } clearTimeout(t0); t0 = setTimeout(markSeen, 700); };
     setTimeout(markSeen, 900);
     if ($("needs")) $("needs").onclick = openNeeds;
+    $("idots").onclick = function (ev) { var d = ev.target.closest("[data-go-k]"); if (d) f.scrollTo({ top: +d.dataset.goK * f.clientHeight, behavior: "smooth" }); };
     var again = $("dagain"), dc = $("dchat"); if (dc) dc.onclick = function () { openChat(); }; if (again) again.onclick = function () { f.scrollTo({ top: 0, behavior: "smooth" }); };
     paint($("hstack"));
   }
@@ -1700,7 +1709,7 @@
   function drawDeck(light) {
     if (!light) { renderHome(); return; }
     var sn = seen(), n = INBOX.length;
-    $("idots").innerHTML = INBOX.map(function (y, k) { return '<i class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("");
+    $("idots").innerHTML = INBOX.map(function (y, k) { return '<i data-go-k="' + k + '" class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("") + '<i data-go-k="' + n + '" class="end' + (pos >= n ? " on" : "") + '">✓</i>';
     $("icount").textContent = pos >= n ? "Caught up" : (pos + 1) + " of " + n + (pos === 0 && n > 1 ? " · swipe up ↑" : "");
   }
   function go(dir) { var f = $("hstack"); if (f) f.scrollTo({ top: Math.max(0, Math.min(INBOX.length, pos + dir)) * f.clientHeight, behavior: "smooth" }); }
