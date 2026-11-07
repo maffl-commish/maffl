@@ -70,7 +70,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Player week-by-week bars should show whether he started or sat that week (daily.js keeps only points per week today; needs the slot too).
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
-- Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball becomes a Vault "Tidbits" series after its items are rewritten.
+- Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball is now a Vault series (25 rewritten tidbits, commish editing); off-season Vault gets 6 slots; earlier weeks listed after "caught up".
 
 **Commish backlog (added 11/6, not built)**
 - ⚖️ Trade grade v2 follow-up: a real age source for Future value (ESPN's league API has none; today it's years since first MAFFL draft). Tune weights once real trades come through.

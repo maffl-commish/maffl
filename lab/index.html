@@ -428,6 +428,15 @@
   .vyr,.vown{width:100%}.vyr{gap:10px;align-items:center}.vy{flex:0 0 46px;font:800 18px var(--display);color:var(--navy)}
   .vown{gap:10px;align-items:center}.vt{font-size:13px;letter-spacing:-2px}
   .vsearch{display:flex;gap:8px;margin-top:12px}.vsearch .field{margin:0}.vsearch input{flex:1}.vsearch select{flex:0 0 112px}
+  .tdhook{font:800 44px/1.05 var(--display);color:var(--navy);letter-spacing:-.01em}
+  .tdline{font-size:17px;line-height:1.45;color:var(--ink);margin-top:10px}
+  .tdh{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:16px 0 6px}
+  .tdbars{display:flex;align-items:flex-end;gap:3px;height:112px;padding:0 0 2px;border-bottom:1px solid var(--border);margin-bottom:16px}
+  .tdb{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px}
+  .tdb i{display:block;width:100%;max-width:22px;background:#c9d3e3;border-radius:3px 3px 0 0}.tdb.hi i{background:var(--gold)}.tdb.lo i{background:var(--navy)}
+  .tdb small{font:700 9px var(--display);color:var(--ink2);white-space:nowrap}.tdb span{font:600 9px var(--body);color:var(--muted);margin-bottom:-14px}
+  .earlier{margin-top:18px;width:100%}.earlier small{display:block;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+  .earlier div{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.earlier button{font:700 12px var(--display);color:var(--navy);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:7px 12px}
   .otrow{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--border)}.otk{font:800 15px var(--display);color:var(--navy);width:30px;flex:0 0 30px;padding-top:2px}
   .otm{flex:1;min-width:0}.otm b{font:700 16px/1.2 var(--display)}.otm small{display:block;font-size:12px;color:var(--muted)}
   .otp{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.otp button{font:600 11px var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:3px 8px}
@@ -1175,10 +1184,20 @@
   function vEra(y) { var s = VS(y); return s && MAFFL_VAULT.eras.filter(function (e) { return e.id === s.era; })[0]; }
   function vTitles(o) { var out = []; Object.keys(MAFFL_VAULT.seasons).forEach(function (y) { if ((MAFFL_VAULT.seasons[y].champ || []).indexOf(o) >= 0) out.push(+y); }); return out; }
   function vShort(o) { return shortOf(o); }
-  function throwbackYear() {
+  function throwbackYear(off) {
     var V = window.MAFFL_VAULT; if (!V) return null;
     var ys = Object.keys(V.seasons).filter(function (y) { return V.seasons[y].line; }).map(Number).sort(function (a, b) { return a - b; });
-    return ys.length ? ys[(W.weekNumber || 0) % ys.length] : null; // one a week, rotating through the seasons that have a story line
+    return ys.length ? ys[((W.weekNumber || 0) + (off || 0) * 7) % ys.length] : null; // one a week, rotating through the seasons that have a story line
+  }
+  // 🎱 The 8 Ball, reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
+  function tidbitCard(off) {
+    var T = (window.MAFFL_VAULT && MAFFL_VAULT.tidbits) || []; if (!T.length) return null;
+    var t = T[((W.weekNumber || 0) * 5 + (off || 0) * 3) % T.length], hs = t.hist || [], mx = Math.max.apply(null, hs.map(function (x) { return x[2]; }).concat([1]));
+    var lo = hs.reduce(function (m, x) { return !m || x[2] < m[2] ? x : m; }, null), hi = hs.reduce(function (m, x) { return !m || x[2] > m[2] ? x : m; }, null);
+    var bars = hs.length ? '<div class="tdh">' + esc(t.player) + ' · every auction</div><div class="tdbars">' + hs.map(function (x) {
+      return '<div class="tdb' + (x === hi ? ' hi' : x === lo ? ' lo' : '') + '" title="' + esc(x[1] + ' · ' + x[0] + ' · $' + x[2]) + '"><small>$' + x[2] + '</small><i style="height:' + Math.max(3, Math.round(70 * x[2] / mx)) + 'px"></i><span>\'' + String(x[0]).slice(2) + '</span></div>'; }).join("") + '</div>' : '';
+    return { id: "tidbit:" + t.key, scope: "league", c: { eb: "🎱 8 Ball", t: "", face: '<div class="fc"><div class="tdhook">' + esc(t.hook) + '</div><p class="tdline">' + esc(t.line) + '</p>' + bars +
+      (t.player ? '<div class="btns"><button class="b" data-vaultq="' + esc(t.player) + '">' + esc(t.player) + ' in the Vault ›</button></div>' : '') + '</div>' } };
   }
   function farewellLine(s, o) {
     var V = MAFFL_VAULT.owners[o] || {}, ts = vTitles(o), divWon = (s.divs || []).some(function (d) { return d.t[0] && d.t[0][0] === o; });
@@ -1186,8 +1205,8 @@
     if (ts.length) bits.push(ts.length === 1 ? "the " + ts[0] + " champ" : ts.length + "-time champ");
     return "Last call: " + o + "'s final season. " + bits.join(", ").replace(/^./, function (c) { return c.toUpperCase(); }) + (divWon ? ", and went out a division winner." : ".");
   }
-  function throwbackCard() {
-    var y = throwbackYear(), s = VS(y); if (!s) return null;
+  function throwbackCard(off) {
+    var y = throwbackYear(off), s = VS(y); if (!s) return null;
     var era = vEra(y) || { title: "" }, tags = era.title.split(" · ").concat(s.draftEra ? [/draft$/i.test(s.draftEra) ? s.draftEra : s.draftEra + " draft"] : []);
     var f = s.final, upDivs = (s.divs || []).filter(function (d) { return d.tier === "U"; });
     var h = '<div class="fc tbk"><div class="tbtags">' + tags.map(function (t, k) { return '<span class="' + (k === tags.length - 1 && s.draftEra ? 'dr' : '') + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
@@ -1493,8 +1512,9 @@
   var SERIES = { // id prefix → group, rank inside the group (lower = first)
     result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
     deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 6], other: ["league", 7],
-    gotw: ["play", 1], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1] };
-  var BUDGET = { you: 5, league: 5, play: 3, vault: 2 };
+    gotw: ["play", 1], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1], tidbit: ["vault", 2] };
+  var BUDGET = { you: 5, league: 5, play: 3, vault: 2 }, BUDGET_OFF = { you: 3, league: 3, play: 3, vault: 6 };
+  function offSeason() { return !W || !W.weekNumber || W.weekNumber > 17 || !(W.results || []).length; } // no games this week: the Vault gets the room
   var FEED_ORDER = ["you", "you", "league", "play", "league", "vault", "you", "league", "play", "league", "you", "vault", "play", "league", "you"];
   var INBOX = [], NEEDS = [], pos = 0;
   function seriesOf(x) { return SERIES[x.id.split(":")[0]] || ["league", 9]; }
@@ -1580,7 +1600,8 @@
     if (tHead || tHot || tCold) all.push({ id: "tier", scope: me.tier, c: { eb: "📣 " + TN[me.tier] + " · Week " + W.weekNumber, t: "", face: '<div class="fc">' + (tHead ? '<h3>' + esc(tHead) + '</h3>' : '<h3>' + TN[me.tier] + ' this week</h3>') +
       '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + esc(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + esc(tCold) + '</span></div>' : '') + '</div>' +
       '</div>' } });
-    var tb = throwbackCard(); if (tb) all.push(tb);
+    // 🗄️ Vault: a throwback + an 8 Ball a week; the off-season gets three of each (commish 11/7)
+    for (var vi = 0; vi < (offSeason() ? 3 : 1); vi++) { var tb = throwbackCard(vi), td = tidbitCard(vi); if (tb && !all.some(function (x) { return x.id === tb.id; })) all.push(tb); if (td && !all.some(function (x) { return x.id === td.id; })) all.push(td); }
     // 🏆 Coach of the Week: ONE league-wide card, both tiers (commish 11/7). Winner + runners-up, bench left; Full report opens the board.
     var CW = W.coachOfWeek || {};
     if (CW.upper || CW.lower) { var board0 = CW.board || [], mineB = board0.filter(function (b) { return norm(b.team) === norm(me.team); })[0], tb = board0.filter(function (b) { return b.tier === me.tier; });
@@ -1635,7 +1656,8 @@
     NEEDS = all.filter(function (x) { return x.action || x.id === "dues"; });
     var q = { you: [], league: [], play: [], vault: [] };
     all.filter(function (x) { return NEEDS.indexOf(x) < 0; }).forEach(function (x, k) { var sr = seriesOf(x); x.series = x.id.split(":")[0]; x.group = sr[0]; x.rank = sr[1] * 100 + k; (q[sr[0]] = q[sr[0]] || []).push(x); });
-    Object.keys(q).forEach(function (g) { q[g].sort(function (a, b) { return a.rank - b.rank; }); q[g] = q[g].slice(0, BUDGET[g] || 2); });
+    var bud = offSeason() ? BUDGET_OFF : BUDGET;
+    Object.keys(q).forEach(function (g) { q[g].sort(function (a, b) { return a.rank - b.rank; }); q[g] = q[g].slice(0, bud[g] || 2); });
     INBOX = []; FEED_ORDER.forEach(function (g) { if (q[g] && q[g].length) INBOX.push(q[g].shift()); });
     ["you", "league", "play", "vault"].forEach(function (g) { while (q[g] && q[g].length) INBOX.push(q[g].shift()); });
     homeBadge();
@@ -1662,7 +1684,9 @@
       '<p class="p" style="margin-top:6px">That\'s Week ' + W.weekNumber + '. New cards land Tuesday morning, and a few more during the week.</p>' +
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
       '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🗄️ League &amp; the Vault</button></div>' +
-      (INBOX.length ? '<button class="again" id="dagain">Back to the top</button>' : '') + '</div>';
+      (INBOX.length ? '<button class="again" id="dagain">Back to the top</button>' : '') +
+      (function () { var ew = WEEKS.filter(function (w) { return w !== W && w.weekNumber < W.weekNumber; }).slice(-6).reverse(); return ew.length ? '<div class="earlier"><small>Earlier weeks</small><div>' + ew.map(function (w) { return '<button data-wkgo="' + w.weekNumber + '">' + (w.weekNumber ? 'Wk ' + w.weekNumber : 'Preseason') + '</button>'; }).join("") + '</div></div>' : ''; })() +
+      (W !== LATEST ? '<button class="b pri" data-wkgo="' + LATEST.weekNumber + '" style="margin-top:12px;width:100%">Back to this week</button>' : '') + '</div>';
     var c = x.c, shared = x.scope === "league" || x.scope === "U" || x.scope === "L";
     // League cards carry the crest and everyone's reactions; your own cards carry your team tag and no reactions (commish 11/7).
     var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
@@ -2536,6 +2560,8 @@
     var el;
     if ((el = e.target.closest("[data-tjump]"))) { var tp = $("tpend"); if (tp) tp.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     if ((el = e.target.closest("[data-stat]"))) { try { statBox(JSON.parse(el.dataset.stat)); } catch (_) {} return; }
+    if ((el = e.target.closest("[data-wkgo]"))) { setWeek(+el.dataset.wkgo); toast(+el.dataset.wkgo === LATEST.weekNumber ? "Back to this week" : "Week " + el.dataset.wkgo + "'s reel"); return; }
+    if ((el = e.target.closest("[data-vaultq]"))) { closeSheet(); VQ = el.dataset.vaultq; VY = ""; VAULT_SUB = "draft"; LEAGUE_SUB = "vault"; renderLeague(); tab("league"); return; }
     if ((el = e.target.closest("[data-vault]"))) { openSheet("vault", el.dataset.vault); return; }
     if ((el = e.target.closest("[data-coach]"))) { openSheet("coach"); return; }
     if ((el = e.target.closest("[data-box]"))) { var bx = el.dataset.box.split("|"); openSheet("box", +bx[0], bx[1]); return; }
@@ -3341,7 +3367,7 @@
   function reME() { var c = ME && ME.commish; ME = BY_OWNER[norm(ME.owner)] || ME; ME.commish = SUM_OK ? !!SUM.commish : !!c; }
   function setWeek(n) {
     W = WEEKS.filter(function (w) { return w.weekNumber === n; })[0] || LATEST;
-    buildTeams(); reME(); closeSheet(); start(); tab("home");
+    buildTeams(); reME(); closeSheet(); pos = 0; start(); tab("home");
   }
 
   // ---------- 🧪 beta feedback kit (REEL.md roadmap 3b; beta crew + commish only) ----------

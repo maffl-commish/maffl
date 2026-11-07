@@ -1,6 +1,6 @@
 # REEL card series — the catalog
 
-Last updated: 2026-11-07 (chat) · v1 · Owner: commissioner (Mike)
+Last updated: 2026-11-07 (chat) · v1.1 · Owner: commissioner (Mike)
 
 The reel is built from **series**. A series is a family of cards with one job (your result, Coach of the Week,
 a throwback...). This page is where we plan them: what each series is, who sees it, how often, who writes it, and how
@@ -23,10 +23,14 @@ together. Mark it up freely: strike things, add ideas at the bottom.
 | Group | Slots | Purpose |
 |---|---|---|
 | ⚡ Needs you | all (strip) | Things to act on |
+
+Off-season (no games that week): Your week 3 · League week 3 · Play 3 · **Vault 6** (three throwbacks + three 8 Balls).
 | ⭐ Your week | 5 | About you: your game, your race, your chats |
 | 🏟️ League week | 5 | What happened, league-wide or your tier |
 | 🎯 Play | 3 | Quizzes, polls, Game of the Week |
 | 🗄️ Vault | 2 | League history, one bite at a time |
+
+"You're caught up" ends the feed, then lists earlier weeks (tap → that week's reel, with Back to this week).
 
 Feed order: you · you · league · play · league · vault · you · league · play · league · you · vault · play · league · you,
 then anything left inside the budget.
@@ -84,7 +88,7 @@ then anything left inside the budget.
 | Rank | Series | id | Audience | When | Writer | Status |
 |---|---|---|---|---|---|---|
 | 1 | Throwback (a past season) | `throwback:YYYY` | league | Weekly, rotating pool | commish line + data | Built (lines drafted, commish editing) |
-| 2 | Tidbits (the 8 Ball, reborn) | `tidbit:*` | league | Rotating pool | commish (rewritten) + data | Planned: the old 8 Ball items need rewriting first |
+| 2 | 🎱 8 Ball (tidbits, reborn) | `tidbit:*` | league | Weekly, rotating pool | commish (`data/MAFFL_Tidbits.csv`: hook + line + player/position) + data (price history chart) | Built: 25 drafted, commish editing |
 | 3 | This week in MAFFL history | `history` | league | Weekly (same week number) | data | Planned |
 | 4 | What would you pay? | `pay` | league | Rotating | data (auction archive) | Planned (play-style quiz) |
 | 5 | Name that team | `names` | league | Rotating | data (team-name history) | Planned |
@@ -101,6 +105,5 @@ then anything left inside the budget.
 
 ## Open questions
 
-- Should Play and Vault slots grow in the off-season, when there's no Your week to show?
-- Tidbits: rewrite the old 8 Ball items into a `data/MAFFL_Tidbits.csv` (one line each, with the facts they cite).
-- "Earlier" issues: is League → Weeks replay enough, or do we want an "Earlier" list under "You're caught up"?
+- Decided 11/7: the Vault grows in the off-season (6 slots); "You're caught up" lists earlier weeks (tap one to replay its reel); the 8 Ball's items were rewritten as hand-kept tidbits.
+- Player names aren't unique (two Josh Allens, several Mike Williamses, two Adrian Petersons): anything keyed on a player must use name + position.

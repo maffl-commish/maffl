@@ -18,6 +18,7 @@ Reads (gold, MAFFL_HQ_DATA_GOVERNANCE.md §2):
   prize.csv                           Lower-Tier 1st (finish flags come from title games + prize.csv, governance §2)
   MAFFL_Draft_History_Clean_v3.csv    every auction pick
   MAFFL_Throwbacks.csv                editorial: the commissioner's one-line story per season (+ optional note)
+  MAFFL_Tidbits.csv                   editorial: the 8 Ball reborn (hook + one line + the player and position whose price history the card draws)
 
 Eras match history.html (ERAS / DRAFT_ERAS).
 """
@@ -248,7 +249,22 @@ def build():
         "playoffs": sorted(([o, len(v["playoffs"])] for o, v in owners.items() if v["playoffs"]), key=lambda t: -t[1])[:12],
         "active": sorted(act),
     }
-    return {"v": 1, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
+    # ---- 🎱 tidbits (editorial) + each tidbit player's auction price history (all years, every owner)
+    tidbits = []
+    if os.path.exists(D("MAFFL_Tidbits.csv")):
+        hist = defaultdict(list)
+        for y in sorted(S):  # every auction, the current season's included
+            for x in S[y]["spends"]:
+                hist[(x["p"], x["pos"])].append([y, x["o"], x["$"]])
+        for r in rows("MAFFL_Tidbits.csv"):
+            if not (r.get("Key") or "").strip():
+                continue
+            pl, ps = (r.get("Player") or "").strip(), (r.get("Pos") or "").strip()  # name + position: two Josh Allens (QB, DL)
+            if pl and (pl, ps) not in hist:
+                print("Tidbit %s: no auction history for %r" % (r["Key"], pl), file=sys.stderr); sys.exit(1)
+            tidbits.append({"key": r["Key"].strip(), "hook": r["Hook"].strip(), "line": r["Line"].strip(), "player": pl,
+                            "pos": ps, "w": int(num(r.get("Weight"), 1)) or 1, "hist": sorted(hist.get((pl, ps), []))})
+    return {"v": 1, "tidbits": tidbits, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
             "draftEras": [{"name": e[0], "from": e[1], "to": e[2]} for e in DRAFT_ERAS],
             "owners": owners, "records": records, "seasons": out}
 
