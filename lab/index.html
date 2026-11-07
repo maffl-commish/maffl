@@ -522,6 +522,12 @@
   .cmsg .ctx{font-size:15px;line-height:1.42;color:var(--navy);white-space:pre-wrap;word-wrap:break-word;margin-top:1px}
   .cmsg.me .cmh{color:var(--gold-dark)}
   .cmsg.gone .ctx{color:var(--muted);font-style:italic}
+  .cmsg.pend .ctx{opacity:.55}
+  .cmsg .cmh small .spin.xs{width:11px;height:11px;border-width:2px;vertical-align:-1px;margin-right:4px}
+  .cmsg.fail .ctx{color:#b42318}
+  .cfail{display:flex;align-items:center;gap:8px;margin-top:4px;font:600 12px var(--body);color:#b42318}
+  .cfail span{flex:1;min-width:0}
+  .cfail button{font:700 12px var(--body);padding:6px 10px;border-radius:999px;border:1px solid #f1b8b2;background:#fff5f4;color:#b42318;min-height:32px}
   .ctx .at{color:var(--gold-dark);font-weight:700}
   .cevt{font:700 14px/1.3 var(--body);margin-top:1px}
   .ctrade{margin-top:6px;border:1px solid var(--border);border-left:4px solid var(--gold);background:var(--surface);border-radius:10px;padding:9px 11px}
@@ -2493,17 +2499,18 @@
   }
   function msgHTML(m, latestOf) {
     var ref = "chat:" + m.id, d = CH.data || {}, bot = m.owner === BOTN, mine = isMe(m.owner);
-    var canDel = !m.deleted && m.kind !== "offer" && !m.pending && (mine || ME.commish), canPin = ME.commish && !m.deleted && !m.pending;
-    var h = '<div class="cmsg' + (mine ? ' me' : '') + (m.deleted ? ' gone' : '') + '">' + avatar(m.owner, true) + '<div class="cmb"><div class="cmh">' +
+    var canDel = !m.deleted && m.kind !== "offer" && !m.pending && !m.failed && (mine || ME.commish), canPin = ME.commish && !m.deleted && !m.pending && !m.failed;
+    var h = '<div class="cmsg' + (mine ? ' me' : '') + (m.deleted ? ' gone' : '') + (m.pending ? ' pend' : '') + (m.failed ? ' fail' : '') + '">' + avatar(m.owner, true) + '<div class="cmb"><div class="cmh">' +
       (bot ? 'MAFFL HQ' : '<button class="tl2" data-owner="' + esc(m.owner) + '">' + esc(mine ? "You" : shortOf(m.owner)) + '</button>') +
-      '<small>' + (m.pending ? "sending…" : ago(m.ts)) + (m.pinned ? ' · 📌 pinned' : '') + '</small>' + (m.deleted || m.pending ? '' : '<button class="opt3" data-cadd="' + m.id + '" aria-label="React">☺︎</button>') +
+      '<small>' + (m.pending ? '<span class="spin xs"></span>Sending…' : m.failed ? "Not sent" : ago(m.ts)) + (m.pinned ? ' · 📌 pinned' : '') + '</small>' + (m.deleted || m.pending || m.failed ? '' : '<button class="opt3" data-cadd="' + m.id + '" aria-label="React">☺︎</button>') +
       (canDel || canPin ? '<button class="opt3 o2" data-cmenu="' + m.id + '" aria-label="More">⋯</button>' : '') + '</div>';
     if (m.kind === "offer") h += '<div class="cevt">' + esc(bot ? evtLine(m) : "💱 " + (EVT[m.event] || m.event).replace(/^./, function (c) { return c.toUpperCase(); })) + '</div>' + tradeMini(m.offer, latestOf[m.ref] === m.id) + (m.text ? '<div class="ctx" style="margin-top:6px">' + fmtText(m.text) + '</div>' : '');
     else if (m.owner === BOTN && DESK_KINDS[m.kind]) h += deskMsg(m);
     else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text)) + '</div>';
+    if (m.failed) h += '<div class="cfail"><span>⚠️ ' + esc(m.err || "Didn't send") + '</span><button data-cretry="' + m.id + '">↻ Retry</button><button data-cdrop="' + m.id + '" aria-label="Remove">✕</button></div>';
     if (CH.menu === m.id) h += '<div class="cmenu">' + (canPin ? '<button data-cmod="' + (m.pinned ? "unpin" : "pin") + '" data-mid="' + m.id + '">' + (m.pinned ? "Unpin" : "📌 Pin") + '</button>' : '') +
       (canDel ? '<button class="bad" data-cmod="delete" data-mid="' + m.id + '">Delete</button>' : '') + '</div>';
-    if (!m.deleted && !m.pending) {
+    if (!m.deleted && !m.pending && !m.failed) {
       var cnt = (d.counts || {})[ref] || {}, my = (d.mine || {})[ref] || {}, who = (d.who || {})[ref] || {}, names = [];
       Object.keys(who).forEach(function (e) { who[e].forEach(function (o) { names.push(isMe(o) ? "You" : shortOf(o)); }); });
       var live = Object.keys(cnt).filter(function (e) { return cnt[e] > 0; });
@@ -2552,19 +2559,28 @@
     $("cat").onclick = function () { CH.at = !CH.at; drawComposer(); $("cinput").focus(); };
   }
   function grow(ta) { ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight + 2) + "px"; }
+  // Send feedback (commish 11/6): the message shows right away, dimmed with a spinner and "Sending…", until the Sheet
+  // confirms it. If it fails it stays in the thread in red with ↻ Retry and ✕ (puts the text back in the box).
   function sendMsg() {
     var ta = $("cinput"), text = (ta.value || "").trim(), room = CH.room; if (!text || CH.sending) return;
     var mentions = Object.keys(CH.ment).filter(function (o) { return text.indexOf("@" + shortOf(o)) >= 0; });
-    CH.sending = true; $("csend").disabled = true;
-    var tmp = { id: "tmp" + Date.now(), ts: new Date().toISOString(), room: room, owner: ME.owner, kind: "text", text: text, pending: true };
-    if (CH.data) { CH.data.messages.push(tmp); CH.forceBottom = true; drawThread(); }
+    var tmp = { id: "tmp" + Date.now(), ts: new Date().toISOString(), room: room, owner: ME.owner, kind: "text", text: text, mentions: mentions };
+    if (CH.data) CH.data.messages.push(tmp);
     ta.value = ""; CH.draft[room] = ""; grow(ta); CH.ment = {};
-    function undo(msg) { toast(msg); if (CH.data) CH.data.messages = CH.data.messages.filter(function (m) { return m !== tmp; }); if (CH.room === room) { drawThread(); $("cinput").value = text; } }
-    api("chatsend", Object.assign(creds(), { room: room, text: text, mentions: mentions })).then(function (r) {
-      CH.sending = false; if ($("csend")) $("csend").disabled = false;
-      if (!r.ok) { undo(r.error || "Didn't send"); return; } CH.sig = null; if (CH.room === room) loadRoom();
-    }).catch(function () { CH.sending = false; if ($("csend")) $("csend").disabled = false; undo("Couldn't reach the league server"); });
+    postMsg(tmp);
   }
+  function postMsg(tmp) {
+    var room = tmp.room; tmp.pending = true; tmp.failed = false; tmp.err = ""; CH.sending = true; if ($("csend")) $("csend").disabled = true;
+    if (CH.room === room) { CH.forceBottom = true; drawThread(); }
+    function fail(msg) { CH.sending = false; if ($("csend")) $("csend").disabled = false; tmp.pending = false; tmp.failed = true; tmp.err = msg; if (CH.room === room) drawThread(); }
+    api("chatsend", Object.assign(creds(), { room: room, text: tmp.text, mentions: tmp.mentions || [] }), true).then(function (r) {
+      if (!r.ok) { fail(r.error || "Didn't send"); return; }
+      CH.sending = false; if ($("csend")) $("csend").disabled = false;
+      tmp.pending = false; tmp.id = r.id || tmp.id; tmp.sent = true; CH.sig = null;
+      if (CH.room === room) { drawThread(); loadRoom(); }
+    }).catch(function () { fail("Couldn't reach the league server"); });
+  }
+  function tmpMsg(id) { return CH.data ? CH.data.messages.filter(function (m) { return m.id === id && (m.failed || m.pending); })[0] : null; }
   function drawInbox() {
     var ib = inboxOf(), body = $("cbody"), h = "";
     if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = ld("Loading your chats…"); return; }
@@ -2620,7 +2636,8 @@
       CH.loading = false; if (CH.room !== room || !CH.open) return;
       if (!r.ok) { $("cbody").innerHTML = '<div class="cempty">' + esc(r.error || "Couldn't open this chat") + '</div>'; return; }
       var sig = JSON.stringify([r.messages.map(function (m) { return m.id + (m.deleted ? "d" : "") + (m.pinned ? "p" : "") + (m.offer ? m.offer.status : ""); }), r.counts, r.pinned.length]);
-      var pend = CH.data ? CH.data.messages.filter(function (m) { return m.pending; }) : [];
+      var pend = CH.data ? CH.data.messages.filter(function (m) { return (m.pending || m.failed) && m.room === room; }) : [];
+      pend.forEach(function (m) { r.messages.push(m); }); // unsent / not-yet-confirmed stay at the bottom until the Sheet has them
       if (sig !== CH.sig || pend.length) { CH.sig = sig; CH.data = r; drawThread(); } else CH.data = Object.assign(r, {});
       var ib = inboxOf(); (ib.rooms || []).forEach(function (x) { if (x.room === room) x.unread = 0; });
       ib.unread = (ib.rooms || []).reduce(function (n, x) { return n + (x.unread || 0); }, 0); chatBadge();
@@ -2667,6 +2684,8 @@
       CH.ment[el.dataset.cat] = 1; ta.value = ta.value.slice(0, p) + (p && !/\s$/.test(ta.value.slice(0, p)) ? " " : "") + ins + ta.value.slice(p); CH.draft[CH.room] = ta.value;
       CH.at = false; drawComposer(); var t2 = $("cinput"); t2.focus(); t2.setSelectionRange(t2.value.length, t2.value.length); return;
     }
+    if ((el = e.target.closest("[data-cretry]"))) { var tm = tmpMsg(el.dataset.cretry); if (tm && !CH.sending) postMsg(tm); return; }
+    if ((el = e.target.closest("[data-cdrop]"))) { var td = tmpMsg(el.dataset.cdrop); if (td) { CH.data.messages = CH.data.messages.filter(function (m) { return m !== td; }); var ci = $("cinput"); if (ci && !ci.value) { ci.value = td.text; CH.draft[CH.room] = td.text; grow(ci); } drawThread(); } return; }
     if ((el = e.target.closest("[data-cmenu]"))) { CH.menu = CH.menu === el.dataset.cmenu ? null : el.dataset.cmenu; CH.picker = null; drawThread(); return; }
     if ((el = e.target.closest("[data-cadd]"))) { CH.picker = CH.picker === el.dataset.cadd ? null : el.dataset.cadd; CH.menu = null; drawThread(); return; }
     if ((el = e.target.closest("[data-creact]"))) {
