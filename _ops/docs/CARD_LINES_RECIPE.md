@@ -36,6 +36,11 @@ Write `lines.json` (and nothing else):
 - `wire`: the most interesting move in `moves` for that tier (skip the key if there are none).
 - `owners.<owner>.result`: one line on that owner's newest final game (from their side: "you").
 - `owners.<owner>.next`: one line on their current-week game (opponent, records, what's at stake).
+- **The card already shows both scores and both records.** Don't restate them. Give the one angle the numbers alone don't:
+  the streak it started or snapped, the bench points that would have flipped it (`coach` board gap vs the margin), a
+  Survivor near-miss, the tier's top or bottom score, a division or promotion-race swing, the opponent's form (last5).
+  Good: "Snapped a three-game skid, and the 0.24 margin is the closest game in Upper this year."
+  Bad: "You beat X 171.36-141.72; now 5-3."
 - Every owner with a team in `teams` (skip the Ghost and teams with owner "").
 
 ## Rules
