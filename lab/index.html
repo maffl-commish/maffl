@@ -380,6 +380,7 @@
   .alive span{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:99px;background:var(--page-bg);border:1px solid var(--border);font:700 13px var(--display)}
   .alive span.me{background:var(--gold-soft);border-color:var(--gold)}.alive i{font-style:normal}
   .frows{margin-top:12px}
+  .frow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--border);font-size:14px;line-height:1.35}.frow:first-child{border-top:0}
   .cd{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.cd b{font:800 64px/1 var(--display);color:var(--loss)}.cd small{font:700 14px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .ofr{padding:10px 0;border-top:1px solid var(--border)}.ofr:first-child{border-top:0}
   .dcard.nope{animation:nope .35s}
@@ -1258,7 +1259,7 @@
         '<h3>' + (won ? "You won by " : "You lost by ") + f2(Math.abs(ms - os)) + '</h3>' +
         '<div class="sbug"><div class="sl' + (won ? ' w' : '') + '"><span class="cav sm">' + initials(ME.owner) + '</span><span>' + esc(me.team) + '</span><b>' + f2(ms) + '</b></div>' +
         '<div class="sl' + (won ? '' : ' w') + '"><span class="cav sm opp">' + initials(oo) + '</span><button class="tl2" data-owner="' + esc(oo) + '">' + esc(ot) + '</button><b>' + f2(os) + '</b></div></div>' +
-        (lw.note ? '<p class="fs">' + esc(sent(lw.note)) + '</p>' : '') +
+        (dailyLine(ME.owner, "result") ? '<p class="fs">' + esc(dailyLine(ME.owner, "result")) + '</p>' : lw.note ? '<p class="fs">' + esc(sent(lw.note)) + '</p>' : '') +
         '<div class="fchips">' + chips.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join("") + '</div></div>' } });
     }
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
@@ -1268,9 +1269,10 @@
         '<div class="vs2"><div><span class="cav">' + initials(ME.owner) + '</span><b>' + esc(me.team) + '</b><small>' + rec(me) + ' · #' + me.rank + '</small></div><i>VS</i>' +
         '<div><span class="cav opp">' + initials(po) + '</span><button class="tl2" data-owner="' + esc(po) + '"><b>' + esc(pt.team) + '</b></button><small>' + rec(pt) + ' · #' + pt.rank + '</small></div></div>' +
         '<p class="fl">' + (r.n ? 'Series ' + r.aw + '–' + r.bw + (r.aw > r.bw ? ', you lead' : r.aw < r.bw ? ', ' + esc(shortOf(po)) + ' leads' : ', dead even') + (lastG ? ' · last met ' + lastG.y : '') : 'First-ever meeting') + '</p>' +
-        (prev.note && (r.n || !/first/i.test(prev.note)) ? '<p class="fs">' + esc(sent(prev.note)) + '</p>' : '') +
+        (dailyLine(ME.owner, "next") ? '<p class="fs">' + esc(dailyLine(ME.owner, "next")) + '</p>' : prev.note && (r.n || !/first/i.test(prev.note)) ? '<p class="fs">' + esc(sent(prev.note)) + '</p>' : '') +
         '<div class="btns"><button class="b pri" data-go="match">⚔️ Match</button>' + (r.n ? '<a class="b" href="' + rivalryHref(ME.owner, po) + '">Rivalry</a>' : '') + '</div></div>' } });
     }
+    var wc = W === LATEST ? wireCard(me) : null; if (wc) all.push(wc);
     var dms = by("dm").concat(by("group"));
     if (dms.length) all.push({ id: "msgs", icon: "💬", c: dms.length === 1 ? dms[0] : { eb: "💬 Chat", t: dms.length + " chats with new messages", body: dms.map(function (d) { return '<div class="ofr"><div class="eb">' + esc(d.t) + '</div>' + d.body + '</div>'; }).join("") } });
     var q = null; ["blunder", "benchbeat", "topscore", "survivor", "hot", "bid"].some(function (k) {
@@ -2792,6 +2794,85 @@
       '<p class="meta" style="margin-top:6px">Testers get a 🧪 Feedback button, a few quick 👍/👎 prompts and a tap log. Their notes land here in the log. You always have the kit.</p></div></details></div>';
   }
 
+  // ---------- 🌅 daily run (REEL in-season mode; backend daily.js, GET action=daily) ----------
+  // The daily run (5 AM + 5 PM ET) has scores, records, Coach, Survivor and roster moves straight from ESPN, plus
+  // Claude's card lines. When it has a final week the Pulse doesn't (yet), that week is built from it in the same shape
+  // the cards read. The Pulse keeps feeding older weeks (and the classic site) until go-live.
+  var DLY = null, DAILY_KEY = "maffl_lab_daily";
+  function dailyCached() { try { var c = JSON.parse(localStorage.getItem(DAILY_KEY) || "null"); return c && c.ok ? c : null; } catch (e) { return null; } }
+  function loadDaily() {
+    if (!API_URL) return;
+    apiGet({ action: "daily" }, true).then(function (r) {
+      if (!r || !r.ok) return; var sig = JSON.stringify([r.snapshot && r.snapshot.at, r.lines && r.lines.at, (r.moves || []).length]), old = DLY && JSON.stringify([DLY.snapshot && DLY.snapshot.at, DLY.lines && DLY.lines.at, (DLY.moves || []).length]);
+      try { localStorage.setItem(DAILY_KEY, JSON.stringify(r)); } catch (e) {}
+      if (sig === old) return; applyDaily(r); refreshAll();
+    }).catch(function () {});
+  }
+  function refreshAll() {
+    if (!ME) return; buildTeams(); ME = BY_OWNER[norm(ME.owner)] || ME;
+    Object.keys(RENDER).forEach(function (k) { if (!guard(k, RENDER[k])) snag(k); }); tab(CUR_TAB);
+  }
+  function dailyLine(owner, key) { var o = DLY && DLY.lines && DLY.lines.owners && DLY.lines.owners[owner]; return o && o[key] || ""; }
+  function tierLine(tier, key) { var t = DLY && DLY.lines && DLY.lines.tiers && DLY.lines.tiers[tier]; return t && t[key] || ""; }
+  function applyDaily(r) {
+    if (!r || !r.snapshot || !r.snapshot.tiers) return; DLY = r;
+    var T = r.snapshot.tiers, U = T.U, L = T.L; if (!U || !L) return;
+    var wk = Math.min(U.last || 0, L.last || 0);
+    if (!wk || WEEKS.some(function (w) { return w.weekNumber === wk; })) return; // the Pulse has it
+    var base = LATEST, nw = weekFromDaily(T, wk, base); WEEKS.push(nw); WEEKS.sort(function (a, b) { return a.weekNumber - b.weekNumber; });
+    var wasLatest = W === LATEST; LATEST = WEEKS[WEEKS.length - 1]; if (wasLatest) W = LATEST;
+  }
+  function weekFromDaily(T, wk, base) {
+    var divOf = {}, credOf = {}; Object.keys(base.upperTier || {}).forEach(function (d) { base.upperTier[d].forEach(function (t) { divOf[t.team] = d; credOf[t.team] = t.credits; }); });
+    (base.lowerTier || []).forEach(function (t) { credOf[t.team] = t.credits; });
+    var name = function (S, id) { var t = S.teams[id] || {}; return t.team || ""; }, ownerOf2 = function (S, id) { var t = S.teams[id] || {}; return t.owner || ownerOfTeam(t.team) || ""; };
+    var row = function (S, x) { return { team: x.team, owner: x.owner || ownerOfTeam(x.team) || "", w: x.w, l: x.l, t: x.t, points: x.pf, streak: x.streak, credits: credOf[x.team] || 0 }; };
+    var sortT = function (a, b) { return b.w - a.w || b.credits - a.credits || b.points - a.points; };
+    var upper = {}; T.U.table.map(function (x) { return row(T.U, x); }).sort(sortT).forEach(function (x) { var d = divOf[x.team] || "divA"; (upper[d] = upper[d] || []).push(x); });
+    var results = [];
+    [["U", T.U], ["L", T.L]].forEach(function (p) { p[1].games.filter(function (g) { return g[0] === wk && !g[6]; }).forEach(function (g) {
+      var hw = g[2] >= g[4], A = hw ? [g[1], g[2]] : [g[3], g[4]], B = hw ? [g[3], g[4]] : [g[1], g[2]];
+      results.push({ tier: p[0], teamA: name(p[1], A[0]), ownerA: ownerOf2(p[1], A[0]), scoreA: A[1], teamB: name(p[1], B[0]), ownerB: ownerOf2(p[1], B[0]), scoreB: B[1], note: "" }); }); });
+    var surv = {}; [["upper", T.U], ["lower", T.L]].forEach(function (p) { var S = p[1].survivor;
+      surv[p[0] + "Active"] = S.alive.map(function (id) { return name(p[1], id); });
+      surv[p[0] + "Eliminated"] = S.out.slice().reverse().map(function (o) { return { team: name(p[1], o.id), week: o.wk, recent: o.wk === wk }; });
+      surv[p[0] + "Concluded"] = S.alive.length <= 1; surv[p[0] + "Winner"] = S.alive.length === 1 ? name(p[1], S.alive[0]) : null; });
+    var coach = { couldHaveWon: [] }; [["upper", T.U], ["lower", T.L]].forEach(function (p) { var c = (p[1].coach || {})[wk]; if (!c || !c.board.length) return;
+      var ok = c.board.filter(function (b) { return !b.out; }), win = ok[0]; if (!win) return;
+      coach[p[0]] = { team: name(p[1], win.id), owner: ownerOf2(p[1], win.id), leftOnBench: win.gap, scored: win.scored, best: win.best,
+        runnersUp: ok.slice(1, 3).map(function (b) { return { team: name(p[1], b.id), leftOnBench: b.gap }; }), out: c.board.filter(function (b) { return b.out; }).map(function (b) { return { team: name(p[1], b.id), why: b.out }; }) };
+      p[1].games.filter(function (g) { return g[0] === wk && !g[6] && g[5]; }).forEach(function (g) { [[g[1], g[2], g[4]], [g[3], g[4], g[2]]].forEach(function (x) {
+        var b = c.board.filter(function (y) { return y.id === x[0]; })[0]; if (b && x[1] < x[2] && b.gap > x[2] - x[1]) coach.couldHaveWon.push({ team: name(p[1], x[0]), leftOnBench: b.gap, lostBy: Math.round((x[2] - x[1]) * 100) / 100 }); }); }); });
+    var hw = { credits: (base.highestWeekly || {}).credits || 1, weeks: [] };
+    T.U.highs.forEach(function (h) { var l = T.L.highs.filter(function (x) { return x.wk === h.wk; })[0];
+      hw.weeks.push({ week: h.wk, upper: { team: name(T.U, h.id), owner: ownerOf2(T.U, h.id), score: h.pts }, lower: l ? { team: name(T.L, l.id), owner: ownerOf2(T.L, l.id), score: l.pts } : null }); });
+    hw.weeks.sort(function (a, b) { return b.week - a.week; });
+    var d0 = new Date(base.dateString); d0.setDate(d0.getDate() + 7 * (wk - base.weekNumber));
+    var top = results.slice().sort(function (a, b) { return b.scoreA - a.scoreA; })[0];
+    return { weekNumber: wk, dateString: isNaN(d0) ? "" : d0.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), fromDaily: true,
+      headline: tierLine("U", "headline") || (top ? top.teamA + " posted the week's top score, " + f2(top.scoreA) + "." : ""), subhead: tierLine("L", "headline"),
+      latestChange: "", upperTier: upper, lowerTier: T.L.table.map(function (x) { return row(T.L, x); }).sort(sortT), results: results, survivor: surv,
+      survivorNote: [tierLine("U", "survivor"), tierLine("L", "survivor")].filter(Boolean).join(" "), creditTracker: base.creditTracker, highestWeekly: hw,
+      elite5: [], coachOfWeek: coach, postseasonNote: "", newsReel: [], matchupPreviews: previewsFor(wk + 1) };
+  }
+  // Next week's games from the schedule (the Pulse used to write these), with Claude's "next" line as the note.
+  function previewsFor(n) {
+    return ((window.SCHEDULE_DATA && SCHEDULE_DATA.games) || []).filter(function (g) { return g[0] === n; })
+      .map(function (g) { return { tier: g[1], teamA: teamOf(g[2]).team, ownerA: g[2], teamB: teamOf(g[3]).team, ownerB: g[3], note: dailyLine(g[2], "next") || dailyLine(g[3], "next") }; });
+  }
+  // 📰 Wire card: roster moves in your tier in the last 48 h (yours first), with Claude's wire line.
+  function wireCard(me) {
+    var mv = ((DLY && DLY.moves) || []).filter(function (m) { return m.tier === me.tier && Date.now() - new Date(m.ts).getTime() < 48 * 3600e3; });
+    if (!mv.length) return null;
+    mv.sort(function (a, b) { return (isMe(b.owner) ? 1 : 0) - (isMe(a.owner) ? 1 : 0); });
+    var ic = { add: "➕", drop: "➖", trade: "🔁" }, line = tierLine(me.tier, "wire");
+    return { id: "wire:" + mv.length + ":" + mv[0].ts, c: { eb: "📰 The wire · " + (me.tier === "U" ? "Upper" : "Lower"), t: mv.length + " roster move" + (mv.length === 1 ? "" : "s"), face: '<div class="fc">' +
+      '<h3>' + mv.length + ' move' + (mv.length === 1 ? '' : 's') + ' in your tier</h3>' + (line ? '<p class="fl">' + esc(line) + '</p>' : '') +
+      '<div class="frows">' + mv.slice(0, 7).map(function (m) { return '<div class="frow"><span>' + ic[m.type] + '</span><span style="flex:1"><b>' + esc(m.player) + '</b> <small class="meta">' + esc(m.pos + " · " + m.nfl) + '</small><br><small class="meta">' +
+        esc((isMe(m.owner) ? "You" : shortOf(m.owner) || m.team) + (m.type === "trade" ? " got him from " + m.other : m.type === "add" ? " added him" : " dropped him") + " · " + ago(m.ts) + (ago(m.ts) === "now" ? "" : " ago")) + '</small></span></div>'; }).join("") + '</div>' +
+      (mv.length > 7 ? '<p class="fs">+' + (mv.length - 7) + ' more</p>' : '') + '</div>' } };
+  }
+
   // ---------- boot ----------
   function start() {
     var saved = store("maffl_lab_owner");
@@ -2813,7 +2894,7 @@
     if (bad.length) toast(bad.join(", ") + " hit a snag. Tap it to retry.");
     if (/^chat/.test(h)) setTimeout(function () { openChat(decodeURIComponent(h.split("=")[1] || "") || null); }, 400); // #chat or #chat=<room> deep link
   }
-  loadPulse().then(function () { buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); })
+  loadPulse().then(function () { guard("daily", function () { applyDaily(dailyCached()); }); buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); loadDaily(); })
     .catch(function (e) { $("boot").textContent = "Couldn't load the league data (" + e.message + ")."; });
 })();
 </script>
