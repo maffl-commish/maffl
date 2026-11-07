@@ -29,7 +29,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 |---|---|
 | Shell | Pinned header + tab bar, iPhone zoom/pan fixed, Home-Screen friendly. **Loading:** logo boot screen, one spinner everywhere, gold bar under the header while the league server works; opens before rulebook/rosters arrive; last summary + last live score kept on the phone for instant paint |
 | Sign-in | Two-word passphrase (GRONK-PISTOL), no team picker, 25 wrong/hour league limit, request-access email |
-| 🏠 Home (inbox) | Up to 8 cards a week: **Needs you** first (trade offers folded into one card, commish desk, open vote; can't be cleared until handled), **Heads up** deadline, then story cards complete on their face, no tap-through (result score bug, up-next VS, chat, one quiz, Survivor if it's about you, division/race). ← → browse, swipe ↑ clears (per week), Inbox zero; count on the Home tab. Reactions on story cards |
+| 🏠 Home (inbox) | Up to 16 cards a week (cap raised 11/6; + 📣 your tier, 🏆 Coach, 🌎 other tier, up to 3 quizzes): **Needs you** first (trade offers folded into one card, commish desk, open vote; can't be cleared until handled), **Heads up** deadline, then story cards complete on their face, no tap-through (result score bug, up-next VS, chat, one quiz, Survivor if it's about you, division/race). ← → browse, swipe ↑ clears (per week), Inbox zero; count on the Home tab. Reactions on story cards |
 | ⚔️ Match | Just the scoreboard: live score from ESPN (backend `live`, 60 s auto-refresh, tap "↻ Ns ago" to pull now), ⚔️ Rivalry button between the teams, ESPN-style lineups (NFL team, opponent, kickoff, stat line). **✖️2 Double Player Bonus**: bonus score flashes gold with ×2 + player chip, doubled player highlighted. **🧪 Test scores** while ESPN is all 0 (opponent gets a pretend DPB; pill turns it off) |
 | 🏈 Team | **Rosters live from ESPN** (backend `rosters`, 30-min cache, last good copy kept 6 h; waiver adds + injury tags; auction price + MAFFL history from the 2026 draft CSV; staged draft roster only if ESPN can't be read; approved test trades on top). Trades end to end (all-rosters grid → side by side → live grade + reason chips → confirm → accept/decline/counter → commish approve/negate). Credits: balance, history, **perk requests** (Extra FAAB, Double Player Bonus, Matchup Swap, Relegation Insurance, Division Swap). Money: dues + winnings |
 | 🏆 League | Standings, Weeks (time-travel any week), Rulebook in-app, Prizes, Champions; classic tiles for Power Rankings, History, Draft |
@@ -64,7 +64,6 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 **Commish backlog (added 11/6, not built)**
 - 🏈 **Team → player info clean-up.** The visible player card needs better info; auction price no longer matters (drop it). Tapping the card opens a richer player view.
 - ⚖️ **Trade grade logic v2.** Stop using draft/auction price. Grade on real-time value (this season's production, role, injury) and future value (age, dynasty outlook).
-- 🎞️ **More cards in the reel.** The 8-card cap (11/3) was too tight; "reel" is the theme. Raise the cap (number TBD).
 - 🏆 **League tab organization.** Better grouping/order for Standings, Weeks, Rulebook, Prizes, Champions and the classic tiles.
 
 **Beta kit follow-ups (after the first testers)**

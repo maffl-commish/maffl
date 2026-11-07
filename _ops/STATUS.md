@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-06 · REEL · More cards in the reel (commish backlog): cap 8 → 16; new 📣 Your tier this week (headline + 🔥 hot / 🧊 cold, card lines when there), 🏆 Coach of the Week (winner, runners-up, where your lineup ranked), 🌎 the other tier in one look; up to 3 🎯 quizzes spread through the reel. ~10–11 cards a week today.
 - 2026-11-06 · REEL · Chat send, follow-up: Send button turns into a spinner while saving, "Still sending… (the league server is slow)" after 6 s, and a message sent before the thread finished loading still shows (with "Loading earlier messages…").
 - 2026-11-06 · REEL · Daily run live-checked: first real run (tick, 17 s) matches the Week 8 Pulse on records, streaks, Survivor and, after a fix, Coach of the Week (robot rule: out at 4+ holes = bye / didn't play / empty slot; 0-pt played isn't a hole; tie → higher score). Daily code changes now re-run at the next tick (`DAILY.VER`). Card-lines robot run by hand twice: ✅ 21 owners + both tiers; recipe tuned so owner lines add an angle, not the score. **Needs:** GITHUB_TOKEN Script property so the backend starts card lines itself (desk shows "Card lines off" until then).
 - 2026-11-06 · REEL · 🧭 Bottom tabs reordered (commish): Home · Team · Match · Chat · League. Lab only.

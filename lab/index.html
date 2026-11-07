@@ -1227,7 +1227,7 @@
   // At most 8 cards a week, picked for you. ⚡ Action cards (trade offers, the desk, an open vote) lead and
   // stay until handled; story cards are light (headline + one line, tap for the full card) and you swipe them up to
   // clear them. Left/right browses. Everything else lives in Match and League.
-  var INBOX = [], pos = 0, INBOX_MAX = 8;
+  var INBOX = [], pos = 0, INBOX_MAX = 16; // commish 11/6: 8 was too tight, "reel" is the theme
   function tossKey() { return "maffl_lab_toss_" + W.weekNumber + "_" + norm(ME.owner); }
   function tossed() { try { return JSON.parse(store(tossKey()) || "{}"); } catch (e) { return {}; } }
   function findCard(key) { var hit = null; GROUPS.forEach(function (g) { g.cards.forEach(function (c) { if (!hit && c.key === key) hit = c; }); }); return hit; }
@@ -1283,9 +1283,27 @@
     var wc = W === LATEST ? wireCard(me) : null; if (wc) all.push(wc);
     var dms = by("dm").concat(by("group"));
     if (dms.length) all.push({ id: "msgs", icon: "💬", c: dms.length === 1 ? dms[0] : { eb: "💬 Chat", t: dms.length + " chats with new messages", body: dms.map(function (d) { return '<div class="ofr"><div class="eb">' + esc(d.t) + '</div>' + d.body + '</div>'; }).join("") } });
-    var q = null; ["blunder", "benchbeat", "topscore", "survivor", "hot", "bid"].some(function (k) {
-      GROUPS.some(function (g) { return g.cards.some(function (c) { if (c.quiz && c.quiz.ref.indexOf("quiz:" + k) > 0) { q = c; return true; } }); }); return !!q; });
-    if (q) all.push({ id: "quiz:" + q.quiz.ref, icon: "🎯", c: q, play: true });
+    // Quizzes: up to three, spread through the reel (the first one right here).
+    var qs = []; ["blunder", "topscore", "survivor", "benchbeat", "hot", "bid", "otherlead"].forEach(function (k) {
+      GROUPS.forEach(function (g) { g.cards.forEach(function (c) { if (qs.length < 3 && c.quiz && c.quiz.ref.indexOf("quiz:" + k) > 0 && qs.indexOf(c) < 0) qs.push(c); }); }); });
+    var playQ = function (c) { all.push({ id: "quiz:" + c.quiz.ref, icon: "🎯", c: c, play: true }); };
+    if (qs[0]) playQ(qs[0]);
+    // 📣 Your tier this week: the headline + hot / cold (Claude's card lines when the daily run has them)
+    var tHead = tierLine(me.tier, "headline") || (me.tier === "U" ? W.headline : W.subhead) || "";
+    var tHot = tierLine(me.tier, "hot"), tCold = tierLine(me.tier, "cold");
+    if (!tHot) { var tt = TEAMS.filter(function (t) { return t.tier === me.tier && !/ghost/i.test(t.team); }), hot = tt.slice().sort(function (a, b) { return b.streak - a.streak; })[0], cold = tt.slice().sort(function (a, b) { return a.streak - b.streak; })[0];
+      if (hot && hot.streak >= 2) tHot = hot.team + ": " + hot.streak + " straight wins, " + rec(hot) + "."; if (cold && cold.streak <= -2) tCold = cold.team + ": " + (-cold.streak) + " straight losses, " + rec(cold) + "."; }
+    if (tHead || tHot || tCold) all.push({ id: "tier", c: { eb: "📣 " + TN[me.tier] + " · Week " + W.weekNumber, t: "", face: '<div class="fc">' + (tHead ? '<h3>' + esc(tHead) + '</h3>' : '<h3>' + TN[me.tier] + ' this week</h3>') +
+      '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + esc(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + esc(tCold) + '</span></div>' : '') + '</div>' +
+      '<div class="btns"><button class="b" data-go="league">🏆 Standings</button></div></div>' } });
+    // 🏆 Coach of the Week in your tier, and where your lineup landed
+    var cw0 = (W.coachOfWeek || {})[me.tier === "U" ? "upper" : "lower"];
+    if (cw0) { var board = ((W.coachOfWeek || {}).board || []).filter(function (b) { return b.tier === me.tier; }), mineB = board.filter(function (b) { return norm(b.team) === norm(me.team); })[0], myRank = mineB ? board.indexOf(mineB) + 1 : 0, wonIt = norm(cw0.team) === norm(me.team);
+      all.push({ id: "coach", c: { eb: "🏆 Coach of the Week · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>' + (wonIt ? "You're Coach of the Week" : esc(cw0.team) + " is Coach of the Week") + '</h3>' +
+        '<p class="fl">' + (cw0.leftOnBench ? f2(cw0.leftOnBench) + ' left on the bench' : 'A perfect lineup: nothing left on the bench') + ' · scored ' + f2(cw0.scored) + '</p>' +
+        (tierLine(me.tier, "coach") ? '<p class="fs">' + esc(tierLine(me.tier, "coach")) + '</p>' : '') +
+        (mineB && !wonIt ? '<div class="fchips"><span>You: #' + myRank + ' of ' + board.length + ' · ' + f2(mineB.leftOnBench) + ' on the bench</span></div>' : '') +
+        ((cw0.runnersUp || []).length ? '<div class="frows">' + cw0.runnersUp.map(function (r, k) { return '<div class="frow"><span>' + (k + 2) + '</span><span style="flex:1">' + esc(r.team) + '</span><small class="meta">' + f2(r.leftOnBench) + ' left</small></div>'; }).join("") + '</div>' : '') + '</div>' } }); }
     // Survivor only when it's about you: still alive, or knocked out this week
     var sv = W.survivor;
     if (sv) { var act = sv[me.tier === "U" ? "upperActive" : "lowerActive"] || [], outNow = (sv[me.tier === "U" ? "upperEliminated" : "lowerEliminated"] || []).filter(function (x) { return x.recent; })[0], alive = act.indexOf(me.team) >= 0;
@@ -1301,6 +1319,11 @@
           me.rank <= 3 ? "You're in a promotion spot" : "You're " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion") + '</h3>' +
         '<div class="frows">' + mine.map(function (t) { return teamResultRow(t, me.tier === "L" && t.rank <= 3 ? "⬆️ #" + t.rank : "#" + t.rank); }).join("") + '</div>' +
         (me.tier === "L" ? '<p class="fs">Top 3 move up to Upper next season.</p>' : '') + '</div>' } }); }
+    if (qs[1]) playQ(qs[1]);
+    // 🌎 The other tier in one look
+    var og = GROUPS.filter(function (g) { return g.key === "other"; })[0], oc = og && og.cards.filter(function (c) { return !c.quiz; })[0];
+    if (oc) all.push({ id: "other", c: oc });
+    if (qs[2]) playQ(qs[2]);
     if (GOTW && GOTW.voted) all.push({ id: "gotw", icon: "🗳️", c: GOTW });
     var gone = tossed();
     INBOX = all.filter(function (x) { return x.action || !gone[x.id]; }).slice(0, INBOX_MAX);
