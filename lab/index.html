@@ -579,6 +579,33 @@
   .reelchat .ctrade{margin-top:8px}
   .reelchat .last{display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)}
   .reelchat .last p{font-size:14px;line-height:1.4;color:var(--navy)}
+  /* 📥 commish desk: floating button + its own full-screen command center */
+  .dkbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--navy);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.3)}
+  .dkbtn.on{display:block}
+  .dkbtn i{display:inline-block;min-width:18px;height:18px;line-height:18px;margin-left:6px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px}
+  body.commish .fbbtn{bottom:calc(env(safe-area-inset-bottom) + 124px)}
+  .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
+  .dk.on{display:flex}
+  .dkhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:var(--navy);color:#fff}
+  .dkhead>div{flex:1}.dkhead .ct{font:700 22px var(--display);letter-spacing:.02em}.dkhead small{font:600 12px var(--body);color:rgba(255,255,255,.65)}
+  .dkhead .cb{color:var(--gold);font-size:24px;min-width:44px;min-height:44px;border:0;background:none}
+  .dkbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px calc(env(safe-area-inset-bottom) + 30px)}
+  .dktiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .dkt{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--muted);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:1px;min-width:0}
+  .dkt span{font-size:18px}.dkt b{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy)}.dkt small{font:600 12px var(--body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dkt.ok{border-top-color:var(--win,#1f9d6a)}.dkt.warn{border-top-color:var(--gold)}.dkt.bad{border-top-color:var(--loss)}.dkt.bad small{color:var(--loss)}
+  .dkh{display:flex;align-items:baseline;gap:8px;margin:18px 2px 0}.dkh h3{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--navy);margin:0}.dkh small{font:600 12px var(--body);color:var(--muted)}
+  .dkchips{display:flex;gap:6px;overflow-x:auto;margin-top:8px;padding-bottom:2px}.dkchips::-webkit-scrollbar{display:none}
+  .dkchips button{flex:0 0 auto;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 11px;font:700 12px var(--body);color:var(--ink2)}
+  .dkchips button.on{background:var(--navy);color:#fff;border-color:var(--navy)}.dkchips i{font-style:normal;opacity:.6;margin-left:2px}
+  .dknote{display:flex;gap:8px;margin-top:10px}.dknote .field{flex:1;margin:0}.dknote .b{flex:0 0 auto;width:auto;padding:0 16px}
+  .dklog{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .dkday{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:10px 12px 4px;background:var(--page-bg)}
+  .dkrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-top:1px solid var(--border);border-left:3px solid transparent}
+  .dkrow .ic{font-size:16px;line-height:1.3}.dkrow .tx{flex:1;min-width:0}.dkrow .hd{font:600 14px/1.35 var(--body);color:var(--navy)}
+  .dkrow small{flex:0 0 auto;font:600 11px var(--body);color:var(--muted);white-space:nowrap;padding-top:2px}
+  .dkrow .bd{margin-top:6px}.dkrow .bd .cbot{margin-top:4px}
+  .dkrow.alerts{border-left-color:var(--loss)}.dkrow.feedback{border-left-color:var(--gold)}.dkrow.notes .hd{font-style:italic}
   /* 🧪 beta feedback kit */
   .fbbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.25)}
   .fbbtn.on{display:block}
@@ -631,6 +658,8 @@
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
 <button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
+<button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥 Desk<i id="dkn"></i></button>
+<div class="dk" id="desk"><div class="dkhead"><button class="cb" id="dkclose" aria-label="Close">‹</button><div><div class="ct">Commish desk</div><small id="dkupd"></small></div><button class="cb" id="dkref" aria-label="Refresh">↻</button></div><div class="dkbody" id="dkbody"></div></div>
 <div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
 <script src="../schedule-data.js"></script>
@@ -940,7 +969,7 @@
     var early = EARLY_SUM && norm(store("maffl_lab_owner")) === norm(ME.owner) ? EARLY_SUM : null; EARLY_SUM = null; // already on its way
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
-      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
+      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); deskBadge(); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
@@ -2518,9 +2547,8 @@
       (L.length > 7 ? '<p class="meta">+' + (L.length - 7) + ' more</p>' : '') + '</div>';
   }
   function deskBtn(op, target, label, pri, extra) { return '<button class="b' + (pri ? ' pri' : '') + '" data-dact="' + op + '" data-target="' + esc(target) + '"' + (extra || '') + '>' + label + '</button>'; }
-  function deskTop() {
-    if (!DESK) return '<div class="dsk"><h4>To do</h4><p class="meta">Loading…</p></div>';
-    var d = DESK, n = deskTodo(), h = "";
+  function deskTodoHTML(d) {
+    var n = deskTodo(), h = "";
     if (!n) h += '<div class="dsk clear">✅ <b>All clear.</b> Nothing waiting on you.</div>';
     else {
       h += '<div class="dsk"><h4><span>To do</span><span class="stp gold">' + n + '</span></h4>';
@@ -2538,9 +2566,13 @@
       var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += '<div class="dsec">💳 Credit sync</div><div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>';
       h += '</div>';
     }
-    h += awardsPanel(d) + betaPanel(d);
+    return h;
+  }
+  function deskPeopleHTML(d) { var h = "";
     if ((d.noPin || []).length) h += '<div class="dsk"><details><summary>👥 ' + d.noPin.length + ' owner' + (d.noPin.length === 1 ? '' : 's') + ' without a passphrase yet</summary>' + d.noPin.map(function (o) {
       return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("") + '</details></div>';
+    return h; }
+  function deskRobotsHTML(d) { var h = "";
     var ls2 = d.sync && d.sync.last, tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
     h += '<div class="dsk"><h4><span>⏱️ 15-minute robot</span>' + deskBtn("tick", "", "Run it now") + '</h4><p class="meta">' +
       (tkAge === null ? '⚠️ Hasn\'t run yet. Add the time trigger (APP_DESIGN §10f).' : (tkAge > 60 ? '⚠️ ' : '✅ ') + 'Last ran ' + ago(tk.at) + (tkAge > 60 ? ' (should be every 15 min; check the trigger)' : '') +
@@ -2550,8 +2582,76 @@
       (!dy.at ? 'Hasn\'t run yet. It starts at the next 5 AM / 5 PM slot.' : ((dy.problems || []).length ? '⚠️ ' : '✅ ') + 'Last ran ' + ago(dy.at) + (ago(dy.at) === "now" ? "" : " ago") + (dy.secs ? ' (' + dy.secs + ' s)' : '') +
         ((dy.log || []).length ? ' · ' + esc(dy.log.join(" · ")) : ' · scores, rosters, Coach, Survivor refreshed') + ((dy.problems || []).length ? '<br>⚠️ ' + esc(dy.problems.join(" · ")) : '') + (dy.lines ? '<br>' + (dy.lines === "started" ? '✍️ Card lines robot started' : '⚠️ Card lines ' + esc(dy.lines)) : '')) + '</p></div>';
     h += '<p class="meta" style="text-align:center;margin:8px 0 2px">Backend v' + esc(d.version || "?") + ' · credits ' + esc((d.sync || {}).mode || "test").toUpperCase() + (ls2 && ls2.at ? ' · last ledger push ' + ago(ls2.at) + (ls2.ok ? ' ✓' : ' ⚠️') : '') + '</p>';
-    return h + '<div class="cgrp">Log</div>';
+    return h; }
+  function deskTop() { // (old chat-room layout; kept for any caller) — the desk is its own screen now: openDesk()
+    if (!DESK) return '<div class="dsk"><h4>To do</h4><p class="meta">Loading…</p></div>';
+    var d = DESK; return deskTodoHTML(d) + awardsPanel(d) + betaPanel(d) + deskPeopleHTML(d) + deskRobotsHTML(d);
   }
+  // ================= 📥 COMMISH DESK: its own screen (commish 11/6: a button like Feedback, command-center feel) =====
+  // Status board → To do → credits / beta / owners → robots → log (newest first, filters, tap a row for detail).
+  var DK = { open: false, log: null, filter: "all", openRow: null, loading: false };
+  function deskKind(m) { if (m.kind === "alert" || (m.kind === "robot" && m.event === "FAIL")) return "alerts"; if (m.kind === "robot") return "robots";
+    if (m.kind === "feedback") return "feedback"; if (m.owner !== BOTN && m.kind === "text") return "notes"; return "owners"; }
+  var DK_IC = { alerts: "⚠️", robots: "🤖", owners: "👥", feedback: "🧪", notes: "📝" };
+  function deskTiles(d) {
+    var tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null, dy = d.daily || {}, dyAge = dy.at ? (Date.now() - new Date(dy.at).getTime()) / 36e5 : null, ls = d.sync && d.sync.last, crew = ((d.beta || {}).crew || []).length;
+    var ago2 = function (t) { var a = ago(t); return a === "now" ? "just now" : a + " ago"; };
+    var T = [["⏱️", "15-min robot", tkAge === null ? "Not running" : ago2(tk.at), tkAge === null || tkAge > 60 ? "bad" : "ok"],
+      ["🌅", "Daily run", dyAge === null ? "Not yet" : ago2(dy.at), dyAge === null ? "warn" : (dy.problems || []).length || dyAge > 14 ? "warn" : "ok"],
+      ["✍️", "Card lines", !dy.lines ? "—" : dy.lines === "started" ? "Running" : "Off", !dy.lines ? "warn" : dy.lines === "started" ? "ok" : "bad"],
+      ["💳", "Credit sync", ((d.sync || {}).mode || "test").toUpperCase() + (ls && ls.at ? " · " + ago(ls.at) : ""), ls && ls.ok === false ? "bad" : (d.sync || {}).mode === "live" ? "ok" : "warn"],
+      ["🧪", "Beta crew", crew + " tester" + (crew === 1 ? "" : "s"), crew ? "ok" : "warn"],
+      ["🖥️", "Backend", "v" + (d.version || "?"), "ok"]];
+    return '<div class="dktiles">' + T.map(function (t) { return '<div class="dkt ' + t[3] + '"><span>' + t[0] + '</span><b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></div>'; }).join("") + '</div>';
+  }
+  function deskLogHTML() {
+    if (!DK.log) return ld("Loading the log…");
+    var all = DK.log.slice().reverse(), cnt = {}; all.forEach(function (m) { var k = deskKind(m); cnt[k] = (cnt[k] || 0) + 1; });
+    var F = [["all", "All"], ["alerts", "⚠️ Alerts"], ["robots", "🤖 Robots"], ["owners", "👥 Owners"], ["feedback", "🧪 Feedback"], ["notes", "📝 Notes"]].filter(function (f) { return f[0] === "all" || cnt[f[0]]; });
+    var list = all.filter(function (m) { return DK.filter === "all" || deskKind(m) === DK.filter; }), lastDay = "";
+    return '<div class="dkchips">' + F.map(function (f) { return '<button data-dkf="' + f[0] + '"' + (DK.filter === f[0] ? ' class="on"' : '') + '>' + f[1] + (f[0] !== "all" ? ' <i>' + cnt[f[0]] + '</i>' : '') + '</button>'; }).join("") + '</div>' +
+      '<div class="dknote"><input class="field" id="dknote" maxlength="300" placeholder="Add a note to the log (only you see it)"><button class="b" id="dknotego">Add</button></div>' +
+      (list.length ? '<div class="dklog">' + list.map(function (m) {
+        var day = dayLabel(m.ts), head = day !== lastDay ? '<div class="dkday">' + esc(day) + '</div>' : ''; lastDay = day;
+        var k = deskKind(m), html = deskMsg(m), hd = (html.match(/<div class="cevt">([\s\S]*?)<\/div>/) || [])[1] || esc(m.text || ""), body = html.replace(/<div class="cevt">[\s\S]*?<\/div>/, ""), open = DK.openRow === m.id;
+        if (k === "notes") { hd = "📝 " + esc(m.text); body = ""; }
+        return head + '<div class="dkrow ' + k + (open ? ' open' : '') + '" data-dkrow="' + esc(m.id) + '"><div class="tx"><div class="hd">' + hd + '</div>' + (open && body ? '<div class="bd">' + body + '</div>' : '') + '</div><small>' + esc(new Date(m.ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })) + (body ? (open ? ' ▴' : ' ▾') : '') + '</small></div>';
+      }).join("") + '</div>' : '<p class="meta" style="padding:14px 4px">Nothing here yet.</p>');
+  }
+  function drawDesk() {
+    if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
+    if (!d) { b.innerHTML = ld("Opening the desk…"); return; }
+    var n = deskTodo();
+    var todo = deskTodoHTML(d).replace(/<h4><span>To do<\/span><span class="stp gold">\d+<\/span><\/h4>/, "").replace(/<div class="dsk"><\/div>/, "") + awardsPanel(d, "todo");
+    if (n && /dsk clear/.test(todo)) todo = todo.replace(/<div class="dsk clear">[\s\S]*?<\/div>/, "");
+    b.innerHTML = deskTiles(d) +
+      '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
+      (awardsPanel(d, "earned") + betaPanel(d) + deskPeopleHTML(d) ? '<div class="dkh"><h3>League</h3></div>' + awardsPanel(d, "earned") + betaPanel(d) + deskPeopleHTML(d) : '') +
+      '<div class="dkh"><h3>Robots</h3></div>' + deskRobotsHTML(d) +
+      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML();
+    b.scrollTop = st;
+    var go = $("dknotego"); if (go) go.onclick = function () { var v = ($("dknote").value || "").trim(); if (!v) return; busy(1);
+      api("chatsend", Object.assign(creds(), { room: "desk", text: v, mentions: [] }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't save"); return; } toast("Noted ✓"); loadDeskLog(); })
+        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+  }
+  function loadDeskLog() {
+    return api("chat", Object.assign(creds(), { room: "desk" }), true).then(function (r) { if (r && r.ok) { DK.log = r.messages; drawDesk(); } }).catch(function () {});
+  }
+  function deskRefresh() { if (!DK.open) return; DESK = null; loadDesk().then(drawDesk); loadDeskLog(); }
+  function openDesk() {
+    if (!ME || !ME.commish) return; DK.open = true; $("desk").classList.add("on"); document.body.style.overflow = "hidden"; tap("sheet", "desk");
+    $("dkupd").textContent = ""; drawDesk(); loadDesk().then(function () { drawDesk(); $("dkupd").textContent = "Updated " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }); loadDeskLog();
+  }
+  function closeDesk() { DK.open = false; $("desk").classList.remove("on"); document.body.style.overflow = ""; deskBadge(); }
+  function deskBadge() { var b = $("dkbtn"); if (!b) return; var on = !!(ME && ME.commish); b.classList.toggle("on", on); document.body.classList.toggle("commish", on);
+    var n = on ? deskTodo() : 0; $("dkn").textContent = n || ""; $("dkn").style.display = n ? "" : "none"; }
+  document.addEventListener("click", function (e) {
+    var el;
+    if ((el = e.target.closest("[data-desk-open]"))) { e.preventDefault(); openDesk(); return; }
+    if (!DK.open || !e.target.closest("#desk")) return;
+    if ((el = e.target.closest("[data-dkf]"))) { DK.filter = el.dataset.dkf; DK.openRow = null; drawDesk(); return; }
+    if ((el = e.target.closest("[data-dkrow]")) && !e.target.closest("button,a,input")) { DK.openRow = DK.openRow === el.dataset.dkrow ? null : el.dataset.dkrow; drawDesk(); return; }
+  });
   function deskMsg(m) {
     var hd = deskLine(m), body = "";
     if (m.kind === "perk" && m.perk) { var p = m.perk, live = p.status === "REQUESTED" && deskOpenPerks().some(function (x) { return x.id === p.id; });
@@ -2569,7 +2669,7 @@
   }
   function loadDesk() {
     if (!ME || !ME.commish || CH.deskBusy) return Promise.resolve(); CH.deskBusy = true;
-    return api("desk", creds()).then(function (r) { CH.deskBusy = false; if (!r.ok) return; var sig = JSON.stringify(r) !== JSON.stringify(DESK); DESK = r;
+    return api("desk", creds()).then(function (r) { CH.deskBusy = false; if (!r.ok) return; var sig = JSON.stringify(r) !== JSON.stringify(DESK); DESK = r; deskBadge(); if (sig && DK.open) drawDesk();
       if (sig && CH.open && CH.room === "desk") drawThread(); if (CH.open && CH.view === "inbox") drawInbox(); }).catch(function () { CH.deskBusy = false; });
   }
   function issueBox(r) {
@@ -2587,18 +2687,18 @@
         awardall: ["Issue all waiting awards?", "Posts every one to the official ledger through credit sync.", "Approve all", false] }[op];
       confirmBox(A[0], '<p class="p">' + esc(A[1]) + '</p>', A[2], A[3]).then(function (yes) { if (!yes) return; busy(1);
         api("deskact", Object.assign(creds(), { op: op === "awardall" ? "awardall" : "award", target: who || "", decision: op === "awardno" ? "deny" : "approve" })).then(function (r) { busy(0);
-          toast(r.ok ? (op === "awardno" ? "Denied" : "🏅 Issued " + r.n + " ✓") : (r.error || "Didn't work")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+          toast(r.ok ? (op === "awardno" ? "Denied" : "🏅 Issued " + r.n + " ✓") : (r.error || "Didn't work")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); return; }
     if (op === "daily") { busy(1); toast("Daily run started. Takes up to a minute…"); api("deskact", Object.assign(creds(), { op: "daily", target: "" })).then(function (r) { busy(0);
-      toast(r.ok ? "Daily run ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : "") : "Daily run: " + ((r.problems || []).join(" · ") || r.error || "didn't finish")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+      toast(r.ok ? "Daily run ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : "") : "Daily run: " + ((r.problems || []).join(" · ") || r.error || "didn't finish")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
-      toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+      toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     if (op === "betaon" || op === "betaoff") {
       if (op === "betaon") { who = ($("betapick") || {}).value; if (!who) { toast("Pick an owner first"); return; } t = teamOf(who).team || who; }
       busy(1); api("deskact", Object.assign(creds(), { op: "beta", target: who, on: op === "betaon" })).then(function (r) { busy(0);
-        toast(r.ok ? (op === "betaon" ? "🧪 " + t + " is in the beta crew" : t + " is out of the beta crew") : (r.error || "Didn't work")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+        toast(r.ok ? (op === "betaon" ? "🧪 " + t + " is in the beta crew" : t + " is out of the beta crew") : (r.error || "Didn't work")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
         .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     var C = { issue: ["Issue a new passphrase?", "For " + t + ". Any old passphrase stops working. You'll see the new one once, with a button to text it.", "Issue it", false],
       unlock: ["Unlock " + t + "?", "Their passphrase stays the same; the wrong-try count resets.", "Unlock", false],
@@ -2609,7 +2709,7 @@
       api("deskact", Object.assign(creds(), { op: op, target: who, perk_id: el.dataset.pid || "" })).then(function (r) {
         busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
         if (op === "issue") issueBox(r); else toast({ unlock: "Unlocked ✓", dismiss: "Dismissed", espn: "Ticked off ✓" }[op]);
-        DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom();
+        DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog();
       }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
     });
   });
@@ -2710,7 +2810,7 @@
     var ib = inboxOf(), body = $("cbody"), h = "";
     if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = ld("Loading your chats…"); return; }
     {
-      var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
+      var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.room !== "desk"; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
       if (!rooms.length) rooms = [{ room: "league", unread: 0 }, { room: "tier:" + ME.tier, unread: 0 }];
       var row = function (r) { var info = roomInfo(r.room);
         return '<button class="croom' + (r.unread ? ' un' : '') + '" data-croom="' + esc(r.room) + '">' + info.ic + '<div class="cm"><div class="cn"><span>' + esc(info.t) + '</span><small>' + (r.last ? ago(r.last.ts) : '') + '</small></div><div class="cp">' + esc(previewOf(r)) + '</div></div>' +
@@ -2837,7 +2937,7 @@
     if (ME.commish && deskTodo()) { var dk = DESK || {}, bits = [];
       [[deskOpenPerks().length, "perk"], [deskReview().length, "trade"], [(dk.access || []).length, "passphrase request"], [(dk.locked || []).length, "lockout"], [(dk.espn || []).length, "ESPN step"]].forEach(function (x) { if (x[0]) bits.push(x[0] + " " + x[1] + (x[0] === 1 ? "" : "s")); });
       out.push({ key: "desk", eb: "📥 Commish desk", t: deskTodo() + " thing" + (deskTodo() === 1 ? "" : "s") + " waiting on you", body: '<p class="meta">' + esc(bits.join(" · ") || "Credit sync needs a look") + '</p>' + deskHomeList() +
-        '<div class="btns"><button class="b pri" data-chat-room="desk">📥 Open the desk</button></div>' }); }
+        '<div class="btns"><button class="b pri" data-desk-open="1">📥 Open the desk</button></div>' }); }
     var live = function (other) { return (SUM.offers || []).filter(function (o) { return ((isMe(o.from) && norm(o.to) === norm(other)) || (isMe(o.to) && norm(o.from) === norm(other))) && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; })
       .sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); })[0]; };
     (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; }).forEach(function (r) {
@@ -2911,6 +3011,7 @@
         .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
   }
   $("fbbtn").onclick = function () { hideNudge(); feedbackBox("", "button"); };
+  $("dkclose").onclick = closeDesk; $("dkref").onclick = function () { deskRefresh(); toast("Refreshing the desk…"); };
   // Quick prompts: never twice for the same moment, at most 3 a day, 3 minutes apart, never over an open box.
   function fbSeen() { try { return JSON.parse(store("maffl_lab_fbseen") || "{}"); } catch (e) { return {}; } }
   function firstLook(t) { if (BETA && FIRST[t]) setTimeout(function () { if (CUR_TAB === t) nudge("first:" + t, FIRST[t]); }, 4000); }
@@ -2929,14 +3030,14 @@
   }
   function hideNudge() { $("fbnudge").classList.remove("on"); clearTimeout(nudge.h); }
   // 🏅 Credit awards from the daily run: EARNED during the season (just shown), PENDING once Week 17 is final (approve → ledger).
-  function awardsPanel(d) {
+  function awardsPanel(d, part) { // part: "todo" = waiting to issue, "earned" = earned so far, none = both
     var aw = d.awards || []; if (!aw.length) return "";
     var pend = aw.filter(function (a) { return a.status === "PENDING"; }), earned = aw.filter(function (a) { return a.status === "EARNED"; });
     var row = function (a, btns) { return '<div class="ditem"><b>' + esc(a.team) + '</b> <span class="meta">+' + a.credits + ' · ' + esc(a.award) + ' · ' + esc(a.detail) + '</span>' + (btns ? '<div class="btns">' + deskBtn("awardno", a.id, "Deny") + deskBtn("awardok", a.id, "✓ Approve", 1) + '</div>' : '') + '</div>'; };
     var h = '';
-    if (pend.length) h += '<div class="dsk"><div class="dsec">🏅 Credit awards to issue · ' + pend.length + '</div>' + pend.map(function (a) { return row(a, true); }).join("") +
+    if (pend.length && part !== "earned") h += '<div class="dsk"><div class="dsec">🏅 Credit awards to issue · ' + pend.length + '</div>' + pend.map(function (a) { return row(a, true); }).join("") +
       (pend.length > 1 ? '<div class="btns">' + deskBtn("awardall", "", "✓ Approve all " + pend.length, 1) + '</div>' : '') + '<p class="meta">Approving posts them to the official ledger (credit sync).</p></div>';
-    if (earned.length) { var tot = {}; earned.forEach(function (a) { tot[a.team] = (tot[a.team] || 0) + a.credits; });
+    if (earned.length && part !== "todo") { var tot = {}; earned.forEach(function (a) { tot[a.team] = (tot[a.team] || 0) + a.credits; });
       h += '<div class="dsk"><details><summary>🏅 Credits earned so far · ' + earned.length + ' (issued after Week 17)</summary>' +
         '<p class="meta" style="margin:6px 0">' + Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a]; }).map(function (t) { return esc(t) + ' +' + tot[t]; }).join(" · ") + '</p>' +
         earned.map(function (a) { return row(a, false); }).join("") + '<p class="meta">Nothing to do yet. After Week 17 these turn into approve cards here.</p></details></div>'; }
