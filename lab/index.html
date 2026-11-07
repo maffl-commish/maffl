@@ -2424,6 +2424,10 @@
     h += '<div class="dsk"><h4><span>⏱️ 15-minute robot</span>' + deskBtn("tick", "", "Run it now") + '</h4><p class="meta">' +
       (tkAge === null ? '⚠️ Hasn\'t run yet. Add the time trigger (APP_DESIGN §10f).' : (tkAge > 60 ? '⚠️ ' : '✅ ') + 'Last ran ' + ago(tk.at) + (tkAge > 60 ? ' (should be every 15 min; check the trigger)' : '') +
         ((tk.log || []).length ? ' · ' + esc(tk.log.join(" · ")) : ' · nothing new')) + '</p></div>';
+    var dy = d.daily || {};
+    h += '<div class="dsk"><h4><span>🌅 Daily run · 5 AM + 5 PM</span>' + deskBtn("daily", "", "Run it now") + '</h4><p class="meta">' +
+      (!dy.at ? 'Hasn\'t run yet. It starts at the next 5 AM / 5 PM slot.' : ((dy.problems || []).length ? '⚠️ ' : '✅ ') + 'Last ran ' + ago(dy.at) + (ago(dy.at) === "now" ? "" : " ago") + (dy.secs ? ' (' + dy.secs + ' s)' : '') +
+        ((dy.log || []).length ? ' · ' + esc(dy.log.join(" · ")) : ' · scores, rosters, Coach, Survivor refreshed') + ((dy.problems || []).length ? '<br>⚠️ ' + esc(dy.problems.join(" · ")) : '')) + '</p></div>';
     h += '<p class="meta" style="text-align:center;margin:8px 0 2px">Backend v' + esc(d.version || "?") + ' · credits ' + esc((d.sync || {}).mode || "test").toUpperCase() + (ls2 && ls2.at ? ' · last ledger push ' + ago(ls2.at) + (ls2.ok ? ' ✓' : ' ⚠️') : '') + '</p>';
     return h + '<div class="cgrp">Log</div>';
   }
@@ -2456,7 +2460,10 @@
   }
   document.addEventListener("click", function (e) {
     var el = e.target.closest("[data-dact]"); if (!el) return;
-    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" ? null : teamOf(who).team || who;
+    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" || op === "daily" ? null : teamOf(who).team || who;
+    if (op === "daily") { busy(1); toast("Daily run started. Takes up to a minute…"); api("deskact", Object.assign(creds(), { op: "daily", target: "" })).then(function (r) { busy(0);
+      toast(r.ok ? "Daily run ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : "") : "Daily run: " + ((r.problems || []).join(" · ") || r.error || "didn't finish")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+      .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
       toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }

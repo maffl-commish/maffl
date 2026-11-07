@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.18";
+var VERSION = "0.19";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -57,6 +57,7 @@ function doGet(e) {
     if (p.action === "summary") return json(summary_(p.week, null));
     if (p.action === "live") { try { return json(live_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
     if (p.action === "rosters") { try { return json(rosters_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // what ESPN shows on each roster (public to the league anyway)
+    if (p.action === "daily") { need_("daily"); return json(DAILY.view()); } // scores, standings, Coach, Survivor, moves, card lines (league-public)
     if (p.action === "ledger") return json({ ok: true, mode: syncMode_(), rows: ledger_(p.mode === "live" ? "live" : p.mode === "test" ? "test" : syncMode_()) }); // credit moves are public anyway
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
@@ -860,12 +861,13 @@ function desk_(me) {
     access: openRequests_().map(function (r) { var o = ownerRow_(r.owner) || {}; return { owner: r.owner, team: o.team, ts: r.ts, note: String(r.note || ""), hasPin: !!o.pin_hash }; }),
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
-    espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(),
+    espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
     moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_() };
 }
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
   if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
+  if (b.op === "daily") { need_("daily"); return DAILY.run("button"); } // "Run daily now"
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
@@ -902,8 +904,22 @@ function etHour_(d) { return Number(Utilities.formatDate(d || new Date(), "Ameri
 function etDay_(d) { return Utilities.formatDate(d || new Date(), "America/New_York", "yyyy-MM-dd"); }
 function hrs_(ms) { var h = Math.round(ms / HOUR); return h <= 1 ? "1 hour" : h + " hours"; }
 function tick() {
-  var lock = LockService.getScriptLock(); if (!lock.tryLock(20000)) return { ok: false, error: "busy" };
-  try { return tickRun_(); } finally { lock.releaseLock(); }
+  var lock = LockService.getScriptLock(), r = { ok: false, error: "busy" };
+  if (lock.tryLock(20000)) { try { r = tickRun_(); } finally { lock.releaseLock(); } }
+  // In-season daily run, 5 AM + 5 PM ET (daily.js). Outside the lock: it only writes its own tabs, and can take a minute.
+  try { need_("daily"); if (DAILY.due()) r.daily = DAILY.run("tick"); } catch (e) { r.daily = { ok: false, error: String(e.message || e) }; deskPost_("alert", "Daily run didn't start: " + String(e.message || e).slice(0, 160), "", "DAILY"); }
+  return r;
+}
+// ---------------------------------------------------------------- extra modules (room past the 95 KB cache limit)
+// need_("daily") fetches _ops/apps-script/daily.js from main (cached 5 min) and evaluates it in THIS scope, so it can use
+// every helper here. Modules export by filling their object (DAILY). Pushing daily.js = deploying it, like logic.js.
+var DAILY = {}, MODS_ = {};
+function need_(name) {
+  if (MODS_[name]) return; var c = CacheService.getScriptCache(), k = "mod_" + name, src = c.get(k);
+  if (!src) { var r = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/_ops/apps-script/" + name + ".js?t=" + Date.now(), { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) throw new Error("Couldn't load " + name + ".js (" + r.getResponseCode() + ")");
+    src = r.getContentText(); if (src.length < 95000) c.put(k, src, 300); }
+  eval(src); MODS_[name] = 1;
 }
 function tickRun_() {
   var props = PropertiesService.getScriptProperties(), sent = tickSent_(), now = new Date(), log = [];
