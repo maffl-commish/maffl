@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.19 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.20 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,9 @@ VERSION: 0.19 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-06 · **In-season mode = a daily run, not a weekly Pulse** (commish). Twice a day (5 AM + 5 PM ET): scores, rosters + moves,
+  Coach/Survivor/highs, feedback digest, health; Claude writes short card lines after each run (commish picked AI lines + twice daily).
+  The classic Pulse keeps going until go-live but publishes itself (no PR); it retires at go-live. §10g.
 - 2026-11-06 · **Beta kit built** (backend v0.18): beta = Owners `beta` column (commish always), toggled from the desk. Feedback → Feedback tab + desk log; prompts capped at 3/day; tap log → TapLog tab (never posted). Testers: nephews (Lower) + Joe or Ed (Upper).
 - 2026-11-06 · **Weekly Pulse fully automatic** (commish): no Tuesday PR to review/merge; the robot publishes the week itself.
   The app is the live product (refreshing daily per owner); the Pulse is only its weekly data drop. Not built yet (REEL.md backlog).
@@ -451,6 +454,27 @@ Add Trigger → function `tick` · deployment **Head** · event source **Time-dr
 **Was the unlock for the "needs trigger" rows:** Apps Script time triggers must call a function in the bound loader, so `Code.gs` needs
 one more line (`function tick() { logic_().tick(); }`), pasted once by the commish, plus a 15-min trigger. Until then, GitHub Actions
 or a Claude scheduled task can hit the web app on a schedule instead (Actions schedules run late, so not for anything time-critical).
+
+### 10g. 🌅 Daily run: in-season mode (built 11/6, backend v0.19–0.20)
+
+Replaces the weekly Pulse inside REEL. Code: `_ops/apps-script/daily.js`, loaded by `logic.js` `need_("daily")` (fetched from
+main, cached 5 min, evaluated in logic's scope; no Code.gs change; pushing daily.js = deploying it).
+
+- **When:** from the 15-minute `tick` once per slot (5 AM and 5 PM ET), outside the script lock; or desk → 🌅 Daily run → Run it now.
+- **What:** (1) both tiers' schedule from ESPN → records (final weeks only), PF/PA, streaks, last 5, all-play, Survivor (single lowest
+  real score per final week), weekly highs; (2) Coach of the Week per final week, computed once and kept (best-lineup bench gap; bye,
+  empty slot or 0-pt starter = out); (3) fresh rosters → adds / drops / trades vs the last run → Moves tab; (4) beta digest (feedback +
+  taps since the last run); (5) health: trouble → one desk alert. A desk post only when there's news.
+- **Where it lives:** Daily tab (key → JSON: `snapshot`, `coach_U/L`, `roster_ids_U/L`, `lines`), Moves tab, Script property
+  LAST_DAILY (shown on the desk). GET `?action=daily` = snapshot + 7 days of moves + lines + run info (league-public).
+- **Card lines:** after each run the backend fires GitHub `repository_dispatch daily-lines` (GITHUB_TOKEN Script property) →
+  `card-lines.yml`: Claude follows `_ops/docs/CARD_LINES_RECIPE.md` (tier headline/hot/cold/coach/survivor/wire, each owner's
+  result + next), checked, posted back via `putlines` (DESK_KEY). No commits. Fails → desk alert; cards show plain facts.
+- **App:** reads the daily view at launch (kept on the phone). When it has a final week the Pulse doesn't, the app builds that week
+  from it in the Pulse's shape (standings sorted record → credits → points; divisions from the last Pulse; next week's previews
+  from schedule-data.js), so every screen moves on. Result / up-next cards use the card lines; 📰 Wire card shows moves.
+- **Not yet:** credits from the daily run (still the last Pulse's numbers + the app ledger), Elite 5 / credit-award races / news
+  reel (Pulse-only today), offseason mode, the official gold history append (stays the Tuesday GitHub robot, self-merging).
 
 ### 10c. Other jobs to automate (queue)
 

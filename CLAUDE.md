@@ -98,8 +98,10 @@ Two binding rules:
 
 - In season, each week arrives through GitHub Actions: `espn-weekly-pull.yml` writes
   `_ops/inbox/MAFFL_2026_WeekNN_espn.md`, and `pulse-draft.yml` appends gold, runs CE-1 + validate, and has
-  Claude draft the Week object in `weekly.html` on branch `pulse/2026-weekNN`, then opens a PR. The
-  commissioner merges it. Guide: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`.
+  Claude draft the Week object in `weekly.html` on branch `pulse/2026-weekNN`, then opens a PR and merges it
+  itself when `check_pulse_week.py` passes (since 2026-11-06; a failed check leaves it open and posts to the Commish desk).
+  The classic Pulse retires at REEL go-live; REEL's in-season mode is the daily run (`_ops/apps-script/daily.js`,
+  APP_DESIGN §10g). Guide: `_ops/docs/WEEKLY_AUTOMATION_PLAN.md`.
 - **Don't hand-append a week to the gold CSVs, and don't edit `weekly.html` or `matchups-data.js`
   while a "Weekly Pulse" PR is open.** Both would conflict with the robot's branch. If a prompt needs to,
   stop and say so.

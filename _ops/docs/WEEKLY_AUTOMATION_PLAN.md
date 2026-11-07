@@ -20,7 +20,7 @@ ESPN stat corrections to earlier weeks are applied automatically and listed in t
 2. Want changes? Comment `@claude …` in plain English (e.g. "@claude lead with the Reilly game"). Claude edits the draft.
 3. Happy? Click **Merge pull request**, then **Confirm merge**. The site updates in a minute or two.
 4. Nothing to do on the computer. Edits happen in a claude.ai chat, which always starts from the latest `main`. (If you do open the desktop copy, Fetch/Pull first.)
-5. **Merge each week's PR before the next Tuesday.** The robot won't draft a week while the previous one is still unmerged. It emails you instead.
+5. **The PR merges itself (since 2026-11-06)** when `check_pulse_week.py` passes, and the Commish desk says "Week N is in the books". A failed check leaves the PR open and posts "needs a look" on the desk. The robot still won't draft a week while the previous one is unmerged. At REEL go-live the classic Pulse retires; REEL's daily run (APP_DESIGN §10g) takes over.
 
 **Fallback:** if the robot fails, the 5:07 AM report says why. Ask Claude in chat to fix it, or to draft the Week N Pulse from the inbox.
 
