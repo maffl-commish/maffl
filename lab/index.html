@@ -380,6 +380,10 @@
   .alive span{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:99px;background:var(--page-bg);border:1px solid var(--border);font:700 13px var(--display)}
   .alive span.me{background:var(--gold-soft);border-color:var(--gold)}.alive i{font-style:normal}
   .frows{margin-top:12px}
+  .wkbars{display:flex;align-items:flex-end;gap:4px;margin-top:10px;height:104px}
+  .wkbars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0}
+  .wkbars i{display:block;width:100%;max-width:26px;background:var(--navy);border-radius:4px 4px 0 0}
+  .wkbars b{font:700 11px var(--display);margin-top:3px}.wkbars small{font:600 10px var(--body);color:var(--muted)}
   .frow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--border);font-size:14px;line-height:1.35}.frow:first-child{border-top:0}
   .cd{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.cd b{font:800 64px/1 var(--display);color:var(--loss)}.cd small{font:700 14px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .ofr{padding:10px 0;border-top:1px solid var(--border)}.ofr:first-child{border-top:0}
@@ -1749,7 +1753,12 @@
       DRAFT.forEach(function (d) { if (+d.Year === y) PRICE[norm(d.Player || d.Player_Raw)] = +d.Price || 0; }); }
     return PRICE[norm(name)] || 0;
   }
-  function pmeta(p) { return (p.price ? "$" + p.price : p.acq === "Drafted" ? "$0" : p.acq || "Added") + (p.inj ? " · " + p.inj : ""); }
+  function f1(n) { return (Math.round(n * 10) / 10).toFixed(1); }
+  function pmeta(p) { // commish 11/6: auction price no longer matters; show what he's doing this season
+    var bits = []; if (p.sp != null) bits.push(f1(p.sp) + " pts" + (p.avg ? " · " + f1(p.avg) + "/g" : ""));
+    if (p.slot === "IR") bits.push("IR"); else if (p.slot === "BE") bits.push("Bench");
+    if (p.inj) bits.push(p.inj); return bits.join(" · ") || p.acq || ""; }
+  function wkList(p) { return p.wk ? Object.keys(p.wk).map(Number).sort(function (a, b) { return a - b; }).map(function (w) { return { w: w, pts: p.wk[w] }; }) : []; }
   function pkey(tier, name) { return tier + ":" + name; }
   // Current rosters = draft picks, then approved test trades applied in order.
   function rosters() {
@@ -1757,7 +1766,8 @@
     ["U", "L"].forEach(function (tier) { var E = ESPNR[tier]; if (!E) return;
       E.teams.forEach(function (tm) { var own = BY_OWNER[norm(tm.owner)] ? tm.owner : liveOwner(tm.team); if (!own) return;
         var t = teamOf(own); R[norm(own)] = tm.players.map(function (p) {
-          return { name: p.n, pos: p.pos, nfl: p.tm, price: priceOf(p.n), owner: t.owner, tier: t.tier, acq: p.acq, inj: p.inj ? p.inj.charAt(0) + p.inj.slice(1).toLowerCase() : "", slot: p.slot }; }); }); });
+          return { name: p.n, id: p.id, pos: p.pos, nfl: p.tm, price: priceOf(p.n), owner: t.owner, tier: t.tier, acq: p.acq, inj: p.inj ? p.inj.charAt(0) + p.inj.slice(1).toLowerCase() : "", slot: p.slot,
+            sp: p.sp, avg: p.avg, proj: p.proj, own: p.own, prk: p.prk, wk: p.wk || null }; }); }); });
     DRAFT.filter(function (d) { return +d.Year === y; }).forEach(function (d) {
       var t = teamOf(d.Owner); if (!BY_OWNER[norm(d.Owner)] || ESPNR[t.tier]) return; // staged only where ESPN didn't answer
       (R[norm(d.Owner)] = R[norm(d.Owner)] || []).push({ name: d.Player || d.Player_Raw, pos: d.Position_Actual || d.Draft_Slot, nfl: d.NFL_Team, price: +d.Price || 0, owner: t.owner, tier: t.tier });
@@ -1770,7 +1780,7 @@
     return R;
   }
   function rosterOf(owner) { var r = rosters()[norm(owner)] || []; return r.slice().sort(function (a, b) {
-    var pa = POS_ORDER.indexOf(a.pos), pb = POS_ORDER.indexOf(b.pos); return (pa < 0 ? 9 : pa) - (pb < 0 ? 9 : pb) || b.price - a.price; }); }
+    var pa = POS_ORDER.indexOf(a.pos), pb = POS_ORDER.indexOf(b.pos); return (pa < 0 ? 9 : pa) - (pb < 0 ? 9 : pb) || (b.sp || 0) - (a.sp || 0) || b.price - a.price; }); }
   // A block tag only counts while the player is still on the roster of the owner who tagged him.
   function blockOf(tier, name, owner) { var b = (SUM.block || {})[pkey(tier, name)]; return b && (!owner || norm(b.owner) === norm(owner)) ? b : null; }
   // "B. Purdy" (Top Performers) → the roster's "Brock Purdy"
@@ -1792,7 +1802,7 @@
     if (!rostersReady()) return '<div class="card">' + (SIDE.rosters === "fail" ? '<p>Couldn\'t load rosters. Pull down or reopen the app to try again.</p>' : ld("Loading rosters…")) + '</div>';
     var onBlock = list.filter(function (p) { return blockOf(p.tier, p.name, p.owner); }).length;
     var E = ESPNR[ME.tier];
-    return '<div class="note" style="margin-top:12px">' + (E ? '📡 Your ESPN roster' + (E.stale ? ' (ESPN didn\'t answer just now; last copy)' : '') + ', as of ' + (ago(E.at) === "now" ? "just now" : esc(ago(E.at)) + " ago") + '. Trades approved in the test are added on top.' : '🧪 Staged roster: ESPN didn\'t answer, so this is your 2026 auction draft plus test trades.') + ' Tap a player for his MAFFL history or to put him on the block.</div>' +
+    return '<div class="note" style="margin-top:12px">' + (E ? '📡 Your ESPN roster' + (E.stale ? ' (ESPN didn\'t answer just now; last copy)' : '') + ', as of ' + (ago(E.at) === "now" ? "just now" : esc(ago(E.at)) + " ago") + '. Trades approved in the test are added on top.' : '🧪 Staged roster: ESPN didn\'t answer, so this is your 2026 auction draft plus test trades.') + ' Tap a player for his week-by-week, status and MAFFL history, or to put him on the block.</div>' +
       '<div class="sh" style="padding-left:0"><h2>' + list.length + ' players</h2><small>' + onBlock + ' on the block</small></div>' +
       '<div class="card" style="margin-top:0;padding:2px 12px">' + list.map(function (p) { return playerRow(p); }).join("") + '</div>';
   }
@@ -1806,7 +1816,9 @@
     var hist = DRAFT.filter(function (d) { return (d.Player || d.Player_Raw) === p.name; }).sort(function (a, b2) { return b2.Year - a.Year; });
     var h = '<div class="card navy"><div style="display:flex;gap:12px;align-items:center">' + posChip(p.pos).replace('class="pos', 'class="pos big') +
       '<div><h3 style="margin:0">' + esc(p.name) + '</h3><p>' + esc(p.nfl || "FA") + ' · ' + esc(teamOf(p.owner).team) + (p.inj ? ' · <b style="color:var(--loss)">' + esc(p.inj) + '</b>' : '') + '</p></div></div>' +
-      '<div class="strip"><div><b>' + (p.price || p.acq !== "Waiver add" && p.acq !== "Free agent" ? "$" + p.price : "Add") + '</b><small>' + (p.price || !p.acq || p.acq === "Drafted" ? "2026 price" : esc(p.acq)) + '</small></div><div><b>' + tw.length + '</b><small>Top-3 weeks</small></div><div><b>' + (tw.length ? f2(Math.max.apply(null, tw.map(function (x) { return x.pts; }))) : "–") + '</b><small>Best week</small></div></div></div>';
+      '<div class="strip"><div><b>' + (p.sp != null ? f1(p.sp) : '–') + '</b><small>Season pts</small></div><div><b>' + (p.avg ? f1(p.avg) : '–') + '</b><small>Per game</small></div>' +
+        '<div><b>' + (p.prk ? esc(p.pos) + p.prk : '–') + '</b><small>ESPN rank</small></div><div><b>' + (p.own != null ? p.own + '%' : '–') + '</b><small>Rostered</small></div></div></div>' +
+      playerStatus(p) + weeksChart(p);
     if (mine) {
       h += '<div class="card"><div class="eb">🏷️ Trade block</div>' + (b ? '<p>On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '. Everyone in your tier sees the tag.</p>' : '<p>Not on the block. Add a note so people know what you want.</p>') +
         '<input class="field" id="bnote" maxlength="80" placeholder="What do you want? (e.g. RB depth)" value="' + esc(b && b.note || "") + '">' +
@@ -1814,11 +1826,25 @@
     } else if (p.tier === ME.tier && API_URL) {
       h += '<div class="btns"><button class="b pri" data-trade-with="' + esc(p.owner) + '" data-trade-want="' + esc(p.name) + '">Start a trade for him</button></div>';
     }
-    if (tw.length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
+    if (tw.length && !wkList(p).length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
       return '<div class="row"><div class="nm">Week ' + x.wk + '</div><div class="rt">' + f2(x.pts) + '<small>#' + x.rank + ' on the team</small></div></div>'; }).join("") + '</div>';
-    h += '<div class="card glist"><div class="eb">MAFFL auction history</div>' + (hist.length ? hist.map(function (d) {
+    h += '<div class="card glist"><div class="eb">MAFFL draft history</div>' + (hist.length ? hist.map(function (d) {
       return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + d.Year + '</div><div style="flex:1"><button class="tl2 nm" data-owner-push="' + esc(d.Owner) + '">' + esc(d.Owner) + '</button><div class="meta">' + esc(d.NFL_Team || "") + '</div></div><div class="rt">$' + (+d.Price || 0) + '</div></div>'; }).join("") : '<p>First time in a MAFFL auction.</p>') + '</div>';
     return h;
+  }
+
+  // Player screen pieces (commish 11/6: tap the card for a richer view)
+  function playerStatus(p) {
+    var where = p.slot === "IR" ? "On IR" : p.slot === "BE" ? "On the bench" : p.slot ? "Starting at " + p.slot : "";
+    var bits = [where, p.acq ? (p.acq === "Waiver add" ? "Picked up off waivers" : p.acq === "Traded" ? "Came in a trade" : p.acq === "Drafted" ? "Drafted" : p.acq) : "", p.proj ? "ESPN projects " + p.proj + " pts this season" : ""].filter(Boolean);
+    return bits.length || p.inj ? '<div class="card"><div class="eb">Status</div>' + (p.inj ? '<p style="color:var(--loss);font-weight:700">🩹 ' + esc(p.inj) + '</p>' : '') + '<p class="meta">' + esc(bits.join(" · ")) + '</p></div>' : '';
+  }
+  function weeksChart(p) {
+    var ws = wkList(p); if (!ws.length) return '';
+    var max = Math.max.apply(null, ws.map(function (x) { return x.pts; }).concat([1])), recent = ws.slice(-4), ravg = recent.reduce(function (a, x) { return a + x.pts; }, 0) / recent.length;
+    return '<div class="card"><div class="eb">Week by week</div><div class="wkbars">' + ws.map(function (x) {
+      return '<div><i style="height:' + Math.max(3, Math.round(70 * x.pts / max)) + 'px"></i><b>' + (x.pts ? Math.round(x.pts) : 0) + '</b><small>W' + x.w + '</small></div>'; }).join("") + '</div>' +
+      '<p class="meta" style="margin-top:6px">Last ' + recent.length + ' weeks: ' + f1(ravg) + ' a week' + (p.avg ? (ravg > p.avg * 1.15 ? ' · 📈 trending up' : ravg < p.avg * 0.85 ? ' · 📉 trending down' : '') : '') + '</p></div>';
   }
 
   // ---------- offers ----------

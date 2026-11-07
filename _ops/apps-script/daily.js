@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "3"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "4"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -89,7 +89,7 @@ function dCoach_(tier, wk, teams) {
   Object.keys(counts).forEach(function (s) { var id = +s; if (id !== 20 && id !== 21) for (var c = 0; c < counts[s]; c++) slots.push(id); });
   var box = espn_(LEAGUES[tier], "view=mMatchupScore&view=mBoxscore&scoringPeriodId=" + wk), pro = {};
   try { pro = proGames_(wk); } catch (e) {}
-  var board = [];
+  var board = [], pwk = {};
   (box.schedule || []).filter(function (g) { return g.matchupPeriodId === wk; }).forEach(function (g) {
     [g.home, g.away].forEach(function (sd) {
       if (!sd || !teams[sd.teamId] || teams[sd.teamId].ghost) return;
@@ -98,6 +98,7 @@ function dCoach_(tier, wk, teams) {
         var act = st.filter(function (x) { return x.scoringPeriodId === wk && x.statSourceId === 0; })[0];
         var pts = act ? act.appliedTotal : ((e.playerPoolEntry || {}).appliedStatTotal || 0);
         var bye = !!pl.proTeamId && Object.keys(pro || {}).length > 0 && !pro[pl.proTeamId];
+        if (pl.id) pwk[pl.id] = r2_(act ? act.appliedTotal : 0);
         return { n: pl.fullName || "?", sid: e.lineupSlotId, pts: r2_(pts), el: pl.eligibleSlots || [], bye: bye, dnp: !bye && !act }; });
       var starters = ps.filter(function (x) { return x.sid !== 20 && x.sid !== 21; }), pool = ps.filter(function (x) { return x.sid !== 21; });
       var why = [], empty = Math.max(0, slots.length - starters.length);
@@ -110,7 +111,7 @@ function dCoach_(tier, wk, teams) {
     });
   });
   board.sort(function (a, b) { return (a.out ? 1 : 0) - (b.out ? 1 : 0) || a.gap - b.gap || b.scored - a.scored; });
-  return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null };
+  return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null, pts: pwk };
 }
 
 // ---- 3. rosters + moves ---------------------------------------------------------------------------------
@@ -159,10 +160,13 @@ DAILY.run = function (why) {
   var snap = { at: new Date().toISOString(), tiers: {} };
   ["U", "L"].forEach(function (tier) {
     try {
-      var s = dScores_(tier), coach = dGet_("coach2_" + tier) || {};
+      var s = dScores_(tier), coach = dGet_("coach3_" + tier) || {};
       s.decided.forEach(function (wk) { if (!coach[wk] && Date.now() - t0 < 200000) { try { coach[wk] = dCoach_(tier, wk, s.teams); } catch (e) { problems.push("Coach " + tier + " wk " + wk + ": " + e.message); } } });
-      dPut_("coach2_" + tier, coach);
-      s.coach = coach; snap.tiers[tier] = s;
+      dPut_("coach3_" + tier, coach);
+      var pw = {}; Object.keys(coach).forEach(function (wk) { var p = coach[wk].pts || {}; Object.keys(p).forEach(function (id) { (pw[id] = pw[id] || {})[wk] = p[id]; }); });
+      dPut_("pweeks_" + tier, pw);
+      var slim = {}; Object.keys(coach).forEach(function (wk) { slim[wk] = { wk: coach[wk].wk, board: coach[wk].board, winner: coach[wk].winner }; });
+      s.coach = slim; snap.tiers[tier] = s;
       var prevLast = (last.weeks || {})[tier] || 0;
       if (s.last > prevLast && prevLast) log.push((tier === "U" ? "Upper" : "Lower") + " week " + s.last + " is final");
     } catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " scores: " + e.message); }
@@ -190,6 +194,8 @@ DAILY.due = function () {
   try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) {}
   return last.slot !== s || last.ver !== DAILY.VER;
 };
+// Week-by-week fantasy points per ESPN player id for a tier (only weeks the player was on a roster in that tier).
+DAILY.playerWeeks = function (tier) { return dGet_("pweeks_" + tier) || {}; };
 // What the app reads (GET ?action=daily): the snapshot + the last 7 days of moves + the card lines + run info.
 DAILY.view = function () {
   var snap = dGet_("snapshot"), info = {};

@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.20";
+var VERSION = "0.21";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -618,12 +618,20 @@ function rosters_(tier) {
   try { d = espn_(LEAGUES[tier], "view=mTeam&view=mRoster"); }
   catch (err) { var old = cache.get("rost_last_" + tier); if (old) { var o = JSON.parse(old); o.stale = true; return o; } throw err; }
   var byTeam = {}; owners_().forEach(function (o) { if (o.team) byTeam[norm_(o.team)] = o.owner; });
+  var pweeks = {}; try { need_("daily"); pweeks = DAILY.playerWeeks(tier); } catch (e) {} // id -> {week: pts}, from the daily run's box scores
   var teams = (d.teams || []).map(function (tm) {
     var name = tm.name || ((tm.location || "") + " " + (tm.nickname || "")).trim();
     var players = (((tm.roster || {}).entries) || []).map(function (e) {
-      var pl = (e.playerPoolEntry || {}).player || {};
-      return { n: pl.fullName || "?", id: pl.id || e.playerId, pos: POS[pl.defaultPositionId] || "", tm: PRO[pl.proTeamId] || "FA",
-        slot: SLOT[e.lineupSlotId] || "", acq: ACQ[e.acquisitionType] || "", inj: pl.injuryStatus && pl.injuryStatus !== "ACTIVE" ? String(pl.injuryStatus).replace(/_/g, " ") : "" };
+      var ppe = e.playerPoolEntry || {}, pl = ppe.player || {}, st = pl.stats || [];
+      var season = st.filter(function (x) { return x.scoringPeriodId === 0 && x.statSourceId === 0 && (x.statSplitTypeId || 0) === 0 && (!x.seasonId || x.seasonId === SEASON); })[0];
+      var proj = st.filter(function (x) { return x.scoringPeriodId === 0 && x.statSourceId === 1 && (!x.seasonId || x.seasonId === SEASON); })[0];
+      var rk = ((ppe.ratings || {})["0"] || {}), own = (pl.ownership || {}).percentOwned, id = pl.id || e.playerId;
+      return { n: pl.fullName || "?", id: id, pos: POS[pl.defaultPositionId] || "", tm: PRO[pl.proTeamId] || "FA",
+        slot: SLOT[e.lineupSlotId] || "", acq: ACQ[e.acquisitionType] || "", inj: pl.injuryStatus && pl.injuryStatus !== "ACTIVE" ? String(pl.injuryStatus).replace(/_/g, " ") : "",
+        sp: season ? Math.round(season.appliedTotal * 10) / 10 : (ppe.appliedStatTotal != null ? Math.round(ppe.appliedStatTotal * 10) / 10 : null),
+        avg: season && season.appliedAverage != null ? Math.round(season.appliedAverage * 10) / 10 : null,
+        proj: proj ? Math.round(proj.appliedTotal) : null, own: own != null ? Math.round(own) : null, prk: rk.positionalRanking || null,
+        wk: (pweeks[id] || null) };
     });
     return { team: name, owner: byTeam[norm_(name)] || "", players: players };
   });
