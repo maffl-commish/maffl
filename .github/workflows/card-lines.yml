@@ -1,0 +1,73 @@
+# REEL card lines — Claude writes the short lines on the app's Home cards after each daily run.
+#
+# Started by the app backend (daily.js → GitHub repository_dispatch "daily-lines", using the GITHUB_TOKEN Script
+# property) right after the 5 AM / 5 PM ET daily run, or by hand (Run workflow). Recipe: _ops/docs/CARD_LINES_RECIPE.md.
+# Reads the snapshot from the backend, has Claude write lines.json, checks it, posts it back (action "putlines",
+# DESK_KEY). Commits nothing. If it fails, the app just shows plain facts; desk-notify posts the failure.
+name: Card lines
+
+on:
+  repository_dispatch:
+    types: [daily-lines]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: card-lines
+  cancel-in-progress: true
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_API: https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec
+    steps:
+      - name: Get the repo
+        uses: actions/checkout@v4
+
+      - name: Get today's snapshot from the backend
+        run: |
+          curl -sSL --max-time 120 "$APP_API?action=daily" -o daily.json
+          python3 -c "import json,sys; d=json.load(open('daily.json')); sys.exit(0 if d.get('ok') else 'No snapshot yet: ' + json.dumps(d)[:300])"
+
+      - name: Claude writes the lines
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: "github-actions"
+          prompt: |
+            Read _ops/docs/CARD_LINES_RECIPE.md and follow it exactly. Input: daily.json. Output: lines.json.
+            Don't commit, push or open a PR.
+          claude_args: |
+            --max-turns 40
+            --allowedTools "Bash,Read,Write,Glob,Grep"
+
+      - name: Check and post the lines
+        env:
+          DESK_KEY: ${{ secrets.DESK_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          d = json.load(open("daily.json")); L = json.load(open("lines.json"))
+          owners = {t["owner"] for tier in d["snapshot"]["tiers"].values() for t in tier["teams"].values() if t.get("owner")}
+          bad = []
+          def chk(where, s):
+              if not isinstance(s, str) or not s.strip(): bad.append(f"{where}: empty")
+              elif len(s) > 140: bad.append(f"{where}: {len(s)} chars")
+          for k, v in (L.get("tiers") or {}).items():
+              for kk, s in v.items(): chk(f"tiers.{k}.{kk}", s)
+          for o, v in (L.get("owners") or {}).items():
+              if o not in owners: bad.append(f"unknown owner {o}")
+              for kk, s in v.items(): chk(f"owners.{o}.{kk}", s)
+          if bad: sys.exit("lines.json failed the check:\n" + "\n".join(bad[:20]))
+          L["at"] = d["snapshot"]["at"]
+          json.dump({"action": "putlines", "key": __import__("os").environ["DESK_KEY"], "lines": L}, open("body.json", "w"))
+          print(f"OK: {len(L.get('owners') or {})} owners, tiers {sorted((L.get('tiers') or {}).keys())}")
+          PY
+          if [ -z "$DESK_KEY" ]; then echo "::warning::DESK_KEY not set; can't post."; exit 1; fi
+          curl -sSL --max-time 60 -H "Content-Type: text/plain;charset=utf-8" --data @body.json "$APP_API" | tee out.json | head -c 300; echo
+          grep -q '"ok":true' out.json

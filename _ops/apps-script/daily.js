@@ -189,4 +189,12 @@ DAILY.view = function () {
   try { info = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) {}
   return { ok: !!snap, snapshot: snap, moves: dRecentMoves_(7), lines: dGet_("lines") || null, run: info };
 };
-DAILY.afterRun = function () {}; // card-line writer hooks in here (APP_DESIGN §10g)
+// After a run: ask GitHub to start the card-lines workflow (Claude writes the lines, posts them back via putlines).
+// Uses the GITHUB_TOKEN Script property (contents: write is enough for repository_dispatch).
+DAILY.afterRun = function () {
+  var token = PropertiesService.getScriptProperties().getProperty("GITHUB_TOKEN"); if (!token) return;
+  var r = UrlFetchApp.fetch("https://api.github.com/repos/" + REPO + "/dispatches", { method: "post", contentType: "application/json", muteHttpExceptions: true,
+    headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" }, payload: JSON.stringify({ event_type: "daily-lines" }) });
+  if (r.getResponseCode() >= 300) deskPost_("alert", "Couldn't start the card-lines robot (GitHub said " + r.getResponseCode() + "). Cards show plain facts until it works.", "", "DAILY");
+};
+DAILY.putLines = function (lines) { dPut_("lines", lines); };

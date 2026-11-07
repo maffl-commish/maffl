@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.19";
+var VERSION = "0.20";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -102,6 +102,7 @@ function doPost(e) {
       case "feedback": return json(withAuth_(b, function (o) { return feedback_(o, b); }));
       case "taplog":   return json(withAuth_(b, function (o) { return tapLog_(o, b); }));
       case "botpost":  return json(botPost_(b));
+      case "putlines": return json(putLines_(b));
       default:        return json({ ok: false, error: "unknown action" });
     }
   } catch (err) {
@@ -891,6 +892,15 @@ function botPost_(b) {
   if (link && !/^https:\/\//.test(link)) link = "";
   post_("desk", BOT, "robot", (title + (text ? "\n" + text : "")).slice(0, CHAT_MAX), link.slice(0, 300), String(b.status || "info").slice(0, 8).toUpperCase());
   return { ok: true };
+}
+
+// Card lines from the card-lines workflow (Claude, after each daily run). Same DESK_KEY as botpost.
+function putLines_(b) {
+  var key = PropertiesService.getScriptProperties().getProperty("DESK_KEY");
+  if (!key || String(b.key || "") !== key) return { ok: false, error: "bad key" };
+  if (!b.lines || typeof b.lines !== "object") return { ok: false, error: "no lines" };
+  var s = JSON.stringify(b.lines); if (s.length > 60000) return { ok: false, error: "too long" };
+  need_("daily"); DAILY.putLines(b.lines); return { ok: true };
 }
 
 // ---------------------------------------------------------------- ⏱️ tick: the 15-minute robot (APP_DESIGN §10f)
