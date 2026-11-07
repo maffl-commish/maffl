@@ -410,6 +410,7 @@
   .tbtn button{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:8px 4px;min-width:70px;text-align:left}
   .tbtn .go{background:var(--navy);color:#fff;border-radius:999px;padding:10px 18px;text-align:center}
   .tbub .tx{position:absolute;top:8px;right:8px;width:32px;height:32px;font-size:16px;color:var(--muted)}
+  .mo{display:flex;align-items:center;gap:12px}.mo .cav{width:56px;height:56px;font-size:20px}.mo b{display:block;font:700 24px/1.1 var(--display);color:var(--navy)}.mo small{font-size:13px;color:var(--muted)}
   .payclues{list-style:none;margin:8px 0 6px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
   .payclues li{font:600 12px/1.3 var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:5px 10px}
   .payclues li:first-child{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
@@ -1239,6 +1240,60 @@
     c.pre = '<ul class="payclues">' + clues.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>';
     return { id: "pay:" + y + ":" + pl, play: true, scope: "league", c: c };
   }
+  // 🏷️ Name that team (Play): "Before they were X, they were…" from the team-name history (vault owners[].teams).
+  function namesCard() {
+    var V = window.MAFFL_VAULT; if (!V) return null;
+    var cur = {}; TEAMS.forEach(function (t) { if (!/ghost/i.test(t.team)) cur[norm(t.owner)] = t; });
+    var olds = {}; Object.keys(V.owners).forEach(function (o) { var t = cur[norm(o)]; V.owners[o].teams.forEach(function (x) { if (!t || x[1] !== t.team) (olds[o] = olds[o] || {})[x[1]] = (olds[o][x[1]] || []).concat([x[0]]); }); });
+    var cands = Object.keys(olds).filter(function (o) { return cur[norm(o)] && Object.keys(olds[o]).length; }).sort();
+    if (cands.length < 3) return null;
+    var o = cands[hashStr("names" + (W.weekNumber || 0)) % cands.length], t = cur[norm(o)], names = Object.keys(olds[o]);
+    var ans = names[hashStr("nm" + o + W.weekNumber) % names.length], yrs = olds[o][ans];
+    var dec = []; cands.filter(function (x) { return x !== o; }).sort(function (a, b) { return hashStr("d" + a + W.weekNumber) - hashStr("d" + b + W.weekNumber); }).forEach(function (x) {
+      if (dec.length < 2) { var n = Object.keys(olds[x]).filter(function (z) { return names.indexOf(z) < 0 && z !== t.team && dec.indexOf(z) < 0; })[0]; if (n) dec.push(n); } });
+    if (dec.length < 2) return null;
+    var opts = dec.concat([ans]).sort(function (a, b) { return hashStr("o" + a) - hashStr("o" + b); }).map(function (n) { return { v: n, label: n, sub: "" }; });
+    var span = yrs[0] + (yrs.length > 1 ? "–" + yrs[yrs.length - 1] : "");
+    var c = quiz("names" + norm(o).replace(/\W/g, ""), "🏷️ Name that team", "Before they were " + t.team + ", " + shortOf(o) + " played as…", opts, ans,
+      esc(o) + " played as " + esc(ans) + " in " + span + ". " + (names.length > 1 ? "That's one of " + (names.length + 1) + " names they've used." : ""));
+    return { id: "names:" + o, play: true, scope: "league", c: c };
+  }
+  // 👋 Meet the owner (Vault): one active owner a week, their whole MAFFL story on one card.
+  function ownerCard() {
+    var V = window.MAFFL_VAULT; if (!V) return null;
+    var act = TEAMS.filter(function (t) { return !/ghost/i.test(t.team) && !isMe(t.owner); }).map(function (t) { return t.owner; }).filter(function (o) { return vOwner(o); }).sort();
+    if (!act.length) return null;
+    var o = act[hashStr("meet" + (W.weekNumber || 0)) % act.length], v = vOwner(o), t = teamOf(o), names = []; v.teams.forEach(function (x) { if (names.indexOf(x[1]) < 0) names.push(x[1]); });
+    var games = (window.MATCHUPS_DATA || []).filter(function (r) { return norm(r[3]) === norm(o) || norm(r[5]) === norm(o); }), opp = {};
+    games.forEach(function (r) { var x = norm(r[3]) === norm(o) ? r[5] : r[3]; opp[x] = (opp[x] || 0) + 1; });
+    var riv = Object.keys(opp).sort(function (a, b) { return opp[b] - opp[a]; })[0], rr = riv ? h2h(o, riv) : null;
+    var rows = [["Since", v.first + " · " + v.seasons + " season" + (v.seasons === 1 ? "" : "s")], ["Titles", v.titles.length ? v.titles.join(", ") : "Still chasing one"],
+      v.ru.length ? ["Runner-up", v.ru.join(", ")] : null, ["Record", v.w + "–" + v.l + (v.w + v.l ? " (" + Math.round(100 * v.w / (v.w + v.l)) + "%) since 2005" : "")],
+      v.playoffs.length ? ["Playoffs", v.playoffs.length + " trips"] : null, v.bigBuy ? ["Biggest buy", v.bigBuy[2] + " " + v.bigBuy[1] + ", $" + v.bigBuy[3] + " (" + v.bigBuy[0] + ")"] : null,
+      v.fav ? ["Can't quit", v.fav[0] + ", bought " + v.fav[2] + " times"] : null, riv ? ["Most-played rival", shortOf(riv) + " · " + opp[riv] + " games · " + rr.aw + "–" + rr.bw] : null,
+      names.length > 1 ? ["Also known as", names.filter(function (n) { return n !== t.team; }).slice(-3).join(" · ")] : null].filter(Boolean);
+    return { id: "owner:" + o, scope: "league", c: { eb: "👋 Meet the owner", t: "", face: '<div class="fc"><div class="mo"><span class="cav">' + initials(o) + '</span><div><b>' + esc(o) + '</b><small>' + esc(t.team) + ' · ' + (t.tier === "U" ? "Upper" : "Lower") + '</small></div></div>' +
+      '<div class="frows">' + rows.map(function (r) { return '<div class="frow"><span style="flex:0 0 112px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + r[0] + '</span><span style="flex:1">' + esc(r[1]) + '</span></div>'; }).join("") + '</div>' +
+      '<div class="btns"><button class="b" data-owner="' + esc(o) + '">Full profile ›</button></div></div>' } };
+  }
+  function vOwner(o) { var V = window.MAFFL_VAULT; if (!V) return null; var k = Object.keys(V.owners).filter(function (x) { return norm(x) === norm(o); })[0]; return k ? V.owners[k] : null; }
+  // 📈 Records watch (League week): only when someone is close. All-time regular-season points and wins since 2005, with this
+  // season added (Vault totals run through 2025): the closest chase for a spot in the top 10, or a round-number milestone.
+  function recordsCard() {
+    var V = window.MAFFL_VAULT; if (!V || W !== LATEST) return null;
+    var live = Object.keys(V.owners).map(function (o) { var v = V.owners[o], t = BY_OWNER[norm(o)]; return { o: o, pf: v.pf + (t ? t.points : 0), w: v.w + (t ? t.w : 0), act: !!t }; });
+    var byPf = live.slice().sort(function (a, b) { return b.pf - a.pf; }), best = null;
+    byPf.slice(0, 10).forEach(function (x, k) { if (!k || !x.act) return; var ahead = byPf[k - 1], gap = ahead.pf - x.pf;
+      if (gap > 0 && gap < 160 && (!best || gap < best.gap)) best = { kind: "pf", x: x, ahead: ahead, gap: gap, rank: k }; });
+    var ms = null; live.forEach(function (x) { if (!x.act) return; var next = Math.ceil((x.w + 1) / 25) * 25, need = next - x.w; if (need <= 2 && next >= 100 && (!ms || need < ms.need)) ms = { x: x, next: next, need: need }; });
+    if (!best && !ms) return null;
+    var h, sub, chips;
+    if (best) { h = shortOf(best.x.o) + " is " + Math.round(best.gap) + " points from passing " + shortOf(best.ahead.o) + " for #" + best.rank + " all-time";
+      sub = "Regular-season points since 2005, this season included."; chips = ['#' + best.rank + ' ' + shortOf(best.ahead.o) + ' · ' + Math.round(best.ahead.pf).toLocaleString(), '#' + (best.rank + 1) + ' ' + shortOf(best.x.o) + ' · ' + Math.round(best.x.pf).toLocaleString()]; }
+    else { h = shortOf(ms.x.o) + " is " + ms.need + " win" + (ms.need === 1 ? "" : "s") + " from " + ms.next + " career wins"; sub = "Regular-season wins since 2005."; chips = [ms.x.w + " wins now"]; }
+    return { id: "records:" + (best ? best.x.o : ms.x.o), scope: "league", c: { eb: "📈 Records watch", t: "", face: '<div class="fc"><h3 style="font-size:28px">' + esc(h) + '</h3><p class="fs">' + esc(sub) + '</p>' +
+      '<div class="fchips">' + chips.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join("") + '</div><div class="btns"><button class="b" data-vaultrec="1">All-time records ›</button></div></div>' } };
+  }
   // 🎱 The 8 Ball, reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
   function tidbitCard(off) {
     var T = (window.MAFFL_VAULT && MAFFL_VAULT.tidbits) || []; if (!T.length) return null;
@@ -1561,9 +1616,10 @@
   // and it ends with "You're caught up". Things that need you (trades, the desk, dues) sit in a strip above the feed.
   var SERIES = { // id prefix → group, rank inside the group (lower = first)
     result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
-    deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 6], other: ["league", 7],
-    gotw: ["play", 1], pay: ["play", 2], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1], history: ["vault", 2], tidbit: ["vault", 3] };
-  var BUDGET = { you: 5, league: 5, play: 3, vault: 3 }, BUDGET_OFF = { you: 3, league: 3, play: 4, vault: 7 };
+    deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 7], other: ["league", 8],
+    records: ["league", 6],
+    gotw: ["play", 1], pay: ["play", 2], names: ["play", 2], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1], history: ["vault", 2], owner: ["vault", 2], tidbit: ["vault", 3] };
+  var BUDGET = { you: 5, league: 6, play: 3, vault: 3 }, BUDGET_OFF = { you: 3, league: 4, play: 4, vault: 7 };
   function offSeason() { return !W || !W.weekNumber || W.weekNumber > 17 || !(W.results || []).length; } // no games this week: the Vault gets the room
   var FEED_ORDER = ["you", "you", "league", "play", "league", "vault", "you", "league", "play", "league", "you", "vault", "play", "league", "you"];
   var INBOX = [], NEEDS = [], pos = 0;
@@ -1651,8 +1707,14 @@
       '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + esc(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + esc(tCold) + '</span></div>' : '') + '</div>' +
       '</div>' } });
     // 🗄️ Vault: a throwback + an 8 Ball a week; the off-season gets three of each (commish 11/7)
-    var hc = historyCard(); if (hc) all.push(hc);
-    var pc = payCard(); if (pc) all.push(pc);
+    // Vault + Play rotation (commish 11/7): in season, What would you pay? and Name that team take turns, as do This week in
+    // history and Meet the owner; the off-season gets all of them.
+    var odd = (W.weekNumber || 0) % 2 === 1, off = offSeason();
+    if (off || !odd) { var hc = historyCard(); if (hc) all.push(hc); }
+    if (off || odd) { var oc2 = ownerCard(); if (oc2) all.push(oc2); }
+    if (off || !odd) { var pc = payCard(); if (pc) all.push(pc); }
+    if (off || odd) { var nc = namesCard(); if (nc) all.push(nc); }
+    var rw = recordsCard(); if (rw) all.push(rw);
     for (var vi = 0; vi < (offSeason() ? 3 : 1); vi++) { var tb = throwbackCard(vi), td = tidbitCard(vi); if (tb && !all.some(function (x) { return x.id === tb.id; })) all.push(tb); if (td && !all.some(function (x) { return x.id === td.id; })) all.push(td); }
     // 🏆 Coach of the Week: ONE league-wide card, both tiers (commish 11/7). Winner + runners-up, bench left; Full report opens the board.
     var CW = W.coachOfWeek || {};
@@ -2615,6 +2677,7 @@
     if ((el = e.target.closest("[data-tjump]"))) { var tp = $("tpend"); if (tp) tp.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     if ((el = e.target.closest("[data-stat]"))) { try { statBox(JSON.parse(el.dataset.stat)); } catch (_) {} return; }
     if ((el = e.target.closest("[data-wkgo]"))) { setWeek(+el.dataset.wkgo); toast(+el.dataset.wkgo === LATEST.weekNumber ? "Back to this week" : "Week " + el.dataset.wkgo + "'s reel"); return; }
+    if ((el = e.target.closest("[data-vaultrec]"))) { VAULT_SUB = "records"; LEAGUE_SUB = "vault"; renderLeague(); tab("league"); return; }
     if ((el = e.target.closest("[data-vaultq]"))) { closeSheet(); VQ = el.dataset.vaultq; VY = ""; VAULT_SUB = "draft"; LEAGUE_SUB = "vault"; renderLeague(); tab("league"); return; }
     if ((el = e.target.closest("[data-vault]"))) { openSheet("vault", el.dataset.vault); return; }
     if ((el = e.target.closest("[data-coach]"))) { openSheet("coach"); return; }

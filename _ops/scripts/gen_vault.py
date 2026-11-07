@@ -232,6 +232,15 @@ def build():
                      "divTitles": [y for y in years for d in out[str(y)].get("divs", []) if d["tier"] == "U" and d["t"] and d["t"][0][0] == o],
                      "playoffs": sorted(po_years[o]), "w": r[0], "l": r[1], "pf": round(r[2], 2),
                      "teams": [[y, S[y]["teams"][o]["team"]] for y in sorted(seasons_of[o])]}
+        buys = [(x["$"], y, x["p"], x["pos"]) for y in sorted(S) for x in S[y]["spends"] if x["o"] == o]
+        if buys:
+            big = max(buys); owners[o]["bigBuy"] = [big[1], big[2], big[3], big[0]]
+            cnt = defaultdict(int)
+            for b_ in buys:
+                if b_[3] in ("QB", "RB", "WR", "TE"): cnt[(b_[2], b_[3])] += 1  # skill players: the ones people remember
+            if cnt:
+                fav = max(cnt.items(), key=lambda kv: (kv[1], kv[0][0]))
+                if fav[1] >= 3: owners[o]["fav"] = [fav[0][0], fav[0][1], fav[1]]
     # ---- records
     all_games = [dict(x, y=y) for y in years for x in S[y]["games"] if x["w"] and x["l"]]
     sc = [(x["ws"], x["y"], x["wk"], x["w"], x["wt"], x["l"]) for x in all_games] + [(x["ls"], x["y"], x["wk"], x["l"], x["lt"], x["w"]) for x in all_games]

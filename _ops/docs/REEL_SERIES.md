@@ -1,6 +1,6 @@
 # REEL card series — the catalog
 
-Last updated: 2026-11-07 (chat) · v1.2 · Owner: commissioner (Mike)
+Last updated: 2026-11-07 (chat) · v1.3 · Owner: commissioner (Mike)
 
 The reel is built from **series**. A series is a family of cards with one job (your result, Coach of the Week,
 a throwback...). This page is where we plan them: what each series is, who sees it, how often, who writes it, and how
@@ -24,9 +24,9 @@ together. Mark it up freely: strike things, add ideas at the bottom.
 |---|---|---|
 | ⚡ Needs you | all (strip) | Things to act on |
 
-Off-season (no games that week): Your week 3 · League week 3 · Play 4 · **Vault 7** (three throwbacks + three 8 Balls + history).
+Off-season (no games that week): Your week 3 · League week 4 · Play 4 · **Vault 7** (three throwbacks + three 8 Balls + history).
 | ⭐ Your week | 5 | About you: your game, your race, your chats |
-| 🏟️ League week | 5 | What happened, league-wide or your tier |
+| 🏟️ League week | 6 | What happened, league-wide or your tier |
 | 🎯 Play | 3 | Quizzes, polls, Game of the Week, What would you pay? |
 | 🗄️ Vault | 3 | League history, one bite at a time (throwback · this week in history · 8 Ball) |
 
@@ -72,15 +72,17 @@ then anything left inside the budget.
 | 3 | Coach of the Week (both tiers) | `coach` | league | Weekly | data | Built |
 | 4 | High scores (both tiers) | `high` | league | Weekly | data | Built |
 | 5 | Elite 5 (your line on a shared card) | `elite5` | league | Weekly | robot | Built |
-| 6 | Credit races | `credits` | tier | Weekly | data | Built |
-| 7 | The other tier in one look | `other` | league | Weekly | data | Built |
+| 7 | Credit races | `credits` | tier | Weekly | data | Built |
+| 6 | 📈 Records watch (someone within 160 pts of the next all-time points spot, top 10, or 2 wins from a round career-win milestone) | `records:*` | league | Only when close | data (Vault totals + this season) | Built |
+| 8 | The other tier in one look | `other` | league | Weekly | data | Built |
 
 ### 🎯 Play (3)
 
 | Rank | Series | id | Audience | When | Writer | Status |
 |---|---|---|---|---|---|---|
 | 1 | Game of the Week vote | `gotw` | league | Weekly | data | Built |
-| 2 | 💸 What would you pay? (a $40+ buy from a past auction, 3 prices, results after you answer) | `pay:*` | league | Weekly, rotating pool | data | Built |
+| 2 | 🏷️ Name that team ("Before they were X, they were…", decoys from other owners' old names) | `names:*` | league | Odd weeks (even: What would you pay?) | data (team-name history) | Built |
+| 2 | 💸 What would you pay? (a $40+ buy from a past auction with clues, 3 prices, results after you answer) | `pay:*` | league | Even weeks, rotating pool | data | Built |
 | 2 | Polls | `poll:*` | league or tier | When the commish posts one | commish (desk) | Built |
 | 3 | Quizzes (top score, bench blunder, Survivor…) | `quiz:*` | league | Weekly | data | Built |
 
@@ -90,10 +92,8 @@ then anything left inside the budget.
 |---|---|---|---|---|---|---|
 | 1 | Throwback (a past season) | `throwback:YYYY` | league | Weekly, rotating pool | commish line + data | Built (lines drafted, commish editing) |
 | 3 | 🎱 8 Ball (tidbits, reborn) | `tidbit:*` | league | Weekly, rotating pool | commish (`data/MAFFL_Tidbits.csv`: hook + line + player/position) + data (price history chart) | Built: 25 drafted, commish editing |
-| 2 | 📅 This week in MAFFL history (record score, biggest blowout, closest game or title game for the coming week number) | `history:*` | league | Weekly (next week's number) | data (`weekly` in vault-data.js) | Built |
-| 5 | Name that team | `names` | league | Rotating | data (team-name history) | Planned |
-| 6 | Meet the owner | `owner` | league | Rotating, one owner a week | data + commish line | Planned |
-| 7 | Records watch | `records` | league | When someone is close | data | Planned |
+| 2 | 📅 This week in MAFFL history (record score, biggest blowout, closest game or title game for the coming week number) | `history:*` | league | Even weeks (odd: Meet the owner), next week's number | data (`weekly` in vault-data.js) | Built |
+| 2 | 👋 Meet the owner (since, titles, record, playoffs, biggest buy, can't-quit player, most-played rival, old team names) | `owner:*` | league | Odd weeks, one owner (not you) | data | Built |
 
 ## Rules of thumb
 

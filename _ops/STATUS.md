@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), What would you pay? clues + history year
+**Last updated:** 2026-11-07 by Claude (chat), REEL series: Name that team, Meet the owner, Records watch
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Last three Vault-data series: 🏷️ **Name that team** (Play: "Before they were X, <owner> played as…", decoys from other owners' old names), 👋 **Meet the owner** (Vault: one owner a week, not you: since, titles, runner-ups, record, playoff trips, biggest buy, can't-quit player, most-played rival + record, old team names; Full profile ›), 📈 **Records watch** (League week, only when close: all-time points chase for a top-10 spot within 160, or 2 wins from a round career-win number; Vault totals + this season). In season they rotate (odd weeks: Meet the owner + Name that team; even: This week in history + What would you pay?); off-season shows all. League week budget 6. gen_vault adds each owner's biggest buy and most-bought skill player. REEL_SERIES.md v1.3.
 - 2026-11-07 · REEL · 💸 What would you pay? gets clues (commish: a 2006 price was a wild guess): NFL team + position, how many times MAFFL had bought him, last year's price, that auction's top buy, the draft era; the reveal adds his rank at his position. New `pay` pool in vault-data.js (every $40+ buy with its clues, 544). 📅 This week in history leads with the year, big (no repeat in the headline).
 - 2026-11-07 · REEL · Commish desk cleanup (commish): 🏷️ Test trade block removed (app + backend `seedblock` op; it was a one-time fill); 🧪 Beta crew moved up into League; 📊 polls moved off the desk into Chat (commish-only Polls row on top of the inbox: ＋ New poll, open polls with Close). New 📣 **Commish alert** on the desk (top of League): one announcement posted by the commish into League chat + both tier chats as a gold alert card, pinned on top of each (unpin from ⋯); inbox preview reads "📣 Commish alert: …". Backend logic v0.26 (desk op `announce`; regression refreshed: seedblock line → announce + pinned check). Tested on the mock at 390px.
 - 2026-11-07 · REEL · Two new series: 💸 **What would you pay?** (Play: a $40+ buy from a past auction, three prices, one shot, then how everyone guessed and where it ranked in that auction, plus whether the buyer won the title) and 📅 **This week in MAFFL history** (Vault: for the coming week number, the record score, biggest blowout, closest game or title game, from new `weekly` in vault-data.js; "That was you" when it was). Vault budget 3 in season (throwback, history, 8 Ball), 7 off-season; Play 4 off-season. REEL_SERIES.md v1.2.
