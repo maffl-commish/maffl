@@ -1,6 +1,6 @@
 # REEL card series — the catalog
 
-Last updated: 2026-11-07 (chat) · v1.1 · Owner: commissioner (Mike)
+Last updated: 2026-11-07 (chat) · v1.2 · Owner: commissioner (Mike)
 
 The reel is built from **series**. A series is a family of cards with one job (your result, Coach of the Week,
 a throwback...). This page is where we plan them: what each series is, who sees it, how often, who writes it, and how
@@ -24,11 +24,11 @@ together. Mark it up freely: strike things, add ideas at the bottom.
 |---|---|---|
 | ⚡ Needs you | all (strip) | Things to act on |
 
-Off-season (no games that week): Your week 3 · League week 3 · Play 3 · **Vault 6** (three throwbacks + three 8 Balls).
+Off-season (no games that week): Your week 3 · League week 3 · Play 4 · **Vault 7** (three throwbacks + three 8 Balls + history).
 | ⭐ Your week | 5 | About you: your game, your race, your chats |
 | 🏟️ League week | 5 | What happened, league-wide or your tier |
-| 🎯 Play | 3 | Quizzes, polls, Game of the Week |
-| 🗄️ Vault | 2 | League history, one bite at a time |
+| 🎯 Play | 3 | Quizzes, polls, Game of the Week, What would you pay? |
+| 🗄️ Vault | 3 | League history, one bite at a time (throwback · this week in history · 8 Ball) |
 
 "You're caught up" ends the feed, then lists earlier weeks (tap → that week's reel, with Back to this week).
 
@@ -80,6 +80,7 @@ then anything left inside the budget.
 | Rank | Series | id | Audience | When | Writer | Status |
 |---|---|---|---|---|---|---|
 | 1 | Game of the Week vote | `gotw` | league | Weekly | data | Built |
+| 2 | 💸 What would you pay? (a $40+ buy from a past auction, 3 prices, results after you answer) | `pay:*` | league | Weekly, rotating pool | data | Built |
 | 2 | Polls | `poll:*` | league or tier | When the commish posts one | commish (desk) | Built |
 | 3 | Quizzes (top score, bench blunder, Survivor…) | `quiz:*` | league | Weekly | data | Built |
 
@@ -88,9 +89,8 @@ then anything left inside the budget.
 | Rank | Series | id | Audience | When | Writer | Status |
 |---|---|---|---|---|---|---|
 | 1 | Throwback (a past season) | `throwback:YYYY` | league | Weekly, rotating pool | commish line + data | Built (lines drafted, commish editing) |
-| 2 | 🎱 8 Ball (tidbits, reborn) | `tidbit:*` | league | Weekly, rotating pool | commish (`data/MAFFL_Tidbits.csv`: hook + line + player/position) + data (price history chart) | Built: 25 drafted, commish editing |
-| 3 | This week in MAFFL history | `history` | league | Weekly (same week number) | data | Planned |
-| 4 | What would you pay? | `pay` | league | Rotating | data (auction archive) | Planned (play-style quiz) |
+| 3 | 🎱 8 Ball (tidbits, reborn) | `tidbit:*` | league | Weekly, rotating pool | commish (`data/MAFFL_Tidbits.csv`: hook + line + player/position) + data (price history chart) | Built: 25 drafted, commish editing |
+| 2 | 📅 This week in MAFFL history (record score, biggest blowout, closest game or title game for the coming week number) | `history:*` | league | Weekly (next week's number) | data (`weekly` in vault-data.js) | Built |
 | 5 | Name that team | `names` | league | Rotating | data (team-name history) | Planned |
 | 6 | Meet the owner | `owner` | league | Rotating, one owner a week | data + commish line | Planned |
 | 7 | Records watch | `records` | league | When someone is close | data | Planned |

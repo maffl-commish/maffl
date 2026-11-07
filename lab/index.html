@@ -1200,6 +1200,37 @@
     var ys = Object.keys(V.seasons).filter(function (y) { return V.seasons[y].line; }).map(Number).sort(function (a, b) { return a - b; });
     return ys.length ? ys[((W.weekNumber || 0) + (off || 0) * 7) % ys.length] : null; // one a week, rotating through the seasons that have a story line
   }
+  // 📅 This week in MAFFL history (commish 11/7): a standout game from the coming week's number in a past season
+  // (highest score, biggest blowout, closest finish, or a title game), from vault-data.js `weekly`.
+  function historyCard() {
+    var V = window.MAFFL_VAULT, wk = NEXT_WK, L = V && V.weekly && V.weekly[String(wk)]; if (!L || !L.length) return null;
+    var g = L[hashStr("hist" + wk + (W.weekNumber || 0)) % L.length], kind = g[0], y = g[1], m = f2(g[4] - g[7]);
+    var head = kind === "high" ? esc(g[3]) + " put up " + f2(g[4]) + ", the most anyone has scored in a Week " + wk
+      : kind === "blowout" ? esc(g[3]) + " beat " + esc(g[6]) + " by " + m + ", the biggest Week " + wk + " win ever"
+      : kind === "thriller" ? esc(g[3]) + " won by " + m + ", the closest Week " + wk + " game ever"
+      : esc(g[3]) + " won the " + y + " title";
+    var mine = isMe(g[2]) || isMe(g[5]);
+    return { id: "history:" + wk + ":" + y, scope: "league", c: { eb: "📅 This week in MAFFL history", t: "", face: '<div class="fc">' +
+      '<div class="tbyr"><b>Week ' + wk + '</b><small>' + y + '</small></div><h3 style="font-size:24px;line-height:1.2;margin-top:8px">' + head + '.</h3>' +
+      '<div class="tbfinal"><div class="w"><span>' + esc(g[3]) + ' <small>' + esc(shortOf(g[2])) + '</small></span><b>' + f2(g[4]) + '</b></div><div><span>' + esc(g[6]) + ' <small>' + esc(shortOf(g[5])) + '</small></span><b>' + f2(g[7]) + '</b></div></div>' +
+      '<div class="fchips"><span>' + ({ high: "🚀 Week " + wk + " record", blowout: "🔨 Week " + wk + " blowout record", thriller: "⏱️ Closest Week " + wk + " game", final: "🏆 Title game" }[kind]) + '</span>' + (mine ? '<span>That was you</span>' : '') + '</div>' +
+      '<div class="btns"><button class="b" data-vault="' + y + '">Open ' + y + ' in the Vault ›</button></div></div>' } };
+  }
+  // 💸 What would you pay? (commish 11/7): a big buy from a past auction, three prices, one shot; then how everyone guessed.
+  function payCard() {
+    var V = window.MAFFL_VAULT; if (!V) return null;
+    var pool = []; Object.keys(V.seasons).forEach(function (y) { (V.seasons[y].spends || []).forEach(function (b, k) { if (b[3] >= 40) pool.push({ y: +y, o: b[0], p: b[1], pos: b[2], $: b[3], rank: k + 1 }); }); });
+    if (!pool.length) return null;
+    var b = pool[hashStr("pay" + (W.weekNumber || 0)) % pool.length], rnd = hashStr("payd" + b.p + b.y);
+    var d1 = 12 + rnd % 9, d2 = 22 + (rnd >> 3) % 12, opts = [b.$, b.$ + d1, Math.max(5, b.$ - d2)];
+    if (rnd % 2) opts[1] = Math.max(5, b.$ - d1), opts[2] = b.$ + d2;
+    opts = opts.filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(function (x, z) { return x - z; });
+    var champ = ((V.seasons[b.y] || {}).champ || []).indexOf(b.o) >= 0;
+    var c = quiz("pay" + b.y + b.p.replace(/\W/g, ""), "💸 What would you pay? · " + b.y, "In " + b.y + ", " + shortOf(b.o) + " bought " + b.p + " (" + b.pos + "). What did it cost?",
+      opts.map(function (v) { return { v: "$" + v, label: "$" + v, sub: "" }; }), "$" + b.$,
+      esc(b.o) + " paid $" + b.$ + ", the #" + b.rank + " buy of the " + b.y + " auction" + (champ ? ", and won the title that year." : "."));
+    return { id: "pay:" + b.y + ":" + b.p, play: true, scope: "league", c: c };
+  }
   // 🎱 The 8 Ball, reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
   function tidbitCard(off) {
     var T = (window.MAFFL_VAULT && MAFFL_VAULT.tidbits) || []; if (!T.length) return null;
@@ -1523,8 +1554,8 @@
   var SERIES = { // id prefix → group, rank inside the group (lower = first)
     result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
     deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 6], other: ["league", 7],
-    gotw: ["play", 1], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1], tidbit: ["vault", 2] };
-  var BUDGET = { you: 5, league: 5, play: 3, vault: 2 }, BUDGET_OFF = { you: 3, league: 3, play: 3, vault: 6 };
+    gotw: ["play", 1], pay: ["play", 2], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1], history: ["vault", 2], tidbit: ["vault", 3] };
+  var BUDGET = { you: 5, league: 5, play: 3, vault: 3 }, BUDGET_OFF = { you: 3, league: 3, play: 4, vault: 7 };
   function offSeason() { return !W || !W.weekNumber || W.weekNumber > 17 || !(W.results || []).length; } // no games this week: the Vault gets the room
   var FEED_ORDER = ["you", "you", "league", "play", "league", "vault", "you", "league", "play", "league", "you", "vault", "play", "league", "you"];
   var INBOX = [], NEEDS = [], pos = 0;
@@ -1612,6 +1643,8 @@
       '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + esc(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + esc(tCold) + '</span></div>' : '') + '</div>' +
       '</div>' } });
     // 🗄️ Vault: a throwback + an 8 Ball a week; the off-season gets three of each (commish 11/7)
+    var hc = historyCard(); if (hc) all.push(hc);
+    var pc = payCard(); if (pc) all.push(pc);
     for (var vi = 0; vi < (offSeason() ? 3 : 1); vi++) { var tb = throwbackCard(vi), td = tidbitCard(vi); if (tb && !all.some(function (x) { return x.id === tb.id; })) all.push(tb); if (td && !all.some(function (x) { return x.id === td.id; })) all.push(td); }
     // 🏆 Coach of the Week: ONE league-wide card, both tiers (commish 11/7). Winner + runners-up, bench left; Full report opens the board.
     var CW = W.coachOfWeek || {};

@@ -264,7 +264,28 @@ def build():
                 print("Tidbit %s: no auction history for %r" % (r["Key"], pl), file=sys.stderr); sys.exit(1)
             tidbits.append({"key": r["Key"].strip(), "hook": r["Hook"].strip(), "line": r["Line"].strip(), "player": pl,
                             "pos": ps, "w": int(num(r.get("Weight"), 1)) or 1, "hist": sorted(hist.get((pl, ps), []))})
-    return {"v": 1, "tidbits": tidbits, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
+    # ---- 📅 this week in MAFFL history: for each week number, the standout games across every season (2005+)
+    weekly = defaultdict(list)
+    for wk in range(1, 18):
+        g = [x for x in all_games if x["wk"] == wk]
+        if not g:
+            continue
+        reg = [x for x in g if x["type"] == "Regular"]
+        pick = []
+        if reg:
+            hi = max(reg, key=lambda x: x["ws"]); pick.append(("high", hi))
+            bl = max(reg, key=lambda x: x["ws"] - x["ls"]); pick.append(("blowout", bl))
+            cl = min((x for x in reg if x["ws"] > x["ls"]), key=lambda x: x["ws"] - x["ls"], default=None)
+            if cl: pick.append(("thriller", cl))
+        for x in g:
+            if x["type"] == "Championship" and x["tier"] == "U": pick.append(("final", x))
+        seen = set()
+        for kind, x in pick:
+            k = (x["y"], x["w"], x["l"])
+            if k in seen: continue
+            seen.add(k)
+            weekly[str(wk)].append([kind, x["y"], x["w"], x["wt"], x["ws"], x["l"], x["lt"], x["ls"], x["type"]])
+    return {"v": 1, "tidbits": tidbits, "weekly": weekly, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
             "draftEras": [{"name": e[0], "from": e[1], "to": e[2]} for e in DRAFT_ERAS],
             "owners": owners, "records": records, "seasons": out}
 
