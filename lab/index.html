@@ -1757,7 +1757,7 @@
     return rows.filter(function (r) { return r.length > 1; }).map(function (r) { var o = {}; head.forEach(function (h, k) { o[h] = r[k]; }); return o; });
   }
   function loadRosters() {
-    var landed = function () { SIDE.rosters = rostersReady() ? "ok" : "loading"; sideLanded("rosters"); };
+    var landed = function () { _repl = {}; _first = null; SIDE.rosters = rostersReady() ? "ok" : "loading"; sideLanded("rosters"); };
     var csv = Promise.all([
       getText("../data/MAFFL_Draft_History_Clean_v3.csv").then(function (t) { DRAFT = parseCSV(t); PRICE = null; }),
       getText("../data/MAFFL_Top_Performers_2026.csv").then(function (t) { TOPS = parseCSV(t); }).catch(function () {})
@@ -1900,7 +1900,7 @@
     if ((o.reasons || []).length) h += '<div class="chips" style="margin-top:6px">' + o.reasons.map(function (r) { return '<span class="chip2 on">' + esc(r) + '</span>'; }).join("") + '</div>';
     if (o.note) h += '<p class="meta" style="margin-top:6px">“' + esc(o.note) + '”</p>';
     if (mineOffer && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0) { var gr = gradeTrade(o.from, o.to, o.give, o.get, o.giveCredits, o.getCredits);
-      h += gradeHTML(iAmFrom ? gr : { from: gr.to, to: gr.from }, "You", teamOf(other).team.split(" ")[0]); }
+      h += gradeHTML(iAmFrom ? gr : { from: gr.to, to: gr.from }, "You", shortOf(other)); }
     if (o.reason) h += '<p class="meta">Commish: ' + esc(o.reason) + '</p>';
     var btn = "";
     if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
@@ -2066,31 +2066,62 @@
   // giving one away hurts. Real per-game averages replace the production term once the ESPN stat pull exists.
   var CREDIT_VALUE = 2, CORE = ["QB", "RB", "WR", "TE"];
   var REASONS = ["Need depth", "Win now", "Selling for the future", "Want credits", "Bye-week fix", "Just a deal"];
-  function pval(p) { return p.price + 0.5 * topWeeks(p).reduce(function (n, w) { return n + w.pts; }, 0); }
+  // ---- Trade grade v2 (commish 11/6): no auction price. NOW = points per game above a replacement player at his
+  // position in this tier (recent form weighted, injury discounted) × weeks left. FUTURE = ESPN % rostered (the market)
+  // × career stage (first MAFFL draft year stands in for age; ESPN's league API has no birthdates). Both in points.
+  var REG_END = 14, SEASON_Y = 2026, INJ = { Questionable: 0.9, Doubtful: 0.6, Out: 0.45, "Injury reserve": 0.2, Suspension: 0.3 };
+  var _repl = {}, _first = null;
+  function replLevel(tier, pos) { // the Nth-best per-game at this position among everyone rostered in the tier (N ≈ starters league-wide)
+    var k = tier + pos; if (_repl[k] != null) return _repl[k];
+    var all = [], R = rosters(); Object.keys(R).forEach(function (o) { R[o].forEach(function (p) { if (p.tier === tier && p.pos === pos && p.avg != null) all.push(p.avg); }); });
+    all.sort(function (a, b) { return b - a; });
+    var n = Math.round(TEAMS.filter(function (t) { return t.tier === tier && !/ghost/i.test(t.team); }).length * ({ QB: 1.5, RB: 2.5, WR: 3, TE: 1.2, K: 1, "D/ST": 1 }[pos] || 2));
+    return (_repl[k] = all.length ? all[Math.min(all.length - 1, n)] : 0);
+  }
+  function firstYear(name) {
+    if (!_first) { _first = {}; DRAFT.forEach(function (d) { var n = norm(d.Player || d.Player_Raw); if (!_first[n] || +d.Year < _first[n]) _first[n] = +d.Year; }); }
+    return _first[norm(name)] || SEASON_Y;
+  }
+  function pvalParts(p) {
+    if (p.avg == null) { var tw = topWeeks(p).reduce(function (n, w) { return n + w.pts; }, 0); return { now: 0.5 * tw, fut: 0, est: true }; } // no ESPN stats: old top-3 fallback
+    var ws = wkList(p).slice(-4), recent = ws.length ? ws.reduce(function (a, x) { return a + x.pts; }, 0) / ws.length : p.avg;
+    var ppg = 0.6 * p.avg + 0.4 * recent, left = Math.max(1, REG_END - (LATEST ? LATEST.weekNumber : 8)) + 1.5; // + a bit for the playoffs
+    var now = Math.max(0, ppg - replLevel(p.tier, p.pos)) * left * (INJ[p.inj] != null ? INJ[p.inj] : 1);
+    var yrs = SEASON_Y - firstYear(p.name), stage = yrs <= 1 ? 1.3 : yrs <= 4 ? 1.05 : yrs <= 7 ? 0.75 : 0.45;
+    var fut = 120 * Math.pow((p.own != null ? p.own : 30) / 100, 2) * stage * (["QB", "RB", "WR", "TE"].indexOf(p.pos) >= 0 ? 1 : 0.3);
+    return { now: now, fut: fut, yrs: yrs };
+  }
+  function pval(p) { var x = pvalParts(p); return x.now + x.fut; }
   function depth(owner) { var d = {}; CORE.forEach(function (k) { d[k] = 0; }); rosterOf(owner).forEach(function (p) { if (d[p.pos] != null) d[p.pos]++; }); return d; }
   function tierDepth(tier) {
     var owners = TEAMS.filter(function (t) { return t.tier === tier && !/ghost/i.test(t.team); }), avg = {};
     CORE.forEach(function (k) { avg[k] = owners.reduce(function (n, t) { return n + depth(t.owner)[k]; }, 0) / Math.max(1, owners.length); });
     return avg;
   }
+  function letter(r) { return r >= 1.3 ? "A+" : r >= 1.12 ? "A" : r >= 0.95 ? "B" : r >= 0.8 ? "C" : r >= 0.65 ? "D" : "F"; }
   function gradeSide(owner, getsNames, getsFromOwner, getsCr, sendsNames, sendsCr) {
-    var gets = getsNames.map(function (n) { return findPlayer(getsFromOwner, n); }), sends = sendsNames.map(function (n) { return findPlayer(owner, n); });
-    var inV = gets.reduce(function (n, p) { return n + pval(p); }, 0) + getsCr * CREDIT_VALUE, outV = sends.reduce(function (n, p) { return n + pval(p); }, 0) + sendsCr * CREDIT_VALUE;
-    var d = depth(owner), avg = tierDepth(teamOf(owner).tier), fit = 0, why = [], who = isMe(owner) ? "you" : teamOf(owner).team.split(" ")[0];
-    gets.forEach(function (p) { if (d[p.pos] != null && d[p.pos] < avg[p.pos]) { fit += 0.06; why.push("Gives " + who + " a needed " + p.pos + " (" + d[p.pos] + " vs tier avg " + avg[p.pos].toFixed(1) + ")"); } });
+    var gets = getsNames.map(function (n) { return findPlayer(getsFromOwner, n); }).filter(Boolean), sends = sendsNames.map(function (n) { return findPlayer(owner, n); }).filter(Boolean);
+    var sum = function (list, k) { return list.reduce(function (n, p) { return n + pvalParts(p)[k]; }, 0); };
+    var nowIn = sum(gets, "now") + getsCr * CREDIT_VALUE, nowOut = sum(sends, "now") + sendsCr * CREDIT_VALUE, futIn = sum(gets, "fut"), futOut = sum(sends, "fut");
+    var inV = nowIn + futIn, outV = nowOut + futOut;
+    var d = depth(owner), avg = tierDepth(teamOf(owner).tier), fit = 0, why = [], who = isMe(owner) ? "you" : shortOf(owner);
+    gets.forEach(function (p) { if (d[p.pos] != null && d[p.pos] < avg[p.pos]) { fit += 0.06; why.push("Gives " + who + " a needed " + p.pos + " (" + d[p.pos] + " vs tier avg " + avg[p.pos].toFixed(1) + ")"); }
+      if (p.inj && INJ[p.inj] != null && INJ[p.inj] < 0.7) why.push(p.name + " is " + p.inj.toLowerCase()); });
     sends.forEach(function (p) { if (d[p.pos] != null && d[p.pos] - 1 < avg[p.pos]) { fit -= 0.06; why.push("Leaves " + who + " thin at " + p.pos + " (" + (d[p.pos] - 1) + " left vs " + avg[p.pos].toFixed(1) + ")"); } });
-    var r = outV ? inV / outV + fit : (inV ? 2 : 1);
-    var g = r >= 1.3 ? "A+" : r >= 1.12 ? "A" : r >= 0.95 ? "B" : r >= 0.8 ? "C" : r >= 0.65 ? "D" : "F";
-    return { g: g, inV: inV, outV: outV, r: r, why: why };
+    var ratio = function (a, b) { return b ? a / b : (a ? 2 : 1); };
+    var r = ratio(inV, outV) + fit;
+    return { g: letter(r), gNow: letter(ratio(nowIn, nowOut)), gFut: letter(ratio(futIn, futOut)), inV: inV, outV: outV, nowIn: nowIn, nowOut: nowOut, futIn: futIn, futOut: futOut, r: r, why: why };
   }
   function gradeTrade(from, to, give, get, gc, tc) {
     return { from: gradeSide(from, get, to, tc, give, gc), to: gradeSide(to, give, from, gc, get, tc) };
   }
   function gradePill(x, label) { return '<span class="grade g' + x.g.replace("+", "p") + '">' + esc(label) + ' ' + x.g + '</span>'; }
   function gradeHTML(gr, youLabel, themLabel) {
+    var f = gr.from, fm = function (n) { return Math.round(n); };
     return '<div class="gradebox"><div class="gl">' + gradePill(gr.from, youLabel) + gradePill(gr.to, themLabel) + '</div>' +
-      '<div class="meta" style="margin-top:6px">Value in vs. out: $' + Math.round(gr.from.inV) + ' vs $' + Math.round(gr.from.outV) + ' for ' + esc(youLabel.toLowerCase()) + '</div>' +
-      (gr.from.why.concat(gr.to.why).length ? '<div class="meta">' + gr.from.why.concat(gr.to.why).slice(0, 3).map(esc).join(" · ") + '</div>' : '') + '</div>';
+      '<div class="meta" style="margin-top:6px">' + esc(youLabel) + ': <b>Now ' + f.gNow + '</b> (' + fm(f.nowIn) + ' in vs ' + fm(f.nowOut) + ' out) · <b>Future ' + f.gFut + '</b> (' + fm(f.futIn) + ' vs ' + fm(f.futOut) + ')</div>' +
+      (gr.from.why.concat(gr.to.why).length ? '<div class="meta">' + gr.from.why.concat(gr.to.why).slice(0, 3).map(esc).join(" · ") + '</div>' : '') +
+      '<details class="meta" style="margin-top:4px"><summary>How this is graded</summary>Now = points per game above a replacement player at his position in your tier (last 4 weeks count extra, injuries discounted) × weeks left. Future = how widely he\'s rostered on ESPN × career stage (years since his first MAFFL draft). Credits count 2 points each. Position fit nudges it.</details></div>';
   }
 
   // ---------- the all-rosters grid (step 1): scroll across teams, tap a team ----------
@@ -2133,7 +2164,7 @@
       function stepper(side, val, max) { return '<div class="crs"><span>💳 ' + val + '</span><button data-cr2="' + side + '" data-d="-1">−</button><button data-cr2="' + side + '" data-d="1">+</button><small>of ' + max + '</small></div>'; }
       return h + '<div class="sbs"><div><div class="colh me">You send</div>' + stepper("give", BLD.gc, availCredits(ME.owner)) + col(mineR, BLD.give, "give") + '</div>' +
         '<div><div class="colh">' + esc(them.team) + ' sends</div>' + stepper("get", BLD.tc, availCredits(BLD.with)) + col(theirR, BLD.get, "get") + '</div></div>' +
-        '<div class="sticky">' + ((gN.length + tN.length) ? gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", them.team.split(" ")[0]) : '') + '<div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
+        '<div class="sticky">' + ((gN.length + tN.length) ? gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", shortOf(BLD.with)) : '') + '<div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
         '<div class="btns" style="margin-top:6px"><button class="b" data-bstep="1">Back</button><button class="b pri" data-bstep="3"' + ((gN.length + tN.length) && (gN.length || BLD.gc) && (tN.length || BLD.tc) ? '' : ' disabled') + '>Preview trade</button></div></div>';
     }
     var checks = [
@@ -2144,7 +2175,7 @@
       [Date.now() < new Date(SUM.deadline || "2026-12-02T17:00:00Z").getTime(), "Before the Dec 2 deadline"]];
     var ok = checks.every(function (c) { return c[0]; });
     return h + '<div class="card"><div class="eb">Trade with ' + esc(them.team) + (BLD.counterOf ? ' · counteroffer' : '') + '</div><div class="two"><div>' + legHTML("You send", ME.owner, gN, BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, tN, BLD.tc) + '</div></div></div>' +
-      gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", them.team.split(" ")[0]) +
+      gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", shortOf(BLD.with)) +
       '<div class="checks">' + checks.map(function (c) { return (c[0] ? "✅ " : "❌ ") + esc(c[1]); }).join("<br>") + '</div>' +
       '<div class="grp">Why this deal? (tap any)</div><div class="chips">' + REASONS.map(function (r) { return '<button class="chip2' + (BLD.reasons[r] ? ' on' : '') + '" data-reason="' + esc(r) + '">' + esc(r) + '</button>'; }).join("") + '</div>' +
       '<input class="field" id="bnote2" maxlength="200" placeholder="Add your own note (optional)" value="' + esc(BLD.note) + '">' +

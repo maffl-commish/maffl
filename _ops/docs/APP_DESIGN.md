@@ -12,6 +12,7 @@ VERSION: 0.20 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-06 · **Trade grade v2** (commish): auction price dropped everywhere in REEL. Grade = Now (PPG above tier replacement level × weeks left, recent form, injury) + Future (ESPN % rostered × career stage via first MAFFL draft year). §7d superseded for value; position fit unchanged.
 - 2026-11-06 · **In-season mode = a daily run, not a weekly Pulse** (commish). Twice a day (5 AM + 5 PM ET): scores, rosters + moves,
   Coach/Survivor/highs, feedback digest, health; Claude writes short card lines after each run (commish picked AI lines + twice daily).
   The classic Pulse keeps going until go-live but publishes itself (no PR); it retires at go-live. §10g.
