@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-06 (chat) · 🌅 Daily run (in-season mode) + card lines; Pulse PR merges itself
+Last updated: 2026-11-07 (chat) · Walkthrough A–E shipped (cards, polls, box scores, roster lineup, chat tab, tour)
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -23,7 +23,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 ## 2. Built (in the lab sandbox, not live)
 
-Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.20** + `daily.js`, TEST Sheet.
+Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.23** + `daily.js`, TEST Sheet.
 
 | Area | What works today |
 |---|---|
@@ -61,6 +61,12 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Prices for waiver adds (FAAB paid) and draft CSV off the critical path (only player history needs it).
 - `gen_lab_weekfacts.py` added to the Tuesday robot.
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
+
+**Commish walkthrough 11/7 (voice notes, tab by tab)**: A–E shipped 11/7 (STATUS). Still open:
+- F · 🏆 **League tab overhaul**: the deep-dive area cards drill into (Rulebook is buried; standings list is too plain). Waiting on Mike's list of what owners should reach from it.
+- G · 👤 **Profile revamp**: bring Power Rankings / owner profile (years in league, draft profile, Madden-style ratings) into the app's look, behind Team → Profile.
+- Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
+- Reel is at the 16-card cap most weeks now; decide which cards drop first when it's full.
 
 **Commish backlog (added 11/6, not built)**
 - ⚖️ Trade grade v2 follow-up: a real age source for Future value (ESPN's league API has none; today it's years since first MAFFL draft). Tune weights once real trades come through.

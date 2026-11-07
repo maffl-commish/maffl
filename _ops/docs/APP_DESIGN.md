@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.20 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.21 (2026-11-07, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,7 @@ VERSION: 0.20 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-07 · **Walkthrough A–E** (commish voice notes, tab by tab): reel cards fill the screen; **two kinds of card** — 🏟️ League/tier cards (everyone sees them and everyone's reactions; Elite 5 keeps your own headline on a shared card) vs. your-team-tagged cards (no reactions); Coach of the Week is one league card for both tiers (+ 🚀 high score card); polls show results **after you vote**; chat pins stay **commish only**; Chat is a real tab (no pull-up sheet); one player screen everywhere (Match, box score, other-tier card); Team = Roster · Trades · Credits (Money and Stats retired); first-time tour per tab. League tab overhaul (F) and profile revamp (G) wait for Mike's list.
 - 2026-11-06 · **Desk = command center** (commish): opened from a floating 📥 Desk button (like 🧪 Feedback), not a chat room. Log newest first, filters, compact rows. Backend unchanged (desk room still stores the log).
 - 2026-11-06 · **Credit awards:** the daily run tracks races and weekly highs; awards are EARNED in season and only become approve cards after Week 17 (credits are issued then, commish). Approve → ledger → credit sync, same path as perks. Elite 5 now written by the card-lines robot.
 - 2026-11-06 · **Trade grade v2** (commish): auction price dropped everywhere in REEL. Grade = Now (PPG above tier replacement level × weeks left, recent form, injury) + Future (ESPN % rostered × career stage via first MAFFL draft year). §7d superseded for value; position fit unchanged.

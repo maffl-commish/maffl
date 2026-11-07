@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.22";
+var VERSION = "0.23";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -55,7 +55,7 @@ function doGet(e) {
   var p = (e && e.parameter) || {};
   try {
     if (p.action === "summary") return json(summary_(p.week, null));
-    if (p.action === "live") { try { return json(live_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
+    if (p.action === "live") { try { return json(live_(p.tier, p.week)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
     if (p.action === "rosters") { try { return json(rosters_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // what ESPN shows on each roster (public to the league anyway)
     if (p.action === "daily") { need_("daily"); return json(DAILY.view()); } // scores, standings, Coach, Survivor, moves, card lines (league-public)
     if (p.action === "ledger") return json({ ok: true, mode: syncMode_(), rows: ledger_(p.mode === "live" ? "live" : p.mode === "test" ? "test" : syncMode_()) }); // credit moves are public anyway
@@ -574,12 +574,13 @@ function bestLineup_(slots, players) {
   for (var k = 1; k <= m; k++) if (p[k]) { pts += cols[k - 1][0]; if (k - 1 < players.length) usedIdx.push(k - 1); }
   return { pts: pts, used: usedIdx };
 }
-function live_(tier) {
-  tier = tier === "L" ? "L" : "U";
-  var cache = CacheService.getScriptCache(), hit = cache.get("live_" + tier);
+function live_(tier, week) { // week = an earlier week's box score (REEL result card); finals cached 6 h
+  tier = tier === "L" ? "L" : "U"; week = Math.floor(Number(week) || 0);
+  var ck = week ? "box_" + tier + "_" + week : "live_" + tier, cache = CacheService.getScriptCache(), hit = cache.get(ck);
   if (hit) return JSON.parse(hit);
   var lid = LEAGUES[tier], base = espn_(lid, "view=mSettings&view=mTeam");
   var mp = (base.status && base.status.currentMatchupPeriod) || base.scoringPeriodId, sp = base.scoringPeriodId || mp;
+  if (week && week < mp) { mp = week; sp = week; } else week = 0;
   var counts = ((base.settings || {}).rosterSettings || {}).lineupSlotCounts || {}, slots = [];
   Object.keys(counts).forEach(function (s) { var id = +s; if (id !== 20 && id !== 21) for (var c = 0; c < counts[s]; c++) slots.push(id); });
   var names = {}; (base.teams || []).forEach(function (t) { names[t.id] = t.name || ((t.location || "") + " " + (t.nickname || "")).trim(); });
@@ -607,7 +608,8 @@ function live_(tier) {
   }
   var games = (box.schedule || []).filter(function (g) { return g.matchupPeriodId === mp; }).map(function (g) { return { home: side(g.home), away: side(g.away) }; });
   var out = { ok: true, tier: tier, week: mp, at: new Date().toISOString(), games: games };
-  var str = JSON.stringify(out); if (str.length < 95000) cache.put("live_" + tier, str, 45);
+  out.final = !!week;
+  var str = JSON.stringify(out); if (str.length < 95000) cache.put(ck, str, week ? 21600 : 45);
   return out;
 }
 
@@ -832,7 +834,7 @@ function summary_(week, owner) {
     if (owner && p[1] === norm_(owner)) myVotes[poll] = votes[k];
   });
   var polls = rows_("Polls").filter(function (p) { return String(p.active) === "Y" && (!week || String(p.week) === String(week)); })
-    .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"] }; });
+    .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"], tier: p.tier || "" }; });
   var t = trades_(owner);
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
   var last = {}; try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
@@ -883,6 +885,14 @@ function deskAct_(me, b) {
   if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
   if (b.op === "daily") { need_("daily"); return DAILY.run("button"); } // "Run daily now"
   if (b.op === "award" || b.op === "awardall") return awardAct_(b);
+  if (b.op === "poll" || b.op === "pollclose") return poll_(me, b);
+  if (b.op === "seedblock") { // 🧪 TEST Sheet only: put one player from each of 8 teams per tier on the block, so the block can be seen full
+    var notes = ["Listening to offers", "Need a RB back", "Selling high", "Open to credits", "Bye-week fix wanted", ""], n = 0;
+    ["U", "L"].forEach(function (t) { (rosters_(t).teams || []).filter(function (x) { return x.owner && norm_(x.owner) !== norm_(me.owner); }).slice(0, 8).forEach(function (x, k) {
+      var p = (x.players || []).filter(function (q) { return q.slot === "BE" && q.pos !== "K" && q.pos !== "D/ST"; })[0]; if (!p) return;
+      log_(x.owner, "block", t + ":" + p.n, "on", "", notes[k % notes.length]); n++; }); });
+    return { ok: true, n: n };
+  }
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
@@ -896,6 +906,22 @@ function deskAct_(me, b) {
   if (b.op === "beta") { ensureCol_("Owners", "beta"); setCell_("Owners", o._row, "beta", b.on ? "Y" : "");
     deskPost_("note", (b.on ? "🧪 " + o.owner + " joined the beta crew." : o.owner + " left the beta crew."), o.owner, b.on ? "BETA_ON" : "BETA_OFF"); return { ok: true }; }
   return { ok: false, error: "issue, unlock, dismiss, beta or espn" };
+}
+// 📊 Polls (commish 11/7): the commish posts a poll from the desk (question, 2–6 options, league or one tier, closes in N days).
+// It lands in the Polls tab (summary → every owner's reel) and the bot announces it in the matching chat room.
+// Owners see results only after voting (app side). op "pollclose" sets active = N.
+function poll_(me, b) {
+  ensureCol_("Polls", "tier");
+  if (b.op === "pollclose") { var hit = rows_("Polls").filter(function (x) { return String(x.poll_id) === String(b.target); })[0]; if (!hit) return { ok: false, error: "No such poll" };
+    setCell_("Polls", hit._row, "active", "N"); return { ok: true }; }
+  var q = String(b.question || "").trim().slice(0, 140), opts = (b.options || []).map(function (o) { return String(o).replace(/\|/g, "/").trim().slice(0, 60); }).filter(String).slice(0, 6);
+  if (!q || opts.length < 2) return { ok: false, error: "A question and at least 2 options" };
+  var tier = b.tier === "U" || b.tier === "L" ? b.tier : "", days = Math.max(1, Math.min(14, Number(b.days) || 7)), id = "P" + Date.now().toString(36).toUpperCase();
+  var vals = { poll_id: id, week: Number(b.week) || "", question: safe_(q), "options (separate with |)": safe_(opts.join("|")), "closes (ISO)": new Date(Date.now() + days * 864e5).toISOString(), active: "Y", tier: tier };
+  var sh = sheet_("Polls"), head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  sh.appendRow(head.map(function (h) { return vals[h] != null ? vals[h] : ""; }));
+  post_(tier ? "tier:" + tier : "league", BOT, "text", "📊 New poll: " + q + "\nVote in the app (Home). Results show once you've voted.", "", "", [], "");
+  return { ok: true, id: id };
 }
 // Robots (GitHub Actions, Claude scheduled tasks) post to the desk with the shared key in Script property DESK_KEY.
 // No key set = closed. Body: { action:"botpost", key, title, text, link, status: ok|fail|info }

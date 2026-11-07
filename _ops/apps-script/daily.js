@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "6"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "7"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -190,7 +190,10 @@ function dMoves_(tier) {
     Object.keys(got).forEach(function (id) { var p = pinfo[id] || {}, from = lost[id];
       moves.push([new Date(), tier, owner[got[id]] || "", got[id], from ? "trade" : "add", p.n || id, p.pos || "", p.tm || "", from || ""]); delete lost[id]; });
     Object.keys(lost).forEach(function (id) { var p = pinfo[id] || {}; moves.push([new Date(), tier, owner[lost[id]] || "", lost[id], "drop", p.n || id, p.pos || "", p.tm || "", ""]); });
-    if (moves.length) { var sh = dTab_("Moves"); sh.getRange(sh.getLastRow() + 1, 1, moves.length, DAILY.MOVE_HEAD.length).setValues(moves); }
+    if (moves.length) { var sh = dTab_("Moves"); sh.getRange(sh.getLastRow() + 1, 1, moves.length, DAILY.MOVE_HEAD.length).setValues(moves);
+      // 📰 the tier's chat hears about it (commish 11/7: league chats should carry the transactions)
+      var ic = { add: "➕", drop: "➖", trade: "🔁" }, ln = moves.slice(0, 8).map(function (m) { return ic[m[4]] + " " + (m[3] || "?") + (m[4] === "trade" ? " got " + m[5] + " from " + m[8] : m[4] === "add" ? " added " + m[5] : " dropped " + m[5]); });
+      try { post_("tier:" + tier, BOT, "text", "📰 Roster moves\n" + ln.join("\n") + (moves.length > 8 ? "\n+" + (moves.length - 8) + " more" : ""), "", "", [], ""); } catch (e) {} }
   }
   var slim = {}; Object.keys(info).forEach(function (id) { slim[id] = { n: info[id].n, pos: info[id].pos, tm: info[id].tm }; });
   dPut_(key, { at: new Date().toISOString(), ids: now, info: slim });
@@ -228,7 +231,10 @@ DAILY.run = function (why) {
       var slim = {}; Object.keys(coach).forEach(function (wk) { slim[wk] = { wk: coach[wk].wk, board: coach[wk].board, winner: coach[wk].winner }; });
       s.coach = slim; s.races = dRaces_(s, coach); snap.tiers[tier] = s;
       var prevLast = (last.weeks || {})[tier] || 0;
-      if (s.last > prevLast && prevLast) log.push((tier === "U" ? "Upper" : "Lower") + " week " + s.last + " is final");
+      if (s.last > prevLast && prevLast) { log.push((tier === "U" ? "Upper" : "Lower") + " week " + s.last + " is final");
+        // 📊 the league room gets the week's wrap: Coach of the Week + high score for this tier (commish 11/7)
+        try { var cw = (coach[s.last] || {}).winner, hi = (s.highs || []).filter(function (h) { return h.wk === s.last; })[0], tn = function (id) { return ((s.teams || {})[id] || {}).team || "?"; };
+          post_("league", BOT, "text", "📊 " + (tier === "U" ? "Upper" : "Lower") + " Week " + s.last + " is final." + (cw != null ? "\n🏆 Coach of the Week: " + tn(cw) : "") + (hi ? "\n🚀 High score: " + tn(hi.id) + ", " + hi.pts : ""), "", "", [], ""); } catch (e) {} }
     } catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " scores: " + e.message); }
     try { var m = dMoves_(tier); if (m) log.push(m + " roster move" + (m === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); }
     catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " rosters: " + e.message); }

@@ -56,3 +56,5 @@ Write `lines.json` (and nothing else):
 4. Numbers to 2 decimals as in the data (e.g. 126.42). Records as 6-3.
 5. Don't repeat last run's line word for word unless nothing changed; then you may keep it.
 6. Valid JSON. When in doubt, leave a key out.
+7. **Never explain league rules** (how Survivor works, who gets promoted, when credits are issued, "one team goes out
+   per tier per week"). Everyone knows them. Spend the words on the story.
