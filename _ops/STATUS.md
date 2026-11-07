@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), backend split + test kit in the repo
+**Last updated:** 2026-11-07 by Claude (chat), desk 👋 welcome tour reset
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 👋 Commish desk → League → Welcome tour: **Replay for me** (starts on Home now), **Replay for them** (pick an owner) or **Everyone**. Backend logic v0.25: desk op `tour` stamps a new Owners `tour` column (one owner or `*`), summary returns it, and the app replays the tour once per new stamp on any phone (bot note in the desk log). Tested on the mock (commish only; regression unchanged apart from the version) and at 390px.
 - 2026-11-07 · REEL · 🏗️ Backend architecture: `logic.js` (91 KB, near the 95 KB Apps Script cache limit) split into a 26 KB core + four parts (`mod_trades` 21 KB, `mod_espn` 13 KB, `mod_social` 13 KB, `mod_desk` 21 KB) evaluated in the core's scope (no code rewritten); parts cached 5 min per VERSION with a 6 h last-good copy so a GitHub hiccup can't take sign-in down. Backend logic v0.24 (no behavior change: the new regression run matches the old build action for action). Shipped in two pushes (parts first). New `_ops/tests/`: the mock backend (real backend code, fake Google + ESPN), `regress.js` + expected output, phone screenshot tool, README; CLAUDE.md App backend rules updated. Tuesday robot (`pulse-draft.yml`) now also regenerates `lab/weekfacts-data.js` (was stale after Week 4) and `lab/vault-data.js`.
 - 2026-11-07 · REEL · Feed cards still snap one at a time, but now size to their story and sit centered (floor ~62% of the screen so short cards don't shrink to a strip; long cards like throwbacks fill and scroll inside).
 - 2026-11-07 · REEL · Feed progress moved to a vertical rail on the right edge (top to bottom, like the feed): current card = tall navy pill, seen cards greyed, ✓ = caught up; tap a dot to jump. Counter ("3 of 15") stays top right.

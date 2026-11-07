@@ -1090,7 +1090,7 @@
     var early = EARLY_SUM && norm(store("maffl_lab_owner")) === norm(ME.owner) ? EARLY_SUM : null; EARLY_SUM = null; // already on its way
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
-      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); deskBadge(); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
+      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); tourStampCheck(r.tour); deskBadge(); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
@@ -2020,7 +2020,7 @@
     if (API_URL) apiGet({}).then(function (r) { if (r && r.version) $("srvver").textContent = "League server v" + r.version + (r.logic === "repo" ? " (auto-updates from the repo)" : ""); }).catch(function () {});
     $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
-    $("mTour").onclick = function () { ["home", "team", "match", "chat", "league"].forEach(function (t) { store(tourKey(t), ""); }); toast("Tour reset: open any tab"); tab("home"); };
+    $("mTour").onclick = function () { tourClear(); toast("Tour reset: open any tab"); tab("home"); };
     if ($("mSet")) $("mSet").onclick = openSettings;
     if ($("errClear")) $("errClear").onclick = function () { store("maffl_lab_errs", "[]"); renderMore(); toast("Cleared"); };
   }
@@ -2564,7 +2564,7 @@
   }
   function busy(on) { document.body.classList.toggle("busy", !!on); }
   function afterChange(msg) {
-    return api("summary", creds()).then(function (r) { if (r.ok) { SUM = r; SUM_OK = true; saveSum(r); } refreshTeam(); paint(); if (msg) toast(msg);
+    return api("summary", creds()).then(function (r) { if (r.ok) { SUM = r; SUM_OK = true; saveSum(r); tourStampCheck(r.tour); } refreshTeam(); paint(); if (msg) toast(msg);
       chatBadge(); if (CH.open) { if (CH.view === "thread") { CH.sig = null; loadRoom(); } else if (CH.view === "inbox") drawInbox(); } else if ($("v-home").classList.contains("on")) renderHome(); });
   }
   function refreshTeam() { renderTeam(); var c = badgeCount(); document.querySelector(".tbadge").setAttribute("data-n", c || ""); }
@@ -3005,6 +3005,15 @@
           (lock[norm(o)] ? deskBtn("unlock", o, "Unlock") : '') + deskBtn("issue", o, no[norm(o)] ? "🔑 Issue passphrase" : "New passphrase", no[norm(o)] ? 1 : 0) + '</div></div>'; }).join("") +
       '<p class="meta">New passphrase replaces the old one; you see it once, with a button to text it.</p></details></div>';
   }
+  // 👋 Welcome tour: replay the first-visit tour for you (right now), one owner, or everyone (on their next open).
+  function deskTourHTML() {
+    var owners = TEAMS.filter(function (t) { return !/ghost/i.test(t.team) && t.owner !== "—" && norm(t.owner) !== norm(ME.owner); }).sort(function (a, b) { return a.team.localeCompare(b.team); });
+    return '<div class="dsk"><details><summary>👋 Welcome tour</summary>' +
+      '<div class="ditem"><b>Replay it for me</b> <span class="meta">Starts on Home right now.</span><div class="btns">' + deskBtn("tourme", "", "👋 Replay for me", 1) + '</div></div>' +
+      '<div class="ditem"><select class="field" id="tourpick"><option value="">Pick an owner…</option>' + owners.map(function (t) { return '<option value="' + esc(t.owner) + '">' + esc(t.team) + ' (' + esc(t.owner) + ')</option>'; }).join("") + '</select>' +
+      '<div class="btns">' + deskBtn("tour", "", "Replay for them") + deskBtn("tour", "*", "Everyone") + '</div></div>' +
+      '<p class="meta">They see it the next time they open the app, on any phone they use. Each tab\'s part plays on their first visit to it.</p></details></div>';
+  }
   function drawDesk() {
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
     if (!d) { b.innerHTML = ld("Opening the desk…"); return; }
@@ -3013,7 +3022,7 @@
     if (n && /dsk clear/.test(todo)) todo = todo.replace(/<div class="dsk clear">[\s\S]*?<\/div>/, "");
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
-      '<div class="dkh"><h3>League</h3></div>' + deskPollsHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
+      '<div class="dkh"><h3>League</h3></div>' + deskPollsHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) + deskTourHTML() +
       '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML() +
       '<div class="dkh"><h3>Beta</h3><small>Until go-live</small></div>' + betaPanel(d) +
       '<div class="dsk"><div class="dkpoll"><span>🏷️ Test trade block</span><button class="b sm" id="dkseed">Fill it</button></div><div class="meta">Puts a bench player from 8 teams per tier on the block (TEST Sheet).</div></div>';
@@ -3107,6 +3116,13 @@
     if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
       toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
+    if (op === "tourme") { tourClear(); closeDesk(); if (CH.open) closeChat(); tab("home"); toast("👋 Here's the tour"); return; }
+    if (op === "tour") {
+      if (who !== "*") { who = ($("tourpick") || {}).value; if (!who) { toast("Pick an owner first"); return; } t = teamOf(who).team || who; }
+      confirmBox(who === "*" ? "Replay the tour for everyone?" : "Replay the tour for " + t + "?", '<p class="p">' + (who === "*" ? "Every owner (you too)" : "They") + ' will see the welcome tour again the next time the app opens.</p>', "Replay it", false).then(function (yes) { if (!yes) return; busy(1);
+        api("deskact", Object.assign(creds(), { op: "tour", target: who })).then(function (r) { busy(0);
+          toast(r.ok ? "👋 Tour reset for " + (who === "*" ? "everyone (" + r.n + ")" : t) : (r.error || "Didn't work")); DESK = null; loadDesk(); if (DK.open) loadDeskLog(); })
+          .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); return; }
     if (op === "betaon" || op === "betaoff") {
       if (op === "betaon") { who = ($("betapick") || {}).value; if (!who) { toast("Pick an owner first"); return; } t = teamOf(who).team || who; }
       busy(1); api("deskact", Object.assign(creds(), { op: "beta", target: who, on: op === "betaon" })).then(function (r) { busy(0);
@@ -3447,6 +3463,10 @@
     league: [["#v-league .seg, #v-league .lseg, #v-league button", "Standings, weeks, rules and history."]] };
   var TR = null;
   function tourKey(t) { return "maffl_lab_tour_" + t + "_" + norm(ME && ME.owner); }
+  function tourClear() { Object.keys(TOUR).forEach(function (t) { store(tourKey(t), ""); }); }
+  // Commish desk 👋 reset (backend v0.25): summary carries this owner's "tour" stamp; a stamp this phone hasn't seen = replay once.
+  function tourStampCheck(st) { if (!st || !ME) return; var k = "maffl_lab_tourstamp_" + norm(ME.owner), had = store(k); if (had === st) return; store(k, st);
+    tourClear(); tourMaybe(CUR_TAB); }
   function tourMaybe(t) { if (!ME || store(tourKey(t)) || TR) return; setTimeout(function () { if ((t === "chat" ? CH.open : CUR_TAB === t && !CH.open) && !TR && !$("welcome").classList.contains("on") && !$("psheet").classList.contains("on") && !$("cwrap").classList.contains("on") && !DK.open) tourStart(t); }, 700); }
   function tourStart(t) { var steps = (TOUR[t] || []).filter(function (s) { var el = document.querySelector(s[0]); return el && el.getBoundingClientRect().height > 0; });
     if (!steps.length) return; TR = { t: t, steps: steps, i: 0 }; store(tourKey(t), "1"); tourDraw(); }

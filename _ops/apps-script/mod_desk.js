@@ -42,6 +42,9 @@ function desk_(me) {
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
     moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_() };
 }
+// 👋 Welcome tour reset (commish 11/7): a new stamp in the Owners "tour" column; summary hands it to that owner's app,
+// which clears its "seen" marks once per new stamp and replays the tour. "T" prefix keeps the Sheet from making it a date.
+function tourStamp_(o) { ensureCol_("Owners", "tour"); setCell_("Owners", o._row, "tour", "T" + Date.now()); }
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
   if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
@@ -56,6 +59,8 @@ function deskAct_(me, b) {
     return { ok: true, n: n };
   }
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
+  if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
+    deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
     var pin = setPhrase_(o); closeRequests_(o.owner);
@@ -67,7 +72,8 @@ function deskAct_(me, b) {
   if (b.op === "dismiss") { closeRequests_(o.owner); return { ok: true }; }
   if (b.op === "beta") { ensureCol_("Owners", "beta"); setCell_("Owners", o._row, "beta", b.on ? "Y" : "");
     deskPost_("note", (b.on ? "🧪 " + o.owner + " joined the beta crew." : o.owner + " left the beta crew."), o.owner, b.on ? "BETA_ON" : "BETA_OFF"); return { ok: true }; }
-  return { ok: false, error: "issue, unlock, dismiss, beta or espn" };
+  if (b.op === "tour") { tourStamp_(o); deskPost_("note", "👋 Welcome tour reset for " + o.owner + " (replays on their next open).", o.owner, "TOUR"); return { ok: true }; }
+  return { ok: false, error: "issue, unlock, dismiss, beta, tour or espn" };
 }
 // 📊 Polls (commish 11/7): the commish posts a poll from the desk (question, 2–6 options, league or one tier, closes in N days).
 // It lands in the Polls tab (summary → every owner's reel) and the bot announces it in the matching chat room.
