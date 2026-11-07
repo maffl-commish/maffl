@@ -1,0 +1,46 @@
+# MAFFL Vault data — keeps lab/vault-data.js (the REEL Vault: league history) in step with the gold CSVs.
+#
+# lab/vault-data.js is DERIVED by _ops/scripts/gen_vault.py from data/*.csv (+ the commissioner's throwback lines in
+# data/MAFFL_Throwbacks.csv). This job re-runs the generator and commits the file when it changed.
+#
+# Triggers: a push to main that touches data/ or the generator; Wednesdays 6:17 AM ET (robot pushes made with the
+# Actions token don't start other workflows, so the weekly gold append is picked up here); or Run workflow.
+name: Vault data
+
+on:
+  push:
+    branches: [main]
+    paths: ['data/**.csv', '_ops/scripts/gen_vault.py']
+  schedule:
+    - cron: '17 11 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vault-data
+  cancel-in-progress: false
+
+jobs:
+  vault:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate
+        run: python3 _ops/scripts/gen_vault.py
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- lab/vault-data.js; then echo "Vault data already current."; exit 0; fi
+          git config user.name "maffl-vault-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lab/vault-data.js
+          git commit -m "Vault data: regenerate lab/vault-data.js from gold"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 10; done
+          exit 1

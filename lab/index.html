@@ -409,6 +409,18 @@
   .tbtn button{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:8px 4px;min-width:70px;text-align:left}
   .tbtn .go{background:var(--navy);color:#fff;border-radius:999px;padding:10px 18px;text-align:center}
   .tbub .tx{position:absolute;top:8px;right:8px;width:32px;height:32px;font-size:16px;color:var(--muted)}
+  .tbtags{display:flex;flex-wrap:wrap;gap:5px}.tbtags span{font:700 10px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--gold-soft);color:var(--gold-dark);border:1px solid var(--gold);border-radius:999px;padding:3px 8px}
+  .tbtags span.dr{background:#fbeee7;color:#8a3d1b;border-color:#e3a284}
+  .tbyr{display:flex;align-items:baseline;gap:10px;margin-top:10px}.tbyr b{font:800 52px/1 var(--display);color:var(--navy)}.tbyr small{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+  .tbline{font:italic 17px/1.45 Georgia,"Times New Roman",serif;color:var(--ink);margin-top:10px}
+  .tbfinal{margin-top:12px;border:1px solid var(--border);border-radius:12px;overflow:hidden}.tbfinal>div{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;font:700 15px/1.25 var(--display);color:var(--muted)}
+  .tbfinal>div+div{border-top:1px solid var(--border)}.tbfinal .w{background:var(--gold-soft);color:var(--navy)}.tbfinal small{font:500 12px var(--body);color:var(--muted)}
+  .tbh{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:14px 0 6px}
+  .tbdiv{display:grid;grid-template-columns:1fr 1fr;gap:6px}.tbdiv>div{background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:7px 9px;font:600 13px/1.25 var(--body);color:var(--ink)}
+  .tbdiv small{display:block;font:700 10px var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.tbdiv i{font-style:normal;color:var(--muted);font-size:12px}
+  .tbbuy{display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:14px;border-top:1px solid var(--border)}.tbbuy small{color:var(--muted);font-size:12px}.tbbuy b{font:700 15px var(--display);color:var(--navy)}
+  .tbnote{margin-top:12px;background:#f0eefc;color:#3c3489;border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.4}
+  .tbfoot{font-size:12px;color:var(--muted);margin-top:10px}
   .otrow{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--border)}.otk{font:800 15px var(--display);color:var(--navy);width:30px;flex:0 0 30px;padding-top:2px}
   .otm{flex:1;min-width:0}.otm b{font:700 16px/1.2 var(--display)}.otm small{display:block;font-size:12px;color:var(--muted)}
   .otp{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.otp button{font:600 11px var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:3px 8px}
@@ -736,6 +748,7 @@
 <script src="../matchups-data.js"></script>
 <script src="../key-dates-data.js"></script>
 <script src="weekfacts-data.js"></script>
+<script src="vault-data.js"></script>
 <script>
 (function () {
   "use strict";
@@ -1138,6 +1151,61 @@
     return '<div class="trr' + (isMe(t.owner) ? ' me' : '') + '"><span class="wl ' + (won ? "W" : "L") + '">' + (won ? "W" : "L") + '</span><div style="flex:1;min-width:0"><div class="nm"><button class="tl2" data-owner="' + esc(t.owner) + '">' + esc(t.team) + '</button></div>' +
       '<div class="meta">' + f2(ms) + '–' + f2(os) + ' vs ' + esc(opp) + '</div></div><div class="rt">' + rec(t) + '<small>' + (extra || ("#" + t.rank)) + '</small></div></div>';
   }
+  // ---------- 🗄️ THE VAULT: league history from lab/vault-data.js (derived by _ops/scripts/gen_vault.py) ----------
+  // Throwback cards (commish 11/7): one past season a week in the reel. The commish's one-line story (data/MAFFL_Throwbacks.csv)
+  // on top, then the facts: title game, division winners, biggest buys spread across owners, comings and goings.
+  function VS(y) { return window.MAFFL_VAULT && MAFFL_VAULT.seasons[String(y)]; }
+  function vEra(y) { var s = VS(y); return s && MAFFL_VAULT.eras.filter(function (e) { return e.id === s.era; })[0]; }
+  function vTitles(o) { var out = []; Object.keys(MAFFL_VAULT.seasons).forEach(function (y) { if ((MAFFL_VAULT.seasons[y].champ || []).indexOf(o) >= 0) out.push(+y); }); return out; }
+  function vShort(o) { return shortOf(o); }
+  function throwbackYear() {
+    var V = window.MAFFL_VAULT; if (!V) return null;
+    var ys = Object.keys(V.seasons).filter(function (y) { return V.seasons[y].line; }).map(Number).sort(function (a, b) { return a - b; });
+    return ys.length ? ys[(W.weekNumber || 0) % ys.length] : null; // one a week, rotating through the seasons that have a story line
+  }
+  function farewellLine(s, o) {
+    var V = MAFFL_VAULT.owners[o] || {}, ts = vTitles(o), divWon = (s.divs || []).some(function (d) { return d.t[0] && d.t[0][0] === o; });
+    var bits = [V.first === 2002 ? "a founder" : "in since " + V.first];
+    if (ts.length) bits.push(ts.length === 1 ? "the " + ts[0] + " champ" : ts.length + "-time champ");
+    return "Last call: " + o + "'s final season. " + bits.join(", ").replace(/^./, function (c) { return c.toUpperCase(); }) + (divWon ? ", and went out a division winner." : ".");
+  }
+  function throwbackCard() {
+    var y = throwbackYear(), s = VS(y); if (!s) return null;
+    var era = vEra(y) || { title: "" }, tags = era.title.split(" · ").concat(s.draftEra ? [s.draftEra + " draft"] : []);
+    var f = s.final, upDivs = (s.divs || []).filter(function (d) { return d.tier === "U"; });
+    var h = '<div class="fc tbk"><div class="tbtags">' + tags.map(function (t, k) { return '<span class="' + (k === tags.length - 1 && s.draftEra ? 'dr' : '') + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
+      '<div class="tbyr"><b>' + y + '</b><small>Throwback</small></div>' + (s.line ? '<p class="tbline">' + esc(s.line) + '</p>' : '');
+    if (f) h += '<div class="tbfinal"><div class="w"><span>🏆 ' + esc(f.wt) + ' <small>' + esc(vShort(f.w)) + '</small></span><b>' + f2(f.ws) + '</b></div><div><span>' + esc(f.lt) + ' <small>' + esc(vShort(f.l)) + '</small></span><b>' + f2(f.ls) + '</b></div></div>' +
+      (s.streak ? '<div class="fchips"><span>' + esc(s.streak.replace(/^./, function (c) { return c.toUpperCase(); })) + '</span>' + (s.titleNo > 1 ? '<span>Title #' + s.titleNo + '</span>' : '') + '</div>' : '');
+    else if ((s.champ || []).length) h += '<div class="tbfinal"><div class="w"><span>🏆 ' + s.champ.map(function (o) { return esc((s.teams || {})[o] || o) + ' <small>' + esc(vShort(o)) + '</small>'; }).join(" &amp; ") + '</span></div></div>';
+    if (upDivs.length) h += '<div class="tbh">Division winners</div><div class="tbdiv">' + upDivs.map(function (d) { var t = d.t[0]; return '<div><small>' + esc(d.name) + '</small>' + esc(t[1]) + ' <i>' + t[2] + '–' + t[3] + '</i></div>'; }).join("") + '</div>';
+    if ((s.topBuy || []).length) h += '<div class="tbh">Biggest buys</div>' + s.topBuy.slice(0, 4).map(function (b) { return '<div class="tbbuy"><span>' + esc(b[1]) + ' <small>' + esc(b[2]) + ' · ' + esc(vShort(b[0])) + '</small></span><b>$' + b[3] + '</b></div>'; }).join("");
+    (s.farewells || []).slice(0, 2).forEach(function (o) { h += '<div class="tbnote">👋 ' + esc(farewellLine(s, o)) + '</div>'; });
+    if (s.note) h += '<div class="tbnote">📝 ' + esc(s.note) + '</div>';
+    var foot = []; if (s.top) foot.push("Top score: " + vShort(s.top.o) + " " + s.top.s); if ((s.rookies || []).length) foot.push("Rookie" + (s.rookies.length > 1 ? "s" : "") + ": " + s.rookies.map(vShort).join(", "));
+    if (foot.length) h += '<p class="tbfoot">' + esc(foot.join(" · ")) + '</p>';
+    h += '<div class="btns"><button class="b" data-vault="' + y + '">Open ' + y + ' in the Vault ›</button></div></div>';
+    return { id: "throwback:" + y, scope: "league", c: { eb: "🗄️ Throwback · " + y, t: "", face: h } };
+  }
+  // The season in full (the Vault's year page; the League tab's Vault will list every year).
+  function vaultSheet(y) {
+    var s = VS(y); if (!s) return '<div class="card"><p>No record for ' + esc(y) + '.</p></div>';
+    var era = vEra(y) || { title: "" }, T = s.teams || {}, nm = function (o) { return esc(T[o] || o) + ' <small class="meta">' + esc(vShort(o)) + '</small>'; };
+    var h = '<h2 class="sht">🗄️ ' + y + ' · the Vault</h2><p class="meta" style="margin:-6px 2px 10px">' + esc(era.title) + (s.draftEra ? ' · ' + esc(s.draftEra) + ' draft' : '') + ' · ' + s.n + ' teams</p>';
+    if (s.line) h += '<div class="card"><p class="tbline" style="margin:0">' + esc(s.line) + '</p></div>';
+    h += '<div class="card glist"><div class="eb">Finish</div>' + [["🏆 Champion", s.champ], ["🥈 Runner-up", s.ru], ["🥉 Third", s.third ? [s.third] : []], ["⬆️ Lower-tier champ", s.lowerChamp]].filter(function (r) { return r[1] && r[1].length; })
+      .map(function (r) { return '<div class="row"><div style="flex:1"><div class="meta">' + r[0] + '</div><div class="nm">' + r[1].map(nm).join(" &amp; ") + '</div></div></div>'; }).join("") + '</div>';
+    if ((s.playoffs || []).length) { var TY = { Quarterfinal: "Quarterfinal", Semifinal: "Semifinal", ThirdPlace: "Third place", Championship: "Championship" };
+      h += '<div class="card glist"><div class="eb">Playoffs</div>' + s.playoffs.map(function (p) { return '<div class="row"><div style="flex:1"><div class="meta">' + (p[0] === "L" ? "Lower · " : "") + TY[p[2]] + ' · Wk ' + p[1] + '</div><div class="nm">' + esc(T[p[3]] || p[3]) + ' <b>' + f2(p[4]) + '</b> · ' + esc(T[p[5]] || p[5]) + ' ' + f2(p[6]) + '</div></div></div>'; }).join("") + '</div>'; }
+    (s.divs || []).forEach(function (d) { h += '<div class="card glist"><div class="eb">' + (d.tier === "L" ? "Lower · " : "") + (d.conf ? esc(d.conf) + ' · ' : '') + esc(d.name) + '</div>' + d.t.map(function (t, k) {
+      return '<div class="row"><div class="rt" style="margin:0;min-width:22px;text-align:left">' + (k + 1) + '</div><div style="flex:1"><div class="nm">' + esc(t[1]) + '</div><div class="meta">' + esc(t[0]) + '</div></div><div class="rt">' + t[2] + '–' + t[3] + '</div></div>'; }).join("") + '</div>'; });
+    var sup = []; if (s.best) sup.push(["Best record", vShort(s.best.o) + " · " + s.best.w + "–" + s.best.l]); if (s.top) sup.push(["Top score", vShort(s.top.o) + " · " + s.top.s + " (Wk " + s.top.wk + ")"]);
+    if (s.blowout) sup.push(["Biggest blowout", vShort(s.blowout.w) + " over " + vShort(s.blowout.l) + " by " + s.blowout.m]); if (s.closest) sup.push(["Closest game", vShort(s.closest.w) + " over " + vShort(s.closest.l) + " by " + s.closest.m]);
+    if ((s.rookies || []).length) sup.push(["Rookies", s.rookies.join(", ")]); if ((s.farewells || []).length) sup.push(["Last season", s.farewells.join(", ")]);
+    if (sup.length) h += '<div class="card glist"><div class="eb">The season</div>' + sup.map(function (r) { return '<div class="row"><div style="flex:1"><div class="meta">' + r[0] + '</div><div class="nm">' + esc(r[1]) + '</div></div></div>'; }).join("") + '</div>';
+    if ((s.spends || []).length) h += '<div class="card glist"><div class="eb">Draft · biggest spends</div>' + s.spends.map(function (b) { return '<div class="row"><div style="flex:1"><div class="nm">' + esc(b[1]) + '</div><div class="meta">' + esc(b[2]) + ' · ' + esc(b[0]) + '</div></div><div class="rt">$' + b[3] + '</div></div>'; }).join("") + '</div>';
+    return h;
+  }
   function form5(owner) { // last five 2026 results, oldest first
     var y = (window.SCHEDULE_DATA && SCHEDULE_DATA.year) || 2026;
     return (window.MATCHUPS_DATA || []).filter(function (r) { return r[0] === y && !future(r) && (norm(r[3]) === norm(owner) || norm(r[5]) === norm(owner)); })
@@ -1432,6 +1500,7 @@
     if (tHead || tHot || tCold) all.push({ id: "tier", scope: me.tier, c: { eb: "📣 " + TN[me.tier] + " · Week " + W.weekNumber, t: "", face: '<div class="fc">' + (tHead ? '<h3>' + esc(tHead) + '</h3>' : '<h3>' + TN[me.tier] + ' this week</h3>') +
       '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + esc(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + esc(tCold) + '</span></div>' : '') + '</div>' +
       '</div>' } });
+    var tb = throwbackCard(); if (tb) all.push(tb);
     // 🏆 Coach of the Week: ONE league-wide card, both tiers (commish 11/7). Winner + runners-up, bench left; Full report opens the board.
     var CW = W.coachOfWeek || {};
     if (CW.upper || CW.lower) { var board0 = CW.board || [], mineB = board0.filter(function (b) { return norm(b.team) === norm(me.team); })[0], tb = board0.filter(function (b) { return b.tier === me.tier; });
@@ -2413,6 +2482,7 @@
     var el;
     if ((el = e.target.closest("[data-tjump]"))) { var tp = $("tpend"); if (tp) tp.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     if ((el = e.target.closest("[data-stat]"))) { try { statBox(JSON.parse(el.dataset.stat)); } catch (_) {} return; }
+    if ((el = e.target.closest("[data-vault]"))) { openSheet("vault", el.dataset.vault); return; }
     if ((el = e.target.closest("[data-coach]"))) { openSheet("coach"); return; }
     if ((el = e.target.closest("[data-box]"))) { var bx = el.dataset.box.split("|"); openSheet("box", +bx[0], bx[1]); return; }
     if ((el = e.target.closest("[data-player]"))) { openSheet("player", el.dataset.player, null, $("psheet").classList.contains("on")); return; }
@@ -2505,7 +2575,7 @@
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
     if (!push) stackS = []; stackS.push([kind, a, b]); tap("sheet", kind + (a && typeof a === "string" && a.length < 40 ? ":" + a : ""));
-    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : kind === "coach" ? coachSheet() : kind === "box" ? boxSheet(a, b) : kind === "card" ? a : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
+    $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : kind === "coach" ? coachSheet() : kind === "vault" ? vaultSheet(a) : kind === "box" ? boxSheet(a, b) : kind === "card" ? a : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules" && $("rq")) { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
     $("sback").style.visibility = stackS.length > 1 ? "visible" : "hidden";
