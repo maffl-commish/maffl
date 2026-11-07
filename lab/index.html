@@ -563,6 +563,8 @@
   .ccomp .ci{flex:0 0 auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:700 17px var(--display);color:var(--navy);background:var(--navy-soft)}
   .ccomp .ci.send{background:var(--navy);color:var(--gold);font-size:18px}
   .ccomp .ci.send:disabled{opacity:.35}
+  .ccomp .ci.send.busy:disabled{opacity:1}
+  .ccomp .ci.send .spin.sm{width:18px;height:18px;border-width:2.5px;border-color:rgba(245,166,35,.35);border-top-color:var(--gold)}
   .catlist{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;padding:8px 10px 0;background:var(--surface);border-top:1px solid var(--border);scrollbar-width:none}
   .catlist::-webkit-scrollbar{display:none}
   .catlist button{flex:0 0 auto;border:1px solid var(--border);border-radius:999px;padding:6px 11px;font:600 13px var(--body)}
@@ -2502,7 +2504,7 @@
     var canDel = !m.deleted && m.kind !== "offer" && !m.pending && !m.failed && (mine || ME.commish), canPin = ME.commish && !m.deleted && !m.pending && !m.failed;
     var h = '<div class="cmsg' + (mine ? ' me' : '') + (m.deleted ? ' gone' : '') + (m.pending ? ' pend' : '') + (m.failed ? ' fail' : '') + '">' + avatar(m.owner, true) + '<div class="cmb"><div class="cmh">' +
       (bot ? 'MAFFL HQ' : '<button class="tl2" data-owner="' + esc(m.owner) + '">' + esc(mine ? "You" : shortOf(m.owner)) + '</button>') +
-      '<small>' + (m.pending ? '<span class="spin xs"></span>Sending…' : m.failed ? "Not sent" : ago(m.ts)) + (m.pinned ? ' · 📌 pinned' : '') + '</small>' + (m.deleted || m.pending || m.failed ? '' : '<button class="opt3" data-cadd="' + m.id + '" aria-label="React">☺︎</button>') +
+      '<small>' + (m.pending ? '<span class="spin xs"></span>' + (m.slow ? 'Still sending… (the league server is slow)' : 'Sending…') : m.failed ? "Not sent" : ago(m.ts)) + (m.pinned ? ' · 📌 pinned' : '') + '</small>' + (m.deleted || m.pending || m.failed ? '' : '<button class="opt3" data-cadd="' + m.id + '" aria-label="React">☺︎</button>') +
       (canDel || canPin ? '<button class="opt3 o2" data-cmenu="' + m.id + '" aria-label="More">⋯</button>' : '') + '</div>';
     if (m.kind === "offer") h += '<div class="cevt">' + esc(bot ? evtLine(m) : "💱 " + (EVT[m.event] || m.event).replace(/^./, function (c) { return c.toUpperCase(); })) + '</div>' + tradeMini(m.offer, latestOf[m.ref] === m.id) + (m.text ? '<div class="ctx" style="margin-top:6px">' + fmtText(m.text) + '</div>' : '');
     else if (m.owner === BOTN && DESK_KINDS[m.kind]) h += deskMsg(m);
@@ -2527,6 +2529,7 @@
     var h = CH.room === "desk" ? deskTop() : "";
     h += (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : fmtText(p.text)) + '</div>'; }).join("");
     if (d.more) h += '<p class="meta" style="text-align:center;margin-top:10px">Showing the latest ' + d.messages.length + ' messages</p>';
+    if (d.local) h += ld("Loading earlier messages…");
     if (!d.messages.length) {
       var dm = CH.room.indexOf("dm:") === 0;
       if (CH.room === "desk") h += '<div class="cempty">Nothing logged yet. Perk requests, trades in review, access requests, lockouts, credit-sync and ESPN problems, and robot reports all post here.</div>'; else
@@ -2565,21 +2568,25 @@
     var ta = $("cinput"), text = (ta.value || "").trim(), room = CH.room; if (!text || CH.sending) return;
     var mentions = Object.keys(CH.ment).filter(function (o) { return text.indexOf("@" + shortOf(o)) >= 0; });
     var tmp = { id: "tmp" + Date.now(), ts: new Date().toISOString(), room: room, owner: ME.owner, kind: "text", text: text, mentions: mentions };
-    if (CH.data) CH.data.messages.push(tmp);
+    if (!CH.data) CH.data = { room: room, messages: [], pinned: [], counts: {}, mine: {}, who: {}, more: false, local: true }; // thread still loading: show the message anyway
+    CH.data.messages.push(tmp);
     ta.value = ""; CH.draft[room] = ""; grow(ta); CH.ment = {};
     postMsg(tmp);
   }
   function postMsg(tmp) {
-    var room = tmp.room; tmp.pending = true; tmp.failed = false; tmp.err = ""; CH.sending = true; if ($("csend")) $("csend").disabled = true;
+    var room = tmp.room; tmp.pending = true; tmp.failed = false; tmp.err = ""; tmp.slow = false; CH.sending = true; sendBtn(true);
     if (CH.room === room) { CH.forceBottom = true; drawThread(); }
-    function fail(msg) { CH.sending = false; if ($("csend")) $("csend").disabled = false; tmp.pending = false; tmp.failed = true; tmp.err = msg; if (CH.room === room) drawThread(); }
+    var slowT = setTimeout(function () { if (tmp.pending) { tmp.slow = true; if (CH.room === room) drawThread(); } }, 6000);
+    function fail(msg) { clearTimeout(slowT); CH.sending = false; sendBtn(false); tmp.pending = false; tmp.failed = true; tmp.err = msg; if (CH.room === room) drawThread(); }
     api("chatsend", Object.assign(creds(), { room: room, text: tmp.text, mentions: tmp.mentions || [] }), true).then(function (r) {
       if (!r.ok) { fail(r.error || "Didn't send"); return; }
-      CH.sending = false; if ($("csend")) $("csend").disabled = false;
+      clearTimeout(slowT); CH.sending = false; sendBtn(false);
       tmp.pending = false; tmp.id = r.id || tmp.id; tmp.sent = true; CH.sig = null;
       if (CH.room === room) { drawThread(); loadRoom(); }
     }).catch(function () { fail("Couldn't reach the league server"); });
   }
+  // Send button shows a spinner while the league server saves the message (commish backlog 11/6).
+  function sendBtn(on) { var b = $("csend"); if (!b) return; b.disabled = on; b.classList.toggle("busy", on); b.innerHTML = on ? '<span class="spin sm"></span>' : '➤'; }
   function tmpMsg(id) { return CH.data ? CH.data.messages.filter(function (m) { return m.id === id && (m.failed || m.pending); })[0] : null; }
   function drawInbox() {
     var ib = inboxOf(), body = $("cbody"), h = "";
