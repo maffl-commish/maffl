@@ -369,7 +369,7 @@
   #hstack .dcard .dbody>.fc{flex:1 0 auto}
   .fc>.btns:last-child{margin-top:auto;padding-top:16px}
   .stamp{font:700 10px var(--display);letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 8px;white-space:nowrap}
-  .stamp.lg{background:var(--navy);color:#fff}.stamp.me{background:var(--gold-soft);color:var(--navy);border:1px solid var(--gold);max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  .stamp.lg{background:var(--navy);color:#fff;display:inline-flex;align-items:center;gap:5px;padding:2px 9px 2px 3px}.stamp.lg img{width:18px;height:18px;object-fit:contain;background:#fff;border-radius:50%;padding:1px}.stamp.me{background:var(--gold-soft);color:var(--navy);border:1px solid var(--gold);max-width:150px;overflow:hidden;text-overflow:ellipsis}
   button.sbug{display:block;width:100%;text-align:left;background:none;padding:0;cursor:pointer}
   .sbox{padding:8px 14px;border-top:1px solid var(--border);font:700 12px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy);text-align:right}
   ul.blt{list-style:none;margin:14px 0 0;padding:0}
@@ -557,7 +557,7 @@
   .cpan{position:relative}
   /* Chat as a tab (commish 11/7): fills the space between header and tab bar, no sheet, no scrim */
   .chat .cpan{margin-top:0;border-radius:0;box-shadow:none;transform:none;transition:none;opacity:0}
-  .chat.on .cpan{opacity:1}.chat.kb{z-index:61}.chat:not(.kb){z-index:19}
+  .chat.on .cpan{opacity:1}.chat:not(.on) .cpan{visibility:hidden;pointer-events:none}.chat.kb{z-index:61}.chat:not(.kb){z-index:19}
   .chd .grabber,.chd .cx{display:none}
   .cnew{position:absolute;left:16px;bottom:16px;z-index:2;font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#fff;background:var(--navy);border:2px solid var(--gold);border-radius:999px;padding:15px 22px;box-shadow:0 6px 18px rgba(15,29,52,.35)}
   .cbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px 14px}
@@ -718,7 +718,7 @@
 </div>
 
 <div class="cscrim" id="cscrim"></div>
-<div class="chat" id="chat"><div class="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New message</button><div id="cfoot"></div></div></div>
+<div class="chat" id="chat"><div class="cpan" id="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New message</button><div id="cfoot"></div></div></div>
 <div class="sscrim" id="sscrim"></div>
 <div class="psheet" id="psheet"><div class="shd"><span class="grabber"></span><button id="sback" style="visibility:hidden">‹ Back</button><button class="x" id="sx" aria-label="Close">×</button></div><div class="sb" id="sb"></div></div>
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
@@ -1495,7 +1495,7 @@
       (Object.keys(tossed()).length ? '<button class="again" id="dagain">Bring back cleared cards</button>' : '') + '</div>';
     var c = x.c, shared = x.scope === "league" || x.scope === "U" || x.scope === "L";
     // League cards carry a 🏟️ stamp and everyone's reactions; your own cards carry your team tag and no reactions (commish 11/7).
-    var stamp = shared ? '<span class="stamp lg">🏟️ ' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
+    var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
     return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (c.face ? ' facec' : '') + '"' + (shared ? DR("inbox:" + x.id) : '') + '>' +
       '<div class="dhead"><div class="sec">' + stamp + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
       (c.face ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
@@ -3265,7 +3265,7 @@
   // arrow and a line each. Next / Got it, or ✕ to skip. Once per tab per owner on this phone; You → Show the tour again.
   var TOUR = {
     home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: cards for the week. Swipe ← → to browse, ↑ to clear one."],
-      [".stamp.lg", "🏟️ League cards: everyone sees them, and everyone's reactions."], [".stamp.me", "This tag means a card is just for you."],
+      [".stamp.lg", "Cards with the MAFFL crest are league-wide: everyone sees them, and everyone's reactions."], [".stamp.me", "This tag means a card is just for you."],
       ["[data-tab='match']", "⚔️ Your game, live from ESPN."], ["#chattab", "💬 New: chat with the league, your tier, or any owner."],
       ["[data-tab='team']", "🏈 Your roster, trades and credits."], ["[data-tab='league']", "🏆 Standings, rules and history."]],
     team: [["#tseg", "Roster, Trades and Credits live here."], [".rrow", "Tap any player: week by week, status, or put him on the trade block."], ["[data-tour='profile']", "Your full profile: career, titles, rivalries."]],

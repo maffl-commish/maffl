@@ -66,6 +66,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - F · 🏆 **League tab overhaul**: the deep-dive area cards drill into (Rulebook is buried; standings list is too plain). Waiting on Mike's list of what owners should reach from it.
 - G · 👤 **Profile revamp**: bring Power Rankings / owner profile (years in league, draft profile, Madden-style ratings) into the app's look, behind Team → Profile.
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
+- Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
 - Reel is at the 16-card cap most weeks now; decide which cards drop first when it's full.
 
 **Commish backlog (added 11/6, not built)**
