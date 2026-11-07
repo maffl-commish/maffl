@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), REEL vertical progress rail
+**Last updated:** 2026-11-07 by Claude (chat), REEL centered cards
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Feed cards still snap one at a time, but now size to their story and sit centered (floor ~62% of the screen so short cards don't shrink to a strip; long cards like throwbacks fill and scroll inside).
 - 2026-11-07 · REEL · Feed progress moved to a vertical rail on the right edge (top to bottom, like the feed): current card = tall navy pill, seen cards greyed, ✓ = caught up; tap a dot to jump. Counter ("3 of 15") stays top right.
 - 2026-11-07 · REEL · 🎱 8 Ball reborn as a Vault series: 25 hand-kept tidbits in new `data/MAFFL_Tidbits.csv` (hook, line, player + position; drafted from the auction history, facts checked, commish to edit) → vault-data.js with each player's full auction price history; card = big hook, the story, a bar chart of every auction (high gold, low navy), "<player> in the Vault ›" opens Draft search. One throwback + one 8 Ball a week; off-season (no games) the Vault gets 6 slots (3 + 3). "You're caught up" lists earlier weeks (tap → that week's reel, Back to this week). Found: the classic draft.html 8 Ball tidbit `joshAllen2223` is wrong (Jake's $1 Josh Allen in 2022 was the DL, not the Bills QB); price histories are now keyed by name + position.
 - 2026-11-07 · REEL · 🎞️ Home is a feed, not an inbox (commish): scroll up for the next card (snap, one card a screen), nothing is deleted, ends with "You're caught up"; Home badge = unseen cards + things that need you (seen tracked per week on the phone). ⚡ Needs you strip above the feed (trade offers, commish desk, dues) opens them in one sheet. Cards are picked by series with a weekly budget (Your week 5 · League week 5 · Play 3 · Vault 2) and interleaved; Game of the Week is a Play card, not a chore. New catalog `_ops/docs/REEL_SERIES.md` (every series: group, rank, audience, cadence, writer, status; budget and feed order). Tour updated.
