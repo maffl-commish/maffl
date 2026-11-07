@@ -46,7 +46,8 @@ const pk = (s.perks || []).filter((p) => p.status === "REQUESTED")[0]; if (pk) o
 out("desk", P(Object.assign({ action: "desk" }, me)));
 out("deskact tick", P(Object.assign({ action: "deskact", op: "tick", target: "" }, me)));
 out("deskact poll", P(Object.assign({ action: "deskact", op: "poll", target: "", question: "Q?", options: ["A", "B"], tier: "", days: 7, week: 8 }, me)));
-out("deskact seedblock", P(Object.assign({ action: "deskact", op: "seedblock", target: "" }, me)));
+out("deskact announce", P(Object.assign({ action: "deskact", op: "announce", target: "", text: "Dues are due Friday." }, me)));
+out("chat league after announce", P(Object.assign({ action: "chat", room: "league" }, me)).pinned);
 out("deskact beta", P(Object.assign({ action: "deskact", op: "beta", target: "Sam Lavrinc", on: true }, me)));
 out("deskact daily", P(Object.assign({ action: "deskact", op: "daily", target: "" }, me)));
 out("feedback", P(Object.assign({ action: "feedback", mood: "up", note: "nice", kind: "button", where: "Home", ctx: "" }, me)));

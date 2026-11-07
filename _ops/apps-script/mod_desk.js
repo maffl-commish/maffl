@@ -1,5 +1,5 @@
 /**
- * MAFFL HQ App backend PART: the commish desk (to-do, actions, polls, test trade block, robot posts, credit awards) and the 15-minute tick robot + its jobs.
+ * MAFFL HQ App backend PART: the commish desk (to-do, actions, polls, commish alerts, robot posts, credit awards) and the 15-minute tick robot + its jobs.
  * Not standalone: logic.js (the core) evaluates this file inside its own scope (see parts_ in logic.js), so it uses the
  * core's helpers by plain name and its functions are callable from every other part. Bump VERSION in logic.js when you
  * change this file. Keep it under ~90 KB.
@@ -51,13 +51,7 @@ function deskAct_(me, b) {
   if (b.op === "daily") { need_("daily"); return DAILY.run("button"); } // "Run daily now"
   if (b.op === "award" || b.op === "awardall") return awardAct_(b);
   if (b.op === "poll" || b.op === "pollclose") return poll_(me, b);
-  if (b.op === "seedblock") { // 🧪 TEST Sheet only: put one player from each of 8 teams per tier on the block, so the block can be seen full
-    var notes = ["Listening to offers", "Need a RB back", "Selling high", "Open to credits", "Bye-week fix wanted", ""], n = 0;
-    ["U", "L"].forEach(function (t) { (rosters_(t).teams || []).filter(function (x) { return x.owner && norm_(x.owner) !== norm_(me.owner); }).slice(0, 8).forEach(function (x, k) {
-      var p = (x.players || []).filter(function (q) { return q.slot === "BE" && q.pos !== "K" && q.pos !== "D/ST"; })[0]; if (!p) return;
-      log_(x.owner, "block", t + ":" + p.n, "on", "", notes[k % notes.length]); n++; }); });
-    return { ok: true, n: n };
-  }
+  if (b.op === "announce") return announce_(me, b);
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
     deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }
@@ -93,6 +87,15 @@ function poll_(me, b) {
   sh.appendRow(head.map(function (h) { return vals[h] != null ? vals[h] : ""; }));
   post_(tier ? "tier:" + tier : "league", BOT, "text", "📊 New poll: " + q + "\nVote in the app (Home). Results show once you've voted.", "", "", [], "");
   return { ok: true, id: id };
+}
+// 📣 Commish alert (commish 11/7): one announcement, posted by the commish into every group chat (league + both tiers)
+// as kind "announce" and pinned there, so it sits on top of each room until he unpins it.
+function announce_(me, b) {
+  var text = String(b.text || "").trim().slice(0, CHAT_MAX); if (!text) return { ok: false, error: "Write the alert first" };
+  var rooms = ["league", "tier:U", "tier:L"], sh = sheet_("Chat");
+  rooms.forEach(function (room) { post_(room, me.owner, "announce", text, "", "ALERT", [], ""); setCell_("Chat", sh.getLastRow(), "pinned", "Y"); });
+  deskPost_("note", "📣 Commish alert sent to " + rooms.length + " group chats: " + text.slice(0, 80), "", "ANNOUNCE");
+  return { ok: true, n: rooms.length };
 }
 // Robots (GitHub Actions, Claude scheduled tasks) post to the desk with the shared key in Script property DESK_KEY.
 // No key set = closed. Body: { action:"botpost", key, title, text, link, status: ok|fail|info }

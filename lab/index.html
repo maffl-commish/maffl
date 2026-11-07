@@ -630,6 +630,8 @@
   .croom.un .cp{color:var(--navy);font-weight:700}
   .croom .dot{flex:0 0 auto;min-width:20px;height:20px;border-radius:10px;background:var(--loss);color:#fff;font:700 11px var(--body);display:grid;place-items:center;padding:0 5px}
   .cgrp{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:16px 0 2px}
+  .cann{background:var(--gold-soft);border:2px solid var(--gold);border-radius:12px;padding:9px 11px;margin-top:4px;font-size:15px;line-height:1.42;color:var(--navy);white-space:pre-wrap;word-wrap:break-word}.cann b{display:block;font:700 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#9a6a00;margin-bottom:3px}
+  .cpolls{margin:4px 0 6px}
   .cpin{background:var(--gold-soft);border:1px solid #f3dfb5;border-radius:10px;padding:8px 10px;margin-top:10px;font-size:13px;line-height:1.35}
   .cpin b{font:700 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dark);display:block}
   .cmsg{display:flex;gap:10px;padding:10px 0 2px}
@@ -2869,7 +2871,7 @@
     if (r.room === "desk") return deskTodo() ? deskTodo() + " to do" + (l ? " · " + deskLine(l) : "") : l ? deskLine(l) : "All clear. Approvals and alerts land here";
     if (!l) return r.room === "league" ? "Say something to the league" : r.room.indexOf("tier:") === 0 ? (r.room === "tier:" + ME.tier ? "Talk to your tier" : "Commish view · nothing yet") : "Start the conversation";
     if (l.kind === "offer") return (l.owner === BOTN ? "🏈 " + (EVT[l.event] || "Trade update") : "💱 " + evtLine({ owner: l.owner, event: l.event, room: r.room }));
-    return (l.owner === BOTN ? "" : isMe(l.owner) ? "You: " : shortOf(l.owner) + ": ") + l.text;
+    return (l.kind === "announce" ? "📣 Commish alert: " : l.owner === BOTN ? "" : isMe(l.owner) ? "You: " : shortOf(l.owner) + ": ") + l.text;
   }
   function chatBadge() {
     var n = chatOn() ? inboxOf().unread || 0 : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
@@ -3055,19 +3057,28 @@
     if (n && /dsk clear/.test(todo)) todo = todo.replace(/<div class="dsk clear">[\s\S]*?<\/div>/, "");
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
-      '<div class="dkh"><h3>League</h3></div>' + deskPollsHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) + deskTourHTML() +
-      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML() +
-      '<div class="dkh"><h3>Beta</h3><small>Until go-live</small></div>' + betaPanel(d) +
-      '<div class="dsk"><div class="dkpoll"><span>🏷️ Test trade block</span><button class="b sm" id="dkseed">Fill it</button></div><div class="meta">Puts a bench player from 8 teams per tier on the block (TEST Sheet).</div></div>';
+      '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) + betaPanel(d) + deskTourHTML() +
+      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML();
     b.scrollTop = st;
     var go = $("dknotego"); if (go) go.onclick = function () { var v = ($("dknote").value || "").trim(); if (!v) return; busy(1);
       api("chatsend", Object.assign(creds(), { room: "desk", text: v, mentions: [] }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't save"); return; } toast("Noted ✓"); loadDeskLog(); })
         .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
   }
-  // 📊 Polls (commish 11/7): post one from the desk; it shows in every owner's reel (or one tier's) and the bot announces it in chat.
-  function deskPollsHTML() {
+  // 📣 Commish alert (desk): one announcement into every group chat (league + both tiers), pinned on top of each.
+  function deskAlertHTML() { return '<div class="dsk"><div class="dkpoll"><span>📣 Commish alert</span><button class="b sm pri" id="dkalert">＋ New alert</button></div><div class="meta">Posts to League chat and both tier chats, pinned on top.</div></div>'; }
+  function alertForm() {
+    $("cbox").innerHTML = '<h3>📣 Commish alert</h3><textarea class="field" id="atext" maxlength="500" placeholder="The announcement (dues, a rule change, a deadline…)"></textarea>' +
+      '<p class="meta">Goes to League chat, Upper Tier and Lower Tier, from you, pinned on top until you unpin it (⋯ on the message).</p><div class="btns"><button class="b" id="cno">Cancel</button><button class="b pri" id="cyes">Send alert</button></div>';
+    $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); };
+    $("cyes").onclick = function () { var t = $("atext").value.trim(); if (!t) { toast("Write the alert first"); return; } busy(1);
+      api("deskact", Object.assign(creds(), { op: "announce", target: "", text: t })).then(function (r) { busy(0);
+        if (!r.ok) { toast(r.error || "Didn't send"); return; } $("cwrap").classList.remove("on"); toast("📣 Alert sent to " + r.n + " group chats"); CH.sig = null; refreshInbox(); if (DK.open) loadDeskLog(); }).catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+  }
+  // 📊 Polls (commish 11/7): posted from the chat inbox (commish only); a poll shows in every owner's reel (or one tier's) and the bot announces it in chat.
+  function chatPollsHTML() {
+    if (!ME || !ME.commish) return "";
     var ps = (SUM.polls || []).filter(function (p) { return String(p.options) !== "auto"; });
-    return '<div class="dsk"><div class="dkpoll"><span>📊 Polls' + (ps.length ? ' · ' + ps.length + ' open' : '') + '</span><button class="b sm" id="dkpollnew">＋ New poll</button></div>' +
+    return '<div class="dsk cpolls"><div class="dkpoll"><span>📊 Polls' + (ps.length ? ' · ' + ps.length + ' open' : '') + '</span><button class="b sm" id="dkpollnew">＋ New poll</button></div>' +
       ps.map(function (p) { var t = SUM.tallies[p.id] || {}, n = Object.keys(t).reduce(function (a, k) { return a + t[k]; }, 0);
         return '<div class="meta" style="margin-top:6px">' + esc(p.q) + ' · ' + n + ' vote' + (n === 1 ? '' : 's') + (p.tier ? ' · ' + (p.tier === "U" ? "Upper" : "Lower") : '') + ' <button class="tl2" data-pollclose="' + esc(p.id) + '">Close</button></div>'; }).join("") + '</div>';
   }
@@ -3081,12 +3092,12 @@
     $("cyes").onclick = function () { var q = $("pq").value.trim(), o = $("po").value.split(/\n/).map(function (x) { return x.trim(); }).filter(Boolean);
       if (!q || o.length < 2) { toast("A question and at least 2 options"); return; } busy(1);
       api("deskact", Object.assign(creds(), { op: "poll", target: "", question: q, options: o, tier: $("pt").value, days: +$("pd").value, week: LATEST.weekNumber })).then(function (r) { busy(0);
-        if (!r.ok) { toast(r.error || "Didn't post"); return; } $("cwrap").classList.remove("on"); toast("Poll posted ✓"); loadSummary(); }).catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+        if (!r.ok) { toast(r.error || "Didn't post"); return; } $("cwrap").classList.remove("on"); toast("Poll posted ✓"); afterChange("").then(function () { if (CH.open && CH.view === "inbox") drawInbox(); }); }).catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
   }
   document.addEventListener("click", function (e) { var el;
     if (e.target.closest("#dkpollnew")) { pollForm(); return; }
-    if (e.target.closest("#dkseed")) { busy(1); api("deskact", Object.assign(creds(), { op: "seedblock", target: "" })).then(function (r) { busy(0); toast(r.ok ? r.n + " players on the block ✓" : r.error || "Didn't work"); loadSummary(); }).catch(function () { busy(0); }); return; }
-    if ((el = e.target.closest("[data-pollclose]"))) { busy(1); api("deskact", Object.assign(creds(), { op: "pollclose", target: el.dataset.pollclose })).then(function (r) { busy(0); toast(r.ok ? "Poll closed" : r.error || "Didn't close"); loadSummary(); }).catch(function () { busy(0); }); } });
+    if (e.target.closest("#dkalert")) { alertForm(); return; }
+    if ((el = e.target.closest("[data-pollclose]"))) { busy(1); api("deskact", Object.assign(creds(), { op: "pollclose", target: el.dataset.pollclose })).then(function (r) { busy(0); toast(r.ok ? "Poll closed" : r.error || "Didn't close"); afterChange("").then(function () { if (CH.open && CH.view === "inbox") drawInbox(); }); }).catch(function () { busy(0); }); } });
   function loadDeskLog() {
     return api("chat", Object.assign(creds(), { room: "desk" }), true).then(function (r) { if (r && r.ok) { DK.log = r.messages; drawDesk(); } }).catch(function () {});
   }
@@ -3187,6 +3198,7 @@
       (canDel || canPin ? '<button class="opt3 o2" data-cmenu="' + m.id + '" aria-label="More">⋯</button>' : '') + '</div>';
     if (m.kind === "offer") h += '<div class="cevt">' + esc(bot ? evtLine(m) : "💱 " + (EVT[m.event] || m.event).replace(/^./, function (c) { return c.toUpperCase(); })) + '</div>' + tradeMini(m.offer, latestOf[m.ref] === m.id) + (m.text ? '<div class="ctx" style="margin-top:6px">' + fmtText(m.text) + '</div>' : '');
     else if (m.owner === BOTN && DESK_KINDS[m.kind]) h += deskMsg(m);
+    else if (m.kind === "announce" && !m.deleted) h += '<div class="cann"><b>📣 Commish alert</b>' + fmtText(m.text) + '</div>';
     else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text)) + '</div>';
     if (m.failed) h += '<div class="cfail"><span>⚠️ ' + esc(m.err || "Didn't send") + '</span><button data-cretry="' + m.id + '">↻ Retry</button><button data-cdrop="' + m.id + '" aria-label="Remove">✕</button></div>';
     if (CH.menu === m.id) h += '<div class="cmenu">' + (canPin ? '<button data-cmod="' + (m.pinned ? "unpin" : "pin") + '" data-mid="' + m.id + '">' + (m.pinned ? "Unpin" : "📌 Pin") + '</button>' : '') +
@@ -3206,7 +3218,7 @@
     if (!d) { body.innerHTML = ld("Loading messages…"); return; }
     var latestOf = {}; if (CH.room !== "desk") d.messages.forEach(function (m) { if (m.kind === "offer") latestOf[m.ref] = m.id; });
     var h = CH.room === "desk" ? deskTop() : "";
-    h += (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : fmtText(p.text)) + '</div>'; }).join("");
+    h += (d.pinned || []).map(function (p) { return '<div class="cpin"><b>📌 Pinned · ' + esc(p.owner === BOTN ? "MAFFL HQ" : shortOf(p.owner)) + '</b>' + (p.kind === "offer" ? esc(evtLine(p)) : (p.kind === "announce" ? "📣 " : "") + fmtText(p.text)) + '</div>'; }).join("");
     if (d.more) h += '<p class="meta" style="text-align:center;margin-top:10px">Showing the latest ' + d.messages.length + ' messages</p>';
     if (d.local) h += ld("Loading earlier messages…");
     if (!d.messages.length) {
@@ -3276,7 +3288,7 @@
       var row = function (r) { var info = roomInfo(r.room);
         return '<button class="croom' + (r.unread ? ' un' : '') + '" data-croom="' + esc(r.room) + '">' + info.ic + '<div class="cm"><div class="cn"><span>' + esc(info.t) + '</span><small>' + (r.last ? ago(r.last.ts) : '') + '</small></div><div class="cp">' + esc(previewOf(r)) + '</div></div>' +
           (r.unread ? '<span class="dot">' + (r.unread > 9 ? "9+" : r.unread) + '</span>' : '') + '</button>'; };
-      h += '<div class="cgrp">Group chats</div>' + rooms.map(row).join("") + '<div class="cgrp">Direct messages</div>' +
+      h += chatPollsHTML() + '<div class="cgrp">Group chats</div>' + rooms.map(row).join("") + '<div class="cgrp">Direct messages</div>' +
         (dms.length ? dms.map(row).join("") : '<p class="meta" style="padding:8px 0">Tap <b>✎ New</b> to message any owner. Trade offers you send or get land in that owner\'s chat automatically.</p>');
     }
     body.innerHTML = h + '<div style="height:84px"></div>'; // room for the ✎ New button
