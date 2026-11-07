@@ -421,6 +421,13 @@
   .tbbuy{display:flex;justify-content:space-between;gap:8px;padding:5px 0;font-size:14px;border-top:1px solid var(--border)}.tbbuy small{color:var(--muted);font-size:12px}.tbbuy b{font:700 15px var(--display);color:var(--navy)}
   .tbnote{margin-top:12px;background:#f0eefc;color:#3c3489;border-radius:10px;padding:9px 11px;font-size:14px;line-height:1.4}
   .tbfoot{font-size:12px;color:var(--muted);margin-top:10px}
+  .vsub{display:flex;gap:6px;overflow-x:auto;padding:12px 14px 2px}.vsub::-webkit-scrollbar{display:none}
+  .vsub button{flex:0 0 auto;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--navy);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:8px 12px}
+  .vsub button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .vera{display:flex;flex-direction:column;margin:16px 2px 6px}.vera b{font:700 15px var(--display);color:var(--navy);text-transform:uppercase;letter-spacing:.06em}.vera small{font-size:12px;color:var(--muted)}
+  .vyr,.vown{width:100%}.vyr{gap:10px;align-items:center}.vy{flex:0 0 46px;font:800 18px var(--display);color:var(--navy)}
+  .vown{gap:10px;align-items:center}.vt{font-size:13px;letter-spacing:-2px}
+  .vsearch{display:flex;gap:8px;margin-top:12px}.vsearch .field{margin:0}.vsearch input{flex:1}.vsearch select{flex:0 0 112px}
   .otrow{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--border)}.otk{font:800 15px var(--display);color:var(--navy);width:30px;flex:0 0 30px;padding-top:2px}
   .otm{flex:1;min-width:0}.otm b{font:700 16px/1.2 var(--display)}.otm small{display:block;font-size:12px;color:var(--muted)}
   .otp{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.otp button{font:600 11px var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:3px 8px}
@@ -895,7 +902,7 @@
   // A background file arrived: redraw whatever is showing it (Team tab, an open rulebook / builder / player sheet).
   function sideLanded(kind) {
     if (!ME || !W) return;
-    if (kind === "rosters") refreshTeam();
+    if (kind === "rosters") { refreshTeam(); var vd = $("vdraft"); if (vd) vd.innerHTML = vaultDraftRows(); }
     var top = stackS[stackS.length - 1];
     if (top && $("psheet").classList.contains("on") && (kind === "rules" ? /^rule/.test(top[0]) : ["builder", "player"].indexOf(top[0]) >= 0)) {
       stackS.pop(); openSheet(top[0], top[1], top[2], true);
@@ -1186,6 +1193,62 @@
     if (foot.length) h += '<p class="tbfoot">' + esc(foot.join(" · ")) + '</p>';
     h += '<div class="btns"><button class="b" data-vault="' + y + '">Open ' + y + ' in the Vault ›</button></div></div>';
     return { id: "throwback:" + y, scope: "league", c: { eb: "🗄️ Throwback · " + y, t: "", face: h } };
+  }
+  // ---------- 🗄️ League → Vault (commish 11/7: History & Stats reborn): Seasons · Records · Owners · Draft ----------
+  var VAULT_SUB = "seasons", VQ = "", VY = "";
+  function vaultHTML() {
+    var V = window.MAFFL_VAULT; if (!V) return '<div class="pad"><div class="card"><p>The Vault didn\'t load. Reopen the app.</p></div></div>';
+    var subs = [["seasons", "Seasons"], ["records", "Records"], ["owners", "Owners"], ["draft", "Draft"]];
+    var h = '<div class="vsub" id="vsub">' + subs.map(function (x) { return '<button data-vsub="' + x[0] + '"' + (VAULT_SUB === x[0] ? ' class="on"' : '') + '>' + x[1] + '</button>'; }).join("") + '</div><div class="pad">';
+    if (VAULT_SUB === "seasons") {
+      V.eras.slice().reverse().forEach(function (era) {
+        var ys = Object.keys(V.seasons).map(Number).filter(function (y) { return y >= era.from && y <= era.to; }).sort(function (a, b) { return b - a; }); if (!ys.length) return;
+        h += '<div class="vera"><b>' + esc(era.title.split(" · ")[0]) + '</b><small>' + esc((era.title.split(" · ")[1] ? era.title.split(" · ")[1] + " · " : "") + era.range) + '</small></div><div class="card" style="margin-top:0;padding:2px 12px">' + ys.map(function (y) {
+          var s = V.seasons[y], c = s.champ || [], T = s.teams || {}, f = s.final;
+          return '<button class="row vyr" data-vault="' + y + '"><span class="vy">' + y + '</span><div style="flex:1;text-align:left;min-width:0"><div class="nm">🏆 ' + c.map(function (o) { return esc(T[o] || o); }).join(" &amp; ") + '</div><div class="meta">' +
+            (f ? esc(shortOf(f.w)) + ' over ' + esc(shortOf(f.l)) + ' · ' + f2(f.ws) + '–' + f2(f.ls) : c.map(shortOf).join(" & ")) + (s.streak ? ' · ' + esc(s.streak) : '') + '</div></div><span class="rv">›</span></button>'; }).join("") + '</div>';
+      });
+    } else if (VAULT_SUB === "records") {
+      var R = V.records, list = function (t, sub, rows) { return '<div class="sh" style="padding-left:0"><h2>' + t + '</h2><small>' + sub + '</small></div><div class="card glist" style="margin-top:0">' + rows.join("") + '</div>'; };
+      var row = function (k, main, meta, rt, own) { return '<div class="row"' + (own ? ' data-owner="' + esc(own) + '"' : '') + '><div class="rt" style="margin:0;min-width:24px;text-align:left">' + k + '</div><div style="flex:1;min-width:0"><div class="nm">' + main + '</div>' + (meta ? '<div class="meta">' + meta + '</div>' : '') + '</div><div class="rt">' + rt + '</div></div>'; };
+      h += list("🏆 Titles", "since 2002", R.titles.map(function (t, k) { return row(k + 1, esc(t[0]), t[2].join(", ") + (t[3] ? ' · ' + t[3] + ' runner-up' + (t[3] > 1 ? 's' : '') : ''), t[1] || '0', t[0]); }));
+      h += list("🚀 Highest scores", "one game", R.scores.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[4]), esc(shortOf(t[3])) + ' · ' + t[1] + ' Wk ' + t[2] + ' vs ' + esc(shortOf(t[5])), f2(t[0]), t[3]); }));
+      h += list("🔨 Biggest blowouts", "margin", R.blowouts.slice(0, 5).map(function (t, k) { return row(k + 1, esc(shortOf(t[3])) + ' over ' + esc(shortOf(t[4])), t[1] + ' Wk ' + t[2] + ' · ' + f2(t[5]) + '–' + f2(t[6]), f2(t[0])); }));
+      h += list("📈 Win %", "regular season since 2005, 3+ seasons", R.wins.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[0]), t[1] + '–' + t[2], (t[3] * 100).toFixed(1) + '%', t[0]); }));
+      h += list("💯 Points", "regular season since 2005", R.points.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[0]), t[2] + ' games', Math.round(t[1]).toLocaleString(), t[0]); }));
+      h += list("🎟️ Playoff trips", "Upper bracket", R.playoffs.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[0]), '', t[1], t[0]); }));
+      h += list("💸 Biggest buys", "auction, all-time", R.buys.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[3]) + ' <small class="meta">' + esc(t[4]) + '</small>', esc(shortOf(t[2])) + ' · ' + t[1], '$' + t[0], t[2]); }));
+      h += '<p class="meta">Scores ran higher once Superflex arrived in 2025.</p>';
+    } else if (VAULT_SUB === "owners") {
+      var O = V.owners, names = Object.keys(O), last = Math.max.apply(null, names.map(function (o) { return O[o].last; }));
+      var sec = function (t, ns) { return '<div class="sh" style="padding-left:0"><h2>' + t + '</h2><small>' + ns.length + '</small></div><div class="card" style="margin-top:0;padding:2px 12px">' + ns.map(function (o) { var v = O[o];
+        return '<button class="row vown" data-owner="' + esc(o) + '"><span class="cav sm">' + initials(o) + '</span><div style="flex:1;text-align:left;min-width:0"><div class="nm">' + esc(o) + '</div><div class="meta">' + v.first + (v.last !== v.first ? '–' + (v.last === last ? 'now' : v.last) : '') + ' · ' + v.seasons + ' season' + (v.seasons === 1 ? '' : 's') + (v.w + v.l ? ' · ' + v.w + '–' + v.l : '') + '</div></div>' +
+          (v.titles.length ? '<span class="vt">' + new Array(v.titles.length + 1).join("🏆") + '</span>' : '') + '<span class="rv">›</span></button>'; }).join("") + '</div>'; };
+      var byTitles = function (a, b) { return O[b].titles.length - O[a].titles.length || O[a].first - O[b].first || (a < b ? -1 : 1); };
+      h += sec("Active", names.filter(function (o) { return O[o].last === last; }).sort(byTitles)) + sec("Former", names.filter(function (o) { return O[o].last !== last; }).sort(byTitles));
+    } else {
+      var yrs = Object.keys(V.seasons).filter(function (y) { return +y >= 2005; }).sort(function (a, b) { return b - a; });
+      h += '<div class="vsearch"><input class="field" id="vq" placeholder="Player or owner" value="' + esc(VQ) + '"><select class="field" id="vy"><option value="">All years</option>' + yrs.map(function (y) { return '<option' + (VY === y ? ' selected' : '') + '>' + y + '</option>'; }).join("") + '</select></div>' +
+        '<div class="card glist" style="margin-top:8px" id="vdraft">' + vaultDraftRows() + '</div>' +
+        '<div class="btns"><a class="b" href="../draft.html">Classic draft portal (8 Ball, tendencies) ›</a></div>';
+    }
+    return h + '<p class="meta" style="margin:14px 2px">Classic pages: <a href="../history.html">History &amp; Stats</a> · <a href="../power-rankings.html">Power Rankings</a> · <a href="../weekly.html">Weekly Pulse</a></p></div>';
+  }
+  function vaultOwnerCard(o) {
+    var v = window.MAFFL_VAULT && MAFFL_VAULT.owners[o]; if (!v) return '';
+    var names = []; v.teams.forEach(function (t) { var last = names[names.length - 1]; if (last && last.n === t[1]) last.to = t[0]; else names.push({ n: t[1], from: t[0], to: t[0] }); });
+    var yl = function (a, lbl) { return a.length ? '<div class="row"><div style="flex:1"><div class="meta">' + lbl + '</div><div class="nm">' + a.join(", ") + '</div></div><div class="rt">' + a.length + '</div></div>' : ''; };
+    return '<div class="card glist"><div class="eb">🗄️ From the Vault · ' + v.first + (v.last !== v.first ? '–' + v.last : '') + '</div>' +
+      yl(v.titles, "🏆 Titles") + yl(v.ru, "🥈 Runner-up") + yl(v.lowerTitles, "⬆️ Lower-tier titles") + yl(v.divTitles, "🛡️ Division titles") + yl(v.playoffs, "🎟️ Playoffs") +
+      '<div class="row"><div style="flex:1"><div class="meta">Team names</div>' + names.slice().reverse().map(function (t) { return '<div class="nm" style="font-size:14px">' + esc(t.n) + ' <small class="meta">' + t.from + (t.to !== t.from ? '–' + t.to : '') + '</small></div>'; }).join("") + '</div></div></div>';
+  }
+  function vaultDraftRows() {
+    if (!DRAFT.length) return ld("Loading every auction since 2005…");
+    var q = norm(VQ), list = DRAFT.filter(function (d) { return +d.Year >= 2005 && (+d.Price || 0) > 0 && (!VY || d.Year === VY) && (!q || norm(d.Player || d.Player_Raw).indexOf(q) >= 0 || norm(d.Owner).indexOf(q) >= 0); })
+      .sort(function (a, b) { return (+b.Price) - (+a.Price) || b.Year - a.Year; });
+    if (!list.length) return '<p class="meta" style="padding:10px 0">No picks match.</p>';
+    return '<div class="eb">' + list.length.toLocaleString() + ' pick' + (list.length === 1 ? '' : 's') + (list.length > 60 ? ' · top 60 by price' : '') + '</div>' + list.slice(0, 60).map(function (d) {
+      return '<div class="row"><div style="flex:1;min-width:0"><div class="nm">' + esc(d.Player || d.Player_Raw) + ' <small class="meta">' + esc(d.Position_Actual || d.Draft_Slot) + '</small></div><div class="meta">' + esc(d.Owner) + ' · ' + d.Year + '</div></div><div class="rt">$' + Math.round(+d.Price) + '</div></div>'; }).join("");
   }
   // The season in full (the Vault's year page; the League tab's Vault will list every year).
   function vaultSheet(y) {
@@ -1885,7 +1948,8 @@
   function renderLeague() {
     leagueTier = leagueTier || ME.tier;
     var rows = TEAMS.filter(function (t) { return t.tier === leagueTier; }).sort(function (a, b) { return a.rank - b.rank; });
-    var subs = [["standings", "Standings"], ["weeks", "Weeks"], ["rules", "Rules & $"], ["history", "History"]];
+    var subs = [["standings", "Standings"], ["weeks", "Weeks"], ["vault", "🗄️ Vault"], ["rules", "Rules & $"]];
+    if (LEAGUE_SUB === "history") LEAGUE_SUB = "vault";
     var h = '<div class="seg" id="lsub">' + subs.map(function (x) { return '<button data-lsub="' + x[0] + '"' + (LEAGUE_SUB === x[0] ? ' class="on"' : '') + '>' + x[1] + '</button>'; }).join("") + '</div>';
     if (LEAGUE_SUB === "standings") {
       h += '<div class="seg seg2" id="lseg"><button data-t="U"' + (leagueTier === "U" ? ' class="on"' : '') + '>Upper</button><button data-t="L"' + (leagueTier === "L" ? ' class="on"' : '') + '>Lower</button></div>' +
@@ -1905,19 +1969,13 @@
         (kd.length ? '<div class="sh"><h2>🗓️ Key dates</h2><small>Coming up</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + kd.map(function (d) {
           return '<div class="row"><div style="flex:1"><div class="nm">' + esc(d.label) + '</div><div class="meta">' + esc(d.when) + (d.note ? ' · ' + esc(d.note) : '') + '</div></div><div class="rt">' + Math.max(0, Math.ceil((d.dueMs - Date.now()) / 864e5)) + '<small>days</small></div></div>'; }).join("") + '</div></div>' : '') +
         '<div class="sh"><h2>Talk to the commish</h2></div><div class="pad"><div class="list" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit requests (form)</a></div></div>';
-    } else {
-      var champs = (window.MATCHUPS_DATA || []).filter(function (r) { return r[7] === "C" && r[2] === "U"; }).sort(function (a, b) { return b[0] - a[0]; });
-      h += '<div class="sh"><h2>🏆 Champions</h2><small>Tap an owner</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + champs.slice(0, 6).map(function (r) {
-      return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + r[0] + '</div><div><div class="nm"><button class="tl2" data-owner="' + esc(r[3]) + '">' + esc(r[3]) + '</button></div><div class="meta">beat <button class="tl2" data-owner="' + esc(r[5]) + '">' + esc(r[5]) + '</button> ' + f2(r[4]) + '–' + f2(r[6]) + '</div></div></div>'; }).join("") +
-      '<details><summary class="rv" style="padding:10px 0;list-style:none">All ' + champs.length + ' title games ›</summary>' + champs.slice(6).map(function (r) {
-      return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + r[0] + '</div><div><div class="nm"><button class="tl2" data-owner="' + esc(r[3]) + '">' + esc(r[3]) + '</button></div><div class="meta">beat ' + esc(r[5]) + '</div></div></div>'; }).join("") + '</details></div></div>';
-      h += '<div class="sh"><h2>Explore</h2><small>Still on the classic site</small></div><div class="pad"><div class="tiles" style="margin-bottom:14px">' +
-      [["🏆", "Power Rankings", "Ratings", "../power-rankings.html"], ["📚", "History", "Since 2002", "../history.html"], ["🎯", "Auction Draft", "Every draft", "../draft.html"], ["📈", "Pulse page", "Long form", "../weekly.html"]]
-        .map(function (x) { return '<a class="tile" href="' + x[3] + '"><span>' + x[0] + '</span><b>' + x[1] + '</b><small>' + x[2] + '</small></a>'; }).join("") + '</div></div>';
-    }
+    } else h += vaultHTML();
     $("v-league").innerHTML = h;
     document.querySelectorAll("#lsub button").forEach(function (b) { b.onclick = function () { LEAGUE_SUB = b.dataset.lsub; renderLeague(); $("views").scrollTop = 0; }; });
     document.querySelectorAll("#lseg button").forEach(function (b) { b.onclick = function () { leagueTier = b.dataset.t; renderLeague(); }; });
+    document.querySelectorAll("#vsub button").forEach(function (b) { b.onclick = function () { VAULT_SUB = b.dataset.vsub; renderLeague(); }; });
+    var vq = $("vq"); if (vq) { vq.oninput = function () { VQ = vq.value; $("vdraft").innerHTML = vaultDraftRows(); }; }
+    var vy = $("vy"); if (vy) { vy.onchange = function () { VY = vy.value; $("vdraft").innerHTML = vaultDraftRows(); }; }
     document.querySelectorAll("#wkchips button").forEach(function (b) { b.onclick = function () { setWeek(+b.dataset.wk); toast(+b.dataset.wk === LATEST.weekNumber ? "Back to this week" : "Replaying Week " + b.dataset.wk); }; });
   }
 
@@ -2626,7 +2684,7 @@
     h += '<div class="card"><div class="eb">Career · titles since 2002, games since 2005</div><div class="stat3"><div><b>' + c.w + '–' + c.l + '</b><small>Reg. season</small></div><div><b>' + c.titles + '</b><small>Titles</small></div><div><b>' + c.playoffs + '</b><small>Playoff years</small></div></div>' +
       (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
       (PRIZE ? '<p>Prize money since ' + PRIZE.meta.data_start + ': <b class="money">$' + PRIZE.prize_events.filter(function (e) { return norm(e.owner) === norm(o); }).reduce(function (s2, e) { return s2 + e.amount; }, 0).toLocaleString() + '</b></p>' : '') +
-      '<div class="btns"><a class="b" href="../power-rankings.html">Power Rankings profile ›</a></div></div>';
+      '<div class="btns"><a class="b" href="../power-rankings.html">Power Rankings profile ›</a></div></div>' + vaultOwnerCard(o);
     var ct = contactOf(o);
     if (!isMe(o) && (ct.phone || ct.email)) h += '<div class="card"><div class="eb">Reach them · owners only</div>' +
       (ct.phone ? '<p>📱 ' + esc(fmtPhone(ct.phone)) + '</p>' : '') + (ct.email ? '<p>✉️ ' + esc(ct.email) + '</p>' : '') +

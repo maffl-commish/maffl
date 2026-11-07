@@ -211,10 +211,46 @@ def build():
             rec.update({k: v for k, v in lines[y].items() if v})
         out[str(y)] = rec
 
-    owners = {o: {"first": first[o], "last": last[o], "seasons": len(seasons_of[o])} for o in seasons_of}
+    # ---- owners: career lines for the Vault's Owners list (regular season = 2005+ games; titles include 2002-04)
+    reg = defaultdict(lambda: [0, 0, 0.0, 0])  # w, l, points for, games
+    po_years = defaultdict(set)
+    for y in years:
+        for x in S[y]["games"]:
+            if x["type"] == "Regular":
+                if x["w"]: reg[x["w"]][0] += 1; reg[x["w"]][2] += x["ws"]; reg[x["w"]][3] += 1
+                if x["l"]: reg[x["l"]][1] += 1; reg[x["l"]][2] += x["ls"]; reg[x["l"]][3] += 1
+            elif x["tier"] == "U" and x["type"] in ("Quarterfinal", "Semifinal", "Championship", "ThirdPlace"):
+                for o in (x["w"], x["l"]):
+                    if o: po_years[o].add(y)
+    owners = {}
+    for o in seasons_of:
+        r = reg[o]
+        owners[o] = {"first": first[o], "last": last[o], "seasons": len(seasons_of[o]),
+                     "titles": [y for y in years if o in champ_of[y]], "ru": [y for y in years if o in ru_of[y]],
+                     "lowerTitles": [y for y in years if o in lower1.get(y, [])],
+                     "divTitles": [y for y in years for d in out[str(y)].get("divs", []) if d["tier"] == "U" and d["t"] and d["t"][0][0] == o],
+                     "playoffs": sorted(po_years[o]), "w": r[0], "l": r[1], "pf": round(r[2], 2),
+                     "teams": [[y, S[y]["teams"][o]["team"]] for y in sorted(seasons_of[o])]}
+    # ---- records
+    all_games = [dict(x, y=y) for y in years for x in S[y]["games"] if x["w"] and x["l"]]
+    sc = [(x["ws"], x["y"], x["wk"], x["w"], x["wt"], x["l"]) for x in all_games] + [(x["ls"], x["y"], x["wk"], x["l"], x["lt"], x["w"]) for x in all_games]
+    sc.sort(key=lambda t: -t[0])
+    bl = sorted(all_games, key=lambda x: -(x["ws"] - x["ls"]))[:10]
+    buys = sorted(((b["$"], y, b["o"], b["p"], b["pos"]) for y in years for b in S[y]["spends"]), key=lambda t: -t[0])[:15]
+    act = [o for o in owners if owners[o]["last"] >= max(years) - 0]
+    records = {
+        "titles": sorted(([o, len(v["titles"]), v["titles"], len(v["ru"])] for o, v in owners.items() if v["titles"] or v["ru"]), key=lambda t: (-t[1], -t[3], t[0])),
+        "wins": sorted(([o, v["w"], v["l"], round(v["w"] / max(1, v["w"] + v["l"]), 3)] for o, v in owners.items() if v["w"] + v["l"] >= 39), key=lambda t: -t[3]),
+        "points": sorted(([o, v["pf"], v["w"] + v["l"]] for o, v in owners.items() if v["pf"]), key=lambda t: -t[1])[:12],
+        "scores": [[t[0], t[1], t[2], t[3], t[4], t[5]] for t in sc[:12]],
+        "blowouts": [[round(x["ws"] - x["ls"], 2), x["y"], x["wk"], x["w"], x["l"], x["ws"], x["ls"]] for x in bl],
+        "buys": [list(t) for t in buys],
+        "playoffs": sorted(([o, len(v["playoffs"])] for o, v in owners.items() if v["playoffs"]), key=lambda t: -t[1])[:12],
+        "active": sorted(act),
+    }
     return {"v": 1, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
             "draftEras": [{"name": e[0], "from": e[1], "to": e[2]} for e in DRAFT_ERAS],
-            "owners": owners, "seasons": out}
+            "owners": owners, "records": records, "seasons": out}
 
 
 def main():

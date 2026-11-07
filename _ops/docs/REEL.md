@@ -63,7 +63,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
 
 **Commish walkthrough 11/7 (voice notes, tab by tab)**: A–E shipped 11/7 (STATUS). Still open:
-- 🗄️ **The Vault** (decided 11/7; History & Stats reborn inside REEL): steps 1–2 shipped (vault-data.js + Throwback card; lines drafted for all 24 seasons, commish editing). Next: 3) Vault section in League (era timeline → year page, Records, Owners, Draft archive), 4) more card series from the Vault data: This week in MAFFL history, What would you pay?, Name that team, Meet the owner, Records watch.
+- 🗄️ **The Vault** (decided 11/7; History & Stats reborn inside REEL): steps 1–3 shipped (vault-data.js + Throwback card; lines drafted for all 24 seasons, commish editing; League → Vault with Seasons, Records, Owners, Draft). Next: 4) more card series from the Vault data: This week in MAFFL history, What would you pay?, Name that team, Meet the owner, Records watch.
 - F · 🏆 **League tab overhaul**: the deep-dive area cards drill into (Rulebook is buried; standings list is too plain). Waiting on Mike's list of what owners should reach from it.
 - G · 👤 **Profile revamp**: bring Power Rankings / owner profile (years in league, draft profile, Madden-style ratings) into the app's look, behind Team → Profile.
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
