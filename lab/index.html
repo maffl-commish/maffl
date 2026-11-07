@@ -116,6 +116,7 @@
   .seg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 14px 0}
   .seg button{flex:1;min-width:0;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .seg button.on{background:var(--surface);color:var(--navy);box-shadow:0 1px 3px var(--navy-shadow)}
+  .seg.seg2{margin:10px 14px 0;max-width:220px}.seg.seg2 button{padding:6px 0;font-size:12px}
   .sub-v{display:none}.sub-v.on{display:block}
   table{width:100%;border-collapse:collapse;font-size:14px}
   th{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;padding:6px 4px}
@@ -1619,26 +1620,45 @@
 
   // ---------- LEAGUE ----------
   var leagueTier = null;
+  // League tab, organized (commish backlog 11/6): four sections under one bar, like Team.
+  //   Standings (tier toggle, table, this week's scores) · Weeks (replay any week) · Rules & $ (rulebook, prizes,
+  //   key dates, talk to the commish) · History (champions, classic-site pages).
+  var LEAGUE_SUB = "standings";
   function renderLeague() {
     leagueTier = leagueTier || ME.tier;
     var rows = TEAMS.filter(function (t) { return t.tier === leagueTier; }).sort(function (a, b) { return a.rank - b.rank; });
-    var h = '<div class="seg" id="lseg"><button data-t="U"' + (leagueTier === "U" ? ' class="on"' : '') + '>Upper</button><button data-t="L"' + (leagueTier === "L" ? ' class="on"' : '') + '>Lower</button></div>' +
-      '<div class="sh"><h2>Standings</h2><small>Through Wk ' + W.weekNumber + '</small></div><div class="pad"><div class="card" style="margin-top:0;padding:6px 10px"><table>' +
-      '<tr><th>#</th><th>Team</th><th class="n">W-L</th><th class="n">PF</th><th class="n">💳</th></tr>' +
+    var subs = [["standings", "Standings"], ["weeks", "Weeks"], ["rules", "Rules & $"], ["history", "History"]];
+    var h = '<div class="seg" id="lsub">' + subs.map(function (x) { return '<button data-lsub="' + x[0] + '"' + (LEAGUE_SUB === x[0] ? ' class="on"' : '') + '>' + x[1] + '</button>'; }).join("") + '</div>';
+    if (LEAGUE_SUB === "standings") {
+      h += '<div class="seg seg2" id="lseg"><button data-t="U"' + (leagueTier === "U" ? ' class="on"' : '') + '>Upper</button><button data-t="L"' + (leagueTier === "L" ? ' class="on"' : '') + '>Lower</button></div>' +
+        '<div class="sh"><h2>Standings</h2><small>Through Wk ' + W.weekNumber + '</small></div><div class="pad"><div class="card" style="margin-top:0;padding:6px 10px"><table>' +
+        '<tr><th>#</th><th>Team</th><th class="n">W-L</th><th class="n">PF</th><th class="n">💳</th></tr>' +
       rows.map(function (t) { return '<tr data-owner="' + esc(t.owner) + '"' + (isMe(t.owner) ? ' class="me"' : '') + '><td>' + t.rank + '</td><td>' + esc(t.team) + (t.div ? ' <span class="pill">' + t.div + '</span>' : '') + '</td><td class="n">' + rec(t) + '</td><td class="n">' + Math.round(t.points) + '</td><td class="n">' + t.credits + '</td></tr>'; }).join("") +
-      '</table></div><p class="meta" style="margin-top:6px">Tap a team for its owner card. Sorted by record, then points; official seeding is in the Pulse.</p></div>';
-    h += '<div class="sh"><h2>📅 Weeks</h2><small>Replay any week</small></div><div class="wkchips" id="wkchips">' + WEEKS.slice().reverse().map(function (w) {
-      return '<button data-wk="' + w.weekNumber + '"' + (w === W ? ' class="on"' : '') + '>' + (w.weekNumber ? "Wk " + w.weekNumber : "Preseason") + '</button>'; }).join("") + '</div>';
-    h += '<div class="pad"><div class="list" style="margin-top:10px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"><button data-rules="1"><span>📋</span>Rulebook</button><button data-prizes="1"><span>💰</span>Prizes &amp; payouts</button></div></div>';
-    var champs = (window.MATCHUPS_DATA || []).filter(function (r) { return r[7] === "C" && r[2] === "U"; }).sort(function (a, b) { return b[0] - a[0]; });
-    h += '<div class="sh"><h2>🏆 Champions</h2><small>Tap an owner</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + champs.slice(0, 6).map(function (r) {
+        '</table></div><p class="meta" style="margin-top:6px">Tap a team for its owner card. Sorted by record, then credits, then points' + (leagueTier === "L" ? '; top 3 move up to Upper' : '') + '.</p></div>';
+      var games = W.results.filter(function (g) { return g.tier === leagueTier; });
+      if (games.length) h += '<div class="sh"><h2>Week ' + W.weekNumber + ' scores</h2><small>Tap ⚔️ for the rivalry</small></div><div class="pad">' + games.map(scoreRow).join("") + '</div>';
+    } else if (LEAGUE_SUB === "weeks") {
+      h += '<div class="sh"><h2>📅 Replay any week</h2><small>The whole app goes back in time</small></div><div class="wkchips" id="wkchips">' + WEEKS.slice().reverse().map(function (w) {
+        return '<button data-wk="' + w.weekNumber + '"' + (w === W ? ' class="on"' : '') + '>' + (w.weekNumber ? "Wk " + w.weekNumber : "Preseason") + '</button>'; }).join("") + '</div>' +
+        '<div class="pad"><p class="meta" style="margin-top:10px">Pick a week and Home, Match, Team and League show it as it was. Tap “Back to now” on the banner to return.</p></div>';
+    } else if (LEAGUE_SUB === "rules") {
+      var kd = (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > Date.now() - 864e5; }).slice(0, 6);
+      h += '<div class="pad"><div class="list" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"><button data-rules="1"><span>📋</span>Rulebook</button><button data-prizes="1"><span>💰</span>Prizes &amp; payouts</button></div></div>' +
+        (kd.length ? '<div class="sh"><h2>🗓️ Key dates</h2><small>Coming up</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + kd.map(function (d) {
+          return '<div class="row"><div style="flex:1"><div class="nm">' + esc(d.label) + '</div><div class="meta">' + esc(d.when) + (d.note ? ' · ' + esc(d.note) : '') + '</div></div><div class="rt">' + Math.max(0, Math.ceil((d.dueMs - Date.now()) / 864e5)) + '<small>days</small></div></div>'; }).join("") + '</div></div>' : '') +
+        '<div class="sh"><h2>Talk to the commish</h2></div><div class="pad"><div class="list" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit requests (form)</a></div></div>';
+    } else {
+      var champs = (window.MATCHUPS_DATA || []).filter(function (r) { return r[7] === "C" && r[2] === "U"; }).sort(function (a, b) { return b[0] - a[0]; });
+      h += '<div class="sh"><h2>🏆 Champions</h2><small>Tap an owner</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + champs.slice(0, 6).map(function (r) {
       return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + r[0] + '</div><div><div class="nm"><button class="tl2" data-owner="' + esc(r[3]) + '">' + esc(r[3]) + '</button></div><div class="meta">beat <button class="tl2" data-owner="' + esc(r[5]) + '">' + esc(r[5]) + '</button> ' + f2(r[4]) + '–' + f2(r[6]) + '</div></div></div>'; }).join("") +
       '<details><summary class="rv" style="padding:10px 0;list-style:none">All ' + champs.length + ' title games ›</summary>' + champs.slice(6).map(function (r) {
       return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + r[0] + '</div><div><div class="nm"><button class="tl2" data-owner="' + esc(r[3]) + '">' + esc(r[3]) + '</button></div><div class="meta">beat ' + esc(r[5]) + '</div></div></div>'; }).join("") + '</details></div></div>';
-    h += '<div class="sh"><h2>Explore</h2><small>Still on the classic site</small></div><div class="pad"><div class="tiles" style="margin-bottom:14px">' +
+      h += '<div class="sh"><h2>Explore</h2><small>Still on the classic site</small></div><div class="pad"><div class="tiles" style="margin-bottom:14px">' +
       [["🏆", "Power Rankings", "Ratings", "../power-rankings.html"], ["📚", "History", "Since 2002", "../history.html"], ["🎯", "Auction Draft", "Every draft", "../draft.html"], ["📈", "Pulse page", "Long form", "../weekly.html"]]
-      .map(function (x) { return '<a class="tile" href="' + x[3] + '"><span>' + x[0] + '</span><b>' + x[1] + '</b><small>' + x[2] + '</small></a>'; }).join("") + '</div></div>';
+        .map(function (x) { return '<a class="tile" href="' + x[3] + '"><span>' + x[0] + '</span><b>' + x[1] + '</b><small>' + x[2] + '</small></a>'; }).join("") + '</div></div>';
+    }
     $("v-league").innerHTML = h;
+    document.querySelectorAll("#lsub button").forEach(function (b) { b.onclick = function () { LEAGUE_SUB = b.dataset.lsub; renderLeague(); $("views").scrollTop = 0; }; });
     document.querySelectorAll("#lseg button").forEach(function (b) { b.onclick = function () { leagueTier = b.dataset.t; renderLeague(); }; });
     document.querySelectorAll("#wkchips button").forEach(function (b) { b.onclick = function () { setWeek(+b.dataset.wk); toast(+b.dataset.wk === LATEST.weekNumber ? "Back to this week" : "Replaying Week " + b.dataset.wk); }; });
   }
