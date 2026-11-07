@@ -144,6 +144,9 @@ jobs:
           }
           Step "validate (expect 0 = 8/8)" { powershell -ExecutionPolicy Bypass -File build\validate.ps1 } @(0)
           Step "Facts calculator" { python _ops/scripts/pulse_facts.py $w } @(0)
+          # REEL app data that follows the weekly pull (robot pushes don't start other workflows, so they're made here)
+          Step "Lab week facts for the quiz cards (gen_lab_weekfacts.py)" { python _ops/scripts/gen_lab_weekfacts.py } @(0)
+          Step "Vault data (gen_vault.py; a failure here never blocks the Pulse)" { python _ops/scripts/gen_vault.py } @(0,1)
           if ($mode -eq 'smoke') { Remove-Item ("_ops/inbox/MAFFL_2026_Week{0:D2}_facts.md" -f $w) }
           git config user.name "maffl-pulse-robot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

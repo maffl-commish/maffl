@@ -24,7 +24,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 ## 2. Built (in the lab sandbox, not live)
 
-Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.23** + `daily.js`, TEST Sheet.
+Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.24** (core) + parts `mod_trades/espn/social/desk.js` + `daily.js`, TEST Sheet.
 
 | Area | What works today |
 |---|---|
@@ -60,7 +60,6 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - ESPN refresh on a rhythm via Apps Script trigger (§6b), "Updated N min ago" label.
 - **Daily run follow-ups:** offseason mode for the daily run; retire the classic Pulse at go-live (stop `pulse-draft.yml`'s Claude step, keep the gold append).
 - Prices for waiver adds (FAAB paid) and draft CSV off the critical path (only player history needs it).
-- `gen_lab_weekfacts.py` added to the Tuesday robot.
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
 
 **Commish walkthrough 11/7 (voice notes, tab by tab)**: A–E shipped 11/7 (STATUS). Still open:
@@ -95,9 +94,8 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Offseason mode (decided: same tabs, different contents): which cards and what Match shows.
 
 **Known issues**
-- `logic.js` is ~79 KB after v0.17 (cache limit 95 KB): split it before the next big backend feature.
 - 11/6 startup bug (no screen after load, blank tabs): guarded startup + You → App errors shipped. If it recurs on the iPhone, the error list names the cause.
-- Watch: `Code.gs` caches `logic.js` only while it is under 95 KB (Apps Script cache limit). It is ~60 KB now; past 95 KB every call would re-download it from GitHub (slow). Split it before then.
+- Done 11/7: backend split into core + parts (each well under the 95 KB cache limit); `_ops/tests/` holds the mock backend, regression and screenshot tools.
 
 ---
 

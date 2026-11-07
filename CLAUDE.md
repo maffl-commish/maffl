@@ -144,6 +144,15 @@ the same commit when something is built, decided or dropped.
   "MAFFL HQ App" Sheet) fetches it from `main` and runs it. **Pushing logic.js = deploying it** (live within
   ~5 min; Sheet menu MAFFL → "Load latest logic now" forces it). `node --check` it and keep the `M.*` exports
   at the bottom intact; a syntax error takes the app's sign-in, reactions and votes down.
+- **Backend layout (2026-11-07):** `logic.js` is the CORE (routing, data helpers, sign-in, settings, summary, commish
+  menu, exports). The rest lives in parts next to it (`mod_trades.js`, `mod_espn.js`, `mod_social.js`, `mod_desk.js`),
+  which the core evaluates inside its own scope (`parts_()`), so functions are called by plain name across files.
+  `daily.js` loads on demand (`need_`). Every file stays under ~90 KB (Apps Script cache limit). **Bump `VERSION` in
+  logic.js whenever any part changes.** A brand-new part file ships in its own push first, and the core that loads it
+  goes in a later push (GitHub's raw files can lag a minute, and a missing part takes sign-in down).
+- **Before any backend push:** `node _ops/tests/regress.js > /tmp/out.txt 2>/dev/null && diff _ops/tests/regress_expected.txt /tmp/out.txt`.
+  No diff = no behavior change. An intended change: review the diff and refresh `regress_expected.txt` in the same
+  commit. For app changes, screenshot with `python3 _ops/tests/shoot.py` (see `_ops/tests/README.md`).
 - `Code.gs` (the loader) should not change. If it must, the commissioner re-pastes it and redeploys a new version.
 - Backend rules: passphrases only as salted hashes; Events is append-only; the backend never writes gold data.
 

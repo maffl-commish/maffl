@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), REEL centered cards
+**Last updated:** 2026-11-07 by Claude (chat), backend split + test kit in the repo
 
 ## Now
 
@@ -19,7 +19,6 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Planned (not written yet)
 
-- **Lab week facts:** `python3 _ops/scripts/gen_lab_weekfacts.py` must run after each weekly ESPN pull (not yet wired into the robot; add to pulse-draft before go-live).
 - **REEL = the MAFFL HQ app redesign (lab, passphrase login, trades, perks). Map: `_ops/docs/REEL.md`; governing doc `_ops/docs/APP_DESIGN.md` (log decisions in its §0 Journal).**
 - **MAFFL HQ app (prototype):** `lab/` v0 live (hidden, read-only). Next: v1 test Sheet + Apps Script (PINs, request-access email, reactions, votes); v2 roster pull + trades; v3 credit perks. Design: `_ops/docs/APP_DESIGN.md`.
 - **Trade Center (sandbox first):** Sleeper-style trade block + offers with players + credits, per-owner PINs, Google Sheet + Apps Script backend, commish approves the credit leg. Design: `_ops/docs/TRADE_CENTER_DESIGN.md` (open questions §8).
@@ -33,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 🏗️ Backend architecture: `logic.js` (91 KB, near the 95 KB Apps Script cache limit) split into a 26 KB core + four parts (`mod_trades` 21 KB, `mod_espn` 13 KB, `mod_social` 13 KB, `mod_desk` 21 KB) evaluated in the core's scope (no code rewritten); parts cached 5 min per VERSION with a 6 h last-good copy so a GitHub hiccup can't take sign-in down. Backend logic v0.24 (no behavior change: the new regression run matches the old build action for action). Shipped in two pushes (parts first). New `_ops/tests/`: the mock backend (real backend code, fake Google + ESPN), `regress.js` + expected output, phone screenshot tool, README; CLAUDE.md App backend rules updated. Tuesday robot (`pulse-draft.yml`) now also regenerates `lab/weekfacts-data.js` (was stale after Week 4) and `lab/vault-data.js`.
 - 2026-11-07 · REEL · Feed cards still snap one at a time, but now size to their story and sit centered (floor ~62% of the screen so short cards don't shrink to a strip; long cards like throwbacks fill and scroll inside).
 - 2026-11-07 · REEL · Feed progress moved to a vertical rail on the right edge (top to bottom, like the feed): current card = tall navy pill, seen cards greyed, ✓ = caught up; tap a dot to jump. Counter ("3 of 15") stays top right.
 - 2026-11-07 · REEL · 🎱 8 Ball reborn as a Vault series: 25 hand-kept tidbits in new `data/MAFFL_Tidbits.csv` (hook, line, player + position; drafted from the auction history, facts checked, commish to edit) → vault-data.js with each player's full auction price history; card = big hook, the story, a bar chart of every auction (high gold, low navy), "<player> in the Vault ›" opens Draft search. One throwback + one 8 Ball a week; off-season (no games) the Vault gets 6 slots (3 + 3). "You're caught up" lists earlier weeks (tap → that week's reel, Back to this week). Found: the classic draft.html 8 Ball tidbit `joshAllen2223` is wrong (Jake's $1 Josh Allen in 2022 was the DL, not the Bills QB); price histories are now keyed by name + position.
