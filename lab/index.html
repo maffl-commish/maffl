@@ -2429,7 +2429,7 @@
     var dy = d.daily || {};
     h += '<div class="dsk"><h4><span>🌅 Daily run · 5 AM + 5 PM</span>' + deskBtn("daily", "", "Run it now") + '</h4><p class="meta">' +
       (!dy.at ? 'Hasn\'t run yet. It starts at the next 5 AM / 5 PM slot.' : ((dy.problems || []).length ? '⚠️ ' : '✅ ') + 'Last ran ' + ago(dy.at) + (ago(dy.at) === "now" ? "" : " ago") + (dy.secs ? ' (' + dy.secs + ' s)' : '') +
-        ((dy.log || []).length ? ' · ' + esc(dy.log.join(" · ")) : ' · scores, rosters, Coach, Survivor refreshed') + ((dy.problems || []).length ? '<br>⚠️ ' + esc(dy.problems.join(" · ")) : '')) + '</p></div>';
+        ((dy.log || []).length ? ' · ' + esc(dy.log.join(" · ")) : ' · scores, rosters, Coach, Survivor refreshed') + ((dy.problems || []).length ? '<br>⚠️ ' + esc(dy.problems.join(" · ")) : '') + (dy.lines ? '<br>' + (dy.lines === "started" ? '✍️ Card lines robot started' : '⚠️ Card lines ' + esc(dy.lines)) : '')) + '</p></div>';
     h += '<p class="meta" style="text-align:center;margin:8px 0 2px">Backend v' + esc(d.version || "?") + ' · credits ' + esc((d.sync || {}).mode || "test").toUpperCase() + (ls2 && ls2.at ? ' · last ledger push ' + ago(ls2.at) + (ls2.ok ? ' ✓' : ' ⚠️') : '') + '</p>';
     return h + '<div class="cgrp">Log</div>';
   }

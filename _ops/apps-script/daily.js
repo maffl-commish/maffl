@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "2"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "3"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -174,10 +174,10 @@ DAILY.run = function (why) {
   var tk = tickInfo_(), tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
   if (why === "tick" ? false : tkAge === null || tkAge > 60) problems.push("the 15-minute robot hasn't run in " + (tkAge === null ? "ever" : Math.round(tkAge) + " min"));
   var weeks = {}; Object.keys(snap.tiers).forEach(function (t) { weeks[t] = snap.tiers[t].last; });
-  props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), ver: DAILY.VER, weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log, problems: problems, secs: Math.round((Date.now() - t0) / 1000) }));
+  var lines = "skipped"; if (Object.keys(snap.tiers).length) { try { lines = DAILY.afterRun(); } catch (e) { lines = "error: " + e.message; } }
+  props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), ver: DAILY.VER, lines: lines, weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log, problems: problems, secs: Math.round((Date.now() - t0) / 1000) }));
   if (log.length || digest.length) deskPost_("robot", ("🌅 Daily run" + (log.length ? ": " + log.join(" · ") : "") + (digest.length ? "\n🧪 Beta: " + digest.join(" · ") : "")).slice(0, CHAT_MAX), "", "OK");
   if (problems.length) deskPost_("alert", "Daily run trouble: " + problems.join(" · "), "", "DAILY");
-  try { DAILY.afterRun(); } catch (e) {}
   return { ok: !problems.length, log: log, problems: problems, digest: digest };
 };
 // Two slots a day in Eastern time: "YYYY-MM-DD am" from 5 AM, "pm" from 5 PM. null before 5 AM.
@@ -199,9 +199,10 @@ DAILY.view = function () {
 // After a run: ask GitHub to start the card-lines workflow (Claude writes the lines, posts them back via putlines).
 // Uses the GITHUB_TOKEN Script property (contents: write is enough for repository_dispatch).
 DAILY.afterRun = function () {
-  var token = PropertiesService.getScriptProperties().getProperty("GITHUB_TOKEN"); if (!token) return;
+  var token = PropertiesService.getScriptProperties().getProperty("GITHUB_TOKEN"); if (!token) return "off: add the GITHUB_TOKEN Script property";
   var r = UrlFetchApp.fetch("https://api.github.com/repos/" + REPO + "/dispatches", { method: "post", contentType: "application/json", muteHttpExceptions: true,
     headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" }, payload: JSON.stringify({ event_type: "daily-lines" }) });
-  if (r.getResponseCode() >= 300) deskPost_("alert", "Couldn't start the card-lines robot (GitHub said " + r.getResponseCode() + "). Cards show plain facts until it works.", "", "DAILY");
+  if (r.getResponseCode() >= 300) { deskPost_("alert", "Couldn't start the card-lines robot (GitHub said " + r.getResponseCode() + "). Cards show plain facts until it works.", "", "DAILY"); return "GitHub said " + r.getResponseCode(); }
+  return "started";
 };
 DAILY.putLines = function (lines) { dPut_("lines", lines); };
