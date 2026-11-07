@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), desk cleanup: 📣 Commish alert, polls to chat
+**Last updated:** 2026-11-07 by Claude (chat), What would you pay? clues + history year
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 💸 What would you pay? gets clues (commish: a 2006 price was a wild guess): NFL team + position, how many times MAFFL had bought him, last year's price, that auction's top buy, the draft era; the reveal adds his rank at his position. New `pay` pool in vault-data.js (every $40+ buy with its clues, 544). 📅 This week in history leads with the year, big (no repeat in the headline).
 - 2026-11-07 · REEL · Commish desk cleanup (commish): 🏷️ Test trade block removed (app + backend `seedblock` op; it was a one-time fill); 🧪 Beta crew moved up into League; 📊 polls moved off the desk into Chat (commish-only Polls row on top of the inbox: ＋ New poll, open polls with Close). New 📣 **Commish alert** on the desk (top of League): one announcement posted by the commish into League chat + both tier chats as a gold alert card, pinned on top of each (unpin from ⋯); inbox preview reads "📣 Commish alert: …". Backend logic v0.26 (desk op `announce`; regression refreshed: seedblock line → announce + pinned check). Tested on the mock at 390px.
 - 2026-11-07 · REEL · Two new series: 💸 **What would you pay?** (Play: a $40+ buy from a past auction, three prices, one shot, then how everyone guessed and where it ranked in that auction, plus whether the buyer won the title) and 📅 **This week in MAFFL history** (Vault: for the coming week number, the record score, biggest blowout, closest game or title game, from new `weekly` in vault-data.js; "That was you" when it was). Vault budget 3 in season (throwback, history, 8 Ball), 7 off-season; Play 4 off-season. REEL_SERIES.md v1.2.
 - 2026-11-07 · REEL · 👋 Commish desk → League → Welcome tour: **Replay for me** (starts on Home now), **Replay for them** (pick an owner) or **Everyone**. Backend logic v0.25: desk op `tour` stamps a new Owners `tour` column (one owner or `*`), summary returns it, and the app replays the tour once per new stamp on any phone (bot note in the desk log). Tested on the mock (commish only; regression unchanged apart from the version) and at 390px.

@@ -1216,7 +1216,7 @@
       : esc(g[3]) + " won the " + y + " title";
     var mine = isMe(g[2]) || isMe(g[5]);
     return { id: "history:" + wk + ":" + y, scope: "league", c: { eb: "📅 This week in MAFFL history", t: "", face: '<div class="fc">' +
-      '<div class="tbyr"><b>' + y + '</b><small>Week ' + wk + '</small></div><h3 style="font-size:24px;line-height:1.2;margin-top:8px">In ' + y + ', ' + head + '.</h3>' +
+      '<div class="tbyr"><b>' + y + '</b><small>Week ' + wk + '</small></div><h3 style="font-size:24px;line-height:1.2;margin-top:8px">' + head + '.</h3>' +
       '<div class="tbfinal"><div class="w"><span>' + esc(g[3]) + ' <small>' + esc(shortOf(g[2])) + '</small></span><b>' + f2(g[4]) + '</b></div><div><span>' + esc(g[6]) + ' <small>' + esc(shortOf(g[5])) + '</small></span><b>' + f2(g[7]) + '</b></div></div>' +
       '<div class="fchips"><span>' + ({ high: "🚀 Week " + wk + " record", blowout: "🔨 Week " + wk + " blowout record", thriller: "⏱️ Closest Week " + wk + " game", final: "🏆 Title game" }[kind]) + '</span>' + (mine ? '<span>That was you</span>' : '') + '</div>' +
       '<div class="btns"><button class="b" data-vault="' + y + '">Open ' + y + ' in the Vault ›</button></div></div>' } };
