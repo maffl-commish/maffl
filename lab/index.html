@@ -115,6 +115,8 @@
   .kpi b{display:block;font:700 20px var(--display)}.kpi small{font-size:11px;color:var(--muted)}
   .thtop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.thtop .b.sm{flex:0 0 auto;width:auto;padding:7px 12px;font-size:12px;min-height:0}
   .kfoot{font-size:11px;color:var(--muted);margin-top:6px;text-align:center}
+  .tjump{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 2px}.tjump button{font:700 12px var(--display);color:var(--navy);background:var(--gold-soft);border:1px solid var(--gold);border-radius:999px;padding:6px 11px}
+  .tjump b{background:var(--navy);color:#fff;border-radius:999px;padding:0 6px;margin-left:3px}
   .tstart{display:flex;align-items:center;gap:12px;margin:12px 0 4px}.tstart .b{flex:0 0 auto;width:auto;padding:10px 16px}.tstart small{font-size:12px;color:var(--muted)}
   .cbal{display:flex;align-items:center;gap:12px;margin:12px 2px 2px}.cbal>b{font:800 44px/1 var(--display);color:var(--navy)}
   .cbal span{display:block;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy)}.cbal small{font-size:12px;color:var(--muted)}
@@ -1079,7 +1081,7 @@
         (picked ? '<span class="qp">' + (o.v === z.answer ? "✓ " : o.v === picked ? "✗ " : "") + pct + '%</span><i class="qbar" style="width:' + pct + '%"></i>' : '') + '</button>'; }).join("") + '</div>';
     if (picked) h += '<div class="qreveal ' + (picked === z.answer ? "ok" : "no") + '"><b>' + (picked === z.answer ? "Nailed it." : "Nope.") + '</b> ' + z.reveal + '</div>' +
       '<p class="meta" style="margin-top:6px">' + (tot ? right + ' of ' + tot + ' owner' + (tot === 1 ? '' : 's') + ' got it right' : '') + '</p>';
-    else h += '<p class="meta" style="margin-top:8px">Tap an answer. You get one shot.</p>';
+    else h += '<p class="meta" style="margin-top:8px">' + (tot ? tot + ' owner' + (tot === 1 ? ' has' : 's have') + ' played · ' : '') + 'Tap an answer to see how everyone picked. One shot.</p>';
     return h;
   }
 
@@ -1374,6 +1376,11 @@
       all.push({ id: "deadline", alert: true, scope: "league", c: { eb: "Key date", t: c.t, face: '<div class="fc"><div class="cd"><b>' + (days == null ? "⏰" : days) + '</b><small>' + (days == null ? "" : "day" + (days === 1 ? "" : "s") + " left") + '</small></div>' +
         '<h3>' + esc(d ? d.label : c.t) + '</h3><p class="fl">' + esc(d ? d.when : "") + '</p>' + (d && d.note ? '<p class="fs">' + esc(d.note) + '</p>' : '') +
         (d && d.id === "trade-deadline" ? '<div class="btns"><button class="b pri" data-go="team">Open Trades</button></div>' : '') + '</div>' } }); });
+    // 💵 Dues: no Money tab any more, so when you owe, it comes to you as a card (commish 11/7)
+    var dues = PRIZE && (PRIZE.dues_seasons || []).filter(function (d) { return d.rows && d.rows.length; }).sort(function (a, b) { return b.year - a.year; })[0];
+    var myDue = dues && dues.rows.filter(function (r) { return norm(r.owner) === norm(ME.owner); })[0];
+    if (myDue && myDue.status !== "PAID" && +myDue.owed > 0) all.push({ id: "dues", alert: true, scope: "me", c: { eb: dues.year + " dues", t: "", face: '<div class="fc"><div class="cd"><b>$' + esc(myDue.owed) + '</b><small>owed</small></div>' +
+      '<h3>Dues are due</h3><p class="fl">Pay the commish; he records it.</p></div>' } });
     if (GOTW && !GOTW.voted) all.push({ id: "gotw", action: true, icon: "🗳️", scope: "league", c: GOTW });
     POLLS.forEach(function (p) { all.push({ id: "poll:" + p.id, play: !p.voted, icon: "📊", scope: p.scope, c: p }); }); // stays put after you vote, so you see the results
     // stories, most personal first
@@ -1429,18 +1436,18 @@
     var CW = W.coachOfWeek || {};
     if (CW.upper || CW.lower) { var board0 = CW.board || [], mineB = board0.filter(function (b) { return norm(b.team) === norm(me.team); })[0], tb = board0.filter(function (b) { return b.tier === me.tier; });
       var cwSec = function (tier, k, nRun) { var w = CW[k]; if (!w) return ''; var won = norm(w.team) === norm(me.team);
-        return '<div class="cwt"><div class="cwh"><span>' + TN[tier] + '</span></div><div class="cwin' + (won ? ' me' : '') + '"><span class="cav sm">' + initials(ownerOfTeam(w.team) || w.team) + '</span><span><b>' + esc(won ? "You · " + w.team : w.team) + '</b><small>' + (w.leftOnBench ? f2(w.leftOnBench) + ' left on the bench' : 'Perfect lineup') + '</small></span><b class="cws">🏆</b></div>' +
-          (w.runnersUp || []).slice(0, nRun).map(function (r, j) { return '<div class="cwr"><i>' + (j + 2) + '</i><span>' + esc(norm(r.team) === norm(me.team) ? "You" : r.team) + '</span><small>' + f2(r.leftOnBench) + ' left</small></div>'; }).join("") + '</div>'; };
+        return '<div class="cwt"><div class="cwh"><span>' + TN[tier] + '</span></div><div class="cwin' + (won ? ' me' : '') + '"><span class="cav sm">' + initials(ownerOfTeam(w.team) || w.team) + '</span><span><b>' + esc(w.team) + '</b><small>' + esc(ownerOfTeam(w.team) || "") + ' · ' + (w.leftOnBench ? f2(w.leftOnBench) + ' left on the bench' : 'perfect lineup') + '</small></span><b class="cws">🏆</b></div>' +
+          (w.runnersUp || []).slice(0, nRun).map(function (r, j) { return '<div class="cwr"><i>' + (j + 2) + '</i><span>' + esc(r.team) + '</span><small>' + f2(r.leftOnBench) + ' left</small></div>'; }).join("") + '</div>'; };
       var iWon = [CW.upper, CW.lower].some(function (w) { return w && norm(w.team) === norm(me.team); });
-      all.push({ id: "coach", scope: "league", c: { eb: "🏆 Coach of the Week · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>' + (iWon ? "You're Coach of the Week" : "Coaches of the Week") + '</h3>' +
+      all.push({ id: "coach", scope: "league", c: { eb: "🏆 Coach of the Week · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>Coaches of the Week</h3>' +
         cwSec("U", "upper", 2) + cwSec("L", "lower", 1) +
         (mineB && !iWon ? '<div class="fchips"><span>Your lineup: #' + (tb.indexOf(mineB) + 1) + ' of ' + tb.length + ' · ' + f2(mineB.leftOnBench) + ' left</span></div>' : '') +
         '<div class="btns"><button class="b" data-coach="1">Full report ›</button></div></div>' } }); }
     // 🚀 High score of the week, both tiers
     var hiOf = function (tier) { var best = null; W.results.forEach(function (g) { [[g.ownerA, g.teamA, g.scoreA], [g.ownerB, g.teamB, g.scoreB]].forEach(function (x) { if (teamOf(x[0]).tier === tier && !/ghost/i.test(x[1]) && (!best || x[2] > best[2])) best = x; }); }); return best; };
     var hiU = hiOf("U"), hiL = hiOf("L");
-    if (hiU || hiL) all.push({ id: "high", scope: "league", c: { eb: "🚀 High score · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>' + ([hiU, hiL].some(function (x) { return x && isMe(x[0]); }) ? "You put up the top score" : "Top scores") + '</h3>' +
-      '<div class="hitiles">' + [["U", hiU], ["L", hiL]].filter(function (x) { return x[1]; }).map(function (x) { return '<div' + (isMe(x[1][0]) ? ' class="me"' : '') + '><small>' + TN[x[0]] + '</small><b>' + f2(x[1][2]) + '</b><span>' + esc(isMe(x[1][0]) ? "You" : x[1][1]) + '</span></div>'; }).join("") + '</div></div>' } });
+    if (hiU || hiL) all.push({ id: "high", scope: "league", c: { eb: "🚀 High score · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>High scores</h3>' +
+      '<div class="hitiles">' + [["U", hiU], ["L", hiL]].filter(function (x) { return x[1]; }).map(function (x) { return '<div' + (isMe(x[1][0]) ? ' class="me"' : '') + '><small>' + TN[x[0]] + '</small><b>' + f2(x[1][2]) + '</b><span>' + esc(x[1][1]) + '<br><small>' + esc(x[1][0]) + '</small></span></div>'; }).join("") + '</div></div>' } });
     // Survivor only when it's about you: still alive, or knocked out this week
     var sv = W.survivor;
     if (sv) { var act = sv[me.tier === "U" ? "upperActive" : "lowerActive"] || [], outNow = (sv[me.tier === "U" ? "upperEliminated" : "lowerEliminated"] || []).filter(function (x) { return x.recent; })[0], alive = act.indexOf(me.team) >= 0;
@@ -2121,7 +2128,9 @@
     var block = Object.keys(SUM.block || {}).filter(function (k) { return k.indexOf(ME.tier + ":") === 0 && !isMe(SUM.block[k].owner); });
     var h = '<div class="tstart"><button class="b pri" data-newtrade="1" data-tour="newtrade">＋ Start a trade</button><small>' + (days > 0 ? '⏰ Deadline in ' + days + ' day' + (days === 1 ? '' : 's') : 'Deadline passed') + '</small></div>';
     function sec(t, list) { return list.length ? '<div class="sh" style="padding-left:0"><h2>' + t + '</h2><small>' + list.length + '</small></div>' + list.map(function (o) { return offerCard(o); }).join("") : ''; }
-    var pend = sec("Needs you", waitingMe) + sec("Waiting on them", waitingThem) + sec("In review · your tier", review);
+    var pend = '<div id="tpend"></div>' + sec("Needs you", waitingMe) + sec("Waiting on them", waitingThem) + sec("In review · your tier", review);
+    var jumps = [["Needs you", waitingMe.length], ["Waiting on them", waitingThem.length], ["In review", review.length]].filter(function (x) { return x[1]; });
+    if (jumps.length) h += '<div class="tjump">' + jumps.map(function (x) { return '<button data-tjump="1">' + x[0] + ' <b>' + x[1] + '</b></button>'; }).join("") + '</div>';
     // 🏷️ The block first, as cards you scroll sideways (commish 11/7); pending trades sit below.
     h += '<div class="sh" style="padding-left:0"><h2>🏷️ On the block</h2><small>' + block.length + ' in your tier</small></div>' +
       (block.length ? '<div class="blk">' + block.map(function (k) { var nm = k.slice(2), ow = SUM.block[k].owner, p = rosterOf(ow).filter(function (x) { return x.name === nm; })[0]; if (!p) return '';
@@ -2402,6 +2411,7 @@
 
   document.addEventListener("click", function (e) {
     var el;
+    if ((el = e.target.closest("[data-tjump]"))) { var tp = $("tpend"); if (tp) tp.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     if ((el = e.target.closest("[data-stat]"))) { try { statBox(JSON.parse(el.dataset.stat)); } catch (_) {} return; }
     if ((el = e.target.closest("[data-coach]"))) { openSheet("coach"); return; }
     if ((el = e.target.closest("[data-box]"))) { var bx = el.dataset.box.split("|"); openSheet("box", +bx[0], bx[1]); return; }

@@ -913,7 +913,10 @@ function deskAct_(me, b) {
 function poll_(me, b) {
   ensureCol_("Polls", "tier");
   if (b.op === "pollclose") { var hit = rows_("Polls").filter(function (x) { return String(x.poll_id) === String(b.target); })[0]; if (!hit) return { ok: false, error: "No such poll" };
-    setCell_("Polls", hit._row, "active", "N"); return { ok: true }; }
+    setCell_("Polls", hit._row, "active", "N");
+    var t = summary_("", "").tallies[hit.poll_id] || {}, n = 0; Object.keys(t).forEach(function (k) { n += t[k]; }); // results go to the same room the poll was announced in
+    post_(hit.tier ? "tier:" + hit.tier : "league", BOT, "text", "📊 Poll closed: " + hit.question + "\n" + Object.keys(t).sort(function (x, y) { return t[y] - t[x]; }).map(function (k) { return k + " · " + Math.round(100 * t[k] / n) + "% (" + t[k] + ")"; }).join("\n") + (n ? "" : "No votes."), "", "", [], "");
+    return { ok: true }; }
   var q = String(b.question || "").trim().slice(0, 140), opts = (b.options || []).map(function (o) { return String(o).replace(/\|/g, "/").trim().slice(0, 60); }).filter(String).slice(0, 6);
   if (!q || opts.length < 2) return { ok: false, error: "A question and at least 2 options" };
   var tier = b.tier === "U" || b.tier === "L" ? b.tier : "", days = Math.max(1, Math.min(14, Number(b.days) || 7)), id = "P" + Date.now().toString(36).toUpperCase();
