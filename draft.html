@@ -1980,7 +1980,7 @@
     </div>
     <div class="page-header__meta" aria-label="Auction Draft version metadata">
       <span class="meta-pill">v1.1</span>
-      <span class="meta-pill">Last Updated October 9, 2026</span>
+      <span class="meta-pill">Last Updated November 7, 2026</span>
     </div>
   </header>
 
@@ -9153,14 +9153,17 @@ function renderOracle() {
   document.getElementById("oracleRollBtn").addEventListener("click", rollOracle);
 }
 
+// Same name, different player (Josh Allen QB vs DL): key by name + position group.
+function oraclePosGrp(ps) { ps = String(ps || '').toUpperCase(); return /^(DT|DE|DL)$/.test(ps) ? 'DL' : /^(S|CB|DB)$/.test(ps) ? 'DB' : ps; }
+function oracleKey(p) { return p[F_P] + '@' + oraclePosGrp(p[F_PS]); }
 function buildOracleData() {
   const players = new Map();
   PICKS.forEach(p => {
     const name = p[F_P];
-    let ent = players.get(name);
+    let ent = players.get(oracleKey(p));
     if (!ent) {
-      ent = { name, count: 0, picks: [], champPicks: [], maxPick: null, minPick: null };
-      players.set(name, ent);
+      ent = { name, key: oracleKey(p), count: 0, picks: [], champPicks: [], maxPick: null, minPick: null };
+      players.set(oracleKey(p), ent);
     }
     ent.count++;
     ent.picks.push(p);
@@ -9176,12 +9179,12 @@ function buildOracleData() {
     const o = owners[p[F_O]];
     o.picks.push(p);
     if (!o.maxPick || p[F_PR] > o.maxPick[F_PR]) o.maxPick = p;
-    o.byPlayer.set(p[F_P], (o.byPlayer.get(p[F_P]) || 0) + 1);
+    o.byPlayer.set(oracleKey(p), (o.byPlayer.get(oracleKey(p)) || 0) + 1);
   });
   owners.forEach(o => {
     let best = null;
-    o.byPlayer.forEach((c, name) => {
-      if (c >= 2 && (!best || c > best.count)) best = { name, count: c };
+    o.byPlayer.forEach((c, k) => {
+      if (c >= 2 && (!best || c > best.count)) best = { name: k.split('@')[0], count: c };
     });
     o.favPlayer = best;
   });
@@ -9202,19 +9205,19 @@ function buildOracleData() {
   const playerList = [...players.values()];
 
   const byPY = new Map();
-  PICKS.forEach(p => { const k = p[F_P] + '|' + p[F_Y]; if (!byPY.has(k)) byPY.set(k, []); byPY.get(k).push(p); });
+  PICKS.forEach(p => { const k = oracleKey(p) + '|' + p[F_Y]; if (!byPY.has(k)) byPY.set(k, []); byPY.get(k).push(p); });
   const priceJumps = [];
   PICKS.forEach(p => {
-    const next = byPY.get(p[F_P] + '|' + (p[F_Y] + 1)); if (!next) return;
+    const next = byPY.get(oracleKey(p) + '|' + (p[F_Y] + 1)); if (!next) return;
     const hi = next.reduce((a, q) => (a && a[F_PR] >= q[F_PR]) ? a : q, null);
-    const lo = byPY.get(p[F_P] + '|' + p[F_Y]).reduce((a, q) => (a && a[F_PR] <= q[F_PR]) ? a : q, null);
+    const lo = byPY.get(oracleKey(p) + '|' + p[F_Y]).reduce((a, q) => (a && a[F_PR] <= q[F_PR]) ? a : q, null);
     if (hi[F_PR] - lo[F_PR] >= 25) priceJumps.push({ lo, hi, jump: hi[F_PR] - lo[F_PR] });
   });
   const seenJ = new Set();
-  const breakouts = priceJumps.filter(j => { const k = j.lo[F_P] + j.lo[F_Y]; if (seenJ.has(k)) return false; seenJ.add(k); return true; }).filter(j => isActiveOwnerIdx(j.lo[F_O]));
+  const breakouts = priceJumps.filter(j => { const k = oracleKey(j.lo) + j.lo[F_Y]; if (seenJ.has(k)) return false; seenJ.add(k); return true; }).filter(j => isActiveOwnerIdx(j.lo[F_O]));
   const splitPlayers = [];
   const splitMap = new Map();
-  PICKS.filter(p => p[F_Y] >= TIER_ERA_START).forEach(p => { const k = p[F_P] + '|' + p[F_Y]; if (!splitMap.has(k)) splitMap.set(k, []); splitMap.get(k).push(p); });
+  PICKS.filter(p => p[F_Y] >= TIER_ERA_START).forEach(p => { const k = oracleKey(p) + '|' + p[F_Y]; if (!splitMap.has(k)) splitMap.set(k, []); splitMap.get(k).push(p); });
   splitMap.forEach((picks, key) => { if (picks.length < 2) return; const up = picks.find(p => pickTier(p) === 'UPPER'); const lo = picks.find(p => pickTier(p) === 'LOWER'); if (up && lo) splitPlayers.push({ name: picks[0][F_P], year: picks[0][F_Y], up, lo }); });
 
   return {
@@ -9258,8 +9261,8 @@ function tagPos(pos) { return '<span class="fact-emph">' + escapeHTML(pos) + '</
  * for the changes to appear on the page.
  * ------------------------------------------------------------------- */
 const ORACLE_TIDBITS = [
-  { key: "tidbit:hinesWard", weight: 3, html: tagPlayer("Hines Ward") + ' was drafted ' + tagNum(8) + ' times, peaking at ' + tagAmt(30) + ' — and won a championship with ' + tagOwner("Tony Trozzo") + ' in ' + tagYear(2010) + '.' },
-  { key: "tidbit:joshAllen2223", weight: 3, html: tagPlayer("Josh Allen") + ' went from a ' + tagAmt(1) + ' steal for ' + tagOwner("Jacob Nickman") + ' in ' + tagYear(2022) + ' to a ' + tagAmt(79) + ' haul for ' + tagOwner("Mike Murello") + ' the very next year in ' + tagYear(2023) + '.' },
+  { key: "tidbit:hinesWard", weight: 3, html: tagPlayer("Hines Ward", "WR") + ' was drafted ' + tagNum(7) + ' times, peaking at ' + tagAmt(30) + ', and was on two title teams: ' + tagOwner("Todd Trozzo") + '&rsquo;s in ' + tagYear(2005) + ' and ' + tagOwner("Tony Trozzo") + '&rsquo;s in ' + tagYear(2010) + '.' },
+  { key: "tidbit:joshAllen1823", weight: 3, html: tagPlayer("Josh Allen", "QB") + ' went for ' + tagAmt(1) + ' to ' + tagOwner("Bob Keslar") + ' in ' + tagYear(2018) + '. By ' + tagYear(2023) + ', ' + tagOwner("Mike Murello") + ' was paying ' + tagAmt(79) + '.' } // fixed 2026-11-07: Jake's $1 Josh Allen (2022) was the DL, not the Bills QB
 ];
 
 const FACT_GENERATORS = [
@@ -9363,7 +9366,7 @@ const FACT_GENERATORS = [
   function () {
     const p = oraclePick(oracleData.dollarPicks);
     if (!p) return null;
-    const ent = oracleData.playerList.find(e => e.name === p[F_P]);
+    const ent = oracleData.playerList.find(e => e.key === oracleKey(p));
     if (!ent || !(ent.count >= 3 || ent.maxPick[F_PR] >= 20)) return null;
     return {
       key: "dollar:" + p[F_P] + ':' + p[F_Y] + ':' + p[F_O],
