@@ -188,7 +188,7 @@ def build():
             rec["top"] = {"o": top[1], "team": top[2], "s": top[0], "wk": top[3]}
             bl = max(real, key=lambda x: x["ws"] - x["ls"])
             rec["blowout"] = {"w": bl["w"], "l": bl["l"], "m": round(bl["ws"] - bl["ls"], 2), "wk": bl["wk"]}
-            close = min((x for x in real if x["type"] == "Regular"), key=lambda x: x["ws"] - x["ls"], default=None)
+            close = min((x for x in real if x["type"] == "Regular" and x["ws"] > x["ls"]), key=lambda x: x["ws"] - x["ls"], default=None)
             if close:
                 rec["closest"] = {"w": close["w"], "l": close["l"], "m": round(close["ws"] - close["ls"], 2), "wk": close["wk"]}
         recs = [(int(num(t["w"])), -int(num(t["l"])), o) for o, t in s["teams"].items() if t["w"] not in ("", None)]

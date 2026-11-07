@@ -1171,7 +1171,7 @@
   }
   function throwbackCard() {
     var y = throwbackYear(), s = VS(y); if (!s) return null;
-    var era = vEra(y) || { title: "" }, tags = era.title.split(" · ").concat(s.draftEra ? [s.draftEra + " draft"] : []);
+    var era = vEra(y) || { title: "" }, tags = era.title.split(" · ").concat(s.draftEra ? [/draft$/i.test(s.draftEra) ? s.draftEra : s.draftEra + " draft"] : []);
     var f = s.final, upDivs = (s.divs || []).filter(function (d) { return d.tier === "U"; });
     var h = '<div class="fc tbk"><div class="tbtags">' + tags.map(function (t, k) { return '<span class="' + (k === tags.length - 1 && s.draftEra ? 'dr' : '') + '">' + esc(t) + '</span>'; }).join("") + '</div>' +
       '<div class="tbyr"><b>' + y + '</b><small>Throwback</small></div>' + (s.line ? '<p class="tbline">' + esc(s.line) + '</p>' : '');
@@ -1191,7 +1191,7 @@
   function vaultSheet(y) {
     var s = VS(y); if (!s) return '<div class="card"><p>No record for ' + esc(y) + '.</p></div>';
     var era = vEra(y) || { title: "" }, T = s.teams || {}, nm = function (o) { return esc(T[o] || o) + ' <small class="meta">' + esc(vShort(o)) + '</small>'; };
-    var h = '<h2 class="sht">🗄️ ' + y + ' · the Vault</h2><p class="meta" style="margin:-6px 2px 10px">' + esc(era.title) + (s.draftEra ? ' · ' + esc(s.draftEra) + ' draft' : '') + ' · ' + s.n + ' teams</p>';
+    var h = '<h2 class="sht">🗄️ ' + y + ' · the Vault</h2><p class="meta" style="margin:-6px 2px 10px">' + esc(era.title) + (s.draftEra ? ' · ' + esc(/draft$/i.test(s.draftEra) ? s.draftEra : s.draftEra + ' draft') : '') + ' · ' + s.n + ' teams</p>';
     if (s.line) h += '<div class="card"><p class="tbline" style="margin:0">' + esc(s.line) + '</p></div>';
     h += '<div class="card glist"><div class="eb">Finish</div>' + [["🏆 Champion", s.champ], ["🥈 Runner-up", s.ru], ["🥉 Third", s.third ? [s.third] : []], ["⬆️ Lower-tier champ", s.lowerChamp]].filter(function (r) { return r[1] && r[1].length; })
       .map(function (r) { return '<div class="row"><div style="flex:1"><div class="meta">' + r[0] + '</div><div class="nm">' + r[1].map(nm).join(" &amp; ") + '</div></div></div>'; }).join("") + '</div>';

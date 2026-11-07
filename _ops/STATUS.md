@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), REEL Vault step 1 (data file + throwback card)
+**Last updated:** 2026-11-07 by Claude (chat), REEL Vault step 2 (throwback lines drafted)
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 🗄️ Vault step 2: throwback story lines drafted for all 24 seasons in `data/MAFFL_Throwbacks.csv` (commish to edit; facts checked against gold), vault-data.js regenerated; Throwback card now rotates weekly through every season. gen_vault.py: closest game skips exact ties (tiebreak games). "Snake Draft draft" label fixed.
 - 2026-11-07 · REEL · 🗄️ The Vault, step 1: `lab/vault-data.js` (all 24 seasons, 81 KB) DERIVED by new `_ops/scripts/gen_vault.py` from the gold CSVs (champions from title games, Lower-tier champ from prize.csv per governance; owners through the registry) + new hand-kept `data/MAFFL_Throwbacks.csv` (commish's one-line story per season; 2009 written). New `Vault data` workflow regenerates it when data/ changes and Wednesdays. App: 🗄️ Throwback card in the reel (league-wide; era + draft-era tags, the story line, title game, back-to-back chip, division winners, biggest buy per owner, farewell / rookie notes, top score), rotating weekly through seasons that have a line; Open 2009 in the Vault › = the full season (finish, playoffs, every division, superlatives, top 10 spends). Governance §2 row added.
 - 2026-11-07 · REEL · Walkthrough second pass (items missed the first time): Coach of the Week and High score cards are league-neutral (no "You're…", owner names shown); quizzes show how many have played before you answer; 💵 dues card when you owe (Money tab is gone); Trades gets jump chips (Needs you · Waiting on them · In review). Backend logic v0.23 (same version): closing a poll posts its results to the room it was announced in. logic.js 91.2 KB.
 - 2026-11-07 · REEL · Fix: after A–E nothing in the middle of the screen took taps (cards wouldn't swipe, Match/Trades buttons dead): the hidden Chat panel still covered it; now it's out of the way when closed (also fixed a closeChat error). League-wide cards wear the MAFFL crest instead of 🏟️. Decided: no custom group chats (DMs + league/tier rooms only).
