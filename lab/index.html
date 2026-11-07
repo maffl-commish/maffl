@@ -565,6 +565,20 @@
   .reelchat .ctrade{margin-top:8px}
   .reelchat .last{display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)}
   .reelchat .last p{font-size:14px;line-height:1.4;color:var(--navy)}
+  /* 🧪 beta feedback kit */
+  .fbbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.25)}
+  .fbbtn.on{display:block}
+  .fbnudge{position:fixed;left:50%;transform:translate(-50%,140%);bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:41;width:min(92vw,440px);background:var(--navy);color:#fff;border-radius:16px;padding:12px 12px 12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(15,29,52,.35);transition:transform .25s ease,visibility 0s .25s;visibility:hidden;pointer-events:none}
+  .fbnudge.on{transform:translate(-50%,0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
+  .fbnudge p{flex:1;font:600 14px/1.3 var(--body)}
+  .fbnudge button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:12px;min-width:44px;height:44px;font-size:20px}
+  .fbnudge .x{background:none;font-size:18px;min-width:32px;opacity:.7}
+  .fbmood{display:flex;gap:8px;margin-top:12px}
+  .fbmood button{flex:1;border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:12px 0;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .fbmood button span{display:block;font-size:26px;margin-bottom:2px}
+  .fbmood button.on{border-color:var(--navy);background:var(--navy);color:#fff}
+  .fbctx{font:600 12px var(--body);color:var(--muted);margin-top:4px}
+  textarea.field{min-height:96px;resize:vertical;font:16px/1.4 var(--body)}
 </style>
 </head>
 <body>
@@ -602,6 +616,8 @@
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
+<button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
+<div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
 <script src="../schedule-data.js"></script>
 <script src="../matchups-data.js"></script>
@@ -636,10 +652,11 @@
     else { var b = $("netbar"); if (b) b.classList.remove("on"); }
   }
   function tracked(p, quiet) { if (quiet) return p; net(1); return p.then(function (x) { net(-1); return x; }, function (e) { net(-1); throw e; }); }
-  var QUIET = { react: 1, vote: 1, inbox: 1 };
+  var QUIET = { react: 1, vote: 1, inbox: 1, taplog: 1 };
   function api(action, body, quiet) {
     body = Object.assign({ action: action }, body || {});
-    return tracked(fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }), quiet || QUIET[action]);
+    return tracked(fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }), quiet || QUIET[action])
+      .then(function (r) { if (r && r.ok && MOMENTS[action]) { var m = MOMENTS[action]; setTimeout(function () { nudge(m[0], m[1]); }, 1800); } return r; });
   }
   function apiGet(q, quiet) { return tracked(fetch(API_URL + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }), quiet); }
   function ld(msg, cls) { return '<div class="ld' + (cls ? " " + cls : "") + '"><span class="spin"></span><span>' + esc(msg || "Loading…") + '</span></div>'; }
@@ -819,13 +836,13 @@
   // Startup safety: a crash in one screen's render must never strand the app on no screen (11/6 bug: after boot
   // nothing showed, Home only on tap, other tabs blank). Each render runs guarded; an empty screen re-renders on tap;
   // errors are kept on this phone (You → App errors) so we can see what broke.
-  var RENDER = {};
+  var RENDER = {}, CUR_TAB = "home";
   function logErr(where, e) {
     var m = (e && (e.message || e.reason && e.reason.message || e.reason)) || String(e), list = [];
     if (/Failed to fetch|Load failed|NetworkError|network connection/i.test(m)) return; // offline blips aren't bugs
     try { list = JSON.parse(store("maffl_lab_errs") || "[]"); } catch (x) {}
     list.unshift({ at: new Date().toISOString(), where: where, msg: String(m).slice(0, 200), line: String((e && (e.stack || e.reason && e.reason.stack)) || "").split("\n").slice(0, 2).join(" | ").slice(0, 240) });
-    store("maffl_lab_errs", JSON.stringify(list.slice(0, 12)));
+    store("maffl_lab_errs", JSON.stringify(list.slice(0, 12))); try { tap("error", where + ": " + String(m).slice(0, 60)); } catch (x) {}
   }
   window.addEventListener("error", function (e) { logErr("page", e.error || e.message); });
   window.addEventListener("unhandledrejection", function (e) { logErr("promise", e.reason); });
@@ -841,6 +858,7 @@
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === t); });
     $("ttl").textContent = TITLES[t]; $("views").scrollTop = 0;
     if (location.hash !== "#" + t) try { history.replaceState(null, "", "#" + t); } catch (e) {}
+    CUR_TAB = t; tap("tab", t); firstLook(t);
   }
   document.querySelectorAll("#tabs button").forEach(function (b) { b.onclick = function () { tab(b.dataset.tab); }; });
   document.addEventListener("click", function (e) {
@@ -908,7 +926,7 @@
     var early = EARLY_SUM && norm(store("maffl_lab_owner")) === norm(ME.owner) ? EARLY_SUM : null; EARLY_SUM = null; // already on its way
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
-      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
+      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
@@ -1308,7 +1326,7 @@
     var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat");
     if (again) again.onclick = function () { store(tossKey(), "{}"); pos = 0; renderHome(); };
     if (dc) dc.onclick = function () { openChat(); };
-    if (x) wireSwipe(top, x);
+    if (x) wireSwipe(top, x); else if (n === 0) nudge("inbox0", "Inbox zero. How was going through the cards?");
     paint($("hstack"));
   }
   function go(dir) { pos = Math.max(0, Math.min(INBOX.length - 1, pos + dir)); drawDeck(); }
@@ -2162,7 +2180,7 @@
   var stackS = [];
   function openSheet(kind, a, b, push) {
     if (kind === "rivalry" && isMe(b)) { var tmp = a; a = b; b = tmp; } // you're always on the left
-    if (!push) stackS = []; stackS.push([kind, a, b]);
+    if (!push) stackS = []; stackS.push([kind, a, b]); tap("sheet", kind + (a && typeof a === "string" && a.length < 40 ? ":" + a : ""));
     $("sb").innerHTML = kind === "player" ? playerSheet(a) : kind === "builder" ? builderSheet() : kind === "perk" ? perkSheet(a) : kind === "settings" ? settingsSheet() : kind === "owner" ? ownerSheet(a) : kind === "rules" ? rulesSheet(a) : kind === "rule" ? ruleSheet(a) : kind === "prizes" ? prizesSheet() : kind === "card" ? a : '<div class="rivsheet">' + rivalryFrame(a, b, "sheet") + '</div>'; $("sb").scrollTop = 0;
     paint($("sb"));
     if (kind === "rules" && $("rq")) { var q = $("rq"); q.oninput = function () { $("rlist").innerHTML = ruleList(q.value); }; }
@@ -2357,6 +2375,7 @@
     if (l.kind === "lock") return "🔒 Owner locked out";
     if (l.kind === "alert") return ALERT_T[l.event] || "⚠️ Alert";
     if (l.kind === "robot") return (l.event === "FAIL" ? "❌ " : "🤖 ") + String(l.text || "").split("\n")[0];
+    if (l.kind === "feedback") return "🧪 " + String(l.text || "").split("\n")[0];
     return l.owner === BOTN ? String(l.text || "") : "You: " + l.text;
   }
   function espnStep(p) {
@@ -2398,6 +2417,7 @@
       var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += '<div class="dsec">💳 Credit sync</div><div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>';
       h += '</div>';
     }
+    h += betaPanel(d);
     if ((d.noPin || []).length) h += '<div class="dsk"><details><summary>👥 ' + d.noPin.length + ' owner' + (d.noPin.length === 1 ? '' : 's') + ' without a passphrase yet</summary>' + d.noPin.map(function (o) {
       return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("") + '</details></div>';
     var ls2 = d.sync && d.sync.last, tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
@@ -2419,6 +2439,7 @@
       body = (parts.length > 1 ? '<div class="cbot' + (m.event === "FAIL" ? " fail" : m.event === "OK" ? " ok" : "") + '">' + esc(parts.slice(1).join("\n")) + '</div>' : '') +
         (/^https:\/\//.test(m.ref || "") ? '<div class="btns"><a class="b" href="' + esc(m.ref) + '" target="_blank" rel="noopener">Open ↗</a></div>' : ''); }
     else if (m.kind === "note") { hd = m.text; body = ""; }
+    else if (m.kind === "feedback") { var fl = String(m.text || "").split("\n"); hd = "🧪 " + fl[0]; body = fl.length > 1 ? '<div class="cbot' + (m.event === "down" ? " fail" : m.event === "up" ? " ok" : "") + '">“' + esc(fl.slice(1).join("\n")) + '”</div>' : ''; }
     return '<div class="cevt">' + esc(hd) + '</div>' + body;
   }
   function loadDesk() {
@@ -2439,6 +2460,11 @@
     if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
       toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
+    if (op === "betaon" || op === "betaoff") {
+      if (op === "betaon") { who = ($("betapick") || {}).value; if (!who) { toast("Pick an owner first"); return; } t = teamOf(who).team || who; }
+      busy(1); api("deskact", Object.assign(creds(), { op: "beta", target: who, on: op === "betaon" })).then(function (r) { busy(0);
+        toast(r.ok ? (op === "betaon" ? "🧪 " + t + " is in the beta crew" : t + " is out of the beta crew") : (r.error || "Didn't work")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     var C = { issue: ["Issue a new passphrase?", "For " + t + ". Any old passphrase stops working. You'll see the new one once, with a button to text it.", "Issue it", false],
       unlock: ["Unlock " + t + "?", "Their passphrase stays the same; the wrong-try count resets.", "Unlock", false],
       dismiss: ["Dismiss this request?", "Marks it done without issuing anything.", "Dismiss", true],
@@ -2684,6 +2710,81 @@
     buildTeams(); ME = BY_OWNER[norm(ME.owner)] || ME; closeSheet(); start(); tab("home");
   }
 
+  // ---------- 🧪 beta feedback kit (REEL.md roadmap 3b; beta crew + commish only) ----------
+  // Feedback button on every screen (grabs where you are), quick 👍/🤔/👎 prompts at a few moments (first look at each
+  // tab, after a trade offer/perk/chat message, inbox zero; at most 3 a day, 3 min apart), and a tap log sent in batches.
+  var BETA = false, TAPS = [], TAP_SID = Math.random().toString(36).slice(2, 10), TAP_T = null;
+  var MOMENTS = { offer: ["offer", "You just sent a trade offer. How easy was that?"], respond: ["respond", "How was answering that trade?"],
+    perk: ["perk", "How was asking for a perk?"], chatsend: ["chat", "How's chatting in here?"] };
+  var FIRST = { home: "First look at your Home cards. Good?", match: "First look at the live Match screen. Good?", team: "First look at Team (roster, trades, credits). Good?", league: "First look at League. Good?", more: "This is your You screen. Anything missing?" };
+  function betaOn(on) {
+    BETA = on; $("fbbtn").classList.toggle("on", on);
+    if (on && !TAP_T) { TAP_T = setInterval(flushTaps, 60000); tap("open", (navigator.standalone ? "home-screen" : "browser") + " " + innerWidth + "x" + innerHeight); firstLook(CUR_TAB); }
+  }
+  function tap(type, what) { if (!BETA) return; TAPS.push([Date.now(), type, String(what || "").slice(0, 80), CUR_TAB + (stackS.length ? ">" + stackS[stackS.length - 1][0] : CH.open ? ">chat" : "")]); if (TAPS.length >= 150) flushTaps(); }
+  function flushTaps(beacon) {
+    if (!TAPS.length || !API_URL || !ME) return; var ev = TAPS.splice(0, 300);
+    var body = JSON.stringify(Object.assign({ action: "taplog", session: TAP_SID, events: ev }, creds()));
+    try { fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, keepalive: !!beacon }).catch(function () {}); } catch (e) {}
+  }
+  document.addEventListener("visibilitychange", function () { if (document.hidden) { tap("hide", ""); flushTaps(true); } else tap("back", ""); });
+  document.addEventListener("click", function (e) {
+    if (!BETA) return; var el = e.target.closest("button,a,[data-tab],[data-go],[data-owner],[data-player]"); if (!el || el.id === "fbbtn" || el.closest("#fbnudge")) return;
+    var d = el.dataset, key = Object.keys(d)[0], what = key ? key + "=" + String(d[key]).slice(0, 40) : (el.id ? "#" + el.id : "") || el.textContent.trim().replace(/\s+/g, " ").slice(0, 40);
+    tap("tap", what);
+  }, true);
+  function screenCtx() {
+    var top = stackS[stackS.length - 1], card = CUR_TAB === "home" && INBOX[pos] ? (INBOX[pos].c.eb || INBOX[pos].id) : "";
+    var where = CH.open ? "Chat" + (CH.room ? " · " + (CH.room === "desk" ? "desk" : /^dm:/.test(CH.room) ? "DM" : CH.room) : "") : (TITLES[CUR_TAB] === "MAFFL HQ" ? "Home" : TITLES[CUR_TAB]) + (top ? " · " + top[0] : card ? " · " + card : CUR_TAB === "team" ? " · " + TEAM_SUB : "");
+    var errs = []; try { errs = JSON.parse(store("maffl_lab_errs") || "[]"); } catch (e) {}
+    return { where: where.slice(0, 120), ctx: JSON.stringify({ tab: CUR_TAB, sheet: top ? top[0] : "", card: card, chat: CH.open ? CH.room || "inbox" : "", week: W && W.weekNumber, screen: innerWidth + "x" + innerHeight,
+      standalone: !!navigator.standalone, ua: navigator.userAgent.replace(/^.*?\(/, "(").slice(0, 120), lastErr: errs[0] ? errs[0].where + ": " + errs[0].msg : "" }) };
+  }
+  function sendFeedback(mood, note, kind, ctx) {
+    ctx = ctx || screenCtx(); tap("feedback", kind + ":" + (mood || "note"));
+    return api("feedback", Object.assign(creds(), { mood: mood, note: note, kind: kind, where: ctx.where, ctx: ctx.ctx }), true);
+  }
+  function feedbackBox(mood0, kind, ctx0) {
+    var ctx = ctx0 || screenCtx(), mood = mood0 || "";
+    $("cbox").innerHTML = '<h3>🧪 What do you think?</h3><p class="fbctx">About: ' + esc(ctx.where) + '</p>' +
+      '<div class="fbmood">' + [["up", "👍", "Like it"], ["meh", "🤔", "Confusing"], ["down", "👎", "Don't like"]].map(function (m) { return '<button data-mood="' + m[0] + '"' + (m[0] === mood ? ' class="on"' : '') + '><span>' + m[1] + '</span>' + m[2] + '</button>'; }).join("") + '</div>' +
+      '<label class="lbl" for="fbnote">Tell the commish (what you expected, what broke, what you\'d add)</label><textarea class="field" id="fbnote" maxlength="600" placeholder="Anything goes. Short is fine."></textarea>' +
+      '<div class="btns"><button class="b" id="fbno">Cancel</button><button class="b pri" id="fbyes">Send</button></div>';
+    $("cwrap").classList.add("on"); tap("sheet", "feedback");
+    $("cbox").querySelectorAll("[data-mood]").forEach(function (b) { b.onclick = function () { mood = mood === b.dataset.mood ? "" : b.dataset.mood; $("cbox").querySelectorAll("[data-mood]").forEach(function (x) { x.classList.toggle("on", x.dataset.mood === mood); }); }; });
+    $("fbno").onclick = function () { $("cwrap").classList.remove("on"); };
+    $("fbyes").onclick = function () { var note = $("fbnote").value.trim(); if (!mood && !note) { toast("Pick a thumb or write a note"); return; }
+      busy(1); sendFeedback(mood, note, kind || "button", ctx).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't send"); return; } $("cwrap").classList.remove("on"); toast("Sent to the commish. Thanks! 🙌"); })
+        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+  }
+  $("fbbtn").onclick = function () { hideNudge(); feedbackBox("", "button"); };
+  // Quick prompts: never twice for the same moment, at most 3 a day, 3 minutes apart, never over an open box.
+  function fbSeen() { try { return JSON.parse(store("maffl_lab_fbseen") || "{}"); } catch (e) { return {}; } }
+  function firstLook(t) { if (BETA && FIRST[t]) setTimeout(function () { if (CUR_TAB === t) nudge("first:" + t, FIRST[t]); }, 4000); }
+  function nudge(key, text) {
+    if (!BETA || $("cwrap").classList.contains("on")) return;
+    var seen = fbSeen(), day = new Date().toDateString(), today = Object.keys(seen).filter(function (k) { return seen[k].d === day; }).length;
+    var last = Math.max.apply(null, [0].concat(Object.keys(seen).map(function (k) { return seen[k].t || 0; })));
+    if (seen[key] || today >= 3 || Date.now() - last < 18e4) return;
+    seen[key] = { d: day, t: Date.now() }; store("maffl_lab_fbseen", JSON.stringify(seen));
+    var ctx = screenCtx(), n = $("fbnudge"); tap("prompt", key);
+    n.innerHTML = '<p>' + esc(text) + '</p><button data-q="up" aria-label="Good">👍</button><button data-q="down" aria-label="Not good">👎</button><button class="x" data-q="x" aria-label="Dismiss">✕</button>';
+    n.classList.add("on"); clearTimeout(nudge.h); nudge.h = setTimeout(hideNudge, 12000);
+    n.querySelectorAll("[data-q]").forEach(function (b) { b.onclick = function () { var q = b.dataset.q; hideNudge(); if (q === "x") { tap("prompt", key + ":dismiss"); return; }
+      sendFeedback(q, "", "prompt:" + key, ctx).then(function (r) { if (r && r.ok) toast(q === "up" ? "👍 Got it. Tap 🧪 Feedback anytime to say more." : "Thanks. What would make it better?"); }).catch(function () {});
+      if (q === "down") setTimeout(function () { feedbackBox("down", "prompt:" + key, ctx); }, 400); }; });
+  }
+  function hideNudge() { $("fbnudge").classList.remove("on"); clearTimeout(nudge.h); }
+  // Desk: who's testing, when they were last in, taps + feedback in the last day; add or remove testers.
+  function betaPanel(d) {
+    var crew = (d.beta && d.beta.crew) || [], ins = {}; crew.forEach(function (c) { ins[norm(c.owner)] = 1; });
+    var others = TEAMS.filter(function (t) { return !ins[norm(t.owner)] && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.team.localeCompare(b.team); });
+    return '<div class="dsk"><details' + (crew.length ? '' : ' open') + '><summary>🧪 Beta crew · ' + crew.length + ' tester' + (crew.length === 1 ? '' : 's') + '</summary>' +
+      crew.map(function (c) { return '<div class="ditem"><b>' + esc(c.team || teamOf(c.owner).team) + '</b> <span class="meta">' + esc(c.owner) + ' · ' + (c.last ? 'in ' + ago(c.last) + (ago(c.last) === "now" ? "" : " ago") : 'not in yet') + ' · ' + c.taps + ' taps · ' + c.fb + ' feedback (24 h)</span><div class="btns">' + deskBtn("betaoff", c.owner, "Remove") + '</div></div>'; }).join("") +
+      '<div class="ditem"><select class="field" id="betapick"><option value="">Add a tester…</option>' + others.map(function (t) { return '<option value="' + esc(t.owner) + '">' + esc(t.team) + ' (' + esc(t.owner) + ', ' + (t.tier === "U" ? "Upper" : "Lower") + ')</option>'; }).join("") + '</select><div class="btns">' + deskBtn("betaon", "", "🧪 Add to beta", 1) + '</div>' +
+      '<p class="meta" style="margin-top:6px">Testers get a 🧪 Feedback button, a few quick 👍/👎 prompts and a tap log. Their notes land here in the log. You always have the kit.</p></div></details></div>';
+  }
+
   // ---------- boot ----------
   function start() {
     var saved = store("maffl_lab_owner");
@@ -2696,6 +2797,7 @@
     $("chip").textContent = initials(ME.owner);
     $("chip").onclick = function () { if (API_URL) tab("more"); else showWelcome(); };
     RENDER = { home: renderHome, match: renderMatch, team: renderTeam, league: renderLeague, more: renderMore };
+    if (SUM_OK && SUM.beta) betaOn(true);
     var h = location.hash.slice(1), first = TITLES[h] ? h : "home", bad = [];
     tab(first); // pick the screen first, so a slow or broken render can't leave you on nothing
     Object.keys(RENDER).forEach(function (k) { if (!guard(k, RENDER[k])) { bad.push(TITLES[k] === "MAFFL HQ" ? "Home" : TITLES[k]); snag(k); } });

@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.17";
+var VERSION = "0.18";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -98,6 +98,8 @@ function doPost(e) {
       case "inbox":    return json(withAuth_(b, function (o) { return { ok: true, chat: inbox_(o) }; }));
       case "desk":     return json(withAuth_(b, function (o) { return o.commish ? desk_(o) : { ok: false, error: "Commish only" }; }));
       case "deskact":  return json(withAuth_(b, function (o) { return o.commish ? deskAct_(o, b) : { ok: false, error: "Commish only" }; }));
+      case "feedback": return json(withAuth_(b, function (o) { return feedback_(o, b); }));
+      case "taplog":   return json(withAuth_(b, function (o) { return tapLog_(o, b); }));
       case "botpost":  return json(botPost_(b));
       default:        return json({ ok: false, error: "unknown action" });
     }
@@ -121,6 +123,8 @@ function sheetGet_(name) {
   if (sh && name === "Perks" && sh.getLastColumn() < PERK_HEAD.length) sh.getRange(1, 1, 1, PERK_HEAD.length).setValues([PERK_HEAD]);
   if (!sh && name === "Chat") { sh = ss.insertSheet("Chat"); sh.appendRow(CHAT_HEAD); sh.setFrozenRows(1); }
   if (!sh && name === "Reads") { sh = ss.insertSheet("Reads"); sh.appendRow(READS_HEAD); sh.setFrozenRows(1); }
+  if (!sh && name === "Feedback") { sh = ss.insertSheet("Feedback"); sh.appendRow(FB_HEAD); sh.setFrozenRows(1); }
+  if (!sh && name === "TapLog") { sh = ss.insertSheet("TapLog"); sh.appendRow(TAP_HEAD); sh.setFrozenRows(1); }
   return sh;
 }
 function rows_(name) {
@@ -626,6 +630,43 @@ function rosters_(tier) {
   return out;
 }
 
+// ---------------------------------------------------------------- 🧪 beta feedback kit (REEL.md roadmap 3b)
+// Owners with beta = "Y" (the commish always) get the Feedback button, quick prompts and the tap log. Feedback lands in
+// the Feedback tab and on the desk; taps land in TapLog (batched from the phone, never posted anywhere).
+var FB_HEAD = ["fb_id","ts","owner","tier","kind","mood","where","note","ctx"];
+var TAP_HEAD = ["ts","owner","session","type","what","where"];
+var MOOD = { up: "👍", meh: "🤔", down: "👎" };
+function isBeta_(o) { return !!o && (String(o.beta || "").toUpperCase() === "Y" || String(o.is_commish) === "Y"); }
+function feedback_(me, b) {
+  var o = ownerRow_(me.owner); if (!isBeta_(o)) return { ok: false, error: "Beta testers only" };
+  var mood = MOOD[b.mood] ? b.mood : "", note = String(b.note || "").trim().slice(0, 600), where = String(b.where || "").slice(0, 120);
+  if (!mood && !note) return { ok: false, error: "Pick a thumb or write a note" };
+  var id = "F" + Date.now().toString(36), ctx = String(b.ctx || "").slice(0, 1500);
+  sheet_("Feedback").appendRow([id, new Date(), me.owner, o.tier, String(b.kind || "button").slice(0, 20), mood, safe_(where), safe_(note), safe_(ctx)]);
+  deskPost_("feedback", ((MOOD[mood] || "💬") + " " + (o.team || me.owner) + " · " + where + (note ? "\n" + note : "")).slice(0, CHAT_MAX), id, mood || "NOTE");
+  return { ok: true, id: id };
+}
+function tapLog_(me, b) {
+  var o = ownerRow_(me.owner); if (!isBeta_(o)) return { ok: true, skipped: true };
+  var ev = (Array.isArray(b.events) ? b.events : []).slice(0, 300), sid = String(b.session || "").slice(0, 16);
+  if (!ev.length) return { ok: true, n: 0 };
+  var rows = ev.map(function (e) { return [new Date(Number(e[0]) || Date.now()), me.owner, sid, String(e[1] || "").slice(0, 20), safe_(String(e[2] || "").slice(0, 80)), safe_(String(e[3] || "").slice(0, 60))]; });
+  var sh = sheet_("TapLog"); sh.getRange(sh.getLastRow() + 1, 1, rows.length, TAP_HEAD.length).setValues(rows);
+  return { ok: true, n: rows.length };
+}
+// Desk panel: who's in the crew, when they were last in, taps + feedback in the last 24 h. Reads only the TapLog tail.
+function betaInfo_() {
+  var crew = owners_().filter(function (o) { return String(o.beta || "").toUpperCase() === "Y"; }), day = Date.now() - 864e5, by = {};
+  crew.forEach(function (o) { by[norm_(o.owner)] = { owner: o.owner, team: o.team, tier: o.tier, last: null, taps: 0, fb: 0 }; });
+  var sh = SpreadsheetApp.getActive().getSheetByName("TapLog");
+  if (sh && sh.getLastRow() > 1) { var n = Math.min(4000, sh.getLastRow() - 1);
+    sh.getRange(sh.getLastRow() - n + 1, 1, n, 2).getValues().forEach(function (r) { var x = by[norm_(r[1])]; if (!x) return; var t = new Date(r[0]).getTime();
+      if (!x.last || t > x.last) x.last = t; if (t > day) x.taps++; }); }
+  var fsh = SpreadsheetApp.getActive().getSheetByName("Feedback");
+  if (fsh) rows_("Feedback").forEach(function (f) { var x = by[norm_(f.owner)]; if (x && new Date(f.ts).getTime() > day) x.fb++; });
+  return { crew: Object.keys(by).map(function (k) { var x = by[k]; if (x.last) x.last = new Date(x.last).toISOString(); return x; }) };
+}
+
 // ---------------------------------------------------------------- chat (test Sheet only)
 // Rooms: "league" (everyone signed in) · "tier:U" / "tier:L" (that tier's group; the commish sees both to moderate)
 // · "dm:<a>|<b>" (two owners, normalized names sorted; only those two). Trade offers post themselves into the two
@@ -781,7 +822,7 @@ function summary_(week, owner) {
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
   var last = {}; try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
   return { ok: true, contacts: owner ? contacts_() : [], perks: pk.perks, insuranceLeft: pk.insuranceLeft, sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
-    commish: !!(meRow && String(meRow.is_commish) === "Y"), chat: meRow ? inbox_(meRow) : null };
+    commish: !!(meRow && String(meRow.is_commish) === "Y"), beta: isBeta_(meRow), chat: meRow ? inbox_(meRow) : null };
 }
 
 // ---------------------------------------------------------------- 🛡️ Commish desk (APP_DESIGN §10d)
@@ -820,7 +861,7 @@ function desk_(me) {
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(),
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }) };
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_() };
 }
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
@@ -835,7 +876,9 @@ function deskAct_(me, b) {
   }
   if (b.op === "unlock") { setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", ""); deskPost_("note", o.owner + " unlocked (same passphrase).", o.owner, "UNLOCKED"); return { ok: true }; }
   if (b.op === "dismiss") { closeRequests_(o.owner); return { ok: true }; }
-  return { ok: false, error: "issue, unlock, dismiss or espn" };
+  if (b.op === "beta") { ensureCol_("Owners", "beta"); setCell_("Owners", o._row, "beta", b.on ? "Y" : "");
+    deskPost_("note", (b.on ? "🧪 " + o.owner + " joined the beta crew." : o.owner + " left the beta crew."), o.owner, b.on ? "BETA_ON" : "BETA_OFF"); return { ok: true }; }
+  return { ok: false, error: "issue, unlock, dismiss, beta or espn" };
 }
 // Robots (GitHub Actions, Claude scheduled tasks) post to the desk with the shared key in Script property DESK_KEY.
 // No key set = closed. Body: { action:"botpost", key, title, text, link, status: ok|fail|info }

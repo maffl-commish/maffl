@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-06 (chat) · Real ESPN rosters; Pulse goes fully automatic (decided)
+Last updated: 2026-11-06 (chat) · 🧪 Beta feedback kit built
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -23,7 +23,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 ## 2. Built (in the lab sandbox, not live)
 
-Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.17**, TEST Sheet.
+Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` + `logic.js` **v0.18**, TEST Sheet.
 
 | Area | What works today |
 |---|---|
@@ -38,6 +38,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 | ☰ More | **Settings**: your email + mobile, six opt-in emails (offer received / countered / accepted / declined, commish decision, perk decision), all off by default. Contacts only in the backend Sheet, shown to signed-in owners |
 | Contacts + nudges | Owner panel shows Text / Call / Email. Every open offer has 💬 Text them / ✉️ Email them (prefilled from your phone, link to the offer); a heads-up box pops after Send, Counter, Accept, Decline. `#offer-ID` links open that offer |
 | Panels | Owner panel and rivalry panel from any name/game; real rivalry page embedded (`rivalry.html?embed=1`) |
+| 🧪 Beta kit | Beta crew (Owners `beta`=Y, managed from the desk's 🧪 Beta crew panel; commish always on): floating 🧪 Feedback button (👍 Like it / 🤔 Confusing / 👎 Don't like + note, grabs the screen/card/sheet, phone, last error) → Feedback tab + desk log. Quick 👍/👎 prompts on first look at each tab, after a trade offer/answer, perk, chat message, inbox zero (max 3/day, 3 min apart; 👎 opens the note box). Tap log (tabs, sheets, taps, prompts, errors, open/hide) batched every 60 s + on close → TapLog tab. Desk panel: each tester's last visit, taps + feedback in 24 h, add/remove |
 | Robots | Credit sync (`credit-sync.yml`): app approval → Credit_Log → balances → credits.html. TEST mode (dry run) |
 
 ## 3. Roadmap (to go-live — everything ships at once)
@@ -45,7 +46,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 1. **Finish the sandbox** — backlog "Next" items below.
 2. **Hook up for real** — GITHUB_TOKEN + DESK_KEY (Script property and GitHub secret); real ESPN live feed; real rosters (ESPN roster pull); lab week facts wired into the Tuesday robot.
 3. **Mike's feel test** — full app on his phone (Home-Screen standalone), then a dry run: fake trades incl. negate, deadline lockout, over-balance block, wrong passphrase, undo.
-3b. **Beta crew** — Charlie, Sam and Ben (Mike's nephews, new to the league, all in the **Lower** tier; young, used to modern apps, have time to test). Mike may add Joe or Ed so a second voice / tier is covered. They get the MVP before everyone else, with beta-only feedback tools (see backlog "Beta feedback kit").
+3b. **Beta crew** — Charlie, Sam and Ben (Mike's nephews, new to the league, all in the **Lower** tier; young, used to modern apps, have time to test). Mike may add Joe or Ed so a second voice / tier is covered. They get the MVP before everyone else, with the 🧪 beta kit (built 11/6). To start: desk → 🧪 Beta crew → add each tester, issue their passphrases, text them the link.
 4. **Go-live** — APP_DESIGN §9 checklist: production Sheet, test data wiped, CREDIT_SYNC=live, passphrases emailed, app becomes `index.html`, old home → League, Pulse announces it.
 
 ## 4. Backlog
@@ -59,12 +60,9 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - `gen_lab_weekfacts.py` added to the Tuesday robot.
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
 
-**Beta feedback kit (idea, 11/6 — build as the MVP nears; beta crew only)**
-- Who: Charlie, Sam, Ben. Beta-only, switched on per owner; the league-wide feedback loop after go-live is separate and quieter.
-- In-the-moment feedback, in their face: a 👍/👎 + "What do you think of this?" prompt on cards/screens, plus a floating "Feedback" button that grabs the current screen/card with a note.
-- Watch what they tap: light click/screen log (which tabs, cards, buttons, where they drop off), sent to the backend Sheet.
-- Answers land in the Commish desk so Mike sees them as they come in.
-- Open: how pushy the prompts are (every new screen vs. a few targeted asks); how long the beta runs before go-live.
+**Beta kit follow-ups (after the first testers)**
+- Desk summary of the tap log (where they spend time, where they drop off); feedback inside the Chat sheet (the button sits under it today).
+- How long the beta runs before go-live; whether prompts are too pushy (tune after the crew's first days).
 
 **Automation queue (§10c, map §10e)**
 - Commish: paste `Code.gs` (tick line) + add the 15-min trigger (§10f). Next robot jobs: weekly-high credit + season awards to the ledger (approve card), dues reminders, ESPN writes (§10b).
