@@ -12,6 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
+DAILY.VER = "2"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -78,7 +79,10 @@ function dScores_(tier) {
 }
 function r2_(x) { return Math.round((Number(x) || 0) * 100) / 100; }
 
-// ---- 2. Coach of the Week (same rule as the robot: fewest points left on the bench; bye / empty / 0-pt starter = out)
+// ---- 2. Coach of the Week — same rule as the ESPN pull robot (maffl_espn_pull.py COTW, commish 2026-10-06): fewest points
+// left on the bench; a "hole" = a starter on bye, a starter who didn't play (no stats that week) or an empty slot; out of
+// contention at 4+ holes (a starter who played and scored 0 is NOT a hole). Tie → higher team score.
+var COTW_HOLES = 4;
 var D_SLOTS_ = {};
 function dCoach_(tier, wk, teams) {
   var base = D_SLOTS_[tier] = D_SLOTS_[tier] || espn_(LEAGUES[tier], "view=mSettings"), counts = ((base.settings || {}).rosterSettings || {}).lineupSlotCounts || {}, slots = [];
@@ -93,16 +97,19 @@ function dCoach_(tier, wk, teams) {
       var ps = ents.map(function (e) { var pl = (e.playerPoolEntry || {}).player || {}, st = pl.stats || [];
         var act = st.filter(function (x) { return x.scoringPeriodId === wk && x.statSourceId === 0; })[0];
         var pts = act ? act.appliedTotal : ((e.playerPoolEntry || {}).appliedStatTotal || 0);
-        return { n: pl.fullName || "?", sid: e.lineupSlotId, pts: r2_(pts), el: pl.eligibleSlots || [], bye: !!pl.proTeamId && pro && Object.keys(pro).length && !pro[pl.proTeamId] }; });
+        var bye = !!pl.proTeamId && Object.keys(pro || {}).length > 0 && !pro[pl.proTeamId];
+        return { n: pl.fullName || "?", sid: e.lineupSlotId, pts: r2_(pts), el: pl.eligibleSlots || [], bye: bye, dnp: !bye && !act }; });
       var starters = ps.filter(function (x) { return x.sid !== 20 && x.sid !== 21; }), pool = ps.filter(function (x) { return x.sid !== 21; });
-      if (starters.length < slots.length) out = "empty slot";
-      else if (starters.some(function (x) { return x.bye; })) out = "started a player on bye";
-      else if (starters.some(function (x) { return !x.pts; })) out = "0-point starter";
+      var why = [], empty = Math.max(0, slots.length - starters.length);
+      starters.forEach(function (x) { if (x.bye) why.push(x.n + " on bye"); else if (x.dnp) why.push(x.n + " didn't play"); });
+      if (empty) why.push(empty + " empty slot" + (empty > 1 ? "s" : ""));
+      var holes = why.length - (empty ? 1 : 0) + empty; if (holes >= COTW_HOLES) out = holes + " holes: " + why.join(", ");
       var sum = starters.reduce(function (a, x) { return a + x.pts; }, 0), best = bestLineup_(slots, pool.map(function (x) { return [x.pts, x.el]; }));
-      board.push({ id: sd.teamId, scored: r2_(sum), best: r2_(best.pts), gap: r2_(best.pts - sum), out: out });
+      var bp = Math.max(best.pts, sum);
+      board.push({ id: sd.teamId, scored: r2_(sum), best: r2_(bp), gap: r2_(bp - sum), holes: holes, out: out });
     });
   });
-  board.sort(function (a, b) { return (a.out ? 1 : 0) - (b.out ? 1 : 0) || a.gap - b.gap; });
+  board.sort(function (a, b) { return (a.out ? 1 : 0) - (b.out ? 1 : 0) || a.gap - b.gap || b.scored - a.scored; });
   return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null };
 }
 
@@ -152,9 +159,9 @@ DAILY.run = function (why) {
   var snap = { at: new Date().toISOString(), tiers: {} };
   ["U", "L"].forEach(function (tier) {
     try {
-      var s = dScores_(tier), coach = dGet_("coach_" + tier) || {};
+      var s = dScores_(tier), coach = dGet_("coach2_" + tier) || {};
       s.decided.forEach(function (wk) { if (!coach[wk] && Date.now() - t0 < 200000) { try { coach[wk] = dCoach_(tier, wk, s.teams); } catch (e) { problems.push("Coach " + tier + " wk " + wk + ": " + e.message); } } });
-      dPut_("coach_" + tier, coach);
+      dPut_("coach2_" + tier, coach);
       s.coach = coach; snap.tiers[tier] = s;
       var prevLast = (last.weeks || {})[tier] || 0;
       if (s.last > prevLast && prevLast) log.push((tier === "U" ? "Upper" : "Lower") + " week " + s.last + " is final");
@@ -167,7 +174,7 @@ DAILY.run = function (why) {
   var tk = tickInfo_(), tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
   if (why === "tick" ? false : tkAge === null || tkAge > 60) problems.push("the 15-minute robot hasn't run in " + (tkAge === null ? "ever" : Math.round(tkAge) + " min"));
   var weeks = {}; Object.keys(snap.tiers).forEach(function (t) { weeks[t] = snap.tiers[t].last; });
-  props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log, problems: problems, secs: Math.round((Date.now() - t0) / 1000) }));
+  props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), ver: DAILY.VER, weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log, problems: problems, secs: Math.round((Date.now() - t0) / 1000) }));
   if (log.length || digest.length) deskPost_("robot", ("🌅 Daily run" + (log.length ? ": " + log.join(" · ") : "") + (digest.length ? "\n🧪 Beta: " + digest.join(" · ") : "")).slice(0, CHAT_MAX), "", "OK");
   if (problems.length) deskPost_("alert", "Daily run trouble: " + problems.join(" · "), "", "DAILY");
   try { DAILY.afterRun(); } catch (e) {}
@@ -181,7 +188,7 @@ DAILY.slot = function () {
 DAILY.due = function () {
   var s = DAILY.slot(); if (!s) return false; var last = {};
   try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) {}
-  return last.slot !== s;
+  return last.slot !== s || last.ver !== DAILY.VER;
 };
 // What the app reads (GET ?action=daily): the snapshot + the last 7 days of moves + the card lines + run info.
 DAILY.view = function () {
