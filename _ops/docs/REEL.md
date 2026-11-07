@@ -63,7 +63,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).
 
 **Commish walkthrough 11/7 (voice notes, tab by tab)**: A–E shipped 11/7 (STATUS). Still open:
-- 🗄️ **The Vault** (decided 11/7; History & Stats reborn inside REEL): steps 1–3 shipped (vault-data.js + Throwback card; lines drafted for all 24 seasons, commish editing; League → Vault with Seasons, Records, Owners, Draft). Step 4 done (11/7): What would you pay?, This week in MAFFL history, Name that team, Meet the owner, Records watch.
+- 🗄️ **The Vault** (decided 11/7; History & Stats reborn inside REEL): steps 1–3 shipped (vault-data.js + Throwback card; lines final for all 24 seasons; League → Vault with Seasons, Records, Owners, Draft). Step 4 done (11/7): What would you pay?, This week in MAFFL history, Name that team, Meet the owner, Records watch.
 - F · 🏆 **League tab overhaul**: the deep-dive area cards drill into (Rulebook is buried; standings list is too plain). Waiting on Mike's list of what owners should reach from it.
 - Done 11/7: 🧑 MAFFL player profile (any player, anywhere: season + price history + owners + title pedigree + trade value + 8 Ball).
 - Done 11/7: 👤 MAFFL owner profile (Power Rankings ratings + scout report, trophy case, season strip, auction profile, rivalries).
@@ -71,7 +71,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
-- Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball is now a Vault series (25 rewritten tidbits, commish editing); off-season Vault gets 6 slots; earlier weeks listed after "caught up".
+- Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball is now a Vault series (25 rewritten tidbits); off-season Vault gets 6 slots; earlier weeks listed after "caught up".
 
 **Commish backlog (added 11/6, not built)**
 - ⚖️ Trade grade v2 follow-up: a real age source for Future value (ESPN's league API has none; today it's years since first MAFFL draft). Tune weights once real trades come through.
