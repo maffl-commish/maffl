@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-06 · REEL · 🧭 Bottom tabs reordered (commish): Home · Team · Match · Chat · League. Lab only.
 - 2026-11-06 · REEL · 💬 Chat send feedback: your message shows dimmed with a spinner + "Sending…" until the Sheet confirms it; if it fails it stays in the thread in red with the reason, ↻ Retry and ✕ (puts the text back in the box). Unsent messages survive the 'chat' polls. Lab only.
 - 2026-11-06 · REEL · App reads the daily run (GET `action=daily`, kept on the phone): when it has a final week the Pulse doesn't, the app builds that week from ESPN data (results, standings by record → credits → points, Coach of the Week, could-have-won, Survivor, weekly highs, next week's previews from the schedule) so every screen moves on without a Pulse. Your result / up-next cards use Claude's card lines; new 📰 Wire card (roster moves in your tier, last 48 h, yours first). Pulse still feeds older weeks until go-live.
 - 2026-11-06 · REEL · ✍️ Card lines: after each daily run the backend (logic v0.20) fires `repository_dispatch daily-lines` → new `card-lines.yml` reads GET `action=daily`, Claude writes `lines.json` per `_ops/docs/CARD_LINES_RECIPE.md` (tier headline / hot / cold / coach / survivor / wire + each owner's result + next), checked (≤140 chars, known owners) and posted back (`putlines`, DESK_KEY). Commits nothing; failures post to the desk; cards fall back to plain facts.
