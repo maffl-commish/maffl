@@ -591,7 +591,9 @@
   .dkhead .cb{color:var(--gold);font-size:24px;min-width:44px;min-height:44px;border:0;background:none}
   .dkbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px calc(env(safe-area-inset-bottom) + 30px)}
   .dktiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .dkt{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--muted);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:1px;min-width:0}
+  .dkt{position:relative;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--muted);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:1px;min-width:0}
+  .dkt em{position:absolute;right:8px;top:6px;font-style:normal;color:var(--muted);font-size:16px}
+  .dktiles.five .dkt:nth-child(4),.dktiles.five .dkt:nth-child(5){grid-column:span 1}
   .dkt span{font-size:18px}.dkt b{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy)}.dkt small{font:600 12px var(--body);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .dkt.ok{border-top-color:var(--win,#1f9d6a)}.dkt.warn{border-top-color:var(--gold)}.dkt.bad{border-top-color:var(--loss)}.dkt.bad small{color:var(--loss)}
   .dkh{display:flex;align-items:baseline;gap:8px;margin:18px 2px 0}.dkh h3{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--navy);margin:0}.dkh small{font:600 12px var(--body);color:var(--muted)}
@@ -2600,9 +2602,9 @@
       ["🌅", "Daily run", dyAge === null ? "Not yet" : ago2(dy.at), dyAge === null ? "warn" : (dy.problems || []).length || dyAge > 14 ? "warn" : "ok"],
       ["✍️", "Card lines", !dy.lines ? "—" : dy.lines === "started" ? "Running" : "Off", !dy.lines ? "warn" : dy.lines === "started" ? "ok" : "bad"],
       ["💳", "Credit sync", ((d.sync || {}).mode || "test").toUpperCase() + (ls && ls.at ? " · " + ago(ls.at) : ""), ls && ls.ok === false ? "bad" : (d.sync || {}).mode === "live" ? "ok" : "warn"],
-      ["🧪", "Beta crew", crew + " tester" + (crew === 1 ? "" : "s"), crew ? "ok" : "warn"],
       ["🖥️", "Backend", "v" + (d.version || "?"), "ok"]];
-    return '<div class="dktiles">' + T.map(function (t) { return '<div class="dkt ' + t[3] + '"><span>' + t[0] + '</span><b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small></div>'; }).join("") + '</div>';
+    var keys = ["tick", "daily", "lines", "sync", "backend"];
+    return '<div class="dktiles five">' + T.map(function (t, k) { return '<button class="dkt ' + t[3] + '" data-dktile="' + keys[k] + '"><span>' + t[0] + '</span><b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small><em>›</em></button>'; }).join("") + '</div>';
   }
   function deskLogHTML() {
     if (!DK.log) return ld("Loading the log…");
@@ -2618,6 +2620,43 @@
         return head + '<div class="dkrow ' + k + (open ? ' open' : '') + '" data-dkrow="' + esc(m.id) + '"><div class="tx"><div class="hd">' + hd + '</div>' + (open && body ? '<div class="bd">' + body + '</div>' : '') + '</div><small>' + esc(new Date(m.ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })) + (body ? (open ? ' ▴' : ' ▾') : '') + '</small></div>';
       }).join("") + '</div>' : '<p class="meta" style="padding:14px 4px">Nothing here yet.</p>');
   }
+  // Tile detail: what it is, its last result, and the one action it has (commish 11/6: the dials should do something).
+  function deskTileBox(k) {
+    var d = DESK || {}, tk = d.tick || {}, dy = d.daily || {}, ls = d.sync && d.sync.last, mode = ((d.sync || {}).mode || "test").toUpperCase(), h = "", act = "";
+    var ago2 = function (t) { var a = ago(t); return a === "now" ? "just now" : a + " ago"; };
+    if (k === "tick") { h = '<h3>⏱️ 15-minute robot</h3><p class="p">Every 15 minutes: perk nudges and lock warnings, the 24-hour trade review clock, the trade-deadline heads-up, checks that approved trades moved on ESPN, and a nightly credit check.</p>' +
+      '<p class="meta">' + (tk.at ? 'Last ran ' + ago2(tk.at) + ((tk.log || []).length ? ' · ' + esc(tk.log.join(" · ")) : ' · nothing new') : '⚠️ Hasn\'t run. Check the time trigger in Apps Script.') + '</p>'; act = "tick"; }
+    if (k === "daily") { h = '<h3>🌅 Daily run</h3><p class="p">5 AM and 5 PM: scores, standings, Coach of the Week, Survivor, credit races, roster moves and the beta digest from ESPN. Then it starts the card-lines robot.</p>' +
+      '<p class="meta">' + (dy.at ? 'Last ran ' + ago2(dy.at) + (dy.secs ? ' (' + dy.secs + ' s)' : '') + ((dy.log || []).length ? ' · ' + esc(dy.log.join(" · ")) : '') : 'Hasn\'t run yet.') + ((dy.problems || []).length ? '<br>⚠️ ' + esc(dy.problems.join(" · ")) : '') + '</p>'; act = "daily"; }
+    if (k === "lines") h = '<h3>✍️ Card lines</h3><p class="p">After each daily run, Claude writes the short lines on the Home cards (tier headlines, hot and cold, each owner\'s result and next game, Elite 5). If it can\'t run, cards show plain facts.</p>' +
+      '<p class="meta">' + (dy.lines === "started" ? '✅ Started after the last daily run.' : dy.lines ? '⚠️ ' + esc(dy.lines) : 'Waiting for the first daily run.') + '</p><p class="meta">Runs again with the next daily run (or tap Run it now on the Daily run tile).</p>';
+    if (k === "sync") { h = '<h3>💳 Credit sync · ' + mode + '</h3><p class="p">When you approve something that moves credits (a perk, a trade with credits, a credit award), the backend writes it to the ledger file in the repo and a GitHub robot adds it to the official Credit_Log, updates balances and the credits page.</p>' +
+      '<p class="p">' + (mode === "LIVE" ? 'LIVE: approvals change the official record.' : 'TEST: a dry run. Nothing official changes until go-live flips it to LIVE.') + '</p>' +
+      '<p class="meta">' + (ls && ls.at ? 'Last ledger push ' + ago2(ls.at) + (ls.ok === false ? ' ⚠️ ' + esc(ls.error || "failed") : ' ✓') : 'No ledger push yet.') + '</p>'; act = "resync"; }
+    if (k === "backend") h = '<h3>🖥️ Backend v' + esc(d.version || "?") + '</h3><p class="p">The league server (Apps Script + the app Sheet). It loads its code from the repo, so updates go live within about 5 minutes of a push. Nothing to do here.</p>';
+    $("cbox").innerHTML = h + '<div class="btns"><button class="b" id="cno">Close</button>' + (act === "resync" ? '<button class="b pri" data-resync="1" id="cyes">Re-send ledger</button>' : act ? '<button class="b pri" data-dact="' + act + '" data-target="" id="cyes">Run it now</button>' : '') + '</div>';
+    $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); };
+    if ($("cyes")) $("cyes").addEventListener("click", function () { $("cwrap").classList.remove("on"); });
+  }
+  // 💳 Credits (earned so far; awards to issue live in To do) · 🤝 Trades · 🔑 Owner access — the go-live desk.
+  function deskTradesHTML() {
+    var offs = (SUM.offers || []).slice().sort(function (a, b) { return new Date(b.updated || b.ts) - new Date(a.updated || a.ts); });
+    var by = function (st) { return offs.filter(function (o) { return o.status === st; }); }, open = by("PROPOSED"), rev = by("ACCEPTED"), done = by("APPROVED");
+    var line = function (o) { return '<div class="ditem"><b>' + esc(shortOf(o.from)) + ' ↔ ' + esc(shortOf(o.to)) + '</b> <span class="meta">' + esc({ PROPOSED: "Offer open", ACCEPTED: "In review", APPROVED: "Approved", NEGATED: "Negated", DECLINED: "Declined", WITHDRAWN: "Withdrawn" }[o.status] || o.status) + ' · ' + ago(o.updated || o.ts) + '</span><p class="meta">' + esc(listText(o.give, o.giveCredits)) + ' ⇄ ' + esc(listText(o.get, o.getCredits)) + '</p></div>'; };
+    return '<div class="dsk"><details><summary>🤝 Trades · ' + open.length + ' open · ' + rev.length + ' in review · ' + done.length + ' approved</summary>' +
+      (offs.length ? offs.slice(0, 8).map(line).join("") : '<p class="meta" style="padding:8px 0">No trades yet this season.</p>') +
+      '<p class="meta">Trades in review show in To do with Approve / Negate. Trade deadline: Wed Dec 2, 12:00 PM ET.</p></details></div>';
+  }
+  function deskAccessHTML(d) {
+    var no = {}, lock = {}, req = {}; (d.noPin || []).forEach(function (o) { no[norm(o)] = 1; }); (d.locked || []).forEach(function (o) { lock[norm(o)] = 1; }); (d.access || []).forEach(function (a) { req[norm(a.owner)] = 1; });
+    var owners = TEAMS.filter(function (t) { return !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.team.localeCompare(b.team); });
+    var can = owners.filter(function (t) { return !no[norm(t.owner)]; }).length;
+    return '<div class="dsk"><details><summary>🔑 Owner access · ' + can + ' of ' + owners.length + ' can sign in' + ((d.locked || []).length ? ' · ' + d.locked.length + ' locked' : '') + '</summary>' +
+      owners.map(function (t) { var o = t.owner, st = lock[norm(o)] ? ["🔒", "Locked out"] : no[norm(o)] ? ["⚪", "No passphrase yet"] : ["🟢", "Can sign in"];
+        return '<div class="ditem"><b>' + esc(t.team) + '</b> <span class="meta">' + esc(o) + ' · ' + st[0] + ' ' + st[1] + (req[norm(o)] ? ' · asked for help' : '') + '</span><div class="btns">' +
+          (lock[norm(o)] ? deskBtn("unlock", o, "Unlock") : '') + deskBtn("issue", o, no[norm(o)] ? "🔑 Issue passphrase" : "New passphrase", no[norm(o)] ? 1 : 0) + '</div></div>'; }).join("") +
+      '<p class="meta">New passphrase replaces the old one; you see it once, with a button to text it.</p></details></div>';
+  }
   function drawDesk() {
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
     if (!d) { b.innerHTML = ld("Opening the desk…"); return; }
@@ -2626,9 +2665,9 @@
     if (n && /dsk clear/.test(todo)) todo = todo.replace(/<div class="dsk clear">[\s\S]*?<\/div>/, "");
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
-      (awardsPanel(d, "earned") + betaPanel(d) + deskPeopleHTML(d) ? '<div class="dkh"><h3>League</h3></div>' + awardsPanel(d, "earned") + betaPanel(d) + deskPeopleHTML(d) : '') +
-      '<div class="dkh"><h3>Robots</h3></div>' + deskRobotsHTML(d) +
-      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML();
+      '<div class="dkh"><h3>League</h3></div>' + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
+      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML() +
+      '<div class="dkh"><h3>Beta</h3><small>Until go-live</small></div>' + betaPanel(d);
     b.scrollTop = st;
     var go = $("dknotego"); if (go) go.onclick = function () { var v = ($("dknote").value || "").trim(); if (!v) return; busy(1);
       api("chatsend", Object.assign(creds(), { room: "desk", text: v, mentions: [] }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't save"); return; } toast("Noted ✓"); loadDeskLog(); })
@@ -2650,6 +2689,7 @@
     if ((el = e.target.closest("[data-desk-open]"))) { e.preventDefault(); openDesk(); return; }
     if (!DK.open || !e.target.closest("#desk")) return;
     if ((el = e.target.closest("[data-dkf]"))) { DK.filter = el.dataset.dkf; DK.openRow = null; drawDesk(); return; }
+    if ((el = e.target.closest("[data-dktile]"))) { deskTileBox(el.dataset.dktile); return; }
     if ((el = e.target.closest("[data-dkrow]")) && !e.target.closest("button,a,input")) { DK.openRow = DK.openRow === el.dataset.dkrow ? null : el.dataset.dkrow; drawDesk(); return; }
   });
   function deskMsg(m) {
@@ -3047,7 +3087,7 @@
   function betaPanel(d) {
     var crew = (d.beta && d.beta.crew) || [], ins = {}; crew.forEach(function (c) { ins[norm(c.owner)] = 1; });
     var others = TEAMS.filter(function (t) { return !ins[norm(t.owner)] && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.team.localeCompare(b.team); });
-    return '<div class="dsk"><details' + (crew.length ? '' : ' open') + '><summary>🧪 Beta crew · ' + crew.length + ' tester' + (crew.length === 1 ? '' : 's') + '</summary>' +
+    return '<div class="dsk"><details><summary>🧪 Beta crew · ' + crew.length + ' tester' + (crew.length === 1 ? '' : 's') + '</summary>' +
       crew.map(function (c) { return '<div class="ditem"><b>' + esc(c.team || teamOf(c.owner).team) + '</b> <span class="meta">' + esc(c.owner) + ' · ' + (c.last ? 'in ' + ago(c.last) + (ago(c.last) === "now" ? "" : " ago") : 'not in yet') + ' · ' + c.taps + ' taps · ' + c.fb + ' feedback (24 h)</span><div class="btns">' + deskBtn("betaoff", c.owner, "Remove") + '</div></div>'; }).join("") +
       '<div class="ditem"><select class="field" id="betapick"><option value="">Add a tester…</option>' + others.map(function (t) { return '<option value="' + esc(t.owner) + '">' + esc(t.team) + ' (' + esc(t.owner) + ', ' + (t.tier === "U" ? "Upper" : "Lower") + ')</option>'; }).join("") + '</select><div class="btns">' + deskBtn("betaon", "", "🧪 Add to beta", 1) + '</div>' +
       '<p class="meta" style="margin-top:6px">Testers get a 🧪 Feedback button, a few quick 👍/👎 prompts and a tap log. Their notes land here in the log. You always have the kit.</p></div></details></div>';
