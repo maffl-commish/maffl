@@ -69,7 +69,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Done 11/7: 👤 MAFFL owner profile (Power Rankings ratings + scout report, trophy case, season strip, auction profile, rivalries).
 - G · 👤 **Profile revamp** (owner side done 11/7; left: anything else from the classic Power Rankings page): bring Power Rankings / owner profile (years in league, draft profile, Madden-style ratings) into the app's look, behind Team → Profile.
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
-- Player week-by-week bars should show whether he started or sat that week (daily.js keeps only points per week today; needs the slot too).
+- Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
 - Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball is now a Vault series (25 rewritten tidbits, commish editing); off-season Vault gets 6 slots; earlier weeks listed after "caught up".
 

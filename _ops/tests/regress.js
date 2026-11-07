@@ -12,8 +12,11 @@ const norm = (o) => JSON.stringify(o, null, 0)
   .replace(/"F[a-z0-9]{6,}"/g, "\"<fid>\"").replace(/"pin":"[^"]*"/g, '"pin":"<pin>"')
   .replace(/\d+ ?(s|ms)\b/g, "<dur>")
   .replace(/(\d+ (min|minutes|hours?|h) ago)/g, "<ago>");
+// The tick's ESPN job only runs every other 15-minute window (and DMs owners when it does): mask it so the result
+// doesn't depend on the clock.
+const clockFree = (k, v) => k === "deskact tick" ? JSON.parse(JSON.stringify(v).replace(/"espn \d+",?/g, "")) : v;
 const pins = m.pins(), me = { owner: "Mike Murello", pin: "GRONK-PISTOL" };
-const out = (k, r) => console.log(k.padEnd(28), norm(r).slice(0, 4000));
+const out = (k, r) => console.log(k.padEnd(28), norm(clockFree(k, r)).slice(0, 4000));
 const G = (q) => m.get(q), P = (b) => m.post(b);
 out("get version", G({}));
 out("get daily", G({ action: "daily" }));
@@ -58,4 +61,4 @@ out("botpost badkey", P({ action: "botpost", key: "nope", title: "x" }));
 out("summary end", P(Object.assign({ action: "summary" }, me)));
 out("sheet Polls", m.sheet("Polls"));
 out("sheet Events len", (m.sheet("Events") || []).length);
-out("sheet Chat len", (m.sheet("Chat") || []).length);
+out("sheet Chat rows (room != dm)", (m.sheet("Chat") || []).filter((r) => !/^dm:/.test(r[2])).length); // DMs vary with the tick's ESPN window

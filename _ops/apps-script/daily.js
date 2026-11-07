@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "7"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "8"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -89,7 +89,7 @@ function dCoach_(tier, wk, teams) {
   Object.keys(counts).forEach(function (s) { var id = +s; if (id !== 20 && id !== 21) for (var c = 0; c < counts[s]; c++) slots.push(id); });
   var box = espn_(LEAGUES[tier], "view=mMatchupScore&view=mBoxscore&scoringPeriodId=" + wk), pro = {};
   try { pro = proGames_(wk); } catch (e) {}
-  var board = [], pwk = {}, tops = {};
+  var board = [], pwk = {}, tops = {}, started = {}; // started: player id -> 1 started / 0 benched or IR that week (commish 11/7: started-or-benched on the player chart)
   (box.schedule || []).filter(function (g) { return g.matchupPeriodId === wk; }).forEach(function (g) {
     [g.home, g.away].forEach(function (sd) {
       if (!sd || !teams[sd.teamId] || teams[sd.teamId].ghost) return;
@@ -98,7 +98,7 @@ function dCoach_(tier, wk, teams) {
         var act = st.filter(function (x) { return x.scoringPeriodId === wk && x.statSourceId === 0; })[0];
         var pts = act ? act.appliedTotal : ((e.playerPoolEntry || {}).appliedStatTotal || 0);
         var bye = !!pl.proTeamId && Object.keys(pro || {}).length > 0 && !pro[pl.proTeamId];
-        if (pl.id) pwk[pl.id] = r2_(act ? act.appliedTotal : 0);
+        if (pl.id) { pwk[pl.id] = r2_(act ? act.appliedTotal : 0); started[pl.id] = e.lineupSlotId !== 20 && e.lineupSlotId !== 21 ? 1 : 0; }
         if (act && (e.lineupSlotId !== 20 && e.lineupSlotId !== 21) && (!tops[sd.teamId] || act.appliedTotal > tops[sd.teamId].pts)) tops[sd.teamId] = { t: sd.teamId, n: pl.fullName || "?", pts: r2_(act.appliedTotal) };
         return { n: pl.fullName || "?", sid: e.lineupSlotId, pts: r2_(pts), el: pl.eligibleSlots || [], bye: bye, dnp: !bye && !act }; });
       var starters = ps.filter(function (x) { return x.sid !== 20 && x.sid !== 21; }), pool = ps.filter(function (x) { return x.sid !== 21; });
@@ -112,7 +112,7 @@ function dCoach_(tier, wk, teams) {
     });
   });
   board.sort(function (a, b) { return (a.out ? 1 : 0) - (b.out ? 1 : 0) || a.gap - b.gap || b.scored - a.scored; });
-  return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null, pts: pwk, top: Object.keys(tops).map(function (k) { return tops[k]; }) };
+  return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null, pts: pwk, st: started, top: Object.keys(tops).map(function (k) { return tops[k]; }) };
 }
 
 // ---- 2b. credit races (rulebook "League bonus credits"): leaders now, and the week each lead began.
@@ -224,10 +224,12 @@ DAILY.run = function (why) {
   ["U", "L"].forEach(function (tier) {
     try {
       var s = dScores_(tier), coach = dGet_("coach4_" + tier) || {};
-      s.decided.forEach(function (wk) { if (!coach[wk] && Date.now() - t0 < 200000) { try { coach[wk] = dCoach_(tier, wk, s.teams); } catch (e) { problems.push("Coach " + tier + " wk " + wk + ": " + e.message); } } });
+      s.decided.forEach(function (wk) { if ((!coach[wk] || !coach[wk].st) && Date.now() - t0 < 200000) { try { coach[wk] = dCoach_(tier, wk, s.teams); } catch (e) { problems.push("Coach " + tier + " wk " + wk + ": " + e.message); } } });
       dPut_("coach4_" + tier, coach);
       var pw = {}; Object.keys(coach).forEach(function (wk) { var p = coach[wk].pts || {}; Object.keys(p).forEach(function (id) { (pw[id] = pw[id] || {})[wk] = p[id]; }); });
       dPut_("pweeks_" + tier, pw);
+      var ps = {}; Object.keys(coach).forEach(function (wk) { var x = coach[wk].st || {}; Object.keys(x).forEach(function (id) { ps[id] = ps[id] || []; if (x[id]) ps[id].push(+wk); }); }); // [] = rostered but never started
+      dPut_("pstart_" + tier, ps); // id -> weeks he was in that week's starting lineup
       var slim = {}; Object.keys(coach).forEach(function (wk) { slim[wk] = { wk: coach[wk].wk, board: coach[wk].board, winner: coach[wk].winner }; });
       s.coach = slim; s.races = dRaces_(s, coach); snap.tiers[tier] = s;
       var prevLast = (last.weeks || {})[tier] || 0;
@@ -263,6 +265,7 @@ DAILY.due = function () {
 };
 // Week-by-week fantasy points per ESPN player id for a tier (only weeks the player was on a roster in that tier).
 DAILY.playerWeeks = function (tier) { return dGet_("pweeks_" + tier) || {}; };
+DAILY.playerStarts = function (tier) { return dGet_("pstart_" + tier) || {}; };
 // What the app reads (GET ?action=daily): the snapshot + the last 7 days of moves + the card lines + run info.
 DAILY.view = function () {
   var snap = dGet_("snapshot"), info = {};

@@ -135,7 +135,7 @@ function rosters_(tier) {
   try { d = espn_(LEAGUES[tier], "view=mTeam&view=mRoster"); }
   catch (err) { var old = cache.get("rost_last_" + tier); if (old) { var o = JSON.parse(old); o.stale = true; return o; } throw err; }
   var byTeam = {}; owners_().forEach(function (o) { if (o.team) byTeam[norm_(o.team)] = o.owner; });
-  var pweeks = {}; try { need_("daily"); pweeks = DAILY.playerWeeks(tier); } catch (e) {} // id -> {week: pts}, from the daily run's box scores
+  var pweeks = {}, pstart = {}; try { need_("daily"); pweeks = DAILY.playerWeeks(tier); pstart = DAILY.playerStarts(tier); } catch (e) {} // id -> {week: pts} / [weeks started], from the daily run's box scores
   var teams = (d.teams || []).map(function (tm) {
     var name = tm.name || ((tm.location || "") + " " + (tm.nickname || "")).trim();
     var players = (((tm.roster || {}).entries) || []).map(function (e) {
@@ -148,7 +148,7 @@ function rosters_(tier) {
         sp: season ? Math.round(season.appliedTotal * 10) / 10 : (ppe.appliedStatTotal != null ? Math.round(ppe.appliedStatTotal * 10) / 10 : null),
         avg: season && season.appliedAverage != null ? Math.round(season.appliedAverage * 10) / 10 : null,
         proj: proj ? Math.round(proj.appliedTotal) : null, own: own != null ? Math.round(own) : null, prk: rk.positionalRanking || null,
-        wk: (pweeks[id] || null) };
+        wk: (pweeks[id] || null), ws: (pstart[id] || null) };
     });
     return { team: name, owner: byTeam[norm_(name)] || "", players: players };
   });

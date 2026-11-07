@@ -394,7 +394,9 @@
   .rgrp{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:14px 2px 6px}
   .rrow{gap:10px;align-items:center}.rslot{flex:0 0 40px;font:700 11px var(--display);color:var(--navy);background:var(--navy-soft);border-radius:6px;padding:5px 0;text-align:center}
   .rmain{flex:1;min-width:0;text-align:left}.rmain .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.injt{color:var(--loss);font-weight:600}
-  .spark{flex:0 0 auto}.spark rect{fill:var(--border)}.spark rect.l{fill:var(--gold)}
+  .spark{flex:0 0 auto}.spark rect{fill:var(--border)}.spark rect.s{fill:#9fb0c9}.spark rect.b{fill:var(--border);opacity:.55}.spark rect.l{fill:var(--gold)}.spark rect.l.b{opacity:.5}
+  .wkbars .bn i{background:#c9d3e3}.wkbars .bn small{color:var(--loss);font-weight:700}
+  .lgS,.lgB{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--navy);vertical-align:-1px;margin:0 2px 0 4px}.lgB{background:#c9d3e3}
   .rnum{flex:0 0 52px;text-align:right}.rnum b{display:block;font:700 17px/1 var(--display);color:var(--navy)}.rnum small{font-size:10px;color:var(--muted)}
   .blk{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -14px;padding:2px 14px 10px;overscroll-behavior-x:contain}.blk::-webkit-scrollbar{display:none}
   .blkc{flex:0 0 156px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:12px;padding:10px;box-shadow:0 2px 6px var(--navy-shadow)}
@@ -2247,7 +2249,8 @@
     var bits = []; if (p.sp != null) bits.push(f1(p.sp) + " pts" + (p.avg ? " · " + f1(p.avg) + "/g" : ""));
     if (p.slot === "IR") bits.push("IR"); else if (p.slot === "BE") bits.push("Bench");
     if (p.inj) bits.push(p.inj); return bits.join(" · ") || p.acq || ""; }
-  function wkList(p) { return p.wk ? Object.keys(p.wk).map(Number).sort(function (a, b) { return a - b; }).map(function (w) { return { w: w, pts: p.wk[w] }; }) : []; }
+  // Each week: points, and (when the daily run knows the lineups) whether he started: s = true / false / null (unknown).
+  function wkList(p) { return p.wk ? Object.keys(p.wk).map(Number).sort(function (a, b) { return a - b; }).map(function (w) { return { w: w, pts: p.wk[w], s: p.ws ? p.ws.indexOf(w) >= 0 : null }; }) : []; }
   function pkey(tier, name) { return tier + ":" + name; }
   // Current rosters = draft picks, then approved test trades applied in order.
   function rosters() {
@@ -2256,7 +2259,7 @@
       E.teams.forEach(function (tm) { var own = BY_OWNER[norm(tm.owner)] ? tm.owner : liveOwner(tm.team); if (!own) return;
         var t = teamOf(own); R[norm(own)] = tm.players.map(function (p) {
           return { name: p.n, id: p.id, pos: p.pos, nfl: p.tm, price: priceOf(p.n), owner: t.owner, tier: t.tier, acq: p.acq, inj: p.inj ? p.inj.charAt(0) + p.inj.slice(1).toLowerCase() : "", slot: p.slot,
-            sp: p.sp, avg: p.avg, proj: p.proj, own: p.own, prk: p.prk, wk: p.wk || null }; }); }); });
+            sp: p.sp, avg: p.avg, proj: p.proj, own: p.own, prk: p.prk, wk: p.wk || null, ws: p.ws || null }; }); }); });
     DRAFT.filter(function (d) { return +d.Year === y; }).forEach(function (d) {
       var t = teamOf(d.Owner); if (!BY_OWNER[norm(d.Owner)] || ESPNR[t.tier]) return; // staged only where ESPN didn't answer
       (R[norm(d.Owner)] = R[norm(d.Owner)] || []).push({ name: d.Player || d.Player_Raw, pos: d.Position_Actual || d.Draft_Slot, nfl: d.NFL_Team, price: +d.Price || 0, owner: t.owner, tier: t.tier });
@@ -2293,7 +2296,7 @@
     var ws = wkList(p).slice(-8); if (!ws.length) return '';
     var mx = Math.max(25, Math.max.apply(null, ws.map(function (w) { return w.pts; }))), bw = 6, gap = 2, H = 22;
     return '<svg class="spark" width="' + (ws.length * (bw + gap)) + '" height="' + H + '" viewBox="0 0 ' + (ws.length * (bw + gap)) + ' ' + H + '" aria-hidden="true">' + ws.map(function (w, k) {
-      var hgt = Math.max(1.5, H * Math.max(0, w.pts) / mx); return '<rect x="' + (k * (bw + gap)) + '" y="' + (H - hgt) + '" width="' + bw + '" height="' + hgt + '" rx="1.5"' + (k === ws.length - 1 ? ' class="l"' : '') + '/>'; }).join("") + '</svg>';
+      var hgt = Math.max(1.5, H * Math.max(0, w.pts) / mx); return '<rect x="' + (k * (bw + gap)) + '" y="' + (H - hgt) + '" width="' + bw + '" height="' + hgt + '" rx="1.5"' + (k === ws.length - 1 ? ' class="l' + (w.s === false ? ' b' : '') + '"' : w.s === false ? ' class="b"' : w.s ? ' class="s"' : '') + '/>'; }).join("") + '</svg>';
   }
   function rosterRow(p, slotLbl) {
     var b = blockOf(p.tier, p.name, p.owner);
@@ -2394,8 +2397,10 @@
   function weeksChart(p) {
     var ws = wkList(p); if (!ws.length) return '';
     var max = Math.max.apply(null, ws.map(function (x) { return x.pts; }).concat([1])), recent = ws.slice(-4), ravg = recent.reduce(function (a, x) { return a + x.pts; }, 0) / recent.length;
-    return '<div class="card"><div class="eb">Week by week</div><div class="wkbars">' + ws.map(function (x) {
-      return '<div><i style="height:' + Math.max(3, Math.round(70 * x.pts / max)) + 'px"></i><b>' + (x.pts ? Math.round(x.pts) : 0) + '</b><small>W' + x.w + '</small></div>'; }).join("") + '</div>' +
+    var known = ws.some(function (x) { return x.s !== null; }), sat = ws.filter(function (x) { return x.s === false; }), satPts = sat.reduce(function (a, x) { return a + x.pts; }, 0);
+    return '<div class="card"><div class="eb">Week by week' + (known ? ' · started or benched' : '') + '</div><div class="wkbars">' + ws.map(function (x) {
+      return '<div class="' + (x.s === false ? 'bn' : '') + '"><i style="height:' + Math.max(3, Math.round(70 * x.pts / max)) + 'px"></i><b>' + (x.pts ? Math.round(x.pts) : 0) + '</b><small>' + (x.s === false ? 'BE' : 'W' + x.w) + '</small></div>'; }).join("") + '</div>' +
+      (known ? '<p class="meta" style="margin-top:6px"><span class="lgS"></span> started <span class="lgB"></span> benched' + (sat.length ? ' · ' + f1(satPts) + ' pts left on the bench in ' + sat.length + ' week' + (sat.length === 1 ? '' : 's') : ' · started every week') + '</p>' : '') +
       '<p class="meta" style="margin-top:6px">Last ' + recent.length + ' weeks: ' + f1(ravg) + ' a week' + (p.avg ? (ravg > p.avg * 1.15 ? ' · 📈 trending up' : ravg < p.avg * 0.85 ? ' · 📉 trending down' : '') : '') + '</p></div>';
   }
 
