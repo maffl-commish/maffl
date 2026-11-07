@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-06 by Claude (chat), REEL startup fix
+**Last updated:** 2026-11-06 by Claude (chat), REEL real rosters
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-06 · REEL · Real rosters from ESPN: backend logic v0.17 `rosters` (GET, per tier, 30-min cache, last good copy 6 h, owner matched by Owners-tab team name) → Team roster, player sheet, all-rosters grid and trade builder show what ESPN shows (waiver adds, injury tags), with 2026 auction prices + MAFFL history from the draft CSV. Staged draft roster only if ESPN can't be read. Decided: the Weekly Pulse goes fully automatic, no PR (REEL.md backlog). Beta crew is Lower tier.
 - 2026-11-06 · REEL · Startup can't strand you on a blank screen (commish: after load no screen showed, Home only on tap, other tabs blank). The app picks your screen first, then draws each one guarded: a screen that crashes shows "hit a snag · Try again" (and drops a bad saved live score) instead of taking the rest down. Errors are kept on the phone under You → App errors (screenshot for the commish). Couldn't reproduce in desktop Chrome; most likely trigger is the saved live score painted at startup. Lab only.
 - 2026-11-06 · REEL · Logged the beta plan: Charlie, Sam and Ben test the MVP first with beta-only in-app feedback + tap log (REEL.md roadmap 3b + backlog "Beta feedback kit"; APP_DESIGN §0). Docs only.
 - 2026-11-04 · REEL · Inbox cards complete on their face (no "see the full card"): score bug, VS block, countdown, rivals' rows; Survivor only when it's about you; cards sized to their story.

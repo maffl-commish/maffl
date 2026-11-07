@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.16";
+var VERSION = "0.17";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -56,6 +56,7 @@ function doGet(e) {
   try {
     if (p.action === "summary") return json(summary_(p.week, null));
     if (p.action === "live") { try { return json(live_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
+    if (p.action === "rosters") { try { return json(rosters_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // what ESPN shows on each roster (public to the league anyway)
     if (p.action === "ledger") return json({ ok: true, mode: syncMode_(), rows: ledger_(p.mode === "live" ? "live" : p.mode === "test" ? "test" : syncMode_()) }); // credit moves are public anyway
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
@@ -596,6 +597,32 @@ function live_(tier) {
   var games = (box.schedule || []).filter(function (g) { return g.matchupPeriodId === mp; }).map(function (g) { return { home: side(g.home), away: side(g.away) }; });
   var out = { ok: true, tier: tier, week: mp, at: new Date().toISOString(), games: games };
   var str = JSON.stringify(out); if (str.length < 95000) cache.put("live_" + tier, str, 45);
+  return out;
+}
+
+// Real rosters from ESPN, one tier per call (APP_DESIGN §6b). Cached 30 min; the last good copy is kept 6 h so a
+// hiccup at ESPN still shows rosters ("as of" time comes back with them). Owner = the Owners-tab row whose team
+// name matches the ESPN team name (same rule as the trade-moved check); unmatched teams come back with owner "".
+var ACQ = { DRAFT: "Drafted", ADD: "Waiver add", TRADE: "Traded", FREEAGENT: "Free agent" };
+function rosters_(tier) {
+  tier = tier === "L" ? "L" : "U";
+  var cache = CacheService.getScriptCache(), hit = cache.get("rost_" + tier);
+  if (hit) return JSON.parse(hit);
+  var d;
+  try { d = espn_(LEAGUES[tier], "view=mTeam&view=mRoster"); }
+  catch (err) { var old = cache.get("rost_last_" + tier); if (old) { var o = JSON.parse(old); o.stale = true; return o; } throw err; }
+  var byTeam = {}; owners_().forEach(function (o) { if (o.team) byTeam[norm_(o.team)] = o.owner; });
+  var teams = (d.teams || []).map(function (tm) {
+    var name = tm.name || ((tm.location || "") + " " + (tm.nickname || "")).trim();
+    var players = (((tm.roster || {}).entries) || []).map(function (e) {
+      var pl = (e.playerPoolEntry || {}).player || {};
+      return { n: pl.fullName || "?", id: pl.id || e.playerId, pos: POS[pl.defaultPositionId] || "", tm: PRO[pl.proTeamId] || "FA",
+        slot: SLOT[e.lineupSlotId] || "", acq: ACQ[e.acquisitionType] || "", inj: pl.injuryStatus && pl.injuryStatus !== "ACTIVE" ? String(pl.injuryStatus).replace(/_/g, " ") : "" };
+    });
+    return { team: name, owner: byTeam[norm_(name)] || "", players: players };
+  });
+  var out = { ok: true, tier: tier, at: new Date().toISOString(), teams: teams }, str = JSON.stringify(out);
+  if (str.length < 95000) { cache.put("rost_" + tier, str, 1800); cache.put("rost_last_" + tier, str, 21600); }
   return out;
 }
 

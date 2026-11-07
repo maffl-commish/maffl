@@ -740,7 +740,7 @@
     ]);
     // Not needed for the first screen: start now, don't wait. Views that use them refresh when they land.
     getText("../rules.html").then(function (t) { RULES_HTML = t; SIDE.rules = "ok"; }).catch(function () { SIDE.rules = "fail"; }).then(function () { sideLanded("rules"); });
-    loadRosters().then(function () { SIDE.rosters = DRAFT.length ? "ok" : "fail"; sideLanded("rosters"); });
+    loadRosters(); // ESPN rosters + the draft CSV (prices, history); each refreshes Team when it lands
     var main = getText("../weekly.html").then(function (t) {
       bootMsg("Setting up your reel");
       SHORT = extract(t, "const SHORT_NAMES = ") || {};
@@ -1661,11 +1661,11 @@
   }
 
   // =====================================================================
-  // ROSTERS + TRADES (lab). Rosters are STAGED: the 2026 auction draft (data/MAFFL_Draft_History_Clean_v3.csv)
-  // plus any trades approved in the test Sheet. Weekly points: data/MAFFL_Top_Performers_2026.csv (top 3 per team).
-  // Nothing here touches ESPN or gold data.
+  // ROSTERS + TRADES (lab). Rosters come from ESPN through the backend (`rosters`, 30-min cache), then any trades
+  // approved in the test Sheet on top. Prices + MAFFL history: the 2026 auction draft (data/MAFFL_Draft_History_Clean_v3.csv).
+  // If ESPN can't be read, a tier falls back to the staged draft roster. Weekly points: MAFFL_Top_Performers_2026.csv.
   // =====================================================================
-  var DRAFT = [], TOPS = [], TEAM_SUB = "roster", BLD = null;
+  var DRAFT = [], TOPS = [], TEAM_SUB = "roster", BLD = null, ESPNR = { U: null, L: null }, PRICE = null;
   var POS_ORDER = ["QB", "RB", "WR", "TE", "K", "D/ST", "DST", "DEF"];
   function parseCSV(t) {
     var rows = [], row = [], cur = "", q = false;
@@ -1682,17 +1682,33 @@
     return rows.filter(function (r) { return r.length > 1; }).map(function (r) { var o = {}; head.forEach(function (h, k) { o[h] = r[k]; }); return o; });
   }
   function loadRosters() {
-    return Promise.all([
-      getText("../data/MAFFL_Draft_History_Clean_v3.csv").then(function (t) { DRAFT = parseCSV(t); }),
+    var landed = function () { SIDE.rosters = rostersReady() ? "ok" : "loading"; sideLanded("rosters"); };
+    var csv = Promise.all([
+      getText("../data/MAFFL_Draft_History_Clean_v3.csv").then(function (t) { DRAFT = parseCSV(t); PRICE = null; }),
       getText("../data/MAFFL_Top_Performers_2026.csv").then(function (t) { TOPS = parseCSV(t); }).catch(function () {})
-    ]).catch(function () {});
+    ]).catch(function () {}).then(landed);
+    var espn = !API_URL ? Promise.resolve() : Promise.all(["U", "L"].map(function (t) {
+      return apiGet({ action: "rosters", tier: t }, true).then(function (r) { ESPNR[t] = r && r.ok ? r : null; landed(); }).catch(function () {}); }));
+    return Promise.all([csv, espn]).then(function () { SIDE.rosters = rostersReady() ? "ok" : "fail"; sideLanded("rosters"); });
   }
+  // Ready = this tier has ESPN rosters (prices fill in when the draft CSV lands) or the staged draft fallback is in.
+  function rostersReady() { return !!(ESPNR[ME && ME.tier] || DRAFT.length); }
+  function priceOf(name) {
+    if (!PRICE) { PRICE = {}; var y = (window.SCHEDULE_DATA && SCHEDULE_DATA.year) || 2026;
+      DRAFT.forEach(function (d) { if (+d.Year === y) PRICE[norm(d.Player || d.Player_Raw)] = +d.Price || 0; }); }
+    return PRICE[norm(name)] || 0;
+  }
+  function pmeta(p) { return (p.price ? "$" + p.price : p.acq === "Drafted" ? "$0" : p.acq || "Added") + (p.inj ? " · " + p.inj : ""); }
   function pkey(tier, name) { return tier + ":" + name; }
   // Current rosters = draft picks, then approved test trades applied in order.
   function rosters() {
     var y = (window.SCHEDULE_DATA && SCHEDULE_DATA.year) || 2026, R = {};
+    ["U", "L"].forEach(function (tier) { var E = ESPNR[tier]; if (!E) return;
+      E.teams.forEach(function (tm) { var own = BY_OWNER[norm(tm.owner)] ? tm.owner : liveOwner(tm.team); if (!own) return;
+        var t = teamOf(own); R[norm(own)] = tm.players.map(function (p) {
+          return { name: p.n, pos: p.pos, nfl: p.tm, price: priceOf(p.n), owner: t.owner, tier: t.tier, acq: p.acq, inj: p.inj ? p.inj.charAt(0) + p.inj.slice(1).toLowerCase() : "", slot: p.slot }; }); }); });
     DRAFT.filter(function (d) { return +d.Year === y; }).forEach(function (d) {
-      var t = teamOf(d.Owner); if (!BY_OWNER[norm(d.Owner)]) return;
+      var t = teamOf(d.Owner); if (!BY_OWNER[norm(d.Owner)] || ESPNR[t.tier]) return; // staged only where ESPN didn't answer
       (R[norm(d.Owner)] = R[norm(d.Owner)] || []).push({ name: d.Player || d.Player_Raw, pos: d.Position_Actual || d.Draft_Slot, nfl: d.NFL_Team, price: +d.Price || 0, owner: t.owner, tier: t.tier });
     });
     (SUM.offers || []).filter(function (o) { return o.status === "APPROVED"; }).sort(function (a, b) { return new Date(a.updated) - new Date(b.updated); }).forEach(function (o) {
@@ -1716,15 +1732,16 @@
   function playerRow(p, extra) {
     var b = blockOf(p.tier, p.name, p.owner);
     return '<button class="row prow" data-player="' + esc(p.owner) + '|' + esc(p.name) + '">' + posChip(p.pos) +
-      '<div style="flex:1;text-align:left"><div class="nm">' + esc(p.name) + (b ? '<span class="tb">TRADE BLOCK</span>' : '') + '</div><div class="meta">' + esc(p.nfl || "FA") + ' · $' + p.price + (b && b.note ? ' · “' + esc(b.note) + '”' : '') + '</div></div>' + (extra || '<span class="rv">›</span>') + '</button>';
+      '<div style="flex:1;text-align:left"><div class="nm">' + esc(p.name) + (b ? '<span class="tb">TRADE BLOCK</span>' : '') + '</div><div class="meta">' + esc(p.nfl || "FA") + ' · ' + esc(pmeta(p)) + (b && b.note ? ' · “' + esc(b.note) + '”' : '') + '</div></div>' + (extra || '<span class="rv">›</span>') + '</button>';
   }
 
   // ---------- Team → Roster ----------
   function rosterHTML() {
     var list = rosterOf(ME.owner);
-    if (!DRAFT.length) return '<div class="card">' + (SIDE.rosters === "fail" ? '<p>Couldn\'t load rosters. Pull down or reopen the app to try again.</p>' : ld("Loading rosters…")) + '</div>';
+    if (!rostersReady()) return '<div class="card">' + (SIDE.rosters === "fail" ? '<p>Couldn\'t load rosters. Pull down or reopen the app to try again.</p>' : ld("Loading rosters…")) + '</div>';
     var onBlock = list.filter(function (p) { return blockOf(p.tier, p.name, p.owner); }).length;
-    return '<div class="note" style="margin-top:12px">🧪 Staged roster: your 2026 auction draft plus any trades approved in the test. Tap a player to see his MAFFL history or put him on the block.</div>' +
+    var E = ESPNR[ME.tier];
+    return '<div class="note" style="margin-top:12px">' + (E ? '📡 Your ESPN roster' + (E.stale ? ' (ESPN didn\'t answer just now; last copy)' : '') + ', as of ' + (ago(E.at) === "now" ? "just now" : esc(ago(E.at)) + " ago") + '. Trades approved in the test are added on top.' : '🧪 Staged roster: ESPN didn\'t answer, so this is your 2026 auction draft plus test trades.') + ' Tap a player for his MAFFL history or to put him on the block.</div>' +
       '<div class="sh" style="padding-left:0"><h2>' + list.length + ' players</h2><small>' + onBlock + ' on the block</small></div>' +
       '<div class="card" style="margin-top:0;padding:2px 12px">' + list.map(function (p) { return playerRow(p); }).join("") + '</div>';
   }
@@ -1737,8 +1754,8 @@
     var mine = isMe(p.owner), b = blockOf(p.tier, p.name, p.owner), tw = topWeeks(p);
     var hist = DRAFT.filter(function (d) { return (d.Player || d.Player_Raw) === p.name; }).sort(function (a, b2) { return b2.Year - a.Year; });
     var h = '<div class="card navy"><div style="display:flex;gap:12px;align-items:center">' + posChip(p.pos).replace('class="pos', 'class="pos big') +
-      '<div><h3 style="margin:0">' + esc(p.name) + '</h3><p>' + esc(p.nfl || "FA") + ' · ' + esc(teamOf(p.owner).team) + '</p></div></div>' +
-      '<div class="strip"><div><b>$' + p.price + '</b><small>2026 price</small></div><div><b>' + tw.length + '</b><small>Top-3 weeks</small></div><div><b>' + (tw.length ? f2(Math.max.apply(null, tw.map(function (x) { return x.pts; }))) : "–") + '</b><small>Best week</small></div></div></div>';
+      '<div><h3 style="margin:0">' + esc(p.name) + '</h3><p>' + esc(p.nfl || "FA") + ' · ' + esc(teamOf(p.owner).team) + (p.inj ? ' · <b style="color:var(--loss)">' + esc(p.inj) + '</b>' : '') + '</p></div></div>' +
+      '<div class="strip"><div><b>' + (p.price || p.acq !== "Waiver add" && p.acq !== "Free agent" ? "$" + p.price : "Add") + '</b><small>' + (p.price || !p.acq || p.acq === "Drafted" ? "2026 price" : esc(p.acq)) + '</small></div><div><b>' + tw.length + '</b><small>Top-3 weeks</small></div><div><b>' + (tw.length ? f2(Math.max.apply(null, tw.map(function (x) { return x.pts; }))) : "–") + '</b><small>Best week</small></div></div></div>';
     if (mine) {
       h += '<div class="card"><div class="eb">🏷️ Trade block</div>' + (b ? '<p>On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '. Everyone in your tier sees the tag.</p>' : '<p>Not on the block. Add a note so people know what you want.</p>') +
         '<input class="field" id="bnote" maxlength="80" placeholder="What do you want? (e.g. RB depth)" value="' + esc(b && b.note || "") + '">' +
@@ -1987,7 +2004,7 @@
       var groups = order.concat(["Other"]).map(function (pos) {
         var ps = r.filter(function (p) { return pos === "Other" ? order.indexOf(p.pos) < 0 : p.pos === pos; }); if (!ps.length) return "";
         return '<div class="gpos">' + pos + ' <small>' + ps.length + '</small></div>' + ps.map(function (p) {
-          return '<div class="gp p-' + esc(String(p.pos).replace("/", "")) + (blockOf(p.tier, p.name, p.owner) ? ' blk' : '') + '"><b>' + esc(p.name) + '</b><small>' + esc(p.nfl || "") + ' · $' + p.price + '</small></div>'; }).join("");
+          return '<div class="gp p-' + esc(String(p.pos).replace("/", "")) + (blockOf(p.tier, p.name, p.owner) ? ' blk' : '') + '"><b>' + esc(p.name) + '</b><small>' + esc(p.nfl || "") + ' · ' + esc(pmeta(p)) + '</small></div>'; }).join("");
       }).join("");
       return '<div class="gcol' + (me ? ' mine' : '') + '">' + (me ? '<div class="ghead me"><b>You</b><small>' + rec(t) + ' · 💳 ' + availCredits(t.owner) + '</small></div>'
         : '<button class="ghead" data-bteam="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b><small>' + rec(t) + ' · #' + t.rank + ' · 💳 ' + availCredits(t.owner) + (nb ? ' · 🏷️' + nb : '') + '</small><span class="gtrade">Trade ›</span></button>') + groups + '</div>'; }).join("") + '</div>';
@@ -2004,7 +2021,7 @@
   }
   function builderSheet() {
     var h = '<div class="steps">' + ["Team", "Pick players", "Preview"].map(function (t, i) { return '<span class="' + (BLD.step === i + 1 ? "on" : BLD.step > i + 1 ? "done" : "") + '">' + (i + 1) + '. ' + t + '</span>'; }).join("") + '</div>';
-    if (!DRAFT.length) return h + '<div class="card">' + ld("Loading rosters…") + '</div>';
+    if (!rostersReady()) return h + '<div class="card">' + (SIDE.rosters === "fail" ? '<p>Couldn\'t load rosters. Reopen the app to try again.</p>' : ld("Loading rosters…")) + '</div>';
     if (BLD.step === 1) return h + gridHTML();
     if (false) {
       var mates = TEAMS.filter(function (t) { return t.tier === ME.tier && !isMe(t.owner) && !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.rank - b.rank; });
@@ -2015,7 +2032,7 @@
     var them = teamOf(BLD.with), mineR = rosterOf(ME.owner), theirR = rosterOf(BLD.with), gN = Object.keys(BLD.give), tN = Object.keys(BLD.get);
     if (BLD.step === 2) {
       function col(list, sel, side) { return list.map(function (p) { var b = blockOf(p.tier, p.name, p.owner);
-        return '<button class="pc2' + (sel[p.name] ? ' on' : '') + '" data-pick="' + side + '" data-name="' + esc(p.name) + '">' + posChip(p.pos) + '<span class="pn2">' + esc(p.name) + (b ? ' 🏷️' : '') + '<small>' + esc(p.nfl || "") + ' · $' + p.price + '</small></span></button>'; }).join(""); }
+        return '<button class="pc2' + (sel[p.name] ? ' on' : '') + '" data-pick="' + side + '" data-name="' + esc(p.name) + '">' + posChip(p.pos) + '<span class="pn2">' + esc(p.name) + (b ? ' 🏷️' : '') + '<small>' + esc(p.nfl || "") + ' · ' + esc(pmeta(p)) + '</small></span></button>'; }).join(""); }
       function stepper(side, val, max) { return '<div class="crs"><span>💳 ' + val + '</span><button data-cr2="' + side + '" data-d="-1">−</button><button data-cr2="' + side + '" data-d="1">+</button><small>of ' + max + '</small></div>'; }
       return h + '<div class="sbs"><div><div class="colh me">You send</div>' + stepper("give", BLD.gc, availCredits(ME.owner)) + col(mineR, BLD.give, "give") + '</div>' +
         '<div><div class="colh">' + esc(them.team) + ' sends</div>' + stepper("get", BLD.tc, availCredits(BLD.with)) + col(theirR, BLD.get, "get") + '</div></div>' +

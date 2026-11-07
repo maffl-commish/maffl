@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.17 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.18 (2026-11-06, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,10 @@ VERSION: 0.17 (2026-11-03, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-06 · **Weekly Pulse fully automatic** (commish): no Tuesday PR to review/merge; the robot publishes the week itself.
+  The app is the live product (refreshing daily per owner); the Pulse is only its weekly data drop. Not built yet (REEL.md backlog).
+- 2026-11-06 · **Rosters = ESPN, read by the backend** (`rosters` action, 30-min cache) instead of a generated rosters file in the
+  repo: fresher, no commits for live data (§6b). Draft CSV stays for auction price + MAFFL history. Beta crew is Lower tier.
 - 2026-11-06 · **Beta crew before go-live** (commish's plan, not built). Charlie, Sam and Ben (nephews, new members) test the MVP
   first, with beta-only in-app feedback (in-the-moment prompts + Feedback button) and a tap log. League-wide feedback after
   go-live is a separate, lighter loop. Details: REEL.md backlog "Beta feedback kit".
