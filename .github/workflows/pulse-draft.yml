@@ -3,8 +3,9 @@
 #   1. data  (Windows, no AI): append the week to gold, apply ESPN stat corrections, run CE-1 + validate,
 #            compute the facts file, push branch pulse/2026-weekNN.
 #   2. write (Linux, Claude): write the Week object in weekly.html per
-#            _ops/docs/ROBOT_PULSE_RECIPE.md, then open a pull request for the commissioner.
-# Nothing publishes until he merges. Needs secret CLAUDE_CODE_OAUTH_TOKEN and the repo setting
+#            _ops/docs/ROBOT_PULSE_RECIPE.md, open a pull request and MERGE IT ITSELF when check_pulse_week.py passes
+#            (commish decision 2026-11-06: no Pulse PR on his desk; the classic Pulse runs until REEL go-live, then retires).
+#            A failed check leaves the PR open and says so on the Commish desk. Needs secret CLAUDE_CODE_OAUTH_TOKEN and the repo setting
 # "Allow GitHub Actions to create and approve pull requests".
 # Guard: a week is only drafted when the previous week is already in gold on main (merge each PR before the next Tuesday).
 # (Claude's GitHub action can't install on Windows runners, hence the split.)
@@ -227,6 +228,8 @@ jobs:
         env:
           CHECK_FAILED: ${{ steps.check.outputs.failed }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DESK_KEY: ${{ secrets.DESK_KEY }}
+          APP_API: https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec
           MODE: ${{ needs.data.outputs.mode }}
           WEEK: ${{ needs.data.outputs.week }}
           BRANCH: ${{ needs.data.outputs.branch }}
@@ -261,4 +264,17 @@ jobs:
             fi
             BODY="$FULL"
           fi
-          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY"
+          URL=$(gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY")
+          desk() { [ -z "$DESK_KEY" ] && return 0
+            jq -n --arg k "$DESK_KEY" --arg t "$1" --arg x "$2" --arg l "$3" --arg s "$4" '{action:"botpost",key:$k,title:$t,text:$x,link:$l,status:$s}' > desk.json
+            curl -sSL --max-time 60 -H "Content-Type: text/plain;charset=utf-8" --data @desk.json "$APP_API" | head -c 200; echo; rm -f desk.json; }
+          if [ "$MODE" != "draft" ]; then exit 0; fi
+          if [ "$CHECK_FAILED" = "true" ]; then
+            desk "Week $WEEK Pulse needs a look" "The automatic check failed, so it did NOT publish. Open the PR and comment @claude fix the check failures (or ask Claude in chat)." "$URL" fail
+            exit 0
+          fi
+          if gh pr merge "$URL" --merge --delete-branch; then
+            desk "Week $WEEK is in the books" "Scores, gold history and the classic Pulse published themselves. Nothing to merge." "https://maffl-commish.github.io/maffl/weekly.html" ok
+          else
+            desk "Week $WEEK Pulse didn't auto-publish" "The check passed but the merge failed (conflict or branch rule). Open the PR to merge it." "$URL" fail
+          fi

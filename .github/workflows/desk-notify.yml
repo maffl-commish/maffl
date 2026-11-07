@@ -38,8 +38,9 @@ jobs:
             *)       status=fail; word="FAILED ($CONCLUSION)" ;;
           esac
           case "$WF" in
-            "Pulse draft") hint=$([ "$status" = ok ] && echo "The Weekly Pulse draft PR should be open. Review and merge it before next Tuesday." || echo "No Pulse draft PR this time. Open the run to see why, or ask Claude to re-run it.") ;;
-            "ESPN weekly pull") hint=$([ "$status" = ok ] && echo "ESPN data is in. The Pulse draft robot runs next." || echo "ESPN didn't come through (cookies expired or the week isn't final). The Pulse can't draft until this works.") ;;
+            "Pulse draft") [ "$status" = ok ] && { echo "Pulse draft posts its own result (published / needs a look)."; exit 0; }
+                           hint="The weekly robot broke before it could publish. Open the run, or ask Claude to re-run it." ;;
+            "ESPN weekly pull") hint=$([ "$status" = ok ] && echo "ESPN data is in. The weekly robot publishes the week next." || echo "ESPN didn't come through (cookies expired or the week isn't final). The Pulse can't draft until this works.") ;;
             "Credit sync") hint=$([ "$status" = ok ] && echo "App-approved credits checked against the official record (TEST runs commit nothing)." || echo "Credits from the app did NOT post. Approvals still stand; open the run.") ;;
             *) hint="" ;;
           esac
