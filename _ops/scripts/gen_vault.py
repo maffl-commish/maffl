@@ -116,7 +116,7 @@ def build():
     for r in rows("MAFFL_Draft_History_Clean_v3.csv"):
         p = num(r["Price"], -1)
         if p > 0:
-            S[int(r["Year"])]["spends"].append({"o": who(r["Owner"]), "p": (r["Player"] or r["Player_Raw"]).strip(), "pos": r["Position_Actual"], "$": int(round(p))})
+            S[int(r["Year"])]["spends"].append({"o": who(r["Owner"]), "p": (r["Player"] or r["Player_Raw"]).strip(), "pos": r["Position_Actual"], "$": int(round(p)), "tm": (r.get("NFL_Team") or "").strip()})
 
     lower1 = defaultdict(list)
     for r in rows("prize.csv"):
@@ -285,7 +285,25 @@ def build():
             if k in seen: continue
             seen.add(k)
             weekly[str(wk)].append([kind, x["y"], x["w"], x["wt"], x["ws"], x["l"], x["lt"], x["ls"], x["type"]])
-    return {"v": 1, "tidbits": tidbits, "weekly": weekly, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
+    # ---- 💸 "What would you pay?" pool: every $40+ buy, with clues so it isn't a wild guess (all from league data)
+    pay = []
+    for y in years:
+        sp = sorted(S[y]["spends"], key=lambda x: -x["$"])
+        if not sp:
+            continue
+        top = sp[0]
+        for x in sp:
+            if x["$"] < 40:
+                continue
+            k = (x["p"], x["pos"])
+            prev = [z for z in S.get(y - 1, {"spends": []})["spends"] if (z["p"], z["pos"]) == k]
+            posr = [z for z in sp if z["pos"] == x["pos"]].index(x) + 1
+            # [year, owner, player, pos, NFL team, price, rank in auction, rank at position, nth time bought, last year's price,
+            #  that auction's top buy [player, pos, price] or null, buyer won the title 1/0]
+            pay.append([y, x["o"], x["p"], x["pos"], x["tm"], x["$"], sp.index(x) + 1, posr,
+                        sum(1 for yy in sorted(S) if yy <= y and any((z["p"], z["pos"]) == k for z in S[yy]["spends"])),
+                        max((z["$"] for z in prev), default=None), None if top is x else [top["p"], top["pos"], top["$"]], 1 if x["o"] in champ_of[y] else 0])
+    return {"v": 1, "tidbits": tidbits, "weekly": weekly, "pay": pay, "eras": [{"id": e[0], "title": e[1], "range": e[2], "from": e[3], "to": e[4]} for e in ERAS],
             "draftEras": [{"name": e[0], "from": e[1], "to": e[2]} for e in DRAFT_ERAS],
             "owners": owners, "records": records, "seasons": out}
 

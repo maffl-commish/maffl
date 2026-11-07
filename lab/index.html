@@ -410,6 +410,9 @@
   .tbtn button{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:8px 4px;min-width:70px;text-align:left}
   .tbtn .go{background:var(--navy);color:#fff;border-radius:999px;padding:10px 18px;text-align:center}
   .tbub .tx{position:absolute;top:8px;right:8px;width:32px;height:32px;font-size:16px;color:var(--muted)}
+  .payclues{list-style:none;margin:8px 0 6px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+  .payclues li{font:600 12px/1.3 var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:5px 10px}
+  .payclues li:first-child{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
   .tbtags{display:flex;flex-wrap:wrap;gap:5px}.tbtags span{font:700 10px var(--display);letter-spacing:.08em;text-transform:uppercase;background:var(--gold-soft);color:var(--gold-dark);border:1px solid var(--gold);border-radius:999px;padding:3px 8px}
   .tbtags span.dr{background:#fbeee7;color:#8a3d1b;border-color:#e3a284}
   .tbyr{display:flex;align-items:baseline;gap:10px;margin-top:10px}.tbyr b{font:800 52px/1 var(--display);color:var(--navy)}.tbyr small{font:700 13px var(--display);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
@@ -1213,25 +1216,28 @@
       : esc(g[3]) + " won the " + y + " title";
     var mine = isMe(g[2]) || isMe(g[5]);
     return { id: "history:" + wk + ":" + y, scope: "league", c: { eb: "📅 This week in MAFFL history", t: "", face: '<div class="fc">' +
-      '<div class="tbyr"><b>Week ' + wk + '</b><small>' + y + '</small></div><h3 style="font-size:24px;line-height:1.2;margin-top:8px">' + head + '.</h3>' +
+      '<div class="tbyr"><b>' + y + '</b><small>Week ' + wk + '</small></div><h3 style="font-size:24px;line-height:1.2;margin-top:8px">In ' + y + ', ' + head + '.</h3>' +
       '<div class="tbfinal"><div class="w"><span>' + esc(g[3]) + ' <small>' + esc(shortOf(g[2])) + '</small></span><b>' + f2(g[4]) + '</b></div><div><span>' + esc(g[6]) + ' <small>' + esc(shortOf(g[5])) + '</small></span><b>' + f2(g[7]) + '</b></div></div>' +
       '<div class="fchips"><span>' + ({ high: "🚀 Week " + wk + " record", blowout: "🔨 Week " + wk + " blowout record", thriller: "⏱️ Closest Week " + wk + " game", final: "🏆 Title game" }[kind]) + '</span>' + (mine ? '<span>That was you</span>' : '') + '</div>' +
       '<div class="btns"><button class="b" data-vault="' + y + '">Open ' + y + ' in the Vault ›</button></div></div>' } };
   }
   // 💸 What would you pay? (commish 11/7): a big buy from a past auction, three prices, one shot; then how everyone guessed.
   function payCard() {
-    var V = window.MAFFL_VAULT; if (!V) return null;
-    var pool = []; Object.keys(V.seasons).forEach(function (y) { (V.seasons[y].spends || []).forEach(function (b, k) { if (b[3] >= 40) pool.push({ y: +y, o: b[0], p: b[1], pos: b[2], $: b[3], rank: k + 1 }); }); });
-    if (!pool.length) return null;
-    var b = pool[hashStr("pay" + (W.weekNumber || 0)) % pool.length], rnd = hashStr("payd" + b.p + b.y);
-    var d1 = 12 + rnd % 9, d2 = 22 + (rnd >> 3) % 12, opts = [b.$, b.$ + d1, Math.max(5, b.$ - d2)];
-    if (rnd % 2) opts[1] = Math.max(5, b.$ - d1), opts[2] = b.$ + d2;
-    opts = opts.filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(function (x, z) { return x - z; });
-    var champ = ((V.seasons[b.y] || {}).champ || []).indexOf(b.o) >= 0;
-    var c = quiz("pay" + b.y + b.p.replace(/\W/g, ""), "💸 What would you pay? · " + b.y, "In " + b.y + ", " + shortOf(b.o) + " bought " + b.p + " (" + b.pos + "). What did it cost?",
-      opts.map(function (v) { return { v: "$" + v, label: "$" + v, sub: "" }; }), "$" + b.$,
-      esc(b.o) + " paid $" + b.$ + ", the #" + b.rank + " buy of the " + b.y + " auction" + (champ ? ", and won the title that year." : "."));
-    return { id: "pay:" + b.y + ":" + b.p, play: true, scope: "league", c: c };
+    var V = window.MAFFL_VAULT, P = V && V.pay; if (!P || !P.length) return null;
+    // [year, owner, player, pos, NFL team, price, auction rank, position rank, nth time bought, last year's price, top buy [p,pos,$] | null, champ]
+    var b = P[hashStr("pay" + (W.weekNumber || 0)) % P.length], y = b[0], o = b[1], pl = b[2], pos = b[3], tm = b[4], pr = b[5];
+    var rnd = hashStr("payd" + pl + y), d1 = 10 + rnd % 9, d2 = 20 + (rnd >> 3) % 12, opts = [pr, pr + d1, Math.max(5, pr - d2)];
+    if (rnd % 2) { opts[1] = Math.max(5, pr - d1); opts[2] = pr + d2; }
+    opts = opts.filter(function (v, k, a) { return a.indexOf(v) === k; }).sort(function (x, z) { return x - z; });
+    var ord = function (n) { return ordinal(n); }, de = (V.seasons[y] || {}).draftEra;
+    // Clues so it isn't a wild guess (commish 11/7): his NFL team, how often MAFFL had bought him, last year's price, that auction's top buy.
+    var clues = [(tm ? tm + " " : "") + pos, b[8] === 1 ? "First time anyone in MAFFL bought him" : "The " + ord(b[8]) + " time MAFFL bought him",
+      b[9] != null ? "Went for $" + b[9] + " the year before" : "Nobody bought him the year before", b[10] ? "Top buy that auction: " + b[10][0] + ", $" + b[10][2] : "", de ? de + " auction" : ""].filter(Boolean);
+    var c = quiz("pay" + y + pl.replace(/\W/g, ""), "💸 What would you pay? · " + y, "In " + y + ", " + shortOf(o) + " bought " + pl + ". What did it cost?",
+      opts.map(function (v) { return { v: "$" + v, label: "$" + v, sub: "" }; }), "$" + pr,
+      esc(o) + " paid $" + pr + ": the #" + b[6] + " buy of the " + y + " auction and the " + ord(b[7]) + "-priciest " + esc(pos) + (b[11] ? ", and won the title that year." : "."));
+    c.pre = '<ul class="payclues">' + clues.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>';
+    return { id: "pay:" + y + ":" + pl, play: true, scope: "league", c: c };
   }
   // 🎱 The 8 Ball, reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
   function tidbitCard(off) {
@@ -1741,7 +1747,7 @@
     return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (c.face ? ' facec' : '') + '"' + (shared ? DR("inbox:" + x.id) : '') + '>' +
       '<div class="dhead"><div class="sec">' + stamp + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
       (c.face ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
-      '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.face || (c.quiz ? quizBody(c.quiz) : c.body)) + '</div>' +
+      '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.face || (c.quiz ? (c.pre || '') + quizBody(c.quiz) : c.body)) + '</div>' +
       (x.action || !shared ? '' : '<div class="dfoot"><div class="reacts">' + (REACTS[x.series] || REACTS[x.id] || REACTS.you).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div>') + '</div>';
   }
   // Redraw: the dots and counter (light), or the whole feed in place (after a vote / quiz answer), keeping your spot.
