@@ -65,6 +65,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 **Commish walkthrough 11/7 (voice notes, tab by tab)**: A–E shipped 11/7 (STATUS). Still open:
 - 🗄️ **The Vault** (decided 11/7; History & Stats reborn inside REEL): steps 1–3 shipped (vault-data.js + Throwback card; lines drafted for all 24 seasons, commish editing; League → Vault with Seasons, Records, Owners, Draft). Step 4 done (11/7): What would you pay?, This week in MAFFL history, Name that team, Meet the owner, Records watch.
 - F · 🏆 **League tab overhaul**: the deep-dive area cards drill into (Rulebook is buried; standings list is too plain). Waiting on Mike's list of what owners should reach from it.
+- Done 11/7: 🧑 MAFFL player profile (any player, anywhere: season + price history + owners + title pedigree + trade value + 8 Ball).
 - G · 👤 **Profile revamp**: bring Power Rankings / owner profile (years in league, draft profile, Madden-style ratings) into the app's look, behind Team → Profile.
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Player week-by-week bars should show whether he started or sat that week (daily.js keeps only points per week today; needs the slot too).

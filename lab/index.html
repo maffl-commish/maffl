@@ -411,6 +411,15 @@
   .tbtn .go{background:var(--navy);color:#fff;border-radius:999px;padding:10px 18px;text-align:center}
   .tbub .tx{position:absolute;top:8px;right:8px;width:32px;height:32px;font-size:16px;color:var(--muted)}
   .mo{display:flex;align-items:center;gap:12px}.mo .cav{width:56px;height:56px;font-size:20px}.mo b{display:block;font:700 24px/1.1 var(--display);color:var(--navy)}.mo small{font-size:13px;color:var(--muted)}
+  .phero h3{margin:0;font:700 26px/1.1 var(--display);color:#fff}.phero p{margin:2px 0 0}.phtop{display:flex;gap:12px;align-items:center}
+  .phown{display:inline-block;margin-top:6px;font:700 12px var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--navy);background:var(--gold);border-radius:999px;padding:5px 10px}
+  .phown.off{background:rgba(255,255,255,.12);color:#c8d2e4}
+  .strip.lt2{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);margin-top:8px}.strip.lt2 b{font-size:18px;color:var(--gold)}
+  .ptid b{display:block;font:800 30px/1.05 var(--display);color:var(--navy);margin-top:4px}.ptid p{margin-top:6px}
+  .ptitle{background:var(--gold-soft);border-color:var(--gold)}.ptitle b{display:block;font:700 18px var(--display);color:var(--navy);margin-top:2px}.ptitle p{margin-top:4px;font-size:14px}
+  .pval{display:flex;gap:10px}.pval>div{flex:1;background:var(--page-bg);border:1px solid var(--border);border-radius:12px;padding:10px}
+  .pval small{display:block;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}.pval b{display:block;font:800 30px/1.1 var(--display);color:var(--navy)}
+  .pval b i{font:600 13px var(--body);font-style:normal;color:var(--muted)}.pval span{font-size:12px;line-height:1.3;color:var(--ink2)}
   .payclues{list-style:none;margin:8px 0 6px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
   .payclues li{font:600 12px/1.3 var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:5px 10px}
   .payclues li:first-child{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
@@ -1236,7 +1245,7 @@
       b[9] != null ? "Went for $" + b[9] + " the year before" : "Nobody bought him the year before", b[10] ? "Top buy that auction: " + b[10][0] + ", $" + b[10][2] : "", de ? de + " auction" : ""].filter(Boolean);
     var c = quiz("pay" + y + pl.replace(/\W/g, ""), "💸 What would you pay? · " + y, "In " + y + ", " + shortOf(o) + " bought " + pl + ". What did it cost?",
       opts.map(function (v) { return { v: "$" + v, label: "$" + v, sub: "" }; }), "$" + pr,
-      esc(o) + " paid $" + pr + ": the #" + b[6] + " buy of the " + y + " auction and the " + ord(b[7]) + "-priciest " + esc(pos) + (b[11] ? ", and won the title that year." : "."));
+      esc(o) + " paid $" + pr + ": the #" + b[6] + " buy of the " + y + " auction and the " + ord(b[7]) + "-priciest " + esc(pos) + (b[11] ? ", and won the title that year." : ".") + ' <button class="tl2" data-player="' + esc(pkeyHist(pl, pos)) + '">His MAFFL profile ›</button>');
     c.pre = '<ul class="payclues">' + clues.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>';
     return { id: "pay:" + y + ":" + pl, play: true, scope: "league", c: c };
   }
@@ -1299,7 +1308,7 @@
     var T = (window.MAFFL_VAULT && MAFFL_VAULT.tidbits) || []; if (!T.length) return null;
     var t = T[((W.weekNumber || 0) * 5 + (off || 0) * 3) % T.length], hs = t.hist || [], mx = Math.max.apply(null, hs.map(function (x) { return x[2]; }).concat([1]));
     var lo = hs.reduce(function (m, x) { return !m || x[2] < m[2] ? x : m; }, null), hi = hs.reduce(function (m, x) { return !m || x[2] > m[2] ? x : m; }, null);
-    var bars = hs.length ? '<div class="tdh">' + esc(t.player) + ' · every auction</div><div class="tdbars">' + hs.map(function (x) {
+    var bars = hs.length ? '<div class="tdh"><button class="tl2" data-player="' + esc(pkeyHist(t.player, t.pos)) + '">' + esc(t.player) + ' ›</button> · every auction</div><div class="tdbars">' + hs.map(function (x) {
       return '<div class="tdb' + (x === hi ? ' hi' : x === lo ? ' lo' : '') + '" title="' + esc(x[1] + ' · ' + x[0] + ' · $' + x[2]) + '"><small>$' + x[2] + '</small><i style="height:' + Math.max(3, Math.round(70 * x[2] / mx)) + 'px"></i><span>\'' + String(x[0]).slice(2) + '</span></div>'; }).join("") + '</div>' : '';
     return { id: "tidbit:" + t.key, scope: "league", c: { eb: "🎱 8 Ball", t: "", face: '<div class="fc"><div class="tdhook">' + esc(t.hook) + '</div><p class="tdline">' + esc(t.line) + '</p>' + bars +
       (t.player ? '<div class="btns"><button class="b" data-vaultq="' + esc(t.player) + '">' + esc(t.player) + ' in the Vault ›</button></div>' : '') + '</div>' } };
@@ -1320,7 +1329,7 @@
       (s.streak ? '<div class="fchips"><span>' + esc(s.streak.replace(/^./, function (c) { return c.toUpperCase(); })) + '</span>' + (s.titleNo > 1 ? '<span>Title #' + s.titleNo + '</span>' : '') + '</div>' : '');
     else if ((s.champ || []).length) h += '<div class="tbfinal"><div class="w"><span>🏆 ' + s.champ.map(function (o) { return esc((s.teams || {})[o] || o) + ' <small>' + esc(vShort(o)) + '</small>'; }).join(" &amp; ") + '</span></div></div>';
     if (upDivs.length) h += '<div class="tbh">Division winners</div><div class="tbdiv">' + upDivs.map(function (d) { var t = d.t[0]; return '<div><small>' + esc(d.name) + '</small>' + esc(t[1]) + ' <i>' + t[2] + '–' + t[3] + '</i></div>'; }).join("") + '</div>';
-    if ((s.topBuy || []).length) h += '<div class="tbh">Biggest buys</div>' + s.topBuy.slice(0, 4).map(function (b) { return '<div class="tbbuy"><span>' + esc(b[1]) + ' <small>' + esc(b[2]) + ' · ' + esc(vShort(b[0])) + '</small></span><b>$' + b[3] + '</b></div>'; }).join("");
+    if ((s.topBuy || []).length) h += '<div class="tbh">Biggest buys</div>' + s.topBuy.slice(0, 4).map(function (b) { return '<div class="tbbuy"><span><button class="tl2" data-player="' + esc(pkeyHist(b[1], b[2])) + '">' + esc(b[1]) + '</button> <small>' + esc(b[2]) + ' · ' + esc(vShort(b[0])) + '</small></span><b>$' + b[3] + '</b></div>'; }).join("");
     (s.farewells || []).slice(0, 2).forEach(function (o) { h += '<div class="tbnote">👋 ' + esc(farewellLine(s, o)) + '</div>'; });
     if (s.note) h += '<div class="tbnote">📝 ' + esc(s.note) + '</div>';
     var foot = []; if (s.top) foot.push("Top score: " + vShort(s.top.o) + " " + s.top.s); if ((s.rookies || []).length) foot.push("Rookie" + (s.rookies.length > 1 ? "s" : "") + ": " + s.rookies.map(vShort).join(", "));
@@ -1351,7 +1360,7 @@
       h += list("📈 Win %", "regular season since 2005, 3+ seasons", R.wins.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[0]), t[1] + '–' + t[2], (t[3] * 100).toFixed(1) + '%', t[0]); }));
       h += list("💯 Points", "regular season since 2005", R.points.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[0]), t[2] + ' games', Math.round(t[1]).toLocaleString(), t[0]); }));
       h += list("🎟️ Playoff trips", "Upper bracket", R.playoffs.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[0]), '', t[1], t[0]); }));
-      h += list("💸 Biggest buys", "auction, all-time", R.buys.slice(0, 10).map(function (t, k) { return row(k + 1, esc(t[3]) + ' <small class="meta">' + esc(t[4]) + '</small>', esc(shortOf(t[2])) + ' · ' + t[1], '$' + t[0], t[2]); }));
+      h += list("💸 Biggest buys", "auction, all-time", R.buys.slice(0, 10).map(function (t, k) { return row(k + 1, '<button class="tl2" data-player="' + esc(pkeyHist(t[3], t[4])) + '">' + esc(t[3]) + '</button> <small class="meta">' + esc(t[4]) + '</small>', esc(shortOf(t[2])) + ' · ' + t[1], '$' + t[0]); })); // no row-wide owner link: the player name is the tap
       h += '<p class="meta">Scores ran higher once Superflex arrived in 2025.</p>';
     } else if (VAULT_SUB === "owners") {
       var O = V.owners, names = Object.keys(O), last = Math.max.apply(null, names.map(function (o) { return O[o].last; }));
@@ -1382,7 +1391,7 @@
       .sort(function (a, b) { return (+b.Price) - (+a.Price) || b.Year - a.Year; });
     if (!list.length) return '<p class="meta" style="padding:10px 0">No picks match.</p>';
     return '<div class="eb">' + list.length.toLocaleString() + ' pick' + (list.length === 1 ? '' : 's') + (list.length > 60 ? ' · top 60 by price' : '') + '</div>' + list.slice(0, 60).map(function (d) {
-      return '<div class="row"><div style="flex:1;min-width:0"><div class="nm">' + esc(d.Player || d.Player_Raw) + ' <small class="meta">' + esc(d.Position_Actual || d.Draft_Slot) + '</small></div><div class="meta">' + esc(d.Owner) + ' · ' + d.Year + '</div></div><div class="rt">$' + Math.round(+d.Price) + '</div></div>'; }).join("");
+      return '<button class="row prow" style="width:100%" data-player="' + esc(pkeyHist(d.Player || d.Player_Raw, d.Position_Actual)) + '"><div style="flex:1;min-width:0;text-align:left"><div class="nm">' + esc(d.Player || d.Player_Raw) + ' <small class="meta">' + esc(d.Position_Actual || d.Draft_Slot) + '</small></div><div class="meta">' + esc(d.Owner) + ' · ' + d.Year + '</div></div><div class="rt">$' + Math.round(+d.Price) + '</div></button>'; }).join("");
   }
   // The season in full (the Vault's year page; the League tab's Vault will list every year).
   function vaultSheet(y) {
@@ -1400,7 +1409,7 @@
     if (s.blowout) sup.push(["Biggest blowout", vShort(s.blowout.w) + " over " + vShort(s.blowout.l) + " by " + s.blowout.m]); if (s.closest) sup.push(["Closest game", vShort(s.closest.w) + " over " + vShort(s.closest.l) + " by " + s.closest.m]);
     if ((s.rookies || []).length) sup.push(["Rookies", s.rookies.join(", ")]); if ((s.farewells || []).length) sup.push(["Last season", s.farewells.join(", ")]);
     if (sup.length) h += '<div class="card glist"><div class="eb">The season</div>' + sup.map(function (r) { return '<div class="row"><div style="flex:1"><div class="meta">' + r[0] + '</div><div class="nm">' + esc(r[1]) + '</div></div></div>'; }).join("") + '</div>';
-    if ((s.spends || []).length) h += '<div class="card glist"><div class="eb">Draft · biggest spends</div>' + s.spends.map(function (b) { return '<div class="row"><div style="flex:1"><div class="nm">' + esc(b[1]) + '</div><div class="meta">' + esc(b[2]) + ' · ' + esc(b[0]) + '</div></div><div class="rt">$' + b[3] + '</div></div>'; }).join("") + '</div>';
+    if ((s.spends || []).length) h += '<div class="card glist"><div class="eb">Draft · biggest spends</div>' + s.spends.map(function (b) { return '<div class="row"><div style="flex:1"><div class="nm"><button class="tl2" data-player="' + esc(pkeyHist(b[1], b[2])) + '">' + esc(b[1]) + '</button></div><div class="meta">' + esc(b[2]) + ' · ' + esc(b[0]) + '</div></div><div class="rt">$' + b[3] + '</div></div>'; }).join("") + '</div>';
     return h;
   }
   function form5(owner) { // last five 2026 results, oldest first
@@ -2298,29 +2307,75 @@
   }
 
   // ---------- Player sheet ----------
+  // ---------- 🧑 The MAFFL player profile (commish 11/7: "every player click opens a next-level MAFFL profile") ----------
+  // One screen for any player anywhere in the app: on a 2026 roster ("owner|name") or only in league history ("|name@POS").
+  // This season (ESPN) on top, then his MAFFL story from every auction since 2005: price history, who's owned him, title
+  // teams he was on, any 8 Ball tidbit about him, and trade value by the same formula the trade grades use.
+  var POS_GRP = { DT: "DL", DE: "DL", DL: "DL", S: "DB", CB: "DB", DB: "DB" };
+  function posGrp(p) { return POS_GRP[p] || p; }
+  function samePos(a, b) { if (!a || !b) return true; if (a === "FLX" || b === "FLX") return ["RB", "WR", "TE", "FLX"].indexOf(a) >= 0 && ["RB", "WR", "TE", "FLX"].indexOf(b) >= 0; return posGrp(a) === posGrp(b); }
+  function pkeyHist(name, pos) { return "|" + name + (pos ? "@" + pos : ""); }
+  function resolvePlayer(key) {
+    var k = key.split("|"), owner = k[0], rest = k.slice(1).join("|"), at = rest.lastIndexOf("@"), name = at > 0 ? rest.slice(0, at) : rest, pos = at > 0 ? rest.slice(at + 1) : "";
+    var p = owner ? rosterOf(owner).filter(function (x) { return x.name === name; })[0] : null;
+    if (!p) { var R = rosters(); Object.keys(R).some(function (o) { p = R[o].filter(function (x) { return x.name === name && samePos(x.pos, pos); })[0]; return !!p; }); }
+    if (p) return p;
+    var rows = DRAFT.filter(function (d) { return (d.Player || d.Player_Raw) === name && samePos(d.Position_Actual, pos); }).sort(function (a, b) { return b.Year - a.Year; });
+    var tm = rows.filter(function (d) { return d.NFL_Team && !/^(UNK|FA|)$/i.test(d.NFL_Team); })[0];
+    return { name: name, pos: pos || (rows[0] && rows[0].Position_Actual) || "", nfl: tm ? tm.NFL_Team + (tm !== rows[0] ? " (last bought " + rows[0].Year + ")" : "") : "", owner: "", tier: "", histOnly: true };
+  }
+  function auctionHist(p) {
+    return DRAFT.filter(function (d) { return (d.Player || d.Player_Raw) === p.name && (+d.Price || 0) > 0 && samePos(d.Position_Actual, p.pos); })
+      .map(function (d) { var y = +d.Year, champ = ((VS(y) || {}).champ || []).some(function (c) { return norm(c) === norm(d.Owner); }); return { y: y, o: d.Owner, $: Math.round(+d.Price), tm: d.NFL_Team || "", champ: champ }; })
+      .sort(function (a, b) { return a.y - b.y || b.$ - a.$; });
+  }
   function playerSheet(key) {
-    var k = key.split("|"), owner = k[0], name = k.slice(1).join("|");
-    var p = rosterOf(owner).filter(function (x) { return x.name === name; })[0];
-    if (!p) return '<p class="p">Player not found.</p>';
-    var mine = isMe(p.owner), b = blockOf(p.tier, p.name, p.owner), tw = topWeeks(p);
-    var hist = DRAFT.filter(function (d) { return (d.Player || d.Player_Raw) === p.name; }).sort(function (a, b2) { return b2.Year - a.Year; });
-    var h = '<div class="card navy"><div style="display:flex;gap:12px;align-items:center">' + posChip(p.pos).replace('class="pos', 'class="pos big') +
-      '<div><h3 style="margin:0">' + esc(p.name) + '</h3><p>' + esc(p.nfl || "FA") + ' · ' + esc(teamOf(p.owner).team) + (p.inj ? ' · <b style="color:var(--loss)">' + esc(p.inj) + '</b>' : '') + '</p></div></div>' +
-      '<div class="strip"><div><b>' + (p.sp != null ? f1(p.sp) : '–') + '</b><small>Season pts</small></div><div><b>' + (p.avg ? f1(p.avg) : '–') + '</b><small>Per game</small></div>' +
-        '<div><b>' + (p.prk ? esc(p.pos) + p.prk : '–') + '</b><small>ESPN rank</small></div><div><b>' + (p.own != null ? p.own + '%' : '–') + '</b><small>Rostered</small></div></div></div>' +
-      playerStatus(p) + weeksChart(p);
-    if (mine) {
-      h += '<div class="card"><div class="eb">🏷️ Trade block</div>' + (b ? '<p>On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '. Everyone in your tier sees the tag.</p>' : '<p>Not on the block. Add a note so people know what you want.</p>') +
-        '<input class="field" id="bnote" maxlength="80" placeholder="What do you want? (e.g. RB depth)" value="' + esc(b && b.note || "") + '">' +
-        '<div class="btns">' + (b ? '<button class="b" data-blk="off" data-pk="' + esc(p.name) + '">Take off the block</button>' : '') + '<button class="b pri" data-blk="on" data-pk="' + esc(p.name) + '">' + (b ? 'Update note' : 'Put on the block') + '</button></div></div>';
-    } else if (p.tier === ME.tier && API_URL) {
-      h += '<div class="btns"><button class="b pri" data-trade-with="' + esc(p.owner) + '" data-trade-want="' + esc(p.name) + '">Start a trade for him</button></div>';
-    }
-    if (tw.length && !wkList(p).length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
-      return '<div class="row"><div class="nm">Week ' + x.wk + '</div><div class="rt">' + f2(x.pts) + '<small>#' + x.rank + ' on the team</small></div></div>'; }).join("") + '</div>';
-    h += '<div class="card glist"><div class="eb">MAFFL draft history</div>' + (hist.length ? hist.map(function (d) {
-      return '<div class="row"><div class="rt" style="margin:0;min-width:44px;text-align:left">' + d.Year + '</div><div style="flex:1"><button class="tl2 nm" data-owner-push="' + esc(d.Owner) + '">' + esc(d.Owner) + '</button><div class="meta">' + esc(d.NFL_Team || "") + '</div></div><div class="rt">$' + (+d.Price || 0) + '</div></div>'; }).join("") : '<p>First time in a MAFFL auction.</p>') + '</div>';
+    var p = resolvePlayer(key); if (!p || !p.name) return '<p class="p">Player not found.</p>';
+    var mine = p.owner && isMe(p.owner), b = p.owner ? blockOf(p.tier, p.name, p.owner) : null, hs = auctionHist(p), cur = !p.histOnly;
+    var tid = ((window.MAFFL_VAULT && MAFFL_VAULT.tidbits) || []).filter(function (t) { return t.player === p.name && samePos(t.pos, p.pos); })[0];
+    // hero
+    var h = '<div class="card navy phero"><div class="phtop">' + posChip(p.pos).replace('class="pos', 'class="pos big') + '<div style="min-width:0"><h3>' + esc(p.name) + '</h3><p>' + esc(p.nfl || "FA") +
+      (p.inj ? ' · <b style="color:#ff9b9b">' + esc(p.inj) + '</b>' : '') + '</p>' +
+      (p.owner ? '<button class="phown" data-owner-push="' + esc(p.owner) + '">' + esc(teamOf(p.owner).team) + ' · ' + esc(shortOf(p.owner)) + ' ›</button>' : '<span class="phown off">Not on a MAFFL roster</span>') + '</div></div>';
+    if (cur) h += '<div class="strip"><div><b>' + (p.sp != null ? f1(p.sp) : '–') + '</b><small>Season pts</small></div><div><b>' + (p.avg ? f1(p.avg) : '–') + '</b><small>Per game</small></div>' +
+      '<div><b>' + (p.prk ? esc(p.pos) + p.prk : '–') + '</b><small>ESPN rank</small></div><div><b>' + (p.own != null ? p.own + '%' : '–') + '</b><small>Rostered</small></div></div>';
+    if (hs.length) { var tot = hs.reduce(function (a, x) { return a + x.$; }, 0), hi = hs.reduce(function (m, x) { return x.$ > m.$ ? x : m; }), owners = {}; hs.forEach(function (x) { owners[norm(x.o)] = 1; });
+      h += '<div class="strip lt2"><div><b>' + hs.length + '×</b><small>Bought since ' + hs[0].y + '</small></div><div><b>$' + hi.$ + '</b><small>Top price · ' + hi.y + '</small></div><div><b>' + Object.keys(owners).length + '</b><small>Owners</small></div><div><b>$' + tot.toLocaleString() + '</b><small>Spent on him</small></div></div>'; }
+    h += '</div>';
+    // actions
+    if (mine) h += '<div class="card"><div class="eb">🏷️ Trade block</div>' + (b ? '<p>On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '. Everyone in your tier sees the tag.</p>' : '<p>Not on the block. Add a note so people know what you want.</p>') +
+      '<input class="field" id="bnote" maxlength="80" placeholder="What do you want? (e.g. RB depth)" value="' + esc(b && b.note || "") + '">' +
+      '<div class="btns">' + (b ? '<button class="b" data-blk="off" data-pk="' + esc(p.name) + '">Take off the block</button>' : '') + '<button class="b pri" data-blk="on" data-pk="' + esc(p.name) + '">' + (b ? 'Update note' : 'Put on the block') + '</button></div></div>';
+    else if (p.owner && p.tier === ME.tier && API_URL) h += '<div class="btns" style="margin-top:10px"><button class="b pri" data-trade-with="' + esc(p.owner) + '" data-trade-want="' + esc(p.name) + '">Start a trade for him</button></div>' + (b ? '<p class="meta" style="margin:6px 2px">🏷️ On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '</p>' : '');
+    // this season
+    if (cur) { h += playerStatus(p) + weeksChart(p) + valueCard(p);
+      var tw = topWeeks(p); if (tw.length && !wkList(p).length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
+        return '<div class="row"><div class="nm">Week ' + x.wk + '</div><div class="rt">' + f2(x.pts) + '<small>#' + x.rank + ' on the team</small></div></div>'; }).join("") + '</div>'; }
+    // 🎱 tidbit
+    if (tid) h += '<div class="card ptid"><div class="eb">🎱 From the 8 Ball</div><b>' + esc(tid.hook) + '</b><p>' + esc(tid.line) + '</p></div>';
+    // MAFFL auction story
+    if (hs.length) {
+      var mx = Math.max.apply(null, hs.map(function (x) { return x.$; })), lo = hs.reduce(function (m, x) { return x.$ < m.$ ? x : m; }), hi2 = hs.reduce(function (m, x) { return x.$ > m.$ ? x : m; });
+      h += '<div class="card"><div class="eb">💸 His MAFFL price tag</div><div class="tdbars">' + hs.map(function (x) {
+        return '<div class="tdb' + (x === hi2 ? ' hi' : x === lo ? ' lo' : '') + '" title="' + esc(x.o + ' · ' + x.y + ' · $' + x.$) + '"><small>$' + x.$ + '</small><i style="height:' + Math.max(3, Math.round(70 * x.$ / mx)) + 'px"></i><span>\'' + String(x.y).slice(2) + '</span></div>'; }).join("") + '</div>' +
+        '<p class="meta">High $' + hi2.$ + ' (' + esc(shortOf(hi2.o)) + ', ' + hi2.y + ') · low $' + lo.$ + ' (' + esc(shortOf(lo.o)) + ', ' + lo.y + ')</p></div>';
+      var champs = hs.filter(function (x) { return x.champ; });
+      if (champs.length) h += '<div class="card ptitle"><div class="eb">🏆 Title pedigree</div><b>' + (champs.length === 1 ? 'On a championship roster' : 'On ' + champs.length + ' championship rosters') + '</b><p>' + champs.map(function (x) { return x.y + ' · ' + esc(shortOf(x.o)) + ' ($' + x.$ + ')'; }).join('<br>') + '</p></div>';
+      var by = {}; hs.forEach(function (x) { var k2 = norm(x.o); (by[k2] = by[k2] || { o: x.o, ys: [] }).ys.push(x); });
+      h += '<div class="card glist"><div class="eb">👥 Every owner who\'s had him</div>' + Object.keys(by).map(function (k2) { return by[k2]; }).sort(function (a, c) { return c.ys.length - a.ys.length || c.ys[c.ys.length - 1].y - a.ys[a.ys.length - 1].y; }).map(function (g) {
+        return '<div class="row"><div style="flex:1;min-width:0"><button class="tl2 nm" data-owner-push="' + esc(g.o) + '">' + esc(g.o) + '</button><div class="meta">' + g.ys.map(function (x) { return x.y + ' $' + x.$ + (x.champ ? ' 🏆' : ''); }).join(' · ') + '</div></div><div class="rt">' + g.ys.length + '×</div></div>'; }).join("") + '</div>';
+    } else h += '<div class="card"><div class="eb">💸 His MAFFL price tag</div><p class="meta">Never bought at a MAFFL auction' + (cur ? ' (a waiver find, or new this year)' : '') + '.</p></div>';
+    h += '<div class="btns"><button class="b" data-vaultq="' + esc(p.name) + '">' + esc(p.name) + ' in the Vault draft ›</button></div>';
     return h;
+  }
+  // Trade value, by the trade grade's own formula (pvalParts): Now = points over a replacement player at his position in this
+  // tier for the rest of the season; Future = market (% rostered) × career stage, as an index.
+  function valueCard(p) {
+    if (p.avg == null || !p.tier) return '';
+    var v = pvalParts(p), fut = Math.min(100, Math.round(v.fut / 1.3)), now = Math.round(v.now), rl = replLevel(p.tier, p.pos);
+    var lvl = function (x, a, b) { return x >= a ? "High" : x >= b ? "Mid" : "Low"; };
+    return '<div class="card"><div class="eb">⚖️ Trade value · same math as the trade grades</div><div class="pval"><div><small>Now</small><b>' + (now > 0 ? '+' + now : '0') + '</b><span>pts over a replacement ' + esc(p.pos) + ' (' + f1(rl) + '/g), rest of season</span></div>' +
+      '<div><small>Future</small><b>' + fut + '<i>/100</i></b><span>' + lvl(fut, 60, 30) + ' · ' + (p.own != null ? p.own + '% rostered' : '') + (v.yrs != null ? ' · ' + (v.yrs <= 1 ? 'new to MAFFL' : v.yrs + ' yrs in MAFFL') : '') + '</span></div></div></div>';
   }
 
   // Player screen pieces (commish 11/6: tap the card for a richer view)
@@ -2350,7 +2405,7 @@
   function legHTML(label, team, players, credits) {
     return '<div class="leg">' + esc(label) + '</div>' + players.map(function (nm) {
       var p = findPlayer(team, nm);
-      return '<div class="row" style="padding:6px 0">' + posChip(p.pos) + '<div class="nm">' + esc(nm) + '</div></div>'; }).join("") +
+      return '<button class="row prow" style="padding:6px 0;width:100%" data-player="' + esc(team) + '|' + esc(nm) + '">' + posChip(p.pos) + '<div class="nm" style="text-align:left">' + esc(nm) + '</div></button>'; }).join("") +
       (credits ? '<div class="row" style="padding:6px 0"><span class="pos p-CR">💳</span><div class="nm">' + credits + ' credit' + (credits === 1 ? '' : 's') + '</div></div>' : '') +
       (!players.length && !credits ? '<p class="meta">Nothing</p>' : '');
   }
@@ -3725,7 +3780,7 @@
     var ic = { add: "➕", drop: "➖", trade: "🔁" }, line = tierLine(me.tier, "wire");
     return { id: "wire:" + mv.length + ":" + mv[0].ts, c: { eb: "📰 The wire · " + (me.tier === "U" ? "Upper" : "Lower"), t: mv.length + " roster move" + (mv.length === 1 ? "" : "s"), face: '<div class="fc">' +
       '<h3>' + mv.length + ' move' + (mv.length === 1 ? '' : 's') + ' in your tier</h3>' + (line ? '<p class="fl">' + esc(line) + '</p>' : '') +
-      '<div class="frows">' + mv.slice(0, 7).map(function (m) { return '<div class="frow"><span>' + ic[m.type] + '</span><span style="flex:1"><b>' + esc(m.player) + '</b> <small class="meta">' + esc(m.pos + " · " + m.nfl) + '</small><br><small class="meta">' +
+      '<div class="frows">' + mv.slice(0, 7).map(function (m) { return '<div class="frow"><span>' + ic[m.type] + '</span><span style="flex:1"><button class="tl2" data-player="' + esc(m.owner || "") + '|' + esc(m.player) + '@' + esc(m.pos || "") + '"><b>' + esc(m.player) + '</b></button> <small class="meta">' + esc(m.pos + " · " + m.nfl) + '</small><br><small class="meta">' +
         esc((isMe(m.owner) ? "You" : shortOf(m.owner) || m.team) + (m.type === "trade" ? " got him from " + m.other : m.type === "add" ? " added him" : " dropped him") + " · " + ago(m.ts) + (ago(m.ts) === "now" ? "" : " ago")) + '</small></span></div>'; }).join("") + '</div>' +
       (mv.length > 7 ? '<p class="fs">+' + (mv.length - 7) + ' more</p>' : '') + '</div>' } };
   }

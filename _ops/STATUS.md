@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), REEL series: Name that team, Meet the owner, Records watch
+**Last updated:** 2026-11-07 by Claude (chat), REEL MAFFL player profile
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 🧑 MAFFL player profile (commish: every player tap opens a next-level profile): one screen for any player, on a 2026 roster or only in history (`|name@POS` keys; name + position, so the two Josh Allens stay apart). Hero: position, NFL team, owner chip (→ owner panel) or "Not on a MAFFL roster", season pts / per game / ESPN rank / rostered, plus MAFFL totals (times bought since, top price, owners, total spent). Then trade block or Start a trade, status, week by week, ⚖️ trade value (Now = pts over a replacement at his position for the rest of the season, Future index; same math as the trade grades), 🎱 his 8 Ball tidbit if any, 💸 price tag chart (every auction, high gold / low navy), 🏆 title pedigree (championship rosters he was on), 👥 every owner who's had him (years, prices, 🏆), Vault draft link. Now tappable everywhere: lineups/box scores, roster, trade block, other-tier chips, trade offers + chat trade cards, the wire, throwback biggest buys, 8 Ball chart, What would you pay? reveal, Vault draft search, Records biggest buys, Vault season spends.
 - 2026-11-07 · REEL · Last three Vault-data series: 🏷️ **Name that team** (Play: "Before they were X, <owner> played as…", decoys from other owners' old names), 👋 **Meet the owner** (Vault: one owner a week, not you: since, titles, runner-ups, record, playoff trips, biggest buy, can't-quit player, most-played rival + record, old team names; Full profile ›), 📈 **Records watch** (League week, only when close: all-time points chase for a top-10 spot within 160, or 2 wins from a round career-win number; Vault totals + this season). In season they rotate (odd weeks: Meet the owner + Name that team; even: This week in history + What would you pay?); off-season shows all. League week budget 6. gen_vault adds each owner's biggest buy and most-bought skill player. REEL_SERIES.md v1.3.
 - 2026-11-07 · REEL · 💸 What would you pay? gets clues (commish: a 2006 price was a wild guess): NFL team + position, how many times MAFFL had bought him, last year's price, that auction's top buy, the draft era; the reveal adds his rank at his position. New `pay` pool in vault-data.js (every $40+ buy with its clues, 544). 📅 This week in history leads with the year, big (no repeat in the headline).
 - 2026-11-07 · REEL · Commish desk cleanup (commish): 🏷️ Test trade block removed (app + backend `seedblock` op; it was a one-time fill); 🧪 Beta crew moved up into League; 📊 polls moved off the desk into Chat (commish-only Polls row on top of the inbox: ＋ New poll, open polls with Close). New 📣 **Commish alert** on the desk (top of League): one announcement posted by the commish into League chat + both tier chats as a gold alert card, pinned on top of each (unpin from ⋯); inbox preview reads "📣 Commish alert: …". Backend logic v0.26 (desk op `announce`; regression refreshed: seedblock line → announce + pinned check). Tested on the mock at 390px.
