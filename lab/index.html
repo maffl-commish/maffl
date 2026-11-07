@@ -420,6 +420,19 @@
   .pval{display:flex;gap:10px}.pval>div{flex:1;background:var(--page-bg);border:1px solid var(--border);border-radius:12px;padding:10px}
   .pval small{display:block;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}.pval b{display:block;font:800 30px/1.1 var(--display);color:var(--navy)}
   .pval b i{font:600 13px var(--body);font-style:normal;color:var(--muted)}.pval span{font-size:12px;line-height:1.3;color:var(--ink2)}
+  .ohero h3{margin:0;font:700 24px/1.1 var(--display);color:#fff}.ohero p{margin:2px 0 0}.ohtop{display:flex;gap:12px;align-items:center}.ohtop .cav{width:58px;height:58px;font-size:21px;flex:0 0 auto}
+  .orat{display:flex;gap:14px;align-items:center;margin-top:12px}.ovr{flex:0 0 74px;height:74px;border-radius:50%;border:3px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ovr b{font:800 30px/1 var(--display);color:#fff}.ovr small{font:700 10px var(--display);letter-spacing:.12em;color:var(--gold)}
+  .obars{flex:1;display:flex;flex-direction:column;gap:6px}.obars>div{display:flex;align-items:center;gap:8px}.obars span{flex:0 0 46px;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#c8d2e4}
+  .obars i{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}.obars em{display:block;height:100%;background:var(--gold);border-radius:4px}.obars b{flex:0 0 26px;text-align:right;font:700 14px var(--display);color:#fff}
+  .otro{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}.otro>div{background:var(--page-bg);border:1px solid var(--border);border-radius:12px;padding:8px;text-align:center}
+  .otro span{font-size:20px}.otro b{display:block;font:800 22px var(--display);color:var(--navy)}.otro small{display:block;font:700 10px var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.otro i{display:block;font-style:normal;font-size:10px;color:var(--ink2);margin-top:2px}
+  .oscout p{font:italic 15px/1.5 Georgia,"Times New Roman",serif;color:var(--ink)}
+  .ocar{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-top:4px}.ocar::-webkit-scrollbar{display:none}
+  .ocy{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;gap:1px;border:1px solid var(--border);border-radius:10px;padding:5px 2px;background:var(--surface)}
+  .ocy small{font:700 10px var(--display);color:var(--muted)}.ocy span{font-size:15px;min-height:20px}.ocy b{font:700 10px var(--display);color:var(--ink2)}
+  .ocy.champ{background:#fff3cf;border-color:var(--gold)}.ocy.ru{background:#eef1f6}.ocy.div{background:#f3ecff}.ocy.po{background:#eaf6f1}.ocy.lt1{background:#fff3cf}
+  .orv{width:100%;background:none;border:0;border-top:1px solid var(--border);text-align:left}
   .payclues{list-style:none;margin:8px 0 6px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
   .payclues li{font:600 12px/1.3 var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:5px 10px}
   .payclues li:first-child{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
@@ -801,6 +814,7 @@
 <script src="../key-dates-data.js"></script>
 <script src="weekfacts-data.js"></script>
 <script src="vault-data.js"></script>
+<script src="../draft-summary-data.js"></script>
 <script>
 (function () {
   "use strict";
@@ -1377,14 +1391,7 @@
     }
     return h + '<p class="meta" style="margin:14px 2px">Classic pages: <a href="../history.html">History &amp; Stats</a> · <a href="../power-rankings.html">Power Rankings</a> · <a href="../weekly.html">Weekly Pulse</a></p></div>';
   }
-  function vaultOwnerCard(o) {
-    var v = window.MAFFL_VAULT && MAFFL_VAULT.owners[o]; if (!v) return '';
-    var names = []; v.teams.forEach(function (t) { var last = names[names.length - 1]; if (last && last.n === t[1]) last.to = t[0]; else names.push({ n: t[1], from: t[0], to: t[0] }); });
-    var yl = function (a, lbl) { return a.length ? '<div class="row"><div style="flex:1"><div class="meta">' + lbl + '</div><div class="nm">' + a.join(", ") + '</div></div><div class="rt">' + a.length + '</div></div>' : ''; };
-    return '<div class="card glist"><div class="eb">🗄️ From the Vault · ' + v.first + (v.last !== v.first ? '–' + v.last : '') + '</div>' +
-      yl(v.titles, "🏆 Titles") + yl(v.ru, "🥈 Runner-up") + yl(v.lowerTitles, "⬆️ Lower-tier titles") + yl(v.divTitles, "🛡️ Division titles") + yl(v.playoffs, "🎟️ Playoffs") +
-      '<div class="row"><div style="flex:1"><div class="meta">Team names</div>' + names.slice().reverse().map(function (t) { return '<div class="nm" style="font-size:14px">' + esc(t.n) + ' <small class="meta">' + t.from + (t.to !== t.from ? '–' + t.to : '') + '</small></div>'; }).join("") + '</div></div></div>';
-  }
+
   function vaultDraftRows() {
     if (!DRAFT.length) return ld("Loading every auction since 2005…");
     var q = norm(VQ), list = DRAFT.filter(function (d) { return +d.Year >= 2005 && (+d.Price || 0) > 0 && (!VY || d.Year === VY) && (!q || norm(d.Player || d.Player_Raw).indexOf(q) >= 0 || norm(d.Owner).indexOf(q) >= 0); })
@@ -2869,31 +2876,71 @@
     h += '<div class="btns"><button class="b" data-owner-push="' + esc(a) + '">' + esc(A.team) + '</button><button class="b" data-owner-push="' + esc(b) + '">' + esc(B.team) + '</button></div>';
     return h;
   }
-  function ownerSheet(o) {
-    var t = teamOf(o), c = career(o), active = !!BY_OWNER[norm(o)];
-    var season = (window.MATCHUPS_DATA || []).filter(function (r) { return r[0] === (SCHEDULE_DATA.year || 2026) && (norm(r[3]) === norm(o) || norm(r[5]) === norm(o)); })
-      .sort(function (x, y) { return y[1] - x[1]; });
-    var h = '<div class="thero" style="margin:0 -14px;border-radius:0"><div class="tn">' + esc(active ? t.team : o) + '</div><div class="sub">' + esc(o) + (active ? ' · ' + (t.tier === "U" ? "Upper" : "Lower") + (t.div ? ' · Div ' + t.div : '') : ' · former owner') + '</div>' +
-      (active ? '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>#' + t.rank + '</b><small>' + (t.tier === "U" ? "Upper" : "Lower") + '</small></div><div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts for</small></div></div>' : '') + '</div>';
-    h += '<div class="card"><div class="eb">Career · titles since 2002, games since 2005</div><div class="stat3"><div><b>' + c.w + '–' + c.l + '</b><small>Reg. season</small></div><div><b>' + c.titles + '</b><small>Titles</small></div><div><b>' + c.playoffs + '</b><small>Playoff years</small></div></div>' +
-      (c.best ? '<p style="margin-top:10px">Best score: ' + f2(c.best.s) + ' (' + c.best.y + ' Wk ' + c.best.wk + ').</p>' : '') +
-      (PRIZE ? '<p>Prize money since ' + PRIZE.meta.data_start + ': <b class="money">$' + PRIZE.prize_events.filter(function (e) { return norm(e.owner) === norm(o); }).reduce(function (s2, e) { return s2 + e.amount; }, 0).toLocaleString() + '</b></p>' : '') +
-      '<div class="btns"><a class="b" href="../power-rankings.html">Power Rankings profile ›</a></div></div>' + vaultOwnerCard(o);
-    var ct = contactOf(o);
-    if (!isMe(o) && (ct.phone || ct.email)) h += '<div class="card"><div class="eb">Reach them · owners only</div>' +
-      (ct.phone ? '<p>📱 ' + esc(fmtPhone(ct.phone)) + '</p>' : '') + (ct.email ? '<p>✉️ ' + esc(ct.email) + '</p>' : '') +
-      '<div class="btns">' + (ct.phone ? '<a class="b" href="sms:' + esc(ct.phone) + '">Text</a><a class="b" href="tel:' + esc(ct.phone) + '">Call</a>' : '') + (ct.email ? '<a class="b" href="mailto:' + esc(ct.email) + '">Email</a>' : '') + '</div></div>';
-    if (!isMe(o)) {
-      var r = h2h(ME.owner, o);
-      h += '<div class="card navy"><div class="eb">You vs. them</div><h3>' + (r.n ? r.aw + '–' + r.bw + (r.aw > r.bw ? ' · you lead' : r.aw < r.bw ? ' · they lead' : ' · even') : 'Never played') + '</h3>' +
-        (r.n ? '<div class="dots">' + r.last.map(function (x) { return '<i class="' + (x.aWon ? "W" : "L") + '">' + (x.aWon ? "W" : "L") + '</i>'; }).join("") + '</div>' : '') +
-        (r.n ? '<div class="btns"><button class="b pri" data-riv-push="' + esc(ME.owner) + '|' + esc(o) + '">Open rivalry</button></div>' : '<p>Your first meeting is still ahead.</p>') + '</div>';
-    }
-    if (season.length) h += '<div class="card glist"><div class="eb">' + (SCHEDULE_DATA.year || 2026) + ' games</div>' + season.map(function (r) {
-      var won = norm(r[3]) === norm(o), opp = won ? r[5] : r[3];
-      return '<div class="row"><span class="wl ' + (won ? "W" : "L") + '">' + (won ? "W" : "L") + '</span><div><div class="nm">' + f2(won ? r[4] : r[6]) + ' – ' + f2(won ? r[6] : r[4]) + '</div><div class="meta">Wk ' + r[1] + ' vs <button class="tl2" data-riv-push="' + esc(o) + '|' + esc(opp) + '">' + esc(teamOf(opp).team) + '</button></div></div></div>'; }).join("") + '</div>';
-    return h;
+  // ---------- 👤 The MAFFL owner profile (commish 11/7: "go with the owner profile") ----------
+  // Power Rankings ratings + scout report (read from power-rankings.html when first needed), trophy case and career strip,
+  // draft profile (draft-summary-data.js), rivalries (every game since 2005), team names, prize money, you vs. them.
+  var PR = null, PR_LOADING = false;
+  function prOf(o) {
+    if (!PR && !PR_LOADING) { PR_LOADING = true; getText("../power-rankings.html").then(function (t) { try { PR = extract(t, "const OWNERS_DATA = ") || []; } catch (e) { PR = []; }
+      var top = stackS[stackS.length - 1]; if (top && top[0] === "owner" && $("psheet").classList.contains("on")) { $("sb").innerHTML = ownerSheet(top[1]); paint($("sb")); } }).catch(function () { PR = []; }); }
+    return (PR || []).filter(function (x) { return norm(x.name) === norm(o); })[0] || null;
   }
+  function rivalsOf(o) {
+    var opp = {}; (window.MATCHUPS_DATA || []).forEach(function (r) { if (future(r)) return; var a = norm(r[3]) === norm(o), b = norm(r[5]) === norm(o); if (!a && !b) return;
+      var x = a ? r[5] : r[3], k = norm(x); (opp[k] = opp[k] || { o: x, w: 0, l: 0 })[a ? "w" : "l"]++; });
+    var L = Object.keys(opp).map(function (k) { var v = opp[k]; v.n = v.w + v.l; v.pct = v.w / v.n; return v; });
+    var q = L.filter(function (v) { return v.n >= 6; });
+    return { most: L.slice().sort(function (a, b) { return b.n - a.n; }).slice(0, 3), owns: q.slice().sort(function (a, b) { return b.pct - a.pct || b.n - a.n; })[0], nemesis: q.slice().sort(function (a, b) { return a.pct - b.pct || b.n - a.n; })[0] };
+  }
+  function ownerSheet(o) {
+    var t = teamOf(o), active = !!BY_OWNER[norm(o)], v = vOwner(o), pr = prOf(o), ds = (window.DRAFT_SUMMARY || []).filter(function (x) { return norm(x.owner) === norm(o); })[0], me = isMe(o);
+    var tierN = t.tier === "U" ? "Upper" : "Lower";
+    // hero
+    var h = '<div class="card navy ohero"><div class="ohtop"><span class="cav">' + initials(o) + '</span><div style="min-width:0"><h3>' + esc(o) + '</h3><p>' + esc(active ? t.team + ' · ' + tierN + (t.div ? ' · Div ' + t.div : '') : (v ? 'Former owner · ' + v.first + '–' + v.last : 'Former owner')) + '</p>' +
+      (pr && pr.rank ? '<span class="phown">Power Rank #' + pr.rank + '</span>' : '') + '</div></div>';
+    if (pr && pr.ovr) h += '<div class="orat"><div class="ovr"><b>' + pr.ovr + '</b><small>OVR</small></div><div class="obars">' + [["Clutch", pr.clutch], ["Grind", pr.grind], ["Heat", pr.heat]].map(function (r) {
+      return '<div><span>' + r[0] + '</span><i><em style="width:' + Math.max(4, Math.min(100, r[1] || 0)) + '%"></em></i><b>' + (r[1] || '–') + '</b></div>'; }).join("") + '</div></div>';
+    else if (!PR) h += '<p class="meta" style="color:#c8d2e4;margin-top:8px">Loading ratings…</p>';
+    if (active) { var sd = seedTile(t); h += '<div class="strip"><div><b>' + rec(t) + '</b><small>2026</small></div><div><b>' + sd.v + '</b><small>' + sd.k + '</small></div><div><b>' + t.credits + '</b><small>Credits</small></div><div><b>' + Math.round(t.points) + '</b><small>Points</small></div></div>'; }
+    h += '</div>';
+    // trophy case
+    if (v) { var tro = [["🏆", "Titles", v.titles], ["🥈", "Runner-up", v.ru], ["👑", "Division", v.divTitles], ["🎟️", "Playoffs", v.playoffs], ["🥇", "Lower tier", v.lowerTitles]].filter(function (x) { return x[2] && x[2].length; });
+      h += '<div class="card"><div class="eb">🏆 Trophy case · ' + v.first + (v.last !== v.first ? '–' + (active ? 'now' : v.last) : '') + ' · ' + v.seasons + ' season' + (v.seasons === 1 ? '' : 's') + '</div>' +
+        (tro.length ? '<div class="otro">' + tro.map(function (x) { return '<div><span>' + x[0] + '</span><b>' + x[2].length + '</b><small>' + x[1] + '</small><i>' + (x[2].length > 4 ? "… " : "") + x[2].slice(-4).join(", ") + '</i></div>'; }).join("") + '</div>' : '<p class="meta">Still building the trophy case.</p>') +
+        '<p class="meta" style="margin-top:8px">Regular season since 2005: ' + v.w + '–' + v.l + (v.w + v.l ? ' (' + Math.round(100 * v.w / (v.w + v.l)) + '%) · ' + Math.round(v.pf).toLocaleString() + ' points' : '') + '</p></div>'; }
+    // scout report
+    if (pr && pr.scout) h += '<div class="card oscout"><div class="eb">📋 Scout report · Power Rankings</div><p>' + esc(pr.scout) + '</p></div>';
+    // career strip (Power Rankings timeline: [year, team, w, l, t, champ, ru, div, playoff, lower1, lowerRU, showdown, tier])
+    if (pr && (pr.timeline || []).length) h += '<div class="card"><div class="eb">📅 Every season · tap a year</div><div class="ocar">' + pr.timeline.slice().reverse().map(function (e2) {
+      var th = e2[5] ? ["champ", "🏆"] : e2[6] ? ["ru", "🥈"] : e2[7] ? ["div", "👑"] : e2[8] ? ["po", "🎟️"] : e2[9] ? ["lt1", "🥇"] : (e2[10] || e2[11]) ? ["lt2", "⭐"] : ["", ""];
+      return '<button class="ocy ' + th[0] + '" data-vault="' + e2[0] + '"><small>\'' + String(e2[0]).slice(2) + '</small><span>' + (th[1] || '·') + '</span><b>' + (e2[2] == null ? '–' : e2[2] + '–' + e2[3]) + '</b></button>'; }).join("") + '</div>' +
+      '<p class="meta" style="margin-top:6px">🏆 title · 🥈 runner-up · 👑 division · 🎟️ playoffs · 🥇 Lower-tier first</p></div>';
+    // draft profile
+    if (ds) { var tp = ds.topByPos || {};
+      h += '<div class="card"><div class="eb">💸 At the auction · ' + esc(ds.years) + '</div><div class="pval"><div><small>Spent</small><b>$' + ds.spent.toLocaleString() + '</b><span>' + ds.picks + ' picks · $' + f1(ds.avg) + ' a pick</span></div>' +
+        '<div><small>Loves</small><b>' + esc(ds.favPos) + '</b><span>' + ds.favPosPct + '% of picks</span></div></div><div class="frows">' +
+        '<div class="frow"><span style="flex:0 0 110px" class="meta">Biggest buy</span><span style="flex:1"><button class="tl2" data-player="' + esc(pkeyHist(ds.maxPlayer, "")) + '">' + esc(ds.maxPlayer) + '</button>, $' + ds.maxPrice + ' (' + ds.maxYear + ')</span></div>' +
+        (v && v.fav ? '<div class="frow"><span style="flex:0 0 110px" class="meta">Can\'t quit</span><span style="flex:1"><button class="tl2" data-player="' + esc(pkeyHist(v.fav[0], v.fav[1])) + '">' + esc(v.fav[0]) + '</button>, ' + v.fav[2] + ' times</span></div>' : '') +
+        ["QB", "RB", "WR", "TE"].filter(function (k) { return tp[k]; }).map(function (k) { return '<div class="frow"><span style="flex:0 0 110px" class="meta">Top ' + k + '</span><span style="flex:1"><button class="tl2" data-player="' + esc(pkeyHist(tp[k].player, k)) + '">' + esc(tp[k].player) + '</button>, $' + tp[k].price + ' (' + tp[k].year + ')</span></div>'; }).join("") + '</div></div>'; }
+    // rivalries
+    var rv = rivalsOf(o), rrow = function (lbl, x) { return x ? '<button class="frow orv" data-riv-push="' + esc(o) + '|' + esc(x.o) + '"><span style="flex:0 0 110px" class="meta">' + lbl + '</span><span style="flex:1;text-align:left"><b>' + esc(shortOf(x.o)) + '</b> · ' + x.w + '–' + x.l + ' in ' + x.n + '</span><span class="rv">›</span></button>' : ''; };
+    if (rv.most.length) h += '<div class="card"><div class="eb">⚔️ Rivalries · since 2005</div><div class="frows">' + rv.most.map(function (x, k) { return rrow(k ? "" : "Most played", x); }).join("") + rrow("Owns", rv.owns) + rrow("Nemesis", rv.nemesis) + '</div></div>';
+    // you vs them
+    if (!me) { var r = h2h(ME.owner, o);
+      h += '<div class="card navy"><div class="eb">You vs. them</div><h3>' + (r.n ? r.aw + '–' + r.bw + (r.aw > r.bw ? ' · you lead' : r.aw < r.bw ? ' · they lead' : ' · even') : 'Never played') + '</h3>' +
+        (r.n ? '<div class="dots">' + r.last.map(function (x) { return '<i class="' + (x.aWon ? "W" : "L") + '">' + (x.aWon ? "W" : "L") + '</i>'; }).join("") + '</div><div class="btns"><button class="b pri" data-riv-push="' + esc(ME.owner) + '|' + esc(o) + '">Open rivalry</button></div>' : '<p>Your first meeting is still ahead.</p>') + '</div>'; }
+    // team names, prize money
+    if (v) { var names = []; v.teams.forEach(function (x) { var last = names[names.length - 1]; if (last && last.n === x[1]) last.to = x[0]; else names.push({ n: x[1], from: x[0], to: x[0] }); });
+      h += '<div class="card glist"><div class="eb">🏷️ Team names</div>' + names.slice().reverse().map(function (x) { return '<div class="row"><div class="nm" style="flex:1">' + esc(x.n) + '</div><div class="rt">' + x.from + (x.to !== x.from ? '–' + String(x.to).slice(2) : '') + '</div></div>'; }).join("") + '</div>'; }
+    if (PRIZE) { var won = PRIZE.prize_events.filter(function (e2) { return norm(e2.owner) === norm(o); }), tot2 = won.reduce(function (a, e2) { return a + e2.amount; }, 0);
+      if (tot2) h += '<div class="card"><div class="eb">💰 Prize money · since ' + PRIZE.meta.data_start + '</div><h3 class="money" style="font-size:28px">$' + tot2.toLocaleString() + '</h3></div>'; }
+    // contact
+    var ct = contactOf(o);
+    if (!me && (ct.phone || ct.email)) h += '<div class="card"><div class="eb">Reach them · owners only</div>' + (ct.phone ? '<p>📱 ' + esc(fmtPhone(ct.phone)) + '</p>' : '') + (ct.email ? '<p>✉️ ' + esc(ct.email) + '</p>' : '') +
+      '<div class="btns">' + (ct.phone ? '<a class="b" href="sms:' + esc(ct.phone) + '">Text</a><a class="b" href="tel:' + esc(ct.phone) + '">Call</a>' : '') + (ct.email ? '<a class="b" href="mailto:' + esc(ct.email) + '">Email</a>' : '') + '</div></div>';
+    return h + '<div class="btns"><a class="b" href="../power-rankings.html">Classic Power Rankings ›</a></div>';
+  }
+
   // Rulebook, read in the app straight from rules.html (always current)
   var RULES = null;
   function rules() {
