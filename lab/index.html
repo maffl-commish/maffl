@@ -472,7 +472,17 @@
   @keyframes nope{25%{transform:translateY(-18px)}60%{transform:translateY(4px)}}
   .done-card .zero{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font:800 36px var(--display);color:#fff;background:var(--win,#1f9d6a)}
   .done-card .again{margin-top:14px;background:none;border:0;font:600 13px inherit;color:var(--muted);text-decoration:underline}
-  #hstack{flex:1;margin:4px 14px 10px}
+  #hstack{flex:1;margin:4px 0 0}
+  #hstack.feed{display:block;flex:1 1 0}
+  .feed{flex:1;min-height:0;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}.feed::-webkit-scrollbar{display:none}
+  .fslot{height:100%;box-sizing:border-box;scroll-snap-align:start;scroll-snap-stop:always;padding:4px 14px 12px;display:flex;flex-direction:column}
+  #hstack .fslot>.dcard{position:relative;inset:auto;flex:1 1 auto;min-height:0;max-height:none;margin:0}
+  #hstack .fslot>.dcard .dbody{overflow-y:auto;overscroll-behavior-y:auto}
+  .idots i.s{background:#b8c3d6}
+  .needs{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin:10px 14px 0;padding:10px 12px;background:#fdecec;border:1.5px solid var(--loss);border-radius:14px;text-align:left}
+  .needs .nb{flex:0 0 auto;font:800 14px var(--display);color:#fff;background:var(--loss);border-radius:999px;padding:5px 10px}
+  .needs .nt{flex:1;min-width:0}.needs b{display:block;font:700 15px var(--display);color:var(--navy)}.needs small{display:block;font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .needc{margin-bottom:14px}.needc .dcard{position:relative;inset:auto}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .hero{padding:12px 0 12px;border-bottom:1px solid var(--border)}
   .hero .tagl{font:700 10px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark)}
@@ -1476,13 +1486,20 @@
   var REACTS = { you: ["🔥", "😎", "😬", "🤝", "👀"], div: ["😤", "🙏", "😂", "👀", "🔥"], race: ["📈", "😤", "🙏", "👀", "🔥"], hot: ["🔥", "🥶", "😂", "🤡", "💀"], other: ["👀", "😂", "🔥", "🥱", "🤡"], headlines: ["🔥", "😂", "🤯", "🤡", "💀"], scores: ["🔥", "😱", "🥱", "👏", "🤡"],
     coach: ["🤦", "😬", "😂", "🧠", "👏"], survivor: ["💀", "😅", "🫡", "😂", "🔥"], wire: ["💸", "🤑", "🤡", "👀", "🔥"], credits: ["💰", "👀", "😤", "🙌", "🔥"] };
 
-  // ---------- HOME = your inbox (commish 11/3) ----------
-  // At most 8 cards a week, picked for you. ⚡ Action cards (trade offers, the desk, an open vote) lead and
-  // stay until handled; story cards are light (headline + one line, tap for the full card) and you swipe them up to
-  // clear them. Left/right browses. Everything else lives in Match and League.
-  var INBOX = [], pos = 0, INBOX_MAX = 16; // commish 11/6: 8 was too tight, "reel" is the theme
-  function tossKey() { return "maffl_lab_toss_" + W.weekNumber + "_" + norm(ME.owner); }
-  function tossed() { try { return JSON.parse(store(tossKey()) || "{}"); } catch (e) { return {}; } }
+  // ---------- HOME = the reel (commish 11/7: a FEED, not an inbox) ----------
+  // Cards come from SERIES (catalog: _ops/docs/REEL_SERIES.md). Each week is an issue: every series fills its group's
+  // slots in the weekly budget, the feed interleaves the groups, you scroll up for the next card (nothing is deleted),
+  // and it ends with "You're caught up". Things that need you (trades, the desk, dues) sit in a strip above the feed.
+  var SERIES = { // id prefix → group, rank inside the group (lower = first)
+    result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
+    deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 6], other: ["league", 7],
+    gotw: ["play", 1], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1] };
+  var BUDGET = { you: 5, league: 5, play: 3, vault: 2 };
+  var FEED_ORDER = ["you", "you", "league", "play", "league", "vault", "you", "league", "play", "league", "you", "vault", "play", "league", "you"];
+  var INBOX = [], NEEDS = [], pos = 0;
+  function seriesOf(x) { return SERIES[x.id.split(":")[0]] || ["league", 9]; }
+  function seenKey() { return "maffl_lab_seen_" + W.weekNumber + "_" + norm(ME.owner); }
+  function seen() { try { return JSON.parse(store(seenKey()) || "{}"); } catch (e) { return {}; } }
   function findCard(key) { var hit = null; GROUPS.forEach(function (g) { g.cards.forEach(function (c) { if (!hit && c.key === key) hit = c; }); }); return hit; }
   function buildInbox() {
     buildGroups();
@@ -1512,7 +1529,7 @@
     var myDue = dues && dues.rows.filter(function (r) { return norm(r.owner) === norm(ME.owner); })[0];
     if (myDue && myDue.status !== "PAID" && +myDue.owed > 0) all.push({ id: "dues", alert: true, scope: "me", c: { eb: dues.year + " dues", t: "", face: '<div class="fc"><div class="cd"><b>$' + esc(myDue.owed) + '</b><small>owed</small></div>' +
       '<h3>Dues are due</h3><p class="fl">Pay the commish; he records it.</p></div>' } });
-    if (GOTW && !GOTW.voted) all.push({ id: "gotw", action: true, icon: "🗳️", scope: "league", c: GOTW });
+    if (GOTW) all.push({ id: "gotw", play: !GOTW.voted, icon: "🗳️", scope: "league", c: GOTW }); // a game, not a chore: in the feed
     POLLS.forEach(function (p) { all.push({ id: "poll:" + p.id, play: !p.voted, icon: "📊", scope: p.scope, c: p }); }); // stays put after you vote, so you see the results
     // stories, most personal first
     var lw = W.results.filter(function (x) { return isMe(x.ownerA) || isMe(x.ownerB); })[0];
@@ -1614,76 +1631,55 @@
     var og = GROUPS.filter(function (g) { return g.key === "other"; })[0], oc = og && og.cards.filter(function (c) { return !c.quiz; })[0];
     if (oc) all.push({ id: "other", scope: "league", c: oc });
     if (qs[2]) playQ(qs[2]);
-    if (GOTW && GOTW.voted) all.push({ id: "gotw", icon: "🗳️", scope: "league", c: GOTW });
 
-    var gone = tossed();
-    INBOX = all.filter(function (x) { return x.action || !gone[x.id]; }).slice(0, INBOX_MAX);
-    var n = INBOX.length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); }
+    NEEDS = all.filter(function (x) { return x.action || x.id === "dues"; });
+    var q = { you: [], league: [], play: [], vault: [] };
+    all.filter(function (x) { return NEEDS.indexOf(x) < 0; }).forEach(function (x, k) { var sr = seriesOf(x); x.series = x.id.split(":")[0]; x.group = sr[0]; x.rank = sr[1] * 100 + k; (q[sr[0]] = q[sr[0]] || []).push(x); });
+    Object.keys(q).forEach(function (g) { q[g].sort(function (a, b) { return a.rank - b.rank; }); q[g] = q[g].slice(0, BUDGET[g] || 2); });
+    INBOX = []; FEED_ORDER.forEach(function (g) { if (q[g] && q[g].length) INBOX.push(q[g].shift()); });
+    ["you", "league", "play", "vault"].forEach(function (g) { while (q[g] && q[g].length) INBOX.push(q[g].shift()); });
+    homeBadge();
   }
+  function homeBadge() { var sn = seen(), n = NEEDS.length + INBOX.filter(function (x) { return !sn[x.id]; }).length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); } }
   function renderHome() {
-    buildInbox();
-    pos = Math.max(0, Math.min(pos, INBOX.length - 1));
-    $("v-home").innerHTML = '<div class="ibar"><div class="idots" id="idots"></div><div class="icount" id="icount"></div></div><div class="stack" id="hstack"></div><div class="ihint" id="ihint"></div>';
-    drawDeck();
+    var keep = pos; buildInbox();
+    var nd = NEEDS.length ? '<button class="needs" id="needs"><span class="nb">⚡ ' + NEEDS.length + '</span><span class="nt"><b>' + (NEEDS.length === 1 ? "1 thing needs you" : NEEDS.length + " things need you") + '</b><small>' + esc(NEEDS.map(function (x) { return x.c.eb.replace(/^[^A-Za-z0-9]+/, ""); }).join(" · ")) + '</small></span><span class="rv">›</span></button>' : '';
+    $("v-home").innerHTML = nd + '<div class="ibar"><div class="idots" id="idots"></div><div class="icount" id="icount"></div></div><div class="feed" id="hstack">' +
+      INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '">' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div>';
+    var f = $("hstack"); pos = Math.max(0, Math.min(keep, INBOX.length));
+    f.scrollTop = pos * f.clientHeight; drawDeck(true);
+    var t0 = null; f.onscroll = function () { var k = Math.round(f.scrollTop / Math.max(1, f.clientHeight)); if (k !== pos) { pos = k; drawDeck(true); } clearTimeout(t0); t0 = setTimeout(markSeen, 700); };
+    setTimeout(markSeen, 900);
+    if ($("needs")) $("needs").onclick = openNeeds;
+    var again = $("dagain"), dc = $("dchat"); if (dc) dc.onclick = function () { openChat(); }; if (again) again.onclick = function () { f.scrollTo({ top: 0, behavior: "smooth" }); };
+    paint($("hstack"));
   }
+  function markSeen() { var x = INBOX[pos]; if (!x) { if (pos === INBOX.length && INBOX.length) nudge("inbox0", "You're caught up. How was the reel this week?"); return; } var sn = seen(); if (!sn[x.id]) { sn[x.id] = 1; store(seenKey(), JSON.stringify(sn)); homeBadge(); drawDeck(true); } }
+  // Things that need you: one sheet with each action card (trade offers, the desk, dues), handled right there.
+  function openNeeds() { openSheet("card", '<h2 class="sht">⚡ Needs you</h2>' + NEEDS.map(function (x) { return '<div class="needc">' + cardHTML(x) + '</div>'; }).join("")); }
   function cardHTML(x) {
-    if (!x) return '<div class="dcard done-card"><div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">Inbox zero</h3>' +
-      '<p class="p" style="margin-top:6px">That\'s everything for Week ' + W.weekNumber + '. New cards land Tuesday morning.</p>' +
+    if (!x) return '<div class="dcard done-card"><div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">You\'re caught up</h3>' +
+      '<p class="p" style="margin-top:6px">That\'s Week ' + W.weekNumber + '. New cards land Tuesday morning, and a few more during the week.</p>' +
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
-      '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🏆 Standings &amp; more</button></div>' +
-      (Object.keys(tossed()).length ? '<button class="again" id="dagain">Bring back cleared cards</button>' : '') + '</div>';
+      '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🗄️ League &amp; the Vault</button></div>' +
+      (INBOX.length ? '<button class="again" id="dagain">Back to the top</button>' : '') + '</div>';
     var c = x.c, shared = x.scope === "league" || x.scope === "U" || x.scope === "L";
-    // League cards carry a 🏟️ stamp and everyone's reactions; your own cards carry your team tag and no reactions (commish 11/7).
+    // League cards carry the crest and everyone's reactions; your own cards carry your team tag and no reactions (commish 11/7).
     var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
     return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (c.face ? ' facec' : '') + '"' + (shared ? DR("inbox:" + x.id) : '') + '>' +
       '<div class="dhead"><div class="sec">' + stamp + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
       (c.face ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
       '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.face || (c.quiz ? quizBody(c.quiz) : c.body)) + '</div>' +
-      (x.action || !shared ? '' : '<div class="dfoot"><div class="reacts">' + (REACTS[x.id] || REACTS.you).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div>') + '</div>';
+      (x.action || !shared ? '' : '<div class="dfoot"><div class="reacts">' + (REACTS[x.series] || REACTS[x.id] || REACTS.you).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div>') + '</div>';
   }
-  function drawDeck() {
-    var n = INBOX.length, x = INBOX[pos];
-    $("idots").innerHTML = INBOX.map(function (y, k) { return '<i class="' + (k === pos ? "on" : "") + (y.action ? " a" : "") + '"></i>'; }).join("");
-    $("icount").textContent = n ? n + " card" + (n === 1 ? "" : "s") : "All clear";
-    $("ihint").textContent = !x ? "" : x.action ? "← → browse · handle this one to clear it" : "← → browse · swipe ↑ to clear";
-    var html = cardHTML(x);
-    if (INBOX[pos + 1]) html = html.replace('class="dcard', 'class="dcard more');
-    $("hstack").innerHTML = html;
-    var top = $("hstack").lastElementChild, again = $("dagain"), dc = $("dchat");
-    if (again) again.onclick = function () { store(tossKey(), "{}"); pos = 0; renderHome(); };
-    if (dc) dc.onclick = function () { openChat(); };
-    if (x) wireSwipe(top, x); else if (n === 0) nudge("inbox0", "Inbox zero. How was going through the cards?");
-    paint($("hstack"));
+  // Redraw: the dots and counter (light), or the whole feed in place (after a vote / quiz answer), keeping your spot.
+  function drawDeck(light) {
+    if (!light) { renderHome(); return; }
+    var sn = seen(), n = INBOX.length;
+    $("idots").innerHTML = INBOX.map(function (y, k) { return '<i class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("");
+    $("icount").textContent = pos >= n ? "Caught up" : (pos + 1) + " of " + n + (pos === 0 && n > 1 ? " · swipe up ↑" : "");
   }
-  function go(dir) { pos = Math.max(0, Math.min(INBOX.length - 1, pos + dir)); drawDeck(); }
-  function toss(top, x) {
-    if (x.action) { top.classList.add("nope"); setTimeout(function () { top.classList.remove("nope"); top.style.transform = ""; }, 400); toast("This one needs you first"); return; }
-    var t = tossed(); t[x.id] = 1; store(tossKey(), JSON.stringify(t));
-    top.style.transform = "translateY(-110%) scale(.9)"; top.style.opacity = "0";
-    setTimeout(function () { INBOX.splice(pos, 1); renderHome(); }, 220);
-  }
-  function wireSwipe(card, x) {
-    var x0 = null, y0 = 0, dx = 0, dy = 0, mode = null, dragged = false, db = card.querySelector(".dbody");
-    // A drag can start anywhere, buttons included; if it turns into a swipe, the button's click is swallowed.
-    card.addEventListener("click", function (e) { if (dragged) { e.stopPropagation(); e.preventDefault(); dragged = false; } }, true);
-    card.addEventListener("pointerdown", function (e) { if (e.target.closest("input,select,textarea")) return; x0 = e.clientX; y0 = e.clientY; dx = dy = 0; mode = null; dragged = false; });
-    card.addEventListener("pointermove", function (e) {
-      if (x0 === null) return; dx = e.clientX - x0; dy = e.clientY - y0;
-      if (!mode) {
-        if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) mode = "h";
-        else if (dy < -14 && -dy > Math.abs(dx) && !(db && db.scrollTop + db.clientHeight < db.scrollHeight - 2)) mode = "v"; // up = clear, once there's nothing left to scroll
-        else if (Math.abs(dy) > 14) { x0 = null; return; } // a scroll inside the card
-        else return;
-        dragged = true; card.classList.add("drag"); try { card.setPointerCapture(e.pointerId); } catch (_) {}
-      }
-      card.style.transform = mode === "h" ? "translateX(" + dx + "px) rotate(" + (dx / 25) + "deg)" : "translateY(" + Math.min(0, dy) + "px)";
-    });
-    function end() { if (x0 === null) return; x0 = null; card.classList.remove("drag");
-      if (mode === "h" && Math.abs(dx) > 80) { var d = dx < 0 ? 1 : -1; if (pos + d < 0 || pos + d > INBOX.length - 1) { card.style.transform = ""; return; } card.style.transform = "translateX(" + (-d * 520) + "px) rotate(" + (-d * 14) + "deg)"; card.style.opacity = "0"; setTimeout(function () { go(d); }, 200); }
-      else if (mode === "v" && dy < -90) toss(card, x);
-      else card.style.transform = ""; }
-    card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
-  }
+  function go(dir) { var f = $("hstack"); if (f) f.scrollTo({ top: Math.max(0, Math.min(INBOX.length, pos + dir)) * f.clientHeight, behavior: "smooth" }); }
   // Home fills the screen between the header and the tab bar; cards scroll inside.
   function sizeHome() { return; // layout is now pure flexbox; kept so old calls are harmless
     var hh = document.querySelector(".hdr").offsetHeight, th = $("tabs").offsetHeight;
@@ -3402,7 +3398,7 @@
   // ---------- 👋 first-time tour (commish 11/7): the first visit to each tab grays the screen, spotlights a few things with an
   // arrow and a line each. Next / Got it, or ✕ to skip. Once per tab per owner on this phone; You → Show the tour again.
   var TOUR = {
-    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: cards for the week. Swipe ← → to browse, ↑ to clear one."],
+    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: this week's cards. Swipe up for the next one."], ["#needs", "⚡ Anything that needs you (a trade offer, dues) waits up here."],
       [".stamp.lg", "Cards with the MAFFL crest are league-wide: everyone sees them, and everyone's reactions."], [".stamp.me", "This tag means a card is just for you."],
       ["[data-tab='match']", "⚔️ Your game, live from ESPN."], ["#chattab", "💬 New: chat with the league, your tier, or any owner."],
       ["[data-tab='team']", "🏈 Your roster, trades and credits."], ["[data-tab='league']", "🏆 Standings, rules and history."]],

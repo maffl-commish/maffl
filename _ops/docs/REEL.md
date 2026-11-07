@@ -15,6 +15,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 | Doc | What it holds |
 |---|---|
+| `_ops/docs/REEL_SERIES.md` | **Card series catalog**: every series, its group, audience, cadence, writer; the weekly budget and feed order |
 | `_ops/docs/APP_DESIGN.md` | **Governing doc.** Decision journal, structure, card rules, page → app mapping, login, contacts, data, ESPN refresh, build notes (§7b–7g), open questions (§8), go-live checklist (§9), automation (§10) |
 | `_ops/docs/TRADE_CENTER_DESIGN.md` | Trade rules, Sheet tabs, guardrails (§5b), trade open questions (§8) |
 | `_ops/docs/REEL_MOCKUP.html` | Early mockups v1–v4 (sample data). History only |
@@ -69,7 +70,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Player week-by-week bars should show whether he started or sat that week (daily.js keeps only points per week today; needs the slot too).
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
-- Reel is at the 16-card cap most weeks now; decide which cards drop first when it's full.
+- Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball becomes a Vault "Tidbits" series after its items are rewritten.
 
 **Commish backlog (added 11/6, not built)**
 - ⚖️ Trade grade v2 follow-up: a real age source for Future value (ESPN's league API has none; today it's years since first MAFFL draft). Tune weights once real trades come through.

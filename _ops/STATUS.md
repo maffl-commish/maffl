@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), REEL Vault step 3 (League → Vault)
+**Last updated:** 2026-11-07 by Claude (chat), REEL feed model + series catalog
 
 ## Now
 
@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 🎞️ Home is a feed, not an inbox (commish): scroll up for the next card (snap, one card a screen), nothing is deleted, ends with "You're caught up"; Home badge = unseen cards + things that need you (seen tracked per week on the phone). ⚡ Needs you strip above the feed (trade offers, commish desk, dues) opens them in one sheet. Cards are picked by series with a weekly budget (Your week 5 · League week 5 · Play 3 · Vault 2) and interleaved; Game of the Week is a Play card, not a chore. New catalog `_ops/docs/REEL_SERIES.md` (every series: group, rank, audience, cadence, writer, status; budget and feed order). Tour updated.
 - 2026-11-07 · REEL · 🗄️ Vault step 3: League tab = Standings · Weeks · 🗄️ Vault · Rules & $ (History sub-tab replaced). Vault: **Seasons** (era timeline, newest first, champion + title game per year → year page), **Records** (titles since 2002, top single-game scores, blowouts, win % and points since 2005, playoff trips, biggest auction buys), **Owners** (active / former, span, seasons, record, 🏆 count → owner panel with a new From the Vault card: titles, runner-ups, Lower-tier and division titles, playoff years, team names over time), **Draft** (search every auction pick since 2005 by player or owner, year filter, top 60 by price; classic portal link for the 8 Ball). gen_vault.py adds `records` + owner careers (vault-data.js 103 KB). **Check:** gold Division_History lists Mike as 2021 Cuoco division winner (9–5), but the governance doc's gotcha note calls that value wrong; the Vault follows gold.
 - 2026-11-07 · REEL · 🗄️ Vault step 2: throwback story lines drafted for all 24 seasons in `data/MAFFL_Throwbacks.csv` (commish to edit; facts checked against gold), vault-data.js regenerated; Throwback card now rotates weekly through every season. gen_vault.py: closest game skips exact ties (tiebreak games). "Snake Draft draft" label fixed.
 - 2026-11-07 · REEL · 🗄️ The Vault, step 1: `lab/vault-data.js` (all 24 seasons, 81 KB) DERIVED by new `_ops/scripts/gen_vault.py` from the gold CSVs (champions from title games, Lower-tier champ from prize.csv per governance; owners through the registry) + new hand-kept `data/MAFFL_Throwbacks.csv` (commish's one-line story per season; 2009 written). New `Vault data` workflow regenerates it when data/ changes and Wednesdays. App: 🗄️ Throwback card in the reel (league-wide; era + draft-era tags, the story line, title game, back-to-back chip, division winners, biggest buy per owner, farewell / rookie notes, top score), rotating weekly through seasons that have a line; Open 2009 in the Vault › = the full season (finish, playoffs, every division, superlatives, top 10 spends). Governance §2 row added.
