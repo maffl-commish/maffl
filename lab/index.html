@@ -637,6 +637,8 @@
   /* Chat as a tab (commish 11/7): fills the space between header and tab bar, no sheet, no scrim */
   .chat .cpan{margin-top:0;border-radius:0;box-shadow:none;transform:none;transition:none;opacity:0}
   .chat.on .cpan{opacity:1}.chat:not(.on) .cpan{visibility:hidden;pointer-events:none}.chat.kb{z-index:61}.chat:not(.kb){z-index:19}
+  /* While chat is open, hide the tab underneath: when the iPhone keyboard opens, iOS slides the page and the Home feed showed through (commish 11/7) */
+  body.chaton #views{visibility:hidden}body.chaton .chat.kb{background:var(--page-bg)}
   .chd .grabber,.chd .cx{display:none}
   .cnew{position:absolute;left:16px;bottom:16px;z-index:2;font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#fff;background:var(--navy);border:2px solid var(--gold);border-radius:999px;padding:15px 22px;box-shadow:0 6px 18px rgba(15,29,52,.35)}
   .cbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px 14px}
