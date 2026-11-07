@@ -33,6 +33,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-06 · REEL · Backlog: chat Send shows a sending state until the Sheet confirms (REEL.md). Docs only.
 - 2026-11-06 · REEL · Backlog: five commish items logged in REEL.md (Team player card + detail clean-up, no auction price; trade grade on real-time + future value, not draft price; raise the 8-card reel cap; tab order Home → Team → Match → Chat → League; League tab organization). Docs only.
 - 2026-11-06 · REEL · 🧪 Beta feedback kit: backend logic v0.18 (`feedback`, `taplog`, desk `beta` op, Feedback + TapLog tabs, Owners `beta` column). App: 🧪 Feedback button (👍/🤔/👎 + note + screen context), quick prompts at key moments (max 3/day), tap log batched to the Sheet, desk 🧪 Beta crew panel (add/remove testers, last visit, taps, feedback). Tested on mocks + backend unit checks at 390px.
 - 2026-11-06 · REEL · Real rosters from ESPN: backend logic v0.17 `rosters` (GET, per tier, 30-min cache, last good copy 6 h, owner matched by Owners-tab team name) → Team roster, player sheet, all-rosters grid and trade builder show what ESPN shows (waiver adds, injury tags), with 2026 auction prices + MAFFL history from the draft CSV. Staged draft roster only if ESPN can't be read. Decided: the Weekly Pulse goes fully automatic, no PR (REEL.md backlog). Beta crew is Lower tier.

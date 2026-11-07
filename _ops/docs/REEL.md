@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-06 (chat) · Commish backlog: player info, trade grade v2, more cards, tab order, League tab
+Last updated: 2026-11-06 (chat) · Commish backlog: player info, trade grade v2, more cards, tab order, League tab, chat send state
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -66,6 +66,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - 🎞️ **More cards in the reel.** The 8-card cap (11/3) was too tight; "reel" is the theme. Raise the cap (number TBD).
 - 🧭 **Bottom tab order:** Home → Team → Match → Chat → League (today: Home · Match · Chat · Team · League).
 - 🏆 **League tab organization.** Better grouping/order for Standings, Weeks, Rulebook, Prizes, Champions and the classic tiles.
+- 💬 **Chat send feedback.** After tapping Send, show a sending state (spinner / "Sending…" on the message) until the Sheet confirms; clear it on success, show a retry on failure.
 
 **Beta kit follow-ups (after the first testers)**
 - Desk summary of the tap log (where they spend time, where they drop off); feedback inside the Chat sheet (the button sits under it today).
