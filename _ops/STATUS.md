@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Readiness audit: `_ops/AUDIT_2026-11-07_reel_readiness.md` (backend, app, classic → REEL map of 91 elements). Not ready for real owners yet: 4 backend blockers (formula injection exposes passphrase hashes, guessable passphrases, lockout abuse, no server credit-balance check) + fake Test scores on by default + lab wording. Fix plan in 3 phases. Nothing changed in code.
 - 2026-11-07: REEL chat: tapping the message box no longer shows the Home feed behind the chat (the tab underneath is hidden while chat is open, so the iPhone keyboard can't uncover it).
 - 2026-11-07: draft.html 8 Ball: fixed the Josh Allen tidbit (QB, $1 Keslar 2018 to $79 Mike 2023) and the Hines Ward count (7, two title teams); random facts now key players by name and position, so namesakes stay apart.
 - 2026-11-07 · REEL · Throwback lines: final editorial pass on all 24 (commish: proceed), facts re-checked against gold (e.g. 2012 Dave's first title seven years after losing the 2005 final, 2021 Josh Lavrinc's last season, 2023 Bob's tenth season, 2025 Mike back up from Lower); 8 Ball tidbits ship as drafted. Commish confirmed Mike won the 2021 Cuoco division (9–5, tiebreak over Camp Kes): gold was right; the governance note that called it (and Mike's 2025 Lower-Tier 1st) a corrupted value is corrected.
