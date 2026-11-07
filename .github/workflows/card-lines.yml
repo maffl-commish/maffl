@@ -63,6 +63,10 @@ jobs:
           for o, v in (L.get("owners") or {}).items():
               if o not in owners: bad.append(f"unknown owner {o}")
               for kk, s in v.items(): chk(f"owners.{o}.{kk}", s)
+          for k, e in enumerate(L.get("elite5") or []):
+              if e.get("owner") not in owners: bad.append(f"elite5[{k}]: unknown owner {e.get('owner')}")
+              chk(f"elite5[{k}].note", e.get("note", ""))
+          if len(L.get("elite5") or []) > 5: bad.append("elite5: more than 5")
           if bad: sys.exit("lines.json failed the check:\n" + "\n".join(bad[:20]))
           L["at"] = d["snapshot"]["at"]
           json.dump({"action": "putlines", "key": __import__("os").environ["DESK_KEY"], "lines": L}, open("body.json", "w"))

@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.21";
+var VERSION = "0.22";
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
 var PERK_HEAD = ["perk_id","ts","owner","tier","perk","cost","qty","week","player","pos","swap_with","affects","note","status","updated_ts","reason","sync"];
@@ -414,6 +414,11 @@ function ledger_(mode) {
               out.push({ id: "L-" + o.offer_id + "B", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: gc, notes: "from " + o.from_owner + " · " + note, approved: o.updated_ts }); }
     if (tc) { out.push({ id: "L-" + o.offer_id + "C", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: -tc, notes: "to " + o.from_owner + " · " + note, approved: o.updated_ts });
               out.push({ id: "L-" + o.offer_id + "D", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: tc, notes: "from " + o.to_owner + " · " + note, approved: o.updated_ts }); }
+  });
+  var aw = SpreadsheetApp.getActive().getSheetByName("Awards"); // credit awards approved on the desk (daily.js §2c)
+  if (aw) rows_("Awards").forEach(function (a) {
+    if (a.status !== "APPROVED" || (a.sync || "test") !== mode) return;
+    out.push({ id: "L-" + a.award_id, season: 2026, owner: a.owner, category: "Earn", type: a.award, amount: Math.abs(Number(a.credits) || 0), notes: a.detail + " · app award " + a.award_id, approved: a.updated_ts });
   });
   return out.sort(function (a, b) { return new Date(a.approved) - new Date(b.approved); });
 }
@@ -871,12 +876,13 @@ function desk_(me) {
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_() };
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_() };
 }
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
   if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
   if (b.op === "daily") { need_("daily"); return DAILY.run("button"); } // "Run daily now"
+  if (b.op === "award" || b.op === "awardall") return awardAct_(b);
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
@@ -900,6 +906,22 @@ function botPost_(b) {
   if (link && !/^https:\/\//.test(link)) link = "";
   post_("desk", BOT, "robot", (title + (text ? "\n" + text : "")).slice(0, CHAT_MAX), link.slice(0, 300), String(b.status || "info").slice(0, 8).toUpperCase());
   return { ok: true };
+}
+
+// Credit awards (Awards tab, made by the daily run): Approve → APPROVED + sync mode → ledger push; Deny → DENIED.
+function awardsPending_() { // PENDING = ready to issue (after Wk 17); EARNED = shown, nothing to do yet
+  var sh = SpreadsheetApp.getActive().getSheetByName("Awards"); if (!sh) return [];
+  return rows_("Awards").filter(function (a) { return a.status === "PENDING" || a.status === "EARNED"; }).map(function (a) {
+    return { id: a.award_id, tier: a.tier, owner: a.owner, team: a.team, award: a.award, credits: Number(a.credits) || 0, week: a.week, detail: a.detail, status: a.status }; });
+}
+function awardAct_(b) {
+  var list = rows_("Awards").filter(function (a) { return a.status === "PENDING" && (b.op === "awardall" || a.award_id === b.target); });
+  if (!list.length) return { ok: false, error: "Nothing waiting" };
+  var ok = b.decision !== "deny", mode = syncMode_();
+  list.forEach(function (a) { setCell_("Awards", a._row, "status", ok ? "APPROVED" : "DENIED"); setCell_("Awards", a._row, "updated_ts", new Date());
+    if (ok) setCell_("Awards", a._row, "sync", mode); if (b.reason) setCell_("Awards", a._row, "reason", String(b.reason).slice(0, 200)); });
+  deskPost_("note", (ok ? "🏅 Approved " : "Denied ") + list.length + " credit award" + (list.length === 1 ? "" : "s") + (list.length === 1 ? ": " + list[0].team + " +" + list[0].credits + " (" + list[0].award + ")" : "") + ".", "", ok ? "AWARD_OK" : "AWARD_NO");
+  return { ok: true, n: list.length, sync: ok ? pushLedger_() : null };
 }
 
 // Card lines from the card-lines workflow (Claude, after each daily run). Same DESK_KEY as botpost.

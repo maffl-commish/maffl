@@ -25,7 +25,8 @@ Write `lines.json` (and nothing else):
   },
   "owners": {
     "<owner exactly as in teams[].owner>": { "result": "...", "next": "..." }
-  }
+  },
+  "elite5": [ { "owner": "<owner>", "note": "..." } ]
 }
 ```
 
@@ -42,6 +43,9 @@ Write `lines.json` (and nothing else):
   Good: "Snapped a three-game skid, and the 0.24 margin is the closest game in Upper this year."
   Bad: "You beat X 171.36-141.72; now 5-3."
 - Every owner with a team in `teams` (skip the Ghost and teams with owner "").
+- `elite5`: the league's five best teams right now, BOTH tiers together, best first (the Pulse's old "Elite 5").
+  Judge on record, all-play, points and recent form (last5). `note` ≤ 140 chars: why they're here, one fact you can see
+  in the data (e.g. "6-2 with a 46-18 all-play and the most points in either tier").
 
 ## Rules
 1. **Only facts in `daily.json`.** No player stats, injuries or news you can't see there. No guessing at the future

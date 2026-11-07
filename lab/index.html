@@ -1324,6 +1324,16 @@
           me.rank <= 3 ? "You're in a promotion spot" : "You're " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion") + '</h3>' +
         '<div class="frows">' + mine.map(function (t) { return teamResultRow(t, me.tier === "L" && t.rank <= 3 ? "⬆️ #" + t.rank : "#" + t.rank); }).join("") + '</div>' +
         (me.tier === "L" ? '<p class="fs">Top 3 move up to Upper next season.</p>' : '') + '</div>' } }); }
+    // 💳 Credit races in your tier (who's leading each award, since when) — from the daily run or the Pulse
+    var races = (W.creditTracker || []).filter(function (i) { return new RegExp("(" + TN[me.tier] + ")$").test(i.award); });
+    if (races.length) all.push({ id: "credits", c: { eb: "💳 Credit races · " + TN[me.tier], t: "", face: '<div class="fc"><h3>' + (races.some(function (i) { return isMe(i.leaderOwner); }) ? "You're leading a credit race" : "Who's leading for credits") + '</h3>' +
+      '<div class="frows">' + races.map(function (i) { var mineR = isMe(i.leaderOwner);
+        return '<div class="frow"><span>' + (i.status === "locked" ? "🔒" : "+" + i.credits) + '</span><span style="flex:1"><b>' + esc(i.award.replace(/\s—\s(Upper|Lower)$/, "")) + '</b><br><small class="meta">' + (i.leaderTeam === "—" ? esc(i.value) : (mineR ? "You" : esc(i.leaderTeam)) + ' · ' + esc(i.value) + (i.since && i.status !== "locked" ? ' · since Wk ' + i.since : '')) + '</small></span></div>'; }).join("") + '</div>' +
+      '<p class="fs">Credits are earned now and issued after Week 17.</p></div>' } });
+    // ⭐ Elite 5: the five best teams across both tiers
+    var e5all = W.elite5 || [];
+    if (e5all.length) all.push({ id: "elite5", c: { eb: "⭐ Elite 5 · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>' + (e5all.some(function (x) { return isMe(x.owner); }) ? "You made the Elite 5" : "The league's Elite 5") + '</h3>' +
+      '<div class="frows">' + e5all.map(function (x) { return '<div class="frow"><span><b>' + x.rank + '</b></span><span style="flex:1"><b>' + (isMe(x.owner) ? "You" : esc(x.team)) + '</b> <small class="meta">' + (x.tier === "U" ? "Upper" : "Lower") + '</small>' + (x.note ? '<br><small class="meta">' + esc(x.note) + '</small>' : '') + '</span></div>'; }).join("") + '</div></div>' } });
     if (qs[1]) playQ(qs[1]);
     // 🌎 The other tier in one look
     var og = GROUPS.filter(function (g) { return g.key === "other"; })[0], oc = og && og.cards.filter(function (c) { return !c.quiz; })[0];
@@ -2476,7 +2486,8 @@
   function deskReview() { return (SUM.offers || []).filter(function (o) { return o.status === "ACCEPTED"; }); }
   function deskTodo() {
     if (!ME || !ME.commish) return 0; var d = DESK || {};
-    return deskOpenPerks().length + deskReview().length + (d.access || []).length + (d.locked || []).length + (d.espn || []).length + (d.sync && d.sync.last && d.sync.last.ok === false ? 1 : 0);
+    return deskOpenPerks().length + deskReview().length + (d.access || []).length + (d.locked || []).length + (d.espn || []).length + (d.sync && d.sync.last && d.sync.last.ok === false ? 1 : 0) +
+      (d.awards || []).filter(function (a) { return a.status === "PENDING"; }).length;
   }
   function deskLine(l) {
     if (l.kind === "offer") return "🤝 Trade waiting for your review";
@@ -2527,7 +2538,7 @@
       var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += '<div class="dsec">💳 Credit sync</div><div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>';
       h += '</div>';
     }
-    h += betaPanel(d);
+    h += awardsPanel(d) + betaPanel(d);
     if ((d.noPin || []).length) h += '<div class="dsk"><details><summary>👥 ' + d.noPin.length + ' owner' + (d.noPin.length === 1 ? '' : 's') + ' without a passphrase yet</summary>' + d.noPin.map(function (o) {
       return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("") + '</details></div>';
     var ls2 = d.sync && d.sync.last, tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
@@ -2570,7 +2581,14 @@
   }
   document.addEventListener("click", function (e) {
     var el = e.target.closest("[data-dact]"); if (!el) return;
-    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" || op === "daily" ? null : teamOf(who).team || who;
+    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" || op === "daily" || /^award/.test(op) ? null : teamOf(who).team || who;
+    if (op === "awardok" || op === "awardno" || op === "awardall") {
+      var A = { awardok: ["Issue this credit?", "Posts it to the official ledger through credit sync.", "Approve", false], awardno: ["Deny this award?", "It won't be issued. You can add it by hand later.", "Deny", true],
+        awardall: ["Issue all waiting awards?", "Posts every one to the official ledger through credit sync.", "Approve all", false] }[op];
+      confirmBox(A[0], '<p class="p">' + esc(A[1]) + '</p>', A[2], A[3]).then(function (yes) { if (!yes) return; busy(1);
+        api("deskact", Object.assign(creds(), { op: op === "awardall" ? "awardall" : "award", target: who || "", decision: op === "awardno" ? "deny" : "approve" })).then(function (r) { busy(0);
+          toast(r.ok ? (op === "awardno" ? "Denied" : "🏅 Issued " + r.n + " ✓") : (r.error || "Didn't work")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
+          .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); return; }
     if (op === "daily") { busy(1); toast("Daily run started. Takes up to a minute…"); api("deskact", Object.assign(creds(), { op: "daily", target: "" })).then(function (r) { busy(0);
       toast(r.ok ? "Daily run ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : "") : "Daily run: " + ((r.problems || []).join(" · ") || r.error || "didn't finish")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
@@ -2910,6 +2928,20 @@
       if (q === "down") setTimeout(function () { feedbackBox("down", "prompt:" + key, ctx); }, 400); }; });
   }
   function hideNudge() { $("fbnudge").classList.remove("on"); clearTimeout(nudge.h); }
+  // 🏅 Credit awards from the daily run: EARNED during the season (just shown), PENDING once Week 17 is final (approve → ledger).
+  function awardsPanel(d) {
+    var aw = d.awards || []; if (!aw.length) return "";
+    var pend = aw.filter(function (a) { return a.status === "PENDING"; }), earned = aw.filter(function (a) { return a.status === "EARNED"; });
+    var row = function (a, btns) { return '<div class="ditem"><b>' + esc(a.team) + '</b> <span class="meta">+' + a.credits + ' · ' + esc(a.award) + ' · ' + esc(a.detail) + '</span>' + (btns ? '<div class="btns">' + deskBtn("awardno", a.id, "Deny") + deskBtn("awardok", a.id, "✓ Approve", 1) + '</div>' : '') + '</div>'; };
+    var h = '';
+    if (pend.length) h += '<div class="dsk"><div class="dsec">🏅 Credit awards to issue · ' + pend.length + '</div>' + pend.map(function (a) { return row(a, true); }).join("") +
+      (pend.length > 1 ? '<div class="btns">' + deskBtn("awardall", "", "✓ Approve all " + pend.length, 1) + '</div>' : '') + '<p class="meta">Approving posts them to the official ledger (credit sync).</p></div>';
+    if (earned.length) { var tot = {}; earned.forEach(function (a) { tot[a.team] = (tot[a.team] || 0) + a.credits; });
+      h += '<div class="dsk"><details><summary>🏅 Credits earned so far · ' + earned.length + ' (issued after Week 17)</summary>' +
+        '<p class="meta" style="margin:6px 0">' + Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a]; }).map(function (t) { return esc(t) + ' +' + tot[t]; }).join(" · ") + '</p>' +
+        earned.map(function (a) { return row(a, false); }).join("") + '<p class="meta">Nothing to do yet. After Week 17 these turn into approve cards here.</p></details></div>'; }
+    return h;
+  }
   // Desk: who's testing, when they were last in, taps + feedback in the last day; add or remove testers.
   function betaPanel(d) {
     var crew = (d.beta && d.beta.crew) || [], ins = {}; crew.forEach(function (c) { ins[norm(c.owner)] = 1; });
@@ -2978,8 +3010,19 @@
     return { weekNumber: wk, dateString: isNaN(d0) ? "" : d0.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }), fromDaily: true,
       headline: tierLine("U", "headline") || (top ? top.teamA + " posted the week's top score, " + f2(top.scoreA) + "." : ""), subhead: tierLine("L", "headline"),
       latestChange: "", upperTier: upper, lowerTier: T.L.table.map(function (x) { return row(T.L, x); }).sort(sortT), results: results, survivor: surv,
-      survivorNote: [tierLine("U", "survivor"), tierLine("L", "survivor")].filter(Boolean).join(" "), creditTracker: base.creditTracker, highestWeekly: hw,
-      elite5: [], coachOfWeek: coach, postseasonNote: "", newsReel: [], matchupPreviews: previewsFor(wk + 1) };
+      survivorNote: [tierLine("U", "survivor"), tierLine("L", "survivor")].filter(Boolean).join(" "), creditTracker: racesTracker(T, wk) || base.creditTracker, highestWeekly: hw,
+      elite5: ((DLY && DLY.lines && DLY.lines.elite5) || []).slice(0, 5).map(function (e, k) { var t = teamOf(e.owner); return { rank: k + 1, team: t.team || "", owner: e.owner, tier: t.tier, note: e.note || "" }; }).filter(function (e) { return e.team; }), coachOfWeek: coach, postseasonNote: "", newsReel: [], matchupPreviews: previewsFor(wk + 1) };
+  }
+  // Credit races from the daily run, in the Pulse tracker's shape (so the 💳 card and Team → Credits read it as is).
+  function racesTracker(T, wk) {
+    var out = [], TN = { U: "Upper", L: "Lower" }, nm = function (S, id) { return (S.teams[id] || {}).team || "—"; }, ow = function (S, id) { return (S.teams[id] || {}).owner || ""; };
+    ["pts", "blow", "ind", "surv"].forEach(function (k) { ["U", "L"].forEach(function (tier) { var S = T[tier], R = S && S.races; if (!R) return; var r = R[k];
+      var lab = { pts: "Most Team Points Scored", blow: "Largest Blowout Victory", ind: "Individual High Score (Wkly)", surv: "Survivor Bonus" }[k], cr = { pts: 5, blow: 3, ind: 3, surv: 5 }[k];
+      if (k === "surv") { out.push({ award: lab + " — " + TN[tier], credits: cr, leaderTeam: r && r.t != null ? nm(S, r.t) : "—", leaderOwner: r && r.t != null ? ow(S, r.t) : "", value: r && r.t != null ? "Last team standing" : (r ? r.alive : "?") + " teams still alive", status: r && r.final ? "locked" : "leading", since: wk }); return; }
+      if (!r) { out.push({ award: lab + " — " + TN[tier], credits: cr, leaderTeam: "—", leaderOwner: "", value: "Unclaimed", status: "leading", since: wk }); return; }
+      out.push({ award: lab + " — " + TN[tier], credits: cr, leaderTeam: nm(S, r.t), leaderOwner: ow(S, r.t), status: r.final ? "locked" : "leading", since: r.since,
+        value: k === "pts" ? f2(r.value) + " through Wk " + wk : k === "blow" ? f2(r.value) + " over " + nm(S, r.over) + " (Wk " + r.wk + ")" : f2(r.value) + " — " + r.player + " (Wk " + r.wk + ")" }); }); });
+    return out.length ? out : null;
   }
   // Next week's games from the schedule (the Pulse used to write these), with Claude's "next" line as the note.
   function previewsFor(n) {

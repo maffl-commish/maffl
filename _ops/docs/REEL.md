@@ -40,6 +40,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 | Panels | Owner panel and rivalry panel from any name/game; real rivalry page embedded (`rivalry.html?embed=1`) |
 | 🧪 Beta kit | Beta crew (Owners `beta`=Y, managed from the desk's 🧪 Beta crew panel; commish always on): floating 🧪 Feedback button (👍 Like it / 🤔 Confusing / 👎 Don't like + note, grabs the screen/card/sheet, phone, last error) → Feedback tab + desk log. Quick 👍/👎 prompts on first look at each tab, after a trade offer/answer, perk, chat message, inbox zero (max 3/day, 3 min apart; 👎 opens the note box). Tap log (tabs, sheets, taps, prompts, errors, open/hide) batched every 60 s + on close → TapLog tab. Desk panel: each tester's last visit, taps + feedback in 24 h, add/remove |
 | 🌅 Daily run | In-season mode (replaces the Pulse in REEL): 5 AM + 5 PM ET from the tick (or desk Run it now): scores, records, streaks, Survivor, highs, Coach of the Week, roster moves (Moves tab), beta digest, health. ✍️ Claude writes card lines after each run (`card-lines.yml`). App builds the newest final week from it when the Pulse doesn't have it; result/next cards use the lines; 📰 Wire card. APP_DESIGN §10g |
+| 🏅 Credits (daily) | Credit races (Most Points, Blowout, Individual High, Survivor) + weekly highs from the daily run; 💳 Credit races + ⭐ Elite 5 reel cards; Awards tab: EARNED all season → approve cards on the desk after Week 17 → ledger (11/6) |
 | Robots | Credit sync (`credit-sync.yml`): app approval → Credit_Log → balances → credits.html. TEST mode (dry run) |
 
 ## 3. Roadmap (to go-live — everything ships at once)
@@ -56,7 +57,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - 💬 Chat follow-ups: opt-in email for DMs/@mentions (add a toggle to Settings), robot posts for Pulse drop + Coach of the Week, older-message paging (APP_DESIGN §4c).
 - Guest "Just browsing" mode (§4).
 - ESPN refresh on a rhythm via Apps Script trigger (§6b), "Updated N min ago" label.
-- **Daily run follow-ups:** credits + credit-award races + Elite 5 from the daily run (today they still come from the last Pulse); offseason mode for the daily run; retire the classic Pulse at go-live (stop `pulse-draft.yml`'s Claude step, keep the gold append).
+- **Daily run follow-ups:** offseason mode for the daily run; retire the classic Pulse at go-live (stop `pulse-draft.yml`'s Claude step, keep the gold append).
 - Prices for waiver adds (FAAB paid) and draft CSV off the critical path (only player history needs it).
 - `gen_lab_weekfacts.py` added to the Tuesday robot.
 - Remaining pages into the app: Power Rankings, History, Draft (§2c).

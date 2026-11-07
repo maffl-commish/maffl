@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "5"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "6"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -89,7 +89,7 @@ function dCoach_(tier, wk, teams) {
   Object.keys(counts).forEach(function (s) { var id = +s; if (id !== 20 && id !== 21) for (var c = 0; c < counts[s]; c++) slots.push(id); });
   var box = espn_(LEAGUES[tier], "view=mMatchupScore&view=mBoxscore&scoringPeriodId=" + wk), pro = {};
   try { pro = proGames_(wk); } catch (e) {}
-  var board = [], pwk = {};
+  var board = [], pwk = {}, tops = {};
   (box.schedule || []).filter(function (g) { return g.matchupPeriodId === wk; }).forEach(function (g) {
     [g.home, g.away].forEach(function (sd) {
       if (!sd || !teams[sd.teamId] || teams[sd.teamId].ghost) return;
@@ -99,6 +99,7 @@ function dCoach_(tier, wk, teams) {
         var pts = act ? act.appliedTotal : ((e.playerPoolEntry || {}).appliedStatTotal || 0);
         var bye = !!pl.proTeamId && Object.keys(pro || {}).length > 0 && !pro[pl.proTeamId];
         if (pl.id) pwk[pl.id] = r2_(act ? act.appliedTotal : 0);
+        if (act && (e.lineupSlotId !== 20 && e.lineupSlotId !== 21) && (!tops[sd.teamId] || act.appliedTotal > tops[sd.teamId].pts)) tops[sd.teamId] = { t: sd.teamId, n: pl.fullName || "?", pts: r2_(act.appliedTotal) };
         return { n: pl.fullName || "?", sid: e.lineupSlotId, pts: r2_(pts), el: pl.eligibleSlots || [], bye: bye, dnp: !bye && !act }; });
       var starters = ps.filter(function (x) { return x.sid !== 20 && x.sid !== 21; }), pool = ps.filter(function (x) { return x.sid !== 21; });
       var why = [], empty = Math.max(0, slots.length - starters.length);
@@ -111,7 +112,66 @@ function dCoach_(tier, wk, teams) {
     });
   });
   board.sort(function (a, b) { return (a.out ? 1 : 0) - (b.out ? 1 : 0) || a.gap - b.gap || b.scored - a.scored; });
-  return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null, pts: pwk };
+  return { wk: wk, board: board, winner: board[0] && !board[0].out ? board[0].id : null, pts: pwk, top: Object.keys(tops).map(function (k) { return tops[k]; }) };
+}
+
+// ---- 2b. credit races (rulebook "League bonus credits"): leaders now, and the week each lead began.
+//   Most Team Points +5 (regular season) · Largest Blowout +3 (regular season, Ghost games count, the winner must be real)
+//   · Individual High Score +3 (one player's week, playoffs included) · Survivor Bonus +5 · Highest Weekly Score +1 each week.
+var REG_WEEKS = 14;
+function dRaces_(s, coach) {
+  var real = {}; Object.keys(s.teams).forEach(function (id) { if (!s.teams[id].ghost) real[id] = 1; });
+  var regDone = s.decided.filter(function (w) { return w <= REG_WEEKS; }), games = s.games.filter(function (g) { return !g[6] && g[5] !== null && regDone.indexOf(g[0]) >= 0; });
+  // Most points: leader after each final week; "since" = the week the current leader took over.
+  var pf = {}, leadBy = [];
+  regDone.forEach(function (wk) { games.filter(function (g) { return g[0] === wk; }).forEach(function (g) { pf[g[1]] = (pf[g[1]] || 0) + g[2]; pf[g[3]] = (pf[g[3]] || 0) + g[4]; });
+    var best = null; Object.keys(pf).forEach(function (id) { if (real[id] && (best === null || pf[id] > pf[best])) best = id; }); leadBy.push([wk, best]); });
+  var since = function (arr) { var cur = arr.length ? arr[arr.length - 1][1] : null, w = null; for (var i = arr.length - 1; i >= 0 && arr[i][1] === cur; i--) w = arr[i][0]; return w; };
+  var ptsL = leadBy.length ? leadBy[leadBy.length - 1][1] : null;
+  // Largest blowout so far
+  var blow = null; games.forEach(function (g) { var w = g[5], l = w === g[1] ? g[3] : g[1], m = Math.abs(g[2] - g[4]); if (w && real[w] && (!blow || m > blow.m)) blow = { wk: g[0], t: w, o: l, m: r2_(m) }; });
+  // Individual high: best single-player week in the tier (any final week, playoffs included)
+  var ind = null; Object.keys(coach || {}).forEach(function (wk) { (coach[wk].top || []).forEach(function (x) { if (real[x.t] && (!ind || x.pts > ind.pts)) ind = { wk: +wk, t: x.t, n: x.n, pts: x.pts }; }); });
+  var sv = s.survivor || { alive: [] };
+  return {
+    pts: ptsL ? { t: +ptsL, value: r2_(pf[ptsL]), since: since(leadBy), final: regDone.indexOf(REG_WEEKS) >= 0 } : null,
+    blow: blow ? { t: blow.t, value: blow.m, over: blow.o, wk: blow.wk, since: blow.wk, final: regDone.indexOf(REG_WEEKS) >= 0 } : null,
+    ind: ind ? { t: ind.t, value: ind.pts, player: ind.n, wk: ind.wk, since: ind.wk, final: s.decided.indexOf(17) >= 0 } : null,
+    surv: { alive: sv.alive.length, t: sv.alive.length === 1 ? sv.alive[0] : null, final: sv.alive.length === 1 }
+  };
+}
+
+// ---- 2c. credit awards (APP_DESIGN §10g). Credits are EARNED during the season but only ISSUED after Week 17
+// (rulebook key dates; commish 11/6), so rows start as EARNED (shown on the desk, nothing to do). Once Week 17 is final
+// in both tiers they flip to PENDING: approve cards on the desk; Approve → the ledger, like perks. One row per award. Weekly high: each final regular-season week, per tier. Season awards when they
+// become final. Never creates an award the official Credit_Log already has (2026 "Highest Weekly Score" for that tier + week).
+DAILY.AWARD_HEAD = ["award_id", "ts", "tier", "owner", "team", "award", "credits", "week", "detail", "status", "updated_ts", "reason", "sync"];
+function dAwardsTab_() { var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName("Awards"); if (!sh) { sh = ss.insertSheet("Awards"); sh.appendRow(DAILY.AWARD_HEAD); sh.setFrozenRows(1); } return sh; }
+function dLogged_() { // keys like "U:9" for 2026 weekly-high rows already in data/Credit_Log.csv on main
+  var out = {}; try { var r = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/data/Credit_Log.csv?t=" + Date.now(), { muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) return null;
+    Utilities.parseCsv(r.getContentText()).forEach(function (x) { if (String(x[0]).trim() !== "2026" || !/highest weekly/i.test(x[4] || "")) return;
+      var m = /(Upper|Lower)[^0-9]*Week\s*(\d+)/i.exec(x[7] || ""); if (m) out[(m[1][0].toUpperCase()) + ":" + (+m[2])] = 1; }); } catch (e) { return null; }
+  return out;
+}
+function dAwards_(snap) {
+  var sh = dAwardsTab_(), have = {}; sh.getDataRange().getValues().slice(1).forEach(function (r) { if (r[0]) have[r[0]] = 1; });
+  var logged = dLogged_(); if (logged === null) return 0; // can't see the official log: don't risk a double award
+  var rows = [], now = new Date(), TN = { U: "Upper", L: "Lower" };
+  var add = function (id, tier, teamId, award, cr, wk, detail) { if (have[id] || teamId == null) return; var t = snap.tiers[tier].teams[teamId] || {}; if (!t.owner) return;
+    rows.push([id, now, tier, t.owner, t.team, award, cr, wk || "", detail, "EARNED", now, "", ""]); have[id] = 1; };
+  Object.keys(snap.tiers).forEach(function (tier) { var S = snap.tiers[tier], R = S.races || {};
+    (S.highs || []).forEach(function (h) { if (h.wk <= REG_WEEKS && !logged[tier + ":" + h.wk]) add("AW" + tier + ("0" + h.wk).slice(-2), tier, h.id, "Highest Weekly Score", 1, h.wk, TN[tier] + "-Tier Week " + h.wk + " · " + h.pts.toFixed(2)); });
+    if (R.pts && R.pts.final) add("AW" + tier + "PTS", tier, R.pts.t, "Most Team Points Scored", 5, "", TN[tier] + "-Tier · " + R.pts.value.toFixed(2) + " regular-season points");
+    if (R.blow && R.blow.final) add("AW" + tier + "BLOW", tier, R.blow.t, "Largest Blowout Victory", 3, R.blow.wk, TN[tier] + "-Tier · Week " + R.blow.wk + " · " + R.blow.value.toFixed(2) + " over " + ((S.teams[R.blow.over] || {}).team || "?"));
+    if (R.ind && R.ind.final) add("AW" + tier + "IND", tier, R.ind.t, "Individual High Score", 3, R.ind.wk, TN[tier] + "-Tier · Week " + R.ind.wk + " · " + R.ind.player + " " + R.ind.value.toFixed(2));
+    if (R.surv && R.surv.final) add("AW" + tier + "SURV", tier, R.surv.t, "Survivor Bonus", 5, "", TN[tier] + "-Tier Survivor winner");
+  });
+  if (rows.length) sh.getRange(sh.getLastRow() + 1, 1, rows.length, DAILY.AWARD_HEAD.length).setValues(rows);
+  var seasonDone = Object.keys(snap.tiers).every(function (t) { return snap.tiers[t].decided.indexOf(17) >= 0; }), flipped = 0;
+  if (seasonDone) rows_("Awards").forEach(function (a) { if (a.status === "EARNED") { setCell_("Awards", a._row, "status", "PENDING"); flipped++; } });
+  if (flipped) deskPost_("note", "🏅 Season's over: " + flipped + " credit award" + (flipped === 1 ? " is" : "s are") + " ready to issue. Approve them in To do.", "", "AWARDS_READY");
+  return rows.length;
 }
 
 // ---- 3. rosters + moves ---------------------------------------------------------------------------------
@@ -160,13 +220,13 @@ DAILY.run = function (why) {
   var snap = { at: new Date().toISOString(), tiers: {} };
   ["U", "L"].forEach(function (tier) {
     try {
-      var s = dScores_(tier), coach = dGet_("coach3_" + tier) || {};
+      var s = dScores_(tier), coach = dGet_("coach4_" + tier) || {};
       s.decided.forEach(function (wk) { if (!coach[wk] && Date.now() - t0 < 200000) { try { coach[wk] = dCoach_(tier, wk, s.teams); } catch (e) { problems.push("Coach " + tier + " wk " + wk + ": " + e.message); } } });
-      dPut_("coach3_" + tier, coach);
+      dPut_("coach4_" + tier, coach);
       var pw = {}; Object.keys(coach).forEach(function (wk) { var p = coach[wk].pts || {}; Object.keys(p).forEach(function (id) { (pw[id] = pw[id] || {})[wk] = p[id]; }); });
       dPut_("pweeks_" + tier, pw);
       var slim = {}; Object.keys(coach).forEach(function (wk) { slim[wk] = { wk: coach[wk].wk, board: coach[wk].board, winner: coach[wk].winner }; });
-      s.coach = slim; snap.tiers[tier] = s;
+      s.coach = slim; s.races = dRaces_(s, coach); snap.tiers[tier] = s;
       var prevLast = (last.weeks || {})[tier] || 0;
       if (s.last > prevLast && prevLast) log.push((tier === "U" ? "Upper" : "Lower") + " week " + s.last + " is final");
     } catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " scores: " + e.message); }
@@ -174,6 +234,7 @@ DAILY.run = function (why) {
     catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " rosters: " + e.message); }
   });
   if (Object.keys(snap.tiers).length) dPut_("snapshot", snap);
+  try { var na = Object.keys(snap.tiers).length === 2 ? dAwards_(snap) : 0; if (na) log.push(na + " credit award" + (na === 1 ? "" : "s") + " earned (issued after Wk 17)"); } catch (e) { problems.push("Awards: " + e.message); }
   var digest = []; try { digest = dDigest_(last.at ? new Date(last.at).getTime() : Date.now() - 864e5); } catch (e) {}
   var tk = tickInfo_(), tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
   if (why === "tick" ? false : tkAge === null || tkAge > 60) problems.push("the 15-minute robot hasn't run in " + (tkAge === null ? "ever" : Math.round(tkAge) + " min"));
