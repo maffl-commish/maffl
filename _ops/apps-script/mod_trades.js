@@ -16,6 +16,8 @@ function offer_(me, b) {
   if (!give.length && !get.length) return { ok: false, error: "Every trade needs at least one player" };
   if (!give.length && !gc) return { ok: false, error: "You have to send something" };
   if (!get.length && !tc) return { ok: false, error: "You have to get something back" };
+  var short = creditShort_(from.owner, gc, { offer: b.counterOf }, "you") || creditShort_(to.owner, tc, {}, to.team);
+  if (short) return { ok: false, error: short };
   var id = "T" + Utilities.getUuid().slice(0, 8).toUpperCase(), now = new Date();
   // A counter declines the offer it answers (one step, so the thread shows one "countered" card, not two).
   var co = b.counterOf ? offerRow_(b.counterOf) : null, isCounter = !!(co && co.status === "PROPOSED" && norm_(co.to_owner) === norm_(me.owner) && norm_(co.from_owner) === norm_(to.owner));
@@ -45,6 +47,8 @@ function respond_(me, id, decision, quiet) {
   var next = { accept: isTo && "ACCEPTED", decline: isTo && "DECLINED", withdraw: isFrom && "WITHDRAWN" }[decision];
   if (!next) return { ok: false, error: "You can't do that to this offer" };
   if (next === "ACCEPTED" && new Date() > TRADE_DEADLINE) return { ok: false, error: "The trade deadline has passed" };
+  if (next === "ACCEPTED") { var short = creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, "you") || creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner));
+    if (short) return { ok: false, error: short }; }
   setOffer_(o, next); log_(me.owner, "offer", id, next, "", "");
   post_(roomDM_(o.from_owner, o.to_owner), me.owner, "offer", "", id, next);
   if (next === "ACCEPTED") { post_("tier:" + o.tier, BOT, "offer", "", id, "REVIEW"); deskPost_("offer", "", id, "REVIEW"); } // accepted trades are public to the tier
@@ -58,6 +62,8 @@ function commish_(me, id, decision, reason) {
   if (o.status !== "ACCEPTED") return { ok: false, error: "Only accepted trades can be approved or negated" };
   var next = decision === "approve" ? "APPROVED" : decision === "negate" ? "NEGATED" : null;
   if (!next) return { ok: false, error: "approve or negate" };
+  if (next === "APPROVED") { var short = creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner)) || creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, teamName_(o.to_owner));
+    if (short) return { ok: false, error: short + " Negate it, or wait for their balance." }; }
   setOffer_(o, next, reason); log_(me.owner, "commish", id, next, "", String(reason || ""));
   post_(roomDM_(o.from_owner, o.to_owner), BOT, "offer", reason, id, next);
   post_(next === "APPROVED" ? "league" : "tier:" + o.tier, BOT, "offer", reason, id, next); // completed trades go to the whole league
@@ -85,9 +91,49 @@ function trades_(owner) {
   return { offers: offers, block: block };
 }
 
+// ---------------------------------------------------------------- credit balance (server-side check)
+// What an owner can spend right now = the official record (data/Credit_Log.csv on main: Approved?=Y rows with a season,
+// the same sum the credit sync robot writes) + app-approved ledger rows the robot hasn't posted yet − credits on hold
+// (open perk requests, offers they'd pay into). `skip` = {offer, perk} ids to leave out (the one being decided).
+function officialCredits_() {
+  var c = CacheService.getScriptCache(), hit = c.get("credlog"); if (hit) return JSON.parse(hit);
+  var res = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/data/Credit_Log.csv?t=" + Date.now(), { muteHttpExceptions: true });
+  if (res.getResponseCode() !== 200) return null;
+  var rows = Utilities.parseCsv(res.getContentText()), h = rows[0] || [], iS = h.indexOf("Season"), iO = h.indexOf("Owner"), iA = h.indexOf("Credit +/-"), iY = h.indexOf("Approved?"), iN = h.indexOf("Notes");
+  var out = { bal: {}, posted: {} };
+  rows.slice(1).forEach(function (r) {
+    var m = /\[app (L-[A-Za-z0-9-]+)\]/.exec(r[iN] || ""); if (m) out.posted[m[1]] = 1;
+    if (String(r[iY] || "").trim() !== "Y" || !String(r[iS] || "").trim()) return;
+    var k = norm_(r[iO]), n = Math.round(Number(r[iA]) || 0); out.bal[k] = (out.bal[k] || 0) + n;
+  });
+  c.put("credlog", JSON.stringify(out), 300);
+  return out;
+}
+function spendable_(owner, skip) {
+  skip = skip || {}; var off = officialCredits_(); if (!off) return null;
+  var k = norm_(owner), n = off.bal[k] || 0;
+  ledger_(syncMode_()).forEach(function (r) { if (norm_(r.owner) === k && !off.posted[r.id]) n += Number(r.amount) || 0; });
+  rows_("Perks").forEach(function (r) { if (r.status === "REQUESTED" && norm_(r.owner) === k && String(r.perk_id) !== String(skip.perk)) n -= Number(r.cost) || 0; });
+  (sheetGet_("Offers") ? rows_("Offers") : []).forEach(function (o) {
+    if (String(o.offer_id) === String(skip.offer)) return;
+    if ((o.status === "PROPOSED" || o.status === "ACCEPTED") && norm_(o.from_owner) === k) n -= Number(o.give_credits) || 0;
+    if (o.status === "ACCEPTED" && norm_(o.to_owner) === k) n -= Number(o.get_credits) || 0;
+  });
+  return n;
+}
+// null = fine; otherwise the error to return. who = "you" or the other owner's name.
+function creditShort_(owner, need, skip, who) {
+  if (!(need > 0)) return null;
+  var have = spendable_(owner, skip);
+  if (have === null) return "Couldn't check credit balances right now. Try again in a minute.";
+  if (need <= have) return null;
+  var h = Math.max(0, have) + " credit" + (Math.max(0, have) === 1 ? "" : "s");
+  return who === "you" ? "You have " + h + " to spend (after open requests and offers), not " + need + "." : who + " only has " + h + " to spend right now, not " + need + ".";
+}
+
 // ---------------------------------------------------------------- credit perks (test Sheet only; never gold)
 // Statuses: REQUESTED → APPROVED | DENIED (commish), or CANCELED (owner, while still REQUESTED).
-// Balance is checked in the app and by the commish at approval (the backend doesn't hold credit totals).
+// Balance is checked here too (spendable_: request, and again at approval).
 function livePerks_() { return rows_("Perks").filter(function (r) { return ["REQUESTED", "APPROVED"].indexOf(r.status) >= 0; }); }
 function perk_(me, b) {
   var P = PERKS[b.perk]; if (!P) return { ok: false, error: "Unknown perk" };
@@ -122,6 +168,7 @@ function perk_(me, b) {
     return { ok: false, error: "Division Swaps are off-season only (open when provisional divisions post; lock Labor Day Eve)" };
   }
   var cost = P.cost * qty, id = "P" + Utilities.getUuid().slice(0, 8).toUpperCase();
+  var short = creditShort_(me.owner, cost, {}, "you"); if (short) return { ok: false, error: short };
   sheet_("Perks").appendRow(cells_([id, now, me.owner, me.tier, String(b.perk), cost, qty, week || "", player, pos, swapWith, JSON.stringify(affects), String(b.note || "").slice(0, 200), "REQUESTED", now, ""]));
   log_(me.owner, "perk", id, "REQUESTED", week || "", b.perk);
   deskPost_("perk", String(b.note || "").slice(0, 200), id, "REQUESTED");
@@ -141,6 +188,7 @@ function perkAct_(me, id, decision, reason) {
   var next = decision === "cancel" && norm_(r.owner) === norm_(me.owner) ? "CANCELED"
     : me.commish && decision === "approve" ? "APPROVED" : me.commish && decision === "deny" ? "DENIED" : null;
   if (!next) return { ok: false, error: "You can't do that to this request" };
+  if (next === "APPROVED") { var short = creditShort_(r.owner, Number(r.cost) || 0, { perk: id }, teamName_(r.owner)); if (short) return { ok: false, error: short + " Deny it, or wait for their balance." }; }
   setCell_("Perks", r._row, "status", next); setCell_("Perks", r._row, "updated_ts", new Date());
   if (reason) setCell_("Perks", r._row, "reason", String(reason).slice(0, 200));
   log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
