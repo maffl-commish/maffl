@@ -26,6 +26,8 @@ hurt real users. The beta crew (nephews) can start once Phase 1 is done.
 
 ## Phase 2: before go-live (should fix)
 
+**✅ Phase 2 shipped 11/7** (backend v0.31–0.32 + lab + Code.gs): busy JSON, lock-free chat reads, daily outside the lock (one at a time), chunked tick memory, daily.js last-good copy, public summary cached; roster checks + no double-traded players + duplicate-safe offers/perks; request email cap; Try again instead of endless spinners, boot retry, confirm-and-clear sign-out, week-replay lines; 29 KB logo; tester/desk buttons in the header; contrast. **Open:** paste the new Code.gs (logic.js last-good copy); reading only the tail of Chat/Events (S6) waits until the tabs actually grow; a GitHub rule requiring PRs for `_ops/apps-script/**` is the commish's call.
+
 - **Robustness:** Chat and Trades spin forever when the backend is down, and a weekly.html failure is a dead end with no retry (B·S2, S3). A lock timeout returns HTML instead of JSON (A). "Run daily now" holds the lock for minutes (A). The tick's reminder memory overflows the 9 KB property limit at about 270 entries and then reposts every 15 min (A). The 8-second chat poll takes the global lock (A).
 - **Trades:** players in an offer aren't checked against rosters (one player can be in two approved trades), and retries create duplicate offers or perks (A).
 - **Supply chain:** only the `mod_*` parts have the 6 h last-good copy. If `logic.js` or `daily.js` fail to load, sign-in goes down. Give them the same fallback (A).

@@ -96,7 +96,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Offseason mode (decided: same tabs, different contents): which cards and what Match shows.
 
 **Known issues**
-- **Readiness audit 11/7:** `_ops/AUDIT_2026-11-07_reel_readiness.md`. Phase 1 shipped 11/7 (issue the crew new passphrases before they start); Phase 2–3 next; §2 of this page is out of date (feed, no Money tab, Vault).
+- **Readiness audit 11/7:** `_ops/AUDIT_2026-11-07_reel_readiness.md`. Phases 1–2 shipped 11/7 (issue the crew new passphrases; paste the new Code.gs); Phase 3 (go-live switch) next; §2 of this page is out of date (feed, no Money tab, Vault).
 - 11/6 startup bug (no screen after load, blank tabs): guarded startup + You → App errors shipped. If it recurs on the iPhone, the error list names the cause.
 - Done 11/7: backend split into core + parts (each well under the 95 KB cache limit); `_ops/tests/` holds the mock backend, regression and screenshot tools.
 
