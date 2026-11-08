@@ -233,11 +233,35 @@ function perkAct_(me, id, decision, reason) {
   log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
   if (next === "CANCELED") deskPost_("perk", "", id, "CANCELED");
   var out = { ok: true, status: next };
-  if (next === "APPROVED") { setCell_("Perks", r._row, "sync", syncMode_()); out.sync = pushLedger_(); }
+  if (next === "APPROVED") { setCell_("Perks", r._row, "sync", syncMode_()); out.sync = pushLedger_(); perkNews_(r); }
   if (next !== "CANCELED") notify_([r.owner], "perks", "MAFFL HQ: " + (PERKS[r.perk] || {}).name + " " + next.toLowerCase(),
     "Your " + (PERKS[r.perk] || {}).name + " request (" + r.cost + " credits" + (r.week ? ", Week " + r.week : "") + (r.player ? ", " + r.player : "") + ") was " + next.toLowerCase() + "." +
     (reason ? "\nCommish: " + reason : "") + (next === "APPROVED" ? "\nThe credits post to the official record automatically." : ""), APP_URL + "#team");
   return out;
+}
+// Approved perk → league chat news (commish 11/7): who spent what, on whom, which week, with @mentions so the
+// owner and everyone it touches get the @ badge. Extra FAAB stays private (it's a waiver budget).
+function perkNews_(r) {
+  if (r.perk === "faab") return;
+  var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
+  var at = function (n) { return "@" + String(n || "").trim(); }, cost = Number(r.cost) || 0, cr = cost + " credit" + (cost === 1 ? "" : "s"), wk = r.week ? " · Week " + r.week : "";
+  var opp = aff.filter(function (a) { return a && norm_(a) !== norm_(r.owner) && norm_(a) !== norm_(r.swap_with); });
+  var text = r.perk === "double" ? "✖️2 Double Player Bonus" + wk + "\n" + at(r.owner) + " spent " + cr + ": " + r.player + (r.pos ? " (" + r.pos + ")" : "") + " scores double" + (opp.length ? " vs " + opp.map(at).join(", ") : "") + "."
+    : r.perk === "swap" ? "🔀 Matchup Swap" + wk + "\n" + at(r.owner) + " spent " + cr + " to swap opponents with " + at(r.swap_with) + "." + (opp.length ? " New matchups for " + opp.map(at).join(" and ") + "." : "")
+    : r.perk === "insurance" ? "🛡️ Relegation Insurance\n" + at(r.owner) + " spent " + cr + " to insure against relegation this season."
+    : "🎟️ " + ((PERKS[r.perk] || {}).name || r.perk) + wk + "\n" + at(r.owner) + " spent " + cr + ".";
+  var seen = {}, mentions = [r.owner, r.swap_with].concat(opp).filter(function (n) { var o = n && ownerRow_(n), k = o && norm_(o.owner); if (!k || seen[k]) return false; seen[k] = 1; return true; })
+    .map(function (n) { return ownerRow_(n).owner; });
+  try { post_("league", BOT, "text", text + (syncMode_() === "live" ? "" : "\n🧪 Test, not real credits."), r.perk_id, "APPROVED", mentions, ""); } catch (e) {}
+}
+// App-approved credit moves the official Credit_Log doesn't show yet, for every owner, so balances in the app
+// (standings, Team → Credits) count them right away. TEST mode: the robot only dry-runs, so test moves stay
+// here until the test data is wiped. null = couldn't read Credit_Log; the app then falls back to "held".
+function pendingMoves_() {
+  try { var off = officialCredits_(); if (!off) return null; var mode = syncMode_();
+    return ledger_(mode).filter(function (x) { return !off.posted[x.id]; }).map(function (x) {
+      return { id: x.id, owner: x.owner, amount: x.amount, type: x.type, category: x.category, notes: x.notes, test: mode !== "live" }; });
+  } catch (e) { return null; }
 }
 // Yours, ones that touch you (your opponent's Double Bonus, a swap that moves you), and for the commish everything open.
 function perks_(owner) {

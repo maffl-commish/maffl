@@ -1016,8 +1016,16 @@
     // Live balances: the official credit record (credits.html registry, kept current by the credit sync robot).
     // Older weeks keep the Pulse snapshot.
     if (W === LATEST && CREDIT_LOG.length) TEAMS.forEach(function (t) { var b = logBalance(t.owner); if (b !== null) t.credits = b; });
+    TEAMS.forEach(function (t) { t.credBase = t.credits; }); applyMoves();
     NEXT_WK = W.weekNumber + 1;
   }
+  // App-approved credit moves the official Credit_Log doesn't show yet (backend summary `moves`, commish 11/7):
+  // counted in the balance right away, everywhere (standings, Team → Credits). Returns true when a balance changed.
+  function movesOf(owner) { return (Array.isArray(SUM.moves) ? SUM.moves : []).filter(function (x) { return norm(x.owner) === norm(owner); }); }
+  function applyMoves() { var ch = false; if (W !== LATEST) return false;
+    TEAMS.forEach(function (t) { if (t.credBase == null) return; var n = t.credBase + movesOf(t.owner).reduce(function (a, x) { return a + (Number(x.amount) || 0); }, 0); if (n !== t.credits) { t.credits = n; ch = true; } });
+    return ch; }
+  function movesSync() { try { if (applyMoves() && RENDER.league) renderLeague(); } catch (e) {} }
   function logBalance(owner) { var hit = false, n = 0; CREDIT_LOG.forEach(function (r) { if (norm(r.owner) === norm(owner) && r.approved !== false) { hit = true; n += r.amount || 0; } }); return hit ? n : null; }
   function logged(id) { return CREDIT_LOG.some(function (r) { return String(r.notes || "").indexOf("[app L-" + id) >= 0; }); } // robot tags each row with its ledger id
   function teamOf(owner) { return BY_OWNER[norm(owner)] || { team: owner, owner: owner, w: 0, l: 0, tier: "?" }; }
@@ -1153,7 +1161,7 @@
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
       if (r.token) { store("maffl_lab_pin", r.token); delete r.token; } // older phones swap their passphrase for a device token
-      SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); tourStampCheck(r.tour); deskBadge(); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
+      SUM = r; SUM_OK = true; saveSum(r); movesSync(); ME.commish = !!r.commish; betaOn(!!r.beta); tourStampCheck(r.tour); deskBadge(); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
@@ -2190,7 +2198,9 @@
       '<div class="seg" id="tseg"><button data-sub="roster">Roster</button><button data-sub="trades">Trades' + ((badgeCount() - perkBadge()) ? ' <i class="sb2">' + (badgeCount() - perkBadge()) + '</i>' : '') + '</button><button data-sub="credits">Credits' + (perkBadge() ? ' <i class="sb2">' + perkBadge() + '</i>' : '') + '</button></div>';
     h += '<div class="sub-v pad" id="s-roster">' + rosterHTML() + '</div>';
     h += '<div class="sub-v pad" id="s-trades">' + tradesHTML() + '</div>';
-    var log = CREDIT_LOG.filter(function (r) { return norm(r.owner) === norm(ME.owner) && r.approved !== false; }).sort(function (a, b) { return b.season - a.season; });
+    var log = (W === LATEST ? movesOf(ME.owner).slice().reverse().map(function (x) { return { season: 2026, amount: Number(x.amount) || 0, creditType: x.type, creditCategory: x.category,
+      notes: String(x.notes || "").replace(/ · app (request|award) \S+$/, "") + (x.test ? " · 🧪 test" : " · posting"), pend: true }; }) : [])
+      .concat(CREDIT_LOG.filter(function (r) { return norm(r.owner) === norm(ME.owner) && r.approved !== false; }).sort(function (a, b) { return b.season - a.season; }));
     var earned = log.filter(function (r) { return r.amount > 0; }).reduce(function (s2, r) { return s2 + r.amount; }, 0), spent = log.filter(function (r) { return r.amount < 0; }).reduce(function (s2, r) { return s2 - r.amount; }, 0);
     var held = t.credits - availCredits(ME.owner);
     // Credits (commish 11/7): balance in one slim line, then straight to the spend buttons.
@@ -2535,9 +2545,9 @@
   function needsMe(o) { return (o.status === "PROPOSED" && isMe(o.to)) || (o.status === "ACCEPTED" && ME.commish); }
   function badgeCount() { return (SUM.offers || []).filter(needsMe).length + perkBadge(); }
   function perkBadge() { return ME && ME.commish ? (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }).length : 0; }
-  function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0 || (o.status === "APPROVED" && (o.giveCredits || o.getCredits) && !logged(o.id)); }).reduce(function (n, o) {
+  function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0 || (o.status === "APPROVED" && (o.giveCredits || o.getCredits) && !logged(o.id) && !Array.isArray(SUM.moves)); }).reduce(function (n, o) {
     return n + (norm(o.from) === norm(owner) ? o.giveCredits : 0) + (norm(o.to) === norm(owner) ? o.getCredits : 0); }, 0); }
-  function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && (p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id))); }).reduce(function (n, p) { return n + p.cost; }, 0); }
+  function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && (p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id) && !Array.isArray(SUM.moves))); }).reduce(function (n, p) { return n + p.cost; }, 0); }
   function availCredits(owner) { return Math.max(0, (teamOf(owner).credits || 0) - committedCredits(owner) - perkCredits(owner)); }
   var ST = { PROPOSED: ["Waiting", ""], ACCEPTED: ["In 24h review", "gold"], APPROVED: ["Approved ✓", "ok"], NEGATED: ["Negated", "bad"], DECLINED: ["Declined", "bad"], WITHDRAWN: ["Withdrawn", ""] };
   function legHTML(label, team, players, credits) {
@@ -2860,7 +2870,7 @@
   }
   function busy(on) { document.body.classList.toggle("busy", !!on); }
   function afterChange(msg) {
-    return api("summary", creds()).then(function (r) { if (r.ok) { SUM = r; SUM_OK = true; saveSum(r); tourStampCheck(r.tour); } refreshTeam(); paint(); if (msg) toast(msg);
+    return api("summary", creds()).then(function (r) { if (r.ok) { SUM = r; SUM_OK = true; saveSum(r); movesSync(); tourStampCheck(r.tour); } refreshTeam(); paint(); if (msg) toast(msg);
       chatBadge(); if (CH.open) { if (CH.view === "thread") { CH.sig = null; loadRoom(); } else if (CH.view === "inbox") drawInbox(); } else if ($("v-home").classList.contains("on")) renderHome(); });
   }
   function refreshTeam() { renderTeam(); var c = badgeCount(); document.querySelector(".tbadge").setAttribute("data-n", c || ""); }
@@ -3179,7 +3189,9 @@
     var n = chatOn() ? inboxOf().unread || 0 : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
     b.setAttribute("data-n", n ? (n > 9 ? "9+" : String(n)) : "");
   }
-  function fmtText(t) { return esc(t).replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, '$1<span class="at">@$2</span>'); }
+  function fmtText(t, ment) { var h = esc(t);
+    (ment || []).forEach(function (o) { var a = esc("@" + o); h = h.split(a).join('<span class="at">' + a + '</span>'); }); // bot posts @ full names
+    return h.replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, '$1<span class="at">@$2</span>'); }
   function tradeMini(o, latest) {
     if (!o) return '<div class="ctrade"><p class="meta">Trade details unavailable.</p></div>';
     var cur = (SUM.offers || []).filter(function (x) { return x.id === o.id; })[0] || o, st = ST[cur.status] || [cur.status, ""];
@@ -3502,7 +3514,7 @@
     else if (m.owner === BOTN && DESK_KINDS[m.kind]) h += deskMsg(m);
     else if (m.kind === "announce" && !m.deleted) h += '<div class="cann"><b>📣 Commish alert</b>' + fmtText(m.text) + '</div>';
     else if ((cp = chatPoll(m))) h += cp.closed ? '<div class="ctx">' + fmtText(m.text.split("\n")[0]) + ' <span class="meta">· closed</span></div>' : '<div class="cpollm"><b>📊 ' + esc(cp.q) + '</b>' + (cp.tier ? '<small class="meta"> · ' + (cp.tier === "U" ? "Upper" : "Lower") + ' only</small>' : '') + pollOpts(cp) + '</div>';
-    else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text)) + '</div>';
+    else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text, m.mentions)) + '</div>';
     if (m.failed) h += '<div class="cfail"><span>⚠️ ' + esc(m.err || "Didn't send") + '</span><button data-cretry="' + m.id + '">↻ Retry</button><button data-cdrop="' + m.id + '" aria-label="Remove">✕</button></div>';
     if (CH.menu === m.id) h += '<div class="cmenu">' + (canPin ? '<button data-cmod="' + (m.pinned ? "unpin" : "pin") + '" data-mid="' + m.id + '">' + (m.pinned ? "Unpin" : "📌 Pin") + '</button>' : '') +
       (canDel ? '<button class="bad" data-cmod="delete" data-mid="' + m.id + '">Delete</button>' : '') + '</div>';
