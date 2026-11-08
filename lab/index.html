@@ -763,12 +763,7 @@
   /* 🧪 beta feedback kit */
   .fbbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.25)}
   .fbbtn.on{display:block}
-  /* Tester + commish buttons live in the header (11/7): they used to float over cards, reactions and chat. */
-  .hdrtools{display:flex;gap:6px;align-items:center;margin:0 8px 0 auto}
-  .hdr .wk:not([hidden])+.hdrtools{margin-left:8px}
-  .hdrtools .fbbtn,.hdrtools .dkbtn{position:static;min-width:40px;height:40px;padding:0 9px;font-size:18px;letter-spacing:0;box-shadow:none;border-radius:20px;align-items:center;justify-content:center}
-  .hdrtools .fbbtn.on,.hdrtools .dkbtn.on{display:inline-flex}
-  .hdrtools .dkbtn i{margin-left:3px}
+  body.chaton .fbbtn{bottom:auto;top:calc(env(safe-area-inset-top) + 104px);padding:7px 11px;font-size:11px;opacity:.9}body.chaton .dkbtn{display:none}
   #v-team,#v-league,#v-match,#v-more{padding-bottom:84px}
   .fbnudge{position:fixed;left:50%;transform:translate(-50%,140%);bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:41;width:min(92vw,440px);background:var(--navy);color:#fff;border-radius:16px;padding:12px 12px 12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(15,29,52,.35);transition:transform .25s ease,visibility 0s .25s;visibility:hidden;pointer-events:none}
   .fbnudge.on{transform:translate(-50%,0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
@@ -792,7 +787,6 @@
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo-192.png"><span class="t" id="ttl">MAFFL HQ</span>
       <div class="wk" id="hdrwk" hidden></div>
-      <div class="hdrtools"><button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪</button><button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥<i id="dkn"></i></button></div>
       <button class="chip" id="chip" aria-label="You: settings, help, sign out">··</button>
     </div>
   </header>
@@ -821,6 +815,8 @@
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
 <div class="tour" id="tour" role="dialog" aria-live="polite"></div>
+<button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
+<button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥 Desk<i id="dkn"></i></button>
 <div class="dk" id="desk"><div class="dkhead"><button class="cb" id="dkclose" aria-label="Close">‹</button><div><div class="ct">Commish desk</div><small id="dkupd"></small></div><button class="cb" id="dkref" aria-label="Refresh">↻</button></div><div class="dkbody" id="dkbody"></div></div>
 <div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
