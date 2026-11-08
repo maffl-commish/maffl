@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>MAFFL HQ · Lab</title>
+<title>MAFFL HQ</title>
 <link rel="icon" href="../maffl-logo.png">
 <link rel="apple-touch-icon" href="../maffl-logo.png">
 <link rel="preconnect" href="https://script.google.com">
@@ -775,7 +775,7 @@
 <body>
 <div class="app">
   <header class="hdr">
-    <div class="lab">Lab · trades &amp; reactions are test-only</div>
+    <div class="lab" id="stagebar">Beta · trades &amp; credit spends are practice runs</div>
     <div class="pastbar" id="pastbar"></div>
     <div class="netbar" id="netbar"></div>
     <div class="hdr-in">
@@ -876,6 +876,9 @@
   function creds() { return { owner: ME && ME.owner, pin: store("maffl_lab_pin") || "" }; }
   // ---------- contacts + nudges (APP_DESIGN §4b): owner email/phone come from the backend, signed-in only ----------
   var APP_LINK = "https://maffl-commish.github.io/maffl/lab/";
+  // "beta" until go-live (APP_DESIGN §9), then "live": hides the beta strip and the practice-run note in More.
+  var STAGE = "beta";
+  if (STAGE === "live") { var stageBar = document.getElementById("stagebar"); if (stageBar) stageBar.remove(); }
   function contactOf(owner) { return (SUM.contacts || []).filter(function (c) { return norm(c.owner) === norm(owner); })[0] || {}; }
   function fmtPhone(d) { d = String(d || ""); return d.length === 10 ? "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6) : d; }
   function smsHref(phone, body) { return "sms:" + (phone || "") + "?&body=" + encodeURIComponent(body); } // ?& works on iOS and Android
@@ -2149,7 +2152,9 @@
   function renderMore() {
     $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
       '<div class="sh"><h2>You</h2></div><div class="list">' + (API_URL ? '<button id="mSet"><span>⚙️</span>Settings</button>' : '') + '<button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button><button id="mTour"><span>👋</span>Show the tour again</button></div>' +
-      '<div class="sh"><h2>About this prototype</h2></div><div class="pad"><p class="p">Lab prototype: read-only for now, real data from the latest Pulse (Week ' + W.weekNumber + '), the schedule and every game since 2005. ' + (API_URL ? 'Reactions and votes save to the test league Sheet.' : 'Demo mode: reactions stay on this phone.') + ' Nothing here changes league data.</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>' + errsBlock();
+      '<div class="sh"><h2>About MAFFL HQ</h2></div><div class="pad"><p class="p">' + (STAGE === "live" ? 'The league\'s app: live scores from ESPN, this week\'s stories, trades and credits, and every game since 2005.'
+        : 'You\'re on the beta of the new MAFFL HQ. Scores, standings and history are real. Trades, credit spends, polls and chat run on a practice copy that gets wiped before launch, so nothing here changes official league records.') +
+        (API_URL ? '' : ' Demo mode: reactions stay on this phone.') + '</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>' + errsBlock();
     if (API_URL) apiGet({}).then(function (r) { if (r && r.version) $("srvver").textContent = "League server v" + r.version + (r.logic === "repo" ? " (auto-updates from the repo)" : ""); }).catch(function () {});
     $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
     $("mReq").onclick = function () { showWelcome(true); };
