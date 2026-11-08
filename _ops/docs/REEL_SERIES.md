@@ -24,11 +24,11 @@ together. Mark it up freely: strike things, add ideas at the bottom.
 |---|---|---|
 | ⚡ Needs you | all (strip) | Things to act on |
 
-Off-season (no games that week): Your week 3 · League week 4 · Play 4 · **Vault 7** (three throwbacks + three 8 Balls + history).
+Off-season (no games that week): Your week 3 · League week 4 · Play 4 · **Vault 7** (three throwbacks + three Auction Draft Insights + history).
 | ⭐ Your week | 5 | About you: your game, your race, your chats |
 | 🏟️ League week | 6 | What happened, league-wide or your tier |
 | 🎯 Play | 3 | Quizzes, polls, Game of the Week, What would you pay? |
-| 🗄️ Vault | 3 | League history, one bite at a time (throwback · this week in history · 8 Ball) |
+| 🗄️ Vault | 3 | League history, one bite at a time (throwback · this week in history · Auction Draft Insights) |
 
 "You're caught up" ends the feed, then lists earlier weeks (tap → that week's reel, with Back to this week).
 
@@ -91,7 +91,7 @@ then anything left inside the budget.
 | Rank | Series | id | Audience | When | Writer | Status |
 |---|---|---|---|---|---|---|
 | 1 | Throwback (a past season) | `throwback:YYYY` | league | Weekly, rotating pool | commish line + data | Built (lines drafted, commish editing) |
-| 3 | 🎱 8 Ball (tidbits, reborn) | `tidbit:*` | league | Weekly, rotating pool | commish (`data/MAFFL_Tidbits.csv`: hook + line + player/position) + data (price history chart) | Built: 25 drafted, commish editing |
+| 3 | 💡 Auction Draft Insights (tidbits; was the 8 Ball, renamed 11/8) | `tidbit:*` | league | Weekly, rotating pool | commish (`data/MAFFL_Tidbits.csv`: hook + line + player/position) + data (price history chart) | Built: 25 drafted, commish editing |
 | 2 | 📅 This week in MAFFL history (record score, biggest blowout, closest game or title game for the coming week number) | `history:*` | league | Even weeks (odd: Meet the owner), next week's number | data (`weekly` in vault-data.js) | Built |
 | 2 | 👋 Meet the owner (since, titles, record, playoffs, biggest buy, can't-quit player, most-played rival, old team names) | `owner:*` | league | Odd weeks, one owner (not you) | data | Built |
 

@@ -1389,14 +1389,14 @@
     return { id: "records:" + (best ? best.x.o : ms.x.o), scope: "league", c: { eb: "📈 Records watch", t: "", face: '<div class="fc"><h3 style="font-size:28px">' + esc(h) + '</h3><p class="fs">' + esc(sub) + '</p>' +
       '<div class="fchips">' + chips.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join("") + '</div><div class="btns"><button class="b" data-vaultrec="1">All-time records ›</button></div></div>' } };
   }
-  // 🎱 The 8 Ball, reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
+  // 💡 Auction Draft Insights (was the 8 Ball; renamed 11/8), reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
   function tidbitCard(off) {
     var T = (window.MAFFL_VAULT && MAFFL_VAULT.tidbits) || []; if (!T.length) return null;
     var t = T[((W.weekNumber || 0) * 5 + (off || 0) * 3) % T.length], hs = t.hist || [], mx = Math.max.apply(null, hs.map(function (x) { return x[2]; }).concat([1]));
     var lo = hs.reduce(function (m, x) { return !m || x[2] < m[2] ? x : m; }, null), hi = hs.reduce(function (m, x) { return !m || x[2] > m[2] ? x : m; }, null);
     var bars = hs.length ? '<div class="tdh"><button class="tl2" data-player="' + esc(pkeyHist(t.player, t.pos)) + '">' + esc(t.player) + ' ›</button> · every auction</div><div class="tdbars">' + hs.map(function (x) {
       return '<div class="tdb' + (x === hi ? ' hi' : x === lo ? ' lo' : '') + '" title="' + esc(x[1] + ' · ' + x[0] + ' · $' + x[2]) + '"><small>$' + x[2] + '</small><i style="height:' + Math.max(3, Math.round(70 * x[2] / mx)) + 'px"></i><span>\'' + String(x[0]).slice(2) + '</span></div>'; }).join("") + '</div>' : '';
-    return { id: "tidbit:" + t.key, scope: "league", c: { eb: "🎱 8 Ball", t: "", face: '<div class="fc"><div class="tdhook">' + esc(t.hook) + '</div><p class="tdline">' + esc(t.line) + '</p>' + bars +
+    return { id: "tidbit:" + t.key, scope: "league", c: { eb: "💡 Auction Draft Insights", t: "", face: '<div class="fc"><div class="tdhook">' + esc(t.hook) + '</div><p class="tdline">' + esc(t.line) + '</p>' + bars +
       (t.player ? '<div class="btns"><button class="b" data-vaultq="' + esc(t.player) + '">' + esc(t.player) + ' in the Vault ›</button></div>' : '') + '</div>' } };
   }
   function farewellLine(s, o) {
@@ -1459,7 +1459,7 @@
       var yrs = Object.keys(V.seasons).filter(function (y) { return +y >= 2005; }).sort(function (a, b) { return b - a; });
       h += '<div class="vsearch"><input class="field" id="vq" placeholder="Player or owner" value="' + esc(VQ) + '"><select class="field" id="vy"><option value="">All years</option>' + yrs.map(function (y) { return '<option' + (VY === y ? ' selected' : '') + '>' + y + '</option>'; }).join("") + '</select></div>' +
         '<div class="card glist" style="margin-top:8px" id="vdraft">' + vaultDraftRows() + '</div>' +
-        '<div class="btns"><a class="b" href="../draft.html">Classic draft portal (8 Ball, tendencies) ›</a></div>';
+        '<div class="btns"><a class="b" href="../draft.html">Classic draft portal (Insights, tendencies) ›</a></div>';
     }
     return h + '<p class="meta" style="margin:14px 2px">Classic pages: <a href="../history.html">History &amp; Stats</a> · <a href="../power-rankings.html">Power Rankings</a> · <a href="../weekly.html">Weekly Pulse</a></p></div>';
   }
@@ -2615,7 +2615,7 @@
       var tw = topWeeks(p); if (tw.length && !wkList(p).length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
         return '<div class="row"><div class="nm">Week ' + x.wk + '</div><div class="rt">' + f2(x.pts) + '<small>#' + x.rank + ' on the team</small></div></div>'; }).join("") + '</div>'; }
     // 🎱 tidbit
-    if (tid) h += '<div class="card ptid"><div class="eb">🎱 From the 8 Ball</div><b>' + esc(tid.hook) + '</b><p>' + esc(tid.line) + '</p></div>';
+    if (tid) h += '<div class="card ptid"><div class="eb">💡 Auction Draft Insight</div><b>' + esc(tid.hook) + '</b><p>' + esc(tid.line) + '</p></div>';
     // MAFFL auction story
     if (hs.length) {
       var mx = Math.max.apply(null, hs.map(function (x) { return x.$; })), lo = hs.reduce(function (m, x) { return x.$ < m.$ ? x : m; }), hi2 = hs.reduce(function (m, x) { return x.$ > m.$ ? x : m; });
