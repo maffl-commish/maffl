@@ -19,7 +19,7 @@ function offer_(me, b) {
   var id = "T" + Utilities.getUuid().slice(0, 8).toUpperCase(), now = new Date();
   // A counter declines the offer it answers (one step, so the thread shows one "countered" card, not two).
   var co = b.counterOf ? offerRow_(b.counterOf) : null, isCounter = !!(co && co.status === "PROPOSED" && norm_(co.to_owner) === norm_(me.owner) && norm_(co.from_owner) === norm_(to.owner));
-  sheet_("Offers").appendRow([id, now, from.owner, to.owner, from.tier, JSON.stringify(give), JSON.stringify(get), gc, tc, safe_(String(b.note || "").slice(0, 200)), "PROPOSED", now, "", JSON.stringify((b.reasons || []).slice(0, 6).map(function (r) { return String(r).slice(0, 30); }))]);
+  sheet_("Offers").appendRow(cells_([id, now, from.owner, to.owner, from.tier, JSON.stringify(give), JSON.stringify(get), gc, tc, safe_(String(b.note || "").slice(0, 200)), "PROPOSED", now, "", JSON.stringify((b.reasons || []).slice(0, 6).map(function (r) { return String(r).slice(0, 30); }))]));
   log_(me.owner, "offer", id, "PROPOSED", "", to.owner);
   if (isCounter) { setOffer_(co, "DECLINED", "Countered"); log_(me.owner, "offer", co.offer_id, "DECLINED", "", "counter " + id); }
   post_(roomDM_(from.owner, to.owner), from.owner, "offer", b.note, id, isCounter ? "COUNTER" : "PROPOSED");
@@ -122,7 +122,7 @@ function perk_(me, b) {
     return { ok: false, error: "Division Swaps are off-season only (open when provisional divisions post; lock Labor Day Eve)" };
   }
   var cost = P.cost * qty, id = "P" + Utilities.getUuid().slice(0, 8).toUpperCase();
-  sheet_("Perks").appendRow([id, now, me.owner, me.tier, b.perk, cost, qty, week || "", player, pos, swapWith, JSON.stringify(affects), String(b.note || "").slice(0, 200), "REQUESTED", now, ""]);
+  sheet_("Perks").appendRow(cells_([id, now, me.owner, me.tier, String(b.perk), cost, qty, week || "", player, pos, swapWith, JSON.stringify(affects), String(b.note || "").slice(0, 200), "REQUESTED", now, ""]));
   log_(me.owner, "perk", id, "REQUESTED", week || "", b.perk);
   deskPost_("perk", String(b.note || "").slice(0, 200), id, "REQUESTED");
   try {

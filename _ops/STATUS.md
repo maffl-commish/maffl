@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Phase 1: no typed text can become a Sheet formula (audit B1): one `safe_()` in the core now guards every owner-typed write (Events: reactions, votes, block notes; passphrase requests; perks; offers; every setCell_), and the email check is strict. Backend logic v0.28.
 - 2026-11-07 · REEL · Phase 1: backend regression no longer depends on the clock (regress.js freezes time at Sat 11/7 10 AM ET; it failed after 5 PM and would fail after the Dec 2 trade deadline).
 - 2026-11-07 · REEL · Readiness audit: `_ops/AUDIT_2026-11-07_reel_readiness.md` (backend, app, classic → REEL map of 91 elements). Not ready for real owners yet: 4 backend blockers (formula injection exposes passphrase hashes, guessable passphrases, lockout abuse, no server credit-balance check) + fake Test scores on by default + lab wording. Fix plan in 3 phases. Nothing changed in code.
 - 2026-11-07: REEL chat: tapping the message box no longer shows the Home feed behind the chat (the tab underneath is hidden while chat is open, so the iPhone keyboard can't uncover it).

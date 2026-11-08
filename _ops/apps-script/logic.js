@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.27";
+var VERSION = "0.28";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -146,9 +146,12 @@ function hash_(salt, pin) {
   var raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ":" + normPin_(pin));
   return raw.map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join("");
 }
+// Never let typed text become a Sheet formula: a string starting with = + - @ is stored with a leading ' (as text).
+function safe_(s) { s = String(s == null ? "" : s); return /^[=+\-@]/.test(s) ? "'" + s : s; }
+function cells_(row) { return row.map(function (v) { return typeof v === "string" ? safe_(v) : v; }); }
 function setCell_(name, row, header, value) {
   var sh = sheet_(name), head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
-  sh.getRange(row, head.indexOf(header) + 1).setValue(value);
+  sh.getRange(row, head.indexOf(header) + 1).setValue(typeof value === "string" ? safe_(value) : value);
 }
 
 // ---------------------------------------------------------------- auth
@@ -200,7 +203,7 @@ function withAuth_(b, fn) {
 // ---------------------------------------------------------------- writes
 function log_(owner, type, ref, value, week, meta) {
   if (!ref) return { ok: false, error: "missing ref" };
-  sheet_("Events").appendRow([new Date(), owner, type, String(ref).slice(0, 120), String(value || "").slice(0, 40), week || "", meta || ""]);
+  sheet_("Events").appendRow(cells_([new Date(), String(owner || ""), String(type || ""), String(ref).slice(0, 120), String(value || "").slice(0, 40), week || "", String(meta || "")]));
   return { ok: true };
 }
 function vote_(owner, poll, choice, week) {
@@ -215,7 +218,7 @@ function request_(owner, note) {
   var dayAgo = Date.now() - 864e5;
   var recent = rows_("Requests").filter(function (r) { return norm_(r.owner) === norm_(owner) && new Date(r.ts).getTime() > dayAgo; });
   if (recent.length >= 3) return { ok: false, error: "Already requested. The commish will text you." };
-  sheet_("Requests").appendRow([new Date(), o.owner, String(note || "").slice(0, 300), "OPEN", "", ""]);
+  sheet_("Requests").appendRow(cells_([new Date(), o.owner, String(note || "").slice(0, 300), "OPEN", "", ""]));
   var to = Session.getEffectiveUser().getEmail();
   MailApp.sendEmail(to, "MAFFL HQ: passphrase request from " + o.owner,
     o.owner + " (" + o.team + ") asked for their PIN.\n\nNote: " + (note || "—") +
@@ -241,7 +244,7 @@ function settings_(me) {
 function saveSettings_(me, b) {
   var email = String(b.email || "").trim().slice(0, 120), digits = String(b.phone || "").replace(/\D/g, "");
   if (digits.length === 11 && digits[0] === "1") digits = digits.slice(1);
-  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok: false, error: "That email doesn't look right" };
+  if (email && !/^[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) return { ok: false, error: "That email doesn't look right" };
   if (digits && digits.length !== 10) return { ok: false, error: "Phone needs 10 digits" };
   var n = {}, any = false; NOTIFY_KEYS.forEach(function (k) { n[k] = !!(b.notify || {})[k]; any = any || n[k]; });
   if (any && !email) return { ok: false, error: "Add your email to turn on emails" };
