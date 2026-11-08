@@ -11,13 +11,20 @@ function offer_(me, b) {
   var to = ownerRow_(b.to), from = ownerRow_(me.owner);
   if (!to || norm_(to.owner) === norm_(me.owner)) return { ok: false, error: "Pick a trade partner" };
   if (String(to.tier) !== String(from.tier)) return { ok: false, error: "Trades stay inside your tier" };
-  var give = (b.give || []).slice(0, 20), get = (b.get || []).slice(0, 20);
+  var give = (b.give || []).slice(0, 20).map(function (x) { return String(x).slice(0, 60); }), get = (b.get || []).slice(0, 20).map(function (x) { return String(x).slice(0, 60); });
   var gc = Math.max(0, Math.floor(Number(b.giveCredits) || 0)), tc = Math.max(0, Math.floor(Number(b.getCredits) || 0));
   if (!give.length && !get.length) return { ok: false, error: "Every trade needs at least one player" };
   if (!give.length && !gc) return { ok: false, error: "You have to send something" };
   if (!get.length && !tc) return { ok: false, error: "You have to get something back" };
   var short = creditShort_(from.owner, gc, { offer: b.counterOf }, "you") || creditShort_(to.owner, tc, {}, to.team);
   if (short) return { ok: false, error: short };
+  var bad = rosterProblem_(from.tier, from.owner, give, "you") || rosterProblem_(from.tier, to.owner, get, to.team);
+  if (bad) return { ok: false, error: bad };
+  // Same offer sent twice in a few minutes (double tap, or a retry after a lost answer): hand back the first one.
+  var key = JSON.stringify([give.slice().sort(), get.slice().sort(), gc, tc]), dup = rows_("Offers").filter(function (o) {
+    return o.status === "PROPOSED" && norm_(o.from_owner) === norm_(from.owner) && norm_(o.to_owner) === norm_(to.owner) && Date.now() - new Date(o.ts).getTime() < 10 * 6e4 &&
+      JSON.stringify([JSON.parse(o.give || "[]").sort(), JSON.parse(o.get || "[]").sort(), Number(o.give_credits) || 0, Number(o.get_credits) || 0]) === key; })[0];
+  if (dup) return { ok: true, offer_id: dup.offer_id, room: roomDM_(from.owner, to.owner), duplicate: true };
   var id = "T" + Utilities.getUuid().slice(0, 8).toUpperCase(), now = new Date();
   // A counter declines the offer it answers (one step, so the thread shows one "countered" card, not two).
   var co = b.counterOf ? offerRow_(b.counterOf) : null, isCounter = !!(co && co.status === "PROPOSED" && norm_(co.to_owner) === norm_(me.owner) && norm_(co.from_owner) === norm_(to.owner));
@@ -47,7 +54,7 @@ function respond_(me, id, decision, quiet) {
   var next = { accept: isTo && "ACCEPTED", decline: isTo && "DECLINED", withdraw: isFrom && "WITHDRAWN" }[decision];
   if (!next) return { ok: false, error: "You can't do that to this offer" };
   if (next === "ACCEPTED" && new Date() > TRADE_DEADLINE) return { ok: false, error: "The trade deadline has passed" };
-  if (next === "ACCEPTED") { var short = creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, "you") || creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner));
+  if (next === "ACCEPTED") { var short = creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, "you") || creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner)) || tradeProblem_(o, "you");
     if (short) return { ok: false, error: short }; }
   setOffer_(o, next); log_(me.owner, "offer", id, next, "", "");
   post_(roomDM_(o.from_owner, o.to_owner), me.owner, "offer", "", id, next);
@@ -62,7 +69,7 @@ function commish_(me, id, decision, reason) {
   if (o.status !== "ACCEPTED") return { ok: false, error: "Only accepted trades can be approved or negated" };
   var next = decision === "approve" ? "APPROVED" : decision === "negate" ? "NEGATED" : null;
   if (!next) return { ok: false, error: "approve or negate" };
-  if (next === "APPROVED") { var short = creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner)) || creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, teamName_(o.to_owner));
+  if (next === "APPROVED") { var short = creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner)) || creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, teamName_(o.to_owner)) || tradeProblem_(o, teamName_(o.to_owner));
     if (short) return { ok: false, error: short + " Negate it, or wait for their balance." }; }
   setOffer_(o, next, reason); log_(me.owner, "commish", id, next, "", String(reason || ""));
   post_(roomDM_(o.from_owner, o.to_owner), BOT, "offer", reason, id, next);
@@ -89,6 +96,35 @@ function trades_(owner) {
     if (e.value === "on") block[e.ref] = { owner: e.owner, note: e.meta }; else if (block[e.ref] && norm_(block[e.ref].owner) === norm_(e.owner)) delete block[e.ref];
   });
   return { offers: offers, block: block };
+}
+
+// ---------------------------------------------------------------- roster checks
+// Players in a trade must be on that side's ESPN roster (rosters_ is cached 30 min). If ESPN can't be read at all, the
+// check steps aside (the commish still reviews every trade). who = "you" or the other team's name.
+function rosterProblem_(tier, owner, names, who) {
+  if (!names.length) return null;
+  var r = null; try { r = rosters_(tier); } catch (e) { return null; }
+  var team = ((r && r.teams) || []).filter(function (t) { return norm_(t.owner) === norm_(owner); })[0]; if (!team) return null;
+  var have = {}; team.players.forEach(function (p) { have[norm_(p.n)] = 1; });
+  var gone = names.filter(function (n) { return !have[norm_(n)]; });
+  if (!gone.length) return null;
+  return gone.join(", ") + (gone.length === 1 ? " isn't" : " aren't") + " on " + (who === "you" ? "your" : who + "'s") + " ESPN roster" + (gone.length === 1 ? "" : "s") + " right now.";
+}
+// Accept / approve: rosters still hold, and no player is already in another accepted trade (or one approved in the last
+// 3 days whose ESPN move may not show yet).
+function tradeProblem_(o, who) {
+  var give = JSON.parse(o.give || "[]"), get = JSON.parse(o.get || "[]");
+  var bad = rosterProblem_(o.tier, o.from_owner, give, teamName_(o.from_owner)) || rosterProblem_(o.tier, o.to_owner, get, who);
+  if (bad) return bad;
+  var mine = {}; give.concat(get).forEach(function (n) { mine[norm_(n)] = n; });
+  var clash = null;
+  rows_("Offers").forEach(function (x) {
+    if (clash || String(x.offer_id) === String(o.offer_id) || String(x.tier) !== String(o.tier)) return;
+    var live = x.status === "ACCEPTED" || (x.status === "APPROVED" && Date.now() - new Date(x.updated_ts).getTime() < 3 * 864e5);
+    if (!live) return;
+    JSON.parse(x.give || "[]").concat(JSON.parse(x.get || "[]")).forEach(function (n) { if (!clash && mine[norm_(n)]) clash = mine[norm_(n)]; });
+  });
+  return clash ? clash + " is already in another accepted trade." : null;
 }
 
 // ---------------------------------------------------------------- credit balance (server-side check)
@@ -168,6 +204,9 @@ function perk_(me, b) {
     return { ok: false, error: "Division Swaps are off-season only (open when provisional divisions post; lock Labor Day Eve)" };
   }
   var cost = P.cost * qty, id = "P" + Utilities.getUuid().slice(0, 8).toUpperCase();
+  var dup = rows_("Perks").filter(function (r) { return r.status === "REQUESTED" && norm_(r.owner) === norm_(me.owner) && r.perk === b.perk && Number(r.qty) === qty &&
+    String(r.week || "") === String(week || "") && String(r.player || "") === player && String(r.swap_with || "") === swapWith && Date.now() - new Date(r.ts).getTime() < 10 * 6e4; })[0];
+  if (dup) return { ok: true, perk_id: dup.perk_id, cost: Number(dup.cost) || cost, duplicate: true }; // double tap / retry: the first request stands
   var short = creditShort_(me.owner, cost, {}, "you"); if (short) return { ok: false, error: short };
   sheet_("Perks").appendRow(cells_([id, now, me.owner, me.tier, String(b.perk), cost, qty, week || "", player, pos, swapWith, JSON.stringify(affects), String(b.note || "").slice(0, 200), "REQUESTED", now, ""]));
   log_(me.owner, "perk", id, "REQUESTED", week || "", b.perk);

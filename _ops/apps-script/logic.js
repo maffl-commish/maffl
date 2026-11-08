@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.31";
+var VERSION = "0.32";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -245,15 +245,16 @@ function vote_(owner, poll, choice, week) {
 function request_(owner, note) {
   var o = ownerRow_(owner);
   if (!o) return { ok: false, error: "Pick your name from the list" };
-  var dayAgo = Date.now() - 864e5;
-  var recent = rows_("Requests").filter(function (r) { return norm_(r.owner) === norm_(owner) && new Date(r.ts).getTime() > dayAgo; });
-  if (recent.length >= 3) return { ok: false, error: "Already requested. The commish will text you." };
+  var dayAgo = Date.now() - 864e5, v = sheet_("Requests").getDataRange().getValues(), recent = 0; // by position: ts, owner (header names vary)
+  for (var i = 1; i < v.length; i++) if (norm_(v[i][1]) === norm_(o.owner) && new Date(v[i][0]).getTime() > dayAgo) recent++;
+  if (recent >= 3) return { ok: false, error: "Already requested. The commish will text you." };
   sheet_("Requests").appendRow(cells_([new Date(), o.owner, String(note || "").slice(0, 300), "OPEN", "", ""]));
-  var to = Session.getEffectiveUser().getEmail();
+  var cache = CacheService.getScriptCache(), sentHr = Number(cache.get("reqmail") || 0); // at most 10 request emails an hour (the desk still gets every one)
+  if (sentHr < 10) try { cache.put("reqmail", String(sentHr + 1), 3600); var to = Session.getEffectiveUser().getEmail();
   MailApp.sendEmail(to, "MAFFL HQ: passphrase request from " + o.owner,
     o.owner + " (" + o.team + ") asked for their PIN.\n\nNote: " + (note || "—") +
     "\n\nTo finish: open the MAFFL HQ App Sheet → MAFFL menu → Set / reset a passphrase, text it to them, then MAFFL → Mark request done.\n" +
-    SpreadsheetApp.getActive().getUrl());
+    SpreadsheetApp.getActive().getUrl()); } catch (e) {}
   deskPost_("access", String(note || "").slice(0, 300), o.owner, "REQUEST");
   return { ok: true };
 }
