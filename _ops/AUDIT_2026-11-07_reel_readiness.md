@@ -13,6 +13,8 @@ hurt real users. The beta crew (nephews) can start once Phase 1 is done.
 
 ## Phase 1: before the beta crew (blockers)
 
+**✅ Phase 1 shipped 11/7** (backend v0.28–0.30 + lab): formula guard, device tokens + no auto-lockouts + GRONK-PISTOL-427 peppered passphrases, server credit checks, test scores testers-only, beta wording with a `STAGE` switch. Regression test no longer clock-dependent. Before the crew starts: issue them **new** passphrases (old two-word ones still work but are the weak kind).
+
 | # | Issue | Why it matters | Fix |
 |---|---|---|---|
 | 1 | **Formula injection** (A·B1): Events, the email setting, the request note and perk notes skip `safe_()` | A reaction or note like `=JOIN(...Owners!D:E)` turns into a Sheet formula, and the public summary returns every passphrase hash | Run `safe_()` inside `log_`, settings, request and perk writes; reject a leading `= + - @` in email |

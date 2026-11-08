@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Phase 1 of the readiness audit complete (audit doc + REEL.md updated). Next: Phase 2 (robustness) and Phase 3 (go-live switch).
 - 2026-11-07 · REEL · Phase 1: lab wording gone (audit front-end B2). Home-Screen name is "MAFFL HQ" (was "MAFFL HQ · Lab"); the top strip says "Beta · trades & credit spends are practice runs"; More → About MAFFL HQ explains the beta in plain words. One switch for go-live: `STAGE = "live"` hides both (REEL.md roadmap step 4).
 - 2026-11-07 · REEL · Phase 1: 🧪 Test scores are testers-only and opt-in (audit front-end B1): only the commish and the beta crew see the turn-on pill, it starts off, and owners never see made-up points or a fake ✖️2. Before kickoff Match now says "Week N · Not kicked off yet" instead of LIVE.
 - 2026-11-07 · REEL · Phase 1: the server now checks credit balances (audit B4): official Credit_Log + unposted app approvals − holds (open perk requests, offers you'd pay into). Checked on send (both legs), accept, commish approve, perk request and perk approve; a 999,999-credit offer or repeat FAAB buys past the balance are refused with the real number. Backend logic v0.30.
