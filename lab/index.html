@@ -870,7 +870,9 @@
   function ld(msg, cls) { return '<div class="ld' + (cls ? " " + cls : "") + '"><span class="spin"></span><span>' + esc(msg || "Loading…") + '</span></div>'; }
   // The signed-in summary is the slowest call (Apps Script + the Sheet). Start it right away, alongside the
   // static files, and paint from this phone's last copy until the fresh one lands.
-  var SUM_OK = false, SUM_KEY = "maffl_lab_sum", EARLY_SUM = null;
+  var SUM_OK = false, SUM_FAIL = false, SUM_KEY = "maffl_lab_sum", EARLY_SUM = null;
+  // While the signed-in summary is on its way: a spinner. If it couldn't be fetched: say so, with Try again.
+  function sumWait(msg) { return SUM_FAIL ? '<div class="pad" style="text-align:center"><p class="p"><b>Couldn\'t reach the league server.</b></p><p class="meta" style="margin:4px 0 12px">Check your signal, then try again.</p><button class="b pri sumRetry" style="display:block;margin:0 auto">Try again</button></div>' : ld(msg); }
   (function () {
     var o = store("maffl_lab_owner"), pin = store("maffl_lab_pin"); if (!API_URL || !o || !pin) return;
     EARLY_SUM = api("summary", { owner: o, pin: pin });
@@ -1143,8 +1145,9 @@
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
-    }).catch(function () {});
+    }).catch(function () { if (SUM_OK) return; SUM_FAIL = true; refreshTeam(); if (CH.open && CH.view === "inbox") drawInbox(); });
   }
+  document.addEventListener("click", function (e) { if (!e.target.closest(".sumRetry")) return; SUM_FAIL = false; refreshTeam(); if (CH.open && CH.view === "inbox") drawInbox(); loadSummary(); });
 
   // ---------- HOME ----------
   var GROUPS = [];
@@ -2161,7 +2164,14 @@
         : 'You\'re on the beta of the new MAFFL HQ. Scores, standings and history are real. Trades, credit spends, polls and chat run on a practice copy that gets wiped before launch, so nothing here changes official league records.') +
         (API_URL ? '' : ' Demo mode: reactions stay on this phone.') + '</p><p class="meta" id="srvver" style="margin-top:6px"></p></div>' + errsBlock();
     if (API_URL) apiGet({}).then(function (r) { if (r && r.version) $("srvver").textContent = "League server v" + r.version + (r.logic === "repo" ? " (auto-updates from the repo)" : ""); }).catch(function () {});
-    $("mSwitch").onclick = function () { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); };
+    $("mSwitch").onclick = function () {
+      if (!API_URL) { store("maffl_lab_pin", ""); store("maffl_lab_owner", ""); showWelcome(); return; }
+      confirmBox("Sign out?", '<p class="p">You\'ll need your passphrase to sign back in. Everything the app saved on this phone (contacts, chats, scores) is cleared.</p>', "Sign out", true).then(function (ok) {
+        if (!ok) return;
+        try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("maffl_lab_") === 0) localStorage.removeItem(k); }); } catch (e) {}
+        location.reload(); // a clean start: nothing of this owner left in memory either
+      });
+    };
     $("mReq").onclick = function () { showWelcome(true); };
     $("mTour").onclick = function () { tourClear(); toast("Tour reset: open any tab"); tab("home"); };
     if ($("mSet")) $("mSet").onclick = openSettings;
@@ -2475,7 +2485,7 @@
   }
   function tradesHTML() {
     if (!API_URL) return '<div class="card"><p>Trades need the league server (demo mode is off-line).</p></div>';
-    if (!SUM_OK) return '<div class="card">' + ld("Loading trades…") + '</div>';
+    if (!SUM_OK) return '<div class="card">' + sumWait("Loading trades…") + '</div>';
     var all = offersFor(ME), dead = new Date(SUM.deadline || "2026-12-02T17:00:00Z"), days = Math.ceil((dead - Date.now()) / 864e5);
     var waitingMe = all.filter(needsMe), waitingThem = all.filter(function (o) { return o.status === "PROPOSED" && isMe(o.from); });
     var review = all.filter(function (o) { return o.status === "ACCEPTED" && !needsMe(o); }), done = all.filter(function (o) { return ["APPROVED", "NEGATED", "DECLINED", "WITHDRAWN"].indexOf(o.status) >= 0; }).slice(-8).reverse();
@@ -2539,7 +2549,7 @@
     return h + (btn ? '<div class="btns">' + btn + '</div>' : '') + '</div>';
   }
   function perksHTML() {
-    if (API_URL && !SUM_OK) return '<div class="card">' + ld("Loading your perks…") + '</div>';
+    if (API_URL && !SUM_OK) return '<div class="card">' + sumWait("Loading your perks…") + '</div>';
     var all = SUM.perks || [], mine = all.filter(function (p) { return isMe(p.owner); }).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); });
     var queue = ME.commish ? all.filter(function (p) { return p.status === "REQUESTED" && !isMe(p.owner); }) : [];
     var vs = all.filter(function (p) { return !isMe(p.owner) && (isMe(p.swapWith) || (p.affects || []).some(isMe)) && p.status !== "CANCELED" && p.status !== "DENIED" && (p.week || 0) > W.weekNumber && queue.indexOf(p) < 0; });
@@ -3481,7 +3491,7 @@
   function tmpMsg(id) { return CH.data ? CH.data.messages.filter(function (m) { return m.id === id && (m.failed || m.pending); })[0] : null; }
   function drawInbox() {
     var ib = inboxOf(), body = $("cbody"), h = "";
-    if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = ld("Loading your chats…"); return; }
+    if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = sumWait("Loading your chats…"); return; }
     {
       var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.room !== "desk"; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
       if (!rooms.length) rooms = [{ room: "league", unread: 0 }, { room: "tier:" + ME.tier, unread: 0 }];
@@ -3786,8 +3796,9 @@
     if (!ME) return; buildTeams(); reME();
     Object.keys(RENDER).forEach(function (k) { if (!guard(k, RENDER[k])) snag(k); }); tab(CUR_TAB);
   }
-  function dailyLine(owner, key) { var o = DLY && DLY.lines && DLY.lines.owners && DLY.lines.owners[owner]; return o && o[key] || ""; }
-  function tierLine(tier, key) { var t = DLY && DLY.lines && DLY.lines.tiers && DLY.lines.tiers[tier]; return t && t[key] || ""; }
+  // Card lines are written for the newest week only: a replayed week (League → Weeks) falls back to its own notes.
+  function dailyLine(owner, key) { if (W !== LATEST) return ""; var o = DLY && DLY.lines && DLY.lines.owners && DLY.lines.owners[owner]; return o && o[key] || ""; }
+  function tierLine(tier, key) { if (W !== LATEST) return ""; var t = DLY && DLY.lines && DLY.lines.tiers && DLY.lines.tiers[tier]; return t && t[key] || ""; }
   function applyDaily(r) {
     if (!r || !r.snapshot || !r.snapshot.tiers) return; DLY = r;
     var T = r.snapshot.tiers, U = T.U, L = T.L; if (!U || !L) return;
@@ -3881,7 +3892,9 @@
     if (/^chat/.test(h)) setTimeout(function () { openChat(decodeURIComponent(h.split("=")[1] || "") || null); }, 400); // #chat or #chat=<room> deep link
   }
   loadPulse().then(function () { guard("daily", function () { applyDaily(dailyCached()); }); buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); loadDaily(); })
-    .catch(function (e) { $("boot").textContent = "Couldn't load the league data (" + e.message + ")."; });
+    .catch(function (e) { // no league data, no app: say so plainly and offer a reload (a Home-Screen app has no reload button)
+      $("boot").innerHTML = '<img alt="" src="../maffl-logo.png"><b>Couldn\'t load the league</b><small>Check your signal, then try again.</small>' +
+        '<button class="b pri" style="margin-top:14px;min-width:160px" onclick="location.reload()">Try again</button><small style="margin-top:10px;opacity:.6">' + esc(String((e && e.message) || "")) + '</small>'; });
 })();
 </script>
 </body>
