@@ -2,7 +2,8 @@
 /**
  * MAFFL HQ App — backend LOADER (Google Apps Script, bound to the "MAFFL HQ App" Sheet).
  *
- * This file should never need to change again. It fetches the real logic from the repo
+ * Changes rarely (last: 2026-11-07, last-good fallback). After pasting a new copy: Deploy → Manage deployments → ✏️ → New version.
+ * Otherwise it never needs to change. It fetches the real logic from the repo
  * (_ops/apps-script/logic.js on main), caches it for 5 minutes, and runs it. Claude ships
  * backend changes by pushing logic.js; nobody re-pastes or redeploys.
  *
@@ -16,16 +17,20 @@
 var LOGIC_URL = "https://raw.githubusercontent.com/maffl-commish/maffl/main/_ops/apps-script/logic.js";
 
 function logic_(fresh) {
-  var cache = CacheService.getScriptCache(), src = fresh ? null : cache.get("logic");
+  // Fresh copy every 5 minutes; a 6-hour last-good copy covers a GitHub hiccup or a push that won't compile.
+  var cache = CacheService.getScriptCache(), src = fresh ? null : cache.get("logic"), M, res = null, got = false;
   if (!src) {
-    var res = UrlFetchApp.fetch(LOGIC_URL + "?t=" + Date.now(), { muteHttpExceptions: true });
-    if (res.getResponseCode() !== 200) throw new Error("Couldn't load logic.js (" + res.getResponseCode() + ")");
-    src = res.getContentText();
-    if (src.length < 95000) cache.put("logic", src, 300);
+    try { res = UrlFetchApp.fetch(LOGIC_URL + "?t=" + Date.now(), { muteHttpExceptions: true }); } catch (e) {}
+    if (res && res.getResponseCode() === 200) { src = res.getContentText(); got = true; }
   }
-  var M = {};
-  (new Function("M", src))(M);
-  return M;
+  if (src) {
+    try { M = {}; (new Function("M", src))(M); if (!M.doPost) throw new Error("no doPost");
+      if (got && src.length < 95000) { cache.put("logic", src, 300); cache.put("logic_last", src, 21600); } return M; }
+    catch (e) { cache.remove("logic"); }
+  }
+  var last = cache.get("logic_last");
+  if (!last) throw new Error("Couldn't load logic.js" + (res ? " (" + res.getResponseCode() + ")" : ""));
+  M = {}; (new Function("M", last))(M); return M;
 }
 
 function doGet(e) { return logic_().doGet(e); }
