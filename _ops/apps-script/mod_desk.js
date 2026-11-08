@@ -45,10 +45,16 @@ function desk_(me) {
 // 👋 Welcome tour reset (commish 11/7): a new stamp in the Owners "tour" column; summary hands it to that owner's app,
 // which clears its "seen" marks once per new stamp and replays the tour. "T" prefix keeps the Sheet from making it a date.
 function tourStamp_(o) { ensureCol_("Owners", "tour"); setCell_("Owners", o._row, "tour", "T" + Date.now()); }
+// One daily run at a time (the button and the 5 AM / 5 PM tick can overlap).
+function dailyOnce_(why) {
+  var c = CacheService.getScriptCache(); if (c.get("daily_running")) return { ok: false, error: "The daily run is already going. Give it a few minutes." };
+  c.put("daily_running", "1", 360);
+  try { need_("daily"); return DAILY.run(why); } finally { c.remove("daily_running"); }
+}
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
   if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
-  if (b.op === "daily") { need_("daily"); return DAILY.run("button"); } // "Run daily now"
+  if (b.op === "daily") return dailyOnce_("button"); // "Run daily now" (doPost runs this one outside the lock)
   if (b.op === "award" || b.op === "awardall") return awardAct_(b);
   if (b.op === "poll" || b.op === "pollclose") return poll_(me, b);
   if (b.op === "announce") return announce_(me, b);
@@ -138,7 +144,17 @@ function putLines_(b) {
 // the others), posts to the 📥 desk at most once per thing (keys remembered in Script property TICK_SENT), and
 // never changes a perk, trade or credit by itself: it reminds, checks and reports.
 var HOUR = 36e5;
-function tickSent_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("TICK_SENT") || "{}"); } catch (e) { return {}; } }
+// The memory of what's been sent is split over TICK_SENT, TICK_SENT_1, … (Apps Script caps one property at 9 KB).
+function tickSent_() {
+  var p = PropertiesService.getScriptProperties(), s = p.getProperty("TICK_SENT") || "", i = 1, more;
+  while ((more = p.getProperty("TICK_SENT_" + i))) { s += more; i++; }
+  try { return JSON.parse(s || "{}"); } catch (e) { return {}; }
+}
+function saveTickSent_(sent) {
+  var p = PropertiesService.getScriptProperties(), s = JSON.stringify(sent), CH = 8000, n = Math.max(1, Math.ceil(s.length / CH));
+  for (var i = 0; i < n; i++) p.setProperty(i ? "TICK_SENT_" + i : "TICK_SENT", s.slice(i * CH, (i + 1) * CH));
+  for (var j = n; p.getProperty("TICK_SENT_" + j); j++) p.deleteProperty("TICK_SENT_" + j);
+}
 function once_(sent, key, fn) { if (sent[key]) return false; fn(); sent[key] = Date.now(); return true; }
 function etHour_(d) { return Number(Utilities.formatDate(d || new Date(), "America/New_York", "H")); }
 function etDay_(d) { return Utilities.formatDate(d || new Date(), "America/New_York", "yyyy-MM-dd"); }
@@ -147,7 +163,7 @@ function tick() {
   var lock = LockService.getScriptLock(), r = { ok: false, error: "busy" };
   if (lock.tryLock(20000)) { try { r = tickRun_(); } finally { lock.releaseLock(); } }
   // In-season daily run, 5 AM + 5 PM ET (daily.js). Outside the lock: it only writes its own tabs, and can take a minute.
-  try { need_("daily"); if (DAILY.due()) r.daily = DAILY.run("tick"); } catch (e) { r.daily = { ok: false, error: String(e.message || e) }; deskPost_("alert", "Daily run didn't start: " + String(e.message || e).slice(0, 160), "", "DAILY"); }
+  try { need_("daily"); if (DAILY.due()) r.daily = dailyOnce_("tick"); } catch (e) { r.daily = { ok: false, error: String(e.message || e) }; deskPost_("alert", "Daily run didn't start: " + String(e.message || e).slice(0, 160), "", "DAILY"); }
   return r;
 }
 // ---------------------------------------------------------------- ⏱️ tick jobs
@@ -162,7 +178,7 @@ function tickRun_() {
     var day = etDay_(now);
     if (etHour_(now) >= 3 && props.getProperty("TICK_DAILY") !== day) { props.setProperty("TICK_DAILY", day); job("reconcile", function () { return tickReconcile_(sent, now); }); }
     Object.keys(sent).forEach(function (k) { if (now - sent[k] > 60 * 864e5) delete sent[k]; }); // forget after 60 days
-    props.setProperty("TICK_SENT", JSON.stringify(sent));
+    saveTickSent_(sent);
     props.setProperty("LAST_TICK", JSON.stringify({ at: now.toISOString(), log: log.slice(0, 12) }));
     return { ok: true, log: log };
   } catch (e) { return { ok: false, error: String(e) }; }

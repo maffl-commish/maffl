@@ -66,6 +66,11 @@ function post_(room, owner, kind, text, ref, event, mentions, replyTo) {
   return { id: id, ts: now };
 }
 function markRead_(owner, room, ts) {
+  var lock = LockService.getScriptLock(), mine = lock.hasLock();
+  if (!mine && !lock.tryLock(1500)) return; // chat reads run without the script lock; marking read can wait for the next poll
+  try { markRead0_(owner, room, ts); } finally { if (!mine) lock.releaseLock(); }
+}
+function markRead0_(owner, room, ts) {
   var hit = rows_("Reads").filter(function (r) { return norm_(r.owner) === norm_(owner) && r.room === room; })[0];
   if (hit) { if (new Date(hit.ts) < ts) setCell_("Reads", hit._row, "ts", ts); }
   else sheet_("Reads").appendRow([owner, room, ts]);

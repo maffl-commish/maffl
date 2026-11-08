@@ -248,7 +248,7 @@ DAILY.run = function (why) {
   if (why === "tick" ? false : tkAge === null || tkAge > 60) problems.push("the 15-minute robot hasn't run in " + (tkAge === null ? "ever" : Math.round(tkAge) + " min"));
   var weeks = {}; Object.keys(snap.tiers).forEach(function (t) { weeks[t] = snap.tiers[t].last; });
   var lines = "skipped"; if (Object.keys(snap.tiers).length) { try { lines = DAILY.afterRun(); } catch (e) { lines = "error: " + e.message; } }
-  props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), ver: DAILY.VER, lines: lines, weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log, problems: problems, secs: Math.round((Date.now() - t0) / 1000) }));
+  props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), ver: DAILY.VER, lines: lines, weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log.slice(0, 20), problems: problems.slice(0, 20), secs: Math.round((Date.now() - t0) / 1000) }));
   if (log.length || digest.length) deskPost_("robot", ("🌅 Daily run" + (log.length ? ": " + log.join(" · ") : "") + (digest.length ? "\n🧪 Beta: " + digest.join(" · ") : "")).slice(0, CHAT_MAX), "", "OK");
   if (problems.length) deskPost_("alert", "Daily run trouble: " + problems.join(" · "), "", "DAILY");
   return { ok: !problems.length, log: log, problems: problems, digest: digest };

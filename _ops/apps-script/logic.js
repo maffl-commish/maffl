@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.30";
+var VERSION = "0.31";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -26,7 +26,7 @@ function perkDeadline_(week) {
   var ymd = d.toISOString().slice(0, 10), hm = week === 12 ? "11:30" : "18:00";
   return new Date(ymd + "T" + hm + ":00" + (dst ? "-04:00" : "-05:00"));
 }
-var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
+var MAX_FAILS_PER_HOUR = 60; // league-wide guess limit for passphrase-only sign-in (raised 11/7: phrases now ~6 million, phones use tokens)
 
 // Passphrases are two football words and 3 digits, e.g. GRONK-PISTOL-427 (older ones: two words). Case, spaces and dashes don't matter when typing.
 var WORDS_A = ["GRONK","BLITZ","PISTOL","HAIL","WILDCAT","SHOTGUN","NICKEL","DIME","REDZONE","AUDIBLE","SPIKE","LAMBEAU",
@@ -54,7 +54,9 @@ function normPin_(pin) { return String(pin || "").toUpperCase().replace(/[^A-Z0-
 function doGet(e) {
   var p = (e && e.parameter) || {};
   try {
-    if (p.action === "summary") return json(summary_(p.week, null));
+    if (p.action === "summary") { // public counts: cached a minute so anonymous calls can't keep the Sheet busy
+      var pc = CacheService.getScriptCache(), pk = "pubsum:" + (p.week || ""), hit = pc.get(pk); if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
+      var pub = JSON.stringify(summary_(p.week, null)); try { pc.put(pk, pub, 60); } catch (e) {} return ContentService.createTextOutput(pub).setMimeType(ContentService.MimeType.JSON); }
     if (p.action === "live") { try { return json(live_(p.tier, p.week)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // public counts only; private data needs POST + passphrase
     if (p.action === "rosters") { try { return json(rosters_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // what ESPN shows on each roster (public to the league anyway)
     if (p.action === "daily") { need_("daily"); return json(DAILY.view()); } // scores, standings, Coach, Survivor, moves, card lines (league-public)
@@ -74,13 +76,16 @@ function doPost(e) {
     var fast = auth_(b.owner, b.pin);
     if (!fast.ok) return json(fast);
     try {
+      if (b.action === "chat") return json(chat_(fast, b)); // marks the room read with a short lock of its own (markRead_)
       if (b.action !== "summary") return json({ ok: true, chat: inbox_(fast) });
       var sum = summary_(b.week, fast.owner); if (fast.viaPhrase) sum.token = token_(fast.viaPhrase);
       return json(sum);
     } catch (err) { return json({ ok: false, error: String(err) }); }
   }
+  // "Run daily now" can take minutes of ESPN calls: run it outside the lock (it only writes its own tabs), like the tick does.
+  if (b.action === "deskact" && b.op === "daily") return json(withAuth_(b, function (o) { return o.commish ? dailyOnce_("button") : { ok: false, error: "Commish only" }; }));
   var lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+  try { lock.waitLock(10000); } catch (err) { return json({ ok: false, busy: true, error: "The league server is busy. Try again in a few seconds." }); }
   try {
     switch (b.action) {
       case "login":   return json(login_(b.owner, b.pin));
@@ -180,7 +185,7 @@ function setCell_(name, row, header, value) {
 //    (signed-in phones keep working on their tokens) and alerts the commish;
 //  · owner + passphrase: OWNER_FAILS wrong per owner per hour, then that owner's passphrase checks pause for the hour.
 // The commish can still lock someone by hand (Owners "locked" = Y).
-var OWNER_FAILS = 3, LOCK_FREE = { summary: 1, inbox: 1 };
+var OWNER_FAILS = 3, LOCK_FREE = { summary: 1, inbox: 1, chat: 1 };
 function me_(o) { return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" }; }
 function signedOut_(msg) { return { ok: false, auth: false, error: msg || "You've been signed out (new passphrase?). Sign in again." }; }
 function loginByPhrase_(pin) {
@@ -328,8 +333,8 @@ var DAILY = {}, MODS_ = {};
 function need_(name) {
   if (MODS_[name]) return; var c = CacheService.getScriptCache(), k = "mod_" + name, src = c.get(k);
   if (!src) { var r = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/_ops/apps-script/" + name + ".js?t=" + Date.now(), { muteHttpExceptions: true });
-    if (r.getResponseCode() !== 200) throw new Error("Couldn't load " + name + ".js (" + r.getResponseCode() + ")");
-    src = r.getContentText(); if (src.length < 95000) c.put(k, src, 300); }
+    if (r.getResponseCode() === 200) { src = r.getContentText(); if (src.length < 95000) { c.put(k, src, 300); c.put("mod_last_" + name, src, 21600); } }
+    else { src = c.get("mod_last_" + name); if (!src) throw new Error("Couldn't load " + name + ".js (" + r.getResponseCode() + ")"); } } // GitHub hiccup: last good copy (6 h)
   eval(src); MODS_[name] = 1;
 }
 // ---------------------------------------------------------------- commish menu

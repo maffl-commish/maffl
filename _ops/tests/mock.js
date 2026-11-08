@@ -281,7 +281,7 @@ function create(opts) {
     SpreadsheetApp: { getActive: () => SS, getUi: () => { throw new Error("no UI in the mock"); } },
     CacheService: { getScriptCache: () => ({ get: (k) => { const e = cache[k]; return e && e.until > Date.now() ? e.v : null; }, put: (k, v, s) => { cache[k] = { v: String(v), until: Date.now() + (s || 600) * 1000 }; }, remove: (k) => { delete cache[k]; } }) },
     PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => (k in props ? props[k] : null), setProperty: (k, v) => { props[k] = String(v); }, getProperties: () => Object.assign({}, props), deleteProperty: (k) => { delete props[k]; } }) },
-    LockService: { getScriptLock: () => ({ waitLock() {}, tryLock: () => true, releaseLock() {} }) },
+    LockService: { getScriptLock: () => ({ waitLock() {}, tryLock: () => true, hasLock: () => false, releaseLock() {} }) },
     MailApp: { sendEmail: (to, subj) => { mail.push({ to, subj, at: new Date() }); log("mail →", to, "·", subj); } },
     Session: { getEffectiveUser: () => ({ getEmail: () => "commish@maffl.test" }) },
     ContentService: { MimeType: { JSON: "json" }, createTextOutput: (s) => ({ body: s, setMimeType() { return this; } }) },

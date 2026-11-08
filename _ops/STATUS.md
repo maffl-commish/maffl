@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Phase 2: backend reliability (audit S1–S3, S6, S8). A busy lock now answers in JSON ("server is busy, try again") instead of Google's error page; chat reads skip the league lock (marking read takes a 1.5 s lock of its own); "Run daily now" runs outside the lock and only one daily run at a time; the robot's sent-reminders memory is split across properties (was going to overflow 9 KB and repost every 15 min); daily.js gets the same 6 h last-good copy as the parts; the public summary is cached a minute; league-wide sign-in pause raised to 60 wrong/hour. Backend logic v0.31.
 - 2026-11-07: REEL chat rebuilt as part of the page (header, chat, tabs in one column) so the iPhone keyboard can't leave it behind as a blank screen; the tab bar hides while you type.
 - 2026-11-07 · REEL · Phase 1 of the readiness audit complete (audit doc + REEL.md updated). Next: Phase 2 (robustness) and Phase 3 (go-live switch).
 - 2026-11-07 · REEL · Phase 1: lab wording gone (audit front-end B2). Home-Screen name is "MAFFL HQ" (was "MAFFL HQ · Lab"); the top strip says "Beta · trades & credit spends are practice runs"; More → About MAFFL HQ explains the beta in plain words. One switch for go-live: `STAGE = "live"` hides both (REEL.md roadmap step 4).
