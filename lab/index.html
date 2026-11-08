@@ -531,6 +531,7 @@
   .ofr{padding:10px 0;border-top:1px solid var(--border)}.ofr:first-child{border-top:0}
   .dcard.nope{animation:nope .35s}
   @keyframes nope{25%{transform:translateY(-18px)}60%{transform:translateY(4px)}}
+  @keyframes shake{20%{transform:translateX(-10px)}45%{transform:translateX(8px)}70%{transform:translateX(-4px)}}.dcard.shake{animation:shake .35s}
   .done-card .zero{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font:800 36px var(--display);color:#fff;background:var(--win,#1f9d6a)}
   .done-card .again{margin-top:14px;background:none;border:0;font:600 13px inherit;color:var(--muted);text-decoration:underline}
   #hstack{flex:1;margin:4px 0 0}
@@ -557,12 +558,14 @@
   .swu span{opacity:0;transition:opacity .1s;padding:10px 14px;border-radius:999px}
   .swu .sv{color:var(--navy);background:var(--gold)}.swu .dn{color:#fff;background:var(--win,#1f9d6a)}
   #hstack .fslot>.dcard.fly{transition:transform .25s ease-in,opacity .25s}
-  .saved{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:0 0 0 -4px;padding:5px 11px;background:#fff7e0;border:1.5px solid var(--gold);border-radius:999px;font:700 13px var(--display);color:var(--navy)}
+  .saved{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:0 0 0 -4px;padding:5px 10px;font-size:12px!important;background:#fff7e0;border:1.5px solid var(--gold);border-radius:999px;font:700 13px var(--display);color:var(--navy)}
   .ihow{font:600 11px var(--body);color:var(--muted);margin-right:auto}
   .undo{position:fixed;left:14px;bottom:calc(env(safe-area-inset-bottom) + 96px);transform:translateY(20px);opacity:0;z-index:96;display:flex;align-items:center;gap:14px;background:var(--navy);color:#fff;border-radius:12px;padding:8px 8px 8px 14px;font:600 14px var(--body);transition:.25s;pointer-events:none;white-space:nowrap}
   .undo.on{opacity:1;transform:none;pointer-events:auto}
   .undo button{background:var(--gold);color:var(--navy);border:0;border-radius:8px;padding:7px 12px;font:800 13px var(--display)}
   .svbtns{display:flex;gap:8px;margin-top:8px}.svbtns .b{flex:1}
+  .saved.dnc{background:#e6f5ee;border-color:var(--win,#1f9d6a);margin-left:0}
+  .bkwk{font:800 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px 4px}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .hero{padding:12px 0 12px;border-bottom:1px solid var(--border)}
   .hero .tagl{font:700 10px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark)}
@@ -1723,10 +1726,25 @@
   function seenKey() { return "maffl_lab_seen_" + W.weekNumber + "_" + norm(ME.owner); }
   function seen() { try { return JSON.parse(store(seenKey()) || "{}"); } catch (e) { return {}; } }
   // Swipe ← = done (gone for the week), → = save (moves to ⭐ Saved above the feed). Per week, per owner, on this phone.
-  function boxKey(k) { return "maffl_lab_" + k + "_" + W.weekNumber + "_" + norm(ME.owner); }
-  function boxGet(k) { try { return JSON.parse(store(boxKey(k)) || "{}"); } catch (e) { return {}; } }
-  function boxSet(k, o) { store(boxKey(k), JSON.stringify(o)); }
-  var SAVED = [], FEED_N = 0;
+  // Per-week maps (clr/pin) decide what the feed hides; the two buckets below are what ⭐ Saved and ✓ Done show,
+  // across weeks, with a copy of each card as it looked. Saved stays until you act on it; Done empties itself after 7 days.
+  function boxKey(k, wk) { return "maffl_lab_" + k + "_" + (wk == null ? W.weekNumber : wk) + "_" + norm(ME.owner); }
+  function boxGet(k, wk) { try { return JSON.parse(store(boxKey(k, wk)) || "{}"); } catch (e) { return {}; } }
+  function boxSet(k, o, wk) { store(boxKey(k, wk), JSON.stringify(o)); }
+  var DONE_DAYS = 7;
+  function bkKey(kind) { return "maffl_lab_bk_" + kind + "_" + norm(ME.owner); }
+  function bkGet(kind) { var a; try { a = JSON.parse(store(bkKey(kind)) || "[]"); } catch (e) { a = []; }
+    if (kind === "clr") { var cut = Date.now() - DONE_DAYS * 864e5, b = a.filter(function (it) { return it.at > cut; }); if (b.length !== a.length) { a = b; store(bkKey(kind), JSON.stringify(a)); } }
+    return a; }
+  function bkSet(kind, a) { store(bkKey(kind), JSON.stringify(a.slice(0, 60))); }
+  // Put a card into (on) or take it out of (!on) a bucket and its week's map.
+  function mark(kind, it, on) {
+    var m = boxGet(kind, it.w); if (on) m[it.id] = 1; else delete m[it.id]; boxSet(kind, m, it.w);
+    var a = bkGet(kind).filter(function (y) { return !(y.w === it.w && y.id === it.id); }); if (on) a.unshift({ w: it.w, id: it.id, eb: it.eb, html: it.html, at: Date.now() }); bkSet(kind, a);
+  }
+  function clearable() { return INBOX.filter(function (x) { return NEEDS.indexOf(x) < 0; }); }
+  function itemOf(x) { return { w: W.weekNumber, id: x.id, eb: x.c && x.c.eb || "", html: cardHTML(x) }; }
+  var FEED_ALL = [], FEED_N = 0;
   function findCard(key) { var hit = null; GROUPS.forEach(function (g) { g.cards.forEach(function (c) { if (!hit && c.key === key) hit = c; }); }); return hit; }
   function buildInbox() {
     buildGroups();
@@ -1875,9 +1893,8 @@
     Object.keys(q).forEach(function (g) { q[g].sort(function (a, b) { return a.rank - b.rank; }); q[g] = q[g].slice(0, bud[g] || 2); });
     INBOX = NEEDS.slice(); FEED_ORDER.forEach(function (g) { if (q[g] && q[g].length) INBOX.push(q[g].shift()); });
     ["you", "league", "play", "vault"].forEach(function (g) { while (q[g] && q[g].length) INBOX.push(q[g].shift()); });
-    var clr = boxGet("clr"), pin = boxGet("pin"); FEED_N = INBOX.length;
-    SAVED = INBOX.filter(function (x) { return pin[x.id] && !clr[x.id]; });
-    INBOX = INBOX.filter(function (x) { return !clr[x.id] && !pin[x.id]; });
+    var clr = boxGet("clr"), pin = boxGet("pin"); FEED_N = INBOX.length; FEED_ALL = INBOX.slice();
+    INBOX = INBOX.filter(function (x) { return NEEDS.indexOf(x) >= 0 || (!clr[x.id] && !pin[x.id]); }); // things that need you can't be swiped away
     homeBadge();
   }
   function homeBadge() { var sn = seen(), n = INBOX.filter(function (x) { return NEEDS.indexOf(x) >= 0 || !sn[x.id]; }).length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); } }
@@ -1885,16 +1902,18 @@
     var keep = pos; buildInbox();
     var nd = ''; // the ⚡ Needs-you banner is gone (commish 11/8): those cards lead the feed instead
     // Progress runs down the right edge, like the feed itself (commish 11/7: the old dots ran sideways).
-    var sv = SAVED.length ? '<button class="saved" id="saved">⭐ Saved · ' + SAVED.length + ' ›</button>' : '';
+    var nSv = bkGet("pin").length, nDn = bkGet("clr").length;
+    var sv = (nSv ? '<button class="saved" id="saved">⭐ Saved ' + nSv + '</button>' : '') + (nDn ? '<button class="saved dnc" id="donebk">✓ Done ' + nDn + '</button>' : '');
     $("v-home").innerHTML = nd + '<div class="ibar">' + sv + (INBOX.length ? '<span class="ihow">← done · save →</span>' : '<span class="ihow"></span>') + '<div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
       INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '"><div class="swu"><span class="sv">⭐ Save</span><span class="dn">✓ Done</span></div>' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div><div class="irail" id="idots"></div></div>';
     var f = $("hstack"); pos = Math.max(0, Math.min(keep, INBOX.length));
     f.scrollTop = pos * f.clientHeight; drawDeck(true);
     var t0 = null; f.onscroll = function () { var k = Math.round(f.scrollTop / Math.max(1, f.clientHeight)); if (k !== pos) { pos = k; drawDeck(true); } clearTimeout(t0); t0 = setTimeout(markSeen, 700); };
     setTimeout(markSeen, 900);
-    if ($("saved")) $("saved").onclick = openSaved;
-    if ($("dclear")) $("dclear").onclick = function () { var c = boxGet("clr"), ids = INBOX.map(function (x) { return x.id; }); ids.forEach(function (id) { c[id] = 1; }); boxSet("clr", c); store("maffl_lab_swiped", "1"); tap("reel", "clearall:" + ids.length);
-      pos = 0; renderHome(); undoBar("✓ " + ids.length + " cleared", function () { var c2 = boxGet("clr"); ids.forEach(function (id) { delete c2[id]; }); boxSet("clr", c2); pos = 0; renderHome(); }); };
+    if ($("saved")) $("saved").onclick = function () { openBucket("pin"); };
+    if ($("donebk")) $("donebk").onclick = function () { openBucket("clr"); };
+    if ($("dclear")) $("dclear").onclick = function () { var its = clearable().map(itemOf); its.slice().reverse().forEach(function (it) { mark("clr", it, true); }); store("maffl_lab_swiped", "1"); tap("reel", "clearall:" + its.length);
+      pos = 0; renderHome(); undoBar("✓ " + its.length + " cleared", function () { its.forEach(function (it) { mark("clr", it, false); }); pos = 0; renderHome(); }); };
     swipeFeed(f);
     $("idots").onclick = function (ev) { var d = ev.target.closest("[data-go-k]"); if (d) f.scrollTo({ top: +d.dataset.goK * f.clientHeight, behavior: "smooth" }); };
     var again = $("dagain"), dc = $("dchat"); if (dc) dc.onclick = function () { openChat(); }; if (again) again.onclick = function () { f.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -1902,11 +1921,12 @@
   }
   function markSeen() { var x = INBOX[pos]; if (!x) { if (pos === INBOX.length && INBOX.length) nudge("inbox0", "You're caught up. How was the reel this week?"); return; } var sn = seen(); if (!sn[x.id]) { sn[x.id] = 1; store(seenKey(), JSON.stringify(sn)); homeBadge(); drawDeck(true); } }
   function cardHTML(x) {
-    if (!x) return '<div class="dcard done-card">' + (INBOX.length ? '<div class="zero" style="background:var(--navy)">' + INBOX.length + '</div><h3 style="font:700 28px/1.1 var(--display);margin-top:10px">That\'s everything</h3>' +
-        '<p class="p" style="margin-top:6px">' + (INBOX.length === 1 ? "1 card is" : INBOX.length + " cards are") + ' still in your reel. Swipe ← on the ones you\'re done with, or clear them all.</p>' +
-        '<button class="b pri" id="dclear" style="width:100%;margin-top:14px;flex:none">✓ Clear ' + (INBOX.length === 1 ? "it" : "all " + INBOX.length) + '</button>'
+    var cl = clearable().length, nn = INBOX.length - cl;
+    if (!x) return '<div class="dcard done-card">' + (cl ? '<div class="zero" style="background:var(--navy)">' + cl + '</div><h3 style="font:700 28px/1.1 var(--display);margin-top:10px">That\'s everything</h3>' +
+        '<p class="p" style="margin-top:6px">' + (cl === 1 ? "1 card is" : cl + " cards are") + ' still in your reel. Swipe ← on the ones you\'re done with, or clear them all.' + (nn ? ' The ' + (nn === 1 ? "one" : nn) + ' at the top that need' + (nn === 1 ? "s" : "") + ' you stay until handled.' : '') + '</p>' +
+        '<button class="b pri" id="dclear" style="width:100%;margin-top:14px;flex:none">✓ Clear ' + (cl === 1 ? "it" : "all " + cl) + '</button>'
       : '<div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">All caught up</h3>' +
-        '<p class="p" style="margin-top:6px">' + (FEED_N ? "You cleared Week " + W.weekNumber + "'s reel." : "That's Week " + W.weekNumber + ".") + (SAVED.length ? " " + SAVED.length + " saved up top." : "") + ' New cards land Tuesday morning.</p>') +
+        '<p class="p" style="margin-top:6px">' + (FEED_N ? "You cleared Week " + W.weekNumber + "'s reel." : "That's Week " + W.weekNumber + ".") + (nn ? " " + (nn === 1 ? "1 thing" : nn + " things") + " up top still need" + (nn === 1 ? "s" : "") + " you." : "") + (bkGet("pin").length ? " Your saved cards are up top." : "") + ' New cards land Tuesday morning.</p>') +
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
       '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🗄️ League &amp; the Vault</button></div>' +
       (INBOX.length > 1 ? '<button class="again" id="dagain">Back to the top</button>' : '') +
@@ -1928,15 +1948,25 @@
     $("idots").innerHTML = INBOX.map(function (y, k) { return '<i data-go-k="' + k + '" class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("") + '<i data-go-k="' + n + '" class="end' + (pos >= n ? " on" : "") + '">✓</i>';
     $("icount").textContent = !n ? "All caught up" : n + " left";
   }
-  // ⭐ Saved: this week's saved cards in one sheet; each can go back to the feed or be marked done.
-  function openSaved() {
+  // ⭐ Saved / ✓ Done: one sheet each, newest first, every card with a way out. This week's cards show live
+  // (reactions, votes); older ones show as they looked when you swiped them.
+  function openBucket(kind) {
     $("undo").classList.remove("on");
-    openSheet("card", '<h2 class="sht">⭐ Saved</h2>' + SAVED.map(function (x) { return '<div class="needc">' + cardHTML(x) + '<div class="svbtns"><button class="b" data-svback="' + esc(x.id) + '">↩ Back to reel</button><button class="b" data-svdone="' + esc(x.id) + '">✓ Done</button></div></div>'; }).join(""));
-    $("sb").querySelectorAll("[data-svback],[data-svdone]").forEach(function (b) { b.onclick = function () {
-      var id = b.dataset.svback || b.dataset.svdone, p = boxGet("pin"); delete p[id]; boxSet("pin", p);
-      if (b.dataset.svdone) { var c = boxGet("clr"); c[id] = 1; boxSet("clr", c); }
-      tap("reel", (b.dataset.svdone ? "savedone:" : "unsave:") + id); renderHome(); if (SAVED.length) openSaved(); else closeSheet();
-      toast(b.dataset.svdone ? "✓ Done" : "Back in your reel"); }; });
+    var a = bkGet(kind), saved = kind === "pin";
+    if (!a.length) { closeSheet(); return; }
+    var live = function (it) { if (it.w !== W.weekNumber) return null; var x = FEED_ALL.filter(function (y) { return y.id === it.id; })[0]; return x ? cardHTML(x) : null; };
+    openSheet("card", '<h2 class="sht">' + (saved ? "⭐ Saved" : "✓ Done") + '</h2>' +
+      '<p class="meta" style="margin:-4px 0 12px">' + (saved ? "Stays here until you send it back or mark it done." : "Cleared cards stay here " + DONE_DAYS + " days, then drop off. The stories are still in League and the Vault.") + '</p>' +
+      a.map(function (it, i) { var old = it.w !== W.weekNumber;
+        return '<div class="needc">' + (old ? '<div class="bkwk">Week ' + it.w + '</div>' : '') + (live(it) || it.html) +
+          '<div class="svbtns"><button class="b" data-bk="back" data-i="' + i + '">↩ Back to ' + (old ? "Wk " + it.w : "reel") + '</button>' +
+          (saved ? '<button class="b" data-bk="done" data-i="' + i + '">✓ Done</button>' : '<button class="b" data-bk="save" data-i="' + i + '">⭐ Save</button>') + '</div></div>'; }).join(""));
+    paint($("sb"));
+    $("sb").querySelectorAll("[data-bk]").forEach(function (b) { b.onclick = function () {
+      var it = a[+b.dataset.i], op = b.dataset.bk; mark(kind, it, false);
+      if (op === "done") mark("clr", it, true); if (op === "save") mark("pin", it, true);
+      tap("reel", kind + ":" + op + ":" + it.id); renderHome(); openBucket(kind);
+      toast(op === "done" ? "✓ Done" : op === "save" ? "⭐ Saved" : it.w === W.weekNumber ? "Back in your reel" : "Back in Week " + it.w + "'s reel"); }; });
   }
   function undoBar(msg, fn) {
     var u = $("undo"); $("undot").textContent = msg; u.classList.add("on");
@@ -1946,27 +1976,28 @@
   // Card handled: "clr" (done) or "pin" (saved). The next card slides into the same spot; Undo puts it back.
   function handle(k, kind) {
     var x = INBOX[k]; if (!x) return;
-    var o = boxGet(kind); o[x.id] = 1; boxSet(kind, o);
+    var it = itemOf(x); mark(kind, it, true);
     var sn = seen(); sn[x.id] = 1; store(seenKey(), JSON.stringify(sn));
     store("maffl_lab_swiped", "1"); tap("reel", kind + ":" + x.id);
     pos = k; renderHome();
-    undoBar(kind === "pin" ? "⭐ Saved · it's up top" : "✓ Done", function () {
-      var o2 = boxGet(kind); delete o2[x.id]; boxSet(kind, o2); pos = k; renderHome(); });
+    undoBar(kind === "pin" ? "⭐ Saved · it's up top" : "✓ Done · up top for " + DONE_DAYS + " days", function () { mark(kind, it, false); pos = k; renderHome(); });
   }
   function swipeFeed(f) {
     var st = null, TH = 80;
     f.addEventListener("pointerdown", function (e) {
       var card = e.target.closest(".fslot>.dcard"); if (!card || card.classList.contains("done-card") || (e.pointerType === "mouse" && e.button)) return;
+      if (NEEDS.indexOf(INBOX[+card.parentNode.dataset.k]) >= 0) { st = { needs: card, x: e.clientX, y: e.clientY }; return; } // needs you: no swipe, a little shake
       if (e.target.closest("input,textarea,select,.blk,.ocar,.rings,.wkchips")) return;
       st = { x: e.clientX, y: e.clientY, card: card, slot: card.parentNode, dir: 0, dx: 0 }; });
     f.addEventListener("pointermove", function (e) {
       if (!st) return; var dx = e.clientX - st.x, dy = e.clientY - st.y;
+      if (st.needs) { if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { var nc = st.needs; st = null; nc.classList.remove("shake"); void nc.offsetWidth; nc.classList.add("shake"); toast("This one needs you first"); } return; }
       if (!st.dir) { if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { st = null; return; }
         if (Math.abs(dx) < 12) return; st.dir = 1; st.card.classList.add("drag"); f.style.overflowY = "hidden"; }
       st.dx = dx; st.card.style.transform = "translateX(" + dx + "px) rotate(" + (dx / 28) + "deg)";
       var u = st.slot.querySelector(".swu"); if (u) { u.firstChild.style.opacity = dx > 0 ? Math.min(1, dx / TH) : 0; u.lastChild.style.opacity = dx < 0 ? Math.min(1, -dx / TH) : 0; } });
     var end = function () {
-      if (!st) return; var s = st; st = null; f.style.overflowY = "";
+      if (!st) return; var s = st; st = null; f.style.overflowY = ""; if (s.needs) return;
       if (!s.dir) return;
       setTimeout(function () { s.card.classList.remove("drag"); }, 50); // swallow the click that ends a drag
       var k = +s.slot.dataset.k;

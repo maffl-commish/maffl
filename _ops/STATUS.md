@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-08 · REEL · 🏠 Home: ✓ Done chip next to ⭐ Saved. Saved now carries across weeks and stays until you send it back or mark it done; Done keeps cleared cards 7 days (↩ back to reel or ⭐ save), then they drop off (the stories stay in League and the Vault). Older weeks' cards show as they looked when swiped. Needs-you cards (now leading the feed) can't be swiped or cleared: they shake.
 - 2026-11-08 · REEL · Home: the "← done · save →" hint now stays (next to ⭐ Saved), counter shortened to "N left".
 - 2026-11-08 · REEL · 📥 Commish desk tidy (commish): every section is an accordion, all closed when the desk opens (count on each: Perks, Trades in review, Passphrase requests, Locked out, Do on ESPN, Scheduled, Credit awards; League panels; the Log is one too, "N today"); what you open stays open while the desk refreshes. ESPN steps are one short line ("Wk 8 · 👻 Ghost score → 147.62", "Wk 9 · ×2 Jalen Hurts → team", "+$40 FAAB → team") plus one small line (vs / approved · 📅 day · Change). 👻 Past-week Ghost re-sets: a Ghost step's ✓ Done is tied to that par, so a stat correction that moves an earlier week's par brings the step back ("Wk 6 · 👻 Ghost 140.84 → 141.19 (par changed)"). Backend logic v0.40.
 - 2026-11-08 · REEL · 👋 Welcome card: "It's yours now" now lists your chats and messages too (commish).
