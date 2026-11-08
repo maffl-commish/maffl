@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · Fix: issuing **your own** new passphrase on the desk signed you out before you could read it (the new salt revoked this phone's token). Now the desk hands this phone a fresh token with it, the box says "write it down; this phone stays signed in", and only your other phones ask for it. Backend logic v0.34.
 - 2026-11-07 · REEL · 🧪 Feedback and 📥 Desk back to floating buttons at the bottom right (commish prefers them there; the header move from earlier tonight is undone; logo and contrast changes stay).
 - 2026-11-07 · REEL · New Code.gs (last-good logic.js fallback) pasted into the Apps Script editor and deployed as web app Version 5 (same URL); the web app answers v0.33.
 - 2026-11-07: REEL: vote on polls right in chat (results after you vote, same as Home); tier chats now get trade alerts only, no free-agent adds/drops; backend v0.33, daily VER 9.

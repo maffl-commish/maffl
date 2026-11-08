@@ -13,7 +13,7 @@ function setPhrase_(o) {
   var others = owners_().filter(function (x) { return x.pin_hash && x._row !== o._row; }), pin, tries = 0;
   do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return pinOk_(x, pin); }));
   var salt = Utilities.getUuid();
-  setCell_("Owners", o._row, "salt", salt);
+  setCell_("Owners", o._row, "salt", salt); o.salt = salt; // callers may hand out a token for the new salt
   setCell_("Owners", o._row, "pin_hash", hash_(salt, pin));
   setCell_("Owners", o._row, "failed_tries", 0);
   setCell_("Owners", o._row, "locked", ""); CacheService.getScriptCache().remove("of:" + norm_(o.owner));
@@ -66,7 +66,9 @@ function deskAct_(me, b) {
     var pin = setPhrase_(o); closeRequests_(o.owner);
     deskPost_("note", "New passphrase issued to " + o.owner + ".", o.owner, "ISSUED");
     var c = contacts_().filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0] || {};
-    return { ok: true, owner: o.owner, team: o.team, pin: pin, phone: c.phone || "", email: c.email || "" }; // shown once, to the commish only
+    var out = { ok: true, owner: o.owner, team: o.team, pin: pin, phone: c.phone || "", email: c.email || "" }; // shown once, to the commish only
+    if (norm_(o.owner) === norm_(me.owner)) { out.token = token_(o); out.self = true; } // your own: keep this phone signed in
+    return out;
   }
   if (b.op === "unlock") { setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", ""); CacheService.getScriptCache().remove("of:" + norm_(o.owner)); deskPost_("note", o.owner + " unlocked (same passphrase).", o.owner, "UNLOCKED"); return { ok: true }; }
   if (b.op === "dismiss") { closeRequests_(o.owner); return { ok: true }; }

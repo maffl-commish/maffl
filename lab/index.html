@@ -3363,7 +3363,7 @@
   function issueBox(r) {
     var msg = "Your MAFFL HQ passphrase: " + r.pin + "\nSign in at " + APP_LINK + " (caps and dashes don't matter).";
     $("cbox").innerHTML = '<h3>Passphrase for ' + esc(r.team || r.owner) + '</h3><p class="p" style="font:700 22px var(--display);letter-spacing:.06em;text-align:center;margin:10px 0">' + esc(r.pin) + '</p>' +
-      '<p class="meta">Shown once. It isn\'t stored anywhere readable. Their old one (if any) stopped working.</p><div class="nudge"><a href="' + esc(smsHref(r.phone, msg)) + '">💬 Text it to them</a><a href="' + esc(mailHref(r.email, "Your MAFFL HQ passphrase", msg)) + '">✉️ Email it</a></div>' +
+      '<p class="meta">' + (r.self ? 'Your new passphrase: write it down. This phone stays signed in; your other phones will ask for it.' : 'Shown once. It isn\'t stored anywhere readable. Their old one (if any) stopped working.') + '</p><div class="nudge"><a href="' + esc(smsHref(r.phone, msg)) + '">💬 Text it to them</a><a href="' + esc(mailHref(r.email, "Your MAFFL HQ passphrase", msg)) + '">✉️ Email it</a></div>' +
       (r.phone || r.email ? '' : '<p class="meta" style="margin-top:4px">No number or email on file; you\'ll pick the contact.</p>') + '<div class="btns"><button class="b pri" id="cno">Done</button></div>';
     $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); };
   }
@@ -3403,7 +3403,7 @@
       if (!yes) return; busy(1);
       api("deskact", Object.assign(creds(), { op: op, target: who, perk_id: el.dataset.pid || "" })).then(function (r) {
         busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
-        if (op === "issue") issueBox(r); else toast({ unlock: "Unlocked ✓", dismiss: "Dismissed", espn: "Ticked off ✓" }[op]);
+        if (op === "issue") { if (r.token) store("maffl_lab_pin", r.token); issueBox(r); } else toast({ unlock: "Unlocked ✓", dismiss: "Dismissed", espn: "Ticked off ✓" }[op]);
         DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog();
       }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
     });
