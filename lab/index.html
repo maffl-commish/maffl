@@ -557,7 +557,7 @@
   .swu span{opacity:0;transition:opacity .1s;padding:10px 14px;border-radius:999px}
   .swu .sv{color:var(--navy);background:var(--gold)}.swu .dn{color:#fff;background:var(--win,#1f9d6a)}
   #hstack .fslot>.dcard.fly{transition:transform .25s ease-in,opacity .25s}
-  .saved{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:0 auto 0 -4px;padding:5px 11px;background:#fff7e0;border:1.5px solid var(--gold);border-radius:999px;font:700 13px var(--display);color:var(--navy)}
+  .saved{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:0 0 0 -4px;padding:5px 11px;background:#fff7e0;border:1.5px solid var(--gold);border-radius:999px;font:700 13px var(--display);color:var(--navy)}
   .ihow{font:600 11px var(--body);color:var(--muted);margin-right:auto}
   .undo{position:fixed;left:14px;bottom:calc(env(safe-area-inset-bottom) + 96px);transform:translateY(20px);opacity:0;z-index:96;display:flex;align-items:center;gap:14px;background:var(--navy);color:#fff;border-radius:12px;padding:8px 8px 8px 14px;font:600 14px var(--body);transition:.25s;pointer-events:none;white-space:nowrap}
   .undo.on{opacity:1;transform:none;pointer-events:auto}
@@ -1886,7 +1886,7 @@
     var nd = ''; // the ⚡ Needs-you banner is gone (commish 11/8): those cards lead the feed instead
     // Progress runs down the right edge, like the feed itself (commish 11/7: the old dots ran sideways).
     var sv = SAVED.length ? '<button class="saved" id="saved">⭐ Saved · ' + SAVED.length + ' ›</button>' : '';
-    $("v-home").innerHTML = nd + '<div class="ibar">' + (sv || (INBOX.length && !store("maffl_lab_swiped") ? '<span class="ihow">← done · save →</span>' : '<span class="ihow"></span>')) + '<div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
+    $("v-home").innerHTML = nd + '<div class="ibar">' + sv + (INBOX.length ? '<span class="ihow">← done · save →</span>' : '<span class="ihow"></span>') + '<div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
       INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '"><div class="swu"><span class="sv">⭐ Save</span><span class="dn">✓ Done</span></div>' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div><div class="irail" id="idots"></div></div>';
     var f = $("hstack"); pos = Math.max(0, Math.min(keep, INBOX.length));
     f.scrollTop = pos * f.clientHeight; drawDeck(true);
@@ -1926,7 +1926,7 @@
     if (!light) { renderHome(); return; }
     var sn = seen(), n = INBOX.length;
     $("idots").innerHTML = INBOX.map(function (y, k) { return '<i data-go-k="' + k + '" class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("") + '<i data-go-k="' + n + '" class="end' + (pos >= n ? " on" : "") + '">✓</i>';
-    $("icount").textContent = !n ? "All caught up" : n + " left this week";
+    $("icount").textContent = !n ? "All caught up" : n + " left";
   }
   // ⭐ Saved: this week's saved cards in one sheet; each can go back to the feed or be marked done.
   function openSaved() {
