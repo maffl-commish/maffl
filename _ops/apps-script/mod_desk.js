@@ -91,7 +91,7 @@ function poll_(me, b) {
   var vals = { poll_id: id, week: Number(b.week) || "", question: safe_(q), "options (separate with |)": safe_(opts.join("|")), "closes (ISO)": new Date(Date.now() + days * 864e5).toISOString(), active: "Y", tier: tier };
   var sh = sheet_("Polls"), head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
   sh.appendRow(head.map(function (h) { return vals[h] != null ? vals[h] : ""; }));
-  post_(tier ? "tier:" + tier : "league", BOT, "text", "📊 New poll: " + q + "\nVote in the app (Home). Results show once you've voted.", "", "", [], "");
+  post_(tier ? "tier:" + tier : "league", BOT, "poll", "📊 New poll: " + q + "\nVote right here or on Home. Results show once you've voted.", id, "", [], ""); // kind "poll" + id: the app draws the vote buttons in chat
   return { ok: true, id: id };
 }
 // 📣 Commish alert (commish 11/7): one announcement, posted by the commish into every group chat (league + both tiers)

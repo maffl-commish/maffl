@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "8"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "9"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -191,9 +191,10 @@ function dMoves_(tier) {
       moves.push([new Date(), tier, owner[got[id]] || "", got[id], from ? "trade" : "add", p.n || id, p.pos || "", p.tm || "", from || ""]); delete lost[id]; });
     Object.keys(lost).forEach(function (id) { var p = pinfo[id] || {}; moves.push([new Date(), tier, owner[lost[id]] || "", lost[id], "drop", p.n || id, p.pos || "", p.tm || "", ""]); });
     if (moves.length) { var sh = dTab_("Moves"); sh.getRange(sh.getLastRow() + 1, 1, moves.length, DAILY.MOVE_HEAD.length).setValues(moves);
-      // 📰 the tier's chat hears about it (commish 11/7: league chats should carry the transactions)
-      var ic = { add: "➕", drop: "➖", trade: "🔁" }, ln = moves.slice(0, 8).map(function (m) { return ic[m[4]] + " " + (m[3] || "?") + (m[4] === "trade" ? " got " + m[5] + " from " + m[8] : m[4] === "add" ? " added " + m[5] : " dropped " + m[5]); });
-      try { post_("tier:" + tier, BOT, "text", "📰 Roster moves\n" + ln.join("\n") + (moves.length > 8 ? "\n+" + (moves.length - 8) + " more" : ""), "", "", [], ""); } catch (e) {} }
+      // 📰 the tier's chat hears about trades only (commish 11/7: free-agent adds and drops were too much noise; they stay in Moves)
+      var tr = moves.filter(function (m) { return m[4] === "trade"; });
+      if (tr.length) { var ic = { trade: "🔁" }, ln = tr.slice(0, 8).map(function (m) { return ic[m[4]] + " " + (m[3] || "?") + (m[4] === "trade" ? " got " + m[5] + " from " + m[8] : m[4] === "add" ? " added " + m[5] : " dropped " + m[5]); });
+      try { post_("tier:" + tier, BOT, "text", "🔁 Trade on ESPN\n" + ln.join("\n") + (tr.length > 8 ? "\n+" + (tr.length - 8) + " more" : ""), "", "", [], ""); } catch (e) {} } }
   }
   var slim = {}; Object.keys(info).forEach(function (id) { slim[id] = { n: info[id].n, pos: info[id].pos, tm: info[id].tm }; });
   dPut_(key, { at: new Date().toISOString(), ids: now, info: slim });

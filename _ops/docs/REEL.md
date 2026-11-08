@@ -72,6 +72,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
 - Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball is now a Vault series (25 rewritten tidbits); off-season Vault gets 6 slots; earlier weeks listed after "caught up".
+- Decided 11/7 (evening): chat is part of the page column (no floating layer; the tab bar hides while typing); polls vote right in chat (bot posts kind "poll" with the poll id; older poll posts match by question), same results-after-you-vote rule as Home; tier chats get trades only from the daily run (free-agent adds/drops stay in the Moves tab).
 
 **Commish backlog (added 11/6, not built)**
 - ⚖️ Trade grade v2 follow-up: a real age source for Future value (ESPN's league API has none; today it's years since first MAFFL draft). Tune weights once real trades come through.

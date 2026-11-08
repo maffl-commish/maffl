@@ -667,6 +667,7 @@
   .cgrp{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:16px 0 2px}
   .cann{background:var(--gold-soft);border:2px solid var(--gold);border-radius:12px;padding:9px 11px;margin-top:4px;font-size:15px;line-height:1.42;color:var(--navy);white-space:pre-wrap;word-wrap:break-word}.cann b{display:block;font:700 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#9a6a00;margin-bottom:3px}
   .cpolls{margin:4px 0 6px}
+  .cpollm{margin-top:4px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--surface);max-width:420px}.cpollm>b{font:700 16px var(--display);color:var(--navy)}
   .cpin{background:var(--gold-soft);border:1px solid #f3dfb5;border-radius:10px;padding:8px 10px;margin-top:10px;font-size:13px;line-height:1.35}
   .cpin b{font:700 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dark);display:block}
   .cmsg{display:flex;gap:10px;padding:10px 0 2px}
@@ -1120,7 +1121,7 @@
     if (prev === ch) return;
     var t = SUM.tallies[poll] = SUM.tallies[poll] || {};
     if (prev) t[prev] = Math.max(0, (t[prev] || 1) - 1); t[ch] = (t[ch] || 0) + 1; SUM.myVotes[poll] = ch;
-    renderHome();
+    renderHome(); if (CH.open && CH.view === "thread") drawThread();
     if (!API_URL) return;
     api("vote", Object.assign(creds(), { poll: poll, choice: ch, week: W.weekNumber })).then(function (r) {
       if (!r.ok) { toast(r.error || "Vote didn't save"); loadSummary(); } else toast("Vote saved ✓");
@@ -1580,6 +1581,21 @@
   }
   // "For you" category: personal cards lead the reel
   var GOTW = null, POLLS = [];
+  // One poll renderer for the Home card and the chat message (commish 11/7: vote right in chat). Results show once you've voted.
+  function pollMine(p) { return SUM.myVotes[p.id] || (p.closes && new Date(p.closes) < new Date() ? "(closed)" : ""); }
+  function pollOpts(p) {
+    var tal = SUM.tallies[p.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mv = pollMine(p);
+    return '<p class="meta" style="margin:6px 0 2px">' + (mv === "(closed)" ? 'Closed · ' + tot + ' vote' + (tot === 1 ? '' : 's') : mv ? tot + ' vote' + (tot === 1 ? '' : 's') + ' · tap to change yours' : 'Vote to see the results') + '</p>' +
+      String(p.options).split("|").map(function (o) { o = o.trim(); var n = tal[o] || 0, pct = tot ? Math.round(100 * n / tot) : 0, sel = mv === o;
+        return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(p.id) + '" data-choice="' + esc(o) + '">' + (mv ? '<span class="ob" style="width:' + pct + '%"></span>' : '') + '<span class="ol">' + esc(o) + (sel ? ' ✓' : '') + '</span><span class="op">' + (mv ? pct + '% · ' + n : '') + '</span></button>'; }).join("");
+  }
+  // A chat message that announces a poll: new ones carry its id (kind "poll"); older ones match by question.
+  function chatPoll(m) {
+    if (m.owner !== BOTN || m.deleted) return null; var ps = (SUM.polls || []).filter(function (p) { return String(p.options) !== "auto"; });
+    if (m.kind === "poll") return ps.filter(function (p) { return String(p.id) === String(m.ref); })[0] || { closed: true };
+    var mm = /^📊 New poll: (.+)/.exec(String(m.text || "").split("\n")[0]); if (!mm) return null;
+    return ps.filter(function (p) { return p.q === mm[1]; })[0] || null;
+  }
   function forYouCards() {
     var out = chatCards(), me = teamOf(ME.owner); GOTW = null;
     var prev = (W.matchupPreviews || []).filter(function (m) { return isMe(m.ownerA) || isMe(m.ownerB); })[0];
@@ -1606,11 +1622,7 @@
     // Polls (commish 11/7): every active poll for this week (league-wide or your tier). Results show once you've voted.
     var wkPolls = (SUM.polls || []).filter(function (p) { return String(p.week) === String(W.weekNumber) && (!p.tier || p.tier === ME.tier || ME.commish); });
     POLLS = wkPolls.filter(function (p) { return String(p.options) !== "auto"; }).map(function (p) {
-      var tal = SUM.tallies[p.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mv = SUM.myVotes[p.id] || (p.closes && new Date(p.closes) < new Date() ? "(closed)" : "");
-      return { key: "poll", id: p.id, voted: !!mv, scope: p.tier || "league", play: true, eb: "📊 Poll" + (p.tier ? " · " + (p.tier === "U" ? "Upper" : "Lower") : ""), t: p.q,
-        body: '<p class="meta" style="margin:6px 0 2px">' + (mv ? tot + ' vote' + (tot === 1 ? '' : 's') + ' · tap to change yours' : 'Vote to see the results') + '</p>' +
-          String(p.options).split("|").map(function (o) { o = o.trim(); var n = tal[o] || 0, pct = tot ? Math.round(100 * n / tot) : 0, sel = mv === o;
-            return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(p.id) + '" data-choice="' + esc(o) + '">' + (mv ? '<span class="ob" style="width:' + pct + '%"></span>' : '') + '<span class="ol">' + esc(o) + (sel ? ' ✓' : '') + '</span><span class="op">' + (mv ? pct + '% · ' + n : '') + '</span></button>'; }).join("") };
+      return { key: "poll", id: p.id, voted: !!pollMine(p), scope: p.tier || "league", play: true, eb: "📊 Poll" + (p.tier ? " · " + (p.tier === "U" ? "Upper" : "Lower") : ""), t: p.q, body: pollOpts(p) };
     });
     var poll = wkPolls.filter(function (p) { return String(p.options) === "auto"; })[0];
     if (poll) {
@@ -3405,7 +3417,7 @@
     return diff === 0 ? "Today" : diff === 1 ? "Yesterday" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
   }
   function msgHTML(m, latestOf) {
-    var ref = "chat:" + m.id, d = CH.data || {}, bot = m.owner === BOTN, mine = isMe(m.owner);
+    var cp, ref = "chat:" + m.id, d = CH.data || {}, bot = m.owner === BOTN, mine = isMe(m.owner);
     var canDel = !m.deleted && m.kind !== "offer" && !m.pending && !m.failed && (mine || ME.commish), canPin = ME.commish && !m.deleted && !m.pending && !m.failed;
     var h = '<div class="cmsg' + (mine ? ' me' : '') + (m.deleted ? ' gone' : '') + (m.pending ? ' pend' : '') + (m.failed ? ' fail' : '') + '">' + avatar(m.owner, true) + '<div class="cmb"><div class="cmh">' +
       (bot ? 'MAFFL HQ' : '<button class="tl2" data-owner="' + esc(m.owner) + '">' + esc(mine ? "You" : shortOf(m.owner)) + '</button>') +
@@ -3414,6 +3426,7 @@
     if (m.kind === "offer") h += '<div class="cevt">' + esc(bot ? evtLine(m) : "💱 " + (EVT[m.event] || m.event).replace(/^./, function (c) { return c.toUpperCase(); })) + '</div>' + tradeMini(m.offer, latestOf[m.ref] === m.id) + (m.text ? '<div class="ctx" style="margin-top:6px">' + fmtText(m.text) + '</div>' : '');
     else if (m.owner === BOTN && DESK_KINDS[m.kind]) h += deskMsg(m);
     else if (m.kind === "announce" && !m.deleted) h += '<div class="cann"><b>📣 Commish alert</b>' + fmtText(m.text) + '</div>';
+    else if ((cp = chatPoll(m))) h += cp.closed ? '<div class="ctx">' + fmtText(m.text.split("\n")[0]) + ' <span class="meta">· closed</span></div>' : '<div class="cpollm"><b>📊 ' + esc(cp.q) + '</b>' + (cp.tier ? '<small class="meta"> · ' + (cp.tier === "U" ? "Upper" : "Lower") + ' only</small>' : '') + pollOpts(cp) + '</div>';
     else h += '<div class="ctx">' + (m.deleted ? "Message removed" : fmtText(m.text)) + '</div>';
     if (m.failed) h += '<div class="cfail"><span>⚠️ ' + esc(m.err || "Didn't send") + '</span><button data-cretry="' + m.id + '">↻ Retry</button><button data-cdrop="' + m.id + '" aria-label="Remove">✕</button></div>';
     if (CH.menu === m.id) h += '<div class="cmenu">' + (canPin ? '<button data-cmod="' + (m.pinned ? "unpin" : "pin") + '" data-mid="' + m.id + '">' + (m.pinned ? "Unpin" : "📌 Pin") + '</button>' : '') +

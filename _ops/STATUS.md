@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07: REEL: vote on polls right in chat (results after you vote, same as Home); tier chats now get trade alerts only, no free-agent adds/drops; backend v0.33, daily VER 9.
 - 2026-11-07 · REEL · Phase 2 of the readiness audit complete (audit doc + REEL.md). Next: Phase 3, the go-live switch.
 - 2026-11-07 · REEL · Phase 2: Code.gs (the loader) gets a 6-hour last-good copy of logic.js and survives a push that won't compile (audit S1). **Needs the commish:** paste the new Code.gs into the Apps Script editor, save, Deploy → Manage deployments → ✏️ → New version. Until then the old loader keeps working as before.
 - 2026-11-07 · REEL · Phase 2: app polish (audit front-end S7, S9, S10). Logo: new 192 px (29 KB) and 180 px touch-icon copies replace the 893 KB original everywhere in the app (classic pages unchanged). The 🧪 Feedback and 📥 Desk buttons moved into the header as round icons, so they no longer cover cards, reactions or chat. Grey and gold-label text darkened to pass accessibility contrast (muted #5f6f8a, gold labels #9a6200, both ≥4.5:1).
