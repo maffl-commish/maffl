@@ -120,6 +120,16 @@
   .tstart{display:flex;align-items:center;gap:12px;margin:12px 0 4px}.tstart .b{flex:0 0 auto;width:auto;padding:10px 16px}.tstart small{font-size:12px;color:var(--muted)}
   .cbal{display:flex;align-items:center;gap:12px;margin:12px 2px 2px}.cbal>b{font:800 44px/1 var(--display);color:var(--navy)}
   .cbal span{display:block;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--navy)}.cbal small{font-size:12px;color:var(--muted)}
+  .wkstep{display:flex;align-items:center;gap:8px;margin:12px 14px 0}.wkstep>div{flex:1;text-align:center}
+  .wkstep b{display:block;font:800 18px var(--display);text-transform:uppercase;letter-spacing:.04em}.wkstep small{font:600 12px var(--body);color:var(--muted)}
+  .wkstep button{width:44px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);font:700 24px/1 var(--display);color:var(--navy)}
+  .wkstep button:disabled{opacity:.3}
+  .mboardb{margin-top:10px;width:100%}.mback{font:700 13px var(--display);color:var(--navy);padding:12px 0 2px;text-transform:uppercase;letter-spacing:.05em}
+  .sbg{display:block;width:100%;text-align:left;padding:10px 14px}.sbg.mine{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold),0 1px 3px var(--navy-shadow)}
+  .sbt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;color:var(--ink2)}.sbt span{min-width:0;font:600 14px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sbt span small{display:block;font:500 11px var(--body);color:var(--muted)}.sbt b{font:700 20px var(--display);color:var(--ink2)}
+  .sbt.w span,.sbt.w b{color:var(--navy);font-weight:800}.sbt.me span{color:var(--navy)}
+  .sbf{display:block;font:600 11px var(--body);color:var(--muted);border-top:1px solid var(--border);margin-top:6px;padding-top:6px;text-align:right}
   .seg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 14px 0}
   .seg button{flex:1;min-width:0;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .seg button.on{background:var(--surface);color:var(--navy);box-shadow:0 1px 3px var(--navy-shadow)}
@@ -1886,11 +1896,11 @@
     if (!API_URL) { $("v-match").innerHTML = '<div class="pad"><div class="card"><h3>Live scores need the league server</h3></div></div>'; return; }
     if (!LIVE) { try { var c = JSON.parse(localStorage.getItem("maffl_lab_live_" + ME.tier) || "null"); // last copy: show it while ESPN is asked
       if (c && c.ok && Date.now() - new Date(c.at).getTime() < 2 * 3600e3) LIVE = c; } catch (e) {} }
-    if (!LIVE) $("v-match").innerHTML = '<div class="pad"><div class="card"><div class="eb">Week ' + NEXT_WK + ' · live</div><h3>Your game</h3>' + ld("Getting live scores from ESPN…") + '</div></div>';
+    if (!LIVE && mWeek() === curWk() && mTier() === ME.tier) drawMatchWait();
     else drawMatch();
     loadLive();
     clearInterval(LIVE_TIMER);
-    LIVE_TIMER = setInterval(function () { if ($("v-match").classList.contains("on") && !document.hidden) loadLive(true); }, 60000);
+    LIVE_TIMER = setInterval(function () { if ($("v-match").classList.contains("on") && !document.hidden) { loadLive(true); if (mTier() !== ME.tier && mWeek() === curWk()) drawMatch(); } }, 60000);
   }
   // A miss retries by itself (2 s, then 6 s) before the error shows; a good copy on screen stays up meanwhile (commish 11/7).
   function loadLive(quiet, tries) {
@@ -1906,7 +1916,7 @@
       try { localStorage.setItem("maffl_lab_live_" + ME.tier, JSON.stringify(r)); } catch (e) {} })
       .catch(function () { miss({ ok: false, error: "Couldn't reach the league server" }); });
   }
-  function drawMatchWait() { $("v-match").innerHTML = '<div class="pad"><div class="card"><div class="eb">Week ' + NEXT_WK + ' · live</div><h3>Your game</h3>' + ld("Getting live scores from ESPN…") + '</div></div>'; }
+  function drawMatchWait() { if (mWeek() !== curWk() || mTier() !== ME.tier) return drawMatch(); $("v-match").innerHTML = mStepper(curWk(), null) + '<div class="pad"><div class="card"><div class="eb">Week ' + NEXT_WK + ' · live</div><h3>Your game</h3>' + ld("Getting live scores from ESPN…") + '</div></div>'; }
   // ---- 🧪 Test scores (lab only). While ESPN shows every team at 0 (week not kicked off), fill in fake points so
   // the Match tab can be tested. Seeded per player + week (same numbers on every phone); more players "finish"
   // each minute you watch. Never written anywhere; turns itself off once real points show up.
@@ -2009,31 +2019,100 @@
     }
     return applyDpb(JSON.parse(JSON.stringify(r)), perks);
   }
+  // ---- Match browsing (commish 11/7): ‹ › steps through weeks (1 → this week); 🏟️ Scoreboard shows every game in
+  // either tier for that week; tap a game to see it like yours. Earlier weeks and the other tier come from the same
+  // backend `live` op with a week (finals cached 6 h on the server); this week's other tier refreshes with yours.
+  var MW = 0, MBOARD = false, MBT = null, MGAME = null, MOTHER = {};
+  function curWk() { return (LIVE && LIVE.ok && LIVE.week) || NEXT_WK; }
+  function mWeek() { var c = curWk(); return MW && MW < c ? MW : c; }
+  function mTier() { return MBOARD || MGAME ? (MBT || ME.tier) : ME.tier; }
+  // The feed for a tier + week: yours this week = LIVE (with test scores / ✖️2); anything else from BOX / MOTHER.
+  function mData(tier, wk) {
+    var c = curWk();
+    if (tier === ME.tier && wk === c) return liveView();
+    var k = tier + wk, live = wk === c, hit = live ? MOTHER[tier] : BOX[k];
+    if (hit && (!live || Date.now() - hit.got < 60000)) return hit.ok ? applyDpb(JSON.parse(JSON.stringify(hit)), dpbFor(hit)) : hit;
+    if (!hit || !hit.wait) mFetch(tier, wk);
+    return hit && hit.ok ? applyDpb(JSON.parse(JSON.stringify(hit)), dpbFor(hit)) : null;
+  }
+  function mFetch(tier, wk) {
+    var live = wk === curWk(), put = function (x) { x.got = Date.now(); if (live) MOTHER[tier] = x; else BOX[tier + wk] = x; };
+    var old = live ? MOTHER[tier] : BOX[tier + wk]; if (old) old.wait = 1; else put({ ok: false, wait: 1 });
+    var done = function (x) { if (!x.ok && old && old.ok) { old.wait = 0; old.got = Date.now() - 45000; } else put(x); if ($("v-match").classList.contains("on")) drawMatch(); };
+    apiGet({ action: "live", tier: tier, week: wk }, true).then(function (x) { done(x && x.ok ? x : { ok: false, error: (x && x.error) || "ESPN didn't answer" }); })
+      .catch(function () { done({ ok: false, error: "Couldn't reach the league server" }); });
+  }
+  function ownOf(sd) { return sd ? (liveOwner(sd.team) || ownerOfTeam(sd.team) || "") : ""; }
+  function mStepper(wk, r) {
+    var c = curWk(), fin = wk < c || (r && r.final), st = fin ? "Final" : r && r.ok && !allZero(r) ? '<span class="ldot"></span>Live' : "This week";
+    return '<div class="wkstep"><button id="mprev" aria-label="Earlier week"' + (wk <= 1 ? " disabled" : "") + '>‹</button>' +
+      '<div><b>Week ' + wk + '</b><small>' + st + '</small></div><button id="mnext" aria-label="Later week"' + (wk >= c ? " disabled" : "") + '>›</button></div>' +
+      '<div class="seg" id="mseg"><button data-mv="game"' + (!MBOARD && !MGAME ? ' class="on"' : '') + '>My game</button><button data-mv="board"' + (MBOARD || MGAME ? ' class="on"' : '') + '>🏟️ Scoreboard</button></div>';
+  }
   function drawMatch() {
-    var r = liveView(), h = '<div class="pad">';
-    if (!r || !r.ok) {
-      h += '<div class="card"><div class="eb">Live scores</div><h3>' + (r && r.setup ? "Live scoring isn't switched on yet" : "Live scores are unavailable right now") + '</h3><p>' + esc((r && r.error) || "") + '</p>' +
-        (r && r.setup && ME.commish ? '<div class="note" style="margin-top:8px">Commish, one-time setup: Apps Script → ⚙️ Project Settings → Script properties → add <b>ESPN_S2</b> and <b>SWID</b> (the same values as the GitHub secrets, SWID with its { } braces). No redeploy needed.</div>' : '') +
-        '<button class="b" id="mrefresh" style="margin-top:10px">↻ Try again</button></div></div>';
+    var wk = mWeek(), c = curWk(), tier = mTier(), r = mData(tier, wk), h = mStepper(wk, r) + '<div class="pad">';
+    var isLive = wk === c && tier === ME.tier;
+    if (!r || (!r.ok && r.wait)) { $("v-match").innerHTML = h + '<div class="card">' + ld("Getting Week " + wk + " from ESPN…") + '</div></div>'; return; }
+    if (!r.ok) {
+      h += '<div class="card"><div class="eb">Week ' + wk + '</div><h3>' + (r.setup ? "Live scoring isn't switched on yet" : "Scores are unavailable right now") + '</h3><p>' + esc(r.error || "") + '</p>' +
+        (r.setup && ME.commish ? '<div class="note" style="margin-top:8px">Commish, one-time setup: Apps Script → ⚙️ Project Settings → Script properties → add <b>ESPN_S2</b> and <b>SWID</b> (the same values as the GitHub secrets, SWID with its { } braces). No redeploy needed.</div>' : '') +
+        '<button class="b" id="' + (isLive ? 'mrefresh' : 'mretry') + '" style="margin-top:10px">↻ Try again</button></div></div>';
       $("v-match").innerHTML = h; return;
     }
-    var myName = teamOf(ME.owner).team, g = null, mine = null, opp = null;
-    r.games.forEach(function (x) { ["home", "away"].forEach(function (s) { if (x[s] && sameTeam(x[s].team, myName)) { g = x; mine = x[s]; opp = x[s === "home" ? "away" : "home"]; } }); });
+    if (MBOARD && !MGAME) { $("v-match").innerHTML = h + boardHTML(r, tier, wk) + '</div>'; return; }
+    var myName = teamOf(ME.owner).team, mine = null, opp = null;
+    if (MGAME) { var gg = r.games[MGAME.i]; if (gg) { mine = gg.away || gg.home; opp = gg.away ? gg.home : null;
+        if (opp && sameTeam(opp.team, myName)) { var t0 = mine; mine = opp; opp = t0; } } }
+    else r.games.forEach(function (x) { ["home", "away"].forEach(function (s) { if (x[s] && sameTeam(x[s].team, myName)) { mine = x[s]; opp = x[s === "home" ? "away" : "home"]; } }); });
+    if (MGAME) h += '<button class="mback" id="mboard">‹ ' + (tier === "U" ? "Upper" : "Lower") + ' Tier scoreboard</button>';
+    if (!mine) { $("v-match").innerHTML = h + '<div class="card"><h3>No game for ' + esc(myName) + ' in Week ' + wk + '</h3></div></div>'; return; }
+    var fin = wk < c || r.final, live = isLive || (wk === c && !fin);
     var ago = Math.max(0, Math.round((Date.now() - new Date(r.at).getTime()) / 1000));
-    if (!mine) { $("v-match").innerHTML = h + '<div class="card"><h3>No game for ' + esc(myName) + ' in Week ' + r.week + '</h3></div></div>'; return; }
-    var lead = mine.pts - (opp ? opp.pts : 0), pm = mine.proj || mine.pts, po = opp ? (opp.proj || opp.pts) : 0, share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
+    var lead = mine.pts - (opp ? opp.pts : 0), pm = fin ? mine.pts : (mine.proj || mine.pts), po = opp ? (fin ? opp.pts : (opp.proj || opp.pts)) : 0, share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
     function bonusBits(sd) { var a = sd.dpb.reduce(function (n, d) { return n + d.add; }, 0); return sd.dpb.length ? '<div class="dchip">✖️2 ' + esc(sd.dpb.map(function (d) { return d.p.n.split(" ").slice(-1)[0]; }).join(" + ")) + ' · +' + f2(a) + '</div>' : ''; }
     function scoreCell(sd, win) { return '<div class="lsc' + (win ? " w" : "") + (sd.dpb.length ? " dbl" : "") + '"><span class="sv">' + f2(sd.pts) + '</span>' + (sd.dpb.length ? '<span class="x2">×2</span>' : '') + '</div>'; }
-    var oppOwner = opp ? (liveOwner(opp.team) || ownerOfTeam(opp.team)) : null;
-    h += '<div class="mhero live"><div class="eb" style="color:var(--gold);display:flex;justify-content:space-between;align-items:center"><span>Week ' + r.week + ' · ' + (allZero(r) ? 'Not kicked off yet' : '<span class="ldot"></span>Live') + '</span>' +
-      (r.sim ? '<button class="simpill" id="simoff">🧪 Test scores · turn off</button>' : allZero(LIVE) && simTester() ? '<button class="simpill" id="simon">🧪 Test scores · turn on</button>' : '<button class="simpill" id="mrefresh" title="Pull the latest from ESPN">↻ ' + (ago < 60 ? ago + "s" : Math.round(ago / 60) + "m") + ' ago</button>') + '</div>' +
-      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div>' + scoreCell(mine, lead >= 0) + '<div class="rec">proj ' + (mine.proj != null ? mine.proj : "–") + ' · ' + mine.left + ' to play</div>' + bonusBits(mine) + '</div>' +
-      '<div class="mid">VS' + (oppOwner ? '<button class="rivb" data-riv-push="' + esc(ME.owner) + '|' + esc(oppOwner) + '" aria-label="Rivalry history">⚔️<small>Rivalry</small></button>' : '') + '</div>' +
-      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div>' + scoreCell(opp, lead < 0) + '<div class="rec">proj ' + (opp.proj != null ? opp.proj : "–") + ' · ' + opp.left + ' to play</div>' + bonusBits(opp) + '</div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
-      '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% by projection</span><span>' + (100 - share) + '%</span></div></div>';
-    h += '<div class="sh"><h2>Lineups</h2><small>Tap a player or his points</small></div>' + lineupHTML(r, mine, opp, true) + '</div>';
+    function sub(sd) { return fin ? f2(sd.bench || 0) + ' left on bench' : 'proj ' + (sd.proj != null ? sd.proj : "–") + ' · ' + sd.left + ' to play'; }
+    var mo = ownOf(mine), oo = ownOf(opp);
+    var pill = isLive && r.sim ? '<button class="simpill" id="simoff">🧪 Test scores · turn off</button>' : isLive && allZero(LIVE) && simTester() ? '<button class="simpill" id="simon">🧪 Test scores · turn on</button>' :
+      live ? '<button class="simpill" id="' + (isLive ? 'mrefresh' : 'mretry') + '" title="Pull the latest from ESPN">↻ ' + (ago < 60 ? ago + "s" : Math.round(ago / 60) + "m") + ' ago</button>' : '';
+    h += '<div class="mhero live"><div class="eb" style="color:var(--gold);display:flex;justify-content:space-between;align-items:center"><span>' +
+      (fin ? 'Final' : allZero(r) ? 'Not kicked off yet' : '<span class="ldot"></span>Live') + (MGAME ? ' · ' + (tier === "U" ? "Upper" : "Lower") : '') + '</span>' + pill + '</div>' +
+      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div>' + scoreCell(mine, lead >= 0) + '<div class="rec">' + sub(mine) + '</div>' + bonusBits(mine) + '</div>' +
+      '<div class="mid">VS' + (mo && oo ? '<button class="rivb" data-riv-push="' + esc(mo) + '|' + esc(oo) + '" aria-label="Rivalry history">⚔️<small>Rivalry</small></button>' : '') + '</div>' +
+      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div>' + scoreCell(opp, lead < 0) + '<div class="rec">' + sub(opp) + '</div>' + bonusBits(opp) + '</div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
+      (fin ? '<div class="wpl" style="justify-content:center;margin-top:10px"><span>' + (opp ? esc(lead >= 0 ? mine.team : opp.team) + ' by ' + f2(Math.abs(lead)) : 'Bye week') + '</span></div>' :
+        '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% by projection</span><span>' + (100 - share) + '%</span></div>') + '</div>';
+    if (!MGAME) h += '<button class="b mboardb" id="mboard">🏟️ League scoreboard · Week ' + wk + ' ›</button>';
+    h += '<div class="sh"><h2>Lineups</h2><small>Tap a player or his points</small></div>' + lineupHTML(r, mine, opp, live) + '</div>';
     $("v-match").innerHTML = h;
   }
+  // 🏟️ Every game in a tier for the week: tap one to open it. Your game wears gold.
+  function boardHTML(r, tier, wk) {
+    var myName = teamOf(ME.owner).team, fin = wk < curWk() || r.final;
+    var h = '<div class="seg seg2" id="mtier" style="margin:12px 0 0"><button data-t="U"' + (tier === "U" ? ' class="on"' : '') + '>Upper</button><button data-t="L"' + (tier === "L" ? ' class="on"' : '') + '>Lower</button></div>';
+    var side = function (sd, other) { if (!sd) return '<div class="sbt"><span>Bye</span></div>';
+      var w = other ? sd.pts > other.pts : true, me = sameTeam(sd.team, myName);
+      return '<div class="sbt' + (w && sd.pts > 0 ? ' w' : '') + (me ? ' me' : '') + '"><span>' + esc(sd.team) + '<small>' + esc(shortOf(ownOf(sd)) || "") + (sd.dpb && sd.dpb.length ? ' · ✖️2' : '') + '</small></span><b>' + f2(sd.pts) + '</b></div>'; };
+    h += r.games.map(function (g, i) {
+      var a = g.away || g.home, b = g.away ? g.home : null, mine = (a && sameTeam(a.team, myName)) || (b && sameTeam(b.team, myName));
+      var foot = fin ? 'Final' : allZero(r) ? 'Not kicked off' : ((a ? a.left : 0) + (b ? b.left : 0)) + ' to play · proj ' + (a && a.proj != null ? a.proj : '–') + '–' + (b && b.proj != null ? b.proj : '–');
+      return '<button class="card sbg' + (mine ? ' mine' : '') + '" data-mgame="' + i + '">' + side(a, b) + side(b, a) + '<small class="sbf">' + foot + ' ›</small></button>';
+    }).join("");
+    return h || '<div class="card"><p>No games this week.</p></div>';
+  }
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#v-match")) return;
+    var t;
+    if (e.target.closest("#mprev")) { MW = Math.max(1, mWeek() - 1); MGAME = null; drawMatch(); }
+    else if (e.target.closest("#mnext")) { var n = mWeek() + 1; MW = n >= curWk() ? 0 : n; MGAME = null; drawMatch(); }
+    else if ((t = e.target.closest("#mseg [data-mv]"))) { MBOARD = t.dataset.mv === "board"; MGAME = null; if (MBOARD && !MBT) MBT = ME.tier; drawMatch(); }
+    else if (e.target.closest("#mboard")) { MBOARD = true; MGAME = null; MBT = MBT || ME.tier; drawMatch(); }
+    else if ((t = e.target.closest("#mtier [data-t]"))) { MBT = t.dataset.t; drawMatch(); }
+    else if ((t = e.target.closest("[data-mgame]"))) { MGAME = { i: Number(t.dataset.mgame) }; drawMatch(); $("v-match").scrollTop = 0; }
+    else if (e.target.closest("#mretry")) { var wk = mWeek(), tr = mTier(); if (wk === curWk()) delete MOTHER[tr]; else delete BOX[tr + wk]; drawMatch(); }
+    else return;
+    try { $("v-match").scrollTo(0, 0); } catch (x) {}
+  });
   // Lineups, ESPN-style (Match and the box score share it): name (→ player screen) + points (→ how he scored them);
   // position, NFL team and opponent + projection; stat line or kickoff. Your team left, a divider, theirs right.
   var LN_ORDER = ["QB", "TQB", "RB", "RB/WR", "WR", "WR/TE", "TE", "FLEX", "OP", "DT", "DE", "DL", "LB", "CB", "S", "DB", "DP", "D/ST", "K", "P", "HC"];
@@ -2072,7 +2151,7 @@
   var BOX = {};
   function boxSheet(wk, oppOwner) {
     var tier = ME.tier, k = tier + wk, r = BOX[k];
-    if (!r) { if (!API_URL) return '<h2 class="sht">Box score</h2><div class="card"><p>Needs the league server.</p></div>';
+    if (!r || r.wait) { if (!API_URL) return '<h2 class="sht">Box score</h2><div class="card"><p>Needs the league server.</p></div>';
       apiGet({ action: "live", tier: tier, week: wk }).then(function (x) { BOX[k] = x && x.ok ? x : { ok: false, error: (x && x.error) || "ESPN didn't answer" };
         var top = stackS[stackS.length - 1]; if (top && top[0] === "box" && $("psheet").classList.contains("on")) { $("sb").innerHTML = boxSheet(wk, oppOwner); paint($("sb")); } })
         .catch(function () { BOX[k] = { ok: false, error: "Couldn't reach the league server" }; });
