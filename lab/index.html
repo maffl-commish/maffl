@@ -638,7 +638,12 @@
   .chat .cpan{margin-top:0;border-radius:0;box-shadow:none;transform:none;transition:none;opacity:0}
   .chat.on .cpan{opacity:1}.chat:not(.on) .cpan{visibility:hidden;pointer-events:none}.chat.kb{z-index:61}.chat:not(.kb){z-index:19}
   /* While chat is open, hide the tab underneath: when the iPhone keyboard opens, iOS slides the page and the Home feed showed through (commish 11/7) */
-  body.chaton #views{visibility:hidden}body.chaton .chat.kb{background:var(--page-bg)}
+  /* Chat lives in the page column (commish 11/7): header, chat, tab bar stack in one flexbox, so when the iPhone
+     keyboard slides or shrinks the page, the chat moves with it instead of being left behind. Tabs hide while typing. */
+  .app>.chat{position:relative;top:auto!important;left:auto;right:auto;height:auto;flex:1;min-height:0;max-width:none;margin:0;z-index:auto;pointer-events:auto;display:none}
+  body.chaton .app>.chat{display:flex}body.chaton #views{display:none}
+  .app>.chat .cpan{flex:1;min-height:0}
+  body.typing #tabs{display:none}
   .chd .grabber,.chd .cx{display:none}
   .cnew{position:absolute;left:16px;bottom:16px;z-index:2;font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#fff;background:var(--navy);border:2px solid var(--gold);border-radius:999px;padding:15px 22px;box-shadow:0 6px 18px rgba(15,29,52,.35)}
   .cbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px 14px}
@@ -791,6 +796,7 @@
     <section class="view" id="v-league"></section>
     <section class="view" id="v-more"></section>
   </main>
+  <div class="chat" id="chat"><div class="cpan" id="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New message</button><div id="cfoot"></div></div></div>
   <nav class="tabs" id="tabs">
     <button data-tab="home"><span>🏠</span>Home</button>
     <button data-tab="team"><span class="tbadge">🏈</span>Team</button>
@@ -801,7 +807,6 @@
 </div>
 
 <div class="cscrim" id="cscrim"></div>
-<div class="chat" id="chat"><div class="cpan" id="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New message</button><div id="cfoot"></div></div></div>
 <div class="sscrim" id="sscrim"></div>
 <div class="psheet" id="psheet"><div class="shd"><span class="grabber"></span><button id="sback" style="visibility:hidden">‹ Back</button><button class="x" id="sx" aria-label="Close">×</button></div><div class="sb" id="sb"></div></div>
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
@@ -3515,7 +3520,7 @@
   }
   function closeChat() {
     var ta = $("cinput"); if (ta && CH.room) CH.draft[CH.room] = ta.value;
-    CH.open = false; CH.room = null; CH.view = "inbox"; $("chat").classList.remove("on"); document.body.classList.remove("chaton"); $("cscrim").classList.remove("on"); $("cpan").style.transform = "";
+    CH.open = false; CH.room = null; CH.view = "inbox"; $("chat").classList.remove("on"); document.body.classList.remove("chaton"); document.body.classList.remove("typing"); $("cscrim").classList.remove("on"); $("cpan").style.transform = "";
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === CUR_TAB); });
     setTimeout(function () { if (!CH.open) $("cfoot").innerHTML = ""; }, 300);
   }
@@ -3546,15 +3551,13 @@
       if (r.chat.unread !== before && $("v-home").classList.contains("on") && !CH.open) renderHome();
     }).catch(function () { CH.inboxBusy = false; });
   }
-  function sizeChat() {
-    var vv = window.visualViewport, c = $("chat"); if (!vv) return;
-    var body = $("cbody"), near = body && body.scrollHeight - body.scrollTop - body.clientHeight < 90;
-    var kb = window.innerHeight - vv.height > 120, hb = document.querySelector(".hdr").getBoundingClientRect().bottom, tt = $("tabs").getBoundingClientRect().top;
-    if (kb) { c.style.setProperty("--vvh", vv.height + "px"); c.style.top = vv.offsetTop + "px"; }
-    else { c.style.setProperty("--vvh", Math.max(200, tt - hb) + "px"); c.style.top = hb + "px"; }
-    c.classList.toggle("kb", kb);
-    if (near && CH.view === "thread") body.scrollTop = body.scrollHeight;
+  function sizeChat() { // layout is flexbox now; only keep the newest message in view as the keyboard moves
+    var body = $("cbody"); if (!body || !CH.open || CH.view !== "thread") return;
+    if (CH.near && document.body.classList.contains("typing")) body.scrollTop = body.scrollHeight;
   }
+  document.addEventListener("focusin", function (e) { if (e.target.closest && e.target.closest("#chat") && /^(TEXTAREA|INPUT)$/.test(e.target.tagName)) { var bd = $("cbody"); CH.near = !bd || bd.scrollHeight - bd.scrollTop - bd.clientHeight < 90; document.body.classList.add("typing"); setTimeout(sizeChat, 350); } });
+  document.addEventListener("focusout", function (e) { if (e.target.closest && e.target.closest("#chat")) setTimeout(function () { if (!document.activeElement || !document.activeElement.closest || !document.activeElement.closest("#chat textarea,#chat input")) { document.body.classList.remove("typing"); try { window.scrollTo(0, 0); document.querySelector(".app").scrollTop = 0; } catch (x) {} } }, 50); });
+
   if (window.visualViewport) { visualViewport.addEventListener("resize", sizeChat); visualViewport.addEventListener("scroll", sizeChat); }
   setInterval(function () { if (document.hidden || !CH.open || CH.view !== "thread") return; loadRoom(); }, 8000);
   setInterval(function () { if (!document.hidden) refreshInbox(); }, 30000);
