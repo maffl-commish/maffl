@@ -3300,12 +3300,13 @@
   // A step counts as a to-do from its day on; before that it waits under 📅 Scheduled.
   function etDay(d) { return new Date(d).toLocaleDateString("en-CA", { timeZone: "America/New_York" }); }
   function tueOf(week) { return new Date(Date.UTC(2026, 8, 15 + 7 * (week - 1))).toISOString().slice(0, 10); } // Tue after Week N (Week 1 = Thu Sep 10)
-  function espnDue(p) { return p.when || (p.perk === "double" && p.week ? tueOf(p.week) : p.perk === "swap" && p.week ? tueOf(p.week - 1) : etDay(p.approved || Date.now())); }
+  function espnDue(p) { return p.when || ((p.perk === "double" || p.perk === "ghost") && p.week ? tueOf(p.week) : p.perk === "swap" && p.week ? tueOf(p.week - 1) : etDay(p.approved || Date.now())); }
   function espnNow() { var t = etDay(Date.now()); return ((DESK || {}).espn || []).filter(function (p) { return espnDue(p) <= t; }); }
   function espnLater() { var t = etDay(Date.now()); return ((DESK || {}).espn || []).filter(function (p) { return espnDue(p) > t; }).sort(function (a, b) { return espnDue(a) < espnDue(b) ? -1 : 1; }); }
   function dayName(iso) { return new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }); }
   function espnItem(p) {
-    return '<div class="ditem">' + esc(espnStep(p)) + '<div class="meta">' + esc((PERK_BY[p.perk] || {}).name || p.perk) + ' · approved ' + ago(p.approved) + '</div>' +
+    return '<div class="ditem">' + esc(espnStep(p)) + '<div class="meta">' + (p.perk === "ghost" ? '👻 Lower · par = average of the real scores, top one dropped' + (p.vs ? ' · vs ' + esc(p.vs) + ' (' + Number(p.vsPts).toFixed(2) + ' → ' + (p.vsPts > p.par ? 'beats' : 'loses to') + ' the Ghost)' : '')
+        : esc((PERK_BY[p.perk] || {}).name || p.perk) + ' · approved ' + ago(p.approved)) + '</div>' +
       '<label class="dwhen">📅 Do on <b>' + dayName(espnDue(p)) + '</b><input type="date" data-espnwhen="' + esc(p.id) + '" value="' + espnDue(p) + '" aria-label="Change the day"><span>Change</span></label><div class="btns">' +
       '<a class="b" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"') + '</div></div>';
   }
@@ -3326,6 +3327,8 @@
   }
   function espnStep(p) {
     var t = teamOf(p.owner).team || p.owner;
+    if (p.perk === "ghost") return Number(p.espnPts) ? "Week " + p.week + ": ESPN shows the MAFFL Ghost at " + p.espnPts.toFixed(2) + ", par is " + p.par.toFixed(2) + ". Fix the score adjustment"
+      : "Week " + p.week + ": set the MAFFL Ghost's score to " + p.par.toFixed(2) + " (score adjustment)";
     return p.perk === "faab" ? "Give " + t + " +$" + 20 * p.qty + " FAAB budget"
       : p.perk === "double" ? "Week " + p.week + ": add " + p.player + "'s points again as a score adjustment for " + t + " (after his game)"
       : p.perk === "swap" ? "Week " + p.week + ": swap opponents between " + t + " and " + (teamOf(p.swapWith).team || p.swapWith) + " in the schedule"

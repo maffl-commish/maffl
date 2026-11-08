@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "9"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "10"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -74,7 +74,18 @@ function dScores_(tier) {
   // Weekly high per decided week, season high.
   var highs = decided.map(function (wk) { var s = scores[wk] || {}, best = null; real.forEach(function (id) { if (s[id] != null && (!best || s[id] > s[best])) best = id; });
     return best ? { wk: wk, id: +best, pts: s[best] } : null; }).filter(Boolean);
-  return { tier: tier, week: cur, decided: decided, last: decided.length ? decided[decided.length - 1] : 0, teams: teams, table: table,
+  // 👻 MAFFL Ghost (Lower, odd-sized tier): its score each week is the "par" = mean of the real scores with the week's top one
+  // dropped, rounded half up to the cent (same rule as maffl_espn_pull.py). The commish enters it on ESPN as a score
+  // adjustment; espn = what ESPN shows now (0 until he does). Final regular-season weeks only.
+  var gid = Object.keys(teams).filter(function (id) { return teams[id].ghost; })[0], ghost = [];
+  if (gid) decided.forEach(function (wk) {
+    var gg = games.filter(function (g) { return g.wk === wk && !g.po; }), gm = gg.filter(function (g) { return String(g.h) === gid || String(g.a) === gid; })[0]; if (!gm) return;
+    var cs = []; gg.forEach(function (g) { [[g.h, g.hp], [g.a, g.ap]].forEach(function (x) { if (String(x[0]) !== gid) cs.push(Math.round(x[1] * 100)); }); });
+    if (cs.length < 2) return; cs.sort(function (a, b) { return b - a; }); var rest = cs.slice(1), sum = rest.reduce(function (a, b) { return a + b; }, 0), n = rest.length;
+    var par = Math.floor((2 * sum + n) / (2 * n)) / 100, home = String(gm.h) === gid;
+    ghost.push({ wk: wk, par: par, espn: home ? gm.hp : gm.ap, vs: home ? gm.a : gm.h, vsPts: home ? gm.ap : gm.hp });
+  });
+  return { tier: tier, week: cur, decided: decided, ghost: ghost, last: decided.length ? decided[decided.length - 1] : 0, teams: teams, table: table,
     games: games.map(function (g) { return [g.wk, g.h, g.hp, g.a, g.ap, g.win, g.po ? 1 : 0]; }), survivor: { alive: alive.map(Number), out: out }, highs: highs };
 }
 function r2_(x) { return Math.round((Number(x) || 0) * 100) / 100; }
@@ -267,6 +278,7 @@ DAILY.due = function () {
 // Week-by-week fantasy points per ESPN player id for a tier (only weeks the player was on a roster in that tier).
 DAILY.playerWeeks = function (tier) { return dGet_("pweeks_" + tier) || {}; };
 DAILY.playerStarts = function (tier) { return dGet_("pstart_" + tier) || {}; };
+DAILY.snapshot = function () { return dGet_("snapshot") || {}; }; // the desk reads the 👻 Ghost par list from it
 // What the app reads (GET ?action=daily): the snapshot + the last 7 days of moves + the card lines + run info.
 DAILY.view = function () {
   var snap = dGet_("snapshot"), info = {};

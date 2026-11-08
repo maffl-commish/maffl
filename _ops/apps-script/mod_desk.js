@@ -33,6 +33,11 @@ function desk_(me) {
   var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id]; }).map(function (r) {
     return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts, when: when[r.perk_id] || "" };
   });
+  // 👻 Ghost score steps (commish 11/8, the job the Pulse robot used to flag): every final week where ESPN's Ghost score isn't the par yet.
+  try { need_("daily"); var sn = DAILY.snapshot(), c2 = function (x) { return Math.round((Number(x) || 0) * 100); }; Object.keys(sn.tiers || {}).forEach(function (t) { var s = sn.tiers[t];
+    (s.ghost || []).forEach(function (g) { var id = "ghost:" + t + ":" + g.wk; if (c2(g.espn) === c2(g.par) || done[id]) return;
+      espn.push({ id: id, owner: "", tier: t, perk: "ghost", qty: 1, week: g.wk, player: "", pos: "", swapWith: "", approved: sn.at, when: when[id] || "",
+        par: g.par, espnPts: g.espn, vs: ((s.teams || {})[g.vs] || {}).team || "", vsPts: g.vsPts }); }); }); } catch (e) {}
   var owners = owners_(), last = {};
   try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
   return { ok: true, version: VERSION,
