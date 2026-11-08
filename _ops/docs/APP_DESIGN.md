@@ -12,6 +12,7 @@ VERSION: 0.21 (2026-11-07, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-07 · **Sign-in hardened** (readiness audit, Phase 1): phones keep a **device token** (handed out at sign-in, tied to the owner's salt, so a new passphrase signs every old phone out) instead of the passphrase. No automatic lockouts any more (anyone could lock anyone): passphrase-only sign-in pauses for an hour after 25 wrong guesses league-wide (signed-in phones keep working, commish alerted); owner + passphrase pauses that owner's passphrase checks after 3 wrong in an hour. New passphrases = two words + 3 digits (GRONK-PISTOL-427, ~6 million), stored as HMAC-SHA256 with a secret pepper in Script Properties (`PIN_PEPPER`, made on first use); older two-word phrases keep working until reissued. The commish can still lock by hand.
 - 2026-11-07 · **Backend = core + parts** (commish: architecture must be first class): `logic.js` core + `mod_*.js` parts evaluated in one scope, each under the 95 KB cache limit, VERSION-keyed cache + 6 h last-good copy; every backend push passes `_ops/tests/regress.js` (mock backend runs the real code).
 - 2026-11-07 · **Feed, not inbox** (commish): Home scrolls up through the week's cards (nothing deleted, ends "You're caught up"); things to act on live in a ⚡ Needs-you strip above it. Cards are organized as **series** with a weekly slot budget; the catalog is `REEL_SERIES.md`. Supersedes the 11/3 inbox (swipe up to clear, ← → browse).
 - 2026-11-07 · **The Vault** (commish): History & Stats becomes the Vault inside REEL. History reaches owners as reel cards (Throwbacks first), the League tab holds the full Vault. Data: one derived file `lab/vault-data.js` (static, generated from gold by `gen_vault.py` + a workflow; no backend/Sheet); the only hand-written part is the commish's story line per season (`data/MAFFL_Throwbacks.csv`).
@@ -159,8 +160,8 @@ for open offers (inbound and outbound). Rules and guardrails: `TRADE_CENTER_DESI
 - More → **Sign out** (shared family devices).
 - **iPhone note:** a Home-Screen web app keeps separate storage from Safari, so an owner who signed in in Safari
   enters the PIN once more after "Add to Home Screen". New phone / cleared data = asked again. Expected.
-- Server side (from `TRADE_CENTER_DESIGN.md` §5): salted PIN hash in the Sheet, every write checks the PIN,
-  5 wrong tries locks it until the commish resets.
+- Server side: peppered passphrase hash in the Sheet; phones hold a device token; every write checks it. No automatic
+  lockouts (Journal 11/7): wrong guesses pause sign-in for an hour instead.
 
 ## 4b. Contacts + notifications (decided 11/2)
 
@@ -287,7 +288,7 @@ interactions (trades for now, §4b).
   (logs + emails the commish), `react`, `vote` (POST, text/plain JSON); `summary` (GET: reaction counts, your
   reactions, poll tallies, active polls; POST adds your chat inbox). Chat (v0.11): `chat` (one room + mark read),
   `chatsend`, `chatmod` (delete / pin), `inbox` (§4c).
-- Passphrases: two football words (GRONK-PISTOL), case/dashes ignored; salted SHA-256 only; 5 wrong tries locks.
+- Passphrases: two football words + 3 digits (GRONK-PISTOL-427; older two-word ones still work), case/spaces/dashes ignored; peppered HMAC-SHA256 (older: salted SHA-256); phones keep a device token; wrong guesses pause, never lock (Journal 11/7).
   Commish menu in the Sheet: **MAFFL → Set / reset a passphrase** (shows it once to text it), **Mark request done**, **Unlock an owner**.
 - Events is append-only (reactions toggle by appending on/off; last write wins).
 - Client: `lab/index.html` `API_URL` (empty = demo mode). A phone can point at a test URL via

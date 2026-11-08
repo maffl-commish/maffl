@@ -17,7 +17,7 @@ const norm = (o) => JSON.stringify(o, null, 0)
   .replace(/"(ts|at|updated|updated_ts|last|since|kick)":\s*\d{10,}/g, '"$1":<n>')
   .replace(/\b1[6-9]\d{11}\b/g, "<ms>")
   .replace(/\b[A-Z]{1,3}[0-9A-Z]{7,}\b/g, (s) => /^[A-Z]+$/.test(s) ? s : "<id>")
-  .replace(/"F[a-z0-9]{6,}"/g, "\"<fid>\"").replace(/"pin":"[^"]*"/g, '"pin":"<pin>"')
+  .replace(/"F[a-z0-9]{6,}"/g, "\"<fid>\"").replace(/"pin":"[^"]*"/g, '"pin":"<pin>"').replace(/"token":"t\.[0-9a-f]+"/g, '"token":"<token>"')
   .replace(/\d+ ?(s|ms)\b/g, "<dur>")
   .replace(/(\d+ (min|minutes|hours?|h) ago)/g, "<ago>");
 // The tick's ESPN job only runs every other 15-minute window (and DMs owners when it does): mask it so the result

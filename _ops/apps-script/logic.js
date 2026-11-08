@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.28";
+var VERSION = "0.29";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -28,7 +28,7 @@ function perkDeadline_(week) {
 }
 var MAX_FAILS_PER_HOUR = 25; // league-wide guess limit for passphrase-only sign-in
 
-// Passphrases are two football words, e.g. GRONK-PISTOL. Case, spaces and dashes don't matter when typing.
+// Passphrases are two football words and 3 digits, e.g. GRONK-PISTOL-427 (older ones: two words). Case, spaces and dashes don't matter when typing.
 var WORDS_A = ["GRONK","BLITZ","PISTOL","HAIL","WILDCAT","SHOTGUN","NICKEL","DIME","REDZONE","AUDIBLE","SPIKE","LAMBEAU",
   "PYLON","STIFFARM","JUKE","SACK","PICKSIX","ONSIDE","FLEAFLICKER","BOOTLEG","CHEESE","FROZEN","TUNDRA","PRIMETIME",
   "TURKEY","GRIDIRON","TOUCHBACK","FUMBLE","WAIVER","BYEWEEK","SLEEPER","HANDCUFF","FLEX","STACK","BOOM","BUST",
@@ -46,10 +46,9 @@ var WORDS_B = ["PISTOL","HAMMER","TORNADO","EXPRESS","RAMPAGE","CANNON","THUNDER
 function newPhrase_() {
   var a = WORDS_A[Math.floor(Math.random() * WORDS_A.length)], b;
   do { b = WORDS_B[Math.floor(Math.random() * WORDS_B.length)]; } while (b === a);
-  return a + "-" + b;
+  return a + "-" + b + "-" + (100 + Math.floor(Math.random() * 900)); // + 3 digits: ~6 million phrases
 }
 function normPin_(pin) { return String(pin || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
-var MAX_TRIES = 5;
 
 // ---------------------------------------------------------------- HTTP
 function doGet(e) {
@@ -70,11 +69,15 @@ function doPost(e) {
   var b = {};
   try { b = JSON.parse((e && e.postData && e.postData.contents) || "{}"); } catch (err) { return json({ ok: false, error: "bad json" }); }
   // Reads that change nothing (summary, inbox) skip the script lock, so one owner's slow call never queues the
-  // whole league behind it. Only when the passphrase checks out cleanly (no failed-try counter to write).
-  var fast = LOCK_FREE[b.action] && cleanAuth_(b);
-  if (fast) {
-    try { return json(b.action === "summary" ? summary_(b.week, fast.owner) : { ok: true, chat: inbox_(fast) }); }
-    catch (err) { return json({ ok: false, error: String(err) }); }
+  // whole league behind it. A phone still holding a passphrase (not a token) gets its token back with the summary.
+  if (LOCK_FREE[b.action]) {
+    var fast = auth_(b.owner, b.pin);
+    if (!fast.ok) return json(fast);
+    try {
+      if (b.action !== "summary") return json({ ok: true, chat: inbox_(fast) });
+      var sum = summary_(b.week, fast.owner); if (fast.viaPhrase) sum.token = token_(fast.viaPhrase);
+      return json(sum);
+    } catch (err) { return json({ ok: false, error: String(err) }); }
   }
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -142,10 +145,26 @@ function rows_(name) {
 function norm_(s) { return String(s || "").replace(/\s*\/\s*/g, "/").trim().toLowerCase(); }
 function owners_() { return rows_("Owners"); }
 function ownerRow_(owner) { var n = norm_(owner); return owners_().filter(function (o) { return norm_(o.owner) === n; })[0]; }
-function hash_(salt, pin) {
-  var raw = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ":" + normPin_(pin));
-  return raw.map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join("");
+// Passphrase hashes. New ones (setPhrase_) are "h2:" + HMAC-SHA256 with a secret pepper kept in Script Properties, so the
+// Sheet alone can't be used to test guesses. Older plain SHA-256 hashes still verify until the commish issues a new phrase.
+function hex_(bytes) { return bytes.map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join(""); }
+function pepper_(make) {
+  var p = PropertiesService.getScriptProperties(), k = p.getProperty("PIN_PEPPER");
+  if (!k && make) { k = Utilities.getUuid() + Utilities.getUuid(); p.setProperty("PIN_PEPPER", k); }
+  return k || "";
 }
+function hmac_(text, key) { return hex_(Utilities.computeHmacSha256Signature(text, key)); }
+function hashV1_(salt, pin) { return hex_(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, salt + ":" + normPin_(pin))); }
+function hash_(salt, pin) { return "h2:" + hmac_(salt + ":" + normPin_(pin), pepper_(true)); }
+function pinOk_(o, pin) {
+  var h = String(o.pin_hash || ""); if (!h || !normPin_(pin)) return false;
+  if (h.indexOf("h2:") !== 0) return hashV1_(o.salt, pin) === h;
+  var k = pepper_(false); return !!k && "h2:" + hmac_(o.salt + ":" + normPin_(pin), k) === h;
+}
+// Device token: handed out at sign-in and kept on the phone instead of the passphrase. Tied to the owner's salt, so a
+// new passphrase signs every old device out. Checking it writes nothing and is never rate-limited.
+function token_(o) { return "t." + hmac_("tok:" + o.salt + ":" + norm_(o.owner), pepper_(true)).slice(0, 40); }
+function tokenOk_(o, t) { var k = pepper_(false); return !!k && !!o.salt && String(t) === "t." + hmac_("tok:" + o.salt + ":" + norm_(o.owner), k).slice(0, 40); }
 // Never let typed text become a Sheet formula: a string starting with = + - @ is stored with a leading ' (as text).
 function safe_(s) { s = String(s == null ? "" : s); return /^[=+\-@]/.test(s) ? "'" + s : s; }
 function cells_(row) { return row.map(function (v) { return typeof v === "string" ? safe_(v) : v; }); }
@@ -155,48 +174,54 @@ function setCell_(name, row, header, value) {
 }
 
 // ---------------------------------------------------------------- auth
-// Sign in with the passphrase alone: try it against every owner's salted hash.
+// Two ways in: a device token (normal: every call from a signed-in phone) or a passphrase (sign-in, older phones).
+// Wrong tokens and wrong passphrases never lock an owner out for good (anyone could do that to anyone). Instead:
+//  · passphrase-only sign-in: MAX_FAILS_PER_HOUR wrong guesses league-wide pauses passphrase checks for the hour
+//    (signed-in phones keep working on their tokens) and alerts the commish;
+//  · owner + passphrase: OWNER_FAILS wrong per owner per hour, then that owner's passphrase checks pause for the hour.
+// The commish can still lock someone by hand (Owners "locked" = Y).
+var OWNER_FAILS = 3, LOCK_FREE = { summary: 1, inbox: 1 };
+function me_(o) { return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" }; }
+function signedOut_(msg) { return { ok: false, auth: false, error: msg || "You've been signed out (new passphrase?). Sign in again." }; }
 function loginByPhrase_(pin) {
   var cache = CacheService.getScriptCache(), fails = Number(cache.get("fails") || 0);
-  if (fails >= MAX_FAILS_PER_HOUR) return { ok: false, error: "Too many wrong tries. Wait an hour, or ask the commish." };
-  if (normPin_(pin).length < 4) return { ok: false, error: "Type your two-word passphrase" };
-  var hit = owners_().filter(function (o) { return o.pin_hash && String(o.locked) !== "Y" && hash_(o.salt, pin) === o.pin_hash; })[0];
+  if (fails >= MAX_FAILS_PER_HOUR) return { ok: false, error: "Sign-in is paused for a bit after too many wrong tries. Try again in an hour, or text the commish." };
+  if (normPin_(pin).length < 4) return { ok: false, error: "Type your passphrase" };
+  var hit = owners_().filter(function (o) { return String(o.locked) !== "Y" && pinOk_(o, pin); })[0];
   if (!hit) {
     cache.put("fails", String(fails + 1), 3600);
     if (fails + 1 === MAX_FAILS_PER_HOUR) { MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: sign-in guesses paused",
-      MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour. Sign-in is paused for an hour. If that wasn't owners fumbling, consider resetting passphrases.");
-      deskPost_("alert", MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour, so sign-in is paused for an hour. If that wasn't owners fumbling, reset passphrases.", "", "GUESSES"); }
+      MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour. New sign-ins are paused for an hour (signed-in phones keep working). If that wasn't owners fumbling, consider issuing new passphrases.");
+      deskPost_("alert", MAX_FAILS_PER_HOUR + " wrong passphrases in the last hour, so new sign-ins are paused for an hour. Signed-in phones keep working. If that wasn't owners fumbling, issue new passphrases.", "", "GUESSES"); }
     return { ok: false, error: "That passphrase doesn't match anyone" };
   }
-  return { ok: true, owner: hit.owner, team: hit.team, tier: hit.tier, commish: String(hit.is_commish) === "Y" };
+  return me_(hit);
+}
+// Write-free check (safe outside the script lock). Returns the signed-in owner, or { ok:false, … }.
+function auth_(owner, pin) {
+  if (!owner) return signedOut_("Sign in first.");
+  var o = ownerRow_(owner);
+  if (!o) return { ok: false, auth: false, error: "Unknown owner" };
+  if (String(o.locked) === "Y") return signedOut_("Locked by the commish. Text him for a new passphrase.");
+  if (/^t\./.test(String(pin || ""))) return tokenOk_(o, pin) ? me_(o) : signedOut_();
+  var cache = CacheService.getScriptCache(), key = "of:" + norm_(o.owner), n = Number(cache.get(key) || 0);
+  if (n >= OWNER_FAILS) return signedOut_("Too many wrong tries. Wait an hour, or text the commish.");
+  if (!o.pin_hash) return signedOut_("No passphrase yet. Request one on the sign-in screen.");
+  if (pinOk_(o, pin)) { var r = me_(o); r.viaPhrase = o; return r; }
+  cache.put(key, String(n + 1), 3600);
+  return signedOut_("That passphrase didn't work. Sign in again.");
 }
 function login_(owner, pin) {
-  if (!owner) return loginByPhrase_(pin);
-  var o = ownerRow_(owner);
-  if (!o) return { ok: false, error: "Unknown owner" };
-  if (String(o.locked) === "Y") return { ok: false, error: "Locked after too many tries. Ask the commish for a new passphrase." };
-  if (!o.pin_hash) return { ok: false, error: "No passphrase yet. Request one below." };
-  if (hash_(o.salt, pin) !== o.pin_hash) {
-    var n = Number(o.failed_tries || 0) + 1;
-    setCell_("Owners", o._row, "failed_tries", n);
-    if (n >= MAX_TRIES) { setCell_("Owners", o._row, "locked", "Y"); deskPost_("lock", "", o.owner, "LOCKED"); }
-    return { ok: false, error: n >= MAX_TRIES ? "Locked. Ask the commish for a new passphrase." : "Wrong passphrase (" + (MAX_TRIES - n) + " tries left)" };
-  }
-  if (Number(o.failed_tries)) setCell_("Owners", o._row, "failed_tries", 0);
-  return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" };
-}
-var LOCK_FREE = { summary: 1, inbox: 1 };
-// Passphrase check that writes nothing: right owner, right passphrase, not locked, no failed tries to reset.
-// Anything else falls through to the normal locked path (login_), which keeps the counters honest.
-function cleanAuth_(b) {
-  if (!b.owner || !b.pin) return null;
-  var o = ownerRow_(b.owner);
-  if (!o || !o.pin_hash || String(o.locked) === "Y" || Number(o.failed_tries) || hash_(o.salt, b.pin) !== o.pin_hash) return null;
-  return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" };
+  var r = owner ? auth_(owner, pin) : loginByPhrase_(pin);
+  if (!r.ok) return r;
+  var o = r.viaPhrase || ownerRow_(r.owner); delete r.viaPhrase;
+  r.token = token_(o); // the phone keeps this instead of the passphrase
+  return r;
 }
 function withAuth_(b, fn) {
-  var r = login_(b.owner, b.pin);
+  var r = auth_(b.owner, b.pin);
   if (!r.ok) return r;
+  delete r.viaPhrase;
   return fn(r);
 }
 
@@ -330,7 +355,7 @@ function menuRequestDone() {
 }
 function menuUnlock() {
   var o = pickOwner_("Unlock an owner"); if (!o) return;
-  setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", "");
+  setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", ""); CacheService.getScriptCache().remove("of:" + norm_(o.owner));
   SpreadsheetApp.getUi().alert(o.owner + " is unlocked. Their passphrase didn't change.");
 }
 

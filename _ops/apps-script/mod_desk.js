@@ -11,12 +11,12 @@
 function deskPost_(kind, text, ref, event) { try { post_("desk", BOT, kind, text, ref, event, [], ""); } catch (e) {} }
 function setPhrase_(o) {
   var others = owners_().filter(function (x) { return x.pin_hash && x._row !== o._row; }), pin, tries = 0;
-  do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return hash_(x.salt, pin) === x.pin_hash; }));
+  do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return pinOk_(x, pin); }));
   var salt = Utilities.getUuid();
   setCell_("Owners", o._row, "salt", salt);
   setCell_("Owners", o._row, "pin_hash", hash_(salt, pin));
   setCell_("Owners", o._row, "failed_tries", 0);
-  setCell_("Owners", o._row, "locked", "");
+  setCell_("Owners", o._row, "locked", ""); CacheService.getScriptCache().remove("of:" + norm_(o.owner));
   sheet_("Events").appendRow([new Date(), "commish", "pin_set", o.owner, "", "", ""]);
   return pin;
 }
@@ -62,7 +62,7 @@ function deskAct_(me, b) {
     var c = contacts_().filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0] || {};
     return { ok: true, owner: o.owner, team: o.team, pin: pin, phone: c.phone || "", email: c.email || "" }; // shown once, to the commish only
   }
-  if (b.op === "unlock") { setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", ""); deskPost_("note", o.owner + " unlocked (same passphrase).", o.owner, "UNLOCKED"); return { ok: true }; }
+  if (b.op === "unlock") { setCell_("Owners", o._row, "failed_tries", 0); setCell_("Owners", o._row, "locked", ""); CacheService.getScriptCache().remove("of:" + norm_(o.owner)); deskPost_("note", o.owner + " unlocked (same passphrase).", o.owner, "UNLOCKED"); return { ok: true }; }
   if (b.op === "dismiss") { closeRequests_(o.owner); return { ok: true }; }
   if (b.op === "beta") { ensureCol_("Owners", "beta"); setCell_("Owners", o._row, "beta", b.on ? "Y" : "");
     deskPost_("note", (b.on ? "🧪 " + o.owner + " joined the beta crew." : o.owner + " left the beta crew."), o.owner, b.on ? "BETA_ON" : "BETA_OFF"); return { ok: true }; }

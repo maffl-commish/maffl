@@ -288,6 +288,7 @@ function create(opts) {
     Utilities: {
       DigestAlgorithm: { SHA_256: "sha256" }, Charset: { UTF_8: "utf8" },
       computeDigest: (alg, s) => Array.from(crypto.createHash("sha256").update(String(s), "utf8").digest()).map((b) => (b > 127 ? b - 256 : b)),
+      computeHmacSha256Signature: (v, k) => Array.from(crypto.createHmac("sha256", String(k)).update(String(v), "utf8").digest()).map((b) => (b > 127 ? b - 256 : b)),
       getUuid: () => crypto.randomUUID(),
       base64Encode: (s) => Buffer.from(String(s), "utf8").toString("base64"),
       base64Decode: (s) => Array.from(Buffer.from(String(s), "base64")),

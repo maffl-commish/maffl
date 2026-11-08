@@ -852,7 +852,14 @@
   function api(action, body, quiet) {
     body = Object.assign({ action: action }, body || {});
     return tracked(fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }), quiet || QUIET[action])
-      .then(function (r) { if (r && r.ok && MOMENTS[action]) { var m = MOMENTS[action]; setTimeout(function () { nudge(m[0], m[1]); }, 1800); } return r; });
+      .then(function (r) { if (r && r.auth === false && action !== "login" && action !== "request") staleSignOut(r.error); if (r && r.ok && MOMENTS[action]) { var m = MOMENTS[action]; setTimeout(function () { nudge(m[0], m[1]); }, 1800); } return r; });
+  }
+  // The server says this phone's sign-in no longer works (new passphrase, or locked): stop calling, forget the
+  // private copy, and ask for the passphrase again. Once, however many calls come back that way.
+  function staleSignOut(msg) {
+    if (!store("maffl_lab_pin")) return;
+    store("maffl_lab_pin", ""); try { localStorage.removeItem("maffl_lab_sum"); } catch (e) {}
+    showWelcome("pin", msg || "You've been signed out. Sign in again.");
   }
   function apiGet(q, quiet) { return tracked(fetch(API_URL + "?" + new URLSearchParams(q).toString()).then(function (r) { return r.json(); }), quiet); }
   function ld(msg, cls) { return '<div class="ld' + (cls ? " " + cls : "") + '"><span class="spin"></span><span>' + esc(msg || "Loading…") + '</span></div>'; }
@@ -1123,6 +1130,7 @@
     var early = EARLY_SUM && norm(store("maffl_lab_owner")) === norm(ME.owner) ? EARLY_SUM : null; EARLY_SUM = null; // already on its way
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
+      if (r.token) { store("maffl_lab_pin", r.token); delete r.token; } // older phones swap their passphrase for a device token
       SUM = r; SUM_OK = true; saveSum(r); ME.commish = !!r.commish; betaOn(!!r.beta); tourStampCheck(r.tour); deskBadge(); if (ME.commish) loadDesk().then(function () { if (deskTodo() && $("v-home").classList.contains("on") && !CH.open) renderHome(); }); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
@@ -2156,7 +2164,7 @@
   }
 
   // ---------- WELCOME (pick team; PINs connect to the league Sheet) ----------
-  function showWelcome(requestMode) {
+  function showWelcome(requestMode, msg) {
     var el = $("welcome"), h = '<img class="logo" src="../maffl-logo.png" alt=""><h1>MAFFL HQ</h1>';
     if (requestMode === true) {
       h += '<p class="p">Need your passphrase? Tell the commish who you are and he\'ll text it to you.</p>' +
@@ -2178,8 +2186,9 @@
     }
     if (requestMode === "pin" || (API_URL && !requestMode)) {
       h += '<p class="p">Enter your passphrase.</p>' +
-        '<input class="field pinpad" id="pin" type="text" autocapitalize="characters" autocorrect="off" autocomplete="off" spellcheck="false" maxlength="40" placeholder="GRONK-PISTOL">' +
-        '<p class="meta" style="text-align:center;margin-top:6px">Your two-word passphrase from the commish. Caps and dashes don\'t matter.</p>' +
+        '<input class="field pinpad" id="pin" type="text" autocapitalize="characters" autocorrect="off" autocomplete="off" spellcheck="false" maxlength="40" placeholder="GRONK-PISTOL-427">' +
+        '<p id="pinErr" role="alert" style="text-align:center;margin-top:8px;color:#b42318;font-weight:700;min-height:1px">' + esc(msg || "") + '</p>' +
+        '<p class="meta" style="text-align:center;margin-top:6px">The passphrase the commish texted you. Caps, spaces and dashes don\'t matter.</p>' +
         '<div class="btns"><button class="b pri" id="pGo">Sign in</button></div>' +
         '<p style="text-align:center;margin-top:18px"><button class="rv" id="wReq">Need your passphrase? Request it ›</button></p>';
       el.innerHTML = h; el.classList.add("on"); setTimeout(function () { $("pin").focus(); }, 50);
@@ -2188,10 +2197,11 @@
       $("pGo").onclick = function () {
         var pin = $("pin").value.trim(); if (!pin) return; $("pGo").disabled = true;
         api("login", { pin: pin }).then(function (r) {
-          if (r.ok) { store("maffl_lab_owner", r.owner); store("maffl_lab_pin", pin); el.classList.remove("on"); start(); toast("Welcome, " + teamOf(r.owner).team + " ✓"); }
-          else { toast(r.error || "Wrong passphrase"); $("pGo").disabled = false; $("pin").value = ""; }
-        }).catch(function () { toast("Couldn't reach the league server"); $("pGo").disabled = false; });
+          if (r.ok) { store("maffl_lab_owner", r.owner); store("maffl_lab_pin", r.token || pin); el.classList.remove("on"); start(); toast("Welcome, " + teamOf(r.owner).team + " ✓"); }
+          else { $("pinErr").textContent = r.error || "That passphrase didn't work"; $("pGo").disabled = false; $("pin").select(); }
+        }).catch(function () { $("pinErr").textContent = "Couldn't reach the league server. Try again."; $("pGo").disabled = false; });
       };
+      $("pin").oninput = function () { $("pinErr").textContent = ""; };
       return;
     }
     h += '<p class="p">Which team is yours?</p><p class="meta" style="text-align:center;margin-top:4px">' + (API_URL ? '' : 'Demo mode: no PIN. Your pick is remembered on this phone.') + '</p>';
