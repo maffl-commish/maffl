@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>MAFFL HQ</title>
-<link rel="icon" href="../maffl-logo.png">
-<link rel="apple-touch-icon" href="../maffl-logo.png">
+<link rel="icon" href="../maffl-logo-180.png">
+<link rel="apple-touch-icon" href="../maffl-logo-180.png">
 <link rel="preconnect" href="https://script.google.com">
 <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,7 +22,7 @@
 -->
 <style>
   :root{--surface:#fff;--page-bg:#f8f9fb;--navy:#1a2e50;--navy-soft:rgba(26,46,80,.07);--navy-shadow:rgba(26,46,80,.10);
-    --gold:#f5a623;--gold-dark:#d98e10;--gold-soft:#fffaf0;--muted:#8a9ab5;--ink2:#4a5a78;--border:#e2e6ed;--win:#1d9e75;--loss:#c04a4a;
+    --gold:#f5a623;--gold-dark:#9a6200;--gold-soft:#fffaf0;--muted:#5f6f8a;--ink2:#4a5a78;--border:#e2e6ed;--win:#1d9e75;--loss:#c04a4a;
     --display:"Barlow Condensed",system-ui,sans-serif;--body:"Barlow",system-ui,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
   /* iPhone: no double-tap zoom, no font inflation; only #views (and the sideways rows) ever scroll */
@@ -762,7 +762,12 @@
   /* 🧪 beta feedback kit */
   .fbbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.25)}
   .fbbtn.on{display:block}
-  body.chaton .fbbtn{bottom:auto;top:calc(env(safe-area-inset-top) + 104px);padding:7px 11px;font-size:11px;opacity:.9}body.chaton .dkbtn{display:none}
+  /* Tester + commish buttons live in the header (11/7): they used to float over cards, reactions and chat. */
+  .hdrtools{display:flex;gap:6px;align-items:center;margin:0 8px 0 auto}
+  .hdr .wk:not([hidden])+.hdrtools{margin-left:8px}
+  .hdrtools .fbbtn,.hdrtools .dkbtn{position:static;min-width:40px;height:40px;padding:0 9px;font-size:18px;letter-spacing:0;box-shadow:none;border-radius:20px;align-items:center;justify-content:center}
+  .hdrtools .fbbtn.on,.hdrtools .dkbtn.on{display:inline-flex}
+  .hdrtools .dkbtn i{margin-left:3px}
   #v-team,#v-league,#v-match,#v-more{padding-bottom:84px}
   .fbnudge{position:fixed;left:50%;transform:translate(-50%,140%);bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:41;width:min(92vw,440px);background:var(--navy);color:#fff;border-radius:16px;padding:12px 12px 12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(15,29,52,.35);transition:transform .25s ease,visibility 0s .25s;visibility:hidden;pointer-events:none}
   .fbnudge.on{transform:translate(-50%,0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
@@ -784,12 +789,14 @@
     <div class="pastbar" id="pastbar"></div>
     <div class="netbar" id="netbar"></div>
     <div class="hdr-in">
-      <img alt="MAFFL" src="../maffl-logo.png"><span class="t" id="ttl">MAFFL HQ</span>
-      <div class="wk" id="hdrwk" hidden></div><button class="chip" id="chip" aria-label="You: settings, help, sign out">··</button>
+      <img alt="MAFFL" src="../maffl-logo-192.png"><span class="t" id="ttl">MAFFL HQ</span>
+      <div class="wk" id="hdrwk" hidden></div>
+      <div class="hdrtools"><button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪</button><button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥<i id="dkn"></i></button></div>
+      <button class="chip" id="chip" aria-label="You: settings, help, sign out">··</button>
     </div>
   </header>
   <main id="views">
-    <div id="boot" class="boot"><img alt="" src="../maffl-logo.png"><span class="spin lg"></span><b>Loading the league…</b><small id="bootmsg">Getting this week's Pulse</small></div>
+    <div id="boot" class="boot"><img alt="" src="../maffl-logo-192.png"><span class="spin lg"></span><b>Loading the league…</b><small id="bootmsg">Getting this week's Pulse</small></div>
     <section class="view" id="v-home"></section>
     <section class="view" id="v-match"></section>
     <section class="view" id="v-team"></section>
@@ -813,8 +820,6 @@
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
 <div class="tour" id="tour" role="dialog" aria-live="polite"></div>
-<button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
-<button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥 Desk<i id="dkn"></i></button>
 <div class="dk" id="desk"><div class="dkhead"><button class="cb" id="dkclose" aria-label="Close">‹</button><div><div class="ct">Commish desk</div><small id="dkupd"></small></div><button class="cb" id="dkref" aria-label="Refresh">↻</button></div><div class="dkbody" id="dkbody"></div></div>
 <div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
@@ -1844,7 +1849,7 @@
       (W !== LATEST ? '<button class="b pri" data-wkgo="' + LATEST.weekNumber + '" style="margin-top:12px;width:100%">Back to this week</button>' : '') + '</div>';
     var c = x.c, shared = x.scope === "league" || x.scope === "U" || x.scope === "L";
     // League cards carry the crest and everyone's reactions; your own cards carry your team tag and no reactions (commish 11/7).
-    var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
+    var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo-192.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
     return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (c.face ? ' facec' : '') + '"' + (shared ? DR("inbox:" + x.id) : '') + '>' +
       '<div class="dhead"><div class="sec">' + stamp + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
       (c.face ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
@@ -2187,7 +2192,7 @@
 
   // ---------- WELCOME (pick team; PINs connect to the league Sheet) ----------
   function showWelcome(requestMode, msg) {
-    var el = $("welcome"), h = '<img class="logo" src="../maffl-logo.png" alt=""><h1>MAFFL HQ</h1>';
+    var el = $("welcome"), h = '<img class="logo" src="../maffl-logo-192.png" alt=""><h1>MAFFL HQ</h1>';
     if (requestMode === true) {
       h += '<p class="p">Need your passphrase? Tell the commish who you are and he\'ll text it to you.</p>' +
         '<select class="field" id="rqOwner"><option value="">Which owner are you?</option>' + TEAMS.slice().sort(function (a, b) { return a.owner.localeCompare(b.owner); }).map(function (t) { return '<option>' + esc(t.owner) + '</option>'; }).join("") + '</select>' +
@@ -3893,7 +3898,7 @@
   }
   loadPulse().then(function () { guard("daily", function () { applyDaily(dailyCached()); }); buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); loadDaily(); })
     .catch(function (e) { // no league data, no app: say so plainly and offer a reload (a Home-Screen app has no reload button)
-      $("boot").innerHTML = '<img alt="" src="../maffl-logo.png"><b>Couldn\'t load the league</b><small>Check your signal, then try again.</small>' +
+      $("boot").innerHTML = '<img alt="" src="../maffl-logo-192.png"><b>Couldn\'t load the league</b><small>Check your signal, then try again.</small>' +
         '<button class="b pri" style="margin-top:14px;min-width:160px" onclick="location.reload()">Try again</button><small style="margin-top:10px;opacity:.6">' + esc(String((e && e.message) || "")) + '</small>'; });
 })();
 </script>
