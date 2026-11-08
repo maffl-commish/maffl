@@ -1,0 +1,17 @@
+{
+ "mode": "test",
+ "generated": "2026-11-08T02:50:36.344Z",
+ "source": "logic.js v0.34",
+ "rows": [
+  {
+   "id": "L-PDB7899A0",
+   "season": 2026,
+   "owner": "Mike Murello",
+   "category": "Spend",
+   "type": "Double Player Bonus",
+   "amount": -10,
+   "notes": "Wk 11 · Josh Allen (QB) · app request PDB7899A0",
+   "approved": "2026-11-08T02:50:34.829Z"
+  }
+ ]
+}
