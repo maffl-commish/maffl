@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-07 by Claude (chat), throwback lines final pass + 2021 division answered
+**Last updated:** 2026-11-07 by Claude (chat), votes lock once cast
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-07 · REEL · 🔒 Votes lock once cast (commish): polls and Game of the Week take one vote per owner; tapping another option says "Your vote is in. Votes can't be changed." Cards read "🔒 your vote is in" (was "tap to change yours"). Backend logic v0.35 refuses a second vote on the same poll (regression: new "vote again" check). Votes already in the Sheet keep their latest pick.
 - 2026-11-07 · REEL · Fix: issuing **your own** new passphrase on the desk signed you out before you could read it (the new salt revoked this phone's token). Now the desk hands this phone a fresh token with it, the box says "write it down; this phone stays signed in", and only your other phones ask for it. Backend logic v0.34.
 - 2026-11-07 · REEL · 🧪 Feedback and 📥 Desk back to floating buttons at the bottom right (commish prefers them there; the header move from earlier tonight is undone; logo and contrast changes stay).
 - 2026-11-07 · REEL · New Code.gs (last-good logic.js fallback) pasted into the Apps Script editor and deployed as web app Version 5 (same URL); the web app answers v0.33.

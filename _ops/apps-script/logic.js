@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.34";
+var VERSION = "0.35";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -240,6 +240,8 @@ function vote_(owner, poll, choice, week) {
   var p = rows_("Polls").filter(function (x) { return String(x.poll_id) === String(poll); })[0];
   if (!p || String(p.active) !== "Y") return { ok: false, error: "Poll is closed" };
   if (p["closes (ISO)"] && new Date() > new Date(p["closes (ISO)"])) return { ok: false, error: "Poll is closed" };
+  if (rows_("Events").some(function (e) { return e.type === "vote" && String(e.ref) === String(poll) && norm_(e.owner) === norm_(owner); }))
+    return { ok: false, error: "Your vote is in. Votes can't be changed." }; // commish 11/7: one vote per owner per poll
   return log_(owner, "vote", poll, choice, week, "");
 }
 function request_(owner, note) {

@@ -1114,9 +1114,9 @@
   }
   function vote(b) {
     var poll = b.dataset.vote, ch = b.dataset.choice, prev = SUM.myVotes[poll];
-    if (prev === ch) return;
+    if (prev) { if (prev !== ch) toast("🔒 Your vote is in. Votes can't be changed."); return; } // commish 11/7: one vote, no changes
     var t = SUM.tallies[poll] = SUM.tallies[poll] || {};
-    if (prev) t[prev] = Math.max(0, (t[prev] || 1) - 1); t[ch] = (t[ch] || 0) + 1; SUM.myVotes[poll] = ch;
+    t[ch] = (t[ch] || 0) + 1; SUM.myVotes[poll] = ch;
     renderHome(); if (CH.open && CH.view === "thread") drawThread();
     if (!API_URL) return;
     api("vote", Object.assign(creds(), { poll: poll, choice: ch, week: W.weekNumber })).then(function (r) {
@@ -1581,7 +1581,7 @@
   function pollMine(p) { return SUM.myVotes[p.id] || (p.closes && new Date(p.closes) < new Date() ? "(closed)" : ""); }
   function pollOpts(p) {
     var tal = SUM.tallies[p.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mv = pollMine(p);
-    return '<p class="meta" style="margin:6px 0 2px">' + (mv === "(closed)" ? 'Closed · ' + tot + ' vote' + (tot === 1 ? '' : 's') : mv ? tot + ' vote' + (tot === 1 ? '' : 's') + ' · tap to change yours' : 'Vote to see the results') + '</p>' +
+    return '<p class="meta" style="margin:6px 0 2px">' + (mv === "(closed)" ? 'Closed · ' + tot + ' vote' + (tot === 1 ? '' : 's') : mv ? tot + ' vote' + (tot === 1 ? '' : 's') + ' · 🔒 your vote is in' : 'Vote to see the results') + '</p>' +
       String(p.options).split("|").map(function (o) { o = o.trim(); var n = tal[o] || 0, pct = tot ? Math.round(100 * n / tot) : 0, sel = mv === o;
         return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(p.id) + '" data-choice="' + esc(o) + '">' + (mv ? '<span class="ob" style="width:' + pct + '%"></span>' : '') + '<span class="ol">' + esc(o) + (sel ? ' ✓' : '') + '</span><span class="op">' + (mv ? pct + '% · ' + n : '') + '</span></button>'; }).join("");
   }
@@ -1624,7 +1624,7 @@
     if (poll) {
       var tal = SUM.tallies[poll.id] || {}, tot = Object.keys(tal).reduce(function (n, k) { return n + tal[k]; }, 0), mineV = SUM.myVotes[poll.id];
       var opts = String(poll.options) === "auto" ? gotwPicks() : String(poll.options).split("|").map(function (o) { return { v: o.trim(), plain: o.trim() }; });
-      GOTW = ({ key: "gotw", voted: !!mineV, play: true, eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + (mineV ? tot + ' vote' + (tot === 1 ? '' : 's') + ' · tap to change yours' : 'Vote to see the results') + '</p>' + opts.map(function (o) {
+      GOTW = ({ key: "gotw", voted: !!mineV, play: true, eb: "🗳️ Game of the Week · Week " + W.weekNumber, t: "Three games. Pick the best one.", body: '<p class="meta" style="margin:6px 0 2px">' + (mineV ? tot + ' vote' + (tot === 1 ? '' : 's') + ' · 🔒 your vote is in' : 'Vote to see the results') + '</p>' + opts.map(function (o) {
         var n = tal[o.v] || 0, pct = tot && mineV ? Math.round(100 * n / tot) : 0, sel = mineV === o.v;
         if (o.plain) return '<button class="opt' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '"><span class="ob" style="width:' + pct + '%"></span><span class="ol">' + esc(o.plain) + '</span><span class="op">' + (tot && mineV ? pct + '%' : '') + '</span></button>';
         return '<button class="gotw' + (sel ? ' sel' : '') + '" data-vote="' + esc(poll.id) + '" data-choice="' + esc(o.v) + '">' +

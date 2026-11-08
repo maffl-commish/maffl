@@ -43,7 +43,8 @@ out("chat league", P(Object.assign({ action: "chat", room: "league" }, me)));
 const sent = P(Object.assign({ action: "chatsend", room: "league", text: "regression hello", mentions: [] }, me)); out("chatsend", sent);
 out("chatmod pin", P(Object.assign({ action: "chatmod", msg_id: sent.id || "", op: "pin" }, me)));
 out("react", P(Object.assign({ action: "react", ref: "inbox:coach", emoji: "🔥", on: true, week: 8 }, me)));
-const poll = (s.polls || [])[0]; if (poll) out("vote", P(Object.assign({ action: "vote", poll: poll.id, choice: "x", week: poll.week }, me)));
+const poll = (s.polls || [])[0]; if (poll) out("vote", P(Object.assign({ action: "vote", poll: poll.id, choice: "x", week: poll.week }, me)))
+if (poll) out("vote again", P(Object.assign({ action: "vote", poll: poll.id, choice: "y", week: poll.week }, me)));
 out("block on", P(Object.assign({ action: "block", player: "U:Josh Allen", on: true, note: "test" }, me)));
 const offers = s.offers || [];
 const toMe = offers.filter((o) => o.status === "PROPOSED" && o.to === "Mike Murello")[0], fromMe = offers.filter((o) => o.status === "PROPOSED" && o.from === "Mike Murello")[0];
