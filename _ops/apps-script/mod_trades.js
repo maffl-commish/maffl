@@ -240,14 +240,14 @@ function perkAct_(me, id, decision, reason) {
   return out;
 }
 // Approved perk → league chat news (commish 11/7): who spent what, on whom, which week, with @mentions so the
-// owner and everyone it touches get the @ badge. Extra FAAB stays private (it's a waiver budget).
+// owner and everyone it touches get the @ badge. Extra FAAB posts too (waiver budgets are public, commish 11/8).
 function perkNews_(r) {
-  if (r.perk === "faab") return;
   var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
   var at = function (n) { return "@" + String(n || "").trim(); }, cost = Number(r.cost) || 0, cr = cost + " credit" + (cost === 1 ? "" : "s"), wk = r.week ? " · Week " + r.week : "";
   var opp = aff.filter(function (a) { return a && norm_(a) !== norm_(r.owner) && norm_(a) !== norm_(r.swap_with); });
   var text = r.perk === "double" ? "✖️2 Double Player Bonus" + wk + "\n" + at(r.owner) + " spent " + cr + ": " + r.player + (r.pos ? " (" + r.pos + ")" : "") + " scores double" + (opp.length ? " vs " + opp.map(at).join(", ") : "") + "."
     : r.perk === "swap" ? "🔀 Matchup Swap" + wk + "\n" + at(r.owner) + " spent " + cr + " to swap opponents with " + at(r.swap_with) + "." + (opp.length ? " New matchups for " + opp.map(at).join(" and ") + "." : "")
+    : r.perk === "faab" ? "💰 Extra FAAB\n" + at(r.owner) + " spent " + cr + " for +$" + 20 * (Number(r.qty) || 1) + " FAAB."
     : r.perk === "insurance" ? "🛡️ Relegation Insurance\n" + at(r.owner) + " spent " + cr + " to insure against relegation this season."
     : "🎟️ " + ((PERKS[r.perk] || {}).name || r.perk) + wk + "\n" + at(r.owner) + " spent " + cr + ".";
   var seen = {}, mentions = [r.owner, r.swap_with].concat(opp).filter(function (n) { var o = n && ownerRow_(n), k = o && norm_(o.owner); if (!k || seen[k]) return false; seen[k] = 1; return true; })
