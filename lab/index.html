@@ -125,11 +125,6 @@
   .wkstep button{width:44px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);font:700 24px/1 var(--display);color:var(--navy)}
   .wkstep button:disabled{opacity:.3}
   .mboardb{margin-top:10px;width:100%}
-  .upnext{margin-top:12px;border:2px solid var(--gold);background:linear-gradient(180deg,#fffaf0,#fff);box-shadow:0 0 0 4px rgba(255,194,77,.18)}
-  .upnext .eb{color:var(--gold-dark)} .upnext h3{margin:4px 0 8px}
-  .upnext .lp.dbl{display:flex;align-items:center;gap:8px;margin:6px 0 0;padding:8px 10px;font-weight:700}
-  .upnext .lp.dbl .pz{font:800 11px var(--display);background:var(--navy);color:#fff;border-radius:4px;padding:2px 5px}
-  .upnext .lp.dbl small{display:block;font-weight:500;color:var(--muted);font-size:12px}.mback{font:700 13px var(--display);color:var(--navy);padding:12px 0 2px;text-transform:uppercase;letter-spacing:.05em}
   .sbg{display:block;width:100%;text-align:left;padding:10px 14px}.sbg.mine{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold),0 1px 3px var(--navy-shadow)}
   .sbt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;color:var(--ink2)}.sbt span{min-width:0;font:600 14px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .sbt span small{display:block;font:500 11px var(--body);color:var(--muted)}.sbt b{font:700 20px var(--display);color:var(--ink2)}
@@ -138,6 +133,7 @@
   .seg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 14px 0}
   .seg button{flex:1;min-width:0;padding:8px 0;border-radius:8px;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
   .seg button.on{background:var(--surface);color:var(--navy);box-shadow:0 1px 3px var(--navy-shadow)}
+  #mseg button{color:var(--navy);opacity:.6} #mseg button.on{background:var(--navy);color:#fff;opacity:1;box-shadow:inset 0 -3px 0 var(--gold),0 1px 3px var(--navy-shadow)}
   .seg.seg2{margin:10px 14px 0;max-width:220px}.seg.seg2 button{padding:6px 0;font-size:12px}
   .sub-v{display:none}.sub-v.on{display:block}
   table{width:100%;border-collapse:collapse;font-size:14px}
@@ -2160,7 +2156,7 @@
     var ago = Math.max(0, Math.round((Date.now() - new Date(r.at).getTime()) / 1000));
     var lead = mine.pts - (opp ? opp.pts : 0), pm = fin ? mine.pts : (mine.proj || mine.pts), po = opp ? (fin ? opp.pts : (opp.proj || opp.pts)) : 0, share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
     function bonusBits(sd) { var a = sd.dpb.reduce(function (n, d) { return n + d.add; }, 0); return sd.dpb.length ? '<div class="dchip">✖️2 ' + esc(sd.dpb.map(function (d) { return d.p.n.split(" ").slice(-1)[0]; }).join(" + ")) + ' · +' + f2(a) + '</div>' : ''; }
-    function scoreCell(sd, win) { return '<div class="lsc' + (win ? " w" : "") + (sd.dpb.length ? " dbl" : "") + '"><span class="sv">' + f2(sd.pts) + '</span>' + (sd.dpb.length ? '<span class="x2">×2</span>' : '') + '</div>'; }
+    function scoreCell(sd, win) { return '<div class="lsc' + (win ? " w" : "") + (sd.dpb.length ? " dbl" : "") + '"><span class="sv">' + f2(sd.pts) + '</span></div>'; }
     function sub(sd) { return fin ? f2(sd.bench || 0) + ' left on bench' : 'proj ' + (sd.proj != null ? sd.proj : "–") + ' · ' + sd.left + ' to play'; }
     var mo = ownOf(mine), oo = ownOf(opp);
     var pill = isLive && r.sim ? '<button class="simpill" id="simoff">🧪 Test scores · turn off</button>' : isLive && allZero(LIVE) && simTester() ? '<button class="simpill" id="simon">🧪 Test scores · turn on</button>' :
@@ -2172,22 +2168,8 @@
       (opp ? '<div><div class="tn">' + esc(opp.team) + '</div>' + scoreCell(opp, lead < 0) + '<div class="rec">' + sub(opp) + '</div>' + bonusBits(opp) + '</div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
       (fin ? '<div class="wpl" style="justify-content:center;margin-top:10px"><span>' + (opp ? esc(lead >= 0 ? mine.team : opp.team) + ' by ' + f2(Math.abs(lead)) : 'Bye week') + '</span></div>' :
         '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% by projection</span><span>' + (100 - share) + '%</span></div>') + '</div>';
-    if (!MGAME && wk === c) h += upNextHTML(c);
-    if (!MGAME) h += '<button class="b mboardb" id="mboard">🏟️ League scoreboard · Week ' + wk + ' ›</button>';
     h += '<div class="sh"><h2>Lineups</h2><small>Tap a player or his points</small></div>' + lineupHTML(r, mine, opp, live) + '</div>';
     $("v-match").innerHTML = h;
-  }
-  // ⏭️ Up next (commish 11/8): a Double Bonus or Matchup Swap approved for a coming week that touches your game shows
-  // here in gold, so the @ in League chat leads somewhere. Once that week is live the lineup row itself wears gold.
-  function upNextHTML(c) {
-    var ps = (SUM.perks || []).filter(function (p) { return (p.perk === "double" || p.perk === "swap") && p.status === "APPROVED" && Number(p.week) > c &&
-      (isMe(p.owner) || isMe(p.swapWith) || (p.affects || []).some(isMe)); }).sort(function (a, b) { return a.week - b.week; });
-    if (!ps.length) return "";
-    return ps.map(function (p) { var mine = isMe(p.owner), who = mine ? "You" : shortOf(p.owner), vs = mine ? (p.affects || [])[0] : p.owner;
-      if (p.perk === "swap") return '<div class="card upnext"><div class="eb">⏭️ Up next · Week ' + p.week + ' · 🔀 Matchup Swap</div><h3>' + esc(who) + (mine ? ' swapped' : ' swapped opponents with ' + esc(isMe(p.swapWith) ? "you" : shortOf(p.swapWith))) + (mine ? ' opponents with ' + esc(shortOf(p.swapWith)) : '') + '</h3><p class="meta">Your Week ' + p.week + ' matchup changes. ESPN gets updated by the commish.</p></div>';
-      return '<div class="card upnext"><div class="eb">⏭️ Up next · Week ' + p.week + (vs ? ' · vs ' + esc(teamOf(vs).team) : '') + '</div>' +
-        '<h3>' + (mine ? 'You doubled a player' : esc(who) + ' doubled a player against you') + '</h3>' +
-        '<div class="lp dbl"><span class="pz">' + esc(p.pos || "") + '</span><div>' + esc(p.player) + ' <i class="x2t">×2</i><small>' + (mine ? 'Your' : esc(teamOf(p.owner).team) + "'s") + ' Week ' + p.week + ' points count double</small></div></div></div>'; }).join("");
   }
   // 🏟️ Every game in a tier for the week: tap one to open it. Your game wears gold.
   function boardHTML(r, tier, wk) {
