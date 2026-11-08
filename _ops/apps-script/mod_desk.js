@@ -35,7 +35,7 @@ function desk_(me) {
   });
   // 👻 Ghost score steps (commish 11/8, the job the Pulse robot used to flag): every final week where ESPN's Ghost score isn't the par yet.
   try { need_("daily"); var sn = DAILY.snapshot(), c2 = function (x) { return Math.round((Number(x) || 0) * 100); }; Object.keys(sn.tiers || {}).forEach(function (t) { var s = sn.tiers[t];
-    (s.ghost || []).forEach(function (g) { var id = "ghost:" + t + ":" + g.wk; if (c2(g.espn) === c2(g.par) || done[id]) return;
+    (s.ghost || []).forEach(function (g) { var id = "ghost:" + t + ":" + g.wk + "@" + c2(g.par); if (c2(g.espn) === c2(g.par) || done[id]) return; // par in the id: a stat correction that moves the par brings the step back, even after ✓ Done (commish 11/8: past weeks get re-set regularly)
       espn.push({ id: id, owner: "", tier: t, perk: "ghost", qty: 1, week: g.wk, player: "", pos: "", swapWith: "", approved: sn.at, when: when[id] || "",
         par: g.par, espnPts: g.espn, vs: ((s.teams || {})[g.vs] || {}).team || "", vsPts: g.vsPts }); }); }); } catch (e) {}
   var owners = owners_(), last = {};

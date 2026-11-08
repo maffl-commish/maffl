@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-08 by Claude (chat), 👻 Ghost score on the desk
+**Last updated:** 2026-11-08 by Claude (chat), desk accordions + Ghost re-sets
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-08 · REEL · 📥 Commish desk tidy (commish): every section is an accordion, all closed when the desk opens (count on each: Perks, Trades in review, Passphrase requests, Locked out, Do on ESPN, Scheduled, Credit awards; League panels; the Log is one too, "N today"); what you open stays open while the desk refreshes. ESPN steps are one short line ("Wk 8 · 👻 Ghost score → 147.62", "Wk 9 · ×2 Jalen Hurts → team", "+$40 FAAB → team") plus one small line (vs / approved · 📅 day · Change). 👻 Past-week Ghost re-sets: a Ghost step's ✓ Done is tied to that par, so a stat correction that moves an earlier week's par brings the step back ("Wk 6 · 👻 Ghost 140.84 → 141.19 (par changed)"). Backend logic v0.40.
 - 2026-11-08 · REEL · 👋 Welcome card: "It's yours now" now lists your chats and messages too (commish).
 - 2026-11-08 · REEL · 👻 Ghost score is a desk ESPN step (the job the legacy Pulse robot flagged): the daily run (daily.js VER 10) computes each final Lower week's par the same way as `maffl_espn_pull.py` (mean of the real scores with the top one dropped, rounded half up; mock matches the robot's Week 3 par 151.47) and what ESPN shows. Any week where ESPN ≠ par shows on the desk as "Week N: set the MAFFL Ghost's score to X" (or "ESPN shows Y, par is X"), with who it plays and whether they beat it; Do-on defaults to the Tuesday after the week; it clears by itself once ESPN shows the par, or with ✓ Done. Backend logic v0.39 (`DAILY.snapshot`, snapshot tiers carry `ghost`).
 - 2026-11-08 · REEL · 👋 Welcome tour overhaul (commish): opens on a "The new and improved MAFFL HQ" card over the app (👤 it's yours now · 📡 virtually live from ESPN · 🤝 everything but your lineup happens here), then Show me around walks Home → Team → Match → Chat → League, switching tabs and ringing each button; the tab bar stays visible (scrim stops above it). Team / Match / Chat keep a short first-visit tip. Fix: the old Home tour pointed at a crest tag on a card far below the screen, so the bubble and Next went off-screen and the tour stuck; tips now use on-screen targets only and the bubble stays in view. Dead "Needs you" banner code removed. You → Show the tour again starts it right away. App only.

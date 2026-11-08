@@ -742,7 +742,10 @@
   .dsk .ditem{border-top:1px solid var(--border);padding:8px 0}.dsk .ditem:first-of-type{border-top:0}
   .dsk .ditem .btns{margin-top:6px}.dsk .card{margin:6px 0 0;box-shadow:none}
   .dsk.clear{border-left-color:var(--win);text-align:center;color:var(--ink2);font-size:14px}
-  .dsk details summary{cursor:pointer;font-size:13px;color:var(--ink2);padding:6px 0}
+  .dsk.acc{padding:4px 12px}.dsk.acc>details>summary,.dsk>details>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none;font:600 15px var(--body);color:var(--navy);padding:10px 0}
+  .dsk details>summary::-webkit-details-marker{display:none}.dsk details>summary::after{content:"›";font-size:20px;color:var(--muted);transition:transform .15s}.dsk details>summary>span:first-child{flex:1}.dsk details[open]>summary::after{transform:rotate(90deg)}
+  .dsk .dstep{font-weight:600;font-size:15px;color:var(--navy)}.dsk .ditem .meta .dwhen{margin:0;font-size:13px}
+  .dsk details summary{cursor:pointer}
   .cbot{margin-top:4px;border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--surface);font-size:14px;line-height:1.4;white-space:pre-line}
   .cbot.fail{border-color:#f0c4c4;background:#fdf3f3}.cbot.ok{border-color:#cdebdf}
   .cempty{text-align:center;color:var(--muted);font-size:14px;padding:40px 10px;line-height:1.5}
@@ -3305,10 +3308,9 @@
   function espnLater() { var t = etDay(Date.now()); return ((DESK || {}).espn || []).filter(function (p) { return espnDue(p) > t; }).sort(function (a, b) { return espnDue(a) < espnDue(b) ? -1 : 1; }); }
   function dayName(iso) { return new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }); }
   function espnItem(p) {
-    return '<div class="ditem">' + esc(espnStep(p)) + '<div class="meta">' + (p.perk === "ghost" ? '👻 Lower · par = average of the real scores, top one dropped' + (p.vs ? ' · vs ' + esc(p.vs) + ' (' + Number(p.vsPts).toFixed(2) + ' → ' + (p.vsPts > p.par ? 'beats' : 'loses to') + ' the Ghost)' : '')
-        : esc((PERK_BY[p.perk] || {}).name || p.perk) + ' · approved ' + ago(p.approved)) + '</div>' +
-      '<label class="dwhen">📅 Do on <b>' + dayName(espnDue(p)) + '</b><input type="date" data-espnwhen="' + esc(p.id) + '" value="' + espnDue(p) + '" aria-label="Change the day"><span>Change</span></label><div class="btns">' +
-      '<a class="b" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"') + '</div></div>';
+    var sub = p.perk === "ghost" ? (p.vs ? "vs " + esc(p.vs) + " " + Number(p.vsPts).toFixed(2) + (p.vsPts > p.par ? " · beats it" : " · loses") : "Lower") : "approved " + ago(p.approved);
+    return '<div class="ditem"><b class="dstep">' + esc(espnStep(p)) + '</b><div class="meta">' + sub + ' · <label class="dwhen">📅 ' + dayName(espnDue(p)) + '<input type="date" data-espnwhen="' + esc(p.id) + '" value="' + espnDue(p) + '" aria-label="Change the day"><span>Change</span></label></div><div class="btns">' +
+      '<a class="b sm" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"').replace('class="b pri"', 'class="b sm pri"') + '</div></div>';
   }
   function deskTodo() {
     if (!ME || !ME.commish) return 0; var d = DESK || {};
@@ -3325,14 +3327,13 @@
     if (l.kind === "feedback") return "🧪 " + String(l.text || "").split("\n")[0];
     return l.owner === BOTN ? String(l.text || "") : "You: " + l.text;
   }
-  function espnStep(p) {
-    var t = teamOf(p.owner).team || p.owner;
-    if (p.perk === "ghost") return Number(p.espnPts) ? "Week " + p.week + ": ESPN shows the MAFFL Ghost at " + p.espnPts.toFixed(2) + ", par is " + p.par.toFixed(2) + ". Fix the score adjustment"
-      : "Week " + p.week + ": set the MAFFL Ghost's score to " + p.par.toFixed(2) + " (score adjustment)";
-    return p.perk === "faab" ? "Give " + t + " +$" + 20 * p.qty + " FAAB budget"
-      : p.perk === "double" ? "Week " + p.week + ": add " + p.player + "'s points again as a score adjustment for " + t + " (after his game)"
-      : p.perk === "swap" ? "Week " + p.week + ": swap opponents between " + t + " and " + (teamOf(p.swapWith).team || p.swapWith) + " in the schedule"
-      : p.perk === "divswap" ? "Offseason: move " + t + " to the other division" : (PERK_BY[p.perk] || {}).name + " for " + t;
+  function espnStep(p) { // short on purpose (commish 11/8: less text in the to-dos)
+    var t = teamOf(p.owner).team || p.owner, f2 = function (x) { return Number(x).toFixed(2); };
+    if (p.perk === "ghost") return "Wk " + p.week + " · 👻 Ghost " + (Number(p.espnPts) ? f2(p.espnPts) + " → " + f2(p.par) + " (par changed)" : "score → " + f2(p.par));
+    return p.perk === "faab" ? "+$" + 20 * p.qty + " FAAB → " + t
+      : p.perk === "double" ? "Wk " + p.week + " · ×2 " + p.player + " → " + t
+      : p.perk === "swap" ? "Wk " + p.week + " · Swap opponents: " + t + " ↔ " + (teamOf(p.swapWith).team || p.swapWith)
+      : p.perk === "divswap" ? "Move " + t + " to the other division" : (PERK_BY[p.perk] || {}).name + " · " + t;
   }
   function deskHomeList() { // the reel card lists what's waiting (never waste space)
     var d = DESK || {}, L = [];
@@ -3346,24 +3347,22 @@
       (L.length > 7 ? '<p class="meta">+' + (L.length - 7) + ' more</p>' : '') + '</div>';
   }
   function deskBtn(op, target, label, pri, extra) { return '<button class="b' + (pri ? ' pri' : '') + '" data-dact="' + op + '" data-target="' + esc(target) + '"' + (extra || '') + '>' + label + '</button>'; }
+  // Desk sections are accordions, all closed when the desk opens (commish 11/8); DK.secs remembers what you opened.
+  function acc(key, title, n, inner, gold) { return '<div class="dsk acc"><details data-sec="' + key + '"><summary><span>' + title + '</span>' + (n ? '<span class="stp' + (gold ? ' gold' : '') + '">' + n + '</span>' : '') + '</summary>' + inner + '</details></div>'; }
   function deskTodoHTML(d) {
     var n = deskTodo(), h = "";
     if (!n) h += '<div class="dsk clear">✅ <b>All clear.</b> Nothing waiting on you.</div>';
-    else {
-      h += '<div class="dsk"><h4><span>To do</span><span class="stp gold">' + n + '</span></h4>';
-      var ps = deskOpenPerks(); if (ps.length) h += '<div class="dsec">🎟️ Perks to approve · ' + ps.length + '</div>' + ps.map(perkCard).join("");
-      var rv = deskReview(); if (rv.length) h += '<div class="dsec">🤝 Trades in review · ' + rv.length + '</div>' + rv.map(function (o) { var hrs = (Date.now() - new Date(o.updated || o.ts).getTime()) / 36e5;
-        return '<p class="meta" style="margin-top:6px">' + (hrs >= 24 ? '✅ Review window over' : '⏳ Review ends in ' + Math.max(1, Math.ceil(24 - hrs)) + ' h') + ' · ' + ((d.moved || []).indexOf(o.id) >= 0 ? '✅ players moved on ESPN' : 'players not moved on ESPN yet') + '</p>' + tradeMini(o, true); }).join("");
-      if ((d.access || []).length) h += '<div class="dsec">🔑 Passphrase requests · ' + d.access.length + '</div>' + d.access.map(function (a) {
-        return '<div class="ditem"><b>' + esc(a.team || a.owner) + '</b> <span class="meta">' + esc(a.owner) + ' · ' + ago(a.ts) + (a.hasPin ? ' · has one (forgot?)' : '') + '</span>' +
-          (a.note ? '<p class="meta">“' + esc(a.note) + '”</p>' : '') + '<div class="btns">' + deskBtn("dismiss", a.owner, "Dismiss") + deskBtn("issue", a.owner, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("");
-      if ((d.locked || []).length) h += '<div class="dsec">🔒 Locked out · ' + d.locked.length + '</div>' + d.locked.map(function (o) {
-        return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + ' · 5 wrong tries</span><div class="btns">' + deskBtn("unlock", o, "Unlock") + deskBtn("issue", o, "New passphrase", 1) + '</div></div>'; }).join("");
-      var en = espnNow(); if (en.length) h += '<div class="dsec">🏈 Do on ESPN · ' + en.length + '</div>' + en.map(espnItem).join("");
-      var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += '<div class="dsec">💳 Credit sync</div><div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>';
-      h += '</div>';
-    }
-    var el = espnLater(); if (el.length) h += '<div class="dsk"><div class="dsec" style="margin-top:0">📅 Scheduled · ' + el.length + '</div>' + el.map(espnItem).join("") + '<p class="meta">Waits here until its day, then moves to To do.</p></div>';
+    var ps = deskOpenPerks(); if (ps.length) h += acc("perks", "🎟️ Perks to approve", ps.length, ps.map(perkCard).join(""), 1);
+    var rv = deskReview(); if (rv.length) h += acc("review", "🤝 Trades in review", rv.length, rv.map(function (o) { var hrs = (Date.now() - new Date(o.updated || o.ts).getTime()) / 36e5;
+      return '<p class="meta" style="margin-top:6px">' + (hrs >= 24 ? '✅ Review over' : '⏳ ' + Math.max(1, Math.ceil(24 - hrs)) + ' h left') + ' · ' + ((d.moved || []).indexOf(o.id) >= 0 ? '✅ moved on ESPN' : 'not moved on ESPN yet') + '</p>' + tradeMini(o, true); }).join(""), 1);
+    if ((d.access || []).length) h += acc("access", "🔑 Passphrase requests", d.access.length, d.access.map(function (a) {
+      return '<div class="ditem"><b>' + esc(a.team || a.owner) + '</b> <span class="meta">' + ago(a.ts) + (a.hasPin ? ' · forgot it' : '') + '</span>' +
+        (a.note ? '<p class="meta">“' + esc(a.note) + '”</p>' : '') + '<div class="btns">' + deskBtn("dismiss", a.owner, "Dismiss") + deskBtn("issue", a.owner, "🔑 Issue", 1) + '</div></div>'; }).join(""), 1);
+    if ((d.locked || []).length) h += acc("locked", "🔒 Locked out", d.locked.length, d.locked.map(function (o) {
+      return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b><div class="btns">' + deskBtn("unlock", o, "Unlock") + deskBtn("issue", o, "New passphrase", 1) + '</div></div>'; }).join(""), 1);
+    var en = espnNow(); if (en.length) h += acc("espn", "🏈 Do on ESPN", en.length, en.map(espnItem).join(""), 1);
+    var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += acc("sync", "💳 Credit sync failed", 1, '<div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>', 1);
+    var el = espnLater(); if (el.length) h += acc("sched", "📅 Scheduled", el.length, el.map(espnItem).join("") + '<p class="meta">Moves to To do on its day.</p>');
     return h;
   }
   function deskPeopleHTML(d) { var h = "";
@@ -3466,12 +3465,15 @@
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
     if (!d) { b.innerHTML = ld("Opening the desk…"); return; }
     var n = deskTodo();
-    var todo = deskTodoHTML(d).replace(/<h4><span>To do<\/span><span class="stp gold">\d+<\/span><\/h4>/, "").replace(/<div class="dsk"><\/div>/, "") + awardsPanel(d, "todo");
+    var todo = deskTodoHTML(d) + awardsPanel(d, "todo");
     if (n && /dsk clear/.test(todo)) todo = todo.replace(/<div class="dsk clear">[\s\S]*?<\/div>/, "");
+    var day = new Date().toDateString(), today = (DK.log || []).filter(function (m) { return new Date(m.ts).toDateString() === day; }).length;
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
       '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) + betaPanel(d) + deskTourHTML() +
-      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + deskLogHTML();
+      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Robots, owners, feedback, notes", today ? today + " today" : "", deskLogHTML());
+    DK.secs = DK.secs || {}; Array.prototype.forEach.call(b.querySelectorAll("details"), function (x) { var k = x.dataset.sec || (x.querySelector("summary") || x).textContent.replace(/[\d·]+/g, "").trim().slice(0, 24); x.dataset.sec = k; x.open = !!DK.secs[k]; });
+    if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }
     b.scrollTop = st;
     var go = $("dknotego"); if (go) go.onclick = function () { var v = ($("dknote").value || "").trim(); if (!v) return; busy(1);
       api("chatsend", Object.assign(creds(), { room: "desk", text: v, mentions: [] }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't save"); return; } toast("Noted ✓"); loadDeskLog(); })
@@ -3516,7 +3518,7 @@
   }
   function deskRefresh() { if (!DK.open) return; DESK = null; loadDesk().then(drawDesk); loadDeskLog(); }
   function openDesk() {
-    if (!ME || !ME.commish) return; DK.open = true; $("desk").classList.add("on"); document.body.style.overflow = "hidden"; tap("sheet", "desk");
+    if (!ME || !ME.commish) return; DK.open = true; DK.secs = {}; $("desk").classList.add("on"); document.body.style.overflow = "hidden"; tap("sheet", "desk");
     $("dkupd").textContent = ""; drawDesk(); loadDesk().then(function () { drawDesk(); $("dkupd").textContent = "Updated " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }); loadDeskLog();
   }
   function closeDesk() { DK.open = false; $("desk").classList.remove("on"); document.body.style.overflow = ""; deskBadge(); }
@@ -4003,8 +4005,8 @@
     var pend = aw.filter(function (a) { return a.status === "PENDING"; }), earned = aw.filter(function (a) { return a.status === "EARNED"; });
     var row = function (a, btns) { return '<div class="ditem"><b>' + esc(a.team) + '</b> <span class="meta">+' + a.credits + ' · ' + esc(a.award) + ' · ' + esc(a.detail) + '</span>' + (btns ? '<div class="btns">' + deskBtn("awardno", a.id, "Deny") + deskBtn("awardok", a.id, "✓ Approve", 1) + '</div>' : '') + '</div>'; };
     var h = '';
-    if (pend.length && part !== "earned") h += '<div class="dsk"><div class="dsec">🏅 Credit awards to issue · ' + pend.length + '</div>' + pend.map(function (a) { return row(a, true); }).join("") +
-      (pend.length > 1 ? '<div class="btns">' + deskBtn("awardall", "", "✓ Approve all " + pend.length, 1) + '</div>' : '') + '<p class="meta">Approving posts them to the official ledger (credit sync).</p></div>';
+    if (pend.length && part !== "earned") h += acc("awards", "🏅 Credit awards to issue", pend.length, pend.map(function (a) { return row(a, true); }).join("") +
+      (pend.length > 1 ? '<div class="btns">' + deskBtn("awardall", "", "✓ Approve all " + pend.length, 1) + '</div>' : '') + '<p class="meta">Approving posts them to the official ledger (credit sync).</p>', 1);
     if (earned.length && part !== "todo") { var tot = {}; earned.forEach(function (a) { tot[a.team] = (tot[a.team] || 0) + a.credits; });
       h += '<div class="dsk"><details><summary>🏅 Credits earned so far · ' + earned.length + ' (issued after Week 17)</summary>' +
         '<p class="meta" style="margin:6px 0">' + Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a]; }).map(function (t) { return esc(t) + ' +' + tot[t]; }).join(" · ") + '</p>' +
