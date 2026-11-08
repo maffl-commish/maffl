@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-08 (chat) · Match ⏭️ Up next card for coming-week perks; FAAB perks post to chat
+Last updated: 2026-11-08 (chat) · Home: swipe ← done / → save, ⭐ Saved, "N left", Clear all
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -72,6 +72,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
+- Decided 11/8: the feed can be handled: swipe ← done, → save (⭐ Saved chip), Undo, "N left this week", Clear all → ✅ All caught up (per week, on the phone). Up next to try: weekly edition (daily lines update cards, not add them) + ~10-card cap with a hero card.
 - Decided 11/7: Home is a feed (scroll up = next, nothing deleted, "caught up" end) with a Needs-you strip; cards come from series with a weekly slot budget (REEL_SERIES.md). The 8 Ball is now a Vault series (25 rewritten tidbits); off-season Vault gets 6 slots; earlier weeks listed after "caught up".
 - Decided 11/7 (evening): chat is part of the page column (no floating layer; the tab bar hides while typing); polls vote right in chat (bot posts kind "poll" with the poll id; older poll posts match by question), same results-after-you-vote rule as Home; tier chats get trades only from the daily run (free-agent adds/drops stay in the Moves tab).
 

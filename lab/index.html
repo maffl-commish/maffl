@@ -546,6 +546,18 @@
   .needs .nb{flex:0 0 auto;font:800 14px var(--display);color:#fff;background:var(--loss);border-radius:999px;padding:5px 10px}
   .needs .nt{flex:1;min-width:0}.needs b{display:block;font:700 15px var(--display);color:var(--navy)}.needs small{display:block;font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .needc{margin-bottom:14px}.needc .dcard{position:relative;inset:auto}
+  /* swipe ← done / → save (commish 11/8) */
+  .fslot{position:relative}
+  .swu{position:absolute;left:14px;right:40px;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;pointer-events:none;font:800 15px var(--display);letter-spacing:.04em}
+  .swu span{opacity:0;transition:opacity .1s;padding:10px 14px;border-radius:999px}
+  .swu .sv{color:var(--navy);background:var(--gold)}.swu .dn{color:#fff;background:var(--win,#1f9d6a)}
+  #hstack .fslot>.dcard.fly{transition:transform .25s ease-in,opacity .25s}
+  .saved{flex:0 0 auto;display:flex;align-items:center;gap:6px;margin:0 auto 0 -4px;padding:5px 11px;background:#fff7e0;border:1.5px solid var(--gold);border-radius:999px;font:700 13px var(--display);color:var(--navy)}
+  .ihow{font:600 11px var(--body);color:var(--muted);margin-right:auto}
+  .undo{position:fixed;left:14px;bottom:calc(env(safe-area-inset-bottom) + 96px);transform:translateY(20px);opacity:0;z-index:96;display:flex;align-items:center;gap:14px;background:var(--navy);color:#fff;border-radius:12px;padding:8px 8px 8px 14px;font:600 14px var(--body);transition:.25s;pointer-events:none;white-space:nowrap}
+  .undo.on{opacity:1;transform:none;pointer-events:auto}
+  .undo button{background:var(--gold);color:var(--navy);border:0;border-radius:8px;padding:7px 12px;font:800 13px var(--display)}
+  .svbtns{display:flex;gap:8px;margin-top:8px}.svbtns .b{flex:1}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .hero{padding:12px 0 12px;border-bottom:1px solid var(--border)}
   .hero .tagl{font:700 10px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark)}
@@ -829,6 +841,7 @@
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
+<div class="undo" id="undo"><span id="undot"></span><button id="undob">Undo</button></div>
 <div class="tour" id="tour" role="dialog" aria-live="polite"></div>
 <button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
 <button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥 Desk<i id="dkn"></i></button>
@@ -1701,6 +1714,11 @@
   function seriesOf(x) { return SERIES[x.id.split(":")[0]] || ["league", 9]; }
   function seenKey() { return "maffl_lab_seen_" + W.weekNumber + "_" + norm(ME.owner); }
   function seen() { try { return JSON.parse(store(seenKey()) || "{}"); } catch (e) { return {}; } }
+  // Swipe ← = done (gone for the week), → = save (moves to ⭐ Saved above the feed). Per week, per owner, on this phone.
+  function boxKey(k) { return "maffl_lab_" + k + "_" + W.weekNumber + "_" + norm(ME.owner); }
+  function boxGet(k) { try { return JSON.parse(store(boxKey(k)) || "{}"); } catch (e) { return {}; } }
+  function boxSet(k, o) { store(boxKey(k), JSON.stringify(o)); }
+  var SAVED = [], FEED_N = 0;
   function findCard(key) { var hit = null; GROUPS.forEach(function (g) { g.cards.forEach(function (c) { if (!hit && c.key === key) hit = c; }); }); return hit; }
   function buildInbox() {
     buildGroups();
@@ -1849,6 +1867,9 @@
     Object.keys(q).forEach(function (g) { q[g].sort(function (a, b) { return a.rank - b.rank; }); q[g] = q[g].slice(0, bud[g] || 2); });
     INBOX = []; FEED_ORDER.forEach(function (g) { if (q[g] && q[g].length) INBOX.push(q[g].shift()); });
     ["you", "league", "play", "vault"].forEach(function (g) { while (q[g] && q[g].length) INBOX.push(q[g].shift()); });
+    var clr = boxGet("clr"), pin = boxGet("pin"); FEED_N = INBOX.length;
+    SAVED = INBOX.filter(function (x) { return pin[x.id] && !clr[x.id]; });
+    INBOX = INBOX.filter(function (x) { return !clr[x.id] && !pin[x.id]; });
     homeBadge();
   }
   function homeBadge() { var sn = seen(), n = NEEDS.length + INBOX.filter(function (x) { return !sn[x.id]; }).length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); } }
@@ -1856,13 +1877,18 @@
     var keep = pos; buildInbox();
     var nd = NEEDS.length ? '<button class="needs" id="needs"><span class="nb">⚡ ' + NEEDS.length + '</span><span class="nt"><b>' + (NEEDS.length === 1 ? "1 thing needs you" : NEEDS.length + " things need you") + '</b><small>' + esc(NEEDS.map(function (x) { return x.c.eb.replace(/^[^A-Za-z0-9]+/, ""); }).join(" · ")) + '</small></span><span class="rv">›</span></button>' : '';
     // Progress runs down the right edge, like the feed itself (commish 11/7: the old dots ran sideways).
-    $("v-home").innerHTML = nd + '<div class="ibar"><div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
-      INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '">' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div><div class="irail" id="idots"></div></div>';
+    var sv = SAVED.length ? '<button class="saved" id="saved">⭐ Saved · ' + SAVED.length + ' ›</button>' : '';
+    $("v-home").innerHTML = nd + '<div class="ibar">' + (sv || (INBOX.length && !store("maffl_lab_swiped") ? '<span class="ihow">← done · save →</span>' : '<span class="ihow"></span>')) + '<div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
+      INBOX.map(function (x, k) { return '<div class="fslot" data-k="' + k + '"><div class="swu"><span class="sv">⭐ Save</span><span class="dn">✓ Done</span></div>' + cardHTML(x) + '</div>'; }).join("") + '<div class="fslot" data-k="' + INBOX.length + '">' + cardHTML(null) + '</div></div><div class="irail" id="idots"></div></div>';
     var f = $("hstack"); pos = Math.max(0, Math.min(keep, INBOX.length));
     f.scrollTop = pos * f.clientHeight; drawDeck(true);
     var t0 = null; f.onscroll = function () { var k = Math.round(f.scrollTop / Math.max(1, f.clientHeight)); if (k !== pos) { pos = k; drawDeck(true); } clearTimeout(t0); t0 = setTimeout(markSeen, 700); };
     setTimeout(markSeen, 900);
     if ($("needs")) $("needs").onclick = openNeeds;
+    if ($("saved")) $("saved").onclick = openSaved;
+    if ($("dclear")) $("dclear").onclick = function () { var c = boxGet("clr"), ids = INBOX.map(function (x) { return x.id; }); ids.forEach(function (id) { c[id] = 1; }); boxSet("clr", c); store("maffl_lab_swiped", "1"); tap("reel", "clearall:" + ids.length);
+      pos = 0; renderHome(); undoBar("✓ " + ids.length + " cleared", function () { var c2 = boxGet("clr"); ids.forEach(function (id) { delete c2[id]; }); boxSet("clr", c2); pos = 0; renderHome(); }); };
+    swipeFeed(f);
     $("idots").onclick = function (ev) { var d = ev.target.closest("[data-go-k]"); if (d) f.scrollTo({ top: +d.dataset.goK * f.clientHeight, behavior: "smooth" }); };
     var again = $("dagain"), dc = $("dchat"); if (dc) dc.onclick = function () { openChat(); }; if (again) again.onclick = function () { f.scrollTo({ top: 0, behavior: "smooth" }); };
     paint($("hstack"));
@@ -1871,11 +1897,14 @@
   // Things that need you: one sheet with each action card (trade offers, the desk, dues), handled right there.
   function openNeeds() { openSheet("card", '<h2 class="sht">⚡ Needs you</h2>' + NEEDS.map(function (x) { return '<div class="needc">' + cardHTML(x) + '</div>'; }).join("")); }
   function cardHTML(x) {
-    if (!x) return '<div class="dcard done-card"><div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">You\'re caught up</h3>' +
-      '<p class="p" style="margin-top:6px">That\'s Week ' + W.weekNumber + '. New cards land Tuesday morning, and a few more during the week.</p>' +
+    if (!x) return '<div class="dcard done-card">' + (INBOX.length ? '<div class="zero" style="background:var(--navy)">' + INBOX.length + '</div><h3 style="font:700 28px/1.1 var(--display);margin-top:10px">That\'s everything</h3>' +
+        '<p class="p" style="margin-top:6px">' + (INBOX.length === 1 ? "1 card is" : INBOX.length + " cards are") + ' still in your reel. Swipe ← on the ones you\'re done with, or clear them all.</p>' +
+        '<button class="b pri" id="dclear" style="width:100%;margin-top:14px;flex:none">✓ Clear ' + (INBOX.length === 1 ? "it" : "all " + INBOX.length) + '</button>'
+      : '<div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">All caught up</h3>' +
+        '<p class="p" style="margin-top:6px">' + (FEED_N ? "You cleared Week " + W.weekNumber + "'s reel." : "That's Week " + W.weekNumber + ".") + (SAVED.length ? " " + SAVED.length + " saved up top." : "") + ' New cards land Tuesday morning.</p>') +
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
       '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🗄️ League &amp; the Vault</button></div>' +
-      (INBOX.length ? '<button class="again" id="dagain">Back to the top</button>' : '') +
+      (INBOX.length > 1 ? '<button class="again" id="dagain">Back to the top</button>' : '') +
       (function () { var ew = WEEKS.filter(function (w) { return w !== W && w.weekNumber < W.weekNumber; }).slice(-6).reverse(); return ew.length ? '<div class="earlier"><small>Earlier weeks</small><div>' + ew.map(function (w) { return '<button data-wkgo="' + w.weekNumber + '">' + (w.weekNumber ? 'Wk ' + w.weekNumber : 'Preseason') + '</button>'; }).join("") + '</div></div>' : ''; })() +
       (W !== LATEST ? '<button class="b pri" data-wkgo="' + LATEST.weekNumber + '" style="margin-top:12px;width:100%">Back to this week</button>' : '') + '</div>';
     var c = x.c, shared = x.scope === "league" || x.scope === "U" || x.scope === "L";
@@ -1892,7 +1921,55 @@
     if (!light) { renderHome(); return; }
     var sn = seen(), n = INBOX.length;
     $("idots").innerHTML = INBOX.map(function (y, k) { return '<i data-go-k="' + k + '" class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("") + '<i data-go-k="' + n + '" class="end' + (pos >= n ? " on" : "") + '">✓</i>';
-    $("icount").textContent = pos >= n ? "Caught up" : (pos + 1) + " of " + n + (pos === 0 && n > 1 ? " · swipe up ↑" : "");
+    $("icount").textContent = !n ? "All caught up" : n + " left this week";
+  }
+  // ⭐ Saved: this week's saved cards in one sheet; each can go back to the feed or be marked done.
+  function openSaved() {
+    $("undo").classList.remove("on");
+    openSheet("card", '<h2 class="sht">⭐ Saved</h2>' + SAVED.map(function (x) { return '<div class="needc">' + cardHTML(x) + '<div class="svbtns"><button class="b" data-svback="' + esc(x.id) + '">↩ Back to reel</button><button class="b" data-svdone="' + esc(x.id) + '">✓ Done</button></div></div>'; }).join(""));
+    $("sb").querySelectorAll("[data-svback],[data-svdone]").forEach(function (b) { b.onclick = function () {
+      var id = b.dataset.svback || b.dataset.svdone, p = boxGet("pin"); delete p[id]; boxSet("pin", p);
+      if (b.dataset.svdone) { var c = boxGet("clr"); c[id] = 1; boxSet("clr", c); }
+      tap("reel", (b.dataset.svdone ? "savedone:" : "unsave:") + id); renderHome(); if (SAVED.length) openSaved(); else closeSheet();
+      toast(b.dataset.svdone ? "✓ Done" : "Back in your reel"); }; });
+  }
+  function undoBar(msg, fn) {
+    var u = $("undo"); $("undot").textContent = msg; u.classList.add("on");
+    $("undob").onclick = function () { u.classList.remove("on"); fn(); };
+    clearTimeout(undoBar.h); undoBar.h = setTimeout(function () { u.classList.remove("on"); }, 4500);
+  }
+  // Card handled: "clr" (done) or "pin" (saved). The next card slides into the same spot; Undo puts it back.
+  function handle(k, kind) {
+    var x = INBOX[k]; if (!x) return;
+    var o = boxGet(kind); o[x.id] = 1; boxSet(kind, o);
+    var sn = seen(); sn[x.id] = 1; store(seenKey(), JSON.stringify(sn));
+    store("maffl_lab_swiped", "1"); tap("reel", kind + ":" + x.id);
+    pos = k; renderHome();
+    undoBar(kind === "pin" ? "⭐ Saved · it's up top" : "✓ Done", function () {
+      var o2 = boxGet(kind); delete o2[x.id]; boxSet(kind, o2); pos = k; renderHome(); });
+  }
+  function swipeFeed(f) {
+    var st = null, TH = 80;
+    f.addEventListener("pointerdown", function (e) {
+      var card = e.target.closest(".fslot>.dcard"); if (!card || card.classList.contains("done-card") || (e.pointerType === "mouse" && e.button)) return;
+      if (e.target.closest("input,textarea,select,.blk,.ocar,.rings,.wkchips")) return;
+      st = { x: e.clientX, y: e.clientY, card: card, slot: card.parentNode, dir: 0, dx: 0 }; });
+    f.addEventListener("pointermove", function (e) {
+      if (!st) return; var dx = e.clientX - st.x, dy = e.clientY - st.y;
+      if (!st.dir) { if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { st = null; return; }
+        if (Math.abs(dx) < 12) return; st.dir = 1; st.card.classList.add("drag"); f.style.overflowY = "hidden"; }
+      st.dx = dx; st.card.style.transform = "translateX(" + dx + "px) rotate(" + (dx / 28) + "deg)";
+      var u = st.slot.querySelector(".swu"); if (u) { u.firstChild.style.opacity = dx > 0 ? Math.min(1, dx / TH) : 0; u.lastChild.style.opacity = dx < 0 ? Math.min(1, -dx / TH) : 0; } });
+    var end = function () {
+      if (!st) return; var s = st; st = null; f.style.overflowY = "";
+      if (!s.dir) return;
+      setTimeout(function () { s.card.classList.remove("drag"); }, 50); // swallow the click that ends a drag
+      var k = +s.slot.dataset.k;
+      if (Math.abs(s.dx) >= TH) { s.card.classList.add("fly"); s.card.style.transform = "translateX(" + (s.dx > 0 ? 130 : -130) + "%) rotate(" + (s.dx > 0 ? 14 : -14) + "deg)"; s.card.style.opacity = "0";
+        setTimeout(function () { handle(k, s.dx > 0 ? "pin" : "clr"); }, 230); }
+      else { s.card.classList.add("fly"); s.card.style.transform = ""; var u = s.slot.querySelector(".swu"); if (u) { u.firstChild.style.opacity = 0; u.lastChild.style.opacity = 0; }
+        setTimeout(function () { s.card.classList.remove("fly"); }, 260); } };
+    f.addEventListener("pointerup", end); f.addEventListener("pointercancel", end);
   }
   function go(dir) { var f = $("hstack"); if (f) f.scrollTo({ top: Math.max(0, Math.min(INBOX.length, pos + dir)) * f.clientHeight, behavior: "smooth" }); }
   // Home fills the screen between the header and the tab bar; cards scroll inside.
@@ -3829,7 +3906,7 @@
   // ---------- 👋 first-time tour (commish 11/7): the first visit to each tab grays the screen, spotlights a few things with an
   // arrow and a line each. Next / Got it, or ✕ to skip. Once per tab per owner on this phone; You → Show the tour again.
   var TOUR = {
-    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: this week's cards. Swipe up for the next one."], ["#needs", "⚡ Anything that needs you (a trade offer, dues) waits up here."],
+    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: this week's cards. Swipe up for the next one, ← when you're done with a card, → to save it."], ["#needs", "⚡ Anything that needs you (a trade offer, dues) waits up here."],
       [".stamp.lg", "Cards with the MAFFL crest are league-wide: everyone sees them, and everyone's reactions."], [".stamp.me", "This tag means a card is just for you."],
       ["[data-tab='match']", "⚔️ Your game, live from ESPN."], ["#chattab", "💬 New: chat with the league, your tier, or any owner."],
       ["[data-tab='team']", "🏈 Your roster, trades and credits."], ["[data-tab='league']", "🏆 Standings, rules and history."]],
