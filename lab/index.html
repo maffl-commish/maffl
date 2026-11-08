@@ -416,9 +416,19 @@
   .blkp{display:flex;align-items:center;gap:6px}.blkp small{font-size:11px;color:var(--muted)}
   .blkc b{font:700 16px/1.15 var(--display);color:var(--ink)}.blkn{font:700 13px var(--display);color:var(--navy)}
   .blkc i{font-size:12px;line-height:1.3;color:var(--ink2);font-style:italic}.blko{margin-top:auto;font-size:11px;color:var(--muted)}
-  .tour{position:fixed;inset:0;z-index:90;display:none}.tour.on{display:block}
-  .thole{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(15,29,52,.62);outline:2px solid var(--gold);transition:all .2s}
-  .tbub{position:absolute;left:50%;transform:translateX(-50%);width:min(calc(100vw - 24px),420px);background:#fff;border-radius:16px;padding:16px 16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .tour{position:fixed;inset:0;z-index:90;display:none;pointer-events:none}.tour.on{display:block}
+  .tscrim{position:absolute;left:0;right:0;top:0;height:var(--navtop,100%);background:rgba(15,29,52,.6);overflow:hidden;pointer-events:auto}.tour.hole .tscrim{background:none}
+  .tnav{position:absolute;left:0;right:0;top:var(--navtop,100%);bottom:0;pointer-events:auto}
+  .thole{position:absolute;border-radius:14px;box-shadow:0 0 0 2400px rgba(15,29,52,.6);outline:2px solid var(--gold);transition:all .2s}
+  .tring{position:absolute;border:3px solid var(--gold);border-radius:14px;box-shadow:0 0 0 5px rgba(242,183,5,.28);transition:all .2s}
+  .twel{position:absolute;left:50%;top:calc(var(--navtop,100%) / 2);transform:translate(-50%,-50%);width:min(calc(100vw - 28px),420px);max-height:calc(var(--navtop,100%) - 24px);overflow:auto;pointer-events:auto;background:#fff;border-radius:20px;padding:22px 20px 14px;box-shadow:0 14px 40px rgba(0,0,0,.35);border-top:5px solid var(--gold);text-align:center}
+  .twel img{width:64px;height:64px}.twel .tkick{margin-top:6px;font:700 13px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#9a6200}
+  .twel h2{margin:4px 0 12px;font:700 28px/1.05 var(--display);color:var(--navy)}
+  .twel ul{list-style:none;margin:0;padding:0;text-align:left;display:flex;flex-direction:column;gap:10px}
+  .twel li{display:flex;gap:12px;align-items:flex-start;background:var(--page-bg);border-radius:12px;padding:10px 12px}.twel li span{font-size:22px;line-height:1.2}
+  .twel li p{margin:0;font:500 14px/1.4 var(--body);color:var(--ink2)}.twel li b{display:block;font:700 16px/1.25 var(--display);color:var(--navy)}
+  .tbub h3{margin:0 0 4px;font:700 20px/1.1 var(--display);color:var(--navy)}
+  .tbub{position:absolute;pointer-events:auto;left:50%;transform:translateX(-50%);width:min(calc(100vw - 24px),420px);background:#fff;border-radius:16px;padding:16px 16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
   .tbub p{font:600 16px/1.4 var(--body);color:var(--ink);padding-right:22px}
   .tarr{position:absolute;width:16px;height:16px;background:#fff;transform:rotate(45deg);margin-left:-8px}.tbub.dn .tarr{top:-7px}.tbub.up .tarr{bottom:-7px}
   .tbtn{display:flex;align-items:center;gap:10px;margin-top:12px}.tbtn small{flex:1;text-align:center;color:var(--muted);font-size:12px}
@@ -540,9 +550,6 @@
   #hstack .fslot>.dcard.done-card{flex:1 1 auto}
   #hstack .fslot>.dcard .dbody{overflow-y:auto;overscroll-behavior-y:auto}
   .idots i.s{background:#b8c3d6}
-  .needs{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin:10px 14px 0;padding:10px 12px;background:#fdecec;border:1.5px solid var(--loss);border-radius:14px;text-align:left}
-  .needs .nb{flex:0 0 auto;font:800 14px var(--display);color:#fff;background:var(--loss);border-radius:999px;padding:5px 10px}
-  .needs .nt{flex:1;min-width:0}.needs b{display:block;font:700 15px var(--display);color:var(--navy)}.needs small{display:block;font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .needc{margin-bottom:14px}.needc .dcard{position:relative;inset:auto}
   /* swipe ← done / → save (commish 11/8) */
   .fslot{position:relative}
@@ -1699,7 +1706,7 @@
   // ---------- HOME = the reel (commish 11/7: a FEED, not an inbox) ----------
   // Cards come from SERIES (catalog: _ops/docs/REEL_SERIES.md). Each week is an issue: every series fills its group's
   // slots in the weekly budget, the feed interleaves the groups, you scroll up for the next card (nothing is deleted),
-  // and it ends with "You're caught up". Things that need you (trades, the desk, dues) sit in a strip above the feed.
+  // and it ends with "You're caught up". Things that need you (trades, the desk, dues) lead the feed.
   var SERIES = { // id prefix → group, rank inside the group (lower = first)
     result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
     deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 7], other: ["league", 8],
@@ -1891,8 +1898,6 @@
     paint($("hstack"));
   }
   function markSeen() { var x = INBOX[pos]; if (!x) { if (pos === INBOX.length && INBOX.length) nudge("inbox0", "You're caught up. How was the reel this week?"); return; } var sn = seen(); if (!sn[x.id]) { sn[x.id] = 1; store(seenKey(), JSON.stringify(sn)); homeBadge(); drawDeck(true); } }
-  // Things that need you: one sheet with each action card (trade offers, the desk, dues), handled right there.
-  function openNeeds() { openSheet("card", '<h2 class="sht">⚡ Needs you</h2>' + NEEDS.map(function (x) { return '<div class="needc">' + cardHTML(x) + '</div>'; }).join("")); }
   function cardHTML(x) {
     if (!x) return '<div class="dcard done-card">' + (INBOX.length ? '<div class="zero" style="background:var(--navy)">' + INBOX.length + '</div><h3 style="font:700 28px/1.1 var(--display);margin-top:10px">That\'s everything</h3>' +
         '<p class="p" style="margin-top:6px">' + (INBOX.length === 1 ? "1 card is" : INBOX.length + " cards are") + ' still in your reel. Swipe ← on the ones you\'re done with, or clear them all.</p>' +
@@ -2353,7 +2358,7 @@
       });
     };
     $("mReq").onclick = function () { showWelcome(true); };
-    $("mTour").onclick = function () { tourClear(); toast("Tour reset: open any tab"); tab("home"); };
+    $("mTour").onclick = function () { tourClear(); toast("👋 Here's the tour"); tab("home"); };
     if ($("mSet")) $("mSet").onclick = openSettings;
     if ($("errClear")) $("errClear").onclick = function () { store("maffl_lab_errs", "[]"); renderMore(); toast("Cleared"); };
   }
@@ -3905,41 +3910,74 @@
   $("dkclose").onclick = closeDesk; $("dkref").onclick = function () { deskRefresh(); toast("Refreshing the desk…"); };
   // Quick prompts: never twice for the same moment, at most 3 a day, 3 minutes apart, never over an open box.
   function fbSeen() { try { return JSON.parse(store("maffl_lab_fbseen") || "{}"); } catch (e) { return {}; } }
-  // ---------- 👋 first-time tour (commish 11/7): the first visit to each tab grays the screen, spotlights a few things with an
-  // arrow and a line each. Next / Got it, or ✕ to skip. Once per tab per owner on this phone; You → Show the tour again.
+  // ---------- 👋 Welcome tour (commish 11/8 overhaul). First open: a welcome card over the app ("the new and improved
+  // MAFFL HQ": it's yours now, ESPN is virtually live, everything but lineups happens here), then one stop per tab: the app
+  // switches to that tab and rings its button. The tab bar stays visible (the scrim stops above it). After that, the first
+  // visit to Team / Match / Chat shows a short tip or two (on-screen targets only). ✕ / Skip end it; You → Show the tour again.
+  var TOUR_TABS = [
+    ["home", "[data-tab='home']", "🏠 Home", "Your reel: this week's stories, picked for you. Swipe ← when you're done with a card, → to save it."],
+    ["team", "[data-tab='team']", "🏈 Team", "Your roster, trades and credits. Tap any player for his week by week, or put him on the trade block. Make offers with players and credits."],
+    ["match", "[data-tab='match']", "⚔️ Match", "Your game, virtually live from ESPN: points, lineups and the full scoreboard for both tiers. Step back through every week."],
+    ["chat", "#chattab", "💬 Chat", "League chat, your tier, and DMs with any owner. Commish alerts, trade news and perk moves land here too."],
+    ["league", "[data-tab='league']", "🏆 League", "Standings, every week, the rulebook, and the Vault: every season since 2005."]];
   var TOUR = {
-    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: this week's cards. Swipe up for the next one, ← when you're done with a card, → to save it."],
-      [".stamp.lg", "Cards with the MAFFL crest are league-wide: everyone sees them, and everyone's reactions."], [".stamp.me", "This tag means a card is just for you."],
-      ["[data-tab='match']", "⚔️ Your game, live from ESPN."], ["#chattab", "💬 New: chat with the league, your tier, or any owner."],
-      ["[data-tab='team']", "🏈 Your roster, trades and credits."], ["[data-tab='league']", "🏆 Standings, rules and history."]],
     team: [["#tseg", "Roster, Trades and Credits live here."], [".rrow", "Tap any player: week by week, status, or put him on the trade block."], ["[data-tour='profile']", "Your full profile: career, titles, rivalries."]],
     match: [[".lpn", "Tap a player to open his screen."], [".lpts", "Tap his points to see how he scored them."]],
-    chat: [["#cnew", "Start a DM or a group message here."]],
-    league: [["#v-league .seg, #v-league .lseg, #v-league button", "Standings, weeks, rules and history."]] };
+    chat: [["#cnew", "Start a DM or a group message here."]] };
   var TR = null;
   function tourKey(t) { return "maffl_lab_tour_" + t + "_" + norm(ME && ME.owner); }
-  function tourClear() { Object.keys(TOUR).forEach(function (t) { store(tourKey(t), ""); }); }
+  function tourClear() { ["welcome", "home", "league"].concat(Object.keys(TOUR)).forEach(function (t) { store(tourKey(t), ""); }); }
   // Commish desk 👋 reset (backend v0.25): summary carries this owner's "tour" stamp; a stamp this phone hasn't seen = replay once.
   function tourStampCheck(st) { if (!st || !ME) return; var k = "maffl_lab_tourstamp_" + norm(ME.owner), had = store(k); if (had === st) return; store(k, st);
     tourClear(); tourMaybe(CUR_TAB); }
-  function tourMaybe(t) { if (!ME || store(tourKey(t)) || TR) return; setTimeout(function () { if ((t === "chat" ? CH.open : CUR_TAB === t && !CH.open) && !TR && !$("welcome").classList.contains("on") && !$("psheet").classList.contains("on") && !$("cwrap").classList.contains("on") && !DK.open) tourStart(t); }, 700); }
-  function tourStart(t) { var steps = (TOUR[t] || []).filter(function (s) { var el = document.querySelector(s[0]); return el && el.getBoundingClientRect().height > 0; });
-    if (!steps.length) return; TR = { t: t, steps: steps, i: 0 }; store(tourKey(t), "1"); tourDraw(); }
-  function tourDraw() {
-    var o = $("tour"); if (!TR) { o.classList.remove("on"); o.innerHTML = ""; return; }
-    var s = TR.steps[TR.i], el = document.querySelector(s[0]); if (!el) { tourNext(); return; }
-    var r = el.getBoundingClientRect(), pad = 6, vh = window.innerHeight, vw = Math.min(window.innerWidth, 480), below = r.top + r.height / 2 < vh / 2;
-    var hole = { l: Math.max(4, r.left - pad), t: Math.max(4, r.top - pad), w: Math.min(r.width + 2 * pad, window.innerWidth - 8), h: Math.min(r.height + 2 * pad, vh * 0.6) };
-    var last = TR.i === TR.steps.length - 1, ax = Math.min(Math.max(r.left + r.width / 2, 30), window.innerWidth - 30);
-    o.innerHTML = '<div class="thole" style="left:' + hole.l + 'px;top:' + hole.t + 'px;width:' + hole.w + 'px;height:' + hole.h + 'px"></div>' +
-      '<div class="tbub ' + (below ? 'dn' : 'up') + '" style="' + (below ? 'top:' + (hole.t + hole.h + 14) : 'bottom:' + (vh - hole.t + 14)) + 'px"><i class="tarr" style="left:' + (ax - Math.max(12, (window.innerWidth - Math.min(vw - 24, 420)) / 2)) + 'px"></i>' +
-      '<p>' + esc(s[1]) + '</p><div class="tbtn"><button id="tskip">' + (last ? '' : 'Skip tour') + '</button><small>' + (TR.i + 1) + ' / ' + TR.steps.length + '</small><button class="go" id="tnext">' + (last ? 'Got it' : 'Next ›') + '</button></div>' +
-      '<button class="tx" id="tx" aria-label="Close tour">✕</button></div>';
-    o.classList.add("on");
-    $("tnext").onclick = tourNext; $("tx").onclick = tourEnd; $("tskip").onclick = tourEnd;
+  function tourBusy() { return TR || $("welcome").classList.contains("on") || $("psheet").classList.contains("on") || $("cwrap").classList.contains("on") || DK.open; }
+  function tourMaybe(t) { if (!ME || TR) return; var w = !store(tourKey("welcome"));
+    if (!w && (!TOUR[t] || store(tourKey(t)))) return;
+    setTimeout(function () { if (tourBusy() || !ME) return;
+      if (w) { if (!store(tourKey("welcome")) && !CH.open) tourWelcome(); return; }
+      if (t === "chat" ? CH.open : CUR_TAB === t && !CH.open) tourStart(t); }, 700); }
+  function tourNavTop() { var n = $("tabs"); return n ? n.getBoundingClientRect().top : window.innerHeight; }
+  function tourWelcome() { store(tourKey("welcome"), "1"); if (CUR_TAB !== "home") tab("home"); TR = { t: "welcome", i: null }; tourDraw(); }
+  function tourCard() { var first = (ME.owner || "").split(" ")[0];
+    tourPaint("", '<div class="twel"><img src="../maffl-logo-192.png" alt=""><div class="tkick">' + (first ? 'Welcome, ' + esc(first) : 'Welcome') + '</div>' +
+      '<h2>The new and improved MAFFL HQ</h2>' +
+      '<ul><li><span>👤</span><p><b>It\'s yours now.</b> You\'re signed in: your feed, your team, your alerts.</p></li>' +
+      '<li><span>📡</span><p><b>Virtually live from ESPN.</b> Scores, lineups and rosters keep updating through game day.</p></li>' +
+      '<li><span>🤝</span><p><b>Everything happens here but your lineup.</b> Trades, credit perks, chat, votes and commish alerts. Lineups still get set in ESPN.</p></li></ul>' +
+      '<div class="tbtn"><button id="tskip">Skip</button><small></small><button class="go" id="tnext">Show me around ›</button></div></div>');
   }
-  function tourNext() { if (!TR) return; TR.i++; if (TR.i >= TR.steps.length) tourEnd(); else tourDraw(); }
-  function tourEnd() { TR = null; tourDraw(); }
+  function tourStart(t) { var vh = tourNavTop(), steps = (TOUR[t] || []).filter(function (s) { var el = document.querySelector(s[0]); if (!el) return false;
+      var r = el.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.top + Math.min(r.height, 60) <= vh; });
+    store(tourKey(t), "1"); if (!steps.length) return; TR = { t: t, steps: steps, i: 0 }; tourDraw(); }
+  // One spotlight step: el = target, text = line, n/of = counter. A tab button (inside the nav) gets a gold ring; anything else a cut-out.
+  function tourSpot(el, title, text, n, of) {
+    var r = el.getBoundingClientRect(), pad = 6, nav = tourNavTop(), inNav = r.top >= nav - 1, last = n === of;
+    var hole = { l: Math.max(4, r.left - pad), t: Math.max(4, r.top - pad), w: Math.min(r.width + 2 * pad, window.innerWidth - 8), h: Math.min(r.height + 2 * pad, nav * 0.6) };
+    var below = !inNav && hole.t + hole.h / 2 < nav / 2, ax = Math.min(Math.max(r.left + r.width / 2, 30), window.innerWidth - 30), bw = Math.min(window.innerWidth - 24, 420);
+    var pos = below ? 'top:' + Math.min(hole.t + hole.h + 14, nav - 200) : 'bottom:' + Math.max(window.innerHeight - (inNav ? nav : hole.t) + 14, 10);
+    tourPaint(inNav ? "" : '<div class="thole" style="left:' + hole.l + 'px;top:' + hole.t + 'px;width:' + hole.w + 'px;height:' + hole.h + 'px"></div>',
+      (inNav ? '<div class="tring" style="left:' + hole.l + 'px;top:' + (r.top - 2) + 'px;width:' + hole.w + 'px;height:' + (r.height + 4) + 'px"></div>' : '') +
+      '<div class="tbub ' + (below ? 'dn' : 'up') + '" style="' + pos + 'px"><i class="tarr" style="left:' + (ax - (window.innerWidth - bw) / 2) + 'px"></i>' +
+      (title ? '<h3>' + esc(title) + '</h3>' : '') + '<p>' + esc(text) + '</p><div class="tbtn"><button id="tskip">' + (last ? '' : 'Skip') + '</button><small>' + n + ' / ' + of + '</small><button class="go" id="tnext">' + (last ? 'Got it' : 'Next ›') + '</button></div>' +
+      '<button class="tx" id="tx" aria-label="Close tour">✕</button></div>', inNav ? "" : "hole");
+  }
+  function tourPaint(cut, h, mode) { var o = $("tour"); o.className = "tour on" + (mode ? " " + mode : ""); o.style.setProperty("--navtop", tourNavTop() + "px");
+    o.innerHTML = '<div class="tscrim">' + cut + '</div><div class="tnav"></div>' + h;
+    $("tnext").onclick = tourNext; $("tskip").onclick = tourEnd; if ($("tx")) $("tx").onclick = tourEnd; }
+  function tourDraw() {
+    var o = $("tour"); if (!TR) { o.className = "tour"; o.innerHTML = ""; return; }
+    if (TR.t === "welcome" && TR.i == null) return tourCard();
+    if (TR.t === "welcome") { var s = TOUR_TABS[TR.i], el = s && document.querySelector(s[1]);
+      if (!s) return tourEnd(); if (!el) return tourNext();
+      if (s[0] !== "chat" && CUR_TAB !== s[0]) tab(s[0]);
+      return tourSpot(el, s[2], s[3], TR.i + 1, TOUR_TABS.length); }
+    var st = TR.steps[TR.i], e2 = document.querySelector(st[0]); if (!e2) return tourNext();
+    tourSpot(e2, "", st[1], TR.i + 1, TR.steps.length);
+  }
+  function tourNext() { if (!TR) return;
+    if (TR.t === "welcome" && TR.i == null) { TR.i = 0; return tourDraw(); }
+    TR.i++; if (TR.t === "welcome" ? TR.i >= TOUR_TABS.length : TR.i >= TR.steps.length) tourEnd(); else tourDraw(); }
+  function tourEnd() { var w = TR && TR.t === "welcome"; TR = null; tourDraw(); if (w && CUR_TAB !== "home") tab("home"); }
   window.addEventListener("resize", function () { if (TR) tourDraw(); });
   function firstLook(t) { tourMaybe(t); if (BETA && FIRST[t]) setTimeout(function () { if (CUR_TAB === t) nudge("first:" + t, FIRST[t]); }, 4000); }
   function nudge(key, text) {

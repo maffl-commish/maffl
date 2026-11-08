@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-08 by Claude (chat), ESPN do-on dates + Needs banner gone
+**Last updated:** 2026-11-08 by Claude (chat), welcome tour overhaul
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-08 · REEL · 👋 Welcome tour overhaul (commish): opens on a "The new and improved MAFFL HQ" card over the app (👤 it's yours now · 📡 virtually live from ESPN · 🤝 everything but your lineup happens here), then Show me around walks Home → Team → Match → Chat → League, switching tabs and ringing each button; the tab bar stays visible (scrim stops above it). Team / Match / Chat keep a short first-visit tip. Fix: the old Home tour pointed at a crest tag on a card far below the screen, so the bubble and Next went off-screen and the tour stuck; tips now use on-screen targets only and the bubble stays in view. Dead "Needs you" banner code removed. You → Show the tour again starts it right away. App only.
 - 2026-11-08 · REEL · ⚡ "Things need you" banner removed from Home (commish): those cards (trade offers, commish desk, dues) now lead the feed; Home badge still counts them. 📅 Commish desk ESPN steps get a **Do on** day (tap Change for a date picker): Double Bonus defaults to the Tuesday after its week, Matchup Swap to the Tuesday before its week, Extra FAAB etc. to the day approved. A step counts as a to-do (desk badge, Home desk card) from its day; before that it waits under 📅 Scheduled. Backend logic v0.38: desk op `espnwhen` (Events `espn_when`), desk items carry `when`; regression adds espnwhen checks. Ghost score isn't a desk step yet.
 - 2026-11-08 · REEL · ⚔️ Match cleanup (commish): Up next card removed (the gold player row + ✖️2 chips carry it); no ×2 tag on the team total; bottom League-scoreboard button removed (the top tab does it); My game / Scoreboard tab now fills navy with a gold underline when selected.
 - 2026-11-08 · REEL · 🏠 Home feed you can empty: swipe a card ← for ✓ Done (gone for the week) or → for ⭐ Save (moves to a Saved chip above the feed; open it to send a card back or mark it done), Undo after each. Counter reads "N left this week"; the end card offers ✓ Clear all, then ✅ All caught up. Needs-you cards still stay until handled. App only.
