@@ -400,6 +400,8 @@
   .hitiles{display:flex;gap:10px;margin-top:16px}.hitiles>div{flex:1;background:var(--page-bg);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
   .hitiles>div.me{background:var(--gold-soft);border-color:var(--gold)}.hitiles small{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
   .hitiles b{display:block;font:800 32px/1.1 var(--display);color:var(--navy);margin:4px 0}.hitiles span{font-size:13px;line-height:1.25;color:var(--ink2)}
+  .dwhen{position:relative;display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:14px;color:var(--navy)}.dwhen span{font:700 12px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#9a6a00;border-bottom:1px dashed #d9a520}
+  .dwhen input{position:absolute;inset:0;opacity:0;width:100%;font-size:16px}
   .dkpoll{display:flex;align-items:center;justify-content:space-between;gap:8px;font:700 14px var(--display);color:var(--navy)}.dkpoll .b.sm{flex:0 0 auto;width:auto;padding:7px 12px;font-size:12px}
   .rhead{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:12px 2px 0}
   .rgrp{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:14px 2px 6px}
@@ -1861,17 +1863,17 @@
     all.filter(function (x) { return NEEDS.indexOf(x) < 0; }).forEach(function (x, k) { var sr = seriesOf(x); x.series = x.id.split(":")[0]; x.group = sr[0]; x.rank = sr[1] * 100 + k; (q[sr[0]] = q[sr[0]] || []).push(x); });
     var bud = offSeason() ? BUDGET_OFF : BUDGET;
     Object.keys(q).forEach(function (g) { q[g].sort(function (a, b) { return a.rank - b.rank; }); q[g] = q[g].slice(0, bud[g] || 2); });
-    INBOX = []; FEED_ORDER.forEach(function (g) { if (q[g] && q[g].length) INBOX.push(q[g].shift()); });
+    INBOX = NEEDS.slice(); FEED_ORDER.forEach(function (g) { if (q[g] && q[g].length) INBOX.push(q[g].shift()); });
     ["you", "league", "play", "vault"].forEach(function (g) { while (q[g] && q[g].length) INBOX.push(q[g].shift()); });
     var clr = boxGet("clr"), pin = boxGet("pin"); FEED_N = INBOX.length;
     SAVED = INBOX.filter(function (x) { return pin[x.id] && !clr[x.id]; });
     INBOX = INBOX.filter(function (x) { return !clr[x.id] && !pin[x.id]; });
     homeBadge();
   }
-  function homeBadge() { var sn = seen(), n = NEEDS.length + INBOX.filter(function (x) { return !sn[x.id]; }).length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); } }
+  function homeBadge() { var sn = seen(), n = INBOX.filter(function (x) { return NEEDS.indexOf(x) >= 0 || !sn[x.id]; }).length, h = document.querySelector('[data-tab="home"] span'); if (h) { h.className = "hbadge"; h.setAttribute("data-n", n || ""); } }
   function renderHome() {
     var keep = pos; buildInbox();
-    var nd = NEEDS.length ? '<button class="needs" id="needs"><span class="nb">⚡ ' + NEEDS.length + '</span><span class="nt"><b>' + (NEEDS.length === 1 ? "1 thing needs you" : NEEDS.length + " things need you") + '</b><small>' + esc(NEEDS.map(function (x) { return x.c.eb.replace(/^[^A-Za-z0-9]+/, ""); }).join(" · ")) + '</small></span><span class="rv">›</span></button>' : '';
+    var nd = ''; // the ⚡ Needs-you banner is gone (commish 11/8): those cards lead the feed instead
     // Progress runs down the right edge, like the feed itself (commish 11/7: the old dots ran sideways).
     var sv = SAVED.length ? '<button class="saved" id="saved">⭐ Saved · ' + SAVED.length + ' ›</button>' : '';
     $("v-home").innerHTML = nd + '<div class="ibar">' + (sv || (INBOX.length && !store("maffl_lab_swiped") ? '<span class="ihow">← done · save →</span>' : '<span class="ihow"></span>')) + '<div class="icount" id="icount"></div></div><div class="fwrap"><div class="feed" id="hstack">' +
@@ -1880,7 +1882,6 @@
     f.scrollTop = pos * f.clientHeight; drawDeck(true);
     var t0 = null; f.onscroll = function () { var k = Math.round(f.scrollTop / Math.max(1, f.clientHeight)); if (k !== pos) { pos = k; drawDeck(true); } clearTimeout(t0); t0 = setTimeout(markSeen, 700); };
     setTimeout(markSeen, 900);
-    if ($("needs")) $("needs").onclick = openNeeds;
     if ($("saved")) $("saved").onclick = openSaved;
     if ($("dclear")) $("dclear").onclick = function () { var c = boxGet("clr"), ids = INBOX.map(function (x) { return x.id; }); ids.forEach(function (id) { c[id] = 1; }); boxSet("clr", c); store("maffl_lab_swiped", "1"); tap("reel", "clearall:" + ids.length);
       pos = 0; renderHome(); undoBar("✓ " + ids.length + " cleared", function () { var c2 = boxGet("clr"); ids.forEach(function (id) { delete c2[id]; }); boxSet("clr", c2); pos = 0; renderHome(); }); };
@@ -3289,9 +3290,23 @@
   var ALERT_T = { SYNC: "💳 Credit sync problem", ESPN: "🏈 ESPN connection problem", GUESSES: "🔐 Sign-in paused", RECONCILE: "🧮 Nightly credit check" };
   function deskOpenPerks() { return (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }); }
   function deskReview() { return (SUM.offers || []).filter(function (o) { return o.status === "ACCEPTED"; }); }
+  // 📅 ESPN steps carry a "do on" day (commish 11/8). Defaults: Double Bonus = the Tuesday after its week (after the games),
+  // Matchup Swap = the Tuesday before its week (the schedule must change first), anything else = the day it was approved.
+  // A step counts as a to-do from its day on; before that it waits under 📅 Scheduled.
+  function etDay(d) { return new Date(d).toLocaleDateString("en-CA", { timeZone: "America/New_York" }); }
+  function tueOf(week) { return new Date(Date.UTC(2026, 8, 15 + 7 * (week - 1))).toISOString().slice(0, 10); } // Tue after Week N (Week 1 = Thu Sep 10)
+  function espnDue(p) { return p.when || (p.perk === "double" && p.week ? tueOf(p.week) : p.perk === "swap" && p.week ? tueOf(p.week - 1) : etDay(p.approved || Date.now())); }
+  function espnNow() { var t = etDay(Date.now()); return ((DESK || {}).espn || []).filter(function (p) { return espnDue(p) <= t; }); }
+  function espnLater() { var t = etDay(Date.now()); return ((DESK || {}).espn || []).filter(function (p) { return espnDue(p) > t; }).sort(function (a, b) { return espnDue(a) < espnDue(b) ? -1 : 1; }); }
+  function dayName(iso) { return new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }); }
+  function espnItem(p) {
+    return '<div class="ditem">' + esc(espnStep(p)) + '<div class="meta">' + esc((PERK_BY[p.perk] || {}).name || p.perk) + ' · approved ' + ago(p.approved) + '</div>' +
+      '<label class="dwhen">📅 Do on <b>' + dayName(espnDue(p)) + '</b><input type="date" data-espnwhen="' + esc(p.id) + '" value="' + espnDue(p) + '" aria-label="Change the day"><span>Change</span></label><div class="btns">' +
+      '<a class="b" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"') + '</div></div>';
+  }
   function deskTodo() {
     if (!ME || !ME.commish) return 0; var d = DESK || {};
-    return deskOpenPerks().length + deskReview().length + (d.access || []).length + (d.locked || []).length + (d.espn || []).length + (d.sync && d.sync.last && d.sync.last.ok === false ? 1 : 0) +
+    return deskOpenPerks().length + deskReview().length + (d.access || []).length + (d.locked || []).length + espnNow().length + (d.sync && d.sync.last && d.sync.last.ok === false ? 1 : 0) +
       (d.awards || []).filter(function (a) { return a.status === "PENDING"; }).length;
   }
   function deskLine(l) {
@@ -3317,7 +3332,7 @@
     deskReview().forEach(function (o) { L.push(["🤝", shortOf(o.from) + " ↔ " + shortOf(o.to), "24h review"]); });
     (d.access || []).forEach(function (a) { L.push(["🔑", (a.team || a.owner) + " needs a passphrase", ago(a.ts)]); });
     (d.locked || []).forEach(function (o) { L.push(["🔒", (teamOf(o).team || o) + " is locked out", ""]); });
-    (d.espn || []).forEach(function (p) { L.push(["🏈", espnStep(p), "ESPN"]); });
+    espnNow().forEach(function (p) { L.push(["🏈", espnStep(p), "ESPN"]); });
     if (d.sync && d.sync.last && d.sync.last.ok === false) L.push(["💳", "Credit sync didn't post", "fix"]);
     return '<div class="list" style="margin-top:6px">' + L.slice(0, 7).map(function (x) { return '<div class="row" style="padding:9px 0;border-top:1px solid var(--border)"><span style="font-size:20px;width:30px">' + x[0] + '</span><div style="flex:1;font-size:15px;line-height:1.3">' + esc(x[1]) + '</div><small class="meta" style="white-space:nowrap;margin-left:8px">' + esc(x[2]) + '</small></div>'; }).join("") +
       (L.length > 7 ? '<p class="meta">+' + (L.length - 7) + ' more</p>' : '') + '</div>';
@@ -3336,12 +3351,11 @@
           (a.note ? '<p class="meta">“' + esc(a.note) + '”</p>' : '') + '<div class="btns">' + deskBtn("dismiss", a.owner, "Dismiss") + deskBtn("issue", a.owner, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("");
       if ((d.locked || []).length) h += '<div class="dsec">🔒 Locked out · ' + d.locked.length + '</div>' + d.locked.map(function (o) {
         return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + ' · 5 wrong tries</span><div class="btns">' + deskBtn("unlock", o, "Unlock") + deskBtn("issue", o, "New passphrase", 1) + '</div></div>'; }).join("");
-      if ((d.espn || []).length) h += '<div class="dsec">🏈 Do on ESPN · ' + d.espn.length + '</div>' + d.espn.map(function (p) {
-        return '<div class="ditem">' + esc(espnStep(p)) + '<div class="meta">' + esc((PERK_BY[p.perk] || {}).name || p.perk) + ' · approved ' + ago(p.approved) + '</div><div class="btns">' +
-          '<a class="b" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"') + '</div></div>'; }).join("");
+      var en = espnNow(); if (en.length) h += '<div class="dsec">🏈 Do on ESPN · ' + en.length + '</div>' + en.map(espnItem).join("");
       var ls = d.sync && d.sync.last; if (ls && ls.ok === false) h += '<div class="dsec">💳 Credit sync</div><div class="ditem">⚠️ ' + esc(ls.error || "Last push failed") + '<div class="btns"><button class="b pri" data-resync="1">Re-send ledger</button></div></div>';
       h += '</div>';
     }
+    var el = espnLater(); if (el.length) h += '<div class="dsk"><div class="dsec" style="margin-top:0">📅 Scheduled · ' + el.length + '</div>' + el.map(espnItem).join("") + '<p class="meta">Waits here until its day, then moves to To do.</p></div>';
     return h;
   }
   function deskPeopleHTML(d) { var h = "";
@@ -3535,6 +3549,12 @@
       (r.phone || r.email ? '' : '<p class="meta" style="margin-top:4px">No number or email on file; you\'ll pick the contact.</p>') + '<div class="btns"><button class="b pri" id="cno">Done</button></div>';
     $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); };
   }
+  document.addEventListener("change", function (e) {
+    var el = e.target.closest && e.target.closest("[data-espnwhen]"); if (!el || !el.value) return; var id = el.dataset.espnwhen, v = el.value;
+    ((DESK || {}).espn || []).forEach(function (p) { if (p.id === id) p.when = v; }); deskBadge(); drawDesk(); busy(1);
+    api("deskact", Object.assign(creds(), { op: "espnwhen", target: "", perk_id: id, when: v })).then(function (r) { busy(0); toast(r.ok ? "📅 Set for " + dayName(v) : (r.error || "Didn't save")); DESK = null; loadDesk(); })
+      .catch(function () { busy(0); toast("Couldn't reach the league server"); });
+  });
   document.addEventListener("click", function (e) {
     var el = e.target.closest("[data-dact]"); if (!el) return;
     var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" || op === "daily" || /^award/.test(op) ? null : teamOf(who).team || who;
@@ -3804,7 +3824,7 @@
     if (!chatOn() || W !== LATEST) return [];
     var ib = inboxOf(), out = [];
     if (ME.commish && deskTodo()) { var dk = DESK || {}, bits = [];
-      [[deskOpenPerks().length, "perk"], [deskReview().length, "trade"], [(dk.access || []).length, "passphrase request"], [(dk.locked || []).length, "lockout"], [(dk.espn || []).length, "ESPN step"]].forEach(function (x) { if (x[0]) bits.push(x[0] + " " + x[1] + (x[0] === 1 ? "" : "s")); });
+      [[deskOpenPerks().length, "perk"], [deskReview().length, "trade"], [(dk.access || []).length, "passphrase request"], [(dk.locked || []).length, "lockout"], [espnNow().length, "ESPN step"]].forEach(function (x) { if (x[0]) bits.push(x[0] + " " + x[1] + (x[0] === 1 ? "" : "s")); });
       out.push({ key: "desk", eb: "📥 Commish desk", t: deskTodo() + " thing" + (deskTodo() === 1 ? "" : "s") + " waiting on you", body: '<p class="meta">' + esc(bits.join(" · ") || "Credit sync needs a look") + '</p>' + deskHomeList() +
         '<div class="btns"><button class="b pri" data-desk-open="1">📥 Open the desk</button></div>' }); }
     var live = function (other) { return (SUM.offers || []).filter(function (o) { return ((isMe(o.from) && norm(o.to) === norm(other)) || (isMe(o.to) && norm(o.from) === norm(other))) && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0; })
@@ -3888,7 +3908,7 @@
   // ---------- 👋 first-time tour (commish 11/7): the first visit to each tab grays the screen, spotlights a few things with an
   // arrow and a line each. Next / Got it, or ✕ to skip. Once per tab per owner on this phone; You → Show the tour again.
   var TOUR = {
-    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: this week's cards. Swipe up for the next one, ← when you're done with a card, → to save it."], ["#needs", "⚡ Anything that needs you (a trade offer, dues) waits up here."],
+    home: [["#hstack .dcard", "👋 Welcome to MAFFL HQ. This is your reel: this week's cards. Swipe up for the next one, ← when you're done with a card, → to save it."],
       [".stamp.lg", "Cards with the MAFFL crest are league-wide: everyone sees them, and everyone's reactions."], [".stamp.me", "This tag means a card is just for you."],
       ["[data-tab='match']", "⚔️ Your game, live from ESPN."], ["#chattab", "💬 New: chat with the league, your tier, or any owner."],
       ["[data-tab='team']", "🏈 Your roster, trades and credits."], ["[data-tab='league']", "🏆 Standings, rules and history."]],

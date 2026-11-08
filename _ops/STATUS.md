@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-08 by Claude (chat), Home swipe to clear / save
+**Last updated:** 2026-11-08 by Claude (chat), ESPN do-on dates + Needs banner gone
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-08 · REEL · ⚡ "Things need you" banner removed from Home (commish): those cards (trade offers, commish desk, dues) now lead the feed; Home badge still counts them. 📅 Commish desk ESPN steps get a **Do on** day (tap Change for a date picker): Double Bonus defaults to the Tuesday after its week, Matchup Swap to the Tuesday before its week, Extra FAAB etc. to the day approved. A step counts as a to-do (desk badge, Home desk card) from its day; before that it waits under 📅 Scheduled. Backend logic v0.38: desk op `espnwhen` (Events `espn_when`), desk items carry `when`; regression adds espnwhen checks. Ghost score isn't a desk step yet.
 - 2026-11-08 · REEL · ⚔️ Match cleanup (commish): Up next card removed (the gold player row + ✖️2 chips carry it); no ×2 tag on the team total; bottom League-scoreboard button removed (the top tab does it); My game / Scoreboard tab now fills navy with a gold underline when selected.
 - 2026-11-08 · REEL · 🏠 Home feed you can empty: swipe a card ← for ✓ Done (gone for the week) or → for ⭐ Save (moves to a Saved chip above the feed; open it to send a card back or mark it done), Undo after each. Counter reads "N left this week"; the end card offers ✓ Clear all, then ✅ All caught up. Needs-you cards still stay until handled. App only.
 - 2026-11-08 · REEL · ⏭️ Match → My game: an **Up next** gold card when a Double Bonus (or Matchup Swap) approved for a coming week touches your game, showing the doubled player ×2 and who did it; once that week is live the lineup row wears gold as before. Extra FAAB now posts to League chat too (waiver budgets are public). Backend v0.37.

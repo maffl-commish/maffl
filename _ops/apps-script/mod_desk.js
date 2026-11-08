@@ -29,9 +29,9 @@ function closeRequests_(owner) {
   var sh = sheet_("Requests"); openRequests_().forEach(function (r) { if (norm_(r.owner) === norm_(owner)) sh.getRange(r.row, 4, 1, 2).setValues([["DONE", new Date()]]); });
 }
 function desk_(me) {
-  var done = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = e.meta || "Y"; });
+  var done = {}, when = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = e.meta || "Y"; if (e.type === "espn_when") when[e.ref] = String(e.value).replace(/^when:/, ""); });
   var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id]; }).map(function (r) {
-    return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts };
+    return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts, when: when[r.perk_id] || "" };
   });
   var owners = owners_(), last = {};
   try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
@@ -58,6 +58,9 @@ function deskAct_(me, b) {
   if (b.op === "award" || b.op === "awardall") return awardAct_(b);
   if (b.op === "poll" || b.op === "pollclose") return poll_(me, b);
   if (b.op === "announce") return announce_(me, b);
+  if (b.op === "espnwhen") { // 📅 the day the commish plans to do an ESPN step (commish 11/8); "when:" keeps the Sheet from turning it into a date
+    if (!b.perk_id || !/^\d{4}-\d{2}-\d{2}$/.test(String(b.when || ""))) return { ok: false, error: "Pick a date" };
+    log_(me.owner, "espn_when", b.perk_id, "when:" + b.when, "", ""); return { ok: true }; }
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
     deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }

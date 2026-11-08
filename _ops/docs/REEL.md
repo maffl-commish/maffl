@@ -43,6 +43,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 | 🌅 Daily run | In-season mode (replaces the Pulse in REEL): 5 AM + 5 PM ET from the tick (or desk Run it now): scores, records, streaks, Survivor, highs, Coach of the Week, roster moves (Moves tab), beta digest, health. ✍️ Claude writes card lines after each run (`card-lines.yml`). App builds the newest final week from it when the Pulse doesn't have it; result/next cards use the lines; 📰 Wire card. APP_DESIGN §10g |
 | 🏅 Credits (daily) | Credit races (Most Points, Blowout, Individual High, Survivor) + weekly highs from the daily run; 💳 Credit races + ⭐ Elite 5 reel cards; Awards tab: EARNED all season → approve cards on the desk after Week 17 → ledger (11/6) |
 | 🗳️ Votes | Polls and Game of the Week: one vote per owner, locked once cast (app + backend v0.35, commish 11/7); results show after you vote |
+| 📅 Desk ESPN steps | Each approved perk's ESPN step has a Do-on day (default: Double Bonus = Tue after its week, Swap = Tue before, else the day approved); counts as a to-do from that day, else waits under Scheduled (v0.38, commish 11/8). No Home "needs you" banner: action cards lead the feed |
 | Robots | Credit sync (`credit-sync.yml`): app approval → Credit_Log → balances → credits.html. TEST mode (dry run) |
 
 ## 3. Roadmap (to go-live — everything ships at once)

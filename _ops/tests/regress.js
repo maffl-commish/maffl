@@ -59,6 +59,10 @@ out("desk", P(Object.assign({ action: "desk" }, me)));
 out("deskact tick", P(Object.assign({ action: "deskact", op: "tick", target: "" }, me)));
 out("deskact poll", P(Object.assign({ action: "deskact", op: "poll", target: "", question: "Q?", options: ["A", "B"], tier: "", days: 7, week: 8 }, me)));
 out("deskact announce", P(Object.assign({ action: "deskact", op: "announce", target: "", text: "Dues are due Friday." }, me)));
+{ const d0 = P(Object.assign({ action: "desk" }, me)); const e0 = (d0.espn || [])[0];
+  if (e0) { out("deskact espnwhen", P(Object.assign({ action: "deskact", op: "espnwhen", target: "", perk_id: e0.id, when: "2026-11-17" }, me)));
+    out("deskact espnwhen bad", P(Object.assign({ action: "deskact", op: "espnwhen", target: "", perk_id: e0.id, when: "soon" }, me)));
+    out("desk espn when", (P(Object.assign({ action: "desk" }, me)).espn || []).map(function (x) { return x.perk + ":" + x.when; })); } }
 out("chat league after announce", P(Object.assign({ action: "chat", room: "league" }, me)).pinned);
 out("deskact beta", P(Object.assign({ action: "deskact", op: "beta", target: "Sam Lavrinc", on: true }, me)));
 out("deskact daily", P(Object.assign({ action: "deskact", op: "daily", target: "" }, me)));
