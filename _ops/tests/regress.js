@@ -2,6 +2,14 @@
 // and prints normalized results (timestamps, ids, durations masked).
 //   node _ops/tests/regress.js > /tmp/out.txt && diff _ops/tests/regress_expected.txt /tmp/out.txt
 // An intended behavior change → review the diff, then refresh regress_expected.txt in the same commit.
+// Freeze the clock at Sat 2026-11-07 10:00 AM ET (real time still ticks forward from there), so the daily slot, the
+// trade deadline and "N min ago" text don't depend on when this runs.
+(function () {
+  const Real = Date, start = Real.UTC(2026, 10, 7, 15, 0, 0), t0 = Real.now();
+  const now = () => start + (Real.now() - t0);
+  class FrozenDate extends Real { constructor(...a) { if (a.length) super(...a); else super(now()); } static now() { return now(); } }
+  global.Date = FrozenDate;
+})();
 const mockMod = require("./mock.js");
 const m = mockMod.create({});
 const norm = (o) => JSON.stringify(o, null, 0)
