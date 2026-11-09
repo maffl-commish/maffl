@@ -148,8 +148,9 @@ function putLines_(b) {
   var s = JSON.stringify(b.lines); if (s.length > 60000) return { ok: false, error: "too long" };
   need_("daily"); DAILY.putLines(b.lines); var e5 = null; try { e5 = elitePost_(b.lines); } catch (e) {} return { ok: true, elite5: e5 };
 }
-// ⭐ Elite 5 on the record (commish 11/9): the first lines after a week goes final (both tiers) post that week's Elite 5
-// to League chat, once per week, so it lands on the 📣 Board. "Dropped out" compares with the last one posted.
+// ⭐ Elite 5 on the record (commish 11/9): the first lines after a week goes final (both tiers) save that week's Elite 5,
+// once per week, to Daily key elite5_hist; the 📣 Board shows it. Not posted to chat (commish 11/9, later). "Out" compares
+// with the last one saved.
 function elitePost_(lines) {
   var e5 = (lines.elite5 || []).slice(0, 5); if (e5.length < 5) return null;
   var T = (DAILY.snapshot() || {}).tiers || {}, wk = Math.min((T.U || {}).last || 0, (T.L || {}).last || 0); if (!wk) return null;
@@ -158,7 +159,7 @@ function elitePost_(lines) {
   var now = e5.map(function (e) { return e.owner; }), was = (last.owners || []).filter(function (o) { return now.map(norm_).indexOf(norm_(o)) < 0; });
   var text = "⭐ Elite 5 · Week " + wk + "\n" + e5.map(function (e, k) { return (k + 1) + ". " + teamName_(e.owner); }).join("\n") +
     (was.length ? "\n⬇️ Out: " + was.map(teamName_).join(", ") : "");
-  post_("league", BOT, "text", text.slice(0, CHAT_MAX), "", "ELITE5", [], "");
+  var hist = DAILY.get("elite5_hist") || []; hist.push({ wk: wk, at: new Date().toISOString(), text: text.slice(0, CHAT_MAX) }); DAILY.put("elite5_hist", hist.slice(-30));
   P.setProperty("ELITE5_POSTED", JSON.stringify({ wk: wk, owners: now }));
   return wk;
 }

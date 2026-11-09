@@ -321,3 +321,4 @@ DAILY.afterRun = function () {
   return "started";
 };
 DAILY.putLines = function (lines) { dPut_("lines", lines); };
+DAILY.get = function (k) { return dGet_(k); }; DAILY.put = function (k, v) { dPut_(k, v); }; // the Daily tab, for the core and parts (⭐ elite5_hist)
