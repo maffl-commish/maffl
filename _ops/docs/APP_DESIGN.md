@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.25 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.26 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,7 @@ VERSION: 0.25 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-09 · **Elite 5 stays out of chat; 📥 Desk in the header** (commish): the weekly Elite 5 is saved for the 📣 Board only (Daily key `elite5_hist`, backend v0.44). The commish desk button is a round 📥 in the header left of the initials chip (was floating bottom right); 🧪 Feedback still floats.
 - 2026-11-09 · **Wire = 💰 Waiver auction** (commish): the Home wire card shows only waiver pickups that spent FAAB, with the winning bid and the losing bids (the free-agent auction report). Daily run reads ESPN `mTransactions2` (this week + last) into `faab_<tier>`; backend v0.43, daily VER 11.
 - 2026-11-09 · **No Clear all; ⭐ Elite 5 on the record** (commish: train owners to save or done each card): the feed's "✓ Clear all" button is gone (Undo after a swipe stays). The first card lines after a week goes final post that week's Elite 5 to League chat (once per week, "⬇️ Out" vs the last one), so it lands on the 📣 Board; weeks before that come from each week's Pulse. Throwback-type Vault cards stay off the Board (their facts already live in the Vault). Backend v0.42.
 - 2026-11-09 · **No weeks in the reel; 📣 League board in the Vault** (commish: cards now arrive twice a day from the news, so "show me last week" isn't a thing): League → Weeks (replay any week), the "Replaying Week N" banner, the feed's Earlier-weeks chips and the Week labels on Saved/Done are gone. Match keeps its ‹ Week › stepper (box scores are a lookup). Everything that went out league-wide is kept on the **Board** (Vault's first tab): commish alerts and MAFFL HQ posts from the league room and your tier room (week wraps, perk news, polls, trade reviews, deadline), newest first; weeks final before the robot posted wraps get one from the daily snapshot. Backend v0.41 `board` reads the Chat tab (no new storage).

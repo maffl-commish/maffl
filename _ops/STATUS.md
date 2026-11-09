@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), REEL: 💰 Waiver auction card replaces the wire
+**Last updated:** 2026-11-09 by Claude (chat), REEL: Elite 5 off chat; 📥 Desk in the header
 
 ## Now
 
@@ -32,6 +32,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-09 · REEL · 📥 Commish desk button moved into the header, left of your initials: round gold 📥 with the red to-do count (commish). 🧪 Feedback stays floating at the bottom right. App only.
+- 2026-11-09 · REEL · Backend v0.44: ⭐ Elite 5 no longer posts to League chat (commish); each final week's Elite 5 is saved to Daily key `elite5_hist` and the 📣 Board shows it. `DAILY.get/put` expose the Daily tab to the core and parts.
 - 2026-11-09 · REEL · 📰 The wire → 💰 **Waiver auction** card (commish: only FAAB pickups, plus the other bids): latest waiver run in your tier, each player won for $1+, winning team + bid, losing bids ("lost: Jake $9, Tony $4") when ESPN shows them; your rows highlighted; shown 4 days. Free-agent adds, drops and $0 claims are off the card (trades still post to tier chat).
 - 2026-11-09 · REEL · Backend v0.43 / daily VER 11: the daily run reads ESPN waiver claims (`view=mTransactions2`, this week + last) into Daily key `faab_<tier>` (3 weeks); `daily` returns `faab`. Mock serves waiver claims. **Unverified on real ESPN:** whether losing bids from other teams come back; if not, the card shows winners only.
 - 2026-11-09 · REEL · ⚔️ Match → 🏟️ Scoreboard shows each team's record next to the owner ("Mike · 5–3"): W–L(–T) through the week shown (past week = after it; this week = coming in until games go final), from the daily snapshot, standings as fallback. App only.

@@ -768,10 +768,10 @@
   .reelchat .last{display:flex;gap:9px;align-items:flex-start;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)}
   .reelchat .last p{font-size:14px;line-height:1.4;color:var(--navy)}
   /* 📥 commish desk: floating button + its own full-screen command center */
-  .dkbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--navy);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.3)}
-  .dkbtn.on{display:block}
-  .dkbtn i{display:inline-block;min-width:18px;height:18px;line-height:18px;margin-left:6px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px}
-  body.commish .fbbtn{bottom:calc(env(safe-area-inset-bottom) + 124px)}
+  /* 📥 commish desk: round button in the header, left of your initials (commish 11/9), + its own full-screen command center */
+  .dkbtn{display:none;position:relative;width:36px;height:36px;border-radius:50%;background:var(--gold-soft);border:2px solid var(--gold);font-size:17px;line-height:1;place-items:center;padding:0}
+  .dkbtn.on{display:grid}.hdr .dkbtn.on{margin-left:auto}.hdr .dkbtn.on+.chip{margin-left:0}
+  .dkbtn i{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px;box-shadow:0 0 0 2px var(--surface)}
   .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
   .dk.on{display:flex}
   .dkhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:var(--navy);color:#fff}
@@ -822,6 +822,7 @@
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo-192.png"><span class="t" id="ttl">MAFFL HQ</span>
       <div class="wk" id="hdrwk" hidden></div>
+      <button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥<i id="dkn"></i></button>
       <button class="chip" id="chip" aria-label="You: settings, help, sign out">··</button>
     </div>
   </header>
@@ -852,7 +853,6 @@
 <div class="undo" id="undo"><span id="undot"></span><button id="undob">Undo</button></div>
 <div class="tour" id="tour" role="dialog" aria-live="polite"></div>
 <button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
-<button class="dkbtn" id="dkbtn" data-desk-open="1" aria-label="Commish desk">📥 Desk<i id="dkn"></i></button>
 <div class="dk" id="desk"><div class="dkhead"><button class="cb" id="dkclose" aria-label="Close">‹</button><div><div class="ct">Commish desk</div><small id="dkupd"></small></div><button class="cb" id="dkref" aria-label="Refresh">↻</button></div><div class="dkbody" id="dkbody"></div></div>
 <div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
