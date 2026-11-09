@@ -12,6 +12,7 @@ VERSION: 0.26 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-09 · **No commish-desk card in the reel** (commish): the commish's reel is news like every owner's; desk to-dos show only as the red count on the header 📥.
 - 2026-11-09 · **Elite 5 stays out of chat; 📥 Desk in the header** (commish): the weekly Elite 5 is saved for the 📣 Board only (Daily key `elite5_hist`, backend v0.44). The commish desk button is a round 📥 in the header left of the initials chip (was floating bottom right); 🧪 Feedback still floats.
 - 2026-11-09 · **Wire = 💰 Waiver auction** (commish): the Home wire card shows only waiver pickups that spent FAAB, with the winning bid and the losing bids (the free-agent auction report). Daily run reads ESPN `mTransactions2` (this week + last) into `faab_<tier>`; backend v0.43, daily VER 11.
 - 2026-11-09 · **No Clear all; ⭐ Elite 5 on the record** (commish: train owners to save or done each card): the feed's "✓ Clear all" button is gone (Undo after a swipe stays). The first card lines after a week goes final post that week's Elite 5 to League chat (once per week, "⬇️ Out" vs the last one), so it lands on the 📣 Board; weeks before that come from each week's Pulse. Throwback-type Vault cards stay off the Board (their facts already live in the Vault). Backend v0.42.

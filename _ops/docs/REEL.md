@@ -74,7 +74,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
 - Decided 11/9: the wire card is the 💰 Waiver auction report (FAAB pickups $1+, winner + bid, losing bids), not every add/drop. Daily run reads ESPN waiver claims (backend v0.43).
-- Decided 11/9 (later): no "Clear all" in the reel: every card gets ← done or → save. ⭐ Elite 5 is saved once per final week (from the card lines) and shows on the Board; not posted to chat (backend v0.44). 📥 Desk button lives in the header, left of your initials.
+- Decided 11/9 (later): no "Clear all" in the reel: every card gets ← done or → save. ⭐ Elite 5 is saved once per final week (from the card lines) and shows on the Board; not posted to chat (backend v0.44). 📥 Desk button lives in the header, left of your initials. No commish-desk card in the reel: the 📥 count is the signal.
 - Decided 11/9: no weeks in the reel. League → Weeks replay, the replay banner and the feed's Earlier-weeks chips are gone; league-wide posts live on the 📣 **Board** in the Vault (backend v0.41 `board`, from the Chat tab). Match keeps its week stepper.
 - Decided 11/7: no custom group chats; DMs plus the league and tier rooms are enough.
 - Decided 11/8: the "8 Ball" name is retired: it's **MAFFL Auction Draft Insights** (💡) in the reel, player profile and the classic draft page (tab "Insights").
