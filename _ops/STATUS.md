@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), REEL: no Clear all + ⭐ Elite 5 on the Board
+**Last updated:** 2026-11-09 by Claude (chat), REEL: team records on the Match scoreboard
 
 ## Now
 
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-09 · REEL · ⚔️ Match → 🏟️ Scoreboard shows each team's record next to the owner ("Mike · 5–3"): W–L(–T) through the week shown (past week = after it; this week = coming in until games go final), from the daily snapshot, standings as fallback. App only.
 - 2026-11-09 · REEL · Home: "✓ Clear all" removed (commish: owners learn to ← done or → save each card); the end card says "Swipe each one: ← done, → save." 📣 Board: ⭐ Elite 5 per week (posted ones, plus Weeks 1–8 rebuilt from the Pulse).
 - 2026-11-09 · REEL · Backend logic v0.42: the first card lines after a week goes final post "⭐ Elite 5 · Week N" (+ ⬇️ Out) to League chat, once per week (Script property ELITE5_POSTED). Mock gains `prop()`; regression adds putlines/board checks.
 - 2026-11-09 · REEL · No weeks in the reel (commish: cards come twice a day now): League → Weeks (replay any week), the "Replaying Week N" banner, the feed end's Earlier-weeks chips / Back to this week and the Week labels on ⭐ Saved / ✓ Done are gone ("You cleared your reel"; older saved cards can be marked done but not sent back). 📣 **League board** = the Vault's first tab: commish alerts + MAFFL HQ posts (week wraps, perk news, polls, trade reviews, deadline) from the league room and your tier room, newest first, by day; weeks final before wraps were posted get one from the daily snapshot. Feed end card button → League board. Match keeps its week stepper.

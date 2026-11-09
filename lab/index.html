@@ -2245,12 +2245,25 @@
     $("v-match").innerHTML = h;
   }
   // 🏟️ Every game in a tier for the week: tap one to open it. Your game wears gold.
+  // Team record on the scoreboard (commish 11/9): W–L(–T) through the week shown (a past week = as it stood after it;
+  // this week = the record coming in, until games go final), from the daily snapshot; this week falls back to standings.
+  function recThru(tier, team, wk) {
+    var S = DLY && DLY.snapshot && DLY.snapshot.tiers && DLY.snapshot.tiers[tier], id = null;
+    if (S && S.teams) Object.keys(S.teams).forEach(function (k) { if (id == null && sameTeam(S.teams[k].team || "", team)) id = k; });
+    if (id != null) { var w = 0, l = 0, t = 0;
+      (S.games || []).forEach(function (g) { if (g[0] > wk || g[6] || g[5] === null || (String(g[1]) !== id && String(g[3]) !== id)) return;
+        if (g[5] === 0) t++; else if (String(g[5]) === id) w++; else l++; });
+      return w + "–" + l + (t ? "–" + t : ""); }
+    if (wk < curWk()) return "";
+    var x = TEAMS.filter(function (y) { return sameTeam(y.team, team); })[0];
+    return x && x.w != null ? x.w + "–" + x.l + (x.t ? "–" + x.t : "") : "";
+  }
   function boardHTML(r, tier, wk) {
     var myName = teamOf(ME.owner).team, fin = wk < curWk() || r.final;
     var h = '<div class="seg seg2" id="mtier" style="margin:12px 0 0"><button data-t="U"' + (tier === "U" ? ' class="on"' : '') + '>Upper</button><button data-t="L"' + (tier === "L" ? ' class="on"' : '') + '>Lower</button></div>';
     var side = function (sd, other) { if (!sd) return '<div class="sbt"><span>Bye</span></div>';
       var w = other ? sd.pts > other.pts : true, me = sameTeam(sd.team, myName);
-      return '<div class="sbt' + (w && sd.pts > 0 ? ' w' : '') + (me ? ' me' : '') + '"><span>' + esc(sd.team) + '<small>' + esc(shortOf(ownOf(sd)) || "") + (sd.dpb && sd.dpb.length ? ' · ✖️2' : '') + '</small></span><b>' + f2(sd.pts) + '</b></div>'; };
+      return '<div class="sbt' + (w && sd.pts > 0 ? ' w' : '') + (me ? ' me' : '') + '"><span>' + esc(sd.team) + '<small>' + esc(shortOf(ownOf(sd)) || "") + (function () { var rc = recThru(tier, sd.team, wk); return rc ? ' · ' + rc : ''; })() + (sd.dpb && sd.dpb.length ? ' · ✖️2' : '') + '</small></span><b>' + f2(sd.pts) + '</b></div>'; };
     h += r.games.map(function (g, i) {
       var a = g.away || g.home, b = g.away ? g.home : null, mine = (a && sameTeam(a.team, myName)) || (b && sameTeam(b.team, myName));
       var foot = fin ? 'Final' : allZero(r) ? 'Not kicked off' : ((a ? a.left : 0) + (b ? b.left : 0)) + ' to play · proj ' + (a && a.proj != null ? a.proj : '–') + '–' + (b && b.proj != null ? b.proj : '–');
