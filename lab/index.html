@@ -3303,7 +3303,9 @@
     return (l.kind === "announce" ? "📣 Commish alert: " : l.owner === BOTN ? "" : isMe(l.owner) ? "You: " : shortOf(l.owner) + ": ") + l.text;
   }
   function chatBadge() {
-    var n = chatOn() ? inboxOf().unread || 0 : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
+    // The 📥 Desk log is a chat room on the server but lives behind its own button (with its own badge), not in the
+    // Chat list, so it never counts here (11/9: Chat showed "1" with nothing unread in the list).
+    var n = chatOn() ? (inboxOf().rooms || []).reduce(function (k, x) { return k + (x.room === "desk" ? 0 : x.unread || 0); }, 0) : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
     b.setAttribute("data-n", n ? (n > 9 ? "9+" : String(n)) : "");
   }
   function fmtText(t, ment) { var h = esc(t);
@@ -3879,7 +3881,7 @@
         (l && l.kind !== "offer" ? '<div class="last">' + avatar(l.owner, true) + '<p><b>' + esc(isMe(l.owner) ? "You" : shortOf(l.owner)) + '</b> ' + fmtText(l.text) + '</p></div>' : '') + '</div>' +
         '<div class="btns"><button class="b pri" data-chat-room="' + esc(r.room) + '">💬 Open the chat' + (r.unread ? ' · ' + r.unread + ' new' : '') + '</button></div>' });
     });
-    (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.unread; }).slice(0, 2).forEach(function (r) {
+    (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.room !== "desk" && r.unread; }).slice(0, 2).forEach(function (r) {
       var info = roomInfo(r.room), l = r.last;
       out.push({ key: "group", eb: "💬 " + info.t, t: r.unread + " new in the " + (r.room === "league" ? "league chat" : "tier group"), body: '<div class="reelchat">' +
         (l ? '<div class="last" style="border:0;margin-top:4px">' + avatar(l.owner, true) + '<p>' + esc(previewOf(r)) + '</p></div>' : '') + '</div>' +
