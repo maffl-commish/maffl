@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), REEL: team records on the Match scoreboard
+**Last updated:** 2026-11-09 by Claude (chat), REEL: 💰 Waiver auction card replaces the wire
 
 ## Now
 
@@ -32,6 +32,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-09 · REEL · 📰 The wire → 💰 **Waiver auction** card (commish: only FAAB pickups, plus the other bids): latest waiver run in your tier, each player won for $1+, winning team + bid, losing bids ("lost: Jake $9, Tony $4") when ESPN shows them; your rows highlighted; shown 4 days. Free-agent adds, drops and $0 claims are off the card (trades still post to tier chat).
+- 2026-11-09 · REEL · Backend v0.43 / daily VER 11: the daily run reads ESPN waiver claims (`view=mTransactions2`, this week + last) into Daily key `faab_<tier>` (3 weeks); `daily` returns `faab`. Mock serves waiver claims. **Unverified on real ESPN:** whether losing bids from other teams come back; if not, the card shows winners only.
 - 2026-11-09 · REEL · ⚔️ Match → 🏟️ Scoreboard shows each team's record next to the owner ("Mike · 5–3"): W–L(–T) through the week shown (past week = after it; this week = coming in until games go final), from the daily snapshot, standings as fallback. App only.
 - 2026-11-09 · REEL · Home: "✓ Clear all" removed (commish: owners learn to ← done or → save each card); the end card says "Swipe each one: ← done, → save." 📣 Board: ⭐ Elite 5 per week (posted ones, plus Weeks 1–8 rebuilt from the Pulse).
 - 2026-11-09 · REEL · Backend logic v0.42: the first card lines after a week goes final post "⭐ Elite 5 · Week N" (+ ⬇️ Out) to League chat, once per week (Script property ELITE5_POSTED). Mock gains `prop()`; regression adds putlines/board checks.

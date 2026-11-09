@@ -2,7 +2,7 @@
 
 **Codename: REEL.** Front door / map: `_ops/docs/REEL.md` (documented, built, roadmap, backlog).
 
-VERSION: 0.24 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
+VERSION: 0.25 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prototype v0 in `lab/`, not live**
 
 > **This is the one doc that governs the redesign.** Every chat working on the app, the Reel, logins or
 > trades reads it first and records decisions here (§0 Journal). Other files are detail under it, never
@@ -12,6 +12,7 @@ VERSION: 0.24 (2026-11-09, chat) · Owner: commissioner (Mike) · Status: **prot
 
 ## 0. Journal (newest on top; one line per decision, dated)
 
+- 2026-11-09 · **Wire = 💰 Waiver auction** (commish): the Home wire card shows only waiver pickups that spent FAAB, with the winning bid and the losing bids (the free-agent auction report). Daily run reads ESPN `mTransactions2` (this week + last) into `faab_<tier>`; backend v0.43, daily VER 11.
 - 2026-11-09 · **No Clear all; ⭐ Elite 5 on the record** (commish: train owners to save or done each card): the feed's "✓ Clear all" button is gone (Undo after a swipe stays). The first card lines after a week goes final post that week's Elite 5 to League chat (once per week, "⬇️ Out" vs the last one), so it lands on the 📣 Board; weeks before that come from each week's Pulse. Throwback-type Vault cards stay off the Board (their facts already live in the Vault). Backend v0.42.
 - 2026-11-09 · **No weeks in the reel; 📣 League board in the Vault** (commish: cards now arrive twice a day from the news, so "show me last week" isn't a thing): League → Weeks (replay any week), the "Replaying Week N" banner, the feed's Earlier-weeks chips and the Week labels on Saved/Done are gone. Match keeps its ‹ Week › stepper (box scores are a lookup). Everything that went out league-wide is kept on the **Board** (Vault's first tab): commish alerts and MAFFL HQ posts from the league room and your tier room (week wraps, perk news, polls, trade reviews, deadline), newest first; weeks final before the robot posted wraps get one from the daily snapshot. Backend v0.41 `board` reads the Chat tab (no new storage).
 - 2026-11-08 · **✓ Done bucket + Saved across weeks** (commish): Done chip beside ⭐ Saved; Saved stays until the owner sends it back or marks it done; Done holds cleared cards 7 days, then they self-delete (the stories stay findable in League and the Vault). Buckets keep a copy of each card as it looked; this week's show live. Needs-you cards lead the feed and can't be swiped or cleared.

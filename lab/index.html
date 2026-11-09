@@ -557,6 +557,7 @@
   .undo button{background:var(--gold);color:var(--navy);border:0;border-radius:8px;padding:7px 12px;font:800 13px var(--display)}
   .svbtns{display:flex;gap:8px;margin-top:8px}.svbtns .b{flex:1}
   .saved.dnc{background:#e6f5ee;border-color:var(--win,#1f9d6a);margin-left:0}
+  .fbid{font:700 15px var(--display);color:var(--navy);min-width:38px}
   .bdday{font:800 11px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 2px 0}
   .bpost{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 12px;margin-top:8px}
   .bpost.al{background:var(--gold-soft);border:2px solid var(--gold)}
@@ -4173,17 +4174,27 @@
       .map(function (g) { return { tier: g[1], teamA: teamOf(g[2]).team, ownerA: g[2], teamB: teamOf(g[3]).team, ownerB: g[3], note: dailyLine(g[2], "next") || dailyLine(g[3], "next") }; });
   }
   // 📰 Wire card: roster moves in your tier in the last 48 h (yours first), with Claude's wire line.
+  // 💰 Waiver auction (commish 11/9): the wire is the FAAB report, not every add and drop. From the daily run's
+  // ESPN waiver claims (DLY.faab): the latest run in your tier (shown for 4 days), each player won for $1+, the winning
+  // team and bid, and the losing bids when ESPN shows them. $0 claims and free-agent pickups stay off it.
   function wireCard(me) {
-    var mv = ((DLY && DLY.moves) || []).filter(function (m) { return m.tier === me.tier && Date.now() - new Date(m.ts).getTime() < 48 * 3600e3; });
-    if (!mv.length) return null;
-    mv.sort(function (a, b) { return (isMe(b.owner) ? 1 : 0) - (isMe(a.owner) ? 1 : 0); });
-    var ic = { add: "➕", drop: "➖", trade: "🔁" }, line = tierLine(me.tier, "wire");
-    return { id: "wire:" + mv.length + ":" + mv[0].ts, c: { eb: "📰 The wire · " + (me.tier === "U" ? "Upper" : "Lower"), t: mv.length + " roster move" + (mv.length === 1 ? "" : "s"), face: '<div class="fc">' +
-      '<h3>' + mv.length + ' move' + (mv.length === 1 ? '' : 's') + ' in your tier</h3>' + (line ? '<p class="fl">' + esc(line) + '</p>' : '') +
-      '<div class="frows">' + mv.slice(0, 7).map(function (m) { return '<div class="frow"><span>' + ic[m.type] + '</span><span style="flex:1"><button class="tl2" data-player="' + esc(m.owner || "") + '|' + esc(m.player) + '@' + esc(m.pos || "") + '"><b>' + esc(m.player) + '</b></button> <small class="meta">' + esc(m.pos + " · " + m.nfl) + '</small><br><small class="meta">' +
-        esc((isMe(m.owner) ? "You" : shortOf(m.owner) || m.team) + (m.type === "trade" ? " got him from " + m.other : m.type === "add" ? " added him" : " dropped him") + " · " + ago(m.ts) + (ago(m.ts) === "now" ? "" : " ago")) + '</small></span></div>'; }).join("") + '</div>' +
-      (mv.length > 7 ? '<p class="fs">+' + (mv.length - 7) + ' more</p>' : '') + '</div>' } };
+    var all = ((DLY && DLY.faab && DLY.faab[me.tier]) || []).filter(function (x) { return x.pid != null; }); if (!all.length) return null;
+    var last = Math.max.apply(null, all.map(function (x) { return x.at; })); if (Date.now() - last > 4 * 864e5) return null;
+    var run = all.filter(function (x) { return last - x.at < 12 * 3600e3; }), by = {};
+    run.forEach(function (x) { (by[x.pid] = by[x.pid] || []).push(x); });
+    var won = Object.keys(by).map(function (k) { var b = by[k].sort(function (p, q) { return q.bid - p.bid; }), w = b.filter(function (x) { return x.won; })[0];
+      return w && w.bid > 0 ? { w: w, lost: b.filter(function (x) { return !x.won; }) } : null; }).filter(Boolean).sort(function (p, q) { return q.w.bid - p.w.bid; });
+    if (!won.length) return null;
+    var spent = won.reduce(function (a, x) { return a + x.w.bid; }, 0), who = function (x) { return isMe(x.owner) ? "You" : shortOf(x.owner) || x.team; };
+    var day = new Date(last).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    return { id: "wire:faab:" + me.tier + ":" + last, c: { eb: "💰 Waiver auction · " + (me.tier === "U" ? "Upper" : "Lower"), t: won.length + " players won", face: '<div class="fc">' +
+      '<h3>' + won.length + ' player' + (won.length === 1 ? '' : 's') + ' won · $' + spent + '</h3><p class="fs">Waivers ran ' + esc(day) + '</p>' +
+      '<div class="frows">' + won.slice(0, 8).map(function (x) { var w = x.w, mine = isMe(w.owner) || x.lost.some(function (y) { return isMe(y.owner); });
+        return '<div class="frow' + (mine ? ' me' : '') + '"><span class="fbid">$' + w.bid + '</span><span style="flex:1"><button class="tl2" data-player="' + esc(w.owner || "") + '|' + esc(w.n) + '@' + esc(w.pos || "") + '"><b>' + esc(w.n || "Player") + '</b></button> <small class="meta">' + esc([w.pos, w.tm].filter(Boolean).join(" · ")) + '</small>' +
+          '<small class="meta" style="display:block">' + esc(who(w)) + ' won it' + (x.lost.length ? ' · lost: ' + x.lost.map(function (y) { return esc(who(y)) + ' $' + y.bid; }).join(", ") : '') + '</small></span></div>'; }).join("") + '</div>' +
+      (won.length > 8 ? '<p class="fs">+' + (won.length - 8) + ' more</p>' : '') + '</div>' } };
   }
+
 
   // ---------- boot ----------
   function start() {
