@@ -13,8 +13,8 @@ together. Mark it up freely: strike things, add ideas at the bottom.
   "You're caught up". The Home badge counts cards you haven't seen yet, plus things that need you.
 - **Needs you** sits in a strip above the feed. It holds only items you have to act on (trade offers, the
   commish desk, dues). Tapping it opens them all in one sheet. These are outside the budget.
-- **Weekly issue.** Tuesday's data drop makes the week's issue; the daily run updates it during the week. Replaying
-  an older week (League → Weeks) shows that week's issue.
+- **No back issues (11/9).** Cards land with the daily runs (5 AM + 5 PM ET); there is no replaying an older week.
+  League-wide posts are kept on the 📣 Board in the Vault.
 - **Budget, not a cap.** Each group gets slots; series inside a group compete by rank. The feed then interleaves the
   groups so it never runs five league cards in a row.
 
@@ -30,7 +30,7 @@ Off-season (no games that week): Your week 3 · League week 4 · Play 4 · **Vau
 | 🎯 Play | 3 | Quizzes, polls, Game of the Week, What would you pay? |
 | 🗄️ Vault | 3 | League history, one bite at a time (throwback · this week in history · Auction Draft Insights) |
 
-"You're caught up" ends the feed, then lists earlier weeks (tap → that week's reel, with Back to this week).
+"You're caught up" ends the feed (Chat · Your game · 📣 League board). No earlier-weeks list (11/9).
 
 Feed order: you · you · league · play · league · vault · you · league · play · league · you · vault · play · league · you,
 then anything left inside the budget.

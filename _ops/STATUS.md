@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), Chat badge no longer counts the Desk log
+**Last updated:** 2026-11-09 by Claude (chat), REEL: no weeks in the reel + 📣 League board
 
 ## Now
 
@@ -32,6 +32,8 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-09 · REEL · No weeks in the reel (commish: cards come twice a day now): League → Weeks (replay any week), the "Replaying Week N" banner, the feed end's Earlier-weeks chips / Back to this week and the Week labels on ⭐ Saved / ✓ Done are gone ("You cleared your reel"; older saved cards can be marked done but not sent back). 📣 **League board** = the Vault's first tab: commish alerts + MAFFL HQ posts (week wraps, perk news, polls, trade reviews, deadline) from the league room and your tier room, newest first, by day; weeks final before wraps were posted get one from the daily snapshot. Feed end card button → League board. Match keeps its week stepper.
+- 2026-11-09 · REEL · Backend logic v0.41: `board` action (signed-in) reads the Chat tab, shows a commish alert or trade update once; regression adds a board check.
 - 2026-11-09 · REEL · Fix (commish): the Chat tab badge counted unread 📥 Desk log notes, which live behind the Desk button and aren't in the Chat list, so Chat showed "1" with nothing to open. Badge and Home "new in the group chat" cards now skip the desk room (the Desk button keeps its own badge). App only.
 - 2026-11-08 · "8 Ball" retired → 💡 **MAFFL Auction Draft Insights**: draft.html tab "Insights" (title, button "Show me one"), REEL card eyebrow and player-profile box. Wording only; draft.html date stamp, no version bump.
 - 2026-11-08 · REEL · 🏠 Home: ✓ Done chip next to ⭐ Saved. Saved now carries across weeks and stays until you send it back or mark it done; Done keeps cleared cards 7 days (↩ back to reel or ⭐ save), then they drop off (the stories stay in League and the Vault). Older weeks' cards show as they looked when swiped. Needs-you cards (now leading the feed) can't be swiped or cleared: they shake.

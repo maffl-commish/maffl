@@ -32,7 +32,7 @@
   a{color:inherit;text-decoration:none}
   body{position:fixed;inset:0}
   .app{max-width:480px;margin:0 auto;height:100%;width:100%;display:flex;flex-direction:column;overflow:hidden}
-  .keys,.wkchips,.rings,.tgrid2,.dbody,.sb,.cbox,.welcome{overscroll-behavior:contain}
+  .keys,.rings,.tgrid2,.dbody,.sb,.cbox,.welcome{overscroll-behavior:contain}
   input,select,textarea{font-size:16px}
   #views{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .view{display:none}.view.on{display:block}
@@ -154,12 +154,6 @@
   nav.tabs button.on{color:var(--navy)}
   nav.tabs button.on span{filter:none;opacity:1}
   nav.tabs button.on::after{content:"";width:18px;height:3px;border-radius:2px;background:var(--gold)}
-  .pastbar{display:none;align-items:center;gap:8px;background:var(--navy);color:#fff;font:600 12px var(--body);padding:6px 14px}
-  .pastbar button{margin-left:auto;background:var(--gold);color:var(--navy);border-radius:6px;padding:4px 8px;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.06em}
-  .wkchips{display:flex;gap:6px;overflow-x:auto;padding:2px 14px 4px;scrollbar-width:none}
-  .wkchips::-webkit-scrollbar{display:none}
-  .wkchips button{flex:0 0 auto;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 12px;font:700 13px var(--display);letter-spacing:.04em}
-  .wkchips button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
   .rbody{font-size:14px;line-height:1.5;color:var(--ink2)}
   .rbody ul,.rbody ol{padding-left:18px;margin:6px 0}.rbody li{margin:4px 0}
   .rbody h3,.rbody h4{font:700 16px var(--display);color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 4px}
@@ -487,8 +481,6 @@
   .tdb{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px}
   .tdb i{display:block;width:100%;max-width:22px;background:#c9d3e3;border-radius:3px 3px 0 0}.tdb.hi i{background:var(--gold)}.tdb.lo i{background:var(--navy)}
   .tdb small{font:700 9px var(--display);color:var(--ink2);white-space:nowrap}.tdb span{font:600 9px var(--body);color:var(--muted);margin-bottom:-14px}
-  .earlier{margin-top:18px;width:100%}.earlier small{display:block;font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
-  .earlier div{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.earlier button{font:700 12px var(--display);color:var(--navy);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:7px 12px}
   .otrow{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--border)}.otk{font:800 15px var(--display);color:var(--navy);width:30px;flex:0 0 30px;padding-top:2px}
   .otm{flex:1;min-width:0}.otm b{font:700 16px/1.2 var(--display)}.otm small{display:block;font-size:12px;color:var(--muted)}
   .otp{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.otp button{font:600 11px var(--body);color:var(--ink2);background:var(--page-bg);border:1px solid var(--border);border-radius:999px;padding:3px 8px}
@@ -565,7 +557,12 @@
   .undo button{background:var(--gold);color:var(--navy);border:0;border-radius:8px;padding:7px 12px;font:800 13px var(--display)}
   .svbtns{display:flex;gap:8px;margin-top:8px}.svbtns .b{flex:1}
   .saved.dnc{background:#e6f5ee;border-color:var(--win,#1f9d6a);margin-left:0}
-  .bkwk{font:800 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px 4px}
+  .bdday{font:800 11px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 2px 0}
+  .bpost{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 12px;margin-top:8px}
+  .bpost.al{background:var(--gold-soft);border:2px solid var(--gold)}
+  .bpost .bh{display:flex;gap:6px;align-items:center;font:700 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .bpost .bh b{color:var(--navy)}.bpost .bh span:last-child{margin-left:auto;letter-spacing:.02em;text-transform:none;font-weight:600}
+  .bpost .bt{font-size:15px;line-height:1.42;color:var(--navy);white-space:pre-wrap;word-wrap:break-word}
   .dcard .ctxt{font:700 11px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .hero{padding:12px 0 12px;border-bottom:1px solid var(--border)}
   .hero .tagl{font:700 10px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark)}
@@ -820,7 +817,6 @@
 <div class="app">
   <header class="hdr">
     <div class="lab" id="stagebar">Beta · trades &amp; credit spends are practice runs</div>
-    <div class="pastbar" id="pastbar"></div>
     <div class="netbar" id="netbar"></div>
     <div class="hdr-in">
       <img alt="MAFFL" src="../maffl-logo-192.png"><span class="t" id="ttl">MAFFL HQ</span>
@@ -1424,12 +1420,51 @@
     return { id: "throwback:" + y, scope: "league", c: { eb: "🗄️ Throwback · " + y, t: "", face: h } };
   }
   // ---------- 🗄️ League → Vault (commish 11/7: History & Stats reborn): Seasons · Records · Owners · Draft ----------
-  var VAULT_SUB = "seasons", VQ = "", VY = "";
+  var VAULT_SUB = "board", VQ = "", VY = "";
+  // 📣 League board (commish 11/9): the reel has no weeks any more, so everything that went out league-wide is kept
+  // here: commish alerts, MAFFL HQ posts (week wraps, perk news, polls, trade reviews, deadline) from the league room
+  // and your tier's room (backend `board`, newest first). Weeks that went final before the robot posted wraps (11/7)
+  // get one from the daily snapshot.
+  var BOARD = null, BOARD_AT = 0, BOARD_ERR = false;
+  function loadBoard() {
+    if (!chatOn() || BOARD_AT > Date.now() - 6e4) return; BOARD_AT = Date.now();
+    var redraw = function () { if (CUR_TAB === "league" && LEAGUE_SUB === "vault" && VAULT_SUB === "board") renderLeague(); };
+    BOARD_ERR = false;
+    api("board", creds(), true).then(function (r) { if (!r || !r.ok) { BOARD_ERR = true; BOARD_AT = 0; redraw(); return; } BOARD = r.posts || []; redraw(); })
+      .catch(function () { BOARD_ERR = true; BOARD_AT = 0; redraw(); });
+  }
+  function boardWraps(have) {
+    var T = DLY && DLY.snapshot && DLY.snapshot.tiers, out = []; if (!T) return out;
+    [["U", "Upper"], ["L", "Lower"]].forEach(function (p) { var S = T[p[0]]; if (!S) return;
+      var tn = function (id) { return ((S.teams || {})[id] || {}).team || "?"; };
+      (S.decided || []).forEach(function (wk) { if (wk > 17 || have[p[1] + " " + wk]) return;
+        var cw = ((S.coach || {})[wk] || {}).winner, hi = (S.highs || []).filter(function (h) { return h.wk === wk; })[0];
+        out.push({ wk: wk, room: "league", owner: BOTN, kind: "text", mentions: [], text: "📊 " + p[1] + " Week " + wk + " is final." + (cw != null ? "\n🏆 Coach of the Week: " + tn(cw) : "") + (hi ? "\n🚀 High score: " + tn(hi.id) + ", " + hi.pts : "") }); }); });
+    return out.sort(function (a, b) { return b.wk - a.wk; });
+  }
+  function lboardHTML() {
+    if (!chatOn()) return '<div class="card"><p>Sign in to see the league board.</p></div>';
+    if (!BOARD && BOARD_ERR) return '<div class="card"><p>Couldn\'t reach the league server.</p><button class="b pri" data-board="1" style="margin-top:10px;width:100%">Try again</button></div>';
+    loadBoard();
+    if (!BOARD) return '<div class="card"><p><span class="spin"></span> Loading the board…</p></div>';
+    var have = {}; BOARD.forEach(function (m) { var x = /^📊 (Upper|Lower) Week (\d+) is final/.exec(m.text || ""); if (x) have[x[1] + " " + x[2]] = 1; });
+    var list = BOARD.concat(boardWraps(have)), day = null, h = '<p class="meta" style="margin:10px 2px 0">Everything that went out to the league this season, newest first.</p>';
+    if (!list.length) return h + '<div class="card"><p>Nothing yet. Commish alerts, week wraps and perk news land here.</p></div>';
+    list.forEach(function (m) {
+      var d = m.ts ? new Date(m.ts).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "Earlier this season";
+      if (d !== day) { h += '<div class="bdday">' + esc(d) + '</div>'; day = d; }
+      var al = m.kind === "announce", where = m.room === "tier:U" ? "Upper" : m.room === "tier:L" ? "Lower" : "League";
+      h += '<div class="bpost' + (al ? ' al' : '') + '"><div class="bh"><b>' + (al ? "📣 Commish alert" : "MAFFL HQ") + '</b><span>· ' + where + '</span><span>' + (m.ts ? esc(ago(m.ts)) : "Wk " + m.wk) + '</span></div>' +
+        (m.kind === "offer" ? '<div class="bt">🏈 ' + esc(EVT[m.event] || "Trade update") + '</div>' + tradeMini(m.offer) : '<div class="bt">' + fmtText(m.text, m.mentions) + '</div>') + '</div>';
+    });
+    return h;
+  }
   function vaultHTML() {
-    var V = window.MAFFL_VAULT; if (!V) return '<div class="pad"><div class="card"><p>The Vault didn\'t load. Reopen the app.</p></div></div>';
-    var subs = [["seasons", "Seasons"], ["records", "Records"], ["owners", "Owners"], ["draft", "Draft"]];
+    var V = window.MAFFL_VAULT, subs = [["board", "📣 Board"], ["seasons", "Seasons"], ["records", "Records"], ["owners", "Owners"], ["draft", "Draft"]];
+    if (!V && VAULT_SUB !== "board") VAULT_SUB = "board";
     var h = '<div class="vsub" id="vsub">' + subs.map(function (x) { return '<button data-vsub="' + x[0] + '"' + (VAULT_SUB === x[0] ? ' class="on"' : '') + '>' + x[1] + '</button>'; }).join("") + '</div><div class="pad">';
-    if (VAULT_SUB === "seasons") {
+    if (VAULT_SUB === "board") h += lboardHTML();
+    else if (VAULT_SUB === "seasons") {
       V.eras.slice().reverse().forEach(function (era) {
         var ys = Object.keys(V.seasons).map(Number).filter(function (y) { return y >= era.from && y <= era.to; }).sort(function (a, b) { return b - a; }); if (!ys.length) return;
         h += '<div class="vera"><b>' + esc(era.title.split(" · ")[0]) + '</b><small>' + esc((era.title.split(" · ")[1] ? era.title.split(" · ")[1] + " · " : "") + era.range) + '</small></div><div class="card" style="margin-top:0;padding:2px 12px">' + ys.map(function (y) {
@@ -1725,7 +1760,7 @@
   function seriesOf(x) { return SERIES[x.id.split(":")[0]] || ["league", 9]; }
   function seenKey() { return "maffl_lab_seen_" + W.weekNumber + "_" + norm(ME.owner); }
   function seen() { try { return JSON.parse(store(seenKey()) || "{}"); } catch (e) { return {}; } }
-  // Swipe ← = done (gone for the week), → = save (moves to ⭐ Saved above the feed). Per week, per owner, on this phone.
+  // Swipe ← = done (out of the reel), → = save (moves to ⭐ Saved above the feed). Per week, per owner, on this phone.
   // Per-week maps (clr/pin) decide what the feed hides; the two buckets below are what ⭐ Saved and ✓ Done show,
   // across weeks, with a copy of each card as it looked. Saved stays until you act on it; Done empties itself after 7 days.
   function boxKey(k, wk) { return "maffl_lab_" + k + "_" + (wk == null ? W.weekNumber : wk) + "_" + norm(ME.owner); }
@@ -1919,19 +1954,18 @@
     var again = $("dagain"), dc = $("dchat"); if (dc) dc.onclick = function () { openChat(); }; if (again) again.onclick = function () { f.scrollTo({ top: 0, behavior: "smooth" }); };
     paint($("hstack"));
   }
-  function markSeen() { var x = INBOX[pos]; if (!x) { if (pos === INBOX.length && INBOX.length) nudge("inbox0", "You're caught up. How was the reel this week?"); return; } var sn = seen(); if (!sn[x.id]) { sn[x.id] = 1; store(seenKey(), JSON.stringify(sn)); homeBadge(); drawDeck(true); } }
+  function markSeen() { var x = INBOX[pos]; if (!x) { if (pos === INBOX.length && INBOX.length) nudge("inbox0", "You're caught up. How's the reel?"); return; } var sn = seen(); if (!sn[x.id]) { sn[x.id] = 1; store(seenKey(), JSON.stringify(sn)); homeBadge(); drawDeck(true); } }
   function cardHTML(x) {
     var cl = clearable().length, nn = INBOX.length - cl;
     if (!x) return '<div class="dcard done-card">' + (cl ? '<div class="zero" style="background:var(--navy)">' + cl + '</div><h3 style="font:700 28px/1.1 var(--display);margin-top:10px">That\'s everything</h3>' +
         '<p class="p" style="margin-top:6px">' + (cl === 1 ? "1 card is" : cl + " cards are") + ' still in your reel. Swipe ← on the ones you\'re done with, or clear them all.' + (nn ? ' The ' + (nn === 1 ? "one" : nn) + ' at the top that need' + (nn === 1 ? "s" : "") + ' you stay until handled.' : '') + '</p>' +
         '<button class="b pri" id="dclear" style="width:100%;margin-top:14px;flex:none">✓ Clear ' + (cl === 1 ? "it" : "all " + cl) + '</button>'
       : '<div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">All caught up</h3>' +
-        '<p class="p" style="margin-top:6px">' + (FEED_N ? "You cleared Week " + W.weekNumber + "'s reel." : "That's Week " + W.weekNumber + ".") + (nn ? " " + (nn === 1 ? "1 thing" : nn + " things") + " up top still need" + (nn === 1 ? "s" : "") + " you." : "") + (bkGet("pin").length ? " Your saved cards are up top." : "") + ' New cards land Tuesday morning.</p>') +
+        '<p class="p" style="margin-top:6px">' + (FEED_N ? "You cleared your reel." : "Nothing new right now.") + (nn ? " " + (nn === 1 ? "1 thing" : nn + " things") + " up top still need" + (nn === 1 ? "s" : "") + " you." : "") + (bkGet("pin").length ? " Your saved cards are up top." : "") + ' New cards land with the morning and evening updates.</p>') +
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
-      '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-go="league">🗄️ League &amp; the Vault</button></div>' +
+      '<div class="btns" style="width:100%;margin-top:8px"><button class="b" data-board="1">📣 League board</button></div>' +
       (INBOX.length > 1 ? '<button class="again" id="dagain">Back to the top</button>' : '') +
-      (function () { var ew = WEEKS.filter(function (w) { return w !== W && w.weekNumber < W.weekNumber; }).slice(-6).reverse(); return ew.length ? '<div class="earlier"><small>Earlier weeks</small><div>' + ew.map(function (w) { return '<button data-wkgo="' + w.weekNumber + '">' + (w.weekNumber ? 'Wk ' + w.weekNumber : 'Preseason') + '</button>'; }).join("") + '</div></div>' : ''; })() +
-      (W !== LATEST ? '<button class="b pri" data-wkgo="' + LATEST.weekNumber + '" style="margin-top:12px;width:100%">Back to this week</button>' : '') + '</div>';
+      '</div>';
     var c = x.c, shared = x.scope === "league" || x.scope === "U" || x.scope === "L";
     // League cards carry the crest and everyone's reactions; your own cards carry your team tag and no reactions (commish 11/7).
     var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo-192.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
@@ -1948,8 +1982,8 @@
     $("idots").innerHTML = INBOX.map(function (y, k) { return '<i data-go-k="' + k + '" class="' + (k === pos ? "on" : "") + (sn[y.id] ? " s" : "") + '"></i>'; }).join("") + '<i data-go-k="' + n + '" class="end' + (pos >= n ? " on" : "") + '">✓</i>';
     $("icount").textContent = !n ? "All caught up" : n + " left";
   }
-  // ⭐ Saved / ✓ Done: one sheet each, newest first, every card with a way out. This week's cards show live
-  // (reactions, votes); older ones show as they looked when you swiped them.
+  // ⭐ Saved / ✓ Done: one sheet each, newest first, every card with a way out. Cards still in the reel show live
+  // (reactions, votes); older ones show as they looked when you swiped them and can't go back into the reel (no week labels, 11/9).
   function openBucket(kind) {
     $("undo").classList.remove("on");
     var a = bkGet(kind), saved = kind === "pin";
@@ -1958,15 +1992,15 @@
     openSheet("card", '<h2 class="sht">' + (saved ? "⭐ Saved" : "✓ Done") + '</h2>' +
       '<p class="meta" style="margin:-4px 0 12px">' + (saved ? "Stays here until you send it back or mark it done." : "Cleared cards stay here " + DONE_DAYS + " days, then drop off. The stories are still in League and the Vault.") + '</p>' +
       a.map(function (it, i) { var old = it.w !== W.weekNumber;
-        return '<div class="needc">' + (old ? '<div class="bkwk">Week ' + it.w + '</div>' : '') + (live(it) || it.html) +
-          '<div class="svbtns"><button class="b" data-bk="back" data-i="' + i + '">↩ Back to ' + (old ? "Wk " + it.w : "reel") + '</button>' +
+        return '<div class="needc">' + (live(it) || it.html) +
+          '<div class="svbtns">' + (old ? '' : '<button class="b" data-bk="back" data-i="' + i + '">↩ Back to reel</button>') +
           (saved ? '<button class="b" data-bk="done" data-i="' + i + '">✓ Done</button>' : '<button class="b" data-bk="save" data-i="' + i + '">⭐ Save</button>') + '</div></div>'; }).join(""));
     paint($("sb"));
     $("sb").querySelectorAll("[data-bk]").forEach(function (b) { b.onclick = function () {
       var it = a[+b.dataset.i], op = b.dataset.bk; mark(kind, it, false);
       if (op === "done") mark("clr", it, true); if (op === "save") mark("pin", it, true);
       tap("reel", kind + ":" + op + ":" + it.id); renderHome(); openBucket(kind);
-      toast(op === "done" ? "✓ Done" : op === "save" ? "⭐ Saved" : it.w === W.weekNumber ? "Back in your reel" : "Back in Week " + it.w + "'s reel"); }; });
+      toast(op === "done" ? "✓ Done" : op === "save" ? "⭐ Saved" : "Back in your reel"); }; });
   }
   function undoBar(msg, fn) {
     var u = $("undo"); $("undot").textContent = msg; u.classList.add("on");
@@ -1987,7 +2021,7 @@
     f.addEventListener("pointerdown", function (e) {
       var card = e.target.closest(".fslot>.dcard"); if (!card || card.classList.contains("done-card") || (e.pointerType === "mouse" && e.button)) return;
       if (NEEDS.indexOf(INBOX[+card.parentNode.dataset.k]) >= 0) { st = { needs: card, x: e.clientX, y: e.clientY }; return; } // needs you: no swipe, a little shake
-      if (e.target.closest("input,textarea,select,.blk,.ocar,.rings,.wkchips")) return;
+      if (e.target.closest("input,textarea,select,.blk,.ocar,.rings")) return;
       st = { x: e.clientX, y: e.clientY, card: card, slot: card.parentNode, dir: 0, dx: 0 }; });
     f.addEventListener("pointermove", function (e) {
       if (!st) return; var dx = e.clientX - st.x, dy = e.clientY - st.y;
@@ -2338,14 +2372,14 @@
   // ---------- LEAGUE ----------
   var leagueTier = null;
   // League tab, organized (commish backlog 11/6): four sections under one bar, like Team.
-  //   Standings (tier toggle, table, this week's scores) · Weeks (replay any week) · Rules & $ (rulebook, prizes,
+  //   Standings (tier toggle, table, this week's scores) · Vault (📣 Board + history) · Rules & $ (rulebook, prizes,
   //   key dates, talk to the commish) · History (champions, classic-site pages).
   var LEAGUE_SUB = "standings";
   function renderLeague() {
     leagueTier = leagueTier || ME.tier;
     var rows = TEAMS.filter(function (t) { return t.tier === leagueTier; }).sort(function (a, b) { return a.rank - b.rank; });
-    var subs = [["standings", "Standings"], ["weeks", "Weeks"], ["vault", "🗄️ Vault"], ["rules", "Rules & $"]];
-    if (LEAGUE_SUB === "history") LEAGUE_SUB = "vault";
+    var subs = [["standings", "Standings"], ["vault", "🗄️ Vault"], ["rules", "Rules & $"]];
+    if (LEAGUE_SUB === "history" || LEAGUE_SUB === "weeks") LEAGUE_SUB = "vault";
     var h = '<div class="seg" id="lsub">' + subs.map(function (x) { return '<button data-lsub="' + x[0] + '"' + (LEAGUE_SUB === x[0] ? ' class="on"' : '') + '>' + x[1] + '</button>'; }).join("") + '</div>';
     if (LEAGUE_SUB === "standings") {
       h += '<div class="seg seg2" id="lseg"><button data-t="U"' + (leagueTier === "U" ? ' class="on"' : '') + '>Upper</button><button data-t="L"' + (leagueTier === "L" ? ' class="on"' : '') + '>Lower</button></div>' +
@@ -2355,10 +2389,6 @@
         '</table></div><p class="meta" style="margin-top:6px">Tap a team for its owner card. Sorted by record, then credits, then points' + (leagueTier === "L" ? '; top 3 move up to Upper' : '') + '.</p></div>';
       var games = W.results.filter(function (g) { return g.tier === leagueTier; });
       if (games.length) h += '<div class="sh"><h2>Week ' + W.weekNumber + ' scores</h2><small>Tap ⚔️ for the rivalry</small></div><div class="pad">' + games.map(scoreRow).join("") + '</div>';
-    } else if (LEAGUE_SUB === "weeks") {
-      h += '<div class="sh"><h2>📅 Replay any week</h2><small>The whole app goes back in time</small></div><div class="wkchips" id="wkchips">' + WEEKS.slice().reverse().map(function (w) {
-        return '<button data-wk="' + w.weekNumber + '"' + (w === W ? ' class="on"' : '') + '>' + (w.weekNumber ? "Wk " + w.weekNumber : "Preseason") + '</button>'; }).join("") + '</div>' +
-        '<div class="pad"><p class="meta" style="margin-top:10px">Pick a week and Home, Match, Team and League show it as it was. Tap “Back to now” on the banner to return.</p></div>';
     } else if (LEAGUE_SUB === "rules") {
       var kd = (window.MAFFL_KEY_DATES || []).filter(function (d) { return d.dueMs > Date.now() - 864e5; }).slice(0, 6);
       h += '<div class="pad"><div class="list" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"><button data-rules="1"><span>📋</span>Rulebook</button><button data-prizes="1"><span>💰</span>Prizes &amp; payouts</button></div></div>' +
@@ -2372,7 +2402,6 @@
     document.querySelectorAll("#vsub button").forEach(function (b) { b.onclick = function () { VAULT_SUB = b.dataset.vsub; renderLeague(); }; });
     var vq = $("vq"); if (vq) { vq.oninput = function () { VQ = vq.value; $("vdraft").innerHTML = vaultDraftRows(); }; }
     var vy = $("vy"); if (vy) { vy.onchange = function () { VY = vy.value; $("vdraft").innerHTML = vaultDraftRows(); }; }
-    document.querySelectorAll("#wkchips button").forEach(function (b) { b.onclick = function () { setWeek(+b.dataset.wk); toast(+b.dataset.wk === LATEST.weekNumber ? "Back to this week" : "Replaying Week " + b.dataset.wk); }; });
   }
 
   // ---------- MORE ----------
@@ -2996,7 +3025,7 @@
     var el;
     if ((el = e.target.closest("[data-tjump]"))) { var tp = $("tpend"); if (tp) tp.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     if ((el = e.target.closest("[data-stat]"))) { try { statBox(JSON.parse(el.dataset.stat)); } catch (_) {} return; }
-    if ((el = e.target.closest("[data-wkgo]"))) { setWeek(+el.dataset.wkgo); toast(+el.dataset.wkgo === LATEST.weekNumber ? "Back to this week" : "Week " + el.dataset.wkgo + "'s reel"); return; }
+    if ((el = e.target.closest("[data-board]"))) { closeSheet(); BOARD_ERR = false; VAULT_SUB = "board"; LEAGUE_SUB = "vault"; renderLeague(); tab("league"); return; }
     if ((el = e.target.closest("[data-vaultrec]"))) { VAULT_SUB = "records"; LEAGUE_SUB = "vault"; renderLeague(); tab("league"); return; }
     if ((el = e.target.closest("[data-vaultq]"))) { closeSheet(); VQ = el.dataset.vaultq; VY = ""; VAULT_SUB = "draft"; LEAGUE_SUB = "vault"; renderLeague(); tab("league"); return; }
     if ((el = e.target.closest("[data-vault]"))) { openSheet("vault", el.dataset.vault); return; }
@@ -3892,10 +3921,6 @@
 
   // Rebuilding the team list makes new objects: keep the commish flag (only the summary knows it).
   function reME() { var c = ME && ME.commish; ME = BY_OWNER[norm(ME.owner)] || ME; ME.commish = SUM_OK ? !!SUM.commish : !!c; }
-  function setWeek(n) {
-    W = WEEKS.filter(function (w) { return w.weekNumber === n; })[0] || LATEST;
-    buildTeams(); reME(); closeSheet(); pos = 0; start(); tab("home");
-  }
 
   // ---------- 🧪 beta feedback kit (REEL.md roadmap 3b; beta crew + commish only) ----------
   // Feedback button on every screen (grabs where you are), quick 👍/🤔/👎 prompts at a few moments (first look at each
@@ -3953,7 +3978,7 @@
   // switches to that tab and rings its button. The tab bar stays visible (the scrim stops above it). After that, the first
   // visit to Team / Match / Chat shows a short tip or two (on-screen targets only). ✕ / Skip end it; You → Show the tour again.
   var TOUR_TABS = [
-    ["home", "[data-tab='home']", "🏠 Home", "Your reel: this week's stories, picked for you. Swipe ← when you're done with a card, → to save it."],
+    ["home", "[data-tab='home']", "🏠 Home", "Your reel: the latest stories, picked for you. Swipe ← when you're done with a card, → to save it."],
     ["team", "[data-tab='team']", "🏈 Team", "Your roster, trades and credits. Tap any player for his week by week, or put him on the trade block. Make offers with players and credits."],
     ["match", "[data-tab='match']", "⚔️ Match", "Your game, virtually live from ESPN: points, lineups and the full scoreboard for both tiers. Step back through every week."],
     ["chat", "#chattab", "💬 Chat", "League chat, your tier, and DMs with any owner. Commish alerts, trade news and perk moves land here too."],
@@ -4074,7 +4099,7 @@
     if (!ME) return; buildTeams(); reME();
     Object.keys(RENDER).forEach(function (k) { if (!guard(k, RENDER[k])) snag(k); }); tab(CUR_TAB);
   }
-  // Card lines are written for the newest week only: a replayed week (League → Weeks) falls back to its own notes.
+  // Card lines are written for the newest week only (older weeks fall back to their own notes).
   function dailyLine(owner, key) { if (W !== LATEST) return ""; var o = DLY && DLY.lines && DLY.lines.owners && DLY.lines.owners[owner]; return o && o[key] || ""; }
   function tierLine(tier, key) { if (W !== LATEST) return ""; var t = DLY && DLY.lines && DLY.lines.tiers && DLY.lines.tiers[tier]; return t && t[key] || ""; }
   function applyDaily(r) {
@@ -4154,9 +4179,6 @@
     ME = saved && BY_OWNER[norm(saved)];
     if (API_URL && !store("maffl_lab_pin")) { showWelcome("pin"); return; }
     if (!ME) { showWelcome(); return; }
-    var pb = $("pastbar"); pb.style.display = W === LATEST ? "none" : "flex";
-    pb.innerHTML = '📅 Replaying Week ' + W.weekNumber + ' (' + esc(W.dateString) + ')<button id="pbback">Back to now</button>';
-    if (W !== LATEST) $("pbback").onclick = function () { setWeek(LATEST.weekNumber); };
     $("chip").textContent = initials(ME.owner);
     $("chip").onclick = function () { if (API_URL) tab("more"); else showWelcome(); };
     RENDER = { home: renderHome, match: renderMatch, team: renderTeam, league: renderLeague, more: renderMore };
