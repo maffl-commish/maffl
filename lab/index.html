@@ -1423,8 +1423,8 @@
   var VAULT_SUB = "board", VQ = "", VY = "";
   // 📣 League board (commish 11/9): the reel has no weeks any more, so everything that went out league-wide is kept
   // here: commish alerts, MAFFL HQ posts (week wraps, perk news, polls, trade reviews, deadline) from the league room
-  // and your tier's room (backend `board`, newest first). Weeks that went final before the robot posted wraps (11/7)
-  // get one from the daily snapshot.
+  // and your tier's room (backend `board`, newest first). Weeks that went final before the robot posted wraps (11/7) get one from the daily
+  // snapshot; weeks before the ⭐ Elite 5 post (backend v0.42) get it from that week's Pulse.
   var BOARD = null, BOARD_AT = 0, BOARD_ERR = false;
   function loadBoard() {
     if (!chatOn() || BOARD_AT > Date.now() - 6e4) return; BOARD_AT = Date.now();
@@ -1440,14 +1440,16 @@
       (S.decided || []).forEach(function (wk) { if (wk > 17 || have[p[1] + " " + wk]) return;
         var cw = ((S.coach || {})[wk] || {}).winner, hi = (S.highs || []).filter(function (h) { return h.wk === wk; })[0];
         out.push({ wk: wk, room: "league", owner: BOTN, kind: "text", mentions: [], text: "📊 " + p[1] + " Week " + wk + " is final." + (cw != null ? "\n🏆 Coach of the Week: " + tn(cw) : "") + (hi ? "\n🚀 High score: " + tn(hi.id) + ", " + hi.pts : "") }); }); });
-    return out.sort(function (a, b) { return b.wk - a.wk; });
+    (WEEKS || []).forEach(function (w) { var e = (w.elite5 || []).slice(0, 5); if (e.length < 5 || have["E5 " + w.weekNumber]) return;
+      out.push({ wk: w.weekNumber, room: "league", owner: BOTN, kind: "text", mentions: [], text: "⭐ Elite 5 · Week " + w.weekNumber + "\n" + e.map(function (x, k) { return (k + 1) + ". " + x.team; }).join("\n") }); });
+    return out.sort(function (a, b) { return b.wk - a.wk || (a.text < b.text ? 1 : -1); });
   }
   function lboardHTML() {
     if (!chatOn()) return '<div class="card"><p>Sign in to see the league board.</p></div>';
     if (!BOARD && BOARD_ERR) return '<div class="card"><p>Couldn\'t reach the league server.</p><button class="b pri" data-board="1" style="margin-top:10px;width:100%">Try again</button></div>';
     loadBoard();
     if (!BOARD) return '<div class="card"><p><span class="spin"></span> Loading the board…</p></div>';
-    var have = {}; BOARD.forEach(function (m) { var x = /^📊 (Upper|Lower) Week (\d+) is final/.exec(m.text || ""); if (x) have[x[1] + " " + x[2]] = 1; });
+    var have = {}; BOARD.forEach(function (m) { var x = /^📊 (Upper|Lower) Week (\d+) is final/.exec(m.text || ""); if (x) have[x[1] + " " + x[2]] = 1; var y = /^⭐ Elite 5 · Week (\d+)/.exec(m.text || ""); if (y) have["E5 " + y[1]] = 1; });
     var list = BOARD.concat(boardWraps(have)), day = null, h = '<p class="meta" style="margin:10px 2px 0">Everything that went out to the league this season, newest first.</p>';
     if (!list.length) return h + '<div class="card"><p>Nothing yet. Commish alerts, week wraps and perk news land here.</p></div>';
     list.forEach(function (m) {
@@ -1947,8 +1949,6 @@
     setTimeout(markSeen, 900);
     if ($("saved")) $("saved").onclick = function () { openBucket("pin"); };
     if ($("donebk")) $("donebk").onclick = function () { openBucket("clr"); };
-    if ($("dclear")) $("dclear").onclick = function () { var its = clearable().map(itemOf); its.slice().reverse().forEach(function (it) { mark("clr", it, true); }); store("maffl_lab_swiped", "1"); tap("reel", "clearall:" + its.length);
-      pos = 0; renderHome(); undoBar("✓ " + its.length + " cleared", function () { its.forEach(function (it) { mark("clr", it, false); }); pos = 0; renderHome(); }); };
     swipeFeed(f);
     $("idots").onclick = function (ev) { var d = ev.target.closest("[data-go-k]"); if (d) f.scrollTo({ top: +d.dataset.goK * f.clientHeight, behavior: "smooth" }); };
     var again = $("dagain"), dc = $("dchat"); if (dc) dc.onclick = function () { openChat(); }; if (again) again.onclick = function () { f.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -1958,8 +1958,7 @@
   function cardHTML(x) {
     var cl = clearable().length, nn = INBOX.length - cl;
     if (!x) return '<div class="dcard done-card">' + (cl ? '<div class="zero" style="background:var(--navy)">' + cl + '</div><h3 style="font:700 28px/1.1 var(--display);margin-top:10px">That\'s everything</h3>' +
-        '<p class="p" style="margin-top:6px">' + (cl === 1 ? "1 card is" : cl + " cards are") + ' still in your reel. Swipe ← on the ones you\'re done with, or clear them all.' + (nn ? ' The ' + (nn === 1 ? "one" : nn) + ' at the top that need' + (nn === 1 ? "s" : "") + ' you stay until handled.' : '') + '</p>' +
-        '<button class="b pri" id="dclear" style="width:100%;margin-top:14px;flex:none">✓ Clear ' + (cl === 1 ? "it" : "all " + cl) + '</button>'
+        '<p class="p" style="margin-top:6px">' + (cl === 1 ? "1 card is" : cl + " cards are") + ' still in your reel. Swipe each one: ← done, → save.' + (nn ? ' The ' + (nn === 1 ? "one" : nn) + ' at the top that need' + (nn === 1 ? "s" : "") + ' you stay until handled.' : '') + '</p>'
       : '<div class="zero">✓</div><h3 style="font:700 30px/1.1 var(--display);margin-top:10px">All caught up</h3>' +
         '<p class="p" style="margin-top:6px">' + (FEED_N ? "You cleared your reel." : "Nothing new right now.") + (nn ? " " + (nn === 1 ? "1 thing" : nn + " things") + " up top still need" + (nn === 1 ? "s" : "") + " you." : "") + (bkGet("pin").length ? " Your saved cards are up top." : "") + ' New cards land with the morning and evening updates.</p>') +
       '<div class="btns" style="width:100%;margin-top:16px"><button class="b pri" id="dchat">💬 Chat</button><button class="b" data-go="match">⚔️ Your game</button></div>' +
