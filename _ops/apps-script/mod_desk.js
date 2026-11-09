@@ -146,7 +146,21 @@ function putLines_(b) {
   if (!key || String(b.key || "") !== key) return { ok: false, error: "bad key" };
   if (!b.lines || typeof b.lines !== "object") return { ok: false, error: "no lines" };
   var s = JSON.stringify(b.lines); if (s.length > 60000) return { ok: false, error: "too long" };
-  need_("daily"); DAILY.putLines(b.lines); return { ok: true };
+  need_("daily"); DAILY.putLines(b.lines); var e5 = null; try { e5 = elitePost_(b.lines); } catch (e) {} return { ok: true, elite5: e5 };
+}
+// ⭐ Elite 5 on the record (commish 11/9): the first lines after a week goes final (both tiers) post that week's Elite 5
+// to League chat, once per week, so it lands on the 📣 Board. "Dropped out" compares with the last one posted.
+function elitePost_(lines) {
+  var e5 = (lines.elite5 || []).slice(0, 5); if (e5.length < 5) return null;
+  var T = (DAILY.snapshot() || {}).tiers || {}, wk = Math.min((T.U || {}).last || 0, (T.L || {}).last || 0); if (!wk) return null;
+  var P = PropertiesService.getScriptProperties(), last = {}; try { last = JSON.parse(P.getProperty("ELITE5_POSTED") || "{}"); } catch (e) {}
+  if (Number(last.wk) >= wk) return null;
+  var now = e5.map(function (e) { return e.owner; }), was = (last.owners || []).filter(function (o) { return now.map(norm_).indexOf(norm_(o)) < 0; });
+  var text = "⭐ Elite 5 · Week " + wk + "\n" + e5.map(function (e, k) { return (k + 1) + ". " + teamName_(e.owner); }).join("\n") +
+    (was.length ? "\n⬇️ Out: " + was.map(teamName_).join(", ") : "");
+  post_("league", BOT, "text", text.slice(0, CHAT_MAX), "", "ELITE5", [], "");
+  P.setProperty("ELITE5_POSTED", JSON.stringify({ wk: wk, owners: now }));
+  return wk;
 }
 
 // ---------------------------------------------------------------- ⏱️ tick: the 15-minute robot (APP_DESIGN §10f)
