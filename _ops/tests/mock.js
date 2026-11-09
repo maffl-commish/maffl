@@ -225,6 +225,16 @@ function espnPayload(L, D, tier, query, T0) {
         winner: done ? (g.hp > g.ap ? "HOME" : g.hp < g.ap ? "AWAY" : "TIE") : "UNDECIDED" };
     });
   }
+  // 💰 Waiver claims (mTransactions2): last week's run, three players, each won by one team with two losing bids.
+  if (views.indexOf("mTransactions2") >= 0) {
+    out.transactions = [];
+    if (spq === CUR - 1) { const tm = T.teams, at = Date.now() - 36 * 3600e3;
+      [0, 1, 2].forEach((k) => { const w = tm[k], list = T.roster[w.id] || [], p = list[list.length - 1 - k]; if (!p) return;
+        const bids = [[w.id, 23 - 7 * k, "EXECUTED"], [tm[(k + 3) % tm.length].id, 12 - 3 * k, "FAILED_INVALIDPLAYERSOURCE"], [tm[(k + 5) % tm.length].id, 4, "FAILED_INVALIDPLAYERSOURCE"]];
+        bids.forEach((b, j) => out.transactions.push({ id: tier + "tx" + k + j, type: "WAIVER", status: b[2], teamId: b[0], bidAmount: b[1], scoringPeriodId: spq,
+          processDate: at, proposedDate: at - 864e5, items: [{ playerId: p.id, type: "ADD", toTeamId: b[0] }] })); });
+      out.transactions.push({ id: tier + "fa", type: "FREEAGENT", status: "EXECUTED", teamId: tm[1].id, bidAmount: 0, processDate: at, items: [{ playerId: 1, type: "ADD" }] }); }
+  }
   return out;
 }
 function proSchedule(L) {

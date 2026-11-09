@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "10"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "11"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -211,6 +211,29 @@ function dMoves_(tier) {
   dPut_(key, { at: new Date().toISOString(), ids: now, info: slim });
   return moves.length;
 }
+// 💰 Waiver auction (commish 11/9: the wire should be the FAAB report, not every add and drop): ESPN's waiver claims
+// for this week and last (view=mTransactions2), winners and, when ESPN shows them, the losing bids. Kept 3 weeks under
+// Daily key faab_<tier>; names from the rosters dMoves_ just saved (run it after dMoves_).
+function dFaab_(tier, s) {
+  var key = "faab_" + tier, old = dGet_(key) || {}, byId = {}, names = (dGet_("roster_ids_" + tier) || {}).info || {}, teams = s.teams || {}, n = 0;
+  (old.list || []).forEach(function (x) { byId[x.id] = x; });
+  var cur = Number(s.week) || (Number(s.last) || 0) + 1;
+  [cur, cur - 1].forEach(function (sp) { if (sp < 1) return;
+    var d = espn_(LEAGUES[tier], "view=mTransactions2&scoringPeriodId=" + sp);
+    (d.transactions || []).forEach(function (t) {
+      if (t.type !== "WAIVER" || !/^(EXECUTED|FAILED)/.test(String(t.status || ""))) return;
+      var add = (t.items || []).filter(function (i) { return i.type === "ADD"; })[0]; if (!add) return;
+      var id = String(t.id), was = byId[id] || {}, p = names[add.playerId] || {}, tm = teams[t.teamId] || {};
+      if (!byId[id]) n++;
+      byId[id] = { id: id, at: Number(t.processDate || t.proposedDate) || Date.now(), wk: sp, team: tm.team || was.team || "", owner: tm.owner || was.owner || "",
+        bid: Number(t.bidAmount) || 0, won: t.status === "EXECUTED", pid: add.playerId, n: p.n || was.n || "", pos: p.pos || was.pos || "", tm: p.tm || was.tm || "" };
+    });
+  });
+  var list = Object.keys(byId).map(function (k) { return byId[k]; }).filter(function (x) { return Date.now() - x.at < 21 * 864e5; })
+    .sort(function (a, b) { return b.at - a.at; }).slice(0, 400);
+  dPut_(key, { at: new Date().toISOString(), list: list });
+  return n;
+}
 function dRecentMoves_(days) {
   var sh = SpreadsheetApp.getActive().getSheetByName("Moves"); if (!sh || sh.getLastRow() < 2) return [];
   var since = Date.now() - days * 864e5, n = Math.min(400, sh.getLastRow() - 1);
@@ -252,6 +275,8 @@ DAILY.run = function (why) {
     } catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " scores: " + e.message); }
     try { var m = dMoves_(tier); if (m) log.push(m + " roster move" + (m === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); }
     catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " rosters: " + e.message); }
+    try { if (snap.tiers[tier]) { var fb = dFaab_(tier, snap.tiers[tier]); if (fb) log.push(fb + " waiver bid" + (fb === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); } }
+    catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " waivers: " + e.message); }
   });
   if (Object.keys(snap.tiers).length) dPut_("snapshot", snap);
   try { var na = Object.keys(snap.tiers).length === 2 ? dAwards_(snap) : 0; if (na) log.push(na + " credit award" + (na === 1 ? "" : "s") + " earned (issued after Wk 17)"); } catch (e) { problems.push("Awards: " + e.message); }
@@ -283,7 +308,8 @@ DAILY.snapshot = function () { return dGet_("snapshot") || {}; }; // the desk re
 DAILY.view = function () {
   var snap = dGet_("snapshot"), info = {};
   try { info = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) {}
-  return { ok: !!snap, snapshot: snap, moves: dRecentMoves_(7), lines: dGet_("lines") || null, run: info };
+  var faab = {}; ["U", "L"].forEach(function (t) { var f = dGet_("faab_" + t); if (f) faab[t] = f.list || []; });
+  return { ok: !!snap, snapshot: snap, moves: dRecentMoves_(7), faab: faab, lines: dGet_("lines") || null, run: info };
 };
 // After a run: ask GitHub to start the card-lines workflow (Claude writes the lines, posts them back via putlines).
 // Uses the GITHUB_TOKEN Script property (contents: write is enough for repository_dispatch).
