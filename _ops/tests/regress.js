@@ -64,6 +64,7 @@ out("deskact announce", P(Object.assign({ action: "deskact", op: "announce", tar
     out("deskact espnwhen bad", P(Object.assign({ action: "deskact", op: "espnwhen", target: "", perk_id: e0.id, when: "soon" }, me)));
     out("desk espn when", (P(Object.assign({ action: "desk" }, me)).espn || []).map(function (x) { return x.perk + ":" + x.when; })); } }
 out("chat league after announce", P(Object.assign({ action: "chat", room: "league" }, me)).pinned);
+out("board", P(Object.assign({ action: "board" }, me)));
 out("deskact beta", P(Object.assign({ action: "deskact", op: "beta", target: "Sam Lavrinc", on: true }, me)));
 out("deskact daily", P(Object.assign({ action: "deskact", op: "daily", target: "" }, me)));
 out("feedback", P(Object.assign({ action: "feedback", mood: "up", note: "nice", kind: "button", where: "Home", ctx: "" }, me)));

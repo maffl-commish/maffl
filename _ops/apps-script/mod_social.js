@@ -144,6 +144,21 @@ function chatMod_(meRaw, b) {
   return { ok: false, error: "delete, pin or unpin" };
 }
 // Your chats: league room, your tier's group (commish: both), and every DM you're in, with unread counts and @mentions.
+// 📣 League board (commish 11/9): the Vault's record of everything that went out league-wide, all season. No new
+// storage: it's the Chat tab's MAFFL HQ posts (week wraps, perk news, polls, trade reviews, deadline) and commish alerts
+// in the league room and the tier rooms you can see. A commish alert (3 rooms) or a trade update shows once. Newest first.
+function board_(meRaw) {
+  var me = meOf_(meRaw), rooms = ["league", "tier:U", "tier:L"].filter(function (r) { return canRoom_(me, r); }), offers = {}, seen = {}, out = [];
+  rows_("Offers").forEach(function (o) { offers[o.offer_id] = o; });
+  rows_("Chat").forEach(function (r) {
+    if (rooms.indexOf(r.room) < 0 || String(r.deleted) === "Y" || !(r.owner === BOT || r.kind === "announce")) return;
+    var m = msgOut_(r, offers);
+    if (r.kind === "offer") { var ko = "o|" + r.ref + "|" + r.event; if (seen[ko]) return; seen[ko] = 1; } // one trade update, shown once
+    if (r.kind === "announce") { var k = r.owner + "|" + String(r.text); if (seen[k] && Math.abs(new Date(r.ts) - seen[k].t) < 6e5) return; seen[k] = { t: new Date(r.ts).getTime() }; }
+    out.push(m);
+  });
+  return { ok: true, posts: out.reverse().slice(0, 300) };
+}
 function inbox_(meRaw) {
   var me = meOf_(meRaw), reads = {}, names = {}, rooms = {}, mentions = [];
   rows_("Reads").forEach(function (r) { if (norm_(r.owner) === norm_(me.owner)) reads[r.room] = new Date(r.ts).getTime(); });
