@@ -241,9 +241,17 @@ function perkAct_(me, id, decision, reason) {
 }
 // Approved perk → league chat news (commish 11/7): who spent what, on whom, which week, with @mentions so the
 // owner and everyone it touches get the @ badge. Extra FAAB posts too (waiver budgets are public, commish 11/8).
+// Who an owner plays in a week, from the daily run's ESPN schedule (both tiers; "" if unknown or the Ghost).
+function weekOpp_(owner, wk) {
+  try { need_("daily"); var sn = DAILY.snapshot(), out = ""; Object.keys(sn.tiers || {}).forEach(function (t) { var s = sn.tiers[t], tm = s.teams || {};
+    var me = Object.keys(tm).filter(function (id) { return norm_(tm[id].owner) === norm_(owner); })[0]; if (!me) return;
+    (s.games || []).forEach(function (g) { if (Number(g[0]) !== Number(wk) || g[6]) return; var o = String(g[1]) === me ? g[3] : String(g[3]) === me ? g[1] : null;
+      if (o != null && tm[o] && tm[o].owner) out = tm[o].owner; }); }); return out; } catch (e) { return ""; }
+}
 function perkNews_(r) {
   var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
   var at = function (n) { return at_(n); }, cost = Number(r.cost) || 0, cr = cost + " credit" + (cost === 1 ? "" : "s"), wk = r.week ? " · Week " + r.week : "";
+  if (!aff.length && r.week && (r.perk === "double" || r.perk === "swap")) aff = [weekOpp_(r.owner, r.week), r.swap_with ? weekOpp_(r.swap_with, r.week) : ""]; // the app didn't say who it hits: read it off the ESPN schedule (commish 11/9)
   var opp = aff.filter(function (a) { return a && norm_(a) !== norm_(r.owner) && norm_(a) !== norm_(r.swap_with); });
   var text = r.perk === "double" ? "✖️2 Double Player Bonus" + wk + "\n" + at(r.owner) + " spent " + cr + ": " + r.player + (r.pos ? " (" + r.pos + ")" : "") + " scores double" + (opp.length ? " vs " + opp.map(at).join(", ") : "") + "."
     : r.perk === "swap" ? "🔀 Matchup Swap" + wk + "\n" + at(r.owner) + " spent " + cr + " to swap opponents with " + at(r.swap_with) + "." + (opp.length ? " New matchups for " + opp.map(at).join(" and ") + "." : "")

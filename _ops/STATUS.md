@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), trade grades removed
+**Last updated:** 2026-11-09 by Claude (chat), perk news @mentions the opponent; Credits tidy
 
 ## Now
 

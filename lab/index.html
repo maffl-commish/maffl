@@ -797,6 +797,9 @@
   .dkbtn i{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px;box-shadow:0 0 0 2px var(--surface)}
   .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
   .dk.on{display:flex}
+  details.fold{padding:4px 14px}details.fold>summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;font:700 15px var(--display);color:var(--navy);padding:10px 0}details.fold>summary span{flex:1}
+  details.fold>summary::-webkit-details-marker,details.fold2>summary::-webkit-details-marker{display:none}details.fold>summary::after{content:"›";font-size:20px;color:var(--muted);transition:transform .15s}details.fold[open]>summary::after{transform:rotate(90deg)}
+  details.fold2>summary{list-style:none;cursor:pointer;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#9a6a00;padding:10px 0 4px;text-align:center}details.fold2[open]>summary{display:none}
   .dkq{margin:8px 0 6px;font-size:16px}.dkmore{display:block;width:100%;margin:8px 0 4px}
   .dkhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:var(--navy);color:#fff}
   .dkhead>div{flex:1}.dkhead .ct{font:700 22px var(--display);letter-spacing:.02em}.dkhead small{font:600 12px var(--body);color:rgba(255,255,255,.65)}
@@ -2485,8 +2488,9 @@
     // Credits (commish 11/7): balance in one slim line, then straight to the spend buttons.
     h += '<div class="sub-v pad" id="s-credits"><div class="cbal"><b>' + t.credits + '</b><div><span>credits</span><small>' + (held > 0 ? availCredits(ME.owner) + ' free · ' + held + ' held for open trades and requests' : 'Earned ' + earned + ' · spent ' + spent) + '</small></div></div>' +
       perksHTML() +
-      '<div class="card glist"><div class="eb">Credit history</div>' + (log.length ? log.map(function (r) {
-        return '<div class="row"><div><div class="nm">' + esc(r.creditType) + '</div><div class="meta">' + r.season + ' · ' + esc(r.creditCategory) + (r.notes ? ' · ' + esc(r.notes) : '') + '</div></div><div class="rt ' + (r.amount > 0 ? "w" : "l") + '">' + (r.amount > 0 ? "+" : "") + r.amount + '</div></div>'; }).join("") : '<p>No logged entries yet.</p>') + '</div>' +
+      (function () { // Credit history (commish 11/9): the latest 3, everything else behind "Show all"
+        var row = function (r) { return '<div class="row"><div><div class="nm">' + esc(r.creditType) + '</div><div class="meta">' + r.season + ' · ' + esc(r.creditCategory) + (r.notes ? ' · ' + esc(r.notes) : '') + '</div></div><div class="rt ' + (r.amount > 0 ? "w" : "l") + '">' + (r.amount > 0 ? "+" : "") + r.amount + '</div></div>'; };
+        return '<div class="card glist"><div class="eb">Credit history</div>' + (log.length ? log.slice(0, 3).map(row).join("") + (log.length > 3 ? '<details class="fold2"><summary>Show all ' + log.length + ' ›</summary>' + log.slice(3).map(row).join("") + '</details>' : '') : '<p>No logged entries yet.</p>') + '</div>'; })() +
       '</div>';
     $("v-team").innerHTML = h;
     var cur = TEAM_SUB;
@@ -2899,13 +2903,14 @@
     if (!API_URL) return "Needs the league server";
     return availCredits(ME.owner) < PERK_BY[k].cost ? "Need " + PERK_BY[k].cost + " free credits" : "";
   }
-  var PST = { REQUESTED: ["Waiting on commish", "gold"], APPROVED: ["Approved ✓", "ok"], DENIED: ["Denied", "bad"], CANCELED: ["Canceled", ""] };
+  var PST = { REQUESTED: ["Waiting on commish", "gold"], APPROVED: ["Approved ✓", "ok"], DENIED: ["Denied by commish", "bad"], CANCELED: ["Withdrawn by owner", ""] };
   function perkLine(p) {
     return p.perk === "faab" ? "+$" + 20 * p.qty + " FAAB" : p.perk === "double" ? "Wk " + p.week + " · " + esc(p.player) + (p.pos ? " (" + esc(p.pos) + ")" : "")
       : p.perk === "swap" ? "Wk " + p.week + " · swap opponents with " + esc(teamOf(p.swapWith).team) : p.perk === "insurance" ? "2026 season" : "";
   }
   function perkCard(p) {
     var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = p.status === "APPROVED" ? (logged(p.id) ? ["Logged ✓", "ok"] : ["Approved · posting", "gold"]) : PST[p.status] || [p.status, ""], mine = isMe(p.owner);
+    if (p.status === "CANCELED" && mine) st = ["Withdrawn by you", ""];
     var h = '<div class="card offer"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mine ? "You" : esc(teamOf(p.owner).team)) + ' · −' + p.cost + ' cr</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>' +
       '<div class="row" style="padding:6px 0"><span class="pos p-CR">' + P.ic + '</span><div><div class="nm">' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + '</div></div></div>';
     if (p.note) h += '<p class="meta">“' + esc(p.note) + '”</p>';
@@ -2929,7 +2934,12 @@
         '<small>' + esc(why || (P.k === "double" || P.k === "swap" ? "Wk " + openWeeks()[0] + " locks " + deadlineLabel(openWeeks()[0]) : P.k === "insurance" ? SUM.insuranceLeft + " of 3 left" : "Open")) + '</small></button>'; }).join("") + '</div>' +
       '<p class="meta" style="margin:6px 2px 0">The commish approves every request.</p>';
     if (vs.length) h += '<div class="sh" style="padding-left:0"><h2>⚠️ Coming at you</h2><small>' + vs.length + '</small></div>' + vs.map(perkCard).join("");
-    if (mine.length) h += '<div class="sh" style="padding-left:0"><h2>Your requests</h2><small>' + mine.length + '</small></div>' + mine.slice(0, 10).map(perkCard).join("");
+    // Your requests (commish 11/9: keep it from sprawling): waiting or approved-not-yet-logged as cards; done ones folded, one line each.
+    var liveR = mine.filter(function (p) { return p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id)); }), pastR = mine.filter(function (p) { return liveR.indexOf(p) < 0; });
+    if (liveR.length) h += '<div class="sh" style="padding-left:0"><h2>Your requests</h2><small>' + liveR.length + '</small></div>' + liveR.map(perkCard).join("");
+    if (pastR.length) h += '<details class="card fold"><summary><span>📁 Past requests</span><small>' + pastR.length + '</small></summary>' + pastR.map(function (p) {
+      var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = p.status === "APPROVED" ? "Logged ✓" : p.status === "CANCELED" ? "Withdrawn by you" : (PST[p.status] || [p.status])[0];
+      return '<div class="row"><div><div class="nm">' + P.ic + ' ' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + ' · ' + esc(st) + (p.reason ? ' · “' + esc(p.reason) + '”' : '') + ' · ' + new Date(p.updated || p.ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }) + '</div></div><div class="rt">' + (p.status === "APPROVED" ? '−' + p.cost : '0') + '</div></div>'; }).join("") + '</details>';
     return h;
   }
   // Matchup Swap: who you'd play instead, and whether the swap is legal (no division game touched; Ghost games stay put).
@@ -3105,7 +3115,9 @@
       confirmBox("Request " + P2.name + "?", '<p class="p">' + esc(F2.summary) + '.</p><p class="p"><b>' + F2.cost + ' credit' + (F2.cost === 1 ? '' : 's') + '</b> are held now and come off when the commish approves and logs it. You can cancel until he does.</p>' +
         (PF.k === "double" || PF.k === "swap" ? '<p class="meta">Locks ' + deadlineLabel(F2.week) + '. Your opponent' + (PF.k === "swap" ? 's see' : ' sees') + ' it in the app.</p>' : ''), "Yes, request it").then(function (yes) {
         if (!yes) return; busy(1);
-        api("perk", Object.assign(creds(), { perk: F2.k, qty: F2.qty, week: F2.week, player: F2.player, pos: F2.pos, swapWith: F2.swapWith, affects: F2.affects, note: F2.note })).then(function (r) {
+        var hit = function (o) { var x = F2.week && o ? opponentOf(F2.week, o) : null; return x ? x.opp : ""; }; // who it lands on, for the league post's @mention (commish 11/9)
+        F2.affects = F2.k === "double" ? [hit(ME.owner)] : F2.k === "swap" ? [hit(ME.owner), hit(F2.swapWith)] : [];
+        api("perk", Object.assign(creds(), { perk: F2.k, qty: F2.qty, week: F2.week, player: F2.player, pos: F2.pos, swapWith: F2.swapWith, affects: F2.affects.filter(Boolean), note: F2.note })).then(function (r) {
           busy(0); if (!r.ok) { toast(r.error); return; } closeSheet(); TEAM_SUB = "credits"; afterChange(P2.name + " requested ✓");
         }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
       });
