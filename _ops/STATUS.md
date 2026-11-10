@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), seed data league-wide
+**Last updated:** 2026-11-09 by Claude (chat), staged credit activity + tag earlier test data
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-09 · REEL · 🎭 Seed data, part 3 (commish): (1) 🏷️ **Tag as staged** on the desk marks all the earlier tinkering (offers, perk requests = the test credit moves, chat outside the desk log, trade-block listings) as staged (new `stage` column = seed on Offers / Perks / Chat; block re-listed as seed), so Wipe takes it out too. (2) The seed now stages credit activity per tier: an APPROVED trade with credits (players move on the app's rosters, credits show in balances + Credits history as test moves, league + tier cards), an ACCEPTED one on the desk to approve, perk requests approved (FAAB, with the League chat news post), waiting (FAAB from a tester, Double Bonus for next week) and denied. (3) Staged rows never reach the repo credit ledger file or the nightly credit check, never get ESPN "players didn't move" reminders, never become Do-on-ESPN steps. Wipe now rewrites each tab in one pass (keeps real rows). Backend v0.62; regression gains seed-ledger / adopt checks (order-free).
 - 2026-11-09 · REEL · 🎭 Seed data now stages pretend activity across the whole league (commish: real owners in it too, all pretend): every beta tester gets an offer waiting, a counter waiting and an old declined offer from other owners with DM banter; testers in one tier get one between them; 2 private offers per tier between other owners (desk counts); tier + league chat from all over; trade-block listings (4 owners + each tester per tier, skipping players already listed). Works with any number of testers (mock: 21 offers, 65 messages, 12 listings). Still tagged / wipeable, no emails, nothing ACCEPTED. Backend v0.61; regression seed check made order-free.
 - 2026-11-09 · REEL · 🎭 Seed data: when nothing gets staged (commish saw just "0 staged"), the desk now says why: "Nothing staged yet: needs 2 beta testers in the same tier" with each tier's state ("Lower (no testers)", "Upper (only Mike is a tester)") and where to add them. Backend v0.60.
 - 2026-11-09 · REEL · 🔇 Owner emails now reach **only the commish** (commish: the beta crew hasn't been told yet). `OWNER_EMAILS = "commish"` in logic.js; `"beta"` lets the beta crew get them, `"live"` everyone at go-live. Seed data never emails. Backend v0.59.

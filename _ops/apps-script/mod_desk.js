@@ -30,7 +30,7 @@ function closeRequests_(owner) {
 }
 function desk_(me) {
   var done = {}, when = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = e.meta || "Y"; if (e.type === "espn_when") when[e.ref] = String(e.value).replace(/^when:/, ""); });
-  var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id]; }).map(function (r) {
+  var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id] && !isSeedRow_(r); }).map(function (r) {
     return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts, when: when[r.perk_id] || "" };
   });
   // 👻 Ghost score steps (commish 11/8, the job the Pulse robot used to flag): every final week where ESPN's Ghost score isn't the par yet.
@@ -77,6 +77,7 @@ function deskAct_(me, b) {
   if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
     deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }
   if (b.op === "seed") return seedBuild_(me);
+  if (b.op === "adopt") { var ad = seedAdopt_(); deskPost_("note", "🏷️ Earlier test data tagged as staged (" + ad.offers + " offers, " + ad.perks + " perk requests, " + ad.msgs + " messages, " + ad.block + " trade-block listings). Wipe seed now takes it out too.", "", "SEED"); return Object.assign({ ok: true }, ad); }
   if (b.op === "unseed") { var w = seedWipe_(); deskPost_("note", "🎭 Seed data wiped (" + w.offers + " offers, " + w.msgs + " messages, " + w.block + " trade-block listings).", "", "SEED"); return Object.assign({ ok: true }, w); }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
@@ -256,7 +257,7 @@ function tickDeadline_(sent, now) {
 // accept → one reminder in the two owners' DM and one on the desk.
 function tickEspnMoves_(sent, now) {
   var moved = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_moved") moved[e.ref] = 1; });
-  var open = rows_("Offers").filter(function (o) { return (o.status === "ACCEPTED" || o.status === "APPROVED") && !moved[o.offer_id] && now - new Date(o.updated_ts) < 14 * 864e5; })
+  var open = rows_("Offers").filter(function (o) { return (o.status === "ACCEPTED" || o.status === "APPROVED") && !moved[o.offer_id] && now - new Date(o.updated_ts) < 14 * 864e5 && !isSeedRow_(o); })
     .filter(function (o) { return JSON.parse(o.give || "[]").length + JSON.parse(o.get || "[]").length > 0; });
   if (!open.length) return 0;
   var rosters = {}, n = 0; // tier -> norm(team name) -> { norm(player): 1 }
@@ -283,7 +284,7 @@ function tickEspnMoves_(sent, now) {
 // Nightly: does the repo hold the same ledger the backend has (did every push land)? LIVE also checks that every
 // ledger row approved 2+ hours ago is in data/Credit_Log.csv (tagged [app L-…]). Quiet when everything matches.
 function tickReconcile_(sent, now) {
-  var mode = syncMode_(), mine = ledger_(mode), raw = "https://raw.githubusercontent.com/" + REPO + "/main/";
+  var mode = syncMode_(), mine = ledger_(mode).filter(function (r) { return !r.seed; }), raw = "https://raw.githubusercontent.com/" + REPO + "/main/";
   var f = UrlFetchApp.fetch(raw + "_ops/inbox/credit_ledger" + (mode === "live" ? "" : "_test") + ".json?t=" + now.getTime(), { muteHttpExceptions: true });
   var repoIds = {}; if (f.getResponseCode() === 200) (JSON.parse(f.getContentText()).rows || []).forEach(function (r) { repoIds[r.id] = 1; });
   var problems = [], notPushed = mine.filter(function (r) { return !repoIds[r.id]; });
@@ -306,7 +307,9 @@ function tickReconcile_(sent, now) {
 // owners; tier + league chat from all over; trade-block listings. Nothing seeded is ACCEPTED (no review items), nothing emails.
 // Tagged so Wipe / Reseed can find it: Offers ids "TSD…", Chat ids "MSD…" (plus any chat card pointing at a TSD offer),
 // trade-block Events with week "seed" (Events stays append-only: wiping appends "off" rows).
-var SEED_OFFER = "TSD", SEED_MSG = "MSD";
+var SEED_OFFER = "TSD", SEED_MSG = "MSD", SEED_PERK = "PSD", SEED_RE = /^(TSD|MSD|PSD)/;
+// Staged = made by the seed (id prefix) or tagged later (Offers / Perks / Chat column "stage" = seed: the tinkering before the beta).
+function isSeedRow_(r) { return !!r && (SEED_RE.test(String(r.offer_id || r.perk_id || r.msg_id || "")) || String(r.stage || "") === "seed"); }
 function seedId_(pre) { return pre + Utilities.getUuid().replace(/-/g, "").slice(0, 8).toUpperCase(); }
 function seedBlock_() { // seeded listings still on the block: ref -> owner
   var on = {}; rows_("Events").forEach(function (e) { if (e.type !== "block") return;
@@ -314,25 +317,52 @@ function seedBlock_() { // seeded listings still on the block: ref -> owner
   return on;
 }
 function seedInfo_() {
-  var isS = function (v, p) { return String(v || "").indexOf(p) === 0; };
-  return { offers: rows_("Offers").filter(function (r) { return isS(r.offer_id, SEED_OFFER); }).length,
-    msgs: rows_("Chat").filter(function (r) { return isS(r.msg_id, SEED_MSG); }).length, block: Object.keys(seedBlock_()).length,
-    at: PropertiesService.getScriptProperties().getProperty("SEED_AT") || "" };
+  var perks = sheetGet_("Perks") ? rows_("Perks") : [], offers = rows_("Offers"), chat = rows_("Chat");
+  var realBlock = 0; try { var bl = trades_("").block || {}, sb = seedBlock_(); Object.keys(bl).forEach(function (k) { if (!sb[k]) realBlock++; }); } catch (e) {}
+  return { offers: offers.filter(isSeedRow_).length, perks: perks.filter(isSeedRow_).length, msgs: chat.filter(isSeedRow_).length, block: Object.keys(seedBlock_()).length,
+    at: PropertiesService.getScriptProperties().getProperty("SEED_AT") || "",
+    untagged: { offers: offers.filter(function (r) { return !isSeedRow_(r); }).length, perks: perks.filter(function (r) { return !isSeedRow_(r); }).length,
+      msgs: chat.filter(function (r) { return !isSeedRow_(r) && r.room !== "desk"; }).length, block: realBlock } };
+}
+// Keep only the rows `keep` says yes to: one read, one write (Sheet text is re-guarded so nothing turns into a formula).
+function seedKeep_(name, keep) {
+  if (!sheetGet_(name)) return 0;
+  var sh = sheet_(name), v = sh.getDataRange().getValues(), head = v.shift(), kept = [], gone = 0;
+  v.forEach(function (row, i) { var o = { _row: i + 2 }; head.forEach(function (h, k) { o[h] = row[k]; }); if (row.join("") === "" ) return; if (keep(o)) kept.push(cells_(row)); else gone++; });
+  if (!gone) return 0;
+  if (v.length) sh.getRange(2, 1, v.length, head.length).clearContent();
+  if (kept.length) sh.getRange(2, 1, kept.length, head.length).setValues(kept);
+  delete MEMO_[name]; return gone;
 }
 function seedWipe_() {
-  var out = { offers: 0, msgs: 0, block: 0 }, del = function (name, test) {
-    var sh = sheet_(name), rs = rows_(name).filter(test).map(function (r) { return r._row; }).sort(function (a, b) { return b - a; });
-    rs.forEach(function (r) { sh.deleteRow(r); }); sheet_(name); return rs.length; };
-  out.offers = del("Offers", function (r) { return String(r.offer_id).indexOf(SEED_OFFER) === 0; });
-  out.msgs = del("Chat", function (r) { return String(r.msg_id).indexOf(SEED_MSG) === 0 || String(r.ref).indexOf(SEED_OFFER) === 0; });
+  var ids = {}; rows_("Offers").filter(isSeedRow_).forEach(function (r) { ids[r.offer_id] = 1; });
+  if (sheetGet_("Perks")) rows_("Perks").filter(isSeedRow_).forEach(function (r) { ids[r.perk_id] = 1; });
+  var out = { offers: seedKeep_("Offers", function (r) { return !isSeedRow_(r); }), perks: seedKeep_("Perks", function (r) { return !isSeedRow_(r); }),
+    msgs: seedKeep_("Chat", function (r) { return !isSeedRow_(r) && !ids[r.ref] && !SEED_RE.test(String(r.ref || "")); }), block: 0 };
   var bl = seedBlock_(); Object.keys(bl).forEach(function (ref) { sheet_("Events").appendRow(cells_([new Date(), bl[ref], "block", ref, "off", "seed", ""])); out.block++; });
   PropertiesService.getScriptProperties().deleteProperty("SEED_AT");
+  return out;
+}
+// 🏷️ Tag the tinkering (commish 11/9): every offer, perk request (= the test credit moves) and chat message that isn't staged
+// yet becomes staged (column "stage" = seed), so Wipe takes it out. The desk log stays. Trade-block listings get re-listed as
+// staged (Events is append-only). Beta-only: never run this after go-live.
+function seedAdopt_() {
+  var out = { offers: 0, perks: 0, msgs: 0, block: 0 };
+  [["Offers", "offers"], ["Perks", "perks"], ["Chat", "msgs"]].forEach(function (t) {
+    if (!sheetGet_(t[0])) return; ensureCol_(t[0], "stage");
+    var sh = sheet_(t[0]), v = sh.getDataRange().getValues(), head = v.shift(), c = head.indexOf("stage"), room = head.indexOf("room");
+    if (c < 0 || !v.length) return;
+    var col = v.map(function (row) { var tag = String(row[c] || ""); if (tag !== "seed" && row.join("") !== "" && !(room >= 0 && row[room] === "desk")) { tag = "seed"; if (!SEED_RE.test(String(row[0]))) out[t[1]]++; } return [tag]; });
+    sh.getRange(2, c + 1, col.length, 1).setValues(col); delete MEMO_[t[0]];
+  });
+  var bl = {}; try { bl = trades_("").block || {}; } catch (e) {} var sb = seedBlock_();
+  Object.keys(bl).forEach(function (ref) { if (sb[ref]) return; sheet_("Events").appendRow(cells_([new Date(), bl[ref].owner, "block", ref, "on", "seed", bl[ref].note || ""])); out.block++; });
   return out;
 }
 function seedBuild_(me) {
   var wiped = seedWipe_(), now = Date.now(), at = function (min) { return new Date(now - min * 6e4); };
   var all = owners_().filter(function (o) { return o.owner && o.team && !/ghost/i.test(String(o.team) + String(o.owner)); });
-  var chat = [], offers = [], block = [], skipped = [], pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  var chat = [], offers = [], perks = [], block = [], skipped = [], pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
   var shuffle = function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = a[i]; a[i] = a[j]; a[j] = x; } return a; };
   var tag = function (o) { try { return at_(o.owner); } catch (e) { return "@" + String(o.owner).split(/[ \/]/)[0]; } };
   var msg = function (min, room, owner, text, mentions, kind, ref, ev) { chat.push([seedId_(SEED_MSG), at(min), room, owner, kind || "text", safe_(text || ""), ref || "", ev || "", JSON.stringify(mentions || []), "", "", ""]); };
@@ -379,6 +409,27 @@ function seedBuild_(me) {
       msg(92, room(U1, U2), U1.owner, "You up? Got an idea for your " + u2.pos + " logjam 👀"); msg(90, room(U1, U2), U1.owner, "Family discount 😇", [], "offer", o5, "PROPOSED"); msg(40, room(U1, U2), U2.owner, "Looking now. Give me a bit 🤔"); }
     // Offers between other owners (private; only the counts show on the desk).
     for (var i = 0; i < 2; i++) { var F = nextO(), G = nextO(); if (F === G) continue; offer(300 + i * 200, 300 + i * 200, F, G, t, [P(F, 5 + i).n], [P(G, 6 + i).n], 0, 0, "", "PROPOSED", "", [pick(REASONS)]); }
+    // 💳 Credit activity (commish 11/9): an approved trade with credits (players move on the app's rosters, the credits show
+    // in balances + Credits history as test moves), one in review on the desk, and perk requests: approved, waiting, denied.
+    var week = 0; try { need_("daily"); week = Number(((DAILY.snapshot().tiers || {})[t] || {}).week) || 0; } catch (e) {}
+    var D = T[0] || nextO(), E = nextO(), d1 = P(D, 9), e1 = P(E, 9), ec = credits(E, 3);
+    var o6 = offer(3400, 2600, D, E, t, [d1.n], [e1.n], 0, ec, "Deal?", "APPROVED", "", ["Want credits"]);
+    msg(3400, room(D, E), D.owner, "Deal?", [], "offer", o6, "PROPOSED"); msg(3300, room(D, E), E.owner, "", [], "offer", o6, "ACCEPTED");
+    msg(3300, "tier:" + t, BOT, "", [], "offer", o6, "REVIEW"); msg(2600, room(D, E), BOT, "", [], "offer", o6, "APPROVED"); msg(2600, "league", BOT, "", [], "offer", o6, "APPROVED");
+    var H = nextO(), J = nextO(), h1 = P(H, 10), j1 = P(J, 10), hc = credits(H, 2);
+    var o7 = offer(420, 300, H, J, t, [h1.n], [j1.n], hc, 0, "Let's get it done before the deadline", "ACCEPTED", "", ["Win now"]);
+    msg(300, "tier:" + t, BOT, "", [], "offer", o7, "REVIEW"); msg(300, "desk", BOT, "", [], "offer", o7, "REVIEW");
+    var perk = function (min, upd, o, kind, qty, wk, pl, status, reason) { var P0 = PERKS[kind] || {}, cost = (P0.cost || 0) * (kind === "faab" ? qty : 1);
+      if (status !== "DENIED" && !credits(o, cost)) return null; var id = seedId_(SEED_PERK);
+      perks.push(cells_([id, at(min), o.owner, t, kind, cost, qty, wk || "", pl ? pl.n : "", pl ? pl.pos : "", "", "[]", "", status, at(upd), reason || "", ""]));
+      if (status === "REQUESTED") msg(min, "desk", BOT, "", [], "perk", id, "REQUESTED");
+      if (status === "APPROVED") msg(upd, "league", BOT, kind === "faab" ? "💰 Extra FAAB\n" + tag(o) + " spent " + cost + " credit" + (cost === 1 ? "" : "s") + " for +$" + 20 * qty + " FAAB.\n🧪 Test, not real credits."
+        : "✖️2 Double Player Bonus · Week " + wk + "\n" + tag(o) + " spent " + cost + " credits: " + pl.n + " (" + pl.pos + ") scores double.\n🧪 Test, not real credits.", [o.owner], "text", id, "APPROVED");
+      return id; };
+    perk(4300, 4200, nextO(), "faab", 2, 0, null, "APPROVED");
+    if (T[0]) perk(200, 200, T[0], "faab", 1, 0, null, "REQUESTED");
+    if (week) { var K = nextO(); perk(500, 500, K, "double", 1, week + 1, P(K, 0), "REQUESTED"); }
+    perk(2000, 1900, nextO(), "faab", 3, 0, null, "DENIED", "Two FAAB buys this week already");
     // Tier chat, newest last.
     var c1 = nextO(), c2 = nextO(), c3o = nextO(), c4 = nextO();
     msg(95, "tier:" + t, c1.owner, "Who's buying " + P(c1, 6).n + "? Price is reasonable 👀");
@@ -403,11 +454,12 @@ function seedBuild_(me) {
   }
   chat.sort(function (a, b) { return a[1] - b[1]; });
   var oSh = sheet_("Offers"); offers.forEach(function (row) { oSh.appendRow(row); });
+  var pSh = sheet_("Perks"); perks.forEach(function (row) { pSh.appendRow(row); });
   var cSh = sheet_("Chat"); chat.forEach(function (row) { cSh.appendRow(row); });
   var eSh = sheet_("Events"); block.forEach(function (row) { eSh.appendRow(row); });
-  ["Offers", "Chat", "Events"].forEach(function (n) { delete MEMO_[n]; });
+  ["Offers", "Perks", "Chat", "Events"].forEach(function (n) { delete MEMO_[n]; });
   if (offers.length || chat.length) PropertiesService.getScriptProperties().setProperty("SEED_AT", new Date().toISOString());
-  var out = { ok: true, offers: offers.length, msgs: chat.length, block: block.length, skipped: skipped, wiped: wiped };
-  deskPost_("note", "🎭 Seed data built: " + out.offers + " offers, " + out.msgs + " messages, " + out.block + " trade-block listings" + (skipped.length ? ". Skipped: " + skipped.join(", ") : "") + ".", "", "SEED");
+  var out = { ok: true, offers: offers.length, perks: perks.length, msgs: chat.length, block: block.length, skipped: skipped, wiped: wiped };
+  deskPost_("note", "🎭 Seed data built: " + out.offers + " offers, " + out.perks + " perk requests, " + out.msgs + " messages, " + out.block + " trade-block listings" + (skipped.length ? ". Skipped: " + skipped.join(", ") : "") + ".", "", "SEED");
   return out;
 }

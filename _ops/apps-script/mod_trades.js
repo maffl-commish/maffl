@@ -293,7 +293,7 @@ function ledger_(mode) {
   rows_("Perks").forEach(function (r) {
     if (r.status !== "APPROVED" || (r.sync || "test") !== mode) return;
     var P = PERKS[r.perk] || { name: r.perk };
-    out.push({ id: "L-" + r.perk_id, season: 2026, owner: r.owner, category: "Spend", type: P.name, amount: -Math.abs(Number(r.cost) || 0),
+    out.push({ seed: isSeedRow_(r), id: "L-" + r.perk_id, season: 2026, owner: r.owner, category: "Spend", type: P.name, amount: -Math.abs(Number(r.cost) || 0),
       notes: (r.perk === "faab" ? "+$" + 20 * (Number(r.qty) || 1) + " FAAB" : r.perk === "double" ? "Wk " + r.week + " · " + r.player + (r.pos ? " (" + r.pos + ")" : "")
         : r.perk === "swap" ? "Wk " + r.week + " · swapped opponents with " + r.swap_with : r.perk === "insurance" ? "2026 season" : "") + " · app request " + r.perk_id,
       approved: r.updated_ts });
@@ -301,10 +301,11 @@ function ledger_(mode) {
   rows_("Offers").forEach(function (o) {
     if (o.status !== "APPROVED" || (o.sync || "test") !== mode) return;
     var gc = Number(o.give_credits) || 0, tc = Number(o.get_credits) || 0, note = "trade " + o.offer_id + " · " + o.from_owner + " ↔ " + o.to_owner;
-    if (gc) { out.push({ id: "L-" + o.offer_id + "A", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: -gc, notes: "to " + o.to_owner + " · " + note, approved: o.updated_ts });
-              out.push({ id: "L-" + o.offer_id + "B", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: gc, notes: "from " + o.from_owner + " · " + note, approved: o.updated_ts }); }
-    if (tc) { out.push({ id: "L-" + o.offer_id + "C", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: -tc, notes: "to " + o.from_owner + " · " + note, approved: o.updated_ts });
-              out.push({ id: "L-" + o.offer_id + "D", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: tc, notes: "from " + o.to_owner + " · " + note, approved: o.updated_ts }); }
+    var sd = isSeedRow_(o);
+    if (gc) { out.push({ seed: sd, id: "L-" + o.offer_id + "A", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: -gc, notes: "to " + o.to_owner + " · " + note, approved: o.updated_ts });
+              out.push({ seed: sd, id: "L-" + o.offer_id + "B", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: gc, notes: "from " + o.from_owner + " · " + note, approved: o.updated_ts }); }
+    if (tc) { out.push({ seed: sd, id: "L-" + o.offer_id + "C", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: -tc, notes: "to " + o.from_owner + " · " + note, approved: o.updated_ts });
+              out.push({ seed: sd, id: "L-" + o.offer_id + "D", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: tc, notes: "from " + o.to_owner + " · " + note, approved: o.updated_ts }); }
   });
   var aw = SpreadsheetApp.getActive().getSheetByName("Awards"); // credit awards approved on the desk (daily.js §2c)
   if (aw) rows_("Awards").forEach(function (a) {
@@ -316,7 +317,7 @@ function ledger_(mode) {
 function pushLedger_() {
   var props = PropertiesService.getScriptProperties(), token = props.getProperty("GITHUB_TOKEN"), mode = syncMode_();
   var path = "_ops/inbox/credit_ledger" + (mode === "live" ? "" : "_test") + ".json";
-  var rows = ledger_(mode), body = JSON.stringify({ mode: mode, generated: new Date().toISOString(), source: "logic.js v" + VERSION, rows: rows }, null, 1);
+  var rows = ledger_(mode).filter(function (r) { return !r.seed; }), body = JSON.stringify({ mode: mode, generated: new Date().toISOString(), source: "logic.js v" + VERSION, rows: rows }, null, 1);
   var res = { ok: false, mode: mode, rows: rows.length };
   try {
     if (!token) throw new Error("SETUP: add Script property GITHUB_TOKEN so approvals post automatically");

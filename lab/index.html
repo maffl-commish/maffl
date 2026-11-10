@@ -3670,12 +3670,14 @@
   // an old declined offer, DM threads, tier + league chat, trade-block listings). Only the beta crew speaks; all of it is
   // tagged, so Reseed rebuilds it fresh and Wipe takes it out. Nothing seeded emails anyone or reaches ESPN or credits.
   function deskSeedHTML(d) {
-    var s = (d && d.seed) || {}, n = (s.offers || 0) + (s.msgs || 0) + (s.block || 0);
-    return '<div class="dsk"><details><summary>🎭 Seed data' + (n ? ' · ' + s.offers + ' offers · ' + s.msgs + ' messages' : ' · none') + '</summary>' +
-      '<div class="ditem">' + (n ? '<b>Staged ' + (s.at ? esc(ago(s.at)) + (ago(s.at) === "now" ? "" : " ago") : "") + '</b> <span class="meta">' + s.offers + ' offers · ' + s.msgs + ' messages · ' + s.block + ' trade-block listings</span>'
+    var s = (d && d.seed) || {}, n = (s.offers || 0) + (s.msgs || 0) + (s.block || 0) + (s.perks || 0), u = s.untagged || {}, un = (u.offers || 0) + (u.perks || 0) + (u.msgs || 0) + (u.block || 0);
+    return '<div class="dsk"><details><summary>🎭 Seed data' + (n ? ' · ' + s.offers + ' offers · ' + (s.perks || 0) + ' perks' : ' · none') + '</summary>' +
+      '<div class="ditem">' + (n ? '<b>Staged' + (s.at ? ' ' + esc(ago(s.at)) + (ago(s.at) === "now" ? "" : " ago") : "") + '</b> <span class="meta">' + s.offers + ' offers · ' + (s.perks || 0) + ' perk requests · ' + s.msgs + ' messages · ' + s.block + ' trade-block listings</span>'
         : '<b>Nothing staged</b>') +
       '<div class="btns">' + deskBtn("seed", "", n ? "🎭 Reseed" : "🎭 Build seed data", 1) + (n ? deskBtn("unseed", "", "Wipe seed") : '') + '</div></div>' +
-      '<p class="meta">Pretend league activity on today\'s ESPN rosters, real owners included: every beta tester gets an offer waiting, a counter waiting and an old declined offer with DM banter; a few private offers between other owners; tier and league chat; trade-block listings. All tagged: Reseed starts it fresh, Wipe takes it all out. No emails, nothing reaches ESPN or the credit ledger.</p></details></div>';
+      (un ? '<div class="ditem"><b>Earlier test data, not tagged</b> <span class="meta">' + u.offers + ' offers · ' + u.perks + ' perk requests (credit moves) · ' + u.msgs + ' messages · ' + u.block + ' trade-block listings</span>' +
+        '<div class="btns">' + deskBtn("adopt", "", "🏷️ Tag as staged") + '</div></div>' : '') +
+      '<p class="meta">Pretend league activity on today\'s ESPN rosters, real owners included: every beta tester gets an offer waiting, a counter waiting and an old declined offer with DM banter; an approved trade with credits (players move on the app\'s rosters; credits show in balances as test moves) and one waiting for your approval; perk requests approved, waiting and denied; tier and league chat; trade-block listings. All tagged: Reseed starts it fresh, Wipe takes it all out. No emails, no ESPN reminders, nothing reaches the credit ledger file.</p></details></div>';
   }
   function drawDesk() {
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
@@ -3803,8 +3805,8 @@
     if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
       toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
-    if (op === "seed" || op === "unseed") {
-      var SD = op === "seed" ? ["Build the seed data?", "Wipes any staged data first, then stages fresh pretend offers, chats and trade-block listings across the league from today\'s ESPN rosters. Real activity stays.", "Build it", false]
+    if (op === "seed" || op === "unseed" || op === "adopt") {
+      var SD = op === "adopt" ? ["Tag earlier test data as staged?", "Every offer, perk request (the test credit moves), chat message and trade-block listing made so far gets the staged tag, so Wipe seed takes it out too. Your desk log stays. Only for the beta: don\'t use this after go-live.", "Tag it", false] : op === "seed" ? ["Build the seed data?", "Wipes any staged data first, then stages fresh pretend offers, chats and trade-block listings across the league from today\'s ESPN rosters. Real activity stays.", "Build it", false]
         : ["Wipe the seed data?", "Takes out every staged offer, message and trade-block listing (including any card a tester answered). Real messages stay.", "Wipe it", true];
       confirmBox(SD[0], '<p class="p">' + SD[1] + '</p>', SD[2], SD[3]).then(function (yes) { if (!yes) return; busy(1);
         api("deskact", Object.assign(creds(), { op: op, target: "" })).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
@@ -3814,7 +3816,7 @@
               '<p class="p">' + (r.skipped || []).map(function (x) { return "• " + esc(x); }).join("<br>") + '</p>' +
               '<p class="meta">Usually ESPN didn\'t answer. Try again in a minute.</p><div class="btns"><button class="b" id="cno">Close</button></div>';
             $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); }; return; }
-          var m = op === "seed" ? "🎭 Staged " + r.offers + " offers, " + r.msgs + " messages" + ((r.skipped || []).length ? " · skipped " + r.skipped.join(", ") : "") : "🎭 Seed wiped";
+          var m = op === "adopt" ? "🏷️ Tagged " + r.offers + " offers, " + r.perks + " perks, " + r.msgs + " messages" : op === "seed" ? "🎭 Staged " + r.offers + " offers, " + (r.perks || 0) + " perks, " + r.msgs + " messages" + ((r.skipped || []).length ? " · skipped " + r.skipped.join(", ") : "") : "🎭 Seed wiped";
           afterChange(m); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); return; }
     if (op === "tourme") { tourClear(); closeDesk(); if (CH.open) closeChat(); tab("home"); toast("👋 Here's the tour"); return; }
