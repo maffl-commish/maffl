@@ -370,7 +370,7 @@ the Match tab and every rivalry panel. Swipe the card from its header or reactio
 - [ ] Guest view checked logged out
 - [ ] App becomes `index.html`; old home folds into League; old links still resolve
 - [ ] Every owner's email + phone in the production Sheet (not the repo); Text/Email buttons tested on iPhone + Android
-- [ ] Owner emails reviewed (how each one looks), then `OWNER_EMAILS = "live"` in logic.js. Until then only the beta crew + commish get owner emails (11/9)
+- [ ] Owner emails reviewed (how each one looks), then `OWNER_EMAILS = "live"` in logic.js. Until then only the commish gets owner emails; `"beta"` adds the beta crew once they've been told (11/9)
 - [ ] PINs emailed; Pulse announces the launch
 
 ## 10. Automation: the league runs itself (commish 11/3)
