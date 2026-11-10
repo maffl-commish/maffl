@@ -373,4 +373,22 @@ DAILY.putLines = function (lines) {
   var wk = dFinalWk_(); if (wk && dGet_("lines_w" + wk)) return { kept: wk };
   lines.week = wk || null; lines.published = new Date().toISOString(); if (wk) dPut_("lines_w" + wk, lines); dPut_("lines", lines); return { saved: wk };
 };
+// 🗞️ Drops step 4 (commish 11/9): what the 📣 Board shows from the Daily tab, read once: each week's published tier
+// headlines (lines_w<N>), ⭐ Elite 5 (elite5_hist) and 💰 Waiver auction drops for the tiers you can see. As Board posts
+// (MAFFL HQ, league room), newest first by publish time. Tonight's math is personal: never on the Board.
+DAILY.boardItems = function (tiers) {
+  var v = dTab_("Daily").getDataRange().getValues(), val = function (r) { try { return JSON.parse(r.slice(2).join("")); } catch (e) { return null; } }, out = [];
+  var post = function (id, ts, room, text, ev) { out.push({ id: id, ts: ts, room: room, owner: BOT, kind: "text", text: String(text).slice(0, CHAT_MAX), event: ev, ref: "", mentions: [], reply_to: "", deleted: false, pinned: false }); };
+  var TN = { U: "Upper", L: "Lower" }, team = function (o, t) { return t || teamName_(o) || o; };
+  for (var i = 1; i < v.length; i++) { var k = String(v[i][0]), x;
+    if (/^lines_w\d+$/.test(k) && (x = val(v[i]))) { var wk = k.slice(7), ts = x.published || x.at || v[i][1];
+      ["U", "L"].forEach(function (t) { var h = ((x.tiers || {})[t] || {}).headline; if (h) post("news-" + t + wk, ts, "league", "📰 " + TN[t] + " · Week " + wk + "\n" + h, "NEWS"); }); }
+    if (k === "elite5_hist" && (x = val(v[i]))) x.forEach(function (e) { post("e5-" + e.wk, e.at, "league", e.text, "ELITE5"); });
+    if (k === "drops" && (x = val(v[i]))) x.forEach(function (d) { if (d.type !== "faab" || tiers.indexOf(d.tier) < 0) return;
+      var spent = d.items.reduce(function (a, it) { return a + it.bid; }, 0);
+      post(d.id, d.at, "tier:" + d.tier, "💰 Waiver auction · " + TN[d.tier] + " · " + d.items.length + " won · $" + spent + "\n" + d.items.slice(0, 8).map(function (it) {
+        return "$" + it.bid + " " + it.n + " → " + team(it.owner, it.team) + (it.lost && it.lost.length ? " (lost: " + it.lost.map(function (y) { return "$" + y.bid; }).join(", ") + ")" : ""); }).join("\n"), "FAAB"); });
+  }
+  return out;
+};
 DAILY.get = function (k) { return dGet_(k); }; DAILY.put = function (k, v) { dPut_(k, v); }; // the Daily tab, for the core and parts (⭐ elite5_hist)

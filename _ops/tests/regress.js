@@ -81,6 +81,7 @@ out("putlines wk out", P({ action: "putlines", key: "k1", lines: E5 }));
 out("putlines wk out again", P({ action: "putlines", key: "k1", lines: E5 }));
 // Drops (11/9): the seeded Week 8 lines are already out, so putlines keeps them (and saves no new Elite 5).
 out("board elite5", (P(Object.assign({ action: "board" }, me)).posts || []).filter((x) => x.event === "ELITE5").map((x) => x.text));
+out("board drops", (P(Object.assign({ action: "board" }, me)).posts || []).filter((x) => /NEWS|FAAB|ELITE5/.test(x.event)).map((x) => [x.event, x.room, x.text.split("\n")[0]]));
 out("summary end", P(Object.assign({ action: "summary" }, me)));
 out("sheet Polls", m.sheet("Polls"));
 out("sheet Events len", (m.sheet("Events") || []).length);

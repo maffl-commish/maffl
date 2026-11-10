@@ -174,8 +174,7 @@ function board_(meRaw) {
     if (r.kind === "announce") { var k = r.owner + "|" + String(r.text); if (seen[k] && Math.abs(new Date(r.ts) - seen[k].t) < 6e5) return; seen[k] = { t: new Date(r.ts).getTime() }; }
     out.push(m);
   });
-  try { need_("daily"); (DAILY.get("elite5_hist") || []).forEach(function (e) { // ⭐ Elite 5 lives here, not in chat
-    out.push({ id: "e5-" + e.wk, ts: e.at, room: "league", owner: BOT, kind: "text", text: e.text, event: "ELITE5", ref: "", mentions: [], reply_to: "", deleted: false, pinned: false }); }); } catch (e) {}
+  try { need_("daily"); out = out.concat(DAILY.boardItems(["U", "L"].filter(function (t) { return canRoom_(me, "tier:" + t); }))); } catch (e) {} // 🗞️ published drops (headlines, Elite 5, waiver auctions)
   out.sort(function (a, b) { return new Date(a.ts) - new Date(b.ts); });
   return { ok: true, posts: out.reverse().slice(0, 300) };
 }
