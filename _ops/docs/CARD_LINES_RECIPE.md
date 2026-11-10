@@ -1,6 +1,8 @@
 # Card lines recipe (REEL daily run → short written lines on the cards)
 
-Run by `.github/workflows/card-lines.yml` after each daily run (5 AM + 5 PM ET). You are writing the few words
+Run by `.github/workflows/card-lines.yml` once per week now (drops, 11/9): the first daily run after a week goes
+final in both tiers starts it, and what you write is published and **kept** for that week (never rewritten). Write
+it as the week's edition: the week that just finished, and the coming week's games. You are writing the few words
 of personality on REEL's Home cards. The app shows plain facts if you don't run, so a missing line is fine and a
 wrong line is not.
 

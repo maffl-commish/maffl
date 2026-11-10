@@ -146,7 +146,8 @@ function putLines_(b) {
   if (!key || String(b.key || "") !== key) return { ok: false, error: "bad key" };
   if (!b.lines || typeof b.lines !== "object") return { ok: false, error: "no lines" };
   var s = JSON.stringify(b.lines); if (s.length > 60000) return { ok: false, error: "too long" };
-  need_("daily"); DAILY.putLines(b.lines); var e5 = null; try { e5 = elitePost_(b.lines); } catch (e) {} return { ok: true, elite5: e5 };
+  need_("daily"); var r = DAILY.putLines(b.lines); if (r && r.kept) return { ok: true, kept: r.kept }; // that week's lines are already out (drops: published once)
+  var e5 = null; try { e5 = elitePost_(b.lines); } catch (e) {} return { ok: true, saved: r && r.saved, elite5: e5 };
 }
 // ⭐ Elite 5 on the record (commish 11/9): the first lines after a week goes final (both tiers) save that week's Elite 5,
 // once per week, to Daily key elite5_hist; the 📣 Board shows it. Not posted to chat (commish 11/9, later). "Out" compares

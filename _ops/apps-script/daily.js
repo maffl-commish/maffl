@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "11"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "12"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -313,12 +313,23 @@ DAILY.view = function () {
 };
 // After a run: ask GitHub to start the card-lines workflow (Claude writes the lines, posts them back via putlines).
 // Uses the GITHUB_TOKEN Script property (contents: write is enough for repository_dispatch).
+// 🗞️ Drops, step 1 (commish 11/9: the Week 8 headline changed between runs): card lines are published ONCE per final week
+// and then kept. The first lines after a week goes final (both tiers) are saved as lines_w<N>; later runs don't start the
+// card-lines robot again, and a late putlines for a week that's out is ignored. Lines written before this change are
+// adopted as that week's drop (no rewrite).
+function dFinalWk_() { var T = (dGet_("snapshot") || {}).tiers || {}; return Math.min((T.U || {}).last || 0, (T.L || {}).last || 0); }
 DAILY.afterRun = function () {
+  var wk = dFinalWk_();
+  if (wk) { if (dGet_("lines_w" + wk)) return "kept: Week " + wk + " lines are out";
+    var cur = dGet_("lines"); if (cur && cur.week == null) { cur.week = wk; cur.published = cur.at || new Date().toISOString(); dPut_("lines_w" + wk, cur); dPut_("lines", cur); try { elitePost_(cur); } catch (e) {} return "kept: adopted Week " + wk + " lines"; } }
   var token = PropertiesService.getScriptProperties().getProperty("GITHUB_TOKEN"); if (!token) return "off: add the GITHUB_TOKEN Script property";
   var r = UrlFetchApp.fetch("https://api.github.com/repos/" + REPO + "/dispatches", { method: "post", contentType: "application/json", muteHttpExceptions: true,
     headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" }, payload: JSON.stringify({ event_type: "daily-lines" }) });
   if (r.getResponseCode() >= 300) { deskPost_("alert", "Couldn't start the card-lines robot (GitHub said " + r.getResponseCode() + "). Cards show plain facts until it works.", "", "DAILY"); return "GitHub said " + r.getResponseCode(); }
   return "started";
 };
-DAILY.putLines = function (lines) { dPut_("lines", lines); };
+DAILY.putLines = function (lines) {
+  var wk = dFinalWk_(); if (wk && dGet_("lines_w" + wk)) return { kept: wk };
+  lines.week = wk || null; lines.published = new Date().toISOString(); if (wk) dPut_("lines_w" + wk, lines); dPut_("lines", lines); return { saved: wk };
+};
 DAILY.get = function (k) { return dGet_(k); }; DAILY.put = function (k, v) { dPut_(k, v); }; // the Daily tab, for the core and parts (⭐ elite5_hist)

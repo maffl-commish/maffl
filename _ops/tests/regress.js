@@ -73,8 +73,9 @@ out("resync", P(Object.assign({ action: "resync" }, me)));
 out("request", P({ action: "request", owner: "Tony Brooks", note: "pls" }));
 out("botpost badkey", P({ action: "botpost", key: "nope", title: "x" }));
 m.prop("DESK_KEY", "k1"); const E5 = { elite5: ["Mike Murello", "Joe Reilly", "Braiden Snyder", "Dominic Nicastro", "Tony Brooks"].map((o) => ({ owner: o, note: "x" })) };
-out("putlines elite5", P({ action: "putlines", key: "k1", lines: E5 }));
-out("putlines elite5 again", P({ action: "putlines", key: "k1", lines: E5 }));
+out("putlines wk out", P({ action: "putlines", key: "k1", lines: E5 }));
+out("putlines wk out again", P({ action: "putlines", key: "k1", lines: E5 }));
+// Drops (11/9): the seeded Week 8 lines are already out, so putlines keeps them (and saves no new Elite 5).
 out("board elite5", (P(Object.assign({ action: "board" }, me)).posts || []).filter((x) => x.event === "ELITE5").map((x) => x.text));
 out("summary end", P(Object.assign({ action: "summary" }, me)));
 out("sheet Polls", m.sheet("Polls"));

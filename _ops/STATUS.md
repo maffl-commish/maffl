@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 
 ## Recently shipped
 
+- 2026-11-09 · REEL · 🗞️ Drops step 1 (backend v0.45, daily VER 12): card lines are published once per final week and kept. The card-lines robot only starts when the newest final week has no lines (`lines_w<N>` in the Daily tab); a late putlines for that week is ignored; lines already out (Week 8) are adopted as-is, so the Week 8 headline stops changing. Recipe updated. Next: waiver auction drop, Monday tonight's-math drop, Board from stored drops.
 - 2026-11-09 · REEL · 📥 Commish desk header: the ‹ back button is gone; ✕ close sits top right with ↻ refresh just left of it (commish: X out top right). Lab only.
 - 2026-11-09 · REEL · Home: the 📥 Commish desk "Needs you" card is gone (commish: the red count on the header 📥 is enough; his reel is news like every owner's). Home badge no longer counts desk to-dos. App only.
 - 2026-11-09 · REEL · 📥 Commish desk button moved into the header, left of your initials: round gold 📥 with the red to-do count (commish). 🧪 Feedback stays floating at the bottom right. App only.
