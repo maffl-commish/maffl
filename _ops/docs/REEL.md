@@ -96,7 +96,6 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Decided 11/7 (evening): chat is part of the page column (no floating layer; the tab bar hides while typing); polls vote right in chat (bot posts kind "poll" with the poll id; older poll posts match by question), same results-after-you-vote rule as Home; tier chats get trades only from the daily run (free-agent adds/drops stay in the Moves tab).
 
 **Commish backlog (added 11/6, not built)**
-- ⚖️ Trade grade v2 follow-up: a real age source for Future value (ESPN's league API has none; today it's years since first MAFFL draft). Tune weights once real trades come through.
 
 **Beta kit follow-ups (after the first testers)**
 - Desk summary of the tap log (where they spend time, where they drop off); feedback inside the Chat sheet (the button sits under it today).
