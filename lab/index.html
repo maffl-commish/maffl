@@ -563,6 +563,19 @@
   .chlist{display:flex;flex-direction:column;margin-top:6px}.chrow{display:flex;gap:10px;align-items:center;text-align:left;padding:10px 2px;border-bottom:1px solid var(--border);background:none}
   .chrow:last-child{border:0}.chrow>span:not(.cav){flex:1;min-width:0}.chrow .cav{flex:none;width:36px;height:36px}.chrow b{display:block;font:700 15px var(--display);color:var(--navy)}.chrow small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .chrow i{font-style:normal;min-width:22px;height:22px;line-height:22px;border-radius:11px;background:var(--loss);color:#fff;font:700 12px var(--body);text-align:center;padding:0 6px}
+  .mxh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin-top:2px}
+  .mxs{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--navy-soft);min-width:0}
+  .mxs.lead{background:var(--gold-soft);box-shadow:inset 0 0 0 2px var(--gold)}.mxs .cav{grid-row:span 2;width:32px;height:32px;font-size:12px}
+  .mxt{font:700 13px var(--display);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mxs small{display:none}
+  .mxn{font:700 24px/1 var(--display);color:var(--navy)}.mxv{font:800 12px var(--display);color:var(--gold-dark);letter-spacing:.08em}
+  .mstory{font:600 16px/1.4 var(--body);color:var(--navy);margin-top:10px}
+  .mxbar{margin-top:10px}.mxbl{font:700 11px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .mxtrack{height:8px;border-radius:4px;background:var(--border);overflow:hidden;margin:4px 0}.mxtrack i{display:block;height:100%;background:var(--navy)}
+  .mxbn{display:flex;justify-content:space-between;font-size:13px;color:var(--navy)}
+  .mxch{font:700 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+  .mxp{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:7px 0;border-bottom:1px solid var(--border);background:none}
+  .mxp span:first-child{flex:1;min-width:0}.mxp b{display:block;font:700 15px/1.2 var(--display);color:var(--navy)}.mxp small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mxj{font:700 14px var(--display);color:var(--gold-dark)}.mxj:before{content:"proj ";font:600 11px var(--body);color:var(--muted)}.mxdone{font-size:12px;color:var(--muted);margin:4px 0}
   .fscore{display:flex;justify-content:space-between;margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--paper,#f4f6fa);font:600 14px var(--body);color:var(--muted)}.fscore b{font:700 22px var(--display);color:var(--navy);margin-left:6px}
   .fbid{font:700 15px var(--display);color:var(--navy);min-width:38px}
   .bdday{font:800 11px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 2px 0}
@@ -4275,10 +4288,25 @@
     else chance = up ? opN + " is favored to catch you." : "It'll take a big night to pull this out.";
     var espn = Math.abs(m) < 0.05 ? "ESPN calls it dead even." : m > 0 ? "ESPN says you'll win by " + f1(m) + "." : "ESPN says " + opN + " wins by " + f1(-m) + ".";
     if (!Me.left.length && !Op.left.length) espn = ""; sub = chance + (espn ? " " + espn : "");
-    return { id: "math:" + d.wk, at: d.at, scope: "me", c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h, face: '<div class="fc"><div class="fscore hero"><span>You <b>' + f1(Me.pts) + '</b></span><span>' + esc(opN) + ' <b>' + f1(Op.pts) + '</b></span></div>' +
+    // Infographic (commish 11/9: "just a bunch of text"): the matchup band, the story, ESPN's projected final as a bar,
+    // then each side's players still to play with their NFL game and kickoff; every player opens his profile and the
+    // card opens your matchup on Match. Older drops have no game info: it's filled from the live scoreboard when it can be.
+    var liveP = {}; ((LIVE && LIVE.games) || []).forEach(function (g) { [g.home, g.away].forEach(function (sd) { ((sd && sd.players) || []).forEach(function (p) { liveP[p.n] = p; }); }); });
+    var kickTxt = function (k) { if (!k) return ""; var t = new Date(k); return t.toLocaleDateString("en-US", { weekday: "short", timeZone: "America/New_York" }) + " " + t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }).replace(":00", ""); };
+    var side = function (x, mine) { var lead = x.pts >= (x === Me ? Op : Me).pts;
+      return '<div class="mxs' + (lead ? ' lead' : '') + '"><span class="cav" style="background:' + AVC[hashStr(norm(x.owner)) % AVC.length] + '">' + esc(initials(x.owner)) + '</span><b class="mxt">' + esc(mine ? "You" : opN) + '</b><small>' + esc(x.team) + '</small><span class="mxn">' + f1(x.pts) + '</span></div>'; };
+    var pf = function (x) { return Math.round((x.pts + x.lp) * 10) / 10; }, pm = pf(Me), po = pf(Op), share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
+    var plist = function (x, label) { if (!x.left.length) return '<div class="mxch">' + esc(label) + ' · all done ✓</div>';
+      return '<div class="mxch">' + esc(label) + ' · proj ' + x.lp + '</div>' + x.left.slice(0, 3).map(function (p) { var lv = liveP[p.n] || {}, opp = p.opp || lv.opp || "", kk = p.kick || lv.kick || 0;
+        return '<button class="mxp" data-player="' + esc(x.owner) + '|' + esc(p.n) + '@' + esc(p.pos || "") + '"><span><b>' + esc(p.n) + '</b><small>' + esc([p.pos, p.tm, opp, kickTxt(kk)].filter(Boolean).join(" · ")) + '</small></span>' +
+          (p.proj != null ? '<span class="mxj">' + p.proj + '</span>' : '') + '</button>'; }).join("") +
+        (x.left.length > 3 ? '<p class="mxdone">+' + (x.left.length - 3) + ' more on Match</p>' : ''); };
+    return { id: "math:" + d.wk, at: d.at, scope: "me", c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h, face: '<div class="fc">' +
+      '<div class="mxh">' + side(Me, true) + '<div class="mxv">VS</div>' + side(Op, false) + '</div>' +
       '<p class="mstory">' + esc(h) + ' ' + esc(sub) + '</p>' +
-      [[Me, "Yours still to play"], [Op, opN + "'s still to play"]].map(function (x) { return x[0].left.length && (Me.left.length > 2 || Op.left.length > 2) ? '<p class="fs" style="margin-top:10px">' + esc(x[1]) + ' · proj ' + x[0].lp + '</p><div class="frows">' +
-        x[0].left.map(function (p) { return '<div class="frow"><span style="flex:1"><b>' + esc(p.n) + '</b> <small class="meta">' + esc([p.pos, p.tm].filter(Boolean).join(" · ")) + '</small></span><span class="meta">' + (p.proj != null ? 'proj ' + p.proj : '') + '</span></div>'; }).join("") + '</div>' : ''; }).join("") + '</div>' } };
+      (Me.left.length || Op.left.length ? '<div class="mxbar"><div class="mxbl"><span>ESPN projects</span></div><div class="mxtrack"><i style="width:' + share + '%"></i></div><div class="mxbn"><b>You ' + pm + '</b><b>' + esc(opN) + ' ' + po + '</b></div></div>' : '') +
+      plist(Me, "Yours to play") + plist(Op, opN + "'s to play") +
+      '<div class="btns"><button class="b pri" data-go="match">⚔️ Open your matchup</button></div></div>' } };
   }
   // 💰 Waiver auction (commish 11/9): the wire is the FAAB report, not every add and drop. 🗞️ It's a drop: the daily run
   // publishes each waiver run once (DLY.drops, type "faab") with the bids as they stood, and this card shows your tier's
