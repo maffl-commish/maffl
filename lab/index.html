@@ -801,7 +801,7 @@
   .dkbtn i{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px;box-shadow:0 0 0 2px var(--surface)}
   .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
   .dk.on{display:flex}
-  .dkq{margin:8px 0 6px;font-size:16px}
+  .dkq{margin:8px 0 6px;font-size:16px}.dkmore{display:block;width:100%;margin:8px 0 4px}
   .dkhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:var(--navy);color:#fff}
   .dkhead>div{flex:1}.dkhead .ct{font:700 22px var(--display);letter-spacing:.02em}.dkhead small{font:600 12px var(--body);color:rgba(255,255,255,.65)}
   .dkhead .cb{color:var(--gold);font-size:24px;min-width:44px;min-height:44px;border:0;background:none}
@@ -825,7 +825,6 @@
   .dkchips{display:flex;gap:6px;overflow-x:auto;margin-top:8px;padding-bottom:2px}.dkchips::-webkit-scrollbar{display:none}
   .dkchips button{flex:0 0 auto;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 11px;font:700 12px var(--body);color:var(--ink2)}
   .dkchips button.on{background:var(--navy);color:#fff;border-color:var(--navy)}.dkchips i{font-style:normal;opacity:.6;margin-left:2px}
-  .dknote{display:flex;gap:8px;margin-top:10px}.dknote .field{flex:1;margin:0}.dknote .b{flex:0 0 auto;width:auto;padding:0 16px}
   .dklog{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
   .dkday{font:700 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:10px 12px 4px;background:var(--page-bg)}
   .dkrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-top:1px solid var(--border);border-left:3px solid transparent}
@@ -3627,17 +3626,20 @@
     if (!DK.log) return ld("Loading the log…");
     var all = DK.log.filter(function (m) { return m.kind !== "offer"; }).concat(tradeRows()).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); }), cnt = {}; all.forEach(function (m) { var k = deskKind(m); cnt[k] = (cnt[k] || 0) + 1; });
     var F = [["all", "All"], ["trades", "🤝 Trades"], ["alerts", "⚠️ Alerts"], ["robots", "🤖 Robots"], ["owners", "👥 Owners"], ["feedback", "🧪 Feedback"], ["notes", "📝 Notes"]].filter(function (f) { return f[0] === "all" || cnt[f[0]]; });
-    var q = norm(DK.q || ""), list = all.filter(function (m) { return (DK.filter === "all" || deskKind(m) === DK.filter) && (!q || (m.q || norm(m.text || "") + " " + norm(m.ref || "")).indexOf(q) >= 0); }), lastDay = "";
+    // Keep it light (commish 11/9): today + yesterday by default, "Show earlier" adds a week at a time; a search looks through everything.
+    var q = norm(DK.q || ""), days = DK.days || 2, cut = new Date(); cut.setHours(0, 0, 0, 0); cut.setDate(cut.getDate() - (days - 1));
+    var hit = all.filter(function (m) { return (DK.filter === "all" || deskKind(m) === DK.filter) && (!q || (m.q || norm(m.text || "") + " " + norm(m.ref || "")).indexOf(q) >= 0); });
+    var list = q ? hit : hit.filter(function (m) { return new Date(m.ts) >= cut; }), older = hit.length - list.length, lastDay = "";
     return '<div class="dkchips">' + F.map(function (f) { return '<button data-dkf="' + f[0] + '"' + (DK.filter === f[0] ? ' class="on"' : '') + '>' + f[1] + (f[0] !== "all" ? ' <i>' + cnt[f[0]] + '</i>' : '') + '</button>'; }).join("") + '</div>' +
       '<input class="field dkq" id="dkq" placeholder="🔎 Search: owner, team, player, offer ID" value="' + esc(DK.q || "") + '" autocomplete="off">' +
-      '<div class="dknote"><input class="field" id="dknote" maxlength="300" placeholder="Add a note to the log (only you see it)"><button class="b" id="dknotego">Add</button></div>' +
       (list.length ? '<div class="dklog">' + list.map(function (m) {
         var day = dayLabel(m.ts), head = day !== lastDay ? '<div class="dkday">' + esc(day) + '</div>' : ''; lastDay = day;
         var k = deskKind(m), html = deskMsg(m), hd = (html.match(/<div class="cevt">([\s\S]*?)<\/div>/) || [])[1] || esc(m.text || ""), body = html.replace(/<div class="cevt">[\s\S]*?<\/div>/, ""), open = DK.openRow === m.id;
         if (k === "notes") { hd = "📝 " + esc(m.text); body = ""; }
         if (m.kind === "trade") { hd = m.hd; body = m.body; }
         return head + '<div class="dkrow ' + k + (open ? ' open' : '') + '" data-dkrow="' + esc(m.id) + '"><div class="tx"><div class="hd">' + hd + '</div>' + (open && body ? '<div class="bd">' + body + '</div>' : '') + '</div><small>' + esc(new Date(m.ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })) + (body ? (open ? ' ▴' : ' ▾') : '') + '</small></div>';
-      }).join("") + '</div>' : '<p class="meta" style="padding:14px 4px">Nothing here yet.</p>');
+      }).join("") + '</div>' : '<p class="meta" style="padding:14px 4px">' + (older ? 'Nothing in the last ' + days + ' days.' : 'Nothing here yet.') + '</p>') +
+      (older ? '<button class="b sm dkmore" id="dkmore">Show earlier · ' + older + ' more ›</button>' : '');
   }
   // Tile detail: what it is, its last result, and the one action it has (commish 11/6: the dials should do something).
   function deskTileBox(k) {
@@ -3715,9 +3717,7 @@
     if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }
     b.scrollTop = st;
     var dq = $("dkq"); if (dq) dq.oninput = function () { var at = dq.selectionStart; DK.q = dq.value; drawDesk(); var d2 = $("dkq"); if (d2) { d2.focus(); d2.setSelectionRange(at, at); } };
-    var go = $("dknotego"); if (go) go.onclick = function () { var v = ($("dknote").value || "").trim(); if (!v) return; busy(1);
-      api("chatsend", Object.assign(creds(), { room: "desk", text: v, mentions: [] }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't save"); return; } toast("Noted ✓"); loadDeskLog(); })
-        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+    var mo = $("dkmore"); if (mo) mo.onclick = function () { DK.days = (DK.days || 2) + 7; drawDesk(); };
   }
   // 📣 Commish alert (desk): one announcement into every group chat (league + both tiers), pinned on top of each.
   function deskAlertHTML() { return '<div class="dsk"><div class="dkpoll"><span>📣 Commish alert</span><button class="b sm pri" id="dkalert">＋ New alert</button></div><div class="meta">Posts to League chat and both tier chats, pinned on top.</div></div>'; }
@@ -3758,7 +3758,7 @@
   }
   function deskRefresh() { if (!DK.open) return; DESK = null; loadDesk().then(drawDesk); loadDeskLog(); }
   function openDesk() {
-    if (!ME || !ME.commish) return; DK.open = true; DK.secs = {}; $("desk").classList.add("on"); document.body.style.overflow = "hidden"; tap("sheet", "desk");
+    if (!ME || !ME.commish) return; DK.open = true; DK.secs = {}; DK.days = 2; $("desk").classList.add("on"); document.body.style.overflow = "hidden"; tap("sheet", "desk");
     $("dkupd").textContent = ""; drawDesk(); loadDesk().then(function () { drawDesk(); $("dkupd").textContent = "Updated " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }); loadDeskLog();
   }
   function closeDesk() { DK.open = false; $("desk").classList.remove("on"); document.body.style.overflow = ""; deskBadge(); }
