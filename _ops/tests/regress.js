@@ -98,4 +98,13 @@ setTimeout(() => {
   out("handle set", P(Object.assign({ action: "savesettings", email: "m@x.test", handle: "@Commish_Mike" }, me)).handle);
   out("handles", P(Object.assign({ action: "summary" }, me)).handles);
   out("chat @handle", (() => { P(Object.assign({ action: "chatsend", room: "league", text: "@Joe you up? cc @braiden" }, me)); const c = P(Object.assign({ action: "chat", room: "league" }, me)); return c.messages[c.messages.length - 1].mentions; })());
+  // 🎭 seed data: build, rebuild (wipes first), what a tester sees, wipe; nothing emails
+  const mail0 = m.mail().length;
+  out("seed", P(Object.assign({ action: "deskact", op: "seed", target: "" }, me)));
+  out("reseed", P(Object.assign({ action: "deskact", op: "seed", target: "" }, me)));
+  out("seed desk", P(Object.assign({ action: "desk" }, me)).seed.offers);
+  out("seed tester offers", (() => { const ch = { owner: "Charles Lavrinc", pin: pins["Charles Lavrinc"] }; return P(Object.assign({ action: "summary" }, ch)).offers.filter((o) => /^TSD/.test(o.id)).map((o) => [o.from, o.to, o.status, o.reason]); })());
+  out("unseed", P(Object.assign({ action: "deskact", op: "unseed", target: "" }, me)));
+  out("unseed desk", P(Object.assign({ action: "desk" }, me)).seed);
+  out("seed mail", m.mail().length - mail0);
 }, 2200);

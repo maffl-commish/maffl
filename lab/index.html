@@ -3642,9 +3642,16 @@
       '<div class="btns">' + deskBtn("tour", "", "Replay for them") + deskBtn("tour", "*", "Everyone") + '</div></div>' +
       '<p class="meta">They see it the next time they open the app, on any phone they use. Each tab\'s part plays on their first visit to it.</p></details></div>';
   }
-  // 🎭 Seed data (Go-live section): staged beta activity, tagged so it can be rebuilt or wiped. Not built yet (11/9).
-  function deskSeedHTML() {
-    return '<div class="dsk"><details><summary>🎭 Seed data</summary><p class="meta">Coming next: staged chat, offers and trade-block activity on the real rosters for the beta crew, with Reseed and Wipe seed buttons. Nothing staged yet.</p></details></div>';
+  // 🎭 Seed data (Go-live section, commish 11/9): staged beta activity on the real ESPN rosters (open offers, a counter,
+  // an old declined offer, DM threads, tier + league chat, trade-block listings). Only the beta crew speaks; all of it is
+  // tagged, so Reseed rebuilds it fresh and Wipe takes it out. Nothing seeded emails anyone or reaches ESPN or credits.
+  function deskSeedHTML(d) {
+    var s = (d && d.seed) || {}, n = (s.offers || 0) + (s.msgs || 0) + (s.block || 0);
+    return '<div class="dsk"><details><summary>🎭 Seed data' + (n ? ' · ' + s.offers + ' offers · ' + s.msgs + ' messages' : ' · none') + '</summary>' +
+      '<div class="ditem">' + (n ? '<b>Staged ' + (s.at ? esc(ago(s.at)) + (ago(s.at) === "now" ? "" : " ago") : "") + '</b> <span class="meta">' + s.offers + ' offers · ' + s.msgs + ' messages · ' + s.block + ' trade-block listings</span>'
+        : '<b>Nothing staged</b>') +
+      '<div class="btns">' + deskBtn("seed", "", n ? "🎭 Reseed" : "🎭 Build seed data", 1) + (n ? deskBtn("unseed", "", "Wipe seed") : '') + '</div></div>' +
+      '<p class="meta">Built from today\'s ESPN rosters, for the beta crew in each tier (needs 2+ testers in a tier): an offer waiting, a counter, an old declined offer, DM threads, tier and league chat, a few trade-block listings. Only beta testers do the talking. Tagged, so Reseed starts it fresh and Wipe takes it all out. No emails, nothing reaches ESPN or the credit ledger.</p></details></div>';
   }
   function drawDesk() {
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
@@ -3656,7 +3663,7 @@
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
       '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
-      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + deskSeedHTML() +
+      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + deskSeedHTML(d) +
       '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Robots, owners, feedback, notes", today ? today + " today" : "", deskLogHTML());
     DK.secs = DK.secs || {}; Array.prototype.forEach.call(b.querySelectorAll("details"), function (x) { var k = x.dataset.sec || (x.querySelector("summary") || x).textContent.replace(/[\d·]+/g, "").trim().slice(0, 24); x.dataset.sec = k; x.open = !!DK.secs[k]; });
     if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }
@@ -3767,6 +3774,14 @@
     if (op === "tick") { busy(1); api("deskact", Object.assign(creds(), { op: "tick", target: "" })).then(function (r) { busy(0);
       toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
+    if (op === "seed" || op === "unseed") {
+      var SD = op === "seed" ? ["Build the seed data?", "Wipes any staged data first, then stages fresh offers, chats and trade-block listings for the beta crew from today\'s ESPN rosters. Testers\' own real activity stays.", "Build it", false]
+        : ["Wipe the seed data?", "Takes out every staged offer, message and trade-block listing (including any card a tester answered). Testers\' own messages stay.", "Wipe it", true];
+      confirmBox(SD[0], '<p class="p">' + SD[1] + '</p>', SD[2], SD[3]).then(function (yes) { if (!yes) return; busy(1);
+        api("deskact", Object.assign(creds(), { op: op, target: "" })).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
+          var m = op === "seed" ? "🎭 Staged " + r.offers + " offers, " + r.msgs + " messages" + ((r.skipped || []).length ? " · skipped " + r.skipped.join(", ") : "") : "🎭 Seed wiped";
+          DESK = null; loadDesk(); if (DK.open) loadDeskLog(); afterChange(m); })
+          .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); return; }
     if (op === "tourme") { tourClear(); closeDesk(); if (CH.open) closeChat(); tab("home"); toast("👋 Here's the tour"); return; }
     if (op === "tour") {
       if (who !== "*") { who = ($("tourpick") || {}).value; if (!who) { toast("Pick an owner first"); return; } t = teamOf(who).team || who; }

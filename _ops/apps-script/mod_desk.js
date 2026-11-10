@@ -45,7 +45,7 @@ function desk_(me) {
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_() };
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_() };
 }
 // 👋 Welcome tour reset (commish 11/7): a new stamp in the Owners "tour" column; summary hands it to that owner's app,
 // which clears its "seen" marks once per new stamp and replays the tour. "T" prefix keeps the Sheet from making it a date.
@@ -69,6 +69,8 @@ function deskAct_(me, b) {
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
     deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }
+  if (b.op === "seed") return seedBuild_(me);
+  if (b.op === "unseed") { var w = seedWipe_(); deskPost_("note", "🎭 Seed data wiped (" + w.offers + " offers, " + w.msgs + " messages, " + w.block + " trade-block listings).", "", "SEED"); return Object.assign({ ok: true }, w); }
   var o = ownerRow_(b.target); if (!o) return { ok: false, error: "Unknown owner" };
   if (b.op === "issue") {
     var pin = setPhrase_(o); closeRequests_(o.owner);
@@ -289,3 +291,95 @@ function tickReconcile_(sent, now) {
   return problems.length;
 }
 
+
+// ---------------------------------------------------------------- 🎭 seed data (commish 11/9, desk → Go-live)
+// Staged beta activity on the real ESPN rosters, so the beta crew opens an app that's already busy: open offers, a counter,
+// an old declined offer, DM threads, tier + league chat, trade-block listings. Only the beta crew (+ commish) "speak";
+// no other owner's name goes on a message or offer. Nothing seeded is ACCEPTED (no review items) and nothing emails.
+// Tagged so Wipe / Reseed can find it: Offers ids "TSD…", Chat ids "MSD…" (plus any chat card pointing at a TSD offer),
+// trade-block Events with week "seed" (Events stays append-only: wiping appends "off" rows).
+var SEED_OFFER = "TSD", SEED_MSG = "MSD";
+function seedId_(pre) { return pre + Utilities.getUuid().replace(/-/g, "").slice(0, 8).toUpperCase(); }
+function seedBlock_() { // seeded listings still on the block: ref -> owner
+  var on = {}; rows_("Events").forEach(function (e) { if (e.type !== "block") return;
+    if (e.value === "on") { if (String(e.week) === "seed") on[e.ref] = e.owner; else delete on[e.ref]; } else if (on[e.ref] && norm_(on[e.ref]) === norm_(e.owner)) delete on[e.ref]; });
+  return on;
+}
+function seedInfo_() {
+  var isS = function (v, p) { return String(v || "").indexOf(p) === 0; };
+  return { offers: rows_("Offers").filter(function (r) { return isS(r.offer_id, SEED_OFFER); }).length,
+    msgs: rows_("Chat").filter(function (r) { return isS(r.msg_id, SEED_MSG); }).length, block: Object.keys(seedBlock_()).length,
+    at: PropertiesService.getScriptProperties().getProperty("SEED_AT") || "" };
+}
+function seedWipe_() {
+  var out = { offers: 0, msgs: 0, block: 0 }, del = function (name, test) {
+    var sh = sheet_(name), rs = rows_(name).filter(test).map(function (r) { return r._row; }).sort(function (a, b) { return b - a; });
+    rs.forEach(function (r) { sh.deleteRow(r); }); sheet_(name); return rs.length; };
+  out.offers = del("Offers", function (r) { return String(r.offer_id).indexOf(SEED_OFFER) === 0; });
+  out.msgs = del("Chat", function (r) { return String(r.msg_id).indexOf(SEED_MSG) === 0 || String(r.ref).indexOf(SEED_OFFER) === 0; });
+  var bl = seedBlock_(); Object.keys(bl).forEach(function (ref) { sheet_("Events").appendRow(cells_([new Date(), bl[ref], "block", ref, "off", "seed", ""])); out.block++; });
+  PropertiesService.getScriptProperties().deleteProperty("SEED_AT");
+  return out;
+}
+function seedBuild_(me) {
+  var wiped = seedWipe_(), now = Date.now(), at = function (min) { return new Date(now - min * 6e4); };
+  var crew = owners_().filter(function (o) { return isBeta_(o) && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); })
+    .sort(function (a, b) { return (String(a.is_commish) === "Y") - (String(b.is_commish) === "Y") || String(a.owner).localeCompare(String(b.owner)); }); // commish last
+  var chat = [], offers = [], block = [], skipped = [];
+  var first = function (o) { return String(o.owner).split(/[ \/]/)[0]; };
+  var msg = function (min, room, owner, text, mentions, kind, ref, ev) { chat.push([seedId_(SEED_MSG), at(min), room, owner, kind || "text", safe_(text || ""), ref || "", ev || "", JSON.stringify(mentions || []), "", "", ""]); };
+  var offer = function (min, upd, from, to, tier, give, get, gc, tc, note, status, reason, reasons) { var id = seedId_(SEED_OFFER);
+    offers.push(cells_([id, at(min), from.owner, to.owner, tier, JSON.stringify(give), JSON.stringify(get), gc, tc, note, status, at(upd), reason || "", JSON.stringify(reasons || []), ""])); return id; };
+  var credits = function (o, n) { try { var h = spendable_(o.owner); return h !== null && h >= n ? n : 0; } catch (e) { return 0; } };
+  ["L", "U"].forEach(function (t) {
+    var c = crew.filter(function (o) { return String(o.tier) === t; });
+    if (c.length < 2) { if (c.length) skipped.push((t === "U" ? "Upper" : "Lower") + " (only " + first(c[0]) + ")"); return; }
+    var r; try { r = rosters_(t); } catch (e) { skipped.push((t === "U" ? "Upper" : "Lower") + " (ESPN rosters didn't load)"); return; }
+    var pl = {}; c.forEach(function (o) { var tm = ((r && r.teams) || []).filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0];
+      pl[o.owner] = ((tm && tm.players) || []).filter(function (p) { return ["K", "D/ST", "DST", ""].indexOf(p.pos) < 0; })
+        .sort(function (a, b) { return (Number(b.sp) || 0) - (Number(a.sp) || 0); }); });
+    var P = function (o, i) { var l = pl[o.owner]; return l.length ? l[Math.min(i, l.length - 1)] : null; };
+    if (c.some(function (o) { return pl[o.owner].length < 4; })) { skipped.push((t === "U" ? "Upper" : "Lower") + " (rosters too thin)"); return; }
+    var A = c[0], B = c[1], C = c[2] || null, room = function (x, y) { return roomDM_(x.owner, y.owner); };
+    // 1 · fresh offer, waiting on B
+    var a1 = P(A, 4), b1 = P(B, 3), n1 = "Your " + b1.pos + " room is stacked. Mine isn't. Let's fix that.";
+    var o1 = offer(95, 95, A, B, t, [a1.n], [b1.n], credits(A, 2), 0, n1, "PROPOSED", "", ["Need depth"]);
+    msg(130, room(A, B), A.owner, "You up? Got an idea for your " + b1.pos + " logjam 👀");
+    msg(95, room(A, B), A.owner, n1, [], "offer", o1, "PROPOSED");
+    msg(93, room(A, B), A.owner, "No rush, but " + b1.n + " would look real good in my lineup");
+    msg(40, room(A, B), B.owner, "Looking now. Give me a bit 🤔");
+    // 2 · a counter, back on the first sender's side (needs a third tester; otherwise B → A)
+    var X = B, Y = C || A;
+    var x2 = P(X, 5), y2 = P(Y, 4), y2b = P(Y, 7);
+    var o2 = offer(1210, 360, X, Y, t, [x2.n], [y2.n], 0, 0, "Straight up. You know you want to.", "DECLINED", "Countered", ["Win now"]);
+    msg(1215, room(X, Y), X.owner, "Straight up. You know you want to.", [], "offer", o2, "PROPOSED");
+    msg(420, room(X, Y), Y.owner, "Close. Not giving up " + y2.n + " for just that though");
+    var o3 = offer(360, 360, Y, X, t, [y2b.n], [x2.n], credits(Y, 1), 0, "Here's what I can do.", "PROPOSED", "", ["Selling for the future"]);
+    msg(360, room(X, Y), Y.owner, "Here's what I can do.", [], "offer", o3, "COUNTER");
+    msg(358, room(X, Y), Y.owner, "Countered. Your move 😤");
+    // 3 · an old declined offer, for history
+    var F = C || B, G = A, f3 = P(F, 6), g3 = P(G, 2);
+    var o4 = offer(2900, 2710, F, G, t, [f3.n], [g3.n], 0, 0, "Worth a shot.", "DECLINED", "", ["Want credits"]);
+    msg(2900, room(F, G), F.owner, "Worth a shot.", [], "offer", o4, "PROPOSED");
+    msg(2710, room(F, G), G.owner, "", [], "offer", o4, "DECLINED");
+    msg(2708, room(F, G), G.owner, "Not a chance 😂 " + g3.n + " stays");
+    msg(2700, room(F, G), F.owner, "Had to try. I'll be back.");
+    // tier chat + trade block (most recent, so they sit at the bottom of the room)
+    msg(88, "tier:" + t, A.owner, "Trade block is open for business. Check mine before the deadline 👀");
+    msg(70, "tier:" + t, B.owner, "@" + first(A) + " your block is all bench guys 😂", [A.owner]);
+    msg(55, "tier:" + t, (C || A).owner, "Who's selling a " + P(C || A, 1).pos + "? Asking for me");
+    msg(20, "tier:" + t, B.owner, "Deadline is Dec 2. Get your offers in.");
+    var notes = ["Make me an offer", "Need a " + P(B, 0).pos + " back", "Best offer by Sunday", "Selling high"];
+    c.forEach(function (o, i) { var p = P(o, 8 + i); if (p) block.push(cells_([at(100 - i * 7), o.owner, "block", t + ":" + p.n, "on", "seed", notes[i % notes.length]])); });
+  });
+  if (crew.length >= 2) { msg(80, "league", crew[0].owner, "Is this thing on? 🎤"); msg(15, "league", crew[crew.length - 1].owner, "Welcome to the new MAFFL HQ, beta crew. Break it before everyone else does 🧪"); }
+  chat.sort(function (a, b) { return a[1] - b[1]; });
+  var oSh = sheet_("Offers"); offers.forEach(function (row) { oSh.appendRow(row); });
+  var cSh = sheet_("Chat"); chat.forEach(function (row) { cSh.appendRow(row); });
+  var eSh = sheet_("Events"); block.forEach(function (row) { eSh.appendRow(row); });
+  ["Offers", "Chat", "Events"].forEach(function (n) { delete MEMO_[n]; });
+  PropertiesService.getScriptProperties().setProperty("SEED_AT", new Date().toISOString());
+  var out = { ok: true, offers: offers.length, msgs: chat.length, block: block.length, skipped: skipped, wiped: wiped };
+  deskPost_("note", "🎭 Seed data built: " + out.offers + " offers, " + out.msgs + " messages, " + out.block + " trade-block listings" + (skipped.length ? ". Skipped: " + skipped.join(", ") : "") + ".", "", "SEED");
+  return out;
+}

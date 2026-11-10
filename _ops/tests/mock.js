@@ -258,6 +258,7 @@ class Sheet {
   fill() { for (let i = 0; i < this.data.length; i++) if (!this.data[i]) this.data[i] = []; }
   getName() { return this.name; }
   appendRow(r) { this.data.push(r.slice()); return this; }
+  deleteRow(r) { this.data.splice(r - 1, 1); return this; }
   setFrozenRows() { return this; }
   getLastRow() { let n = this.data.length; while (n && !(this.data[n - 1] || []).some((x) => x !== "" && x != null)) n--; return n; }
   getLastColumn() { return Math.max(0, ...this.data.map((r) => (r || []).length)); }
