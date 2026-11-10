@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), desk Trades shows open/pending only
+**Last updated:** 2026-11-09 by Claude (chat), trade audit trail in the desk log
 
 ## Now
 

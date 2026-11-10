@@ -801,6 +801,7 @@
   .dkbtn i{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px;box-shadow:0 0 0 2px var(--surface)}
   .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
   .dk.on{display:flex}
+  .dkq{margin:8px 0 6px;font-size:16px}
   .dkhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:var(--navy);color:#fff}
   .dkhead>div{flex:1}.dkhead .ct{font:700 22px var(--display);letter-spacing:.02em}.dkhead small{font:600 12px var(--body);color:rgba(255,255,255,.65)}
   .dkhead .cb{color:var(--gold);font-size:24px;min-width:44px;min-height:44px;border:0;background:none}
@@ -3573,9 +3574,9 @@
   // ================= 📥 COMMISH DESK: its own screen (commish 11/6: a button like Feedback, command-center feel) =====
   // Status board → To do → credits / beta / owners → robots → log (newest first, filters, tap a row for detail).
   var DK = { open: false, log: null, filter: "all", openRow: null, loading: false };
-  function deskKind(m) { if (m.kind === "alert" || (m.kind === "robot" && m.event === "FAIL")) return "alerts"; if (m.kind === "robot") return "robots";
+  function deskKind(m) { if (m.kind === "trade" || m.kind === "offer") return "trades"; if (m.kind === "alert" || (m.kind === "robot" && m.event === "FAIL")) return "alerts"; if (m.kind === "robot") return "robots";
     if (m.kind === "feedback") return "feedback"; if (m.owner !== BOTN && m.kind === "text") return "notes"; return "owners"; }
-  var DK_IC = { alerts: "⚠️", robots: "🤖", owners: "👥", feedback: "🧪", notes: "📝" };
+  var DK_IC = { trades: "🤝", alerts: "⚠️", robots: "🤖", owners: "👥", feedback: "🧪", notes: "📝" };
   // Desk dashboard (commish 11/9 re-think): what's waiting on you, in numbers, then one plain-English robots line.
   function linesState(v) { v = String(v || "");
     if (!v) return ["Waiting for the first daily run", "warn"]; if (v === "started") return ["Writing this week's lines", "ok"];
@@ -3603,17 +3604,38 @@
       R.map(function (r) { return '<button class="dkrb ' + r[5] + '" data-dktile="' + r[0] + '"><span>' + r[1] + '</span><div><b>' + esc(r[2]) + '</b><small>' + esc(r[3]) + '</small></div><i>' + esc(r[4]) + ' ›</i></button>'; }).join("") +
       '<p class="meta">Tap one for what it does and a Run it now button. League server v' + esc(d.version || "?") + '.</p></details></div>';
   }
+  // 🧾 Trade audit (commish 11/9): every step of every offer from the backend's Events tab (DESK.trades), as log rows.
+  // Tap one for both sides, the offer ID, where it stands now and its whole timeline. Search covers owners, teams, players, IDs.
+  var TST = { PROPOSED: "offered", ACCEPTED: "accepted", DECLINED: "declined", WITHDRAWN: "withdrew", APPROVED: "approved", NEGATED: "negated" };
+  function tradeRows() {
+    var T = (DESK && DESK.trades) || [], counterOf = {}; T.forEach(function (e) { var m = /^counter (\w+)/.exec(e.meta); if (m) counterOf[m[1]] = e.id; });
+    var S = function (o) { return shortOf(o); }, f2 = function (o) { return o.replace(/^./, function (c) { return c.toUpperCase(); }); };
+    return T.map(function (e, k) {
+      var by = S(e.by), from = S(e.from), to = S(e.to), hd;
+      if (e.st === "PROPOSED") hd = by + (counterOf[e.id] ? " countered " : " offered ") + to;
+      else if (e.st === "DECLINED" && /^counter/.test(e.meta)) hd = by + " countered " + from + "'s offer (declines it)";
+      else if (e.st === "ACCEPTED" || e.st === "DECLINED") hd = by + " " + TST[e.st] + " " + from + "'s offer";
+      else if (e.st === "WITHDRAWN") hd = by + " withdrew the offer to " + to;
+      else hd = "Commish " + (TST[e.st] || e.st.toLowerCase()) + " " + from + " ↔ " + to + (e.meta ? " · “" + e.meta + "”" : "");
+      var steps = T.filter(function (x) { return x.id === e.id; }).map(function (x) { return new Date(x.ts).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " · " + S(x.by) + " " + (TST[x.st] || x.st.toLowerCase()) + (x.meta && x.st !== "PROPOSED" ? " (" + x.meta + ")" : ""); });
+      var body = '<div class="cbot">' + esc(from + " sends: " + listText(e.give, e.gc) + "\n" + to + " sends: " + listText(e.get, e.tc) + "\nOffer " + e.id + " · " + (e.tier === "L" ? "Lower" : "Upper") + " · now " + f2(String(e.now || "").toLowerCase())) +
+        '\n<b>Timeline</b>\n' + esc(steps.join("\n")) + '</div>';
+      return { id: "tr" + k + e.id, ts: e.ts, kind: "trade", owner: BOTN, hd: "🤝 " + esc(hd), body: body, q: norm([e.by, e.from, e.to, teamOf(e.from).team, teamOf(e.to).team, e.id].concat(e.give, e.get).join(" ")) };
+    });
+  }
   function deskLogHTML() {
     if (!DK.log) return ld("Loading the log…");
-    var all = DK.log.slice().reverse(), cnt = {}; all.forEach(function (m) { var k = deskKind(m); cnt[k] = (cnt[k] || 0) + 1; });
-    var F = [["all", "All"], ["alerts", "⚠️ Alerts"], ["robots", "🤖 Robots"], ["owners", "👥 Owners"], ["feedback", "🧪 Feedback"], ["notes", "📝 Notes"]].filter(function (f) { return f[0] === "all" || cnt[f[0]]; });
-    var list = all.filter(function (m) { return DK.filter === "all" || deskKind(m) === DK.filter; }), lastDay = "";
+    var all = DK.log.filter(function (m) { return m.kind !== "offer"; }).concat(tradeRows()).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); }), cnt = {}; all.forEach(function (m) { var k = deskKind(m); cnt[k] = (cnt[k] || 0) + 1; });
+    var F = [["all", "All"], ["trades", "🤝 Trades"], ["alerts", "⚠️ Alerts"], ["robots", "🤖 Robots"], ["owners", "👥 Owners"], ["feedback", "🧪 Feedback"], ["notes", "📝 Notes"]].filter(function (f) { return f[0] === "all" || cnt[f[0]]; });
+    var q = norm(DK.q || ""), list = all.filter(function (m) { return (DK.filter === "all" || deskKind(m) === DK.filter) && (!q || (m.q || norm(m.text || "") + " " + norm(m.ref || "")).indexOf(q) >= 0); }), lastDay = "";
     return '<div class="dkchips">' + F.map(function (f) { return '<button data-dkf="' + f[0] + '"' + (DK.filter === f[0] ? ' class="on"' : '') + '>' + f[1] + (f[0] !== "all" ? ' <i>' + cnt[f[0]] + '</i>' : '') + '</button>'; }).join("") + '</div>' +
+      '<input class="field dkq" id="dkq" placeholder="🔎 Search: owner, team, player, offer ID" value="' + esc(DK.q || "") + '" autocomplete="off">' +
       '<div class="dknote"><input class="field" id="dknote" maxlength="300" placeholder="Add a note to the log (only you see it)"><button class="b" id="dknotego">Add</button></div>' +
       (list.length ? '<div class="dklog">' + list.map(function (m) {
         var day = dayLabel(m.ts), head = day !== lastDay ? '<div class="dkday">' + esc(day) + '</div>' : ''; lastDay = day;
         var k = deskKind(m), html = deskMsg(m), hd = (html.match(/<div class="cevt">([\s\S]*?)<\/div>/) || [])[1] || esc(m.text || ""), body = html.replace(/<div class="cevt">[\s\S]*?<\/div>/, ""), open = DK.openRow === m.id;
         if (k === "notes") { hd = "📝 " + esc(m.text); body = ""; }
+        if (m.kind === "trade") { hd = m.hd; body = m.body; }
         return head + '<div class="dkrow ' + k + (open ? ' open' : '') + '" data-dkrow="' + esc(m.id) + '"><div class="tx"><div class="hd">' + hd + '</div>' + (open && body ? '<div class="bd">' + body + '</div>' : '') + '</div><small>' + esc(new Date(m.ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })) + (body ? (open ? ' ▴' : ' ▾') : '') + '</small></div>';
       }).join("") + '</div>' : '<p class="meta" style="padding:14px 4px">Nothing here yet.</p>');
   }
@@ -3688,10 +3710,11 @@
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
       '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
       '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + deskSeedHTML(d) +
-      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Robots, owners, feedback, notes", today ? today + " today" : "", deskLogHTML());
+      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Trades, robots, owners, notes", today ? today + " today" : "", deskLogHTML());
     DK.secs = DK.secs || {}; Array.prototype.forEach.call(b.querySelectorAll("details"), function (x) { var k = x.dataset.sec || (x.querySelector("summary") || x).textContent.replace(/[\d·]+/g, "").trim().slice(0, 24); x.dataset.sec = k; x.open = !!DK.secs[k]; });
     if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }
     b.scrollTop = st;
+    var dq = $("dkq"); if (dq) dq.oninput = function () { var at = dq.selectionStart; DK.q = dq.value; drawDesk(); var d2 = $("dkq"); if (d2) { d2.focus(); d2.setSelectionRange(at, at); } };
     var go = $("dknotego"); if (go) go.onclick = function () { var v = ($("dknote").value || "").trim(); if (!v) return; busy(1);
       api("chatsend", Object.assign(creds(), { room: "desk", text: v, mentions: [] }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't save"); return; } toast("Noted ✓"); loadDeskLog(); })
         .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };

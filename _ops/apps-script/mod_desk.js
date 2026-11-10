@@ -45,7 +45,7 @@ function desk_(me) {
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_() };
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: tradeAudit_(), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_() };
 }
 // Desk dashboard counts (commish 11/9): every offer in the league, not just the commish's own. Numbers only (offers stay private).
 function offerCounts_() {
@@ -62,6 +62,16 @@ function dailyOnce_(why) {
   var c = CacheService.getScriptCache(); if (c.get("daily_running")) return { ok: false, error: "The daily run is already going. Give it a few minutes." };
   c.put("daily_running", "1", 360);
   try { need_("daily"); return DAILY.run(why); } finally { c.remove("daily_running"); }
+}
+// 🧾 Trade audit (commish 11/9): every step of every offer, straight from the append-only Events tab (offer = owner moves:
+// PROPOSED / ACCEPTED / DECLINED / WITHDRAWN, meta "counter T…" when a counter declined it; commish = APPROVED / NEGATED, meta = reason),
+// joined to the Offers row for who / what. Newest 300. The desk log shows them under 🤝 Trades.
+function tradeAudit_() {
+  var offs = {}; rows_("Offers").forEach(function (o) { offs[o.offer_id] = o; });
+  var js = function (x) { try { return JSON.parse(x || "[]"); } catch (e) { return []; } };
+  return rows_("Events").filter(function (e) { return (e.type === "offer" || e.type === "commish") && offs[e.ref]; }).slice(-300).map(function (e) { var o = offs[e.ref];
+    return { ts: e.ts, by: e.owner, id: e.ref, st: String(e.value), meta: String(e.meta || ""), from: o.from_owner, to: o.to_owner, tier: o.tier,
+      give: js(o.give), get: js(o.get), gc: Number(o.give_credits) || 0, tc: Number(o.get_credits) || 0, now: o.status }; });
 }
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
