@@ -28,6 +28,7 @@ const out = (k, r) => console.log(k.padEnd(28), norm(clockFree(k, r)).slice(0, 4
 const G = (q) => m.get(q), P = (b) => m.post(b);
 out("get version", G({}));
 out("get daily", G({ action: "daily" }));
+out("daily drops", (G({ action: "daily" }).drops || []).map((d) => [d.id, d.type, d.tier, d.items.length, d.items[0].bid, d.items[0].lost.length]));
 out("get rosters U", G({ action: "rosters", tier: "U" }));
 out("get rosters L", G({ action: "rosters", tier: "L" }));
 out("get live U", G({ action: "live", tier: "U" }));

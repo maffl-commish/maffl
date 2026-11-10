@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "12"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "13"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -232,7 +232,26 @@ function dFaab_(tier, s) {
   var list = Object.keys(byId).map(function (k) { return byId[k]; }).filter(function (x) { return Date.now() - x.at < 21 * 864e5; })
     .sort(function (a, b) { return b.at - a.at; }).slice(0, 400);
   dPut_(key, { at: new Date().toISOString(), list: list });
+  try { dFaabDrop_(tier, list); } catch (e) {}
   return n;
+}
+// 🗞️ Drops step 2 (commish 11/9): a waiver run becomes a 💰 Waiver auction drop, published once with the bids as they
+// stood and kept (Daily key "drops", newest first, 60 days). A run = claims processed within 12 h of the newest one;
+// published when it has a winner who spent $1+. The app's card and the Board read the drop, never the live claims.
+function dFaabDrop_(tier, list) {
+  if (!list.length) return null;
+  var last = Math.max.apply(null, list.map(function (x) { return x.at; })), id = "faab:" + tier + ":" + last;
+  var drops = dGet_("drops") || []; if (drops.some(function (d) { return d.id === id || (d.type === "faab" && d.tier === tier && Math.abs(d.run - last) < 12 * 3600e3); })) return null; // a run is published once
+  var run = list.filter(function (x) { return last - x.at < 12 * 3600e3; }), by = {};
+  run.forEach(function (x) { (by[x.pid] = by[x.pid] || []).push(x); });
+  var items = Object.keys(by).map(function (k) { var b = by[k].sort(function (p, q) { return q.bid - p.bid; }), w = b.filter(function (x) { return x.won; })[0];
+    return w && w.bid > 0 ? { pid: w.pid, n: w.n, pos: w.pos, tm: w.tm, bid: w.bid, owner: w.owner, team: w.team,
+      lost: b.filter(function (x) { return !x.won; }).map(function (x) { return { owner: x.owner, team: x.team, bid: x.bid }; }) } : null; })
+    .filter(Boolean).sort(function (p, q) { return q.bid - p.bid; });
+  if (!items.length) return null;
+  drops.unshift({ id: id, type: "faab", tier: tier, at: new Date().toISOString(), run: last, items: items });
+  var cut = Date.now() - 60 * 864e5; dPut_("drops", drops.filter(function (d) { return new Date(d.at).getTime() > cut; }).slice(0, 200));
+  return id;
 }
 function dRecentMoves_(days) {
   var sh = SpreadsheetApp.getActive().getSheetByName("Moves"); if (!sh || sh.getLastRow() < 2) return [];
@@ -309,7 +328,7 @@ DAILY.view = function () {
   var snap = dGet_("snapshot"), info = {};
   try { info = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) {}
   var faab = {}; ["U", "L"].forEach(function (t) { var f = dGet_("faab_" + t); if (f) faab[t] = f.list || []; });
-  return { ok: !!snap, snapshot: snap, moves: dRecentMoves_(7), faab: faab, lines: dGet_("lines") || null, run: info };
+  return { ok: !!snap, snapshot: snap, moves: dRecentMoves_(7), faab: faab, drops: (dGet_("drops") || []).slice(0, 40), lines: dGet_("lines") || null, run: info };
 };
 // After a run: ask GitHub to start the card-lines workflow (Claude writes the lines, posts them back via putlines).
 // Uses the GITHUB_TOKEN Script property (contents: write is enough for repository_dispatch).
