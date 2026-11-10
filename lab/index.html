@@ -3640,8 +3640,9 @@
     var offs = (SUM.offers || []).slice().sort(function (a, b) { return new Date(b.updated || b.ts) - new Date(a.updated || a.ts); });
     var by = function (st) { return offs.filter(function (o) { return o.status === st; }); }, open = by("PROPOSED"), rev = by("ACCEPTED"), done = by("APPROVED");
     var line = function (o) { return '<div class="ditem"><b>' + esc(shortOf(o.from)) + ' ↔ ' + esc(shortOf(o.to)) + '</b> <span class="meta">' + esc({ PROPOSED: "Offer open", ACCEPTED: "In review", APPROVED: "Approved", NEGATED: "Negated", DECLINED: "Declined", WITHDRAWN: "Withdrawn" }[o.status] || o.status) + ' · ' + ago(o.updated || o.ts) + '</span><p class="meta">' + esc(listText(o.give, o.giveCredits)) + ' ⇄ ' + esc(listText(o.get, o.getCredits)) + '</p></div>'; };
-    return '<div class="dsk"><details data-sec="trades"><summary>🤝 Trades · ' + open.length + ' open · ' + rev.length + ' in review · ' + done.length + ' approved</summary>' +
-      (offs.length ? offs.slice(0, 8).map(line).join("") : '<p class="meta" style="padding:8px 0">No trades yet this season.</p>') +
+    var live = rev.concat(open); // only what's still moving (commish 11/9): declined / withdrawn / negated live in the log, approved count stays in the line
+    return '<div class="dsk"><details data-sec="trades"><summary>🤝 Trades · ' + open.length + ' open · ' + rev.length + ' in review' + (done.length ? ' · ' + done.length + ' approved' : '') + '</summary>' +
+      (live.length ? live.map(line).join("") : '<p class="meta" style="padding:8px 0">No open or pending trades.</p>') +
       '<p class="meta">Trades in review show in To do with Approve / Negate. Trade deadline: Wed Dec 2, 12:00 PM ET.</p></details></div>';
   }
   function deskAccessHTML(d) {

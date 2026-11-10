@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), Elite 5 card @s in Chat → @ Mentions
+**Last updated:** 2026-11-09 by Claude (chat), desk Trades shows open/pending only
 
 ## Now
 
