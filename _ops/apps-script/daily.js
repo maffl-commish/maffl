@@ -350,7 +350,8 @@ DAILY.view = function () {
   var snap = dGet_("snapshot"), info = {};
   try { info = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) {}
   var faab = {}; ["U", "L"].forEach(function (t) { var f = dGet_("faab_" + t); if (f) faab[t] = f.list || []; });
-  return { ok: !!snap, snapshot: snap, moves: dRecentMoves_(7), faab: faab, drops: (dGet_("drops") || []).slice(0, 40), lines: dGet_("lines") || null, run: info };
+  var hd = {}; try { hd = handles_(); } catch (e) {} // 🏷️ owners' @handles, for the card-lines robot (11/9)
+  return { ok: !!snap, snapshot: snap, handles: hd, moves: dRecentMoves_(7), faab: faab, drops: (dGet_("drops") || []).slice(0, 40), lines: dGet_("lines") || null, run: info };
 };
 // After a run: ask GitHub to start the card-lines workflow (Claude writes the lines, posts them back via putlines).
 // Uses the GITHUB_TOKEN Script property (contents: write is enough for repository_dispatch).
