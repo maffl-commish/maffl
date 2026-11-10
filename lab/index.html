@@ -806,6 +806,14 @@
   .dkhead .cb{color:var(--gold);font-size:24px;min-width:44px;min-height:44px;border:0;background:none}
   .dkhead{padding-left:18px;gap:2px}.dkhead .dkx{color:#fff;font-size:22px;margin-right:-6px}
   .dkbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px calc(env(safe-area-inset-bottom) + 30px)}
+  .dkn{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .dknt{font:inherit;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:9px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .dknt b{font:800 28px/1 var(--display);color:var(--navy)}.dknt span{font:600 12px/1.25 var(--body);color:var(--muted)}
+  .dknt.hot{background:var(--gold-soft);border-color:var(--gold)}.dknt.hot b{color:#9a6200}.dknt.zero b{color:var(--border)}
+  .dknm{font:600 12px var(--body);color:var(--muted);margin:8px 2px 0}
+  .dkrb{font:inherit;width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:none;border:0;border-top:1px solid var(--border);padding:10px 2px}
+  .dkrb>span{font-size:18px}.dkrb div{flex:1;min-width:0;display:flex;flex-direction:column}.dkrb b{font:700 14px var(--body);color:var(--navy)}.dkrb small{font:600 11px var(--body);color:var(--muted)}
+  .dkrb i{font:600 12px var(--body);font-style:normal;color:var(--win,#1f9d6a);text-align:right;max-width:46%}.dkrb.warn i{color:#9a6200}.dkrb.bad i{color:var(--loss)}
   .dktiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .dkt{position:relative;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--muted);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:1px;min-width:0}
   .dkt em{position:absolute;right:8px;top:6px;font-style:normal;color:var(--muted);font-size:16px}
@@ -3571,16 +3579,32 @@
   function deskKind(m) { if (m.kind === "alert" || (m.kind === "robot" && m.event === "FAIL")) return "alerts"; if (m.kind === "robot") return "robots";
     if (m.kind === "feedback") return "feedback"; if (m.owner !== BOTN && m.kind === "text") return "notes"; return "owners"; }
   var DK_IC = { alerts: "⚠️", robots: "🤖", owners: "👥", feedback: "🧪", notes: "📝" };
+  // Desk dashboard (commish 11/9 re-think): what's waiting on you, in numbers, then one plain-English robots line.
+  function linesState(v) { v = String(v || "");
+    if (!v) return ["Waiting for the first daily run", "warn"]; if (v === "started") return ["Writing this week's lines", "ok"];
+    if (/^kept/.test(v)) { var w = (v.match(/Week \d+/) || [""])[0]; return [(w || "This week") + " lines are out", "ok"]; }
+    if (v === "skipped") return ["Nothing new to write", "ok"]; if (/^off/.test(v)) return ["Off: " + v.replace(/^off:\s*/, ""), "bad"];
+    return ["Problem: " + v.replace(/^error:\s*/, ""), "bad"]; }
+  function robotRows(d) {
+    var tk = d.tick || {}, dy = d.daily || {}, ls = d.sync && d.sync.last, mode = ((d.sync || {}).mode || "test");
+    var tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null, dyAge = dy.at ? (Date.now() - new Date(dy.at).getTime()) / 36e5 : null;
+    var ago2 = function (t) { var a = ago(t); return a === "now" ? "just now" : a + " ago"; }, ln = linesState(dy.lines);
+    return [["tick", "⏱️", "Trade clock + reminders", "every 15 min", tkAge === null ? "Not running" : "Ran " + ago2(tk.at), tkAge === null || tkAge > 60 ? "bad" : "ok"],
+      ["daily", "🌅", "Scores + standings from ESPN", "5 AM + 5 PM", dyAge === null ? "Hasn't run yet" : "Ran " + ago2(dy.at) + ((dy.problems || []).length ? " · " + dy.problems.length + " problem" + (dy.problems.length === 1 ? "" : "s") : ""), dyAge === null ? "warn" : (dy.problems || []).length || dyAge > 14 ? "warn" : "ok"],
+      ["lines", "✍️", "Home card headlines", "after each final week", ln[0], ln[1]],
+      ["sync", "💳", "Credits → official log", mode === "live" ? "LIVE" : "TEST (practice until go-live)", ls && ls.ok === false ? "Last push failed" : ls && ls.at ? "Pushed " + ago2(ls.at) : "Nothing pushed yet", ls && ls.ok === false ? "bad" : "ok"]];
+  }
   function deskTiles(d) {
-    var tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null, dy = d.daily || {}, dyAge = dy.at ? (Date.now() - new Date(dy.at).getTime()) / 36e5 : null, ls = d.sync && d.sync.last, crew = ((d.beta || {}).crew || []).length;
-    var ago2 = function (t) { var a = ago(t); return a === "now" ? "just now" : a + " ago"; };
-    var T = [["⏱️", "15-min robot", tkAge === null ? "Not running" : ago2(tk.at), tkAge === null || tkAge > 60 ? "bad" : "ok"],
-      ["🌅", "Daily run", dyAge === null ? "Not yet" : ago2(dy.at), dyAge === null ? "warn" : (dy.problems || []).length || dyAge > 14 ? "warn" : "ok"],
-      ["✍️", "Card lines", !dy.lines ? "—" : dy.lines === "started" ? "Running" : "Off", !dy.lines ? "warn" : dy.lines === "started" ? "ok" : "bad"],
-      ["💳", "Credit sync", ((d.sync || {}).mode || "test").toUpperCase() + (ls && ls.at ? " · " + ago(ls.at) : ""), ls && ls.ok === false ? "bad" : (d.sync || {}).mode === "live" ? "ok" : "warn"],
-      ["🖥️", "Backend", "v" + (d.version || "?"), "ok"]];
-    var keys = ["tick", "daily", "lines", "sync", "backend"];
-    return '<div class="dktiles five">' + T.map(function (t, k) { return '<button class="dkt ' + t[3] + '" data-dktile="' + keys[k] + '"><span>' + t[0] + '</span><b>' + esc(t[1]) + '</b><small>' + esc(t[2]) + '</small><em>›</em></button>'; }).join("") + '</div>';
+    var oc = d.offers || {}, crew = (d.beta && d.beta.crew) || [], fb = crew.reduce(function (n, c) { return n + (Number(c.fb) || 0); }, 0);
+    var N = [["review", "⏳", deskReview().length, "Trades to approve", 1], ["perks", "🎟️", deskOpenPerks().length, "Perks to approve", 1], ["espn", "🏈", espnNow().length, "Do on ESPN", 1],
+      ["access", "🔑", (d.access || []).length + (d.locked || []).length, "Sign-in help", 1], ["trades", "🤝", oc.open != null ? oc.open : "–", "Offers out", 0], ["feedback", "🧪", fb, "Beta notes (24 h)", 0]];
+    var R = robotRows(d), bad = R.filter(function (r) { return r[5] !== "ok"; }).length;
+    return '<div class="dkn">' + N.map(function (t) { var hot = t[4] && t[2] > 0;
+        return '<button class="dknt' + (hot ? ' hot' : '') + (!t[2] ? ' zero' : '') + '" data-dkgo="' + t[0] + '"><b>' + t[2] + '</b><span>' + t[1] + ' ' + esc(t[3]) + '</span></button>'; }).join("") + '</div>' +
+      '<p class="dknm">' + (oc.review || oc.open ? 'League-wide: ' + (oc.open || 0) + ' offer' + (oc.open === 1 ? '' : 's') + ' waiting on an answer · ' + (oc.review || 0) + ' in review' + (oc.approved7 ? ' · ' + oc.approved7 + ' approved this week' : '') : 'No trades moving right now.') + '</p>' +
+      '<div class="dsk acc"><details data-sec="robots"><summary><span>' + (bad ? '⚠️ Robots · ' + bad + ' need' + (bad === 1 ? 's' : '') + ' a look' : '🤖 Robots · all running') + '</span></summary>' +
+      R.map(function (r) { return '<button class="dkrb ' + r[5] + '" data-dktile="' + r[0] + '"><span>' + r[1] + '</span><div><b>' + esc(r[2]) + '</b><small>' + esc(r[3]) + '</small></div><i>' + esc(r[4]) + ' ›</i></button>'; }).join("") +
+      '<p class="meta">Tap one for what it does and a Run it now button. League server v' + esc(d.version || "?") + '.</p></details></div>';
   }
   function deskLogHTML() {
     if (!DK.log) return ld("Loading the log…");
@@ -3600,13 +3624,13 @@
   function deskTileBox(k) {
     var d = DESK || {}, tk = d.tick || {}, dy = d.daily || {}, ls = d.sync && d.sync.last, mode = ((d.sync || {}).mode || "test").toUpperCase(), h = "", act = "";
     var ago2 = function (t) { var a = ago(t); return a === "now" ? "just now" : a + " ago"; };
-    if (k === "tick") { h = '<h3>⏱️ 15-minute robot</h3><p class="p">Every 15 minutes: perk nudges and lock warnings, the 24-hour trade review clock, the trade-deadline heads-up, checks that approved trades moved on ESPN, and a nightly credit check.</p>' +
+    if (k === "tick") { h = '<h3>⏱️ Trade clock + reminders</h3><p class="p">Every 15 minutes: perk nudges and lock warnings, the 24-hour trade review clock, the trade-deadline heads-up, checks that approved trades moved on ESPN, and a nightly credit check.</p>' +
       '<p class="meta">' + (tk.at ? 'Last ran ' + ago2(tk.at) + ((tk.log || []).length ? ' · ' + esc(tk.log.join(" · ")) : ' · nothing new') : '⚠️ Hasn\'t run. Check the time trigger in Apps Script.') + '</p>'; act = "tick"; }
-    if (k === "daily") { h = '<h3>🌅 Daily run</h3><p class="p">5 AM and 5 PM: scores, standings, Coach of the Week, Survivor, credit races, roster moves and the beta digest from ESPN. Then it starts the card-lines robot.</p>' +
+    if (k === "daily") { h = '<h3>🌅 Scores + standings from ESPN</h3><p class="p">5 AM and 5 PM: scores, standings, Coach of the Week, Survivor, credit races, roster moves and the beta digest from ESPN. Then it starts the card-lines robot.</p>' +
       '<p class="meta">' + (dy.at ? 'Last ran ' + ago2(dy.at) + (dy.secs ? ' (' + dy.secs + ' s)' : '') + ((dy.log || []).length ? ' · ' + esc(dy.log.join(" · ")) : '') : 'Hasn\'t run yet.') + ((dy.problems || []).length ? '<br>⚠️ ' + esc(dy.problems.join(" · ")) : '') + '</p>'; act = "daily"; }
-    if (k === "lines") h = '<h3>✍️ Card lines</h3><p class="p">After each daily run, Claude writes the short lines on the Home cards (tier headlines, hot and cold, each owner\'s result and next game, Elite 5). If it can\'t run, cards show plain facts.</p>' +
-      '<p class="meta">' + (dy.lines === "started" ? '✅ Started after the last daily run.' : dy.lines ? '⚠️ ' + esc(dy.lines) : 'Waiting for the first daily run.') + '</p><p class="meta">Runs again with the next daily run (or tap Run it now on the Daily run tile).</p>';
-    if (k === "sync") { h = '<h3>💳 Credit sync · ' + mode + '</h3><p class="p">When you approve something that moves credits (a perk, a trade with credits, a credit award), the backend writes it to the ledger file in the repo and a GitHub robot adds it to the official Credit_Log, updates balances and the credits page.</p>' +
+    if (k === "lines") { var lsx = linesState(dy.lines); h = '<h3>✍️ Home card headlines</h3><p class="p">Once a week goes final, Claude writes the short lines on everyone\'s Home cards (tier headlines, hot and cold, each owner\'s result and next game, Elite 5). It writes them once per week and keeps them; if it can\'t run, cards show plain facts.</p>' +
+      '<p class="meta">' + (lsx[1] === "ok" ? '✅ ' : '⚠️ ') + esc(lsx[0]) + '</p><p class="meta">Checks again with each daily run (5 AM + 5 PM).</p>'; }
+    if (k === "sync") { h = '<h3>💳 Credits → official log · ' + mode + '</h3><p class="p">When you approve something that moves credits (a perk, a trade with credits, a credit award), the backend writes it to the ledger file in the repo and a GitHub robot adds it to the official Credit_Log, updates balances and the credits page.</p>' +
       '<p class="p">' + (mode === "LIVE" ? 'LIVE: approvals change the official record.' : 'TEST: a dry run. Nothing official changes until go-live flips it to LIVE.') + '</p>' +
       '<p class="meta">' + (ls && ls.at ? 'Last ledger push ' + ago2(ls.at) + (ls.ok === false ? ' ⚠️ ' + esc(ls.error || "failed") : ' ✓') : 'No ledger push yet.') + '</p>'; act = "resync"; }
     if (k === "backend") h = '<h3>🖥️ Backend v' + esc(d.version || "?") + '</h3><p class="p">The league server (Apps Script + the app Sheet). It loads its code from the repo, so updates go live within about 5 minutes of a push. Nothing to do here.</p>';
@@ -3619,7 +3643,7 @@
     var offs = (SUM.offers || []).slice().sort(function (a, b) { return new Date(b.updated || b.ts) - new Date(a.updated || a.ts); });
     var by = function (st) { return offs.filter(function (o) { return o.status === st; }); }, open = by("PROPOSED"), rev = by("ACCEPTED"), done = by("APPROVED");
     var line = function (o) { return '<div class="ditem"><b>' + esc(shortOf(o.from)) + ' ↔ ' + esc(shortOf(o.to)) + '</b> <span class="meta">' + esc({ PROPOSED: "Offer open", ACCEPTED: "In review", APPROVED: "Approved", NEGATED: "Negated", DECLINED: "Declined", WITHDRAWN: "Withdrawn" }[o.status] || o.status) + ' · ' + ago(o.updated || o.ts) + '</span><p class="meta">' + esc(listText(o.give, o.giveCredits)) + ' ⇄ ' + esc(listText(o.get, o.getCredits)) + '</p></div>'; };
-    return '<div class="dsk"><details><summary>🤝 Trades · ' + open.length + ' open · ' + rev.length + ' in review · ' + done.length + ' approved</summary>' +
+    return '<div class="dsk"><details data-sec="trades"><summary>🤝 Trades · ' + open.length + ' open · ' + rev.length + ' in review · ' + done.length + ' approved</summary>' +
       (offs.length ? offs.slice(0, 8).map(line).join("") : '<p class="meta" style="padding:8px 0">No trades yet this season.</p>') +
       '<p class="meta">Trades in review show in To do with Approve / Negate. Trade deadline: Wed Dec 2, 12:00 PM ET.</p></details></div>';
   }
@@ -3723,6 +3747,11 @@
     if (!DK.open || !e.target.closest("#desk")) return;
     if ((el = e.target.closest("[data-dkf]"))) { DK.filter = el.dataset.dkf; DK.openRow = null; drawDesk(); return; }
     if ((el = e.target.closest("[data-dktile]"))) { deskTileBox(el.dataset.dktile); return; }
+    if ((el = e.target.closest("[data-dkgo]"))) { var g = el.dataset.dkgo, n = Number((el.querySelector("b") || {}).textContent) || 0;
+      if (!n && g !== "trades") { toast("Nothing waiting"); return; }
+      if (g === "feedback") { DK.filter = "feedback"; g = "log"; }
+      DK.secs = DK.secs || {}; DK.secs[g] = true; if (g === "access") DK.secs.locked = true; drawDesk();
+      var tgt = $("dkbody").querySelector('details[data-sec="' + g + '"]'); if (tgt) $("dkbody").scrollTop = tgt.closest(".dsk").offsetTop - 8; return; }
     if ((el = e.target.closest("[data-dkrow]")) && !e.target.closest("button,a,input")) { DK.openRow = DK.openRow === el.dataset.dkrow ? null : el.dataset.dkrow; drawDesk(); return; }
   });
   function deskMsg(m) {

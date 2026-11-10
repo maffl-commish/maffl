@@ -45,7 +45,14 @@ function desk_(me) {
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_() };
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_() };
+}
+// Desk dashboard counts (commish 11/9): every offer in the league, not just the commish's own. Numbers only (offers stay private).
+function offerCounts_() {
+  var wk = Date.now() - 7 * 864e5, c = { open: 0, review: 0, approved7: 0 };
+  (sheetGet_("Offers") ? rows_("Offers") : []).forEach(function (o) { if (o.status === "PROPOSED") c.open++; else if (o.status === "ACCEPTED") c.review++;
+    else if (o.status === "APPROVED" && new Date(o.updated_ts).getTime() > wk) c.approved7++; });
+  return c;
 }
 // 👋 Welcome tour reset (commish 11/7): a new stamp in the Owners "tour" column; summary hands it to that owner's app,
 // which clears its "seen" marks once per new stamp and replays the tour. "T" prefix keeps the Sheet from making it a date.
