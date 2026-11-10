@@ -1,6 +1,6 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-08 (chat) · Home: swipe ← done / → save, ⭐ Saved, "N left", Clear all
+Last updated: 2026-11-10 (chat) · Roadmap refreshed for the beta launch (Week 10); ops handbook added
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
@@ -15,6 +15,7 @@ two disagree, APP_DESIGN wins and this page gets fixed.
 
 | Doc | What it holds |
 |---|---|
+| `_ops/docs/REEL_OPERATIONS.md` | **Ops & architecture handbook**: diagram, inventory (pages, backend files, Sheet tabs, Script properties, workflows), operating calendar, procedures, risks, go-live readiness checklist, cutover plan |
 | `_ops/docs/REEL_SERIES.md` | **Card series catalog**: every series, its group, audience, cadence, writer; the weekly budget and feed order |
 | `_ops/docs/APP_DESIGN.md` | **Governing doc.** Decision journal, structure, card rules, page → app mapping, login, contacts, data, ESPN refresh, build notes (§7b–7g), open questions (§8), go-live checklist (§9), automation (§10) |
 | `_ops/docs/TRADE_CENTER_DESIGN.md` | Trade rules, Sheet tabs, guardrails (§5b), trade open questions (§8) |
@@ -58,8 +59,9 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 1. **Finish the sandbox** — backlog "Next" items below.
 2. **Hook up for real** — GITHUB_TOKEN Script property (credit sync **and** the daily card-lines robot need it) + DESK_KEY (Script property and GitHub secret); real ESPN live feed; real rosters (ESPN roster pull); lab week facts wired into the Tuesday robot.
 3. **Mike's feel test** — full app on his phone (Home-Screen standalone), then a dry run: fake trades incl. negate, deadline lockout, over-balance block, wrong passphrase, undo.
+3a. **Beta launch, Week 10 (target Wed 11/11 evening, before Thursday's game):** add the crew on the desk + issue new passphrases → Reseed Wed night → `OWNER_EMAILS = "beta"` when they're told → text the link + a short brief (real: scores, rosters, standings, history · pretend: trades, credits, chat with other owners; keep it in the crew) → no risky pushes Sat noon–Mon night → collect feedback through 🧪, read it Monday. Go-live target: week of 11/23 (trade deadline 12/2).
 3b. **Beta crew** — Charlie, Sam and Ben (Mike's nephews, new to the league, all in the **Lower** tier; young, used to modern apps, have time to test). Joe Reilly joins (commish 11/9) for Upper-tier activity with Mike. They get the MVP before everyone else, with the 🧪 beta kit (built 11/6). To start: desk → 🚀 🚀 Go-live → 🧪 Beta crew → add each tester, issue their passphrases, text them the link.
-4. **Go-live** — APP_DESIGN §9 checklist: `STAGE = "live"` in lab/index.html (hides the beta strip + practice note), production Sheet, test data wiped, CREDIT_SYNC=live, `OWNER_EMAILS = "live"` (logic.js) after the emails are reviewed, passphrases emailed, app becomes `index.html`, old home → League, Pulse announces it.
+4. **Go-live** — readiness checklist + cutover plan in `REEL_OPERATIONS.md` §5–§6 (same-URL swap, tag `classic-final`, scripted build step, `lab/` redirect). APP_DESIGN §9 checklist: `STAGE = "live"` in lab/index.html (hides the beta strip + practice note), production Sheet, test data wiped, CREDIT_SYNC=live, `OWNER_EMAILS = "live"` (logic.js) after the emails are reviewed, passphrases emailed, app becomes `index.html`, old home → League, Pulse announces it.
 
 ## 4. Backlog
 

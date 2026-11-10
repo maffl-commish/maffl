@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), perk news @mentions the opponent; Credits tidy
+**Last updated:** 2026-11-10 by Claude (chat), REEL ops handbook + beta launch plan
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-10 · REEL · 📘 `_ops/docs/REEL_OPERATIONS.md`: ops & architecture handbook (diagram, inventory of pages / backend files / Sheet tabs / Script properties / workflows, operating calendar, procedures, risks), go-live readiness checklist and the cutover plan (same-URL swap, not a new site). REEL.md roadmap gains the Week 10 beta launch step. Docs only.
 - 2026-11-09 · REEL · @ Card mentions (commish): making the ⭐ Elite 5 now tags you in Chat → @ Mentions ("⭐ Elite 5 · Week 8: @Mike you're #4. …", last 4 weeks, newest first with chat @s). Unread for 7 days until tapped (kept on the phone), counts on the @ Mentions and Chat badges; tap opens the card in a sheet. App only.
 - 2026-11-09 · REEL · 🎭 Seed data, part 3 (commish): (1) 🏷️ **Tag as staged** on the desk marks all the earlier tinkering (offers, perk requests = the test credit moves, chat outside the desk log, trade-block listings) as staged (new `stage` column = seed on Offers / Perks / Chat; block re-listed as seed), so Wipe takes it out too. (2) The seed now stages credit activity per tier: an APPROVED trade with credits (players move on the app's rosters, credits show in balances + Credits history as test moves, league + tier cards), an ACCEPTED one on the desk to approve, perk requests approved (FAAB, with the League chat news post), waiting (FAAB from a tester, Double Bonus for next week) and denied. (3) Staged rows never reach the repo credit ledger file or the nightly credit check, never get ESPN "players didn't move" reminders, never become Do-on-ESPN steps. Wipe now rewrites each tab in one pass (keeps real rows). Backend v0.62; regression gains seed-ledger / adopt checks (order-free).
 - 2026-11-09 · REEL · 🎭 Seed data now stages pretend activity across the whole league (commish: real owners in it too, all pretend): every beta tester gets an offer waiting, a counter waiting and an old declined offer from other owners with DM banter; testers in one tier get one between them; 2 private offers per tier between other owners (desk counts); tier + league chat from all over; trade-block listings (4 owners + each tester per tier, skipping players already listed). Works with any number of testers (mock: 21 offers, 65 messages, 12 listings). Still tagged / wipeable, no emails, nothing ACCEPTED. Backend v0.61; regression seed check made order-free.
