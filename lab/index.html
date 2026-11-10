@@ -4161,26 +4161,22 @@
       .map(function (g) { return { tier: g[1], teamA: teamOf(g[2]).team, ownerA: g[2], teamB: teamOf(g[3]).team, ownerB: g[3], note: dailyLine(g[2], "next") || dailyLine(g[3], "next") }; });
   }
   // 📰 Wire card: roster moves in your tier in the last 48 h (yours first), with Claude's wire line.
-  // 💰 Waiver auction (commish 11/9): the wire is the FAAB report, not every add and drop. From the daily run's
-  // ESPN waiver claims (DLY.faab): the latest run in your tier (shown for 4 days), each player won for $1+, the winning
-  // team and bid, and the losing bids when ESPN shows them. $0 claims and free-agent pickups stay off it.
+  // 💰 Waiver auction (commish 11/9): the wire is the FAAB report, not every add and drop. 🗞️ It's a drop: the daily run
+  // publishes each waiver run once (DLY.drops, type "faab") with the bids as they stood, and this card shows your tier's
+  // newest one for 4 days after it went out, word for word. Winners who spent $1+, plus the losing bids when ESPN shows them.
   function wireCard(me) {
-    var all = ((DLY && DLY.faab && DLY.faab[me.tier]) || []).filter(function (x) { return x.pid != null; }); if (!all.length) return null;
-    var last = Math.max.apply(null, all.map(function (x) { return x.at; })); if (Date.now() - last > 4 * 864e5) return null;
-    var run = all.filter(function (x) { return last - x.at < 12 * 3600e3; }), by = {};
-    run.forEach(function (x) { (by[x.pid] = by[x.pid] || []).push(x); });
-    var won = Object.keys(by).map(function (k) { var b = by[k].sort(function (p, q) { return q.bid - p.bid; }), w = b.filter(function (x) { return x.won; })[0];
-      return w && w.bid > 0 ? { w: w, lost: b.filter(function (x) { return !x.won; }) } : null; }).filter(Boolean).sort(function (p, q) { return q.w.bid - p.w.bid; });
-    if (!won.length) return null;
-    var spent = won.reduce(function (a, x) { return a + x.w.bid; }, 0), who = function (x) { return isMe(x.owner) ? "You" : shortOf(x.owner) || x.team; };
-    var day = new Date(last).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-    return { id: "wire:faab:" + me.tier + ":" + last, c: { eb: "💰 Waiver auction · " + (me.tier === "U" ? "Upper" : "Lower"), t: won.length + " players won", face: '<div class="fc">' +
+    var d = ((DLY && DLY.drops) || []).filter(function (x) { return x.type === "faab" && x.tier === me.tier; })[0];
+    if (!d || !(d.items || []).length || Date.now() - new Date(d.at).getTime() > 4 * 864e5) return null;
+    var won = d.items, spent = won.reduce(function (a, x) { return a + x.bid; }, 0), who = function (x) { return isMe(x.owner) ? "You" : shortOf(x.owner) || x.team; };
+    var day = new Date(d.run).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+    return { id: "wire:" + d.id, c: { eb: "💰 Waiver auction · " + (me.tier === "U" ? "Upper" : "Lower"), t: won.length + " players won", face: '<div class="fc">' +
       '<h3>' + won.length + ' player' + (won.length === 1 ? '' : 's') + ' won · $' + spent + '</h3><p class="fs">Waivers ran ' + esc(day) + '</p>' +
-      '<div class="frows">' + won.slice(0, 8).map(function (x) { var w = x.w, mine = isMe(w.owner) || x.lost.some(function (y) { return isMe(y.owner); });
+      '<div class="frows">' + won.slice(0, 8).map(function (w) { var mine = isMe(w.owner) || (w.lost || []).some(function (y) { return isMe(y.owner); });
         return '<div class="frow' + (mine ? ' me' : '') + '"><span class="fbid">$' + w.bid + '</span><span style="flex:1"><button class="tl2" data-player="' + esc(w.owner || "") + '|' + esc(w.n) + '@' + esc(w.pos || "") + '"><b>' + esc(w.n || "Player") + '</b></button> <small class="meta">' + esc([w.pos, w.tm].filter(Boolean).join(" · ")) + '</small>' +
-          '<small class="meta" style="display:block">' + esc(who(w)) + ' won it' + (x.lost.length ? ' · lost: ' + x.lost.map(function (y) { return esc(who(y)) + ' $' + y.bid; }).join(", ") : '') + '</small></span></div>'; }).join("") + '</div>' +
+          '<small class="meta" style="display:block">' + esc(who(w)) + ' won it' + ((w.lost || []).length ? ' · lost: ' + w.lost.map(function (y) { return esc(who(y)) + ' $' + y.bid; }).join(", ") : '') + '</small></span></div>'; }).join("") + '</div>' +
       (won.length > 8 ? '<p class="fs">+' + (won.length - 8) + ' more</p>' : '') + '</div>' } };
   }
+
 
 
   // ---------- boot ----------
