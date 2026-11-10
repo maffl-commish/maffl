@@ -3617,6 +3617,10 @@
       '<div class="btns">' + deskBtn("tour", "", "Replay for them") + deskBtn("tour", "*", "Everyone") + '</div></div>' +
       '<p class="meta">They see it the next time they open the app, on any phone they use. Each tab\'s part plays on their first visit to it.</p></details></div>';
   }
+  // 🎭 Seed data (Go-live section): staged beta activity, tagged so it can be rebuilt or wiped. Not built yet (11/9).
+  function deskSeedHTML() {
+    return '<div class="dsk"><details><summary>🎭 Seed data</summary><p class="meta">Coming next: staged chat, offers and trade-block activity on the real rosters for the beta crew, with Reseed and Wipe seed buttons. Nothing staged yet.</p></details></div>';
+  }
   function drawDesk() {
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
     if (!d) { b.innerHTML = ld("Opening the desk…"); return; }
@@ -3626,7 +3630,8 @@
     var day = new Date().toDateString(), today = (DK.log || []).filter(function (m) { return new Date(m.ts).toDateString() === day; }).length;
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
-      '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) + betaPanel(d) + deskTourHTML() +
+      '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
+      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + deskSeedHTML() +
       '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Robots, owners, feedback, notes", today ? today + " today" : "", deskLogHTML());
     DK.secs = DK.secs || {}; Array.prototype.forEach.call(b.querySelectorAll("details"), function (x) { var k = x.dataset.sec || (x.querySelector("summary") || x).textContent.replace(/[\d·]+/g, "").trim().slice(0, 24); x.dataset.sec = k; x.open = !!DK.secs[k]; });
     if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }
