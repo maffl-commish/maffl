@@ -228,10 +228,6 @@
   .gp.blk{background:var(--gold-soft);border-color:var(--gold)}
   .gp.blk b::after{content:" 🏷️"}
   .gp b{display:block;font:700 13px/1.1 var(--display)}.gp small{font-size:10px;color:var(--muted)}
-  .gradebox{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin:8px 0}
-  .gl{display:flex;gap:8px}
-  .grade{flex:1;text-align:center;font:700 15px var(--display);text-transform:uppercase;letter-spacing:.04em;border-radius:6px;padding:5px 0;background:var(--navy-soft)}
-  .grade.gAp,.grade.gA{background:var(--win);color:#fff}.grade.gB{background:#3b6fb6;color:#fff}.grade.gC{background:var(--gold);color:var(--navy)}.grade.gD,.grade.gF{background:var(--loss);color:#fff}
   .pgrid{display:flex;flex-direction:column;gap:8px}
   .ptile{display:grid;grid-template-columns:40px 1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:12px;padding:10px 12px;box-shadow:0 2px 6px var(--navy-shadow)}
   .ptile .pic{grid-row:1/3;font-size:24px;line-height:1;text-align:center}
@@ -2644,7 +2640,7 @@
     return rows.filter(function (r) { return r.length > 1; }).map(function (r) { var o = {}; head.forEach(function (h, k) { o[h] = r[k]; }); return o; });
   }
   function loadRosters() {
-    var landed = function () { _repl = {}; _first = null; SIDE.rosters = rostersReady() ? "ok" : "loading"; sideLanded("rosters"); };
+    var landed = function () { SIDE.rosters = rostersReady() ? "ok" : "loading"; sideLanded("rosters"); };
     var csv = Promise.all([
       getText("../data/MAFFL_Draft_History_Clean_v3.csv").then(function (t) { DRAFT = parseCSV(t); PRICE = null; }),
       getText("../data/MAFFL_Top_Performers_2026.csv").then(function (t) { TOPS = parseCSV(t); }).catch(function () {})
@@ -2736,7 +2732,7 @@
   // ---------- 🧑 The MAFFL player profile (commish 11/7: "every player click opens a next-level MAFFL profile") ----------
   // One screen for any player anywhere in the app: on a 2026 roster ("owner|name") or only in league history ("|name@POS").
   // This season (ESPN) on top, then his MAFFL story from every auction since 2005: price history, who's owned him, title
-  // teams he was on, any 8 Ball tidbit about him, and trade value by the same formula the trade grades use.
+  // teams he was on, any 8 Ball tidbit about him, plus how he's trending.
   var POS_GRP = { DT: "DL", DE: "DL", DL: "DL", S: "DB", CB: "DB", DB: "DB" };
   function posGrp(p) { return POS_GRP[p] || p; }
   function samePos(a, b) { if (!a || !b) return true; if (a === "FLX" || b === "FLX") return ["RB", "WR", "TE", "FLX"].indexOf(a) >= 0 && ["RB", "WR", "TE", "FLX"].indexOf(b) >= 0; return posGrp(a) === posGrp(b); }
@@ -2774,7 +2770,7 @@
       '<div class="btns">' + (b ? '<button class="b" data-blk="off" data-pk="' + esc(p.name) + '">Take off the block</button>' : '') + '<button class="b pri" data-blk="on" data-pk="' + esc(p.name) + '">' + (b ? 'Update note' : 'Put on the block') + '</button></div></div>';
     else if (p.owner && p.tier === ME.tier && API_URL) h += '<div class="btns" style="margin-top:10px"><button class="b pri" data-trade-with="' + esc(p.owner) + '" data-trade-want="' + esc(p.name) + '">Start a trade for him</button></div>' + (b ? '<p class="meta" style="margin:6px 2px">🏷️ On the block' + (b.note ? ': “' + esc(b.note) + '”' : '') + '</p>' : '');
     // this season
-    if (cur) { h += playerStatus(p) + weeksChart(p) + valueCard(p);
+    if (cur) { h += playerStatus(p) + weeksChart(p);
       var tw = topWeeks(p); if (tw.length && !wkList(p).length) h += '<div class="card glist"><div class="eb">2026 · weeks in ' + esc(teamOf(p.owner).team) + '\'s top 3</div>' + tw.map(function (x) {
         return '<div class="row"><div class="nm">Week ' + x.wk + '</div><div class="rt">' + f2(x.pts) + '<small>#' + x.rank + ' on the team</small></div></div>'; }).join("") + '</div>'; }
     // 🎱 tidbit
@@ -2794,15 +2790,7 @@
     h += '<div class="btns"><button class="b" data-vaultq="' + esc(p.name) + '">' + esc(p.name) + ' in the Vault draft ›</button></div>';
     return h;
   }
-  // Trade value, by the trade grade's own formula (pvalParts): Now = points over a replacement player at his position in this
-  // tier for the rest of the season; Future = market (% rostered) × career stage, as an index.
-  function valueCard(p) {
-    if (p.avg == null || !p.tier) return '';
-    var v = pvalParts(p), fut = Math.min(100, Math.round(v.fut / 1.3)), now = Math.round(v.now), rl = replLevel(p.tier, p.pos);
-    var lvl = function (x, a, b) { return x >= a ? "High" : x >= b ? "Mid" : "Low"; };
-    return '<div class="card"><div class="eb">⚖️ Trade value · same math as the trade grades</div><div class="pval"><div><small>Now</small><b>' + (now > 0 ? '+' + now : '0') + '</b><span>pts over a replacement ' + esc(p.pos) + ' (' + f1(rl) + '/g), rest of season</span></div>' +
-      '<div><small>Future</small><b>' + fut + '<i>/100</i></b><span>' + lvl(fut, 60, 30) + ' · ' + (p.own != null ? p.own + '% rostered' : '') + (v.yrs != null ? ' · ' + (v.yrs <= 1 ? 'new to MAFFL' : v.yrs + ' yrs in MAFFL') : '') + '</span></div></div></div>';
-  }
+
 
   // Player screen pieces (commish 11/6: tap the card for a richer view)
   function playerStatus(p) {
@@ -2852,8 +2840,6 @@
     else h += '<div class="two"><div>' + legHTML(teamOf(o.from).team + " sends", o.from, o.give, o.giveCredits) + '</div><div>' + legHTML(teamOf(o.to).team + " sends", o.to, o.get, o.getCredits) + '</div></div>';
     if ((o.reasons || []).length) h += '<p class="meta" style="margin-top:6px">Why: ' + o.reasons.map(esc).join(" · ") + '</p>';
     if (o.note) h += '<p class="meta" style="margin-top:6px">“' + esc(o.note) + '”</p>';
-    if (mineOffer && ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0) { var gr = gradeTrade(o.from, o.to, o.give, o.get, o.giveCredits, o.getCredits);
-      h += gradeHTML(iAmFrom ? gr : { from: gr.to, to: gr.from }, "You", shortOf(other)); }
     if (o.reason) h += '<p class="meta">Commish: ' + esc(o.reason) + '</p>';
     var btn = "";
     if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
@@ -3014,71 +3000,7 @@
   function openPerk(k, keepScroll) { if (!keepScroll) PF = { k: k }; var y = $("sb").scrollTop; openSheet("perk", k, null, false); if (keepScroll) $("sb").scrollTop = y; }
 
   // ---------- builder: pick team → side by side → preview → send ----------
-  // ---------- trade grade (lab formula; see APP_DESIGN §7d) ----------
-  // Player value = 2026 auction price + half the points he has posted in his team's weekly top 3.
-  // 1 credit = $2 of auction value. Fit: getting a position you're thin at (vs. your tier's average) helps;
-  // giving one away hurts. Real per-game averages replace the production term once the ESPN stat pull exists.
-  var CREDIT_VALUE = 2, CORE = ["QB", "RB", "WR", "TE"];
-  var REASONS = ["Need depth", "Win now", "Selling for the future", "Want credits", "Bye-week fix", "Just a deal"];
-  // ---- Trade grade v2 (commish 11/6): no auction price. NOW = points per game above a replacement player at his
-  // position in this tier (recent form weighted, injury discounted) × weeks left. FUTURE = ESPN % rostered (the market)
-  // × career stage (first MAFFL draft year stands in for age; ESPN's league API has no birthdates). Both in points.
-  var REG_END = 14, SEASON_Y = 2026, INJ = { Questionable: 0.9, Doubtful: 0.6, Out: 0.45, "Injury reserve": 0.2, Suspension: 0.3 };
-  var _repl = {}, _first = null, GRADE_K = 30;
-  function replLevel(tier, pos) { // the Nth-best per-game at this position among everyone rostered in the tier (N ≈ starters league-wide)
-    var k = tier + pos; if (_repl[k] != null) return _repl[k];
-    var all = [], R = rosters(); Object.keys(R).forEach(function (o) { R[o].forEach(function (p) { if (p.tier === tier && p.pos === pos && p.avg != null) all.push(p.avg); }); });
-    all.sort(function (a, b) { return b - a; });
-    var n = Math.round(TEAMS.filter(function (t) { return t.tier === tier && !/ghost/i.test(t.team); }).length * ({ QB: 1.5, RB: 2.5, WR: 3, TE: 1.2, K: 1, "D/ST": 1 }[pos] || 2));
-    return (_repl[k] = all.length ? all[Math.min(all.length - 1, n)] : 0);
-  }
-  function firstYear(name) {
-    if (!_first) { _first = {}; DRAFT.forEach(function (d) { var n = norm(d.Player || d.Player_Raw); if (!_first[n] || +d.Year < _first[n]) _first[n] = +d.Year; }); }
-    return _first[norm(name)] || SEASON_Y;
-  }
-  function pvalParts(p) {
-    if (p.avg == null) { var tw = topWeeks(p).reduce(function (n, w) { return n + w.pts; }, 0); return { now: 0.5 * tw, fut: 0, est: true }; } // no ESPN stats: old top-3 fallback
-    var ws = wkList(p).slice(-4), recent = ws.length ? ws.reduce(function (a, x) { return a + x.pts; }, 0) / ws.length : p.avg;
-    var ppg = 0.6 * p.avg + 0.4 * recent, left = Math.max(1, REG_END - (LATEST ? LATEST.weekNumber : 8)) + 1.5; // + a bit for the playoffs
-    var now = Math.max(0, ppg - replLevel(p.tier, p.pos)) * left * (INJ[p.inj] != null ? INJ[p.inj] : 1);
-    var yrs = SEASON_Y - firstYear(p.name), stage = yrs <= 1 ? 1.3 : yrs <= 4 ? 1.05 : yrs <= 7 ? 0.75 : 0.45;
-    var fut = 120 * Math.pow((p.own != null ? p.own : 30) / 100, 2) * stage * (["QB", "RB", "WR", "TE"].indexOf(p.pos) >= 0 ? 1 : 0.3);
-    return { now: now, fut: fut, yrs: yrs };
-  }
-  function pval(p) { var x = pvalParts(p); return x.now + x.fut; }
-  function depth(owner) { var d = {}; CORE.forEach(function (k) { d[k] = 0; }); rosterOf(owner).forEach(function (p) { if (d[p.pos] != null) d[p.pos]++; }); return d; }
-  function tierDepth(tier) {
-    var owners = TEAMS.filter(function (t) { return t.tier === tier && !/ghost/i.test(t.team); }), avg = {};
-    CORE.forEach(function (k) { avg[k] = owners.reduce(function (n, t) { return n + depth(t.owner)[k]; }, 0) / Math.max(1, owners.length); });
-    return avg;
-  }
-  function letter(r) { return r >= 1.3 ? "A+" : r >= 1.12 ? "A" : r >= 0.95 ? "B" : r >= 0.8 ? "C" : r >= 0.65 ? "D" : "F"; }
-  function gradeSide(owner, getsNames, getsFromOwner, getsCr, sendsNames, sendsCr) {
-    var gets = getsNames.map(function (n) { return findPlayer(getsFromOwner, n); }).filter(Boolean), sends = sendsNames.map(function (n) { return findPlayer(owner, n); }).filter(Boolean);
-    var sum = function (list, k) { return list.reduce(function (n, p) { return n + pvalParts(p)[k]; }, 0); };
-    var nowIn = sum(gets, "now") + getsCr * CREDIT_VALUE, nowOut = sum(sends, "now") + sendsCr * CREDIT_VALUE, futIn = sum(gets, "fut"), futOut = sum(sends, "fut");
-    var inV = nowIn + futIn, outV = nowOut + futOut;
-    var d = depth(owner), avg = tierDepth(teamOf(owner).tier), fit = 0, why = [], who = isMe(owner) ? "you" : shortOf(owner);
-    gets.forEach(function (p) { if (d[p.pos] != null && d[p.pos] < avg[p.pos]) { fit += 0.06; why.push("Gives " + who + " a needed " + p.pos + " (" + d[p.pos] + " vs tier avg " + avg[p.pos].toFixed(1) + ")"); }
-      if (p.inj && INJ[p.inj] != null && INJ[p.inj] < 0.7) why.push(p.name + " is " + p.inj.toLowerCase()); });
-    sends.forEach(function (p) { if (d[p.pos] != null && d[p.pos] - 1 < avg[p.pos]) { fit -= 0.06; why.push("Leaves " + who + " thin at " + p.pos + " (" + (d[p.pos] - 1) + " left vs " + avg[p.pos].toFixed(1) + ")"); } });
-    // Damped ratio (commish 11/7: Kyler Murray for Deshaun Watson graded F vs A+). Two near-replacement players used to
-    // divide small numbers by small numbers; GRADE_K points on both sides keeps a close swap near a B.
-    var ratio = function (a, b) { return (a + GRADE_K) / (b + GRADE_K); };
-    var r = ratio(inV, outV) + fit;
-    return { g: letter(r), gNow: letter(ratio(nowIn, nowOut)), gFut: letter(ratio(futIn, futOut)), inV: inV, outV: outV, nowIn: nowIn, nowOut: nowOut, futIn: futIn, futOut: futOut, r: r, why: why };
-  }
-  function gradeTrade(from, to, give, get, gc, tc) {
-    return { from: gradeSide(from, get, to, tc, give, gc), to: gradeSide(to, give, from, gc, get, tc) };
-  }
-  function gradePill(x, label) { return '<span class="grade g' + x.g.replace("+", "p") + '">' + esc(label) + ' ' + x.g + '</span>'; }
-  function gradeHTML(gr, youLabel, themLabel) {
-    var f = gr.from, fm = function (n) { return Math.round(n); };
-    return '<div class="gradebox"><div class="gl">' + gradePill(gr.from, youLabel) + gradePill(gr.to, themLabel) + '</div>' +
-      '<div class="meta" style="margin-top:6px">' + esc(youLabel) + ': <b>Now ' + f.gNow + '</b> (' + fm(f.nowIn) + ' in vs ' + fm(f.nowOut) + ' out) · <b>Future ' + f.gFut + '</b> (' + fm(f.futIn) + ' vs ' + fm(f.futOut) + ')</div>' +
-      (gr.from.why.concat(gr.to.why).length ? '<div class="meta">' + gr.from.why.concat(gr.to.why).slice(0, 3).map(esc).join(" · ") + '</div>' : '') +
-      '<details class="meta" style="margin-top:4px"><summary>How this is graded</summary>Now: what he scores over a bench-level player, for the weeks left. Future: how widely he\'s rostered and how long he\'s been around.</details></div>';
-  }
+
 
   // ---------- the all-rosters grid (step 1): scroll across teams, tap a team ----------
   function gridHTML() {
@@ -3103,6 +3025,7 @@
     }
     openSheet("builder", null, null, false);
   }
+  var REASONS = ["Need depth", "Win now", "Selling for the future", "Want credits", "Bye-week fix", "Just a deal"]; // "Why this deal?" chips
   function builderSheet() {
     var h = '<div class="steps">' + ["Team", "Pick players", "Preview"].map(function (t, i) { return '<span class="' + (BLD.step === i + 1 ? "on" : BLD.step > i + 1 ? "done" : "") + '">' + (i + 1) + '. ' + t + '</span>'; }).join("") + '</div>';
     if (!rostersReady()) return h + '<div class="card">' + (SIDE.rosters === "fail" ? '<p>Couldn\'t load rosters. Reopen the app to try again.</p>' : ld("Loading rosters…")) + '</div>';
@@ -3120,7 +3043,7 @@
       function stepper(side, val, max) { return '<div class="crs"><span>💳 ' + val + '</span><button data-cr2="' + side + '" data-d="-1">−</button><button data-cr2="' + side + '" data-d="1">+</button><small>of ' + max + '</small></div>'; }
       return h + '<div class="sbs"><div><div class="colh me">You send</div>' + stepper("give", BLD.gc, availCredits(ME.owner)) + col(mineR, BLD.give, "give") + '</div>' +
         '<div><div class="colh">' + esc(them.team) + ' sends</div>' + stepper("get", BLD.tc, availCredits(BLD.with)) + col(theirR, BLD.get, "get") + '</div></div>' +
-        '<div class="sticky">' + ((gN.length + tN.length) ? gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", shortOf(BLD.with)) : '') + '<div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
+        '<div class="sticky"><div class="meta">You send ' + gN.length + ' player' + (gN.length === 1 ? '' : 's') + (BLD.gc ? ' + ' + BLD.gc + ' cr' : '') + ' · you get ' + tN.length + (BLD.tc ? ' + ' + BLD.tc + ' cr' : '') + '</div>' +
         '<div class="btns" style="margin-top:6px"><button class="b" data-bstep="1">Back</button><button class="b pri" data-bstep="3"' + ((gN.length + tN.length) && (gN.length || BLD.gc) && (tN.length || BLD.tc) ? '' : ' disabled') + '>Preview trade</button></div></div>';
     }
     var checks = [
@@ -3131,7 +3054,6 @@
       [Date.now() < new Date(SUM.deadline || "2026-12-02T17:00:00Z").getTime(), "Before the Dec 2 deadline"]];
     var ok = checks.every(function (c) { return c[0]; });
     return h + '<div class="card"><div class="eb">Trade with ' + esc(them.team) + (BLD.counterOf ? ' · counteroffer' : '') + '</div><div class="two"><div>' + legHTML("You send", ME.owner, gN, BLD.gc) + '</div><div>' + legHTML("You get", BLD.with, tN, BLD.tc) + '</div></div></div>' +
-      gradeHTML(gradeTrade(ME.owner, BLD.with, gN, tN, BLD.gc, BLD.tc), "You", shortOf(BLD.with)) +
       '<div class="checks">' + checks.map(function (c) { return (c[0] ? "✅ " : "❌ ") + esc(c[1]); }).join("<br>") + '</div>' +
       '<div class="grp">Why this deal? (tap any)</div><div class="chips">' + REASONS.map(function (r) { return '<button class="chip2' + (BLD.reasons[r] ? ' on' : '') + '" data-reason="' + esc(r) + '">' + esc(r) + '</button>'; }).join("") + '</div>' +
       '<input class="field" id="bnote2" maxlength="200" placeholder="Add your own note (optional)" value="' + esc(BLD.note) + '">' +
