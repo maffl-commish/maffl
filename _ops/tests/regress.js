@@ -72,7 +72,12 @@ out("board", P(Object.assign({ action: "board" }, me)));
 out("deskact beta", P(Object.assign({ action: "deskact", op: "beta", target: "Sam Lavrinc", on: true }, me)));
 out("deskact daily", P(Object.assign({ action: "deskact", op: "daily", target: "" }, me)));
 out("feedback", P(Object.assign({ action: "feedback", mood: "up", note: "nice", kind: "button", where: "Home", ctx: "" }, me)));
-out("taplog", P(Object.assign({ action: "taplog", taps: [["tab", "home", "Home"]], session: "s1" }, me)));
+{ const tb = { owner: "Dan Reilly", pin: pins["Dan Reilly"] }; // 💡 Ideas & feedback: any owner, beta or not
+  out("feedback nonbeta button", P(Object.assign({ action: "feedback", mood: "up", note: "x", kind: "button", where: "Home" }, tb)));
+  out("feedback rate", P(Object.assign({ action: "feedback", kind: "rate", stars: 4, note: "Love the reel", where: "Ideas & feedback" }, tb)));
+  out("feedback rate empty", P(Object.assign({ action: "feedback", kind: "rate", stars: 0, note: " ", where: "Ideas & feedback" }, tb)));
+  out("feedback rate desk", (P(Object.assign({ action: "chat", room: "desk" }, me)).messages || []).filter((l) => l.event === "rate").map((l) => l.text)); }
+out("taplog",P(Object.assign({ action: "taplog", taps: [["tab", "home", "Home"]], session: "s1" }, me)));
 out("resync", P(Object.assign({ action: "resync" }, me)));
 out("request", P({ action: "request", owner: "Tony Brooks", note: "pls" }));
 out("botpost badkey", P({ action: "botpost", key: "nope", title: "x" }));

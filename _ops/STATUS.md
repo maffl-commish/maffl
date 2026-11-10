@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), desk close ✕ top right
+**Last updated:** 2026-11-09 by Claude (chat), 💡 Ideas & feedback
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-09 · REEL · 💡 **Ideas & feedback** replaces Speak Up + Credit requests (form) under Talk to the commish (You tab and League → Rules & $): 1–5 stars + optional note, any signed-in owner → Feedback tab + 📥 desk post ("💡 Team · ★★★★☆" + the note). Backend logic v0.50 (`feedback` kind `rate`, beta-only gate skipped for it); regress adds rate checks, baseline refreshed.
 - 2026-11-09 · REEL · Settings emails: new **DMs + @mentions** toggle (off; max one email per person per chat every 30 min) and **📣 Commish announcements** (on by default; every desk alert now emails owners who have it on), grouped Trades & credits / Chat & league, **All on / All off**, copy "Email only, for now". Settings accepts 2 emails (co-owned teams). All 21 teams' emails loaded into the TEST backend Sheet (not the repo). Backend logic v0.47; regress baseline refreshed.
 
 - 2026-11-09 · REEL · 🗞️ Drops step 3: 🧮 **Tonight's math** card (top of your reel, Monday night until noon Tuesday): your game first ("You need 20.1 from Josh Allen to beat Joe" / "It's yours" / "Hold on: up 8.4…" / "Your guys need 3.8 more than Braiden's"), then up to 4 other live games in your tier. Backend v0.48 / daily VER 14: the Monday 5 PM ET run (or the desk's Run it now on a Monday) publishes `math:<wk>` once into `drops` (games still alive, each side's starters yet to play with projections; Ghost games skipped). Mock gains `daily()`; regression adds math-drop checks.

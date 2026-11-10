@@ -819,6 +819,10 @@
   .fbmood button span{display:block;font-size:26px;margin-bottom:2px}
   .fbmood button.on{border-color:var(--navy);background:var(--navy);color:#fff}
   .fbctx{font:600 12px var(--body);color:var(--muted);margin-top:4px}
+  .fbstars{display:flex;justify-content:center;gap:6px;margin-top:6px}
+  .fbstars button{border:0;background:none;font-size:40px;line-height:1;padding:4px 2px;color:#d5dbe5;min-width:44px;min-height:44px}
+  .fbstars button.on{color:var(--gold)}
+  .fbstarw{text-align:center;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:2px 0 6px}
   textarea.field{min-height:96px;resize:vertical;font:16px/1.4 var(--body)}
 </style>
 </head>
@@ -2450,9 +2454,10 @@
       h += '<div class="pad"><div class="list" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"><button data-rules="1"><span>📋</span>Rulebook</button><button data-prizes="1"><span>💰</span>Prizes &amp; payouts</button></div></div>' +
         (kd.length ? '<div class="sh"><h2>🗓️ Key dates</h2><small>Coming up</small></div><div class="pad"><div class="card" style="margin-top:0;padding:4px 12px">' + kd.map(function (d) {
           return '<div class="row"><div style="flex:1"><div class="nm">' + esc(d.label) + '</div><div class="meta">' + esc(d.when) + (d.note ? ' · ' + esc(d.note) : '') + '</div></div><div class="rt">' + Math.max(0, Math.ceil((d.dueMs - Date.now()) / 864e5)) + '<small>days</small></div></div>'; }).join("") + '</div></div>' : '') +
-        '<div class="sh"><h2>Talk to the commish</h2></div><div class="pad"><div class="list" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit requests (form)</a></div></div>';
+        (API_URL ? '<div class="sh"><h2>Talk to the commish</h2></div><div class="pad"><div class="list" style="border-radius:12px;overflow:hidden;border:1px solid var(--border)"><button data-idea="1"><span>💡</span>Ideas &amp; feedback</button></div></div>' : '');
     } else h += vaultHTML();
     $("v-league").innerHTML = h;
+    document.querySelectorAll("#v-league [data-idea]").forEach(function (b) { b.onclick = function () { ideaBox(); }; });
     document.querySelectorAll("#lsub button").forEach(function (b) { b.onclick = function () { LEAGUE_SUB = b.dataset.lsub; renderLeague(); $("views").scrollTop = 0; }; });
     document.querySelectorAll("#lseg button").forEach(function (b) { b.onclick = function () { leagueTier = b.dataset.t; renderLeague(); }; });
     document.querySelectorAll("#vsub button").forEach(function (b) { b.onclick = function () { VAULT_SUB = b.dataset.vsub; renderLeague(); }; });
@@ -2462,7 +2467,7 @@
 
   // ---------- MORE ----------
   function renderMore() {
-    $("v-more").innerHTML = '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><a href="../speakup.html"><span>🗣️</span>Speak Up</a><a href="../credits.html"><span>💳</span>Credit Requests (form)</a></div>' +
+    $("v-more").innerHTML = (API_URL ? '<div class="sh"><h2>Talk to the commish</h2></div><div class="list"><button id="mIdea"><span>💡</span>Ideas &amp; feedback</button></div>' : '') +
       '<div class="sh"><h2>You</h2></div><div class="list">' + (API_URL ? '<button id="mSet"><span>⚙️</span>Settings</button>' : '') + '<button id="mSwitch"><span>🔄</span>' + (API_URL ? 'Sign out' : 'Switch team') + '</button><button id="mReq"><span>🔑</span>Passphrase help</button><button id="mTour"><span>👋</span>Show the tour again</button></div>' +
       '<div class="sh"><h2>About MAFFL HQ</h2></div><div class="pad"><p class="p">' + (STAGE === "live" ? 'The league\'s app: live scores from ESPN, this week\'s stories, trades and credits, and every game since 2005.'
         : 'You\'re on the beta of the new MAFFL HQ. Scores, standings and history are real. Trades, credit spends, polls and chat run on a practice copy that gets wiped before launch, so nothing here changes official league records.') +
@@ -2479,6 +2484,7 @@
     $("mReq").onclick = function () { showWelcome(true); };
     $("mTour").onclick = function () { tourClear(); toast("👋 Here's the tour"); tab("home"); };
     if ($("mSet")) $("mSet").onclick = openSettings;
+    if ($("mIdea")) $("mIdea").onclick = function () { ideaBox(); };
     if ($("errClear")) $("errClear").onclick = function () { store("maffl_lab_errs", "[]"); renderMore(); toast("Cleared"); };
   }
   function errsBlock() {
@@ -3442,7 +3448,7 @@
     if (l.kind === "lock") return "🔒 Owner locked out";
     if (l.kind === "alert") return ALERT_T[l.event] || "⚠️ Alert";
     if (l.kind === "robot") return (l.event === "FAIL" ? "❌ " : "🤖 ") + String(l.text || "").split("\n")[0];
-    if (l.kind === "feedback") return "🧪 " + String(l.text || "").split("\n")[0];
+    if (l.kind === "feedback") return (l.event === "rate" ? "" : "🧪 ") + String(l.text || "").split("\n")[0];
     return l.owner === BOTN ? String(l.text || "") : "You: " + l.text;
   }
   function espnStep(p) { // short on purpose (commish 11/8: less text in the to-dos)
@@ -3651,7 +3657,7 @@
       body = (parts.length > 1 ? '<div class="cbot' + (m.event === "FAIL" ? " fail" : m.event === "OK" ? " ok" : "") + '">' + esc(parts.slice(1).join("\n")) + '</div>' : '') +
         (/^https:\/\//.test(m.ref || "") ? '<div class="btns"><a class="b" href="' + esc(m.ref) + '" target="_blank" rel="noopener">Open ↗</a></div>' : ''); }
     else if (m.kind === "note") { hd = m.text; body = ""; }
-    else if (m.kind === "feedback") { var fl = String(m.text || "").split("\n"); hd = "🧪 " + fl[0]; body = fl.length > 1 ? '<div class="cbot' + (m.event === "down" ? " fail" : m.event === "up" ? " ok" : "") + '">“' + esc(fl.slice(1).join("\n")) + '”</div>' : ''; }
+    else if (m.kind === "feedback") { var fl = String(m.text || "").split("\n"); var rt = m.event === "rate" ? (fl[0].match(/★/g) || []).length : 0; hd = (m.event === "rate" ? "" : "🧪 ") + fl[0]; body = fl.length > 1 ? '<div class="cbot' + (m.event === "down" || (rt && rt <= 2) ? " fail" : m.event === "up" || rt >= 4 ? " ok" : "") + '">“' + esc(fl.slice(1).join("\n")) + '”</div>' : ''; }
     return '<div class="cevt">' + esc(hd) + '</div>' + body;
   }
   function loadDesk() {
@@ -4009,6 +4015,25 @@
     $("fbno").onclick = function () { $("cwrap").classList.remove("on"); };
     $("fbyes").onclick = function () { var note = $("fbnote").value.trim(); if (!mood && !note) { toast("Pick a thumb or write a note"); return; }
       busy(1); sendFeedback(mood, note, kind || "button", ctx).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't send"); return; } $("cwrap").classList.remove("on"); toast("Sent to the commish. Thanks! 🙌"); })
+        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
+  }
+  // 💡 Ideas & feedback (commish 11/9): every owner, from You and League → Rules & $. Replaces the Speak Up and
+  // credit-request Google forms. 1–5 stars and/or a note → backend `feedback` kind "rate" → Feedback tab + 📥 desk.
+  var STAR_WORD = ["", "Not good", "Meh", "It's OK", "Really good", "Love it"];
+  function ideaBox() {
+    var stars = 0;
+    $("cbox").innerHTML = '<h3>💡 Ideas &amp; feedback</h3><p class="fbctx">Straight to the commish: ideas for the app, what\'s bugging you, or kudos.</p>' +
+      '<label class="lbl" style="margin-top:12px">How\'s MAFFL HQ treating you?</label><div class="fbstars" role="radiogroup">' +
+      [1, 2, 3, 4, 5].map(function (n) { return '<button data-star="' + n + '" aria-label="' + n + ' star' + (n > 1 ? 's' : '') + '">★</button>'; }).join("") + '</div>' +
+      '<p class="fbstarw" id="fbstarw">Tap a star</p>' +
+      '<label class="lbl" for="idnote">Anything to add? (optional)</label><textarea class="field" id="idnote" maxlength="600" placeholder="An idea, a gripe, a shout-out…"></textarea>' +
+      '<div class="btns"><button class="b" id="idno">Cancel</button><button class="b pri" id="idyes">Send</button></div>';
+    $("cwrap").classList.add("on"); tap("sheet", "ideas");
+    function paint() { $("cbox").querySelectorAll("[data-star]").forEach(function (x) { x.classList.toggle("on", +x.dataset.star <= stars); }); $("fbstarw").textContent = stars ? STAR_WORD[stars] : "Tap a star"; }
+    $("cbox").querySelectorAll("[data-star]").forEach(function (b) { b.onclick = function () { stars = stars === +b.dataset.star ? 0 : +b.dataset.star; paint(); }; });
+    $("idno").onclick = function () { $("cwrap").classList.remove("on"); };
+    $("idyes").onclick = function () { var note = $("idnote").value.trim(); if (!stars && !note) { toast("Pick stars or write a note"); return; }
+      busy(1); api("feedback", Object.assign(creds(), { kind: "rate", stars: stars, note: note, where: "Ideas & feedback", ctx: screenCtx().ctx }), true).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't send"); return; } $("cwrap").classList.remove("on"); toast("Sent to the commish. Thanks! 🙌"); })
         .catch(function () { busy(0); toast("Couldn't reach the league server"); }); };
   }
   $("fbbtn").onclick = function () { hideNudge(); feedbackBox("", "button"); };

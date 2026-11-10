@@ -11,13 +11,19 @@ var FB_HEAD = ["fb_id","ts","owner","tier","kind","mood","where","note","ctx"];
 var TAP_HEAD = ["ts","owner","session","type","what","where"];
 var MOOD = { up: "👍", meh: "🤔", down: "👎" };
 function isBeta_(o) { return !!o && (String(o.beta || "").toUpperCase() === "Y" || String(o.is_commish) === "Y"); }
+// kind "rate" = 💡 Ideas & feedback (You tab, every signed-in owner; replaces the Speak Up / credit-request Google forms,
+// commish 11/9): 1–5 stars and/or a note → Feedback tab (mood "4★") + a desk post (event "rate").
 function feedback_(me, b) {
-  var o = ownerRow_(me.owner); if (!isBeta_(o)) return { ok: false, error: "Beta testers only" };
-  var mood = MOOD[b.mood] ? b.mood : "", note = String(b.note || "").trim().slice(0, 600), where = String(b.where || "").slice(0, 120);
-  if (!mood && !note) return { ok: false, error: "Pick a thumb or write a note" };
+  var o = ownerRow_(me.owner), rate = String(b.kind || "") === "rate";
+  if (!o || (!rate && !isBeta_(o))) return { ok: false, error: "Beta testers only" };
+  var stars = rate ? Math.max(0, Math.min(5, Math.round(Number(b.stars) || 0))) : 0;
+  var mood = rate ? (stars ? stars + "★" : "") : (MOOD[b.mood] ? b.mood : ""), note = String(b.note || "").trim().slice(0, 600), where = String(b.where || "").slice(0, 120);
+  if (!mood && !note) return { ok: false, error: rate ? "Pick stars or write a note" : "Pick a thumb or write a note" };
   var id = "F" + Date.now().toString(36), ctx = String(b.ctx || "").slice(0, 1500);
-  sheet_("Feedback").appendRow([id, new Date(), me.owner, o.tier, String(b.kind || "button").slice(0, 20), mood, safe_(where), safe_(note), safe_(ctx)]);
-  deskPost_("feedback", ((MOOD[mood] || "💬") + " " + (o.team || me.owner) + " · " + where + (note ? "\n" + note : "")).slice(0, CHAT_MAX), id, mood || "NOTE");
+  sheet_("Feedback").appendRow([id, new Date(), me.owner, o.tier, rate ? "rate" : String(b.kind || "button").slice(0, 20), mood, safe_(where), safe_(note), safe_(ctx)]);
+  var head = rate ? "💡 " + (o.team || me.owner) + " · " + (stars ? new Array(stars + 1).join("★") + new Array(6 - stars).join("☆") : "no rating")
+    : (MOOD[mood] || "💬") + " " + (o.team || me.owner) + " · " + where;
+  deskPost_("feedback", (head + (note ? "\n" + note : "")).slice(0, CHAT_MAX), id, rate ? "rate" : (mood || "NOTE"));
   return { ok: true, id: id };
 }
 function tapLog_(me, b) {
