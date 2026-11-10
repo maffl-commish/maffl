@@ -557,6 +557,7 @@
   .undo button{background:var(--gold);color:var(--navy);border:0;border-radius:8px;padding:7px 12px;font:800 13px var(--display)}
   .svbtns{display:flex;gap:8px;margin-top:8px}.svbtns .b{flex:1}
   .saved.dnc{background:#e6f5ee;border-color:var(--win,#1f9d6a);margin-left:0}
+  .fscore{display:flex;justify-content:space-between;margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--paper,#f4f6fa);font:600 14px var(--body);color:var(--muted)}.fscore b{font:700 22px var(--display);color:var(--navy);margin-left:6px}
   .fbid{font:700 15px var(--display);color:var(--navy);min-width:38px}
   .bdday{font:800 11px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 2px 0}
   .bpost{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 12px;margin-top:8px}
@@ -4169,8 +4170,8 @@
   }
   // 📰 Wire card: roster moves in your tier in the last 48 h (yours first), with Claude's wire line.
   // 🧮 Tonight's math (drops step 3, commish 11/9): the Monday 5 PM run publishes every game still alive for Monday night
-  // (DLY.drops type "math"). Shown until noon the next day, word for word as published. Your game leads ("You need 20.1
-  // from Josh Allen to win"); the rest of your tier's live games follow. Your card when you're in it, else your tier's.
+  // (DLY.drops type "math"). Shown until noon the next day, word for word as published. Your matchup only ("You need
+  // 20.1 from Josh Allen to win"); no card if your game is already decided.
   function mathCard(me) {
     var d = ((DLY && DLY.drops) || []).filter(function (x) { return x.type === "math"; })[0]; if (!d) return null;
     var age = Date.now() - new Date(d.at).getTime(); if (age > 20 * 3600e3 || age < 0) return null;
@@ -4178,19 +4179,17 @@
     var nm = function (L) { var n = L.map(function (p) { return p.n + (p.proj != null ? " (proj " + p.proj + ")" : ""); }); return n.length > 1 ? n.slice(0, -1).join(", ") + " and " + n[n.length - 1] : n[0]; };
     var f1 = function (x) { return (Math.round(x * 100) / 100).toFixed(2).replace(/\.?0+$/, ""); };
     var mine = gs.filter(function (g) { return isMe(g.a.owner) || isMe(g.b.owner); })[0], h = "", sub = "";
-    if (mine) { var Me = isMe(mine.a.owner) ? mine.a : mine.b, Op = Me === mine.a ? mine.b : mine.a, diff = Me.pts - Op.pts, opN = shortOf(Op.owner) || Op.team;
+    if (!mine) return null; // your matchup only (commish 11/9): no card when your game is already decided
+    var Me = isMe(mine.a.owner) ? mine.a : mine.b, Op = Me === mine.a ? mine.b : mine.a, diff = Me.pts - Op.pts, opN = shortOf(Op.owner) || Op.team;
       if (Me.left.length && !Op.left.length) { if (diff > 0) { h = "It's yours"; sub = "You lead by " + f1(diff) + " and " + opN + " is out of players."; }
         else { h = "You need " + f1(-diff + 0.01); sub = "from " + nm(Me.left) + " to beat " + opN + "."; } }
       else if (!Me.left.length && Op.left.length) { if (diff > 0) { h = "Hold on: up " + f1(diff); sub = opN + " needs " + f1(diff + 0.01) + " from " + nm(Op.left) + "."; }
         else { h = "Down " + f1(-diff) + ", out of players"; sub = opN + " still has " + nm(Op.left) + "."; } }
-      else { h = diff >= 0 ? "Up " + f1(diff) + " going in" : "Down " + f1(-diff) + " going in"; sub = (diff >= 0 ? "Keep " + opN + "'s guys from outscoring yours by " + f1(diff + 0.01) : "Your guys need " + f1(-diff + 0.01) + " more than " + opN + "'s") + ". Yours: " + nm(Me.left) + ". " + opN + "'s: " + nm(Op.left) + "."; } }
-    var others = gs.filter(function (g) { return g !== mine; });
-    var row = function (g) { var lead = g.a.pts >= g.b.pts ? g.a : g.b, trail = lead === g.a ? g.b : g.a, who = function (x) { return shortOf(x.owner) || x.team; };
-      return '<div class="frow"><span style="flex:1"><b>' + esc(who(lead)) + ' ' + f1(lead.pts) + '</b> – ' + esc(who(trail)) + ' ' + f1(trail.pts) +
-        '<small class="meta" style="display:block">' + [lead, trail].filter(function (x) { return x.left.length; }).map(function (x) { return esc(who(x)) + ': ' + esc(x.left.map(function (p) { return p.n; }).join(", ")) + ' (proj ' + x.lp + ')'; }).join(" · ") + '</small></span></div>'; };
-    return { id: "math:" + d.wk, scope: mine ? "me" : me.tier, c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h || "Games still alive", face: '<div class="fc">' +
-      (mine ? '<h3>' + esc(h) + '</h3><p class="fl">' + esc(sub) + '</p>' : '<h3>' + others.length + ' game' + (others.length === 1 ? '' : 's') + ' still alive tonight</h3>') +
-      (others.length ? (mine ? '<p class="fs" style="margin-top:10px">Also alive in ' + (me.tier === "U" ? "Upper" : "Lower") + '</p>' : '') + '<div class="frows">' + others.slice(0, 4).map(row).join("") + '</div>' + (others.length > 4 ? '<p class="fs">+' + (others.length - 4) + ' more · ⚔️ Match → Scoreboard</p>' : '') : '') + '</div>' } };
+      else { h = diff >= 0 ? "Up " + f1(diff) + " going in" : "Down " + f1(-diff) + " going in"; sub = (diff >= 0 ? "Keep " + opN + "'s guys from outscoring yours by " + f1(diff + 0.01) : "Your guys need " + f1(-diff + 0.01) + " more than " + opN + "'s") + "."; }
+    return { id: "math:" + d.wk, scope: "me", c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h, face: '<div class="fc"><h3>' + esc(h) + '</h3><p class="fl">' + esc(sub) + '</p>' +
+      '<div class="fscore"><span>You <b>' + f1(Me.pts) + '</b></span><span>' + esc(opN) + ' <b>' + f1(Op.pts) + '</b></span></div>' +
+      [[Me, "Yours still to play"], [Op, opN + "'s still to play"]].map(function (x) { return x[0].left.length ? '<p class="fs" style="margin-top:10px">' + esc(x[1]) + ' · proj ' + x[0].lp + '</p><div class="frows">' +
+        x[0].left.map(function (p) { return '<div class="frow"><span style="flex:1"><b>' + esc(p.n) + '</b> <small class="meta">' + esc([p.pos, p.tm].filter(Boolean).join(" · ")) + '</small></span><span class="meta">' + (p.proj != null ? 'proj ' + p.proj : '') + '</span></div>'; }).join("") + '</div>' : ''; }).join("") + '</div>' } };
   }
   // 💰 Waiver auction (commish 11/9): the wire is the FAAB report, not every add and drop. 🗞️ It's a drop: the daily run
   // publishes each waiver run once (DLY.drops, type "faab") with the bids as they stood, and this card shows your tier's
