@@ -563,6 +563,7 @@
   .chlist{display:flex;flex-direction:column;margin-top:6px}.chrow{display:flex;gap:10px;align-items:center;text-align:left;padding:10px 2px;border-bottom:1px solid var(--border);background:none}
   .chrow:last-child{border:0}.chrow>span:not(.cav){flex:1;min-width:0}.chrow .cav{flex:none;width:36px;height:36px}.chrow b{display:block;font:700 15px var(--display);color:var(--navy)}.chrow small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .chrow i{font-style:normal;min-width:22px;height:22px;line-height:22px;border-radius:11px;background:var(--loss);color:#fff;font:700 12px var(--body);text-align:center;padding:0 6px}
+  .mhero .tow{font:600 12px var(--body);color:rgba(255,255,255,.75);margin:2px 0 4px}.mhero .tow b{font-weight:700}.mhero .tow .sw{color:#4ade80}.mhero .tow .sl{color:#f87171}
   .mxh{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;margin-top:2px}
   .mxs{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--navy-soft);min-width:0}
   .mxs.lead{background:var(--gold-soft);box-shadow:inset 0 0 0 2px var(--gold)}.mxs .cav{grid-row:span 2;width:32px;height:32px;font-size:12px}
@@ -2298,7 +2299,8 @@
     if (!mine) { $("v-match").innerHTML = h + '<div class="card"><h3>No game for ' + esc(myName) + ' in Week ' + wk + '</h3></div></div>'; return; }
     var fin = wk < c || r.final, live = isLive || (wk === c && !fin);
     var ago = Math.max(0, Math.round((Date.now() - new Date(r.at).getTime()) / 1000));
-    var lead = mine.pts - (opp ? opp.pts : 0), pm = fin ? mine.pts : (mine.proj || mine.pts), po = opp ? (fin ? opp.pts : (opp.proj || opp.pts)) : 0, share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
+    var lead = mine.pts - (opp ? opp.pts : 0), pm = fin ? mine.pts : (mine.proj || mine.pts), po = opp ? (fin ? opp.pts : (opp.proj || opp.pts)) : 0, share = opp ? winProb(mine, opp, leftOf(mine), leftOf(opp)) : 50, espnWp = mine.wp != null;
+    var recLine = function (sd) { var o = ownOf(sd), rc = recThru(tier, sd.team, wk), st = wk === c ? streakTxt(sd.team) : ""; return '<div class="tow">' + esc(o ? shortOf(o) : "") + (rc ? ' · ' + rc : '') + (st ? ' <b class="' + (st[0] === "W" ? "sw" : "sl") + '">(' + st + ')</b>' : '') + '</div>'; };
     function bonusBits(sd) { var a = sd.dpb.reduce(function (n, d) { return n + d.add; }, 0); return sd.dpb.length ? '<div class="dchip">✖️2 ' + esc(sd.dpb.map(function (d) { return d.p.n.split(" ").slice(-1)[0]; }).join(" + ")) + ' · +' + f2(a) + '</div>' : ''; }
     function scoreCell(sd, win) { return '<div class="lsc' + (win ? " w" : "") + (sd.dpb.length ? " dbl" : "") + '"><span class="sv">' + f2(sd.pts) + '</span></div>'; }
     function sub(sd) { return fin ? f2(sd.bench || 0) + ' left on bench' : 'proj ' + (sd.proj != null ? sd.proj : "–") + ' · ' + sd.left + ' to play'; }
@@ -2307,15 +2309,28 @@
       live ? '<button class="simpill" id="' + (isLive ? 'mrefresh' : 'mretry') + '" title="Pull the latest from ESPN">↻ ' + (ago < 60 ? ago + "s" : Math.round(ago / 60) + "m") + ' ago</button>' : '';
     h += '<div class="mhero live"><div class="eb" style="color:var(--gold);display:flex;justify-content:space-between;align-items:center"><span>' +
       (fin ? 'Final' : allZero(r) ? 'Not kicked off yet' : '<span class="ldot"></span>Live') + (MGAME ? ' · ' + (tier === "U" ? "Upper" : "Lower") : '') + '</span>' + pill + '</div>' +
-      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div>' + scoreCell(mine, lead >= 0) + '<div class="rec">' + sub(mine) + '</div>' + bonusBits(mine) + '</div>' +
+      '<div class="vs"><div><div class="tn">' + esc(mine.team) + '</div>' + recLine(mine) + scoreCell(mine, lead >= 0) + '<div class="rec">' + sub(mine) + '</div>' + bonusBits(mine) + '</div>' +
       '<div class="mid">VS' + (mo && oo ? '<button class="rivb" data-riv-push="' + esc(mo) + '|' + esc(oo) + '" aria-label="Rivalry history">⚔️<small>Rivalry</small></button>' : '') + '</div>' +
-      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div>' + scoreCell(opp, lead < 0) + '<div class="rec">' + sub(opp) + '</div>' + bonusBits(opp) + '</div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
+      (opp ? '<div><div class="tn">' + esc(opp.team) + '</div>' + recLine(opp) + scoreCell(opp, lead < 0) + '<div class="rec">' + sub(opp) + '</div>' + bonusBits(opp) + '</div>' : '<div><div class="tn">Bye</div></div>') + '</div>' +
       (fin ? '<div class="wpl" style="justify-content:center;margin-top:10px"><span>' + (opp ? esc(lead >= 0 ? mine.team : opp.team) + ' by ' + f2(Math.abs(lead)) : 'Bye week') + '</span></div>' :
-        '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% by projection</span><span>' + (100 - share) + '%</span></div>') + '</div>';
+        '<div class="wp"><i style="width:' + share + '%"></i></div><div class="wpl"><span>' + share + '% win probability' + (espnWp ? ' · ESPN' : '') + '</span><span>' + (100 - share) + '%</span></div>') + '</div>';
     h += '<div class="sh"><h2>Lineups</h2><small>Tap a player or his points</small></div>' + lineupHTML(r, mine, opp, live) + '</div>';
     $("v-match").innerHTML = h;
   }
   // 🏟️ Every game in a tier for the week: tap one to open it. Your game wears gold.
+  // 🎯 Win probability (commish 11/9: match ESPN). ESPN's own number when the feed carries one (side.wp, 0–100);
+  // otherwise ESPN's projected totals + who's left: margin / spread, spread = 0.47 × √(Σ proj² of every starter still to
+  // play, both sides) (fit to ESPN: 170.8 vs 157.4 with Allen 21.4 + Hockenson 6.0 left = 90%). Returns your %.
+  function winProb(me, op, meLeft, opLeft) {
+    if (me && me.wp != null && op) return Math.round(me.wp);
+    var mp = me.proj != null ? me.proj : me.pts, op2 = op ? (op.proj != null ? op.proj : op.pts) : 0, all = (meLeft || []).concat(opLeft || []);
+    var sd = 0.47 * Math.sqrt(all.reduce(function (a, p) { var x = Number(p.proj) || 0; return a + x * x; }, 0)), m = mp - op2;
+    if (sd < 0.5) return m > 0 ? 100 : m < 0 ? 0 : 50;
+    var z = m / sd, t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2), erf = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z / 2);
+    var pr = 0.5 * (1 + (z >= 0 ? erf : -erf)); return Math.max(1, Math.min(99, Math.round(100 * pr)));
+  }
+  function leftOf(sd) { return ((sd && sd.players) || []).filter(function (p) { return p.slot !== "BE" && p.slot !== "IR" && !p.played && p.opp && p.opp !== "BYE"; }); }
+  function streakTxt(team) { var t = TEAMS.filter(function (y) { return sameTeam(y.team, team); })[0]; return t && t.streak ? (t.streak > 0 ? "W" : "L") + Math.abs(t.streak) : ""; }
   // Team record on the scoreboard (commish 11/9): W–L(–T) through the week shown (a past week = as it stood after it;
   // this week = the record coming in, until games go final), from the daily snapshot; this week falls back to standings.
   function recThru(tier, team, wk) {
@@ -4295,7 +4310,7 @@
     var kickTxt = function (k) { if (!k) return ""; var t = new Date(k); return t.toLocaleDateString("en-US", { weekday: "short", timeZone: "America/New_York" }) + " " + t.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" }).replace(":00", ""); };
     var side = function (x, mine) { var lead = x.pts >= (x === Me ? Op : Me).pts;
       return '<div class="mxs' + (lead ? ' lead' : '') + '"><span class="cav" style="background:' + AVC[hashStr(norm(x.owner)) % AVC.length] + '">' + esc(initials(x.owner)) + '</span><b class="mxt">' + esc(mine ? "You" : opN) + '</b><small>' + esc(x.team) + '</small><span class="mxn">' + f1(x.pts) + '</span></div>'; };
-    var pf = function (x) { return Math.round((x.pts + x.lp) * 10) / 10; }, pm = pf(Me), po = pf(Op), share = pm + po ? Math.round(100 * pm / (pm + po)) : 50;
+    var pf = function (x) { return Math.round((x.pts + x.lp) * 10) / 10; }, pm = pf(Me), po = pf(Op), share = winProb({ pts: Me.pts, proj: pm }, { pts: Op.pts, proj: po }, Me.left, Op.left);
     var plist = function (x, label) { if (!x.left.length) return '<div class="mxch">' + esc(label) + ' · all done ✓</div>';
       return '<div class="mxch">' + esc(label) + ' · proj ' + x.lp + '</div>' + x.left.slice(0, 3).map(function (p) { var lv = liveP[p.n] || {}, opp = p.opp || lv.opp || "", kk = p.kick || lv.kick || 0;
         return '<button class="mxp" data-player="' + esc(x.owner) + '|' + esc(p.n) + '@' + esc(p.pos || "") + '"><span><b>' + esc(p.n) + '</b><small>' + esc([p.pos, p.tm, opp, kickTxt(kk)].filter(Boolean).join(" · ")) + '</small></span>' +
@@ -4304,7 +4319,7 @@
     return { id: "math:" + d.wk, at: d.at, scope: "me", c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h, face: '<div class="fc">' +
       '<div class="mxh">' + side(Me, true) + '<div class="mxv">VS</div>' + side(Op, false) + '</div>' +
       '<p class="mstory">' + esc(h) + ' ' + esc(sub) + '</p>' +
-      (Me.left.length || Op.left.length ? '<div class="mxbar"><div class="mxbl"><span>ESPN projects</span></div><div class="mxtrack"><i style="width:' + share + '%"></i></div><div class="mxbn"><b>You ' + pm + '</b><b>' + esc(opN) + ' ' + po + '</b></div></div>' : '') +
+      (Me.left.length || Op.left.length ? '<div class="mxbar"><div class="mxbl"><span>Win probability</span></div><div class="mxtrack"><i style="width:' + share + '%"></i></div><div class="mxbn"><b>You ' + share + '%</b><b>' + esc(opN) + ' ' + (100 - share) + '%</b></div><div class="mxbn" style="color:var(--muted);font-size:12px"><span>proj ' + pm + '</span><span>proj ' + po + '</span></div></div>' : '') +
       plist(Me, "Yours to play") + plist(Op, opN + "'s to play") +
       '<div class="btns"><button class="b pri" data-go="match">⚔️ Open your matchup</button></div></div>' } };
   }

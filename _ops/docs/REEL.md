@@ -74,6 +74,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - G · 👤 **Profile revamp** (owner side done 11/7; left: anything else from the classic Power Rankings page): bring Power Rankings / owner profile (years in league, draft profile, Madden-style ratings) into the app's look, behind Team → Profile.
 - Box scores today read ESPN on demand (`live` with `week`, finals cached 6 h). If we want them offline/historic later: end-of-season roster + lineup snapshot into the archive (gold stays results-only).
 - Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
+- Decided 11/9: Match win probability must match ESPN (ESPN's number if the feed has it, else an estimate fit to ESPN's); team header shows owner · record (streak).
 - Decided 11/9: 🏷️ @handles for every owner (default = registry short name, editable in Settings) and the @ Mentions tab back in Chat (reversing 11/3): cards and chat tag people by handle (backend v0.50).
 - 11/9 (built): REEL_SERIES v2.1 build plan done: drops (cards wait for their slot, newest drop first), 🏅 Week awards, one quiz a week, no "you" headlines on shared cards, anatomy pass, 📣 Commish alert + 💳 Perk news cards (also in chat).
 - 11/9: 🗂️ **Card inventory** in REEL_SERIES.md v2.0: every series, its drop slot in the weekly rhythm, lifetime, verdict (keep / fix / merge / your call / new) and the card anatomy everyone follows. Build plan at its end.
