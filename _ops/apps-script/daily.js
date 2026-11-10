@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "13"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "14"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -253,6 +253,27 @@ function dFaabDrop_(tier, list) {
   var cut = Date.now() - 60 * 864e5; dPut_("drops", drops.filter(function (d) { return new Date(d.at).getTime() > cut; }).slice(0, 200));
   return id;
 }
+// 🗞️ Drops step 3 (commish 11/9): 🧮 Tonight's math. The Monday afternoon run (5 PM ET, or the desk's Run it now on a
+// Monday) reads the live scoreboards and publishes, once per week, every game still alive for Monday night: both
+// scores, and each side's starters yet to play with their projections. The app turns it into "you need 20.1 from Josh
+// Allen". Ghost games are left out. force = publish now whatever the day (tests).
+DAILY.mathDrop = function (force) {
+  var now = new Date();
+  if (!force && !(Utilities.formatDate(now, "America/New_York", "EEE") === "Mon" && etHour_(now) >= 12)) return null;
+  var drops = dGet_("drops") || [], games = [], wk = 0, owner = {}, cache = CacheService.getScriptCache();
+  owners_().forEach(function (o) { if (o.team) owner[norm_(o.team)] = o.owner; });
+  ["U", "L"].forEach(function (tier) {
+    cache.remove("live_" + tier); var L = live_(tier, 0); if (!L || !L.ok) return; wk = wk || L.week;
+    var sd = function (x) { var left = (x.players || []).filter(function (p) { return p.slot !== "BE" && p.slot !== "IR" && !p.played && p.opp && p.opp !== "BYE"; });
+      return { team: x.team, owner: owner[norm_(x.team)] || "", pts: x.pts, left: left.map(function (p) { return { n: p.n, pos: p.pos, tm: p.tm, proj: p.proj }; }),
+        lp: Math.round(left.reduce(function (a, p) { return a + (Number(p.proj) || 0); }, 0) * 10) / 10 }; };
+    (L.games || []).forEach(function (g) { if (!g.home || !g.away || /ghost/i.test(g.home.team + g.away.team)) return;
+      var a = sd(g.home), b = sd(g.away); if (a.left.length || b.left.length) games.push({ tier: tier, a: a, b: b }); });
+  });
+  if (!wk || !games.length || drops.some(function (d) { return d.id === "math:" + wk; })) return null;
+  drops.unshift({ id: "math:" + wk, type: "math", wk: wk, at: now.toISOString(), games: games }); dPut_("drops", drops.slice(0, 200));
+  return games.length;
+};
 function dRecentMoves_(days) {
   var sh = SpreadsheetApp.getActive().getSheetByName("Moves"); if (!sh || sh.getLastRow() < 2) return [];
   var since = Date.now() - days * 864e5, n = Math.min(400, sh.getLastRow() - 1);
@@ -298,6 +319,7 @@ DAILY.run = function (why) {
     catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " waivers: " + e.message); }
   });
   if (Object.keys(snap.tiers).length) dPut_("snapshot", snap);
+  try { var mg = DAILY.mathDrop(); if (mg) log.push("🧮 tonight's math: " + mg + " game" + (mg === 1 ? "" : "s") + " alive"); } catch (e) { problems.push("Tonight's math: " + e.message); }
   try { var na = Object.keys(snap.tiers).length === 2 ? dAwards_(snap) : 0; if (na) log.push(na + " credit award" + (na === 1 ? "" : "s") + " earned (issued after Wk 17)"); } catch (e) { problems.push("Awards: " + e.message); }
   var digest = []; try { digest = dDigest_(last.at ? new Date(last.at).getTime() : Date.now() - 864e5); } catch (e) {}
   var tk = tickInfo_(), tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;

@@ -474,7 +474,7 @@ function create(opts) {
   return {
     get(params) { const t = Date.now(), out = bodyOf(logic().doGet({ parameter: params || {} })); log("GET", params.action || "(version)", params.tier || "", Date.now() - t + "ms", out.ok === false ? "→ " + out.error : ""); return out; },
     post(body) { const t = Date.now(), out = bodyOf(logic().doPost({ postData: { contents: JSON.stringify(body || {}) } })); if (body.action !== "taplog") log("POST", body.action, Date.now() - t + "ms", out.ok === false ? "→ " + out.error : ""); return out; },
-    reset: seed, pins: () => PINS, prop: (k, v) => { props[k] = String(v); }, sheet: (n) => (sheets[n] ? sheets[n].data : null), mail: () => mail,
+    reset: seed, pins: () => PINS, prop: (k, v) => { props[k] = String(v); }, daily: () => { const M = logic(); M._need("daily"); return M._daily(); }, sheet: (n) => (sheets[n] ? sheets[n].data : null), mail: () => mail,
   };
 }
 

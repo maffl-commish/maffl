@@ -1759,7 +1759,7 @@
   // slots in the weekly budget, the feed interleaves the groups, you scroll up for the next card (nothing is deleted),
   // and it ends with "You're caught up". Things that need you (trades, the desk, dues) lead the feed.
   var SERIES = { // id prefix → group, rank inside the group (lower = first)
-    result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
+    math: ["you", 0], result: ["you", 1], next: ["you", 2], msgs: ["you", 3], surv: ["you", 4], div: ["you", 5], wire: ["you", 6],
     deadline: ["league", 1], tier: ["league", 2], coach: ["league", 3], high: ["league", 4], elite5: ["league", 5], credits: ["league", 7], other: ["league", 8],
     records: ["league", 6],
     gotw: ["play", 1], pay: ["play", 2], names: ["play", 2], poll: ["play", 2], quiz: ["play", 3], throwback: ["vault", 1], history: ["vault", 2], owner: ["vault", 2], tidbit: ["vault", 3] };
@@ -1855,6 +1855,7 @@
         '<div class="btns"><button class="b pri" data-go="match">⚔️ Match</button>' + (r.n ? '<a class="b" href="' + rivalryHref(ME.owner, po) + '">Rivalry' + (lastG ? ' · last met ' + lastG.y : '') + '</a>' : '') + '</div></div>' } });
     }
     var wc = W === LATEST ? wireCard(me) : null; if (wc) { wc.scope = me.tier; all.push(wc); }
+    var mc = mathCard(me); if (mc) all.push(mc);
     var dms = by("dm").concat(by("group"));
     if (dms.length) all.push({ id: "msgs", icon: "💬", scope: "me", c: dms.length === 1 ? dms[0] : { eb: "💬 Chat", t: dms.length + " chats with new messages", body: dms.map(function (d) { return '<div class="ofr"><div class="eb">' + esc(d.t) + '</div>' + d.body + '</div>'; }).join("") } });
     // Quizzes: up to three, spread through the reel (the first one right here).
@@ -4167,6 +4168,30 @@
       .map(function (g) { return { tier: g[1], teamA: teamOf(g[2]).team, ownerA: g[2], teamB: teamOf(g[3]).team, ownerB: g[3], note: dailyLine(g[2], "next") || dailyLine(g[3], "next") }; });
   }
   // 📰 Wire card: roster moves in your tier in the last 48 h (yours first), with Claude's wire line.
+  // 🧮 Tonight's math (drops step 3, commish 11/9): the Monday 5 PM run publishes every game still alive for Monday night
+  // (DLY.drops type "math"). Shown until noon the next day, word for word as published. Your game leads ("You need 20.1
+  // from Josh Allen to win"); the rest of your tier's live games follow. Your card when you're in it, else your tier's.
+  function mathCard(me) {
+    var d = ((DLY && DLY.drops) || []).filter(function (x) { return x.type === "math"; })[0]; if (!d) return null;
+    var age = Date.now() - new Date(d.at).getTime(); if (age > 20 * 3600e3 || age < 0) return null;
+    var gs = (d.games || []).filter(function (g) { return g.tier === me.tier; }); if (!gs.length) return null;
+    var nm = function (L) { var n = L.map(function (p) { return p.n + (p.proj != null ? " (proj " + p.proj + ")" : ""); }); return n.length > 1 ? n.slice(0, -1).join(", ") + " and " + n[n.length - 1] : n[0]; };
+    var f1 = function (x) { return (Math.round(x * 100) / 100).toFixed(2).replace(/\.?0+$/, ""); };
+    var mine = gs.filter(function (g) { return isMe(g.a.owner) || isMe(g.b.owner); })[0], h = "", sub = "";
+    if (mine) { var Me = isMe(mine.a.owner) ? mine.a : mine.b, Op = Me === mine.a ? mine.b : mine.a, diff = Me.pts - Op.pts, opN = shortOf(Op.owner) || Op.team;
+      if (Me.left.length && !Op.left.length) { if (diff > 0) { h = "It's yours"; sub = "You lead by " + f1(diff) + " and " + opN + " is out of players."; }
+        else { h = "You need " + f1(-diff + 0.01); sub = "from " + nm(Me.left) + " to beat " + opN + "."; } }
+      else if (!Me.left.length && Op.left.length) { if (diff > 0) { h = "Hold on: up " + f1(diff); sub = opN + " needs " + f1(diff + 0.01) + " from " + nm(Op.left) + "."; }
+        else { h = "Down " + f1(-diff) + ", out of players"; sub = opN + " still has " + nm(Op.left) + "."; } }
+      else { h = diff >= 0 ? "Up " + f1(diff) + " going in" : "Down " + f1(-diff) + " going in"; sub = (diff >= 0 ? "Keep " + opN + "'s guys from outscoring yours by " + f1(diff + 0.01) : "Your guys need " + f1(-diff + 0.01) + " more than " + opN + "'s") + ". Yours: " + nm(Me.left) + ". " + opN + "'s: " + nm(Op.left) + "."; } }
+    var others = gs.filter(function (g) { return g !== mine; });
+    var row = function (g) { var lead = g.a.pts >= g.b.pts ? g.a : g.b, trail = lead === g.a ? g.b : g.a, who = function (x) { return shortOf(x.owner) || x.team; };
+      return '<div class="frow"><span style="flex:1"><b>' + esc(who(lead)) + ' ' + f1(lead.pts) + '</b> – ' + esc(who(trail)) + ' ' + f1(trail.pts) +
+        '<small class="meta" style="display:block">' + [lead, trail].filter(function (x) { return x.left.length; }).map(function (x) { return esc(who(x)) + ': ' + esc(x.left.map(function (p) { return p.n; }).join(", ")) + ' (proj ' + x.lp + ')'; }).join(" · ") + '</small></span></div>'; };
+    return { id: "math:" + d.wk, scope: mine ? "me" : me.tier, c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h || "Games still alive", face: '<div class="fc">' +
+      (mine ? '<h3>' + esc(h) + '</h3><p class="fl">' + esc(sub) + '</p>' : '<h3>' + others.length + ' game' + (others.length === 1 ? '' : 's') + ' still alive tonight</h3>') +
+      (others.length ? (mine ? '<p class="fs" style="margin-top:10px">Also alive in ' + (me.tier === "U" ? "Upper" : "Lower") + '</p>' : '') + '<div class="frows">' + others.slice(0, 4).map(row).join("") + '</div>' + (others.length > 4 ? '<p class="fs">+' + (others.length - 4) + ' more · ⚔️ Match → Scoreboard</p>' : '') : '') + '</div>' } };
+  }
   // 💰 Waiver auction (commish 11/9): the wire is the FAAB report, not every add and drop. 🗞️ It's a drop: the daily run
   // publishes each waiver run once (DLY.drops, type "faab") with the bids as they stood, and this card shows your tier's
   // newest one for 4 days after it went out, word for word. Winners who spent $1+, plus the losing bids when ESPN shows them.
