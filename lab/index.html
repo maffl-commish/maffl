@@ -725,7 +725,11 @@
   .cfail{display:flex;align-items:center;gap:8px;margin-top:4px;font:600 12px var(--body);color:#b42318}
   .cfail span{flex:1;min-width:0}
   .cfail button{font:700 12px var(--body);padding:6px 10px;border-radius:999px;border:1px solid #f1b8b2;background:#fff5f4;color:#b42318;min-height:32px}
-  .ctx .at{color:var(--gold-dark);font-weight:700}
+  .ctx .at,.at{color:var(--gold-dark);font-weight:700}button.at{background:none;border:0;padding:0;font:inherit;color:var(--gold-dark);font-weight:700;cursor:pointer}
+  .cnum{font-style:normal;display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);margin-left:4px;padding:0 5px}
+  .cp.at2{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .hfield{display:flex;align-items:center;gap:6px;margin-top:8px}.hfield span{font:700 20px var(--display);color:var(--gold-dark)}.hfield .field{flex:1;margin:0}
+  .catlist small{color:var(--muted);font-weight:500;margin-left:2px}
   .cevt{font:700 14px/1.3 var(--body);margin-top:1px}
   .ctrade{margin-top:6px;border:1px solid var(--border);border-left:4px solid var(--gold);background:var(--surface);border-radius:10px;padding:9px 11px}
   .ctrade .two{gap:10px}
@@ -977,6 +981,8 @@
     if (!SET) return '<div class="card">' + ld("Loading your settings…") + '</div>';
     if (SET.error) return '<div class="card"><p>' + esc(SET.error) + '</p></div>';
     return '<div class="sh" style="padding-left:0"><h2>⚙️ Settings</h2></div>' +
+      '<div class="card"><div class="eb">Your @handle</div><p class="meta">How owners tag you in chat and how cards name you. Letters and numbers, 2–20.</p>' +
+      '<div class="hfield"><span>@</span><input class="field" id="stHandle" maxlength="20" autocapitalize="off" autocomplete="off" spellcheck="false" value="' + esc(SET.handle || "") + '"></div></div>' +
       '<div class="card"><div class="eb">Your contact info</div><p class="meta">Only signed-in owners see it (never the public site). Used for trade texts and emails.</p>' +
       '<label class="lbl" for="stEmail">Email <small>(two? separate with a comma)</small></label><input class="field" id="stEmail" type="email" multiple inputmode="email" autocomplete="email" maxlength="120" value="' + esc(SET.email) + '" placeholder="you@example.com">' +
       '<label class="lbl" for="stPhone">Mobile</label><input class="field" id="stPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" value="' + esc(fmtPhone(SET.phone)) + '" placeholder="(412) 555-0123"></div>' +
@@ -997,8 +1003,8 @@
     $("stAllOn").onclick = function () { all(true); }; $("stAllOff").onclick = function () { all(false); };
     b.onclick = function () {
       var n = {}; document.querySelectorAll("[data-nt]").forEach(function (x) { n[x.dataset.nt] = x.checked; });
-      busy(1); api("savesettings", Object.assign(creds(), { email: $("stEmail").value, phone: $("stPhone").value, notify: n })).then(function (r) {
-        busy(0); if (!r.ok) { toast(r.error); return; } SET = r; closeSheet(); afterChange("Settings saved ✓");
+      busy(1); api("savesettings", Object.assign(creds(), { email: $("stEmail").value, phone: $("stPhone").value, notify: n, handle: $("stHandle") ? $("stHandle").value : null })).then(function (r) {
+        busy(0); if (!r.ok) { toast(r.error); return; } SET = r; if (SUM && SUM.handles && r.handle) SUM.handles[ME.owner] = r.handle; closeSheet(); afterChange("Settings saved ✓");
       }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
     };
   }
@@ -1227,6 +1233,10 @@
   // Quizzes come from the week's ESPN facts (lab/weekfacts-data.js) + the Pulse week object.
   // ---------------------------------------------------------------------------------------------
   var SHORT = {};
+  // 🏷️ @handles (commish 11/9): from the summary (backend handles_: Settings choice, else the registry short name).
+  function handleOf(owner) { var h = SUM && SUM.handles || {}, o = String(owner || ""); if (h[o]) return h[o]; var k = Object.keys(h).filter(function (x) { return norm(x) === norm(o); })[0];
+    return k ? h[k] : shortOf(o).replace(/[^A-Za-z0-9_]/g, ""); }
+  function ownerOfHandle(hd) { var h = SUM && SUM.handles || {}, l = String(hd || "").toLowerCase(); return Object.keys(h).filter(function (o) { return h[o].toLowerCase() === l; })[0] || ""; }
   function shortOf(owner) { return SHORT[String(owner || "").replace(/\s+/g, " ").replace(/\s*\/\s*/g, " / ").trim().toLowerCase()] || String(owner || "").split(" ")[0]; }
   function tw(team) { var o = ownerOfTeam(team); return esc(team) + (o ? ' <span class="who2">(' + esc(shortOf(o)) + ')</span>' : ''); }
   function hashStr(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
@@ -3401,7 +3411,8 @@
   }
   function fmtText(t, ment) { var h = esc(t);
     (ment || []).forEach(function (o) { var a = esc("@" + o); h = h.split(a).join('<span class="at">' + a + '</span>'); }); // bot posts @ full names
-    return h.replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, '$1<span class="at">@$2</span>'); }
+    return h.replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, function (m, pre, hd) { var o = ownerOfHandle(hd.replace(/[^A-Za-z0-9_]+$/, ""));
+      return pre + (o ? '<button class="at" data-owner="' + esc(o) + '">@' + hd + '</button>' : '<span class="at">@' + hd + '</span>'); }); }
   function tradeMini(o, latest) {
     if (!o) return '<div class="ctrade"><p class="meta">Trade details unavailable.</p></div>';
     var cur = (SUM.offers || []).filter(function (x) { return x.id === o.id; })[0] || o, st = ST[cur.status] || [cur.status, ""];
@@ -3771,13 +3782,13 @@
   function mentionable(room) {
     if (room.indexOf("dm:") === 0) return [otherOf(room)];
     return TEAMS.filter(function (t) { return t.owner !== "—" && !isMe(t.owner) && (room === "league" || "tier:" + t.tier === room); })
-      .map(function (t) { return t.owner; }).sort(function (a, b) { return shortOf(a).localeCompare(shortOf(b)); });
+      .map(function (t) { return t.owner; }).sort(function (a, b) { return handleOf(a).localeCompare(handleOf(b)); });
   }
   function drawComposer() {
     var room = CH.room, ta = $("cinput"); if (ta) CH.draft[room] = ta.value;
     var other = room.indexOf("dm:") === 0 ? otherOf(room) : null, ot = other ? teamOf(other) : null;
     var canTrade = ot && ot.tier === ME.tier && !/ghost/i.test(ot.team || "") && W === LATEST;
-    $("cfoot").innerHTML = (CH.at ? '<div class="catlist">' + mentionable(room).map(function (o) { return '<button data-cat="' + esc(o) + '">@' + esc(shortOf(o)) + '</button>'; }).join("") + '</div>' : '') +
+    $("cfoot").innerHTML = (CH.at ? '<div class="catlist">' + mentionable(room).map(function (o) { return '<button data-cat="' + esc(o) + '">@' + esc(handleOf(o)) + (handleOf(o).toLowerCase() !== shortOf(o).replace(/[^A-Za-z0-9_]/g, "").toLowerCase() ? ' <small>' + esc(shortOf(o)) + '</small>' : '') + '</button>'; }).join("") + '</div>' : '') +
       '<div class="ccomp"><button class="ci" id="cat" aria-label="Mention someone">@</button>' + (canTrade ? '<button class="ci" data-trade-with="' + esc(other) + '" aria-label="Propose a trade">⇄</button>' : '') +
       '<textarea id="cinput" rows="1" maxlength="500" enterkeyhint="send" placeholder="' + (room === "desk" ? "Note to self (only you see this)" : room === "league" ? "Message the league" : room.indexOf("tier:") === 0 ? "Message your tier" : "Message " + esc(shortOf(other))) + '"></textarea>' +
       '<button class="ci send" id="csend" aria-label="Send">➤</button></div>';
@@ -3792,7 +3803,7 @@
   // confirms it. If it fails it stays in the thread in red with ↻ Retry and ✕ (puts the text back in the box).
   function sendMsg() {
     var ta = $("cinput"), text = (ta.value || "").trim(), room = CH.room; if (!text || CH.sending) return;
-    var mentions = Object.keys(CH.ment).filter(function (o) { return text.indexOf("@" + shortOf(o)) >= 0; });
+    var mentions = Object.keys(CH.ment).filter(function (o) { return text.toLowerCase().indexOf("@" + handleOf(o).toLowerCase()) >= 0; }); // the server also reads @handles in the text
     var tmp = { id: "tmp" + Date.now(), ts: new Date().toISOString(), room: room, owner: ME.owner, kind: "text", text: text, mentions: mentions };
     if (!CH.data) CH.data = { room: room, messages: [], pinned: [], counts: {}, mine: {}, who: {}, more: false, local: true }; // thread still loading: show the message anyway
     CH.data.messages.push(tmp);
@@ -3817,6 +3828,15 @@
   function drawInbox() {
     var ib = inboxOf(), body = $("cbody"), h = "";
     if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = sumWait("Loading your chats…"); return; }
+    // @ Mentions is back (commish 11/9): every message that tags you, newest first; tap one to open that chat.
+    var mn = ib.mentionsUnread || 0, ml = ib.mentions || [];
+    h += '<div class="cseg"><button data-cseg="chats"' + (CH.seg !== "at" ? ' class="on"' : '') + '>Chats</button><button data-cseg="at"' + (CH.seg === "at" ? ' class="on"' : '') + '>@ Mentions' + (mn ? ' <i class="cnum">' + mn + '</i>' : '') + '</button></div>';
+    if (CH.seg === "at") {
+      h += ml.length ? ml.map(function (m) { var info = roomInfo(m.room);
+        return '<button class="croom' + (m.unread ? ' un' : '') + '" data-croom="' + esc(m.room) + '">' + avatar(m.owner) + '<div class="cm"><div class="cn"><span>' + esc(m.owner === BOTN ? "MAFFL HQ" : shortOf(m.owner)) + ' <small class="meta">in ' + esc(info.t) + '</small></span><small>' + ago(m.ts) + '</small></div><div class="cp at2">' + fmtText(m.text) + '</div></div>' +
+'</button>'; }).join("") : '<p class="meta" style="padding:14px 2px">Nobody has tagged you yet. When someone writes @' + esc(handleOf(ME.owner)) + ', it lands here.</p>';
+      body.innerHTML = h + '<div style="height:84px"></div>'; return;
+    }
     {
       var rooms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") !== 0 && r.room !== "desk"; }), dms = (ib.rooms || []).filter(function (r) { return r.room.indexOf("dm:") === 0; });
       if (!rooms.length) rooms = [{ room: "league", unread: 0 }, { room: "tier:" + ME.tier, unread: 0 }];
@@ -3917,7 +3937,7 @@
     if ((el = e.target.closest("[data-cseg]"))) { CH.seg = el.dataset.cseg; drawInbox(); return; }
     if ((el = e.target.closest("[data-croom]"))) { openRoom(el.dataset.croom); return; }
     if ((el = e.target.closest("[data-cat]"))) {
-      var ta = $("cinput"), ins = "@" + shortOf(el.dataset.cat) + " ", p = ta.selectionStart || ta.value.length;
+      var ta = $("cinput"), ins = "@" + handleOf(el.dataset.cat) + " ", p = ta.selectionStart || ta.value.length;
       CH.ment[el.dataset.cat] = 1; ta.value = ta.value.slice(0, p) + (p && !/\s$/.test(ta.value.slice(0, p)) ? " " : "") + ins + ta.value.slice(p); CH.draft[CH.room] = ta.value;
       CH.at = false; drawComposer(); var t2 = $("cinput"); t2.focus(); t2.setSelectionRange(t2.value.length, t2.value.length); return;
     }
