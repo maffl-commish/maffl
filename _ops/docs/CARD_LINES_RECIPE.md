@@ -32,6 +32,7 @@ Write `lines.json` (and nothing else):
 }
 ```
 
+- **Owners by @handle (11/9):** when a line names an owner (a person), write their @handle from `handles` in daily.json (e.g. `@Braiden`, `@JonRick`); the app makes it tappable. Team names stay plain text.
 - `headline`: the tier's story right now (newest final week, or the race if nothing new). **Never the week's top score or high scorer** (the 🏅 Week awards card owns that fact; REEL_SERIES v2.0 rule 1: one fact, one card). Lead with the race, a streak, an upset or a swing.
 - `hot` / `cold`: the hottest and coldest team (streak, last5, points).
 - `coach`: newest final week's Coach of the Week winner, or the worst bench blunder.

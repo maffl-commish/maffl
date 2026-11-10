@@ -42,6 +42,7 @@ The backend runs at 5 AM and 5 PM. A drop goes out with the run that first sees 
 4. Every card fits one phone screen at 390 px. Longer = cut or move behind a tap.
 5. Published words don't change (drops). Numbers can't change either once a week is final.
 6. Each drop opens with your cards, then your tier, then the league, then play, then the Vault.
+8. Owners are named by @handle on every card (tappable → their profile); teams by team name (11/9).
 7. Every card links into the app wherever it can (commish 11/9): players open their profile, owners their profile, games your matchup on Match, history the Vault. The main button goes to the place the card is about.
 
 ## The catalog

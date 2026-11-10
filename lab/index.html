@@ -1250,6 +1250,10 @@
   // 🏷️ @handles (commish 11/9): from the summary (backend handles_: Settings choice, else the registry short name).
   function handleOf(owner) { var h = SUM && SUM.handles || {}, o = String(owner || ""); if (h[o]) return h[o]; var k = Object.keys(h).filter(function (x) { return norm(x) === norm(o); })[0];
     return k ? h[k] : shortOf(o).replace(/[^A-Za-z0-9_]/g, ""); }
+  // Cards name owners by @handle (commish 11/9: "owners called out all over the place with no sign of an @"):
+  // atH = plain "@Handle" for text that's rendered with fmtText (which makes it tappable); atO = the tappable button.
+  function atH(o) { return isMe(o) ? "you" : "@" + handleOf(o); }
+  function atO(o) { return isMe(o) ? "You" : '<button class="at" data-owner="' + esc(o) + '">@' + esc(handleOf(o)) + '</button>'; }
   function ownerOfHandle(hd) { var h = SUM && SUM.handles || {}, l = String(hd || "").toLowerCase(); return Object.keys(h).filter(function (o) { return h[o].toLowerCase() === l; })[0] || ""; }
   function shortOf(owner) { return SHORT[String(owner || "").replace(/\s+/g, " ").replace(/\s*\/\s*/g, " / ").trim().toLowerCase()] || String(owner || "").split(" ")[0]; }
   function tw(team) { var o = ownerOfTeam(team); return esc(team) + (o ? ' <span class="who2">(' + esc(shortOf(o)) + ')</span>' : ''); }
@@ -1352,7 +1356,7 @@
     var mine = isMe(g[2]) || isMe(g[5]);
     return { id: "history:" + wk + ":" + y, scope: "league", c: { eb: "📅 This week in MAFFL history", t: "", face: '<div class="fc">' +
       '<div class="tbyr"><b>' + y + '</b><small>Week ' + wk + '</small></div><h3 style="font-size:24px;line-height:1.2;margin-top:8px">' + head + '.</h3>' +
-      '<div class="tbfinal"><div class="w"><span>' + esc(g[3]) + ' <small>' + esc(shortOf(g[2])) + '</small></span><b>' + f2(g[4]) + '</b></div><div><span>' + esc(g[6]) + ' <small>' + esc(shortOf(g[5])) + '</small></span><b>' + f2(g[7]) + '</b></div></div>' +
+      '<div class="tbfinal"><div class="w"><span>' + esc(g[3]) + ' <small>' + atO(g[2]) + '</small></span><b>' + f2(g[4]) + '</b></div><div><span>' + esc(g[6]) + ' <small>' + atO(g[5]) + '</small></span><b>' + f2(g[7]) + '</b></div></div>' +
       '<div class="fchips"><span>' + ({ high: "🚀 Week " + wk + " record", blowout: "🔨 Week " + wk + " blowout record", thriller: "⏱️ Closest Week " + wk + " game", final: "🏆 Title game" }[kind]) + '</span>' + (mine ? '<span>That was you</span>' : '') + '</div>' +
       '<div class="btns"><button class="b" data-vault="' + y + '">Open ' + y + ' in the Vault ›</button></div></div>' } };
   }
@@ -1368,7 +1372,7 @@
     // Clues so it isn't a wild guess (commish 11/7): his NFL team, how often MAFFL had bought him, last year's price, that auction's top buy.
     var clues = [(tm ? tm + " " : "") + pos, b[8] === 1 ? "First time anyone in MAFFL bought him" : "The " + ord(b[8]) + " time MAFFL bought him",
       b[9] != null ? "Went for $" + b[9] + " the year before" : "Nobody bought him the year before", b[10] ? "Top buy that auction: " + b[10][0] + ", $" + b[10][2] : "", de ? de + " auction" : ""].filter(Boolean);
-    var c = quiz("pay" + y + pl.replace(/\W/g, ""), "💸 What would you pay? · " + y, "In " + y + ", " + shortOf(o) + " bought " + pl + ". What did it cost?",
+    var c = quiz("pay" + y + pl.replace(/\W/g, ""), "💸 What would you pay? · " + y, "In " + y + ", " + atH(o) + " bought " + pl + ". What did it cost?",
       opts.map(function (v) { return { v: "$" + v, label: "$" + v, sub: "" }; }), "$" + pr,
       esc(o) + " paid $" + pr + ": the #" + b[6] + " buy of the " + y + " auction and the " + ord(b[7]) + "-priciest " + esc(pos) + (b[11] ? ", and won the title that year." : ".") + ' <button class="tl2" data-player="' + esc(pkeyHist(pl, pos)) + '">His MAFFL profile ›</button>');
     c.pre = '<ul class="payclues">' + clues.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join("") + '</ul>';
@@ -1388,7 +1392,7 @@
     if (dec.length < 2) return null;
     var opts = dec.concat([ans]).sort(function (a, b) { return hashStr("o" + a) - hashStr("o" + b); }).map(function (n) { return { v: n, label: n, sub: "" }; });
     var span = yrs[0] + (yrs.length > 1 ? "–" + yrs[yrs.length - 1] : "");
-    var c = quiz("names" + norm(o).replace(/\W/g, ""), "🏷️ Name that team", "Before they were " + t.team + ", " + shortOf(o) + " played as…", opts, ans,
+    var c = quiz("names" + norm(o).replace(/\W/g, ""), "🏷️ Name that team", "Before they were " + t.team + ", " + atH(o) + " played as…", opts, ans,
       esc(o) + " played as " + esc(ans) + " in " + span + ". " + (names.length > 1 ? "That's one of " + (names.length + 1) + " names they've used." : ""));
     return { id: "names:" + o, play: true, scope: "league", c: c };
   }
@@ -1404,10 +1408,10 @@
     var rows = [["Since", v.first + " · " + v.seasons + " season" + (v.seasons === 1 ? "" : "s")], ["Titles", v.titles.length ? v.titles.join(", ") : "Still chasing one"],
       v.ru.length ? ["Runner-up", v.ru.join(", ")] : null, ["Record", v.w + "–" + v.l + (v.w + v.l ? " (" + Math.round(100 * v.w / (v.w + v.l)) + "%) since 2005" : "")],
       v.playoffs.length ? ["Playoffs", v.playoffs.length + " trips"] : null, v.bigBuy ? ["Biggest buy", v.bigBuy[2] + " " + v.bigBuy[1] + ", $" + v.bigBuy[3] + " (" + v.bigBuy[0] + ")"] : null,
-      v.fav ? ["Can't quit", v.fav[0] + ", bought " + v.fav[2] + " times"] : null, riv ? ["Most-played rival", shortOf(riv) + " · " + opp[riv] + " games · " + rr.aw + "–" + rr.bw] : null,
+      v.fav ? ["Can't quit", v.fav[0] + ", bought " + v.fav[2] + " times"] : null, riv ? ["Most-played rival", atH(riv) + " · " + opp[riv] + " games · " + rr.aw + "–" + rr.bw] : null,
       names.length > 1 ? ["Also known as", names.filter(function (n) { return n !== t.team; }).slice(-3).join(" · ")] : null].filter(Boolean);
     return { id: "owner:" + o, scope: "league", c: { eb: "👋 Meet the owner", t: "", face: '<div class="fc"><div class="mo"><span class="cav">' + initials(o) + '</span><div><b>' + esc(o) + '</b><small>' + esc(t.team) + ' · ' + (t.tier === "U" ? "Upper" : "Lower") + '</small></div></div>' +
-      '<div class="frows">' + rows.map(function (r) { return '<div class="frow"><span style="flex:0 0 112px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + r[0] + '</span><span style="flex:1">' + esc(r[1]) + '</span></div>'; }).join("") + '</div>' +
+      '<div class="frows">' + rows.map(function (r) { return '<div class="frow"><span style="flex:0 0 112px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">' + r[0] + '</span><span style="flex:1">' + fmtText(r[1]) + '</span></div>'; }).join("") + '</div>' +
       '<div class="btns"><button class="b" data-owner="' + esc(o) + '">Full profile ›</button></div></div>' } };
   }
   function vOwner(o) { var V = window.MAFFL_VAULT; if (!V) return null; var k = Object.keys(V.owners).filter(function (x) { return norm(x) === norm(o); })[0]; return k ? V.owners[k] : null; }
@@ -1422,11 +1426,11 @@
     var ms = null; live.forEach(function (x) { if (!x.act) return; var next = Math.ceil((x.w + 1) / 25) * 25, need = next - x.w; if (need <= 2 && next >= 100 && (!ms || need < ms.need)) ms = { x: x, next: next, need: need }; });
     if (!best && !ms) return null;
     var h, sub, chips;
-    if (best) { h = shortOf(best.x.o) + " is " + Math.round(best.gap) + " points from passing " + shortOf(best.ahead.o) + " for #" + best.rank + " all-time";
-      sub = "Regular-season points since 2005, this season included."; chips = ['#' + best.rank + ' ' + shortOf(best.ahead.o) + ' · ' + Math.round(best.ahead.pf).toLocaleString(), '#' + (best.rank + 1) + ' ' + shortOf(best.x.o) + ' · ' + Math.round(best.x.pf).toLocaleString()]; }
-    else { h = shortOf(ms.x.o) + " is " + ms.need + " win" + (ms.need === 1 ? "" : "s") + " from " + ms.next + " career wins"; sub = "Regular-season wins since 2005."; chips = [ms.x.w + " wins now"]; }
-    return { id: "records:" + (best ? best.x.o : ms.x.o), scope: "league", c: { eb: "📈 Records watch", t: "", face: '<div class="fc"><h3 style="font-size:28px">' + esc(h) + '</h3><p class="fs">' + esc(sub) + '</p>' +
-      '<div class="fchips">' + chips.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join("") + '</div><div class="btns"><button class="b" data-vaultrec="1">All-time records ›</button></div></div>' } };
+    if (best) { h = atH(best.x.o) + " is " + Math.round(best.gap) + " points from passing " + atH(best.ahead.o) + " for #" + best.rank + " all-time";
+      sub = "Regular-season points since 2005, this season included."; chips = ['#' + best.rank + ' ' + atH(best.ahead.o) + ' · ' + Math.round(best.ahead.pf).toLocaleString(), '#' + (best.rank + 1) + ' ' + atH(best.x.o) + ' · ' + Math.round(best.x.pf).toLocaleString()]; }
+    else { h = atH(ms.x.o) + " is " + ms.need + " win" + (ms.need === 1 ? "" : "s") + " from " + ms.next + " career wins"; sub = "Regular-season wins since 2005."; chips = [ms.x.w + " wins now"]; }
+    return { id: "records:" + (best ? best.x.o : ms.x.o), scope: "league", c: { eb: "📈 Records watch", t: "", face: '<div class="fc"><h3 style="font-size:28px">' + fmtText(h).replace(/^you /, "You ") + '</h3><p class="fs">' + esc(sub) + '</p>' +
+      '<div class="fchips">' + chips.map(function (c) { return '<span>' + fmtText(c) + '</span>'; }).join("") + '</div><div class="btns"><button class="b" data-vaultrec="1">All-time records ›</button></div></div>' } };
   }
   // 💡 Auction Draft Insights (was the 8 Ball; renamed 11/8), reborn (commish 11/7): hand-written tidbits (data/MAFFL_Tidbits.csv) with the player's whole auction price history drawn under them.
   function tidbitCard(off) {
@@ -1649,7 +1653,7 @@
         var team2 = TEAMS.filter(function (t) { return t.team === bba.team; })[0], pos2 = (F.missed.filter(function (m) { return m.team === bba.team && m.player === bba.player; })[0] || {}).pos;
         var decoys = F.missed.filter(function (m) { return m.player !== bba.player && (!pos2 || m.pos === pos2); }).sort(function (a, b) { return hashStr("p" + a.player) - hashStr("p" + b.player); }).slice(0, 2).map(function (m) { return m.player; });
         if (decoys.length === 2) coachCards.push(quiz("benchbeat", "🧠 Name the bench guy · Week " + W.weekNumber,
-          shortOf(team2 ? team2.owner : "") + " left a " + (pos2 || "player") + " on the bench who outscored every starter he played. Who?",
+          (team2 ? atH(team2.owner) : "Someone") + " left a " + (pos2 || "player") + " on the bench who outscored every starter he played. Who?",
           decoys.concat([bba.player]).sort(function (a, b) { return hashStr("q" + a) - hashStr("q" + b); }).map(function (p) { return { v: p, label: p }; }), bba.player,
           esc(bba.player) + ' scored ' + f2(bba.pts) + ' on ' + tw(bba.team) + '\'s bench. Their best starter managed ' + f2(bba.bestStarter) + '.'));
       }
@@ -1694,11 +1698,11 @@
         quiz("otherlead", "🌎 Meanwhile in " + TN[other], "Who's leading the " + TN[other] + " tier after Week " + W.weekNumber + "?", teamOptions(ot[0].team, other, "ol" + W.weekNumber), ot[0].team,
           tw(ot[0].team) + ' is ' + rec(ot[0]) + ' with ' + Math.round(ot[0].points) + ' points.'),
         { eb: "🌎 " + TN[other] + " · Week " + W.weekNumber, t: TN[other] + " in one look", body:
-          '<div class="strip lt"><div><b>' + esc(shortOf(ot[0].owner)) + '</b><small>Leader · ' + rec(ot[0]) + '</small></div>' + (ot[1] ? '<div><b>' + esc(shortOf(ot[1].owner)) + '</b><small>2nd · ' + rec(ot[1]) + '</small></div>' : '') +
-          (oHot && oHot.streak >= 2 ? '<div><b>W' + oHot.streak + '</b><small>Hottest · ' + esc(shortOf(oHot.owner)) + '</small></div>' : '') + '</div>' +
+          '<div class="strip lt"><div><b>' + atO(ot[0].owner) + '</b><small>Leader · ' + rec(ot[0]) + '</small></div>' + (ot[1] ? '<div><b>' + atO(ot[1].owner) + '</b><small>2nd · ' + rec(ot[1]) + '</small></div>' : '') +
+          (oHot && oHot.streak >= 2 ? '<div><b>W' + oHot.streak + '</b><small>Hottest · ' + atO(oHot.owner) + '</small></div>' : '') + '</div>' +
           // every team, with its three best players so far: "meet the other tier" (commish 11/7); no box scores
           '<div class="grp">Top 5 · best players</div>' + ot.slice(0, 5).map(function (t) { var top = (rosters()[norm(t.owner)] || []).filter(function (p) { return p.sp != null; }).sort(function (a, b) { return (b.sp || 0) - (a.sp || 0); }).slice(0, 2);
-            return '<div class="otrow"><span class="otk">' + (other === "L" && t.rank <= 3 ? "⬆️" : "") + t.rank + '</span><span class="otm"><button class="tl2" data-owner="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b></button><small>' + esc(shortOf(t.owner)) + ' · ' + rec(t) + '</small>' +
+            return '<div class="otrow"><span class="otk">' + (other === "L" && t.rank <= 3 ? "⬆️" : "") + t.rank + '</span><span class="otm"><button class="tl2" data-owner="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b></button><small>' + atO(t.owner) + ' · ' + rec(t) + '</small>' +
               (top.length ? '<span class="otp">' + top.map(function (p) { return '<button data-player="' + esc(p.owner) + '|' + esc(p.name) + '">' + esc(p.pos) + ' ' + esc(p.name.replace(/^(\S)\S*\s/, "$1. ")) + '</button>'; }).join("") + '</span>' : '') + '</span></div>'; }).join("") }] });
     }
   }
@@ -1884,8 +1888,8 @@
       var hh = h2h(ME.owner, oo), hs = /^([WL])(\d+)$/.exec(hh.streak || ""), tierScores = W.results.filter(function (g) { return teamOf(g.ownerA).tier === me.tier; }).reduce(function (a, g) { return a.concat([g.scoreA, g.scoreB]); }, []);
       var bl = [];
       if (me.streak >= 2) bl.push(["🔥", ordinal(me.streak) + " straight win"]); else if (me.streak <= -2) bl.push(["🧊", ordinal(-me.streak) + " straight loss"]);
-      if (hs && +hs[2] >= 2) bl.push(["⚔️", (hs[1] === "W" ? "Beat " : "Lost to ") + esc(shortOf(oo)) + " " + hs[2] + " straight times"]);
-      else if (hh.n > 1) bl.push(["⚔️", "Series with " + esc(shortOf(oo)) + ": " + hh.aw + "–" + hh.bw]);
+      if (hs && +hs[2] >= 2) bl.push(["⚔️", '<span>' + (hs[1] === "W" ? "Beat " : "Lost to ") + atO(oo) + " " + hs[2] + " straight times</span>"]);
+      else if (hh.n > 1) bl.push(["⚔️", '<span>Series with ' + atO(oo) + ": " + hh.aw + "–" + hh.bw + '</span>']);
       if (tierScores.length && ms >= Math.max.apply(null, tierScores)) bl.push(["🚀", "Top score in " + TN[me.tier] + " this week"]);
       if (e5) bl.push(["⭐", "Elite 5 · #" + e5.rank]);
       if (cw) bl.push(["🔄", f2(cw.leftOnBench) + " left on the bench would have won it"]);
@@ -1926,8 +1930,8 @@
     var tHot = tierLine(me.tier, "hot"), tCold = tierLine(me.tier, "cold");
     if (!tHot) { var tt = TEAMS.filter(function (t) { return t.tier === me.tier && !/ghost/i.test(t.team); }), hot = tt.slice().sort(function (a, b) { return b.streak - a.streak; })[0], cold = tt.slice().sort(function (a, b) { return a.streak - b.streak; })[0];
       if (hot && hot.streak >= 2) tHot = hot.team + ": " + hot.streak + " straight wins, " + rec(hot) + "."; if (cold && cold.streak <= -2) tCold = cold.team + ": " + (-cold.streak) + " straight losses, " + rec(cold) + "."; }
-    if (tHead || tHot || tCold) all.push({ id: "tier", scope: me.tier, c: { eb: "📣 " + TN[me.tier] + " · Week " + W.weekNumber, t: "", face: '<div class="fc">' + (tHead ? '<h3>' + esc(tHead) + '</h3>' : '<h3>' + TN[me.tier] + ' this week</h3>') +
-      '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + esc(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + esc(tCold) + '</span></div>' : '') + '</div>' +
+    if (tHead || tHot || tCold) all.push({ id: "tier", scope: me.tier, c: { eb: "📣 " + TN[me.tier] + " · Week " + W.weekNumber, t: "", face: '<div class="fc">' + (tHead ? '<h3>' + fmtText(tHead) + '</h3>' : '<h3>' + TN[me.tier] + ' this week</h3>') +
+      '<div class="frows">' + (tHot ? '<div class="frow"><span>🔥</span><span style="flex:1">' + fmtText(tHot) + '</span></div>' : '') + (tCold ? '<div class="frow"><span>🧊</span><span style="flex:1">' + fmtText(tCold) + '</span></div>' : '') + '</div>' +
       '</div>' } });
     // 🗄️ Vault: a throwback + an 8 Ball a week; the off-season gets three of each (commish 11/7)
     // Vault + Play rotation (commish 11/7): in season, What would you pay? and Name that team take turns, as do This week in
@@ -1959,7 +1963,7 @@
     if (sv) { var act = sv[me.tier === "U" ? "upperActive" : "lowerActive"] || [], outNow = (sv[me.tier === "U" ? "upperEliminated" : "lowerEliminated"] || []).filter(function (x) { return x.recent; })[0], alive = act.indexOf(me.team) >= 0;
       if (alive || (outNow && outNow.team === me.team)) all.push({ id: "surv", scope: "me", c: { eb: "🛟 Survivor · " + act.length + " left", t: alive ? "Still alive" : "Knocked out", face: '<div class="fc">' +
         '<h3>' + (alive ? "You're still alive" : "You're out of Survivor") + '</h3>' +
-        '<div class="alive">' + act.map(function (t) { var o = ownerOfTeam(t); return '<span class="' + (t === me.team ? 'me' : '') + '"><i class="cav sm">' + initials(o || t) + '</i>' + esc(shortOf(o || t)) + '</span>'; }).join("") + '</div>' +
+        '<div class="alive">' + act.map(function (t) { var o = ownerOfTeam(t); return '<span class="' + (t === me.team ? 'me' : '') + '"><i class="cav sm">' + initials(o || t) + '</i>' + (o ? atO(o) : esc(t)) + '</span>'; }).join("") + '</div>' +
         (outNow ? '<p class="fs">💀 ' + esc(outNow.team) + ' went home this week.</p>' : '') + '</div>' } }); }
     // Your division (Upper) / promotion race (Lower): how the people you're chasing did
     var mine = TEAMS.filter(function (t) { return t.tier === me.tier && !/ghost/i.test(t.team) && (me.tier === "U" ? t.div === me.div : Math.abs(t.rank - me.rank) <= 2); }).sort(function (a, b) { return a.rank - b.rank; });
@@ -1967,7 +1971,7 @@
       all.push({ id: "div", scope: "me", c: { eb: me.tier === "U" ? "🛡️ Division " + me.div : "📈 Promotion race", t: "", face: '<div class="fc">' +
         '<h3>' + (me.tier === "U" ? (function () { var top = mine[0], gb = function (t) { return ((top.w - t.w) + (t.l - top.l)) / 2; }, nx = mine.filter(function (t) { return !isMe(t.owner); })[0];
             if (isMe(top.owner)) { var g2 = nx ? (me.w - nx.w + nx.l - me.l) / 2 : 0; return g2 > 0 ? "You lead Division " + me.div + " by " + g2 + (g2 === 1 ? " game" : " games") : "You're tied for the Division " + me.div + " lead"; }
-            var g = gb(me); return g > 0 ? "You're " + g + (g === 1 ? " game" : " games") + " behind " + shortOf(top.owner) + " in Division " + me.div : "You're tied with " + shortOf(top.owner) + " for the Division " + me.div + " lead"; })() :
+            var g = gb(me); return g > 0 ? "You're " + g + (g === 1 ? " game" : " games") + " behind " + atO(top.owner) + " in Division " + me.div : "You're tied with " + atO(top.owner) + " for the Division " + me.div + " lead"; })() :
           me.rank <= 3 ? "You're in a promotion spot" : "You're " + (me.rank - 3) + " spot" + (me.rank - 3 === 1 ? "" : "s") + " out of promotion") + '</h3>' +
         (me.tier === "U" ? '<p class="fl">' + (fw === foes.length ? "Your division rivals all won this week." : fw ? fw + " of " + foes.length + " division rivals won this week." : "Your division rivals all lost this week.") + '</p>' : '') +
         '<div class="frows">' + mine.map(function (t) { return teamResultRow(t, me.tier === "L" && t.rank <= 3 ? "⬆️ #" + t.rank : "#" + t.rank); }).join("") + '</div>' +
@@ -1984,7 +1988,7 @@
     var e5all = W.elite5 || [], myE5 = e5all.filter(function (x) { return isMe(x.owner); })[0], prevW = WEEKS ? WEEKS.filter(function (w) { return w.weekNumber === W.weekNumber - 1; })[0] : null;
     var outE5 = prevW && prevW.elite5 ? prevW.elite5.filter(function (p) { return !e5all.some(function (x) { return norm(x.owner) === norm(p.owner); }); }) : [];
     if (e5all.length) all.push({ id: "elite5", scope: "league", c: { eb: "⭐ Elite 5 · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>The Elite 5</h3>' +
-      (myE5 && myE5.note ? '<p class="fl">You\'re #' + myE5.rank + ': ' + esc(myE5.note) + '</p>' : '') +
+      (myE5 && myE5.note ? '<p class="fl">You\'re #' + myE5.rank + ': ' + fmtText(myE5.note) + '</p>' : '') +
       '<div class="frows">' + e5all.map(function (x) { return '<div class="frow' + (isMe(x.owner) ? ' me' : '') + '"><span class="e5n">' + x.rank + '</span><span style="flex:1"><b>' + (isMe(x.owner) ? "You" : esc(x.team)) + '</b> <small class="meta">' + (x.tier === "U" ? "Upper" : "Lower") + '</small></span></div>'; }).join("") + '</div>' +
       (outE5.length ? '<p class="fs">⬇️ Out this week: ' + outE5.map(function (p) { return esc(isMe(p.owner) ? "you" : teamOf(p.owner).team || p.team); }).join(", ") + '</p>' : '') + '</div>' } });
     // 🌎 The other tier in one look
@@ -2042,7 +2046,7 @@
     var stamp = shared ? '<span class="stamp lg"><img src="../maffl-logo-192.png" alt="">' + (x.scope === "U" ? "Upper" : x.scope === "L" ? "Lower" : "League") + '</span>' : x.scope === "me" ? '<span class="stamp me">' + esc(teamOf(ME.owner).team) + '</span>' : '';
     return '<div class="dcard' + (x.action ? ' actc' : '') + (x.play ? ' playc' : '') + (c.face ? ' facec' : '') + '"' + (shared ? DR("inbox:" + x.id) : '') + '>' +
       '<div class="dhead"><div class="sec">' + stamp + (x.action ? '<span class="acttag">Needs you</span>' : x.alert ? '<span class="acttag">Heads up</span>' : x.play ? '<span class="playtag">🎯 Play</span>' : '') + '<span class="eb">' + esc(c.eb) + '</span></div>' +
-      (c.face ? '' : '<h3>' + esc(c.t) + '</h3>') + '</div>' +
+      (c.face ? '' : '<h3>' + fmtText(c.t) + '</h3>') + '</div>' +
       '<div class="dbody' + (c.flush ? ' flush' : '') + '">' + (c.face || (c.quiz ? (c.pre || '') + quizBody(c.quiz) : c.body)) + '</div>' +
       (x.action || !shared ? '' : '<div class="dfoot"><div class="reacts">' + (REACTS[x.series] || REACTS[x.id] || REACTS.you).map(function (e) { return '<button>' + e + '</button>'; }).join("") + '</div><div class="whos"></div></div>') + '</div>';
   }
@@ -3439,8 +3443,8 @@
   }
   function fmtText(t, ment) { var h = esc(t);
     (ment || []).forEach(function (o) { var a = esc("@" + o); h = h.split(a).join('<span class="at">' + a + '</span>'); }); // bot posts @ full names
-    return h.replace(/(^|\s)@([A-Za-z][\w\/'.\-]*)/g, function (m, pre, hd) { var o = ownerOfHandle(hd.replace(/[^A-Za-z0-9_]+$/, ""));
-      return pre + (o ? '<button class="at" data-owner="' + esc(o) + '">@' + hd + '</button>' : '<span class="at">@' + hd + '</span>'); }); }
+    return h.replace(/(^|\s|\()@([A-Za-z][\w\/'.\-]*)/g, function (m, pre, hd) { var core = (hd.match(/^[A-Za-z][A-Za-z0-9_]*/) || [""])[0], o = ownerOfHandle(core);
+      return pre + (o ? '<button class="at" data-owner="' + esc(o) + '">@' + core + '</button>' + hd.slice(core.length) : '<span class="at">@' + hd + '</span>'); }); }
   function tradeMini(o, latest) {
     if (!o) return '<div class="ctrade"><p class="meta">Trade details unavailable.</p></div>';
     var cur = (SUM.offers || []).filter(function (x) { return x.id === o.id; })[0] || o, st = ST[cur.status] || [cur.status, ""];
@@ -4286,7 +4290,7 @@
     var f1 = function (x) { return (Math.round(x * 100) / 100).toFixed(2).replace(/\.?0+$/, ""); };
     var mine = gs.filter(function (g) { return isMe(g.a.owner) || isMe(g.b.owner); })[0], h = "", sub = "";
     if (!mine) return null; // your matchup only (commish 11/9): no card when your game is already decided
-    var Me = isMe(mine.a.owner) ? mine.a : mine.b, Op = Me === mine.a ? mine.b : mine.a, diff = Me.pts - Op.pts, opN = shortOf(Op.owner) || Op.team;
+    var Me = isMe(mine.a.owner) ? mine.a : mine.b, Op = Me === mine.a ? mine.b : mine.a, diff = Me.pts - Op.pts, opN = "@" + handleOf(Op.owner);
     // The story (commish 11/9): "You're down 1.92 with Josh Allen and Braiden's got TJ Hockenson. You've got a good chance to
     // pull this out. ESPN says you'll win by 13.4." Projected final = score now + projections of who's left.
     var names = function (L) { if (L.length > 2) return L.length + " players left"; var n = L.map(function (p) { return p.n; }); return n.length > 1 ? n[0] + " and " + n[1] : n[0]; };
@@ -4318,7 +4322,7 @@
         (x.left.length > 3 ? '<p class="mxdone">+' + (x.left.length - 3) + ' more on Match</p>' : ''); };
     return { id: "math:" + d.wk, at: d.at, scope: "me", c: { eb: "🧮 Tonight's math · Week " + d.wk, t: h, face: '<div class="fc">' +
       '<div class="mxh">' + side(Me, true) + '<div class="mxv">VS</div>' + side(Op, false) + '</div>' +
-      '<p class="mstory">' + esc(h) + ' ' + esc(sub) + '</p>' +
+      '<p class="mstory">' + fmtText(h + ' ' + sub) + '</p>' +
       (Me.left.length || Op.left.length ? '<div class="mxbar"><div class="mxbl"><span>Win probability</span></div><div class="mxtrack"><i style="width:' + share + '%"></i></div><div class="mxbn"><b>You ' + share + '%</b><b>' + esc(opN) + ' ' + (100 - share) + '%</b></div><div class="mxbn" style="color:var(--muted);font-size:12px"><span>proj ' + pm + '</span><span>proj ' + po + '</span></div></div>' : '') +
       plist(Me, "Yours to play") + plist(Op, opN + "'s to play") +
       '<div class="btns"><button class="b pri" data-go="match">⚔️ Open your matchup</button></div></div>' } };
@@ -4329,13 +4333,13 @@
   function wireCard(me) {
     var d = ((DLY && DLY.drops) || []).filter(function (x) { return x.type === "faab" && x.tier === me.tier; })[0];
     if (!d || !(d.items || []).length || Date.now() - new Date(d.at).getTime() > 4 * 864e5) return null;
-    var won = d.items, spent = won.reduce(function (a, x) { return a + x.bid; }, 0), who = function (x) { return isMe(x.owner) ? "You" : shortOf(x.owner) || x.team; };
+    var won = d.items, spent = won.reduce(function (a, x) { return a + x.bid; }, 0), who = function (x) { return x.owner ? atO(x.owner) : esc(x.team); };
     var day = new Date(d.run).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
     return { id: "wire:" + d.id, at: d.at, c: { eb: "💰 Waiver auction · " + (me.tier === "U" ? "Upper" : "Lower"), t: won.length + " players won", face: '<div class="fc">' +
       '<h3>' + won.length + ' player' + (won.length === 1 ? '' : 's') + ' won · $' + spent + '</h3><p class="fs">Waivers ran ' + esc(day) + '</p>' +
       '<div class="frows">' + won.slice(0, 8).map(function (w) { var mine = isMe(w.owner) || (w.lost || []).some(function (y) { return isMe(y.owner); });
         return '<div class="frow' + (mine ? ' me' : '') + '"><span class="fbid">$' + w.bid + '</span><span style="flex:1"><button class="tl2" data-player="' + esc(w.owner || "") + '|' + esc(w.n) + '@' + esc(w.pos || "") + '"><b>' + esc(w.n || "Player") + '</b></button> <small class="meta">' + esc([w.pos, w.tm].filter(Boolean).join(" · ")) + '</small>' +
-          '<small class="meta" style="display:block">' + esc(who(w)) + ' won it' + ((w.lost || []).length ? ' · lost: ' + w.lost.map(function (y) { return esc(who(y)) + ' $' + y.bid; }).join(", ") : '') + '</small></span></div>'; }).join("") + '</div>' +
+          '<small class="meta" style="display:block">' + who(w) + ' won it' + ((w.lost || []).length ? ' · lost: ' + w.lost.map(function (y) { return who(y) + ' $' + y.bid; }).join(", ") : '') + '</small></span></div>'; }).join("") + '</div>' +
       (won.length > 8 ? '<p class="fs">+' + (won.length - 8) + ' more</p>' : '') + '</div>' } };
   }
 
