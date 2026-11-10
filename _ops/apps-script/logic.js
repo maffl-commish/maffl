@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.46";
+var VERSION = "0.47";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -17,7 +17,8 @@ var PERKS = { faab: { name: "Extra FAAB $", cost: 1 }, double: { name: "Double P
   insurance: { name: "Relegation Insurance", cost: 25 }, divswap: { name: "Division Swap", cost: 10 } };
 // More → Settings (APP_DESIGN §4b): owner email/phone + opt-in emails, all OFF by default. Contacts live only in the Owners tab.
 var APP_URL = "https://maffl-commish.github.io/maffl/lab/";
-var NOTIFY_KEYS = ["received", "countered", "accepted", "declined", "commish", "perks"];
+var NOTIFY_KEYS = ["received", "countered", "accepted", "declined", "commish", "perks", "chat", "announce"];
+var NOTIFY_DEFAULT_ON = { announce: true }; // commish announcements start on; everything else off until the owner turns it on
 var INSURANCE_CLOSES = new Date("2026-10-01T20:15:00-04:00"), INSURANCE_MAX = 3, REG_WEEKS = 14;
 // Double Bonus / Matchup Swap deadline: Thursday 6:00 PM ET of that week, or 1 hour before the week's first game if earlier
 // (Wk 12 = Thanksgiving, first game 12:30 PM → 11:30 AM). Week 1 Thursday = Sep 10, 2026.
@@ -269,7 +270,7 @@ function ensureCol_(name, header) {
 }
 function prefs_(o) {
   var p = {}; try { p = JSON.parse((o && o.notify) || "{}"); } catch (e) {}
-  var out = {}; NOTIFY_KEYS.forEach(function (k) { out[k] = p[k] === true; }); return out;
+  var out = {}; NOTIFY_KEYS.forEach(function (k) { out[k] = (k in p) ? p[k] === true : !!NOTIFY_DEFAULT_ON[k]; }); return out;
 }
 function settings_(me) {
   var o = ownerRow_(me.owner); if (!o) return { ok: false, error: "Unknown owner" };
@@ -278,9 +279,12 @@ function settings_(me) {
 function saveSettings_(me, b) {
   var email = String(b.email || "").trim().slice(0, 120), digits = String(b.phone || "").replace(/\D/g, "");
   if (digits.length === 11 && digits[0] === "1") digits = digits.slice(1);
-  if (email && !/^[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) return { ok: false, error: "That email doesn't look right" };
+  var list = email ? email.split(/[,;\s]+/).filter(String) : []; // co-owned teams: up to 2 addresses, comma-separated
+  if (list.length > 2) return { ok: false, error: "Two emails at most" };
+  if (list.some(function (e) { return !/^[A-Za-z0-9._%+'-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(e); })) return { ok: false, error: "That email doesn't look right" };
+  email = list.join(", ");
   if (digits && digits.length !== 10) return { ok: false, error: "Phone needs 10 digits" };
-  var n = {}, any = false; NOTIFY_KEYS.forEach(function (k) { n[k] = !!(b.notify || {})[k]; any = any || n[k]; });
+  var n = {}, any = false; NOTIFY_KEYS.forEach(function (k) { n[k] = !!(b.notify || {})[k]; any = any || (n[k] && !NOTIFY_DEFAULT_ON[k]); });
   if (any && !email) return { ok: false, error: "Add your email to turn on emails" };
   ["email", "phone", "notify"].forEach(function (h) { ensureCol_("Owners", h); });
   var o = ownerRow_(me.owner);

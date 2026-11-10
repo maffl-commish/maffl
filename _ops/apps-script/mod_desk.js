@@ -111,6 +111,7 @@ function announce_(me, b) {
   var rooms = ["league", "tier:U", "tier:L"], sh = sheet_("Chat");
   rooms.forEach(function (room) { post_(room, me.owner, "announce", text, "", "ALERT", [], ""); setCell_("Chat", sh.getLastRow(), "pinned", "Y"); });
   deskPost_("note", "📣 Commish alert sent to " + rooms.length + " group chats: " + text.slice(0, 80), "", "ANNOUNCE");
+  notify_(owners_().map(function (o) { return o.owner; }), "announce", "MAFFL HQ: 📣 Commish alert", text, "", me.owner); // on by default (Settings)
   return { ok: true, n: rooms.length };
 }
 // Robots (GitHub Actions, Claude scheduled tasks) post to the desk with the shared key in Script property DESK_KEY.

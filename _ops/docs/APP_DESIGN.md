@@ -193,6 +193,9 @@ More → Settings (writes need the PIN, like everything else).
 2. **Opt-in automatic emails.** More → Settings toggles, all **off by default**: offer received · accepted ·
    declined · countered · commish approved/rejected the credit leg. Apps Script `MailApp` sends them on the
    matching write, with the same deep link. Mind the free daily email cap (fine for 20-some owners).
+   **11/9:** + DMs/@mentions (off; one email per person per chat per 30 min) and 📣 commish announcements (**on** by
+   default, sent with every desk alert); All on / All off; Settings takes up to 2 emails. Sender = the Apps Script
+   (MailApp, from the commish's Gmail) on the matching write; not Claude, not GitHub. Push/SMS parked.
 
 **Not doing:** robot-sent texts (paid SMS service + carrier registration) and web push. Commish: not wanted.
 
@@ -219,7 +222,7 @@ sheets, owner sheets and confirms open on top of it, so you never lose your plac
 - **Messages:** text up to 500 characters, @mentions (tap @, pick an owner; highlighted in the message, count toward unread), emoji reactions
   (🔥😂💀👀👏, who reacted). Delete your own; commish deletes any and pins up to 3 per room. Trade cards can't be deleted.
 - **Fresh enough, not instant.** An open thread refreshes every 8 s; unread counts every 30 s and when the app comes back.
-- **Not yet:** opt-in email for DMs/mentions (§4b toggles), robot posts for Pulse drops and Coach of the Week, older-message paging (keeps the last 150).
+- **Not yet:** robot posts for Pulse drops and Coach of the Week, older-message paging (keeps the last 150).
 - Backend: Sheet tabs **Chat** (msg_id, ts, room, owner, kind text|offer, text, ref, event, mentions, reply_to,
   deleted, pinned) and **Reads** (owner, room, last read). Both auto-created. Text is stored formula-safe.
 

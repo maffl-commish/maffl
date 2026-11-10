@@ -956,19 +956,23 @@
   }
 
   // ---------- More → Settings ----------
-  var NOTIFY = [["received", "Offer received", "Someone sends you a trade offer"], ["countered", "Counter-offer", "They counter your offer"],
+  var NOTIFY = [["Trades & credits", [["received", "Offer received", "Someone sends you a trade offer"], ["countered", "Counter-offer", "They counter your offer"],
     ["accepted", "Offer accepted", "They accept your offer"], ["declined", "Offer declined", "They pass on your offer"],
-    ["commish", "Commish decision", "A trade you're in is approved or negated"], ["perks", "Credit perk decision", "Your perk request is approved or denied"]];
+    ["commish", "Commish decision", "A trade you're in is approved or negated"], ["perks", "Credit perk decision", "Your perk request is approved or denied"]]],
+    ["Chat & league", [["chat", "DMs and @mentions", "Someone messages you or @mentions you (one email per chat every 30 min)"],
+    ["announce", "Commish announcements", "📣 Alerts from the commish (dues, rules, deadlines)"]]]];
   var SET = null;
   function settingsSheet() {
     if (!SET) return '<div class="card">' + ld("Loading your settings…") + '</div>';
     if (SET.error) return '<div class="card"><p>' + esc(SET.error) + '</p></div>';
     return '<div class="sh" style="padding-left:0"><h2>⚙️ Settings</h2></div>' +
       '<div class="card"><div class="eb">Your contact info</div><p class="meta">Only signed-in owners see it (never the public site). Used for trade texts and emails.</p>' +
-      '<label class="lbl" for="stEmail">Email</label><input class="field" id="stEmail" type="email" inputmode="email" autocomplete="email" maxlength="120" value="' + esc(SET.email) + '" placeholder="you@example.com">' +
+      '<label class="lbl" for="stEmail">Email <small>(two? separate with a comma)</small></label><input class="field" id="stEmail" type="email" multiple inputmode="email" autocomplete="email" maxlength="120" value="' + esc(SET.email) + '" placeholder="you@example.com">' +
       '<label class="lbl" for="stPhone">Mobile</label><input class="field" id="stPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" value="' + esc(fmtPhone(SET.phone)) + '" placeholder="(412) 555-0123"></div>' +
-      '<div class="card"><div class="eb">Email me when…</div><p class="meta">All off unless you turn them on. No texts or push, ever.</p>' +
-      NOTIFY.map(function (n) { return '<label class="tg"><div><b>' + n[1] + '</b><small>' + n[2] + '</small></div><input type="checkbox" data-nt="' + n[0] + '"' + (SET.notify && SET.notify[n[0]] ? ' checked' : '') + '></label>'; }).join("") + '</div>' +
+      '<div class="card"><div class="eb">Email me when…</div><p class="meta">Email only, for now. Commish announcements start on; the rest are off until you turn them on.</p>' +
+      '<div class="btns" style="margin:6px 0 2px"><button class="b" id="stAllOn">All on</button><button class="b" id="stAllOff">All off</button></div>' +
+      NOTIFY.map(function (g) { return '<div class="lbl" style="margin-top:12px">' + g[0] + '</div>' +
+        g[1].map(function (n) { return '<label class="tg"><div><b>' + n[1] + '</b><small>' + n[2] + '</small></div><input type="checkbox" data-nt="' + n[0] + '"' + (SET.notify && SET.notify[n[0]] ? ' checked' : '') + '></label>'; }).join(""); }).join("") + '</div>' +
       '<div class="btns" style="margin-bottom:16px"><button class="b pri" id="stSave">Save settings</button></div>';
   }
   function openSettings() {
@@ -978,6 +982,8 @@
   }
   function wireSettings() {
     var b = $("stSave"); if (!b) return;
+    function all(on) { document.querySelectorAll("[data-nt]").forEach(function (x) { x.checked = on; }); }
+    $("stAllOn").onclick = function () { all(true); }; $("stAllOff").onclick = function () { all(false); };
     b.onclick = function () {
       var n = {}; document.querySelectorAll("[data-nt]").forEach(function (x) { n[x.dataset.nt] = x.checked; });
       busy(1); api("savesettings", Object.assign(creds(), { email: $("stEmail").value, phone: $("stPhone").value, notify: n })).then(function (r) {

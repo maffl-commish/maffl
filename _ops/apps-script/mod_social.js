@@ -126,7 +126,24 @@ function chatSend_(meRaw, b) {
     .map(function (o) { return o.owner; });
   var m = post_(room, me.owner, "text", text, "", "", mentions, String(b.reply_to || "").slice(0, 20));
   markRead_(me.owner, room, m.ts);
+  chatNotify_(me.owner, room, text, mentions);
   return { ok: true, id: m.id, room: room };
+}
+// Opt-in "chat" email (Settings): a DM to you, or an @mention of you. At most one email per person per room every
+// 30 minutes (the first message in a burst), so a busy thread can't flood an inbox. Best-effort; never blocks the send.
+function chatNotify_(from, room, text, mentions) {
+  try {
+    var to = (mentions || []).slice(), dm = room.indexOf("dm:") === 0, pair = dm ? room.slice(3).split("|") : [];
+    if (dm) owners_().forEach(function (o) { if (pair.indexOf(norm_(o.owner)) >= 0 && norm_(o.owner) !== norm_(from)) to.push(o.owner); });
+    var cache = CacheService.getScriptCache(), where = room === "league" ? "league chat" : room === "tier:U" ? "the Upper tier chat" : room === "tier:L" ? "the Lower tier chat" : "";
+    to.filter(function (n, i) { return to.indexOf(n) === i; }).forEach(function (n) {
+      var o = ownerRow_(n); if (!o || !prefs_(o).chat || !String(o.email || "").trim()) return;
+      var key = ("cn_" + norm_(n) + "_" + room).replace(/[^a-z0-9_]/g, "").slice(0, 200);
+      if (cache.get(key)) return; cache.put(key, "1", 1800);
+      notify_([n], "chat", dm ? "MAFFL HQ: message from " + from : "MAFFL HQ: " + from + " mentioned you in " + where,
+        from + ": " + String(text).slice(0, 300) + "\n\n(One email per chat every 30 minutes. Reply in the app.)", "", from);
+    });
+  } catch (err) {}
 }
 // Delete: your own message, or any (commish). Pin / unpin: commish only.
 function chatMod_(meRaw, b) {

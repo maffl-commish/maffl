@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-09 · REEL · Settings emails: new **DMs + @mentions** toggle (off; max one email per person per chat every 30 min) and **📣 Commish announcements** (on by default; every desk alert now emails owners who have it on), grouped Trades & credits / Chat & league, **All on / All off**, copy "Email only, for now". Settings accepts 2 emails (co-owned teams). All 21 teams' emails loaded into the TEST backend Sheet (not the repo). Backend logic v0.47; regress baseline refreshed.
 
 - 2026-11-09 · REEL · 🗞️ Drops step 2: the 💰 Waiver auction card reads its published drop (shown 4 days after it went out), not the live claims. Backend v0.46 / daily VER 13: each waiver run (claims within 12 h of the newest) with a $1+ winner is published once per tier into Daily key `drops` (winners, bids, losing bids as they stood; kept 60 days); `daily` returns `drops`. Regression adds a drops check.
 - 2026-11-09 · REEL · 🗞️ Drops step 1 (backend v0.45, daily VER 12): card lines are published once per final week and kept. The card-lines robot only starts when the newest final week has no lines (`lines_w<N>` in the Daily tab); a late putlines for that week is ignored; lines already out (Week 8) are adopted as-is, so the Week 8 headline stops changing. Recipe updated. Next: waiver auction drop, Monday tonight's-math drop, Board from stored drops.
