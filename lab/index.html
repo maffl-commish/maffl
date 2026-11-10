@@ -654,6 +654,8 @@
   .wl.W{background:var(--win)}.wl.L{background:var(--loss)}
   .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 90px);transform:translateX(-50%) translateY(20px);opacity:0;z-index:95;background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;font:600 14px var(--body);transition:.25s;max-width:90vw;pointer-events:none}
   .toast.on{opacity:1;transform:translateX(-50%)}
+  .upd{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 8px);transform:translateX(-50%) translateY(-140%);z-index:96;background:var(--navy);color:#fff;border:2px solid var(--gold);border-radius:22px;padding:9px 16px;font:700 14px var(--body);box-shadow:0 6px 20px rgba(0,0,0,.25);transition:transform .3s;white-space:nowrap}
+  .upd.on{transform:translateX(-50%)}.upd b{color:var(--gold)}
   .loading{padding:60px 20px;text-align:center;color:var(--muted)}
   /* loading: one spinner everywhere (boot, cards, sheets, chat), a thin bar under the header while the league server works */
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -880,6 +882,7 @@
 <div class="cwrap" id="cwrap"><div class="cbox" id="cbox"></div></div>
 <div class="welcome" id="welcome"></div>
 <div class="toast" id="toast"></div>
+<button class="upd" id="upd" type="button">✨ Update ready · <b>Tap to refresh</b></button>
 <div class="undo" id="undo"><span id="undot"></span><button id="undob">Undo</button></div>
 <div class="tour" id="tour" role="dialog" aria-live="polite"></div>
 <button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
@@ -954,6 +957,28 @@
   // "beta" until go-live (APP_DESIGN §9), then "live": hides the beta strip and the practice-run note in More.
   var STAGE = "beta";
   if (STAGE === "live") { var stageBar = document.getElementById("stagebar"); if (stageBar) stageBar.remove(); }
+  // ✨ Update check (commish 11/9): a Home-Screen app keeps running the copy it loaded. Fingerprint this copy's own
+  // scripts + styles, compare with a fresh fetch of the page: on boot, on return to the app (≥1 min apart) and every
+  // 10 min. Newer copy → back after 10+ min away with nothing being typed: reload; otherwise a tap-to-refresh pill.
+  (function () {
+    function fp(doc) { var t = ""; Array.prototype.forEach.call(doc.querySelectorAll("script:not([src]),style"), function (e) { t += e.textContent; });
+      var h = 5381; for (var i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return h + ":" + t.length; }
+    var mine = fp(document), last = 0, hiddenAt = 0, ready = false, btn = document.getElementById("upd");
+    function busyTyping() { var a = document.activeElement; return !!(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) || Array.prototype.some.call(document.querySelectorAll("textarea"), function (x) { return x.value.trim(); }); }
+    function show() { ready = true; btn.classList.add("on"); }
+    function check(auto) { if (ready) { if (auto && !busyTyping()) location.reload(); return; }
+      if (Date.now() - last < 6e4) return; last = Date.now();
+      fetch(location.pathname + "?u=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (txt) {
+        if (!txt || txt.indexOf("</html>") < 0) return;
+        if (fp(new DOMParser().parseFromString(txt, "text/html")) === mine) return;
+        if (auto && !busyTyping()) location.reload(); else show(); }).catch(function () {}); }
+    btn.onclick = function () { location.reload(); };
+    setTimeout(function () { check(false); }, 4000);
+    setInterval(function () { if (!document.hidden) check(false); }, 6e5);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { hiddenAt = Date.now(); return; }
+      var away = hiddenAt && Date.now() - hiddenAt >= 6e5; if (away) last = 0; check(away); });
+    window._updShow = show; // tests
+  })();
   function contactOf(owner) { return (SUM.contacts || []).filter(function (c) { return norm(c.owner) === norm(owner); })[0] || {}; }
   function fmtPhone(d) { d = String(d || ""); return d.length === 10 ? "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6) : d; }
   function smsHref(phone, body) { return "sms:" + (phone || "") + "?&body=" + encodeURIComponent(body); } // ?& works on iOS and Android

@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), desk Go-live section
+**Last updated:** 2026-11-09 by Claude (chat), app update check
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-09 · REEL · ✨ Update check (commish couldn't see a fresh push in the Home-Screen app): the app compares a fingerprint of its own scripts + styles with a fresh fetch of the page on open, on return (≥1 min apart) and every 10 min. Newer copy → reloads itself if you were away 10+ min and aren't typing, else shows "✨ Update ready · Tap to refresh" at the top. No build number to bump. App only.
 - 2026-11-09 · REEL · 📥 Commish desk: new **Go-live** section ("Beta + launch tools") between League and Log, holding 🧪 Beta crew and 👋 Welcome tour (moved out of League) plus a 🎭 Seed data placeholder (staged beta activity with Reseed / Wipe seed, next build). Commish: Joe Reilly joins the beta crew for Upper-tier activity. App only.
 - 2026-11-09 · REEL · 🔇 Owner emails held until go-live (commish): all 21 owners' emails are in the TEST Sheet and 📣 Commish announcements email by default, so a beta alert would have reached the whole league. New switch `OWNER_EMAILS = "beta"` in logic.js: `notify_` (the only path that emails owners) now sends only to the beta crew + commish; flip to `"live"` at go-live after the emails are reviewed (APP_DESIGN §9, REEL.md roadmap 4). Emails to the commish (passphrase requests, sync errors, sign-in pause) unchanged. Backend logic v0.56; mock check: a commish alert emails Ben, Sam, Charles only.
 - 2026-11-09 · REEL · 💰 Waiver auction: checked on real ESPN through the live backend (chat can now reach it): losing bids from other teams DO come back (Upper: 33 losing $1+ bids). Fix: claims on players who are on no MAFFL roster now had no name (17 in Upper); the daily run (VER 15) looks those ids up once in ESPN's public players list (Daily key `pnames`, last 400). Backend logic v0.55; mock gains an unrostered claim + the players lookup; regress baseline refreshed.
