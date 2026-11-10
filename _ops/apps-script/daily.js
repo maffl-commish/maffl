@@ -265,7 +265,7 @@ DAILY.mathDrop = function (force) {
   ["U", "L"].forEach(function (tier) {
     cache.remove("live_" + tier); var L = live_(tier, 0); if (!L || !L.ok) return; wk = wk || L.week;
     var sd = function (x) { var left = (x.players || []).filter(function (p) { return p.slot !== "BE" && p.slot !== "IR" && !p.played && p.opp && p.opp !== "BYE"; });
-      return { team: x.team, owner: owner[norm_(x.team)] || "", pts: x.pts, left: left.map(function (p) { return { n: p.n, pos: p.pos, tm: p.tm, proj: p.proj }; }),
+      return { team: x.team, owner: owner[norm_(x.team)] || "", pts: x.pts, left: left.map(function (p) { return { n: p.n, pos: p.pos, tm: p.tm, opp: p.opp, kick: p.kick, proj: p.proj }; }), // + the NFL game (11/9 infographic)
         lp: Math.round(left.reduce(function (a, p) { return a + (Number(p.proj) || 0); }, 0) * 10) / 10 }; };
     (L.games || []).forEach(function (g) { if (!g.home || !g.away || /ghost/i.test(g.home.team + g.away.team)) return;
       var a = sd(g.home), b = sd(g.away); if (a.left.length || b.left.length) games.push({ tier: tier, a: a, b: b }); });
