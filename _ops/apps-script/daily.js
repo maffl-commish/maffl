@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "14"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "15"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -231,9 +231,28 @@ function dFaab_(tier, s) {
   });
   var list = Object.keys(byId).map(function (k) { return byId[k]; }).filter(function (x) { return Date.now() - x.at < 21 * 864e5; })
     .sort(function (a, b) { return b.at - a.at; }).slice(0, 400);
+  var nameless = list.filter(function (x) { return !x.n && x.pid; }); // players on no MAFFL roster now (commish 11/9: 17 blank rows)
+  if (nameless.length) { var pn = dNames_(nameless.map(function (x) { return x.pid; }));
+    nameless.forEach(function (x) { var p = pn[x.pid]; if (p) { x.n = p.n; x.pos = x.pos || p.pos; x.tm = x.tm || p.tm; } }); }
   dPut_(key, { at: new Date().toISOString(), list: list });
   try { dFaabDrop_(tier, list); } catch (e) {}
   return n;
+}
+// Names for players ESPN has on no MAFFL roster (dropped, lost claims): one public ESPN players lookup for the missing ids
+// (no league cookies needed), kept under Daily key "pnames" (last 400) so each id is looked up once.
+function dNames_(ids) {
+  var cache = dGet_("pnames") || {}, miss = ids.filter(function (id, i) { return id && !cache[id] && ids.indexOf(id) === i; }).slice(0, 100);
+  if (!miss.length) return cache;
+  try {
+    var r = UrlFetchApp.fetch("https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "/players?view=players_wl",
+      { headers: { "X-Fantasy-Filter": JSON.stringify({ filterActive: null, filterIds: { value: miss } }) }, muteHttpExceptions: true });
+    if (r.getResponseCode() !== 200) return cache;
+    var j = JSON.parse(r.getContentText()), got = 0;
+    (Array.isArray(j) ? j : j.players || []).forEach(function (p) { p = p.player || p;
+      if (p && p.id && p.fullName) { cache[p.id] = { n: p.fullName, pos: POS[p.defaultPositionId] || "", tm: PRO[p.proTeamId] || "FA" }; got++; } });
+    if (got) { var k = Object.keys(cache); k.slice(0, Math.max(0, k.length - 400)).forEach(function (x) { delete cache[x]; }); dPut_("pnames", cache); }
+  } catch (e) {}
+  return cache;
 }
 // 🗞️ Drops step 2 (commish 11/9): a waiver run becomes a 💰 Waiver auction drop, published once with the bids as they
 // stood and kept (Daily key "drops", newest first, 60 days). A run = claims processed within 12 h of the newest one;

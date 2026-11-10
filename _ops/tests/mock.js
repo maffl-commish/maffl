@@ -233,6 +233,8 @@ function espnPayload(L, D, tier, query, T0) {
         const bids = [[w.id, 23 - 7 * k, "EXECUTED"], [tm[(k + 3) % tm.length].id, 12 - 3 * k, "FAILED_INVALIDPLAYERSOURCE"], [tm[(k + 5) % tm.length].id, 4, "FAILED_INVALIDPLAYERSOURCE"]];
         bids.forEach((b, j) => out.transactions.push({ id: tier + "tx" + k + j, type: "WAIVER", status: b[2], teamId: b[0], bidAmount: b[1], scoringPeriodId: spq,
           processDate: at, proposedDate: at - 864e5, items: [{ playerId: p.id, type: "ADD", toTeamId: b[0] }] })); });
+      // a claim on a player who is on no MAFFL roster now (won, then dropped): the name comes from the players lookup
+      out.transactions.push({ id: tier + "txoff", type: "WAIVER", status: "EXECUTED", teamId: tm[2].id, bidAmount: 3, scoringPeriodId: spq, processDate: at, proposedDate: at - 864e5, items: [{ playerId: 9999901, type: "ADD", toTeamId: tm[2].id }] });
       out.transactions.push({ id: tier + "fa", type: "FREEAGENT", status: "EXECUTED", teamId: tm[1].id, bidAmount: 0, processDate: at, items: [{ playerId: 1, type: "ADD" }] }); }
   }
   return out;
@@ -312,6 +314,9 @@ function create(opts) {
   function fetchFake(url, o) {
     let m;
     if ((m = /fantasy\.espn\.com\/apis\/v3\/games\/ffl\/seasons\/2026\/segments\/0\/leagues\/(\d+)\?(.*)$/.exec(url))) return resp(200, espnPayload(LG, D, m[1] === "34467" ? "U" : "L", m[2], T0));
+    if (/fantasy\.espn\.com\/apis\/v3\/games\/ffl\/seasons\/2026\/players\?/.test(url)) { // public players lookup (X-Fantasy-Filter ids)
+      let ids = []; try { ids = JSON.parse((o.headers || {})["X-Fantasy-Filter"]).filterIds.value; } catch (e) {}
+      return resp(200, ids.filter((id) => id === 9999901).map((id) => ({ id: id, fullName: "Waiver Wanderer", defaultPositionId: 3, proTeamId: 23 }))); }
     if (/fantasy\.espn\.com\/apis\/v3\/games\/ffl\/seasons\/2026\?view=proTeamSchedules/.test(url)) return resp(200, proSchedule(LG));
     if ((m = /raw\.githubusercontent\.com\/[^/]+\/[^/]+\/main\/([^?]+)/.exec(url))) { try { return resp(200, rd(m[1])); } catch (e) { return resp(404, "404: Not Found"); } }
     if (/api\.github\.com\/.*\/dispatches/.test(url)) return resp(204, "");
