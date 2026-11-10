@@ -32,7 +32,7 @@ Write `lines.json` (and nothing else):
 }
 ```
 
-- `headline`: the tier's story right now (newest final week, or the race if nothing new).
+- `headline`: the tier's story right now (newest final week, or the race if nothing new). **Never the week's top score or high scorer** (the 🏅 Week awards card owns that fact; REEL_SERIES v2.0 rule 1: one fact, one card). Lead with the race, a streak, an upset or a swing.
 - `hot` / `cold`: the hottest and coldest team (streak, last5, points).
 - `coach`: newest final week's Coach of the Week winner, or the worst bench blunder.
 - `survivor`: who went out last, or who's on the bubble.
