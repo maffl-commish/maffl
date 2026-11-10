@@ -300,9 +300,10 @@ function tickReconcile_(sent, now) {
 
 
 // ---------------------------------------------------------------- 🎭 seed data (commish 11/9, desk → Go-live)
-// Staged beta activity on the real ESPN rosters, so the beta crew opens an app that's already busy: open offers, a counter,
-// an old declined offer, DM threads, tier + league chat, trade-block listings. Only the beta crew (+ commish) "speak";
-// no other owner's name goes on a message or offer. Nothing seeded is ACCEPTED (no review items) and nothing emails.
+// Pretend league activity on the real ESPN rosters, so the beta crew opens an app that's already busy (commish 11/9: real
+// owners in it too, all pretend): every tester gets an offer waiting, a counter waiting and an old declined offer from
+// other owners, with DM banter; testers in the same tier get one between them; a couple of private offers between other
+// owners; tier + league chat from all over; trade-block listings. Nothing seeded is ACCEPTED (no review items), nothing emails.
 // Tagged so Wipe / Reseed can find it: Offers ids "TSD…", Chat ids "MSD…" (plus any chat card pointing at a TSD offer),
 // trade-block Events with week "seed" (Events stays append-only: wiping appends "off" rows).
 var SEED_OFFER = "TSD", SEED_MSG = "MSD";
@@ -330,62 +331,82 @@ function seedWipe_() {
 }
 function seedBuild_(me) {
   var wiped = seedWipe_(), now = Date.now(), at = function (min) { return new Date(now - min * 6e4); };
-  var crew = owners_().filter(function (o) { return isBeta_(o) && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); })
-    .sort(function (a, b) { return (String(a.is_commish) === "Y") - (String(b.is_commish) === "Y") || String(a.owner).localeCompare(String(b.owner)); }); // commish last
-  var chat = [], offers = [], block = [], skipped = [];
-  var first = function (o) { return String(o.owner).split(/[ \/]/)[0]; };
+  var all = owners_().filter(function (o) { return o.owner && o.team && !/ghost/i.test(String(o.team) + String(o.owner)); });
+  var chat = [], offers = [], block = [], skipped = [], pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  var shuffle = function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = a[i]; a[i] = a[j]; a[j] = x; } return a; };
+  var tag = function (o) { try { return at_(o.owner); } catch (e) { return "@" + String(o.owner).split(/[ \/]/)[0]; } };
   var msg = function (min, room, owner, text, mentions, kind, ref, ev) { chat.push([seedId_(SEED_MSG), at(min), room, owner, kind || "text", safe_(text || ""), ref || "", ev || "", JSON.stringify(mentions || []), "", "", ""]); };
   var offer = function (min, upd, from, to, tier, give, get, gc, tc, note, status, reason, reasons) { var id = seedId_(SEED_OFFER);
     offers.push(cells_([id, at(min), from.owner, to.owner, tier, JSON.stringify(give), JSON.stringify(get), gc, tc, note, status, at(upd), reason || "", JSON.stringify(reasons || []), ""])); return id; };
-  var credits = function (o, n) { try { var h = spendable_(o.owner); return h !== null && h >= n ? n : 0; } catch (e) { return 0; } };
+  var credits = function (o, n) { if (!n) return 0; try { var h = spendable_(o.owner); return h !== null && h >= n ? n : 0; } catch (e) { return 0; } };
+  var listed = {}; try { listed = trades_("").block || {}; } catch (e) {}
+  var REASONS = ["Need depth", "Win now", "Selling for the future", "Want credits", "Bye-week fix"];
   ["L", "U"].forEach(function (t) {
-    var c = crew.filter(function (o) { return String(o.tier) === t; });
-    if (c.length < 2) { skipped.push((t === "U" ? "Upper" : "Lower") + (c.length ? " (only " + first(c[0]) + " is a tester)" : " (no testers)")); return; }
-    var r; try { r = rosters_(t); } catch (e) { skipped.push((t === "U" ? "Upper" : "Lower") + " (ESPN rosters didn't load)"); return; }
-    var pl = {}; c.forEach(function (o) { var tm = ((r && r.teams) || []).filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0];
-      pl[o.owner] = ((tm && tm.players) || []).filter(function (p) { return ["K", "D/ST", "DST", ""].indexOf(p.pos) < 0; })
-        .sort(function (a, b) { return (Number(b.sp) || 0) - (Number(a.sp) || 0); }); });
-    var P = function (o, i) { var l = pl[o.owner]; return l.length ? l[Math.min(i, l.length - 1)] : null; };
-    if (c.some(function (o) { return pl[o.owner].length < 4; })) { skipped.push((t === "U" ? "Upper" : "Lower") + " (rosters too thin)"); return; }
-    var A = c[0], B = c[1], C = c[2] || null, room = function (x, y) { return roomDM_(x.owner, y.owner); };
-    // 1 · fresh offer, waiting on B
-    var a1 = P(A, 4), b1 = P(B, 3), n1 = "Your " + b1.pos + " room is stacked. Mine isn't. Let's fix that.";
-    var o1 = offer(95, 95, A, B, t, [a1.n], [b1.n], credits(A, 2), 0, n1, "PROPOSED", "", ["Need depth"]);
-    msg(130, room(A, B), A.owner, "You up? Got an idea for your " + b1.pos + " logjam 👀");
-    msg(95, room(A, B), A.owner, n1, [], "offer", o1, "PROPOSED");
-    msg(93, room(A, B), A.owner, "No rush, but " + b1.n + " would look real good in my lineup");
-    msg(40, room(A, B), B.owner, "Looking now. Give me a bit 🤔");
-    // 2 · a counter, back on the first sender's side (needs a third tester; otherwise B → A)
-    var X = B, Y = C || A;
-    var x2 = P(X, 5), y2 = P(Y, 4), y2b = P(Y, 7);
-    var o2 = offer(1210, 360, X, Y, t, [x2.n], [y2.n], 0, 0, "Straight up. You know you want to.", "DECLINED", "Countered", ["Win now"]);
-    msg(1215, room(X, Y), X.owner, "Straight up. You know you want to.", [], "offer", o2, "PROPOSED");
-    msg(420, room(X, Y), Y.owner, "Close. Not giving up " + y2.n + " for just that though");
-    var o3 = offer(360, 360, Y, X, t, [y2b.n], [x2.n], credits(Y, 1), 0, "Here's what I can do.", "PROPOSED", "", ["Selling for the future"]);
-    msg(360, room(X, Y), Y.owner, "Here's what I can do.", [], "offer", o3, "COUNTER");
-    msg(358, room(X, Y), Y.owner, "Countered. Your move 😤");
-    // 3 · an old declined offer, for history
-    var F = C || B, G = A, f3 = P(F, 6), g3 = P(G, 2);
-    var o4 = offer(2900, 2710, F, G, t, [f3.n], [g3.n], 0, 0, "Worth a shot.", "DECLINED", "", ["Want credits"]);
-    msg(2900, room(F, G), F.owner, "Worth a shot.", [], "offer", o4, "PROPOSED");
-    msg(2710, room(F, G), G.owner, "", [], "offer", o4, "DECLINED");
-    msg(2708, room(F, G), G.owner, "Not a chance 😂 " + g3.n + " stays");
-    msg(2700, room(F, G), F.owner, "Had to try. I'll be back.");
-    // tier chat + trade block (most recent, so they sit at the bottom of the room)
-    msg(88, "tier:" + t, A.owner, "Trade block is open for business. Check mine before the deadline 👀");
-    msg(70, "tier:" + t, B.owner, "@" + first(A) + " your block is all bench guys 😂", [A.owner]);
-    msg(55, "tier:" + t, (C || A).owner, "Who's selling a " + P(C || A, 1).pos + "? Asking for me");
-    msg(20, "tier:" + t, B.owner, "Deadline is Dec 2. Get your offers in.");
-    var notes = ["Make me an offer", "Need a " + P(B, 0).pos + " back", "Best offer by Sunday", "Selling high"];
-    c.forEach(function (o, i) { var p = P(o, 8 + i); if (p) block.push(cells_([at(100 - i * 7), o.owner, "block", t + ":" + p.n, "on", "seed", notes[i % notes.length]])); });
+    var T0 = t === "U" ? "Upper" : "Lower", tier = all.filter(function (o) { return String(o.tier) === t; });
+    var r; try { r = rosters_(t); } catch (e) { skipped.push(T0 + " (ESPN rosters didn't load)"); return; }
+    var pl = {}; tier.forEach(function (o) { var tm = ((r && r.teams) || []).filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0];
+      pl[o.owner] = ((tm && tm.players) || []).filter(function (p) { return ["K", "D/ST", "DST", ""].indexOf(p.pos) < 0; }).sort(function (a, b) { return (Number(b.sp) || 0) - (Number(a.sp) || 0); }); });
+    var ok = tier.filter(function (o) { return pl[o.owner].length >= 10; });
+    var T = ok.filter(isBeta_).sort(function (a, b) { return (String(a.is_commish) === "Y") - (String(b.is_commish) === "Y") || String(a.owner).localeCompare(String(b.owner)); });
+    var O = shuffle(ok.filter(function (o) { return !isBeta_(o); }));
+    if (O.length < 3) { skipped.push(T0 + " (rosters didn't load)"); return; }
+    var oi = 0, nextO = function () { return O[oi++ % O.length]; }, P = function (o, i) { var l = pl[o.owner]; return l[Math.min(i, l.length - 1)]; };
+    var room = function (x, y) { return roomDM_(x.owner, y.owner); };
+    // Every tester: an offer waiting on them, a counter waiting on them, an old declined one. From real owners, all pretend.
+    T.forEach(function (X, k) {
+      var A = nextO(), a = P(A, 3 + k % 3), x = P(X, 4 + k % 3), n1 = pick(["Your " + x.pos + " room is stacked. Mine isn't. Let's fix that.", "Fair deal. Look it over.", "I need " + x.n + " more than you do. Let's talk.", "Sending this before somebody else does."]);
+      var o1 = offer(150 + k * 70, 150 + k * 70, A, X, t, [a.n], [x.n], credits(A, pick([0, 0, 1, 2])), 0, n1, "PROPOSED", "", [pick(REASONS)]);
+      msg(152 + k * 70, room(A, X), A.owner, pick(["You around? Got something for you", "Hey, quick one for you 👀", "Got a trade idea, hear me out"]));
+      msg(150 + k * 70, room(A, X), A.owner, n1, [], "offer", o1, "PROPOSED");
+      msg(148 + k * 70, room(A, X), A.owner, pick([a.n + " has been a stud lately, just saying", "Don't sleep on it, deadline's coming", "Open to tweaks if you want to counter"]));
+      var B = nextO(), b = P(B, 4), x2 = P(X, 6), b2 = P(B, 7);
+      var o2 = offer(1500 + k * 60, 620 + k * 30, X, B, t, [x2.n], [b.n], 0, 0, "Straight up?", "DECLINED", "Countered", [pick(REASONS)]);
+      msg(1500 + k * 60, room(X, B), X.owner, "Straight up?", [], "offer", o2, "PROPOSED");
+      msg(640 + k * 30, room(X, B), B.owner, pick(["Close. Not giving up " + b.n + " for just that though", "Ehh. Let me counter", "I like it but I need a little more"]));
+      var o3 = offer(620 + k * 30, 620 + k * 30, B, X, t, [b2.n], [x2.n], credits(B, 1), 0, "Here's what I can do.", "PROPOSED", "", [pick(REASONS)]);
+      msg(620 + k * 30, room(X, B), B.owner, "Here's what I can do.", [], "offer", o3, "COUNTER");
+      msg(618 + k * 30, room(X, B), B.owner, pick(["Your move 😤", "Ball's in your court", "That's my best one"]));
+      var C = nextO(), c3 = P(C, 2), x3 = P(X, 8);
+      var o4 = offer(3000 + k * 50, 2800 + k * 50, X, C, t, [x3.n], [c3.n], 0, 0, "Worth a shot.", "DECLINED", "", [pick(REASONS)]);
+      msg(3000 + k * 50, room(X, C), X.owner, "Worth a shot.", [], "offer", o4, "PROPOSED");
+      msg(2800 + k * 50, room(X, C), C.owner, "", [], "offer", o4, "DECLINED");
+      msg(2798 + k * 50, room(X, C), C.owner, pick(["Not a chance 😂 " + c3.n + " stays", "Lol no", "Come back with something real"]));
+      msg(2790 + k * 50, room(X, C), X.owner, pick(["Had to try. I'll be back.", "Worth asking 🤷", "Noted. Round two coming"]));
+    });
+    // Two testers in the tier: one between them too.
+    if (T.length >= 2) { var U1 = T[0], U2 = T[1], u1 = P(U1, 7), u2 = P(U2, 5);
+      var o5 = offer(90, 90, U1, U2, t, [u1.n], [u2.n], credits(U1, 2), 0, "Family discount 😇", "PROPOSED", "", ["Need depth"]);
+      msg(92, room(U1, U2), U1.owner, "You up? Got an idea for your " + u2.pos + " logjam 👀"); msg(90, room(U1, U2), U1.owner, "Family discount 😇", [], "offer", o5, "PROPOSED"); msg(40, room(U1, U2), U2.owner, "Looking now. Give me a bit 🤔"); }
+    // Offers between other owners (private; only the counts show on the desk).
+    for (var i = 0; i < 2; i++) { var F = nextO(), G = nextO(); if (F === G) continue; offer(300 + i * 200, 300 + i * 200, F, G, t, [P(F, 5 + i).n], [P(G, 6 + i).n], 0, 0, "", "PROPOSED", "", [pick(REASONS)]); }
+    // Tier chat, newest last.
+    var c1 = nextO(), c2 = nextO(), c3o = nextO(), c4 = nextO();
+    msg(95, "tier:" + t, c1.owner, "Who's buying " + P(c1, 6).n + "? Price is reasonable 👀");
+    msg(80, "tier:" + t, c2.owner, "Reasonable to who, " + tag(c1) + " 😂", [c1.owner]);
+    msg(66, "tier:" + t, c3o.owner, "Bye weeks are killing me. Need a " + P(c3o, 1).pos + " bad");
+    if (T[0]) msg(52, "tier:" + t, T[0].owner, "Trade block is open for business. Check mine 👀");
+    msg(38, "tier:" + t, c4.owner, "Deadline's Dec 2. Somebody make me an offer I can't refuse");
+    msg(22, "tier:" + t, c2.owner, "That last waiver run was highway robbery");
+    if (T[1]) msg(9, "tier:" + t, T[1].owner, "I'll take that action, " + tag(c4), [c4.owner]);
+    // Trade block: four other owners + each tester (skips players already listed for real).
+    O.slice(0, 4).concat(T).forEach(function (o, j) { for (var q = 8; q < 13; q++) { var p = P(o, q), ref = t + ":" + p.n; if (listed[ref]) continue; listed[ref] = 1;
+      block.push(cells_([at(240 - j * 25), o.owner, "block", ref, "on", "seed", pick(["Make me an offer", "Selling high", "Open to credits", "Need a " + P(o, 0).pos + " back", "Best offer by Sunday", ""])])); break; } });
   });
-  if (crew.length >= 2) { msg(80, "league", crew[0].owner, "Is this thing on? 🎤"); msg(15, "league", crew[crew.length - 1].owner, "Welcome to the new MAFFL HQ, beta crew. Break it before everyone else does 🧪"); }
+  // League chat: a few voices from both tiers.
+  var L = shuffle(all.filter(function (o) { return !isBeta_(o); })).slice(0, 4), crew = all.filter(isBeta_);
+  if (L.length >= 4) {
+    msg(120, "league", L[0].owner, "New MAFFL HQ looks legit. Who built this 👀");
+    msg(100, "league", L[1].owner, "Lower tier trash talk > Upper tier trash talk. Discuss.");
+    msg(75, "league", L[2].owner, "Bold words from a guy with a bye-week disaster, " + tag(L[1]), [L[1].owner]);
+    msg(45, "league", L[3].owner, "Somebody tell the commish the Ghost is cheating 👻");
+    if (crew[0]) msg(12, "league", crew[0].owner, "Is this thing on? 🎤");
+  }
   chat.sort(function (a, b) { return a[1] - b[1]; });
   var oSh = sheet_("Offers"); offers.forEach(function (row) { oSh.appendRow(row); });
   var cSh = sheet_("Chat"); chat.forEach(function (row) { cSh.appendRow(row); });
   var eSh = sheet_("Events"); block.forEach(function (row) { eSh.appendRow(row); });
   ["Offers", "Chat", "Events"].forEach(function (n) { delete MEMO_[n]; });
-  PropertiesService.getScriptProperties().setProperty("SEED_AT", new Date().toISOString());
+  if (offers.length || chat.length) PropertiesService.getScriptProperties().setProperty("SEED_AT", new Date().toISOString());
   var out = { ok: true, offers: offers.length, msgs: chat.length, block: block.length, skipped: skipped, wiped: wiped };
   deskPost_("note", "🎭 Seed data built: " + out.offers + " offers, " + out.msgs + " messages, " + out.block + " trade-block listings" + (skipped.length ? ". Skipped: " + skipped.join(", ") : "") + ".", "", "SEED");
   return out;

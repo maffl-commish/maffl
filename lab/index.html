@@ -3675,7 +3675,7 @@
       '<div class="ditem">' + (n ? '<b>Staged ' + (s.at ? esc(ago(s.at)) + (ago(s.at) === "now" ? "" : " ago") : "") + '</b> <span class="meta">' + s.offers + ' offers · ' + s.msgs + ' messages · ' + s.block + ' trade-block listings</span>'
         : '<b>Nothing staged</b>') +
       '<div class="btns">' + deskBtn("seed", "", n ? "🎭 Reseed" : "🎭 Build seed data", 1) + (n ? deskBtn("unseed", "", "Wipe seed") : '') + '</div></div>' +
-      '<p class="meta">Built from today\'s ESPN rosters, for the beta crew in each tier (needs 2+ testers in a tier): an offer waiting, a counter, an old declined offer, DM threads, tier and league chat, a few trade-block listings. Only beta testers do the talking. Tagged, so Reseed starts it fresh and Wipe takes it all out. No emails, nothing reaches ESPN or the credit ledger.</p></details></div>';
+      '<p class="meta">Pretend league activity on today\'s ESPN rosters, real owners included: every beta tester gets an offer waiting, a counter waiting and an old declined offer with DM banter; a few private offers between other owners; tier and league chat; trade-block listings. All tagged: Reseed starts it fresh, Wipe takes it all out. No emails, nothing reaches ESPN or the credit ledger.</p></details></div>';
   }
   function drawDesk() {
     if (!DK.open) return; var d = DESK, b = $("dkbody"), st = b.scrollTop;
@@ -3804,15 +3804,15 @@
       toast(r.ok ? "Robot ran ✓" + ((r.log || []).length ? " · " + r.log.join(" · ") : " · nothing new") : (r.error || "Didn't run")); DESK = null; loadDesk(); CH.sig = null; if (CH.open && CH.view === "thread") loadRoom(); if (DK.open) loadDeskLog(); })
       .catch(function () { busy(0); toast("Couldn't reach the league server"); }); return; }
     if (op === "seed" || op === "unseed") {
-      var SD = op === "seed" ? ["Build the seed data?", "Wipes any staged data first, then stages fresh offers, chats and trade-block listings for the beta crew from today\'s ESPN rosters. Testers\' own real activity stays.", "Build it", false]
-        : ["Wipe the seed data?", "Takes out every staged offer, message and trade-block listing (including any card a tester answered). Testers\' own messages stay.", "Wipe it", true];
+      var SD = op === "seed" ? ["Build the seed data?", "Wipes any staged data first, then stages fresh pretend offers, chats and trade-block listings across the league from today\'s ESPN rosters. Real activity stays.", "Build it", false]
+        : ["Wipe the seed data?", "Takes out every staged offer, message and trade-block listing (including any card a tester answered). Real messages stay.", "Wipe it", true];
       confirmBox(SD[0], '<p class="p">' + SD[1] + '</p>', SD[2], SD[3]).then(function (yes) { if (!yes) return; busy(1);
         api("deskact", Object.assign(creds(), { op: op, target: "" })).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
           DESK = null; loadDesk(); if (DK.open) loadDeskLog();
           if (op === "seed" && !r.offers) { // nothing staged: say why, plainly (commish 11/9 saw "0 staged" and nothing else)
-            $("cbox").innerHTML = '<h3>🎭 Nothing staged yet</h3><p class="p">Seed data needs at least <b>2 beta testers in the same tier</b>, so they have someone to trade and chat with.</p>' +
+            $("cbox").innerHTML = '<h3>🎭 Nothing staged</h3><p class="p">The seed couldn\'t build this time.</p>' +
               '<p class="p">' + (r.skipped || []).map(function (x) { return "• " + esc(x); }).join("<br>") + '</p>' +
-              '<p class="meta">Add testers under Go-live → 🧪 Beta crew (it doesn\'t notify them), then tap Build again.</p><div class="btns"><button class="b" id="cno">Close</button></div>';
+              '<p class="meta">Usually ESPN didn\'t answer. Try again in a minute.</p><div class="btns"><button class="b" id="cno">Close</button></div>';
             $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); }; return; }
           var m = op === "seed" ? "🎭 Staged " + r.offers + " offers, " + r.msgs + " messages" + ((r.skipped || []).length ? " · skipped " + r.skipped.join(", ") : "") : "🎭 Seed wiped";
           afterChange(m); })

@@ -103,7 +103,7 @@ setTimeout(() => {
   out("seed", P(Object.assign({ action: "deskact", op: "seed", target: "" }, me)));
   out("reseed", P(Object.assign({ action: "deskact", op: "seed", target: "" }, me)));
   out("seed desk", P(Object.assign({ action: "desk" }, me)).seed.offers);
-  out("seed tester offers", (() => { const ch = { owner: "Charles Lavrinc", pin: pins["Charles Lavrinc"] }; return P(Object.assign({ action: "summary" }, ch)).offers.filter((o) => /^TSD/.test(o.id)).map((o) => [o.from, o.to, o.status, o.reason]); })());
+  out("seed tester offers", (() => { const ch = { owner: "Charles Lavrinc", pin: pins["Charles Lavrinc"] }; return P(Object.assign({ action: "summary" }, ch)).offers.filter((o) => /^TSD/.test(o.id)).map((o) => o.status + (o.reason ? "/" + o.reason : "")).sort(); })());
   out("unseed", P(Object.assign({ action: "deskact", op: "unseed", target: "" }, me)));
   out("unseed desk", P(Object.assign({ action: "desk" }, me)).seed);
   out("seed mail", m.mail().length - mail0);
