@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), owner emails commish-only
+**Last updated:** 2026-11-09 by Claude (chat), seed empty-state
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-09 · REEL · 🎭 Seed data: when nothing gets staged (commish saw just "0 staged"), the desk now says why: "Nothing staged yet: needs 2 beta testers in the same tier" with each tier's state ("Lower (no testers)", "Upper (only Mike is a tester)") and where to add them. Backend v0.60.
 - 2026-11-09 · REEL · 🔇 Owner emails now reach **only the commish** (commish: the beta crew hasn't been told yet). `OWNER_EMAILS = "commish"` in logic.js; `"beta"` lets the beta crew get them, `"live"` everyone at go-live. Seed data never emails. Backend v0.59.
 - 2026-11-09 · REEL · 📥 Commish desk dashboard re-think (commish: the robot tiles meant nothing to him, Card lines read "Off" when it was fine): the top is now six count tiles (⏳ Trades to approve · 🎟️ Perks to approve · 🏈 Do on ESPN · 🔑 Sign-in help · 🤝 Offers out · 🧪 Beta notes 24 h; gold when something waits on you, tap → opens that section), a league-wide line (offers waiting on an answer, in review, approved this week), then one folded "🤖 Robots · all running" row with plain names (Trade clock + reminders, Scores + standings from ESPN, Home card headlines, Credits → official log) and real states ("Week 8 lines are out" instead of Off). Backend v0.58: desk returns `offers` counts for the whole league (numbers only).
 - 2026-11-09 · REEL · 🎭 **Seed data** (desk → Go-live): Build / Reseed / Wipe seed. Stages beta activity on the live ESPN rosters for each tier with 2+ testers (Lower: Ben, Charles, Sam; Upper once Joe is in the crew with Mike): an offer waiting, a counter, an old declined offer, DM threads, tier + league chat, trade-block listings. Only beta testers speak; no emails, no ESPN, no credit ledger; nothing ACCEPTED. Tagged (Offers TSD…, Chat MSD…, block Events week "seed") so Wipe takes it all out. Backend v0.57; mock `deleteRow`; regression adds seed / reseed / tester view / unseed / no-mail checks.

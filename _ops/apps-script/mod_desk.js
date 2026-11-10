@@ -340,7 +340,7 @@ function seedBuild_(me) {
   var credits = function (o, n) { try { var h = spendable_(o.owner); return h !== null && h >= n ? n : 0; } catch (e) { return 0; } };
   ["L", "U"].forEach(function (t) {
     var c = crew.filter(function (o) { return String(o.tier) === t; });
-    if (c.length < 2) { if (c.length) skipped.push((t === "U" ? "Upper" : "Lower") + " (only " + first(c[0]) + ")"); return; }
+    if (c.length < 2) { skipped.push((t === "U" ? "Upper" : "Lower") + (c.length ? " (only " + first(c[0]) + " is a tester)" : " (no testers)")); return; }
     var r; try { r = rosters_(t); } catch (e) { skipped.push((t === "U" ? "Upper" : "Lower") + " (ESPN rosters didn't load)"); return; }
     var pl = {}; c.forEach(function (o) { var tm = ((r && r.teams) || []).filter(function (x) { return norm_(x.owner) === norm_(o.owner); })[0];
       pl[o.owner] = ((tm && tm.players) || []).filter(function (p) { return ["K", "D/ST", "DST", ""].indexOf(p.pos) < 0; })

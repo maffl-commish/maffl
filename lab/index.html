@@ -3808,8 +3808,14 @@
         : ["Wipe the seed data?", "Takes out every staged offer, message and trade-block listing (including any card a tester answered). Testers\' own messages stay.", "Wipe it", true];
       confirmBox(SD[0], '<p class="p">' + SD[1] + '</p>', SD[2], SD[3]).then(function (yes) { if (!yes) return; busy(1);
         api("deskact", Object.assign(creds(), { op: op, target: "" })).then(function (r) { busy(0); if (!r.ok) { toast(r.error || "Didn't work"); return; }
+          DESK = null; loadDesk(); if (DK.open) loadDeskLog();
+          if (op === "seed" && !r.offers) { // nothing staged: say why, plainly (commish 11/9 saw "0 staged" and nothing else)
+            $("cbox").innerHTML = '<h3>🎭 Nothing staged yet</h3><p class="p">Seed data needs at least <b>2 beta testers in the same tier</b>, so they have someone to trade and chat with.</p>' +
+              '<p class="p">' + (r.skipped || []).map(function (x) { return "• " + esc(x); }).join("<br>") + '</p>' +
+              '<p class="meta">Add testers under Go-live → 🧪 Beta crew (it doesn\'t notify them), then tap Build again.</p><div class="btns"><button class="b" id="cno">Close</button></div>';
+            $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); }; return; }
           var m = op === "seed" ? "🎭 Staged " + r.offers + " offers, " + r.msgs + " messages" + ((r.skipped || []).length ? " · skipped " + r.skipped.join(", ") : "") : "🎭 Seed wiped";
-          DESK = null; loadDesk(); if (DK.open) loadDeskLog(); afterChange(m); })
+          afterChange(m); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); return; }
     if (op === "tourme") { tourClear(); closeDesk(); if (CH.open) closeChat(); tab("home"); toast("👋 Here's the tour"); return; }
     if (op === "tour") {
