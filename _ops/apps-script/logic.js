@@ -274,7 +274,7 @@ function prefs_(o) {
 }
 function settings_(me) {
   var o = ownerRow_(me.owner); if (!o) return { ok: false, error: "Unknown owner" };
-  return { ok: true, email: String(o.email || ""), phone: String(o.phone || ""), notify: prefs_(o), keys: NOTIFY_KEYS };
+  return { ok: true, email: String(o.email || ""), phone: String(o.phone || ""), notify: prefs_(o), keys: NOTIFY_KEYS, handle: handles_()[o.owner] || "" };
 }
 function saveSettings_(me, b) {
   var email = String(b.email || "").trim().slice(0, 120), digits = String(b.phone || "").replace(/\D/g, "");
@@ -286,6 +286,7 @@ function saveSettings_(me, b) {
   if (digits && digits.length !== 10) return { ok: false, error: "Phone needs 10 digits" };
   var n = {}, any = false; NOTIFY_KEYS.forEach(function (k) { n[k] = !!(b.notify || {})[k]; any = any || (n[k] && !NOTIFY_DEFAULT_ON[k]); });
   if (any && !email) return { ok: false, error: "Add your email to turn on emails" };
+  if (b.handle != null) { var he = setHandle_(me, b.handle); if (he) return { ok: false, error: he }; } // 🏷️ @handle (commish 11/9)
   ["email", "phone", "notify"].forEach(function (h) { ensureCol_("Owners", h); });
   var o = ownerRow_(me.owner);
   setCell_("Owners", o._row, "email", email);
@@ -330,7 +331,7 @@ function summary_(week, owner) {
   var t = trades_(owner);
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
   var last = {}; try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
-  return { ok: true, contacts: owner ? contacts_() : [], perks: pk.perks, insuranceLeft: pk.insuranceLeft, moves: pendingMoves_(), sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
+  return { ok: true, handles: (function () { try { return handles_(); } catch (e) { return {}; } })(), contacts: owner ? contacts_() : [], perks: pk.perks, insuranceLeft: pk.insuranceLeft, moves: pendingMoves_(), sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
     commish: !!(meRow && String(meRow.is_commish) === "Y"), beta: isBeta_(meRow), tour: meRow && meRow.tour ? String(meRow.tour) : "", chat: meRow ? inbox_(meRow) : null };
 }
 

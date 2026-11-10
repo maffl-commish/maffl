@@ -91,3 +91,11 @@ out("summary end", P(Object.assign({ action: "summary" }, me)));
 out("sheet Polls", m.sheet("Polls"));
 out("sheet Events len", (m.sheet("Events") || []).length);
 out("sheet Chat rows (room != dm)", (m.sheet("Chat") || []).filter((r) => !/^dm:/.test(r[2])).length); // DMs vary with the tick's ESPN window
+// 🏷️ Handles (11/9), last so the 1-second chat limit and Mike's new handle don't touch the checks above
+setTimeout(() => {
+  out("handle taken", P(Object.assign({ action: "savesettings", email: "m@x.test", handle: "Joe" }, me)).error);
+  out("handle bad", P(Object.assign({ action: "savesettings", email: "m@x.test", handle: "1x" }, me)).error);
+  out("handle set", P(Object.assign({ action: "savesettings", email: "m@x.test", handle: "@Commish_Mike" }, me)).handle);
+  out("handles", P(Object.assign({ action: "summary" }, me)).handles);
+  out("chat @handle", (() => { P(Object.assign({ action: "chatsend", room: "league", text: "@Joe you up? cc @braiden" }, me)); const c = P(Object.assign({ action: "chat", room: "league" }, me)); return c.messages[c.messages.length - 1].mentions; })());
+}, 2200);

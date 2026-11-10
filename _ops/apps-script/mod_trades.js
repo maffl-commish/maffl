@@ -243,7 +243,7 @@ function perkAct_(me, id, decision, reason) {
 // owner and everyone it touches get the @ badge. Extra FAAB posts too (waiver budgets are public, commish 11/8).
 function perkNews_(r) {
   var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
-  var at = function (n) { return "@" + String(n || "").trim(); }, cost = Number(r.cost) || 0, cr = cost + " credit" + (cost === 1 ? "" : "s"), wk = r.week ? " · Week " + r.week : "";
+  var at = function (n) { return at_(n); }, cost = Number(r.cost) || 0, cr = cost + " credit" + (cost === 1 ? "" : "s"), wk = r.week ? " · Week " + r.week : "";
   var opp = aff.filter(function (a) { return a && norm_(a) !== norm_(r.owner) && norm_(a) !== norm_(r.swap_with); });
   var text = r.perk === "double" ? "✖️2 Double Player Bonus" + wk + "\n" + at(r.owner) + " spent " + cr + ": " + r.player + (r.pos ? " (" + r.pos + ")" : "") + " scores double" + (opp.length ? " vs " + opp.map(at).join(", ") : "") + "."
     : r.perk === "swap" ? "🔀 Matchup Swap" + wk + "\n" + at(r.owner) + " spent " + cr + " to swap opponents with " + at(r.swap_with) + "." + (opp.length ? " New matchups for " + opp.map(at).join(" and ") + "." : "")

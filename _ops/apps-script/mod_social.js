@@ -118,6 +118,37 @@ function chat_(meRaw, b) {
       week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, note: r.note, status: r.status, reason: r.reason }; }); }
   return { ok: true, room: room, messages: msgs, pinned: pinned, counts: counts, mine: mine, who: who, more: all.length > list.length };
 }
+// 🏷️ Handles (commish 11/9): every owner has an @handle. Default = the registry's short name (data/MAFFL_Owner_Registry.csv
+// short_name, letters/digits only: "Jon/Rick" → @JonRick); owners can pick their own in Settings (Owners column "handle").
+// Unique, case-insensitive, 2–20 letters/digits/_ starting with a letter. Cached 10 min; saving one clears it.
+var HANDLE_RE = /^[A-Za-z][A-Za-z0-9_]{1,19}$/, HANDLE_RESERVED = ["everyone", "all", "here", "league", "commish", "mafflhq", "upper", "lower", "admin"];
+function handleClean_(s) { return String(s || "").replace(/[^A-Za-z0-9_]/g, "").slice(0, 20); }
+function handles_() {
+  var c = CacheService.getScriptCache(), hit = c.get("handles"); if (hit) { try { return JSON.parse(hit); } catch (e) {} }
+  var short = {}; try { var r = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/data/MAFFL_Owner_Registry.csv", { muteHttpExceptions: true });
+    if (r.getResponseCode() === 200) { var rows = Utilities.parseCsv(r.getContentText()), H = rows[0], ci = H.indexOf("canonical_name"), si = H.indexOf("short_name"), ai = H.indexOf("aliases");
+      rows.slice(1).forEach(function (x) { if (!x[si]) return; [x[ci]].concat(String(x[ai] || "").split("|")).forEach(function (n) { if (n) short[norm_(n)] = x[si]; }); }); } } catch (e) {}
+  var out = {}, used = {}, os = owners_();
+  os.forEach(function (o) { var h = handleClean_(o.handle); if (h && HANDLE_RE.test(h) && !used[h.toLowerCase()]) { out[o.owner] = h; used[h.toLowerCase()] = 1; } });
+  os.forEach(function (o) { if (out[o.owner]) return; var base = handleClean_(short[norm_(o.owner)] || String(o.owner).split(/[\s\/]+/)[0]) || "Owner", h = base, k = 2;
+    while (used[h.toLowerCase()]) h = base + k++; out[o.owner] = h; used[h.toLowerCase()] = 1; });
+  c.put("handles", JSON.stringify(out), 600); return out;
+}
+function at_(owner) { var o = ownerRow_(owner); return "@" + ((o && handles_()[o.owner]) || String(owner || "").split(" ")[0]); }
+function ownersFromText_(text) { // "@Handle" in a message → owners (case-insensitive)
+  var by = {}, h = handles_(); Object.keys(h).forEach(function (o) { by[h[o].toLowerCase()] = o; });
+  return (String(text).match(/@[A-Za-z][A-Za-z0-9_]{1,19}/g) || []).map(function (t) { return by[t.slice(1).toLowerCase()]; }).filter(Boolean);
+}
+function setHandle_(me, want) {
+  var h = handleClean_(String(want || "").replace(/^@/, "")); if (h === "") return null;
+  if (!HANDLE_RE.test(h)) return "Handles are 2–20 letters or numbers, starting with a letter";
+  if (HANDLE_RESERVED.indexOf(h.toLowerCase()) >= 0) return "@" + h + " is reserved";
+  var all = handles_(), mine = all[(ownerRow_(me.owner) || {}).owner];
+  if (Object.keys(all).some(function (o) { return norm_(o) !== norm_(me.owner) && all[o].toLowerCase() === h.toLowerCase(); })) return "@" + h + " is taken";
+  if (mine === h) return null;
+  ensureCol_("Owners", "handle"); setCell_("Owners", ownerRow_(me.owner)._row, "handle", h); CacheService.getScriptCache().remove("handles"); MEMO_ = {};
+  return null;
+}
 function chatSend_(meRaw, b) {
   var me = meOf_(meRaw), room = String(b.room || "");
   if (b.to) { var t = ownerRow_(b.to); if (!t || norm_(t.owner) === norm_(me.owner)) return { ok: false, error: "Pick someone to message" }; room = roomDM_(me.owner, t.owner); }
@@ -128,8 +159,8 @@ function chatSend_(meRaw, b) {
   var cache = CacheService.getScriptCache(), rk = "chat_" + norm_(me.owner).replace(/[^a-z0-9]/g, "");
   if (cache.get(rk)) return { ok: false, error: "Easy, one second between messages" };
   cache.put(rk, "1", 2);
-  var mentions = (b.mentions || []).slice(0, 8).map(function (n) { return ownerRow_(n); }).filter(function (o) { return o && canRoom_(meOf_(o), room) && norm_(o.owner) !== norm_(me.owner); })
-    .map(function (o) { return o.owner; });
+  var mentions = (b.mentions || []).concat(ownersFromText_(text)).slice(0, 12).map(function (n) { return ownerRow_(n); }).filter(function (o) { return o && canRoom_(meOf_(o), room) && norm_(o.owner) !== norm_(me.owner); })
+    .map(function (o) { return o.owner; }).filter(function (o, i, a) { return a.indexOf(o) === i; }).slice(0, 8);
   var m = post_(room, me.owner, "text", text, "", "", mentions, String(b.reply_to || "").slice(0, 20));
   markRead_(me.owner, room, m.ts);
   chatNotify_(me.owner, room, text, mentions);
