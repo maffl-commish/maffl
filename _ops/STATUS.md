@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-09 by Claude (chat), waiver names for unrostered players
+**Last updated:** 2026-11-09 by Claude (chat), owner emails held to the beta crew until go-live
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-09 · REEL · 🔇 Owner emails held until go-live (commish): all 21 owners' emails are in the TEST Sheet and 📣 Commish announcements email by default, so a beta alert would have reached the whole league. New switch `OWNER_EMAILS = "beta"` in logic.js: `notify_` (the only path that emails owners) now sends only to the beta crew + commish; flip to `"live"` at go-live after the emails are reviewed (APP_DESIGN §9, REEL.md roadmap 4). Emails to the commish (passphrase requests, sync errors, sign-in pause) unchanged. Backend logic v0.56; mock check: a commish alert emails Ben, Sam, Charles only.
 - 2026-11-09 · REEL · 💰 Waiver auction: checked on real ESPN through the live backend (chat can now reach it): losing bids from other teams DO come back (Upper: 33 losing $1+ bids). Fix: claims on players who are on no MAFFL roster now had no name (17 in Upper); the daily run (VER 15) looks those ids up once in ESPN's public players list (Daily key `pnames`, last 400). Backend logic v0.55; mock gains an unrostered claim + the players lookup; regress baseline refreshed.
 - 2026-11-09 · REEL · 💡 **Ideas & feedback** replaces Speak Up + Credit requests (form) under Talk to the commish (You tab and League → Rules & $): 1–5 stars + optional note, any signed-in owner → Feedback tab + 📥 desk post ("💡 Team · ★★★★☆" + the note). Backend logic v0.50 (`feedback` kind `rate`, beta-only gate skipped for it); regress adds rate checks, baseline refreshed.
 - 2026-11-09 · REEL · Settings emails: new **DMs + @mentions** toggle (off; max one email per person per chat every 30 min) and **📣 Commish announcements** (on by default; every desk alert now emails owners who have it on), grouped Trades & credits / Chat & league, **All on / All off**, copy "Email only, for now". Settings accepts 2 emails (co-owned teams). All 21 teams' emails loaded into the TEST backend Sheet (not the repo). Backend logic v0.47; regress baseline refreshed.

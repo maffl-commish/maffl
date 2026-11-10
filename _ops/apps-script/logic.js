@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.55";
+var VERSION = "0.56";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -18,6 +18,7 @@ var PERKS = { faab: { name: "Extra FAAB $", cost: 1 }, double: { name: "Double P
 // More → Settings (APP_DESIGN §4b): owner email/phone + opt-in emails, all OFF by default. Contacts live only in the Owners tab.
 var APP_URL = "https://maffl-commish.github.io/maffl/lab/";
 var NOTIFY_KEYS = ["received", "countered", "accepted", "declined", "commish", "perks", "chat", "announce"];
+var OWNER_EMAILS = "beta"; // "beta" = owner emails go only to the beta crew + commish (11/9, commish); "live" at go-live (§9)
 var NOTIFY_DEFAULT_ON = { announce: true }; // commish announcements start on; everything else off until the owner turns it on
 var INSURANCE_CLOSES = new Date("2026-10-01T20:15:00-04:00"), INSURANCE_MAX = 3, REG_WEEKS = 14;
 // Double Bonus / Matchup Swap deadline: Thursday 6:00 PM ET of that week, or 1 hour before the week's first game if earlier

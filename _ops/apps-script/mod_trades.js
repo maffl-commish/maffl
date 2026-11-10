@@ -342,11 +342,12 @@ function pushLedger_() {
   return res;
 }
 // Best-effort email, only to owners who turned that email on in More → Settings (all off by default; §4b).
-// Never emails the person who did the action. Never blocks the action.
+// Never emails the person who did the action. Never blocks the action. Before go-live (OWNER_EMAILS) only the beta crew + commish.
 function notify_(owners, key, subject, text, link, actor) {
   try {
     owners.forEach(function (n) { var o = ownerRow_(n); var to = o && String(o.email || "").trim();
       if (!to || !/@/.test(to) || !prefs_(o)[key] || (actor && norm_(o.owner) === norm_(actor))) return;
+      if (OWNER_EMAILS !== "live" && !isBeta_(o)) return; // until go-live: no email reaches anyone outside the beta crew
       MailApp.sendEmail(to, subject, text + "\n\nOpen MAFFL HQ: " + (link || APP_URL) + "\n\n(Turn these emails off in MAFFL HQ → More → Settings.)"); });
   } catch (err) {}
 }

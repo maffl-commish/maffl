@@ -54,7 +54,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 2. **Hook up for real** — GITHUB_TOKEN Script property (credit sync **and** the daily card-lines robot need it) + DESK_KEY (Script property and GitHub secret); real ESPN live feed; real rosters (ESPN roster pull); lab week facts wired into the Tuesday robot.
 3. **Mike's feel test** — full app on his phone (Home-Screen standalone), then a dry run: fake trades incl. negate, deadline lockout, over-balance block, wrong passphrase, undo.
 3b. **Beta crew** — Charlie, Sam and Ben (Mike's nephews, new to the league, all in the **Lower** tier; young, used to modern apps, have time to test). Mike may add Joe or Ed so a second voice / tier is covered. They get the MVP before everyone else, with the 🧪 beta kit (built 11/6). To start: desk → 🧪 Beta crew → add each tester, issue their passphrases, text them the link.
-4. **Go-live** — APP_DESIGN §9 checklist: `STAGE = "live"` in lab/index.html (hides the beta strip + practice note), production Sheet, test data wiped, CREDIT_SYNC=live, passphrases emailed, app becomes `index.html`, old home → League, Pulse announces it.
+4. **Go-live** — APP_DESIGN §9 checklist: `STAGE = "live"` in lab/index.html (hides the beta strip + practice note), production Sheet, test data wiped, CREDIT_SYNC=live, `OWNER_EMAILS = "live"` (logic.js) after the emails are reviewed, passphrases emailed, app becomes `index.html`, old home → League, Pulse announces it.
 
 ## 4. Backlog
 
