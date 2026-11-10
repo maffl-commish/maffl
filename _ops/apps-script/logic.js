@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.52";
+var VERSION = "0.53";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];

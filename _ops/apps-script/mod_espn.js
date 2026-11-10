@@ -116,7 +116,18 @@ function live_(tier, week) { // week = an earlier week's box score (REEL result 
       bench: Math.round((best.pts - starters.reduce(function (a, x) { return a + x.pts; }, 0)) * 100) / 100,
       left: starters.filter(function (x) { return !x.played; }).length, players: players };
   }
-  var games = (box.schedule || []).filter(function (g) { return g.matchupPeriodId === mp; }).map(function (g) { return { home: side(g.home), away: side(g.away) }; });
+  // 🎯 Win probability (commish 11/9: match ESPN's). If ESPN's feed carries a win-probability field on the matchup or a side,
+  // pass it through as wp (0–100) per side; the first look posts to the desk which field it found, or that there is none
+  // (then the app computes its own from ESPN's projections).
+  var wpKey = null, findWp = function (o) { var hit = null; Object.keys(o || {}).forEach(function (k) { if (!hit && /prob/i.test(k) && typeof o[k] === "number") hit = k; }); return hit; };
+  var wpOf = function (g, sd) { var k = findWp(sd) || null; if (k) { wpKey = wpKey || "side." + k; return sd[k] <= 1 ? Math.round(sd[k] * 1000) / 10 : sd[k]; } return null; };
+  var games = (box.schedule || []).filter(function (g) { return g.matchupPeriodId === mp; }).map(function (g) {
+    var h = side(g.home), a = side(g.away);
+    if (h) h.wp = wpOf(g, g.home); if (a) a.wp = wpOf(g, g.away);
+    var gk = findWp(g); if (gk && h && a && h.wp == null) { wpKey = wpKey || "matchup." + gk; var v = g[gk] <= 1 ? g[gk] * 100 : g[gk]; h.wp = Math.round(v * 10) / 10; a.wp = Math.round((100 - v) * 10) / 10; }
+    return { home: h, away: a }; });
+  try { if (!week && !PropertiesService.getScriptProperties().getProperty("WP_PROBE")) { PropertiesService.getScriptProperties().setProperty("WP_PROBE", wpKey || "none");
+    deskPost_("note", wpKey ? "🎯 ESPN sends a win probability (" + wpKey + "): Match now shows ESPN's number." : "🎯 ESPN's matchup feed has no win-probability field: Match shows MAFFL HQ's own estimate from ESPN's projections.", "", "WP"); } } catch (e) {}
   var out = { ok: true, tier: tier, week: mp, at: new Date().toISOString(), games: games };
   out.final = !!week;
   var str = JSON.stringify(out); if (str.length < 95000) cache.put(ck, str, week ? 21600 : 45);
