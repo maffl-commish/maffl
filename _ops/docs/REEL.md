@@ -79,6 +79,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Done 11/7: player week-by-week bars show started vs benched (daily.js keeps each week's starters).
 - Decided 11/9: Match win probability must match ESPN (ESPN's number if the feed has it, else an estimate fit to ESPN's); team header shows owner · record (streak).
 - Decided 11/9: 🏷️ @handles for every owner (default = registry short name, editable in Settings) and the @ Mentions tab back in Chat (reversing 11/3): cards and chat tag people by handle (backend v0.50).
+- Decided 11/9: a league card that names you tags you in Chat → @ Mentions (⭐ Elite 5 first; tap opens the card). Client-side, unread kept on the phone.
 - 11/9 (built): REEL_SERIES v2.1 build plan done: drops (cards wait for their slot, newest drop first), 🏅 Week awards, one quiz a week, no "you" headlines on shared cards, anatomy pass, 📣 Commish alert + 💳 Perk news cards (also in chat).
 - 11/9: 🗂️ **Card inventory** in REEL_SERIES.md v2.0: every series, its drop slot in the weekly rhythm, lifetime, verdict (keep / fix / merge / your call / new) and the card anatomy everyone follows. Build plan at its end.
 - Decided 11/9: 🗞️ **Drops**: cards are published once and kept (no rewriting between runs). Step 1 ✅ card lines frozen per final week (backend v0.45). Step 2 ✅ waiver auction is a stored drop (v0.46). Step 3 ✅ 🧮 Tonight's math, Monday 5 PM (v0.48), your matchup only. Step 4 ✅ Board shows the published drops (v0.49). Plan complete (APP_DESIGN journal 11/9).

@@ -2020,10 +2020,7 @@
     // ⭐ Elite 5: league-wide card (shared reactions) with your own angle on top; who dropped out since last week.
     var e5all = W.elite5 || [], myE5 = e5all.filter(function (x) { return isMe(x.owner); })[0], prevW = WEEKS ? WEEKS.filter(function (w) { return w.weekNumber === W.weekNumber - 1; })[0] : null;
     var outE5 = prevW && prevW.elite5 ? prevW.elite5.filter(function (p) { return !e5all.some(function (x) { return norm(x.owner) === norm(p.owner); }); }) : [];
-    if (e5all.length) all.push({ id: "elite5", scope: "league", c: { eb: "⭐ Elite 5 · Week " + W.weekNumber, t: "", face: '<div class="fc"><h3>The Elite 5</h3>' +
-      (myE5 && myE5.note ? '<p class="fl">You\'re #' + myE5.rank + ': ' + fmtText(myE5.note) + '</p>' : '') +
-      '<div class="frows">' + e5all.map(function (x) { return '<div class="frow' + (isMe(x.owner) ? ' me' : '') + '"><span class="e5n">' + x.rank + '</span><span style="flex:1"><b>' + (isMe(x.owner) ? "You" : esc(x.team)) + '</b> <small class="meta">' + (x.tier === "U" ? "Upper" : "Lower") + '</small></span></div>'; }).join("") + '</div>' +
-      (outE5.length ? '<p class="fs">⬇️ Out this week: ' + outE5.map(function (p) { return esc(isMe(p.owner) ? "you" : teamOf(p.owner).team || p.team); }).join(", ") + '</p>' : '') + '</div>' } });
+    if (e5all.length) all.push({ id: "elite5", scope: "league", c: { eb: "⭐ Elite 5 · Week " + W.weekNumber, t: "", face: e5Face(W) } });
     // 🌎 The other tier in one look
     var og = GROUPS.filter(function (g) { return g.key === "other"; })[0], oc = og && og.cards.filter(function (c) { return !c.quiz; })[0];
     if (oc) all.push({ id: "other", scope: "league", c: oc });
@@ -3471,7 +3468,7 @@
   function chatBadge() {
     // The 📥 Desk log is a chat room on the server but lives behind its own button (with its own badge), not in the
     // Chat list, so it never counts here (11/9: Chat showed "1" with nothing unread in the list).
-    var n = chatOn() ? (inboxOf().rooms || []).reduce(function (k, x) { return k + (x.room === "desk" ? 0 : x.unread || 0); }, 0) : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
+    var n = chatOn() ? (inboxOf().rooms || []).reduce(function (k, x) { return k + (x.room === "desk" ? 0 : x.unread || 0); }, 0) + cardAtUnread() : 0, b = document.querySelector("#chattab .cbadge"); if (!b) return;
     b.setAttribute("data-n", n ? (n > 9 ? "9+" : String(n)) : "");
   }
   function fmtText(t, ment) { var h = esc(t);
@@ -3939,14 +3936,47 @@
   // Send button shows a spinner while the league server saves the message (commish backlog 11/6).
   function sendBtn(on) { var b = $("csend"); if (!b) return; b.disabled = on; b.classList.toggle("busy", on); b.innerHTML = on ? '<span class="spin sm"></span>' : '➤'; }
   function tmpMsg(id) { return CH.data ? CH.data.messages.filter(function (m) { return m.id === id && (m.failed || m.pending); })[0] : null; }
+  // ⭐ Elite 5 card face (Home card and the @ Mentions sheet share it).
+  function e5Face(w) {
+    var e5all = w.elite5 || [], myE5 = e5all.filter(function (x) { return isMe(x.owner); })[0], prevW = (WEEKS || []).filter(function (x) { return x.weekNumber === w.weekNumber - 1; })[0];
+    var outE5 = prevW && prevW.elite5 ? prevW.elite5.filter(function (p) { return !e5all.some(function (x) { return norm(x.owner) === norm(p.owner); }); }) : [];
+    return '<div class="fc"><h3>The Elite 5</h3>' +
+      (myE5 && myE5.note ? '<p class="fl">You\'re #' + myE5.rank + ': ' + fmtText(myE5.note) + '</p>' : '') +
+      '<div class="frows">' + e5all.map(function (x) { return '<div class="frow' + (isMe(x.owner) ? ' me' : '') + '"><span class="e5n">' + x.rank + '</span><span style="flex:1"><b>' + (isMe(x.owner) ? "You" : esc(x.team)) + '</b> <small class="meta">' + (x.tier === "U" ? "Upper" : "Lower") + '</small></span></div>'; }).join("") + '</div>' +
+      (outE5.length ? '<p class="fs">⬇️ Out this week: ' + outE5.map(function (p) { return esc(isMe(p.owner) ? "you" : teamOf(p.owner).team || p.team); }).join(", ") + '</p>' : '') + '</div>';
+  }
+  // Card @s (commish 11/9): a league card that names you (⭐ Elite 5 so far) tags you in Chat → @ Mentions, last 4 weeks.
+  // Unread until you tap it (kept on this phone); it counts on the @ Mentions and Chat badges like a chat @.
+  function cardAtSeen() { try { return JSON.parse(store("maffl_lab_cardat") || "{}") || {}; } catch (e) { return {}; } }
+  function cardAts() {
+    if (!ME || !W) return [];
+    var seen = cardAtSeen(), dl = (typeof DLY !== "undefined" && DLY && DLY.lines) || {}, by = {};
+    (WEEKS || []).concat([W]).forEach(function (w) { if (w && w.weekNumber) by[w.weekNumber] = w; });
+    return Object.keys(by).map(Number).sort(function (a, b) { return b - a; }).slice(0, 4).map(function (wk) {
+      var w = by[wk], me = (w.elite5 || []).filter(function (x) { return isMe(x.owner); })[0]; if (!me) return null;
+      var t = dl.week == wk && (dl.published || dl.at) ? new Date(dl.published || dl.at) : new Date(w.dateString); if (isNaN(t)) t = new Date(nowMs());
+      if (!(dl.week == wk) && !isNaN(new Date(w.dateString))) t.setDate(t.getDate() + 1); // Pulse weeks: the lines land the day after
+      var id = "e5:" + wk, ts = t.toISOString();
+      return { card: id, wk: wk, owner: BOTN, ts: ts, text: "⭐ Elite 5 · Week " + wk + ": @" + handleOf(ME.owner) + " you're #" + me.rank + "." + (me.note ? " " + me.note : ""),
+        unread: !seen[id] && nowMs() - t.getTime() < 7 * 864e5 };
+    }).filter(Boolean);
+  }
+  function cardAtUnread() { return chatOn() ? cardAts().filter(function (m) { return m.unread; }).length : 0; }
+  function openCardAt(id) {
+    var seen = cardAtSeen(); seen[id] = 1; store("maffl_lab_cardat", JSON.stringify(seen));
+    var wk = Number(id.split(":")[1]), w = (WEEKS || []).concat([W]).filter(function (x) { return x && x.weekNumber === wk; }).pop();
+    chatBadge(); if (CH.open && CH.view === "inbox") drawInbox();
+    if (w) openSheet("card", '<div class="eb" style="margin:2px 2px 8px">⭐ Elite 5 · Week ' + wk + '</div><div class="card">' + e5Face(w) + '</div>');
+  }
   function drawInbox() {
     var ib = inboxOf(), body = $("cbody"), h = "";
     if (!SUM_OK && !(SUM && SUM.chat)) { body.innerHTML = sumWait("Loading your chats…"); return; }
     // @ Mentions is back (commish 11/9): every message that tags you, newest first; tap one to open that chat.
-    var mn = ib.mentionsUnread || 0, ml = ib.mentions || [];
+    var mn = (ib.mentionsUnread || 0) + cardAtUnread(), ml = (ib.mentions || []).concat(cardAts()).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); });
     h += '<div class="cseg"><button data-cseg="chats"' + (CH.seg !== "at" ? ' class="on"' : '') + '>Chats</button><button data-cseg="at"' + (CH.seg === "at" ? ' class="on"' : '') + '>@ Mentions' + (mn ? ' <i class="cnum">' + mn + '</i>' : '') + '</button></div>';
     if (CH.seg === "at") {
-      h += ml.length ? ml.map(function (m) { var info = roomInfo(m.room);
+      h += ml.length ? ml.map(function (m) { var info = m.card ? null : roomInfo(m.room);
+        if (m.card) return '<button class="croom' + (m.unread ? ' un' : '') + '" data-cardat="' + esc(m.card) + '">' + avatar(BOTN) + '<div class="cm"><div class="cn"><span>MAFFL HQ <small class="meta">on the ⭐ Elite 5 card</small></span><small>' + ago(m.ts) + '</small></div><div class="cp at2">' + fmtText(m.text) + '</div></div></button>';
         return '<button class="croom' + (m.unread ? ' un' : '') + '" data-croom="' + esc(m.room) + '">' + avatar(m.owner) + '<div class="cm"><div class="cn"><span>' + esc(m.owner === BOTN ? "MAFFL HQ" : shortOf(m.owner)) + ' <small class="meta">in ' + esc(info.t) + '</small></span><small>' + ago(m.ts) + '</small></div><div class="cp at2">' + fmtText(m.text) + '</div></div>' +
 '</button>'; }).join("") : '<p class="meta" style="padding:14px 2px">Nobody has tagged you yet. When someone writes @' + esc(handleOf(ME.owner)) + ', it lands here.</p>';
       body.innerHTML = h + '<div style="height:84px"></div>'; return;
@@ -4049,6 +4079,7 @@
     if ((el = e.target.closest("[data-chat-room]"))) { e.preventDefault(); openChat(el.dataset.chatRoom); return; }
     if (!e.target.closest("#chat")) return;
     if ((el = e.target.closest("[data-cseg]"))) { CH.seg = el.dataset.cseg; drawInbox(); return; }
+    if ((el = e.target.closest("[data-cardat]"))) { openCardAt(el.dataset.cardat); return; }
     if ((el = e.target.closest("[data-croom]"))) { openRoom(el.dataset.croom); return; }
     if ((el = e.target.closest("[data-cat]"))) {
       var ta = $("cinput"), ins = "@" + handleOf(el.dataset.cat) + " ", p = ta.selectionStart || ta.value.length;
