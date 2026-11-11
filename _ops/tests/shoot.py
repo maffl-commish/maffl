@@ -97,7 +97,7 @@ def main():
               const day = new Date().toDateString(), seen = {}; ['a','b','c'].forEach(k => seen['harness:' + k] = { d: day, t: Date.now() });
               localStorage.setItem('maffl_lab_api', %s); localStorage.setItem('maffl_lab_owner', 'Mike Murello'); localStorage.setItem('maffl_lab_pin', %s);
               localStorage.setItem('maffl_lab_fbseen', JSON.stringify(seen)); localStorage.setItem('maffl_lab_sim', 'off');
-              if (%s) ['home','team','match','chat','league','more'].forEach(t => localStorage.setItem('maffl_lab_tour_' + t + '_mike murello', '1'));
+              if (%s) ['welcome','home','team','match','chat','league','more'].forEach(t => localStorage.setItem('maffl_lab_tour_' + t + '_mike murello', '1'));
             } catch (e) {} })();""" % (json.dumps(mock_url), json.dumps(pins["Mike Murello"]), "false" if a.tour else "true") + HELPERS)
 
             def route(r):
