@@ -102,7 +102,7 @@ flowchart LR
 | File (repo `_ops/apps-script/`) | Role |
 |---|---|
 | `Code.gs` | **Loader.** The only file pasted into Apps Script. Fetches `logic.js` from `main`, caches 5 min, keeps a 6-h last-good copy. Owns `doGet/doPost`, the Sheet menu, and `tick()`. Changes rarely; changing it = re-paste + Deploy → New version |
-| `logic.js` | **Core** (v0.64): routing, sign-in, settings, summary, Sheet helpers, `safe_()` formula guard, exports. Config constants: `VERSION`, `APP_URL`, `OWNER_EMAILS` |
+| `logic.js` | **Core** (v0.65): routing, sign-in, settings, summary, Sheet helpers, `safe_()` formula guard, exports. Config constants: `VERSION`, `APP_URL`, `OWNER_EMAILS` |
 | `mod_trades.js` | Offers, counters, accept/decline, commish approve/negate, perks, credit balance checks, credit sync push |
 | `mod_espn.js` | ESPN reads: live scores, rosters (30-min cache, 6-h last good), schedule |
 | `mod_social.js` | Chat rooms/DMs, reads, reactions, polls in chat, feedback, tap log |
