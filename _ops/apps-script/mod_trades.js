@@ -66,26 +66,47 @@ function respond_(me, id, decision, quiet) {
 function commish_(me, id, decision, reason) {
   if (!me.commish) return { ok: false, error: "Commish only" };
   var o = offerRow_(id); if (!o) return { ok: false, error: "Offer not found" };
+  if (decision === "reverse") return reverseOffer_(me, o, reason);
   if (o.status !== "ACCEPTED") return { ok: false, error: "Only accepted trades can be approved or negated" };
   var next = decision === "approve" ? "APPROVED" : decision === "negate" ? "NEGATED" : null;
   if (!next) return { ok: false, error: "approve or negate" };
   if (next === "APPROVED") { var short = creditShort_(o.from_owner, Number(o.give_credits) || 0, { offer: id }, teamName_(o.from_owner)) || creditShort_(o.to_owner, Number(o.get_credits) || 0, { offer: id }, teamName_(o.to_owner)) || tradeProblem_(o, teamName_(o.to_owner));
     if (short) return { ok: false, error: short + " Negate it, or wait for their balance." }; }
+  var credits = Number(o.give_credits) || Number(o.get_credits);
+  if (next === "APPROVED" && credits) setCell_("Offers", o._row, "sync", syncMode_()); // review F1: the ledger mode goes in BEFORE the status, so a half-done write never leaves an APPROVED row the ledger skips
   setOffer_(o, next, reason); log_(me.owner, "commish", id, next, "", String(reason || ""));
   post_(roomDM_(o.from_owner, o.to_owner), BOT, "offer", reason, id, next);
   post_(next === "APPROVED" ? "league" : "tier:" + o.tier, BOT, "offer", reason, id, next); // completed trades go to the whole league
   var out = { ok: true, status: next };
-  if (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits))) { setCell_("Offers", o._row, "sync", syncMode_()); out.sync = pushLedger_(); }
+  if (next === "APPROVED" && credits) out.sync = pushLedger_();
   notify_([o.from_owner, o.to_owner], "commish", "MAFFL HQ: trade " + next.toLowerCase(), teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + " was " + next.toLowerCase() + " by the commish." +
     (reason ? "\nReason: " + reason : "") + (next === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits)) ? "\nThe credits post to the official record automatically." : ""), APP_URL + "#offer-" + id);
+  return out;
+}
+// ↩️ Reverse (pre-launch review F7): a mis-tapped Approve used to be permanent. APPROVED → REVERSED keeps the original
+// ledger rows (they may already be in the official Credit_Log, which is append-only) and adds offsetting rows
+// (id + "R"), so the net is zero and the record shows both. Players don't move back by themselves: that's an ESPN step.
+function reverseOffer_(me, o, reason) {
+  if (o.status !== "APPROVED") return { ok: false, error: "Only approved trades can be reversed" };
+  if (!String(reason || "").trim()) return { ok: false, error: "Give a reason; both teams see it." };
+  setOffer_(o, "REVERSED", reason); log_(me.owner, "commish", o.offer_id, "REVERSED", "", String(reason));
+  post_(roomDM_(o.from_owner, o.to_owner), BOT, "offer", reason, o.offer_id, "REVERSED");
+  post_("league", BOT, "offer", reason, o.offer_id, "REVERSED");
+  var players = JSON.parse(o.give || "[]").length + JSON.parse(o.get || "[]").length;
+  deskPost_("note", "↩️ Reversed " + teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + "." + (players ? " Move the players back on ESPN." : ""), o.offer_id, "REVERSED");
+  var out = { ok: true, status: "REVERSED" };
+  if ((Number(o.give_credits) || Number(o.get_credits)) && o.sync) out.sync = pushLedger_();
+  notify_([o.from_owner, o.to_owner], "commish", "MAFFL HQ: trade reversed", teamName_(o.from_owner) + " ↔ " + teamName_(o.to_owner) + " was reversed by the commish.\nReason: " + reason +
+    (Number(o.give_credits) || Number(o.get_credits) ? "\nThe credits go back on the official record automatically." : ""), APP_URL + "#offer-" + o.offer_id);
   return out;
 }
 function trades_(owner) {
   var me = owner ? ownerRow_(owner) : null, commish = me && String(me.is_commish) === "Y";
   var offers = (sheetGet_("Offers") ? rows_("Offers") : []).filter(function (o) {
     var mine = me && (norm_(o.from_owner) === norm_(me.owner) || norm_(o.to_owner) === norm_(me.owner));
-    var tierPublic = me && String(o.tier) === String(me.tier) && ["ACCEPTED", "APPROVED", "NEGATED"].indexOf(o.status) >= 0;
-    return mine || tierPublic || (commish && o.status === "ACCEPTED");
+    var tierPublic = me && String(o.tier) === String(me.tier) && ["ACCEPTED", "APPROVED", "NEGATED", "REVERSED"].indexOf(o.status) >= 0;
+    var recent = Date.now() - new Date(o.updated_ts).getTime() < 14 * 864e5; // the commish sees approved trades for 2 weeks, to reverse a mistake
+    return mine || tierPublic || (commish && (o.status === "ACCEPTED" || (o.status === "APPROVED" && recent)));
   }).map(function (o) {
     return { id: o.offer_id, ts: o.ts, from: o.from_owner, to: o.to_owner, tier: o.tier, give: JSON.parse(o.give || "[]"), get: JSON.parse(o.get || "[]"),
       giveCredits: Number(o.give_credits) || 0, getCredits: Number(o.get_credits) || 0, note: o.note, status: o.status, updated: o.updated_ts, reason: o.reason, reasons: (function () { try { return JSON.parse(o.reasons || "[]"); } catch (e) { return []; } })() };
@@ -223,20 +244,37 @@ function perk_(me, b) {
 function perkAct_(me, id, decision, reason) {
   var r = rows_("Perks").filter(function (x) { return String(x.perk_id) === String(id); })[0];
   if (!r) return { ok: false, error: "Request not found" };
-  if (r.status !== "REQUESTED") return { ok: false, error: "That request is already " + String(r.status).toLowerCase() };
+  if (r.status !== "REQUESTED" && decision !== "reverse") return { ok: false, error: "That request is already " + String(r.status).toLowerCase() };
   var next = decision === "cancel" && norm_(r.owner) === norm_(me.owner) ? "CANCELED"
     : me.commish && decision === "approve" ? "APPROVED" : me.commish && decision === "deny" ? "DENIED" : null;
+  if (decision === "reverse") return reversePerk_(me, r, reason);
   if (!next) return { ok: false, error: "You can't do that to this request" };
   if (next === "APPROVED") { var short = creditShort_(r.owner, Number(r.cost) || 0, { perk: id }, teamName_(r.owner)); if (short) return { ok: false, error: short + " Deny it, or wait for their balance." }; }
+  if (next === "APPROVED") setCell_("Perks", r._row, "sync", syncMode_()); // review F1: before the status
   setCell_("Perks", r._row, "status", next); setCell_("Perks", r._row, "updated_ts", new Date());
   if (reason) setCell_("Perks", r._row, "reason", String(reason).slice(0, 200));
   log_(me.owner, "perk", id, next, r.week || "", String(reason || ""));
   if (next === "CANCELED") deskPost_("perk", "", id, "CANCELED");
   var out = { ok: true, status: next };
-  if (next === "APPROVED") { setCell_("Perks", r._row, "sync", syncMode_()); out.sync = pushLedger_(); perkNews_(r); }
+  if (next === "APPROVED") { out.sync = pushLedger_(); perkNews_(r); }
   if (next !== "CANCELED") notify_([r.owner], "perks", "MAFFL HQ: " + (PERKS[r.perk] || {}).name + " " + next.toLowerCase(),
     "Your " + (PERKS[r.perk] || {}).name + " request (" + r.cost + " credits" + (r.week ? ", Week " + r.week : "") + (r.player ? ", " + r.player : "") + ") was " + next.toLowerCase() + "." +
     (reason ? "\nCommish: " + reason : "") + (next === "APPROVED" ? "\nThe credits post to the official record automatically." : ""), APP_URL + "#team");
+  return out;
+}
+// ↩️ Reverse an approved perk (review F7): refund row L-<id>R; the original row stays (append-only record).
+function reversePerk_(me, r, reason) {
+  if (!me.commish) return { ok: false, error: "Commish only" };
+  if (r.status !== "APPROVED") return { ok: false, error: "Only approved perks can be reversed" };
+  if (!String(reason || "").trim()) return { ok: false, error: "Give a reason; the owner sees it." };
+  setCell_("Perks", r._row, "status", "REVERSED"); setCell_("Perks", r._row, "updated_ts", new Date()); setCell_("Perks", r._row, "reason", String(reason).slice(0, 200));
+  log_(me.owner, "perk", r.perk_id, "REVERSED", r.week || "", String(reason));
+  var name = (PERKS[r.perk] || {}).name || r.perk;
+  try { post_("league", BOT, "text", "↩️ " + name + (r.week ? " · Week " + r.week : "") + "\nThe commish reversed " + at_(r.owner) + "'s " + name + ": " + r.cost + " credit" + (Number(r.cost) === 1 ? "" : "s") + " back. " + String(reason).slice(0, 140), r.perk_id, "REVERSED", [r.owner], ""); } catch (e) {}
+  deskPost_("note", "↩️ Reversed " + teamName_(r.owner) + "'s " + name + "." + (r.perk !== "insurance" ? " Undo the ESPN side if you already did it." : ""), r.perk_id, "REVERSED");
+  var out = { ok: true, status: "REVERSED" };
+  if (r.sync) out.sync = pushLedger_();
+  notify_([r.owner], "perks", "MAFFL HQ: " + name + " reversed", "Your " + name + " was reversed by the commish and the " + r.cost + " credits come back.\nReason: " + reason, APP_URL + "#team");
   return out;
 }
 // Approved perk → league chat news (commish 11/7): who spent what, on whom, which week, with @mentions so the
@@ -276,7 +314,7 @@ function perks_(owner) {
   var me = owner ? ownerRow_(owner) : null, commish = me && String(me.is_commish) === "Y", all = rows_("Perks");
   var list = !me ? [] : all.filter(function (r) {
     var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
-    return norm_(r.owner) === norm_(me.owner) || (r.status !== "CANCELED" && (norm_(r.swap_with) === norm_(me.owner) || aff.some(function (a) { return norm_(a) === norm_(me.owner); }))) || (commish && r.status === "REQUESTED");
+    return norm_(r.owner) === norm_(me.owner) || (r.status !== "CANCELED" && (norm_(r.swap_with) === norm_(me.owner) || aff.some(function (a) { return norm_(a) === norm_(me.owner); }))) || (commish && (r.status === "REQUESTED" || (r.status === "APPROVED" && Date.now() - new Date(r.updated_ts).getTime() < 14 * 864e5)));
   }).map(function (r) {
     var aff = []; try { aff = JSON.parse(r.affects || "[]"); } catch (e) {}
     return { id: r.perk_id, ts: r.ts, owner: r.owner, tier: r.tier, perk: r.perk, cost: Number(r.cost) || 0, qty: Number(r.qty) || 1, week: Number(r.week) || null,
@@ -299,21 +337,26 @@ function teamName_(owner) { var o = ownerRow_(owner); return o ? o.team : owner;
 function ledger_(mode) {
   var out = [];
   rows_("Perks").forEach(function (r) {
-    if (r.status !== "APPROVED" || (r.sync || "test") !== mode) return;
+    if ((r.status !== "APPROVED" && r.status !== "REVERSED") || (r.sync || "test") !== mode) return;
     var P = PERKS[r.perk] || { name: r.perk };
+    if (r.status === "REVERSED") out.push({ seed: isSeedRow_(r), id: "L-" + r.perk_id + "R", season: 2026, owner: r.owner, category: "Spend", type: "Reversed: " + P.name, amount: Math.abs(Number(r.cost) || 0),
+      notes: "commish reversed app request " + r.perk_id + (r.reason ? " · " + String(r.reason).slice(0, 80) : ""), approved: r.updated_ts });
     out.push({ seed: isSeedRow_(r), id: "L-" + r.perk_id, season: 2026, owner: r.owner, category: "Spend", type: P.name, amount: -Math.abs(Number(r.cost) || 0),
       notes: (r.perk === "faab" ? "+$" + 20 * (Number(r.qty) || 1) + " FAAB" : r.perk === "double" ? "Wk " + r.week + " · " + r.player + (r.pos ? " (" + r.pos + ")" : "")
         : r.perk === "swap" ? "Wk " + r.week + " · swapped opponents with " + r.swap_with : r.perk === "insurance" ? "2026 season" : "") + " · app request " + r.perk_id,
       approved: r.updated_ts });
   });
   rows_("Offers").forEach(function (o) {
-    if (o.status !== "APPROVED" || (o.sync || "test") !== mode) return;
+    if ((o.status !== "APPROVED" && o.status !== "REVERSED") || (o.sync || "test") !== mode) return;
+    var before = out.length;
     var gc = Number(o.give_credits) || 0, tc = Number(o.get_credits) || 0, note = "trade " + o.offer_id + " · " + o.from_owner + " ↔ " + o.to_owner;
     var sd = isSeedRow_(o);
     if (gc) { out.push({ seed: sd, id: "L-" + o.offer_id + "A", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: -gc, notes: "to " + o.to_owner + " · " + note, approved: o.updated_ts });
               out.push({ seed: sd, id: "L-" + o.offer_id + "B", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: gc, notes: "from " + o.from_owner + " · " + note, approved: o.updated_ts }); }
     if (tc) { out.push({ seed: sd, id: "L-" + o.offer_id + "C", season: 2026, owner: o.to_owner, category: "Trade", type: "Trade", amount: -tc, notes: "to " + o.from_owner + " · " + note, approved: o.updated_ts });
               out.push({ seed: sd, id: "L-" + o.offer_id + "D", season: 2026, owner: o.from_owner, category: "Trade", type: "Trade", amount: tc, notes: "from " + o.to_owner + " · " + note, approved: o.updated_ts }); }
+    if (o.status === "REVERSED") out.slice(before).forEach(function (x) { out.push({ seed: x.seed, id: x.id + "R", season: 2026, owner: x.owner, category: "Trade", type: "Trade reversed", amount: -x.amount,
+      notes: "commish reversed " + note, approved: o.updated_ts }); });
   });
   var aw = SpreadsheetApp.getActive().getSheetByName("Awards"); // credit awards approved on the desk (daily.js §2c)
   if (aw) rows_("Awards").forEach(function (a) {
@@ -354,6 +397,7 @@ function pushLedger_() {
 // Never emails the person who did the action. Never blocks the action. Before go-live OWNER_EMAILS limits who can get one (commish only, for now).
 function notify_(owners, key, subject, text, link, actor) {
   try {
+    if (mailLeft_() < 10) return; // review F4: keep the last 10 of the day's 100 for the commish's alerts
     owners.forEach(function (n) { var o = ownerRow_(n); var to = o && String(o.email || "").trim();
       if (!to || !/@/.test(to) || !prefs_(o)[key] || (actor && norm_(o.owner) === norm_(actor))) return;
       if (OWNER_EMAILS !== "live" && !(OWNER_EMAILS === "beta" ? isBeta_(o) : String(o.is_commish) === "Y")) return; // until go-live: commish only, then beta crew, then everyone

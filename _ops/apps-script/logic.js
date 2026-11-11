@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.66";
+var VERSION = "0.67";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -66,9 +66,19 @@ function doGet(e) {
     if (p.action === "rosters") { try { return json(rosters_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // what ESPN shows on each roster (public to the league anyway)
     if (p.action === "daily") { need_("daily"); return json(DAILY.view()); } // scores, standings, Coach, Survivor, moves, card lines (league-public)
     if (p.action === "ledger") return json({ ok: true, mode: syncMode_(), rows: ledger_(p.mode === "live" ? "live" : p.mode === "test" ? "test" : syncMode_()) }); // credit moves are public anyway
+    if (p.action === "health") return json(health_()); // uptime monitor: keyword "healthy":true (review §6)
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
   } catch (err) { return json({ ok: false, error: String(err) }); }
+}
+
+// 🩺 Health (pre-launch review, observability): one cheap public call an uptime monitor can poll every 5 minutes.
+// healthy = this code loaded and the 15-minute robot ran in the last 40 minutes. No private data.
+function health_() {
+  var age = function (k) { try { var a = JSON.parse(prop_(k) || "{}").at; return a ? Math.round((Date.now() - new Date(a).getTime()) / 6e4) : null; } catch (e) { return null; } };
+  var tick = age("LAST_TICK"), daily = age("LAST_DAILY"), sync = {}; try { sync = JSON.parse(prop_("LAST_SYNC") || "{}"); } catch (e) {}
+  var mail = null; try { mail = MailApp.getRemainingDailyQuota(); } catch (e) {}
+  return { ok: true, healthy: tick !== null && tick <= 40, version: VERSION, tickMin: tick, dailyMin: daily, syncOk: sync.ok !== false, mailLeft: mail };
 }
 
 // Body is sent as text/plain JSON (avoids a CORS preflight from GitHub Pages).
@@ -87,42 +97,45 @@ function doPost(e) {
       return json(sum);
     } catch (err) { return json({ ok: false, error: String(err) }); }
   }
+  // Reads and appends that never read-modify-write a row skip the lock too (review F2: one lock serialized everything).
+  if (NO_LOCK[b.action]) { try { return json(route_(b)); } catch (err) { return json({ ok: false, error: String(err) }); } }
   // "Run daily now" can take minutes of ESPN calls: run it outside the lock (it only writes its own tabs), like the tick does.
   if (b.action === "deskact" && b.op === "daily") return json(withAuth_(b, function (o) { return o.commish ? dailyOnce_("button") : { ok: false, error: "Commish only" }; }));
   var lock = LockService.getScriptLock();
   try { lock.waitLock(10000); } catch (err) { return json({ ok: false, busy: true, error: "The league server is busy. Try again in a few seconds." }); }
-  try {
+  try { return json(route_(b)); }
+  catch (err) { return json({ ok: false, error: String(err) }); }
+  finally { lock.releaseLock(); }
+}
+function route_(b) {
     switch (b.action) {
-      case "login":   return json(login_(b.owner, b.pin));
-      case "request": return json(request_(b.owner, b.note));
-      case "react":   return json(withAuth_(b, function (o) { return /[<>]/.test(String(b.emoji || "")) ? { ok: false, error: "Pick an emoji" } : log_(o.owner, "react", b.ref, b.emoji, b.week, b.on ? "on" : "off"); })); // the value is shown to other owners: never markup
-      case "vote":    return json(withAuth_(b, function (o) { return vote_(o.owner, b.poll, b.choice, b.week); }));
-      case "summary": return json(withAuth_(b, function (o) { return summary_(b.week, o.owner); }));
-      case "block":   return json(withAuth_(b, function (o) { return log_(o.owner, "block", b.player, b.on ? "on" : "off", "", String(b.note || "").slice(0, 80)); }));
-      case "offer":   return json(withAuth_(b, function (o) { return offer_(o, b); }));
-      case "respond": return json(withAuth_(b, function (o) { return respond_(o, b.offer_id, b.decision, !!b.counter); }));
-      case "commish": return json(withAuth_(b, function (o) { return commish_(o, b.offer_id, b.decision, b.reason); }));
-      case "perk":    return json(withAuth_(b, function (o) { return perk_(o, b); }));
-      case "perkact": return json(withAuth_(b, function (o) { return perkAct_(o, b.perk_id, b.decision, b.reason); }));
-      case "settings": return json(withAuth_(b, function (o) { return settings_(o); }));
-      case "savesettings": return json(withAuth_(b, function (o) { return saveSettings_(o, b); }));
-      case "resync":  return json(withAuth_(b, function (o) { return o.commish ? pushLedger_() : { ok: false, error: "Commish only" }; }));
-      case "chat":     return json(withAuth_(b, function (o) { return chat_(o, b); }));
-      case "chatsend": return json(withAuth_(b, function (o) { return chatSend_(o, b); }));
-      case "chatmod":  return json(withAuth_(b, function (o) { return chatMod_(o, b); }));
-      case "board":    return json(withAuth_(b, board_));
-      case "inbox":    return json(withAuth_(b, function (o) { return { ok: true, chat: inbox_(o) }; }));
-      case "desk":     return json(withAuth_(b, function (o) { return o.commish ? desk_(o) : { ok: false, error: "Commish only" }; }));
-      case "deskact":  return json(withAuth_(b, function (o) { return o.commish ? deskAct_(o, b) : { ok: false, error: "Commish only" }; }));
-      case "feedback": return json(withAuth_(b, function (o) { return feedback_(o, b); }));
-      case "taplog":   return json(withAuth_(b, function (o) { return tapLog_(o, b); }));
-      case "botpost":  return json(botPost_(b));
-      case "putlines": return json(putLines_(b));
-      default:        return json({ ok: false, error: "unknown action" });
+      case "login":   return (login_(b.owner, b.pin));
+      case "request": return (request_(b.owner, b.note));
+      case "react":   return (withAuth_(b, function (o) { return /[<>]/.test(String(b.emoji || "")) ? { ok: false, error: "Pick an emoji" } : log_(o.owner, "react", b.ref, b.emoji, b.week, b.on ? "on" : "off"); })); // the value is shown to other owners: never markup
+      case "vote":    return (withAuth_(b, function (o) { return vote_(o.owner, b.poll, b.choice, b.week); }));
+      case "summary": return (withAuth_(b, function (o) { return summary_(b.week, o.owner); }));
+      case "block":   return (withAuth_(b, function (o) { return log_(o.owner, "block", b.player, b.on ? "on" : "off", "", String(b.note || "").slice(0, 80)); }));
+      case "offer":   return (withAuth_(b, function (o) { return offer_(o, b); }));
+      case "respond": return (withAuth_(b, function (o) { return respond_(o, b.offer_id, b.decision, !!b.counter); }));
+      case "commish": return (withAuth_(b, function (o) { return commish_(o, b.offer_id, b.decision, b.reason); }));
+      case "perk":    return (withAuth_(b, function (o) { return perk_(o, b); }));
+      case "perkact": return (withAuth_(b, function (o) { return perkAct_(o, b.perk_id, b.decision, b.reason); }));
+      case "settings": return (withAuth_(b, function (o) { return settings_(o); }));
+      case "savesettings": return (withAuth_(b, function (o) { return saveSettings_(o, b); }));
+      case "resync":  return (withAuth_(b, function (o) { return o.commish ? pushLedger_() : { ok: false, error: "Commish only" }; }));
+      case "chat":     return (withAuth_(b, function (o) { return chat_(o, b); }));
+      case "chatsend": return (withAuth_(b, function (o) { return chatSend_(o, b); }));
+      case "chatmod":  return (withAuth_(b, function (o) { return chatMod_(o, b); }));
+      case "board":    return (withAuth_(b, board_));
+      case "inbox":    return (withAuth_(b, function (o) { return { ok: true, chat: inbox_(o) }; }));
+      case "desk":     return (withAuth_(b, function (o) { return o.commish ? desk_(o) : { ok: false, error: "Commish only" }; }));
+      case "deskact":  return (withAuth_(b, function (o) { return o.commish ? deskAct_(o, b) : { ok: false, error: "Commish only" }; }));
+      case "feedback": return (withAuth_(b, function (o) { return feedback_(o, b); }));
+      case "taplog":   return (withAuth_(b, function (o) { return tapLog_(o, b); }));
+      case "botpost":  return (botPost_(b));
+      case "putlines": return (putLines_(b));
+      default:        return { ok: false, error: "unknown action" };
     }
-  } catch (err) {
-    return json({ ok: false, error: String(err) });
-  } finally { lock.releaseLock(); }
 }
 
 function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
@@ -196,12 +209,12 @@ function setCell_(name, row, header, value) {
 //    (signed-in phones keep working on their tokens) and alerts the commish;
 //  · owner + passphrase: OWNER_FAILS wrong per owner per hour, then that owner's passphrase checks pause for the hour.
 // The commish can still lock someone by hand (Owners "locked" = Y).
-var OWNER_FAILS = 3, LOCK_FREE = { summary: 1, inbox: 1, chat: 1 };
+var OWNER_FAILS = 3, LOCK_FREE = { summary: 1, inbox: 1, chat: 1 }, NO_LOCK = { login: 1, board: 1, settings: 1, desk: 1, react: 1 };
 function me_(o) { return { ok: true, owner: o.owner, team: o.team, tier: o.tier, commish: String(o.is_commish) === "Y" }; }
 function signedOut_(msg) { return { ok: false, auth: false, error: msg || "You've been signed out (new passphrase?). Sign in again." }; }
 function loginByPhrase_(pin) {
   var cache = CacheService.getScriptCache(), fails = Number(cache.get("fails") || 0);
-  if (fails >= MAX_FAILS_PER_HOUR) return { ok: false, error: "Sign-in is paused for a bit after too many wrong tries. Try again in an hour, or text the commish." };
+  if (fails >= MAX_FAILS_PER_HOUR) return { ok: false, paused: true, error: "Too many wrong tries league-wide, so sign-in needs your name too for a bit. Pick your name and try again." }; // review F6: the app then signs in by name (3 tries an hour per owner)
   if (normPin_(pin).length < 4) return { ok: false, error: "Type your passphrase" };
   var hit = owners_().filter(function (o) { return String(o.locked) !== "Y" && pinOk_(o, pin); })[0];
   if (!hit) {

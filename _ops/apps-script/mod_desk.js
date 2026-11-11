@@ -8,7 +8,16 @@
 // One chat room only the commish sees. Every robot and every owner action that needs him posts a card here
 // (kind perk | offer | access | lock | alert | robot | note). desk_ returns the live to-do list on top of it;
 // deskAct_ does the jobs that used to need the Sheet menu (issue a passphrase, unlock) and ticks off ESPN steps.
-function deskPost_(kind, text, ref, event) { try { post_("desk", BOT, kind, text, ref, event, [], ""); } catch (e) {} }
+function deskPost_(kind, text, ref, event) { try { post_("desk", BOT, kind, text, ref, event, [], ""); } catch (e) {} if (kind === "alert") alertMail_(text); }
+// Review F3: an alert only on the desk is seen whenever the commish next opens the app. Email it too: at most 5 per
+// 6 hours, and never when the day's mail quota is nearly gone (owner emails need it more).
+function alertMail_(text) {
+  try { var c = CacheService.getScriptCache(), n = Number(c.get("alertmail") || 0); if (n >= 5 || mailLeft_() < 10) return;
+    c.put("alertmail", String(n + 1), 21600);
+    MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ ⚠️ " + String(text || "").slice(0, 70), String(text || "") + "\n\nOpen the desk: " + APP_URL + "#desk" + (n === 4 ? "\n\n(That's 5 alert emails in 6 hours: the rest wait on the desk.)" : "")); } catch (e) {}
+}
+// Review F4: what's left of the 100-a-day email quota (Google's own count). Unknown = assume plenty.
+function mailLeft_() { try { return MailApp.getRemainingDailyQuota(); } catch (e) { return 100; } }
 function setPhrase_(o) {
   var others = owners_().filter(function (x) { return x.pin_hash && x._row !== o._row; }), pin, tries = 0;
   do { pin = newPhrase_(); tries++; } while (tries < 50 && others.some(function (x) { return pinOk_(x, pin); }));
@@ -46,6 +55,7 @@ function desk_(me) {
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
     oldPin: owners.filter(function (o) { return o.pin_hash && String(o.pin_hash).indexOf("h2:") !== 0; }).map(function (o) { return o.owner; }), legacyPins: LEGACY_PINS, // review B6
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
+    mailLeft: mailLeft_(), // review F4
     moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: tradeAudit_(), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_() };
 }
 // Desk dashboard counts (commish 11/9): every offer in the league, not just the commish's own. Numbers only (offers stay private).
@@ -133,8 +143,10 @@ function announce_(me, b) {
   var rooms = ["league", "tier:U", "tier:L"], sh = sheet_("Chat");
   rooms.forEach(function (room) { post_(room, me.owner, "announce", text, "", "ALERT", [], ""); setCell_("Chat", sh.getLastRow(), "pinned", "Y"); });
   deskPost_("note", "📣 Commish alert sent to " + rooms.length + " group chats: " + text.slice(0, 80), "", "ANNOUNCE");
-  notify_(owners_().map(function (o) { return o.owner; }), "announce", "MAFFL HQ: 📣 Commish alert", text, "", me.owner); // on by default (Settings)
-  return { ok: true, n: rooms.length };
+  var left = mailLeft_(), out = { ok: true, n: rooms.length, mailLeft: left };
+  if (left < 35) { out.emailed = false; deskPost_("note", "📣 The alert is in every chat, but NOT emailed: only " + left + " of today's 100 emails are left (Google's limit). It resets 24 h after the first send.", "", "MAILQUOTA"); }
+  else notify_(owners_().map(function (o) { return o.owner; }), "announce", "MAFFL HQ: 📣 Commish alert", text, "", me.owner); // on by default (Settings)
+  return out;
 }
 // Robots (GitHub Actions, Claude scheduled tasks) post to the desk with the shared key in Script property DESK_KEY.
 // No key set = closed. Body: { action:"botpost", key, title, text, link, status: ok|fail|info }
@@ -157,8 +169,8 @@ function awardAct_(b) {
   var list = rows_("Awards").filter(function (a) { return a.status === "PENDING" && (b.op === "awardall" || a.award_id === b.target); });
   if (!list.length) return { ok: false, error: "Nothing waiting" };
   var ok = b.decision !== "deny", mode = syncMode_();
-  list.forEach(function (a) { setCell_("Awards", a._row, "status", ok ? "APPROVED" : "DENIED"); setCell_("Awards", a._row, "updated_ts", new Date());
-    if (ok) setCell_("Awards", a._row, "sync", mode); if (b.reason) setCell_("Awards", a._row, "reason", String(b.reason).slice(0, 200)); });
+  list.forEach(function (a) { if (ok) setCell_("Awards", a._row, "sync", mode); // review F1: before the status
+    setCell_("Awards", a._row, "status", ok ? "APPROVED" : "DENIED"); setCell_("Awards", a._row, "updated_ts", new Date()); if (b.reason) setCell_("Awards", a._row, "reason", String(b.reason).slice(0, 200)); });
   deskPost_("note", (ok ? "🏅 Approved " : "Denied ") + list.length + " credit award" + (list.length === 1 ? "" : "s") + (list.length === 1 ? ": " + list[0].team + " +" + list[0].credits + " (" + list[0].award + ")" : "") + ".", "", ok ? "AWARD_OK" : "AWARD_NO");
   return { ok: true, n: list.length, sync: ok ? pushLedger_() : null };
 }
@@ -306,6 +318,9 @@ function tickReconcile_(sent, now) {
     var missing = mine.filter(function (r) { return now - new Date(r.approved) > 2 * HOUR && txt.indexOf("[app " + r.id + "]") < 0; });
     if (missing.length) problems.push(missing.length + " approved move" + (missing.length === 1 ? " isn't" : "s aren't") + " in Credit_Log yet (" + missing.slice(0, 3).map(function (r) { return r.id; }).join(", ") + "); check the Credit sync run");
   }
+  var noMode = rows_("Offers").filter(function (o) { return o.status === "APPROVED" && (Number(o.give_credits) || Number(o.get_credits)) && !o.sync && !isSeedRow_(o); }).length +
+    rows_("Perks").filter(function (r) { return r.status === "APPROVED" && !r.sync && !isSeedRow_(r); }).length; // review F1: a half-written approval
+  if (noMode) problems.push(noMode + " approved credit move" + (noMode === 1 ? " has" : "s have") + " no ledger mode (sync column empty), so the ledger skips " + (noMode === 1 ? "it" : "them") + ": type " + syncMode_() + " in that cell, then tap Re-send ledger");
   if (!problems.length) return 0;
   deskPost_("alert", "Nightly credit check (" + mode.toUpperCase() + "): " + problems.join("; ") + ".", "", "RECONCILE");
   return problems.length;

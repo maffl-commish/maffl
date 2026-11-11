@@ -2600,7 +2600,12 @@
       $("pin").onkeydown = function (ev) { if (ev.key === "Enter") $("pGo").click(); };
       $("pGo").onclick = function () {
         var pin = $("pin").value.trim(); if (!pin) return; $("pGo").disabled = true;
-        api("login", { pin: pin }).then(function (r) {
+        var who = $("pinOwner") && $("pinOwner").value;
+        if ($("pinOwner") && !who) { $("pinErr").textContent = "Pick your name first"; $("pGo").disabled = false; return; }
+        api("login", who ? { owner: who, pin: pin } : { pin: pin }).then(function (r) {
+          if (!r.ok && r.paused && !$("pinOwner")) { // review F6: league-wide guesses paused → sign in with your name (3 tries an hour per owner)
+            $("pin").insertAdjacentHTML("beforebegin", '<select class="field" id="pinOwner" style="margin-bottom:8px"><option value="">Which owner are you?</option>' + TEAMS.slice().sort(function (a, b) { return a.owner.localeCompare(b.owner); }).map(function (t) { return '<option>' + esc(t.owner) + '</option>'; }).join("") + '</select>');
+            $("pinErr").textContent = r.error; $("pGo").disabled = false; $("pinOwner").focus(); return; }
           if (r.ok) { store("maffl_lab_owner", r.owner); store("maffl_lab_pin", r.token || pin); el.classList.remove("on"); start(); toast("Welcome, " + teamOf(r.owner).team + " ✓"); }
           else { $("pinErr").textContent = r.error || "That passphrase didn't work"; $("pGo").disabled = false; $("pin").select(); }
         }).catch(function () { $("pinErr").textContent = "Couldn't reach the league server. Try again."; $("pGo").disabled = false; });
@@ -2821,7 +2826,7 @@
     return n + (norm(o.from) === norm(owner) ? o.giveCredits : 0) + (norm(o.to) === norm(owner) ? o.getCredits : 0); }, 0); }
   function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && (p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id) && !Array.isArray(SUM.moves))); }).reduce(function (n, p) { return n + p.cost; }, 0); }
   function availCredits(owner) { return Math.max(0, (teamOf(owner).credits || 0) - committedCredits(owner) - perkCredits(owner)); }
-  var ST = { PROPOSED: ["Waiting", ""], ACCEPTED: ["In 24h review", "gold"], APPROVED: ["Approved ✓", "ok"], NEGATED: ["Negated", "bad"], DECLINED: ["Declined", "bad"], WITHDRAWN: ["Withdrawn", ""] };
+  var ST = { PROPOSED: ["Waiting", ""], ACCEPTED: ["In 24h review", "gold"], APPROVED: ["Approved ✓", "ok"], NEGATED: ["Negated", "bad"], DECLINED: ["Declined", "bad"], WITHDRAWN: ["Withdrawn", ""], REVERSED: ["Reversed by commish", "bad"] };
   function legHTML(label, team, players, credits) {
     return '<div class="leg">' + esc(label) + '</div>' + players.map(function (nm) {
       var p = findPlayer(team, nm);
@@ -2849,6 +2854,7 @@
     if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
     else if (o.status === "PROPOSED" && iAmFrom) btn = '<button class="b" data-act="withdraw" data-id="' + o.id + '">Withdraw</button>';
     else if (o.status === "ACCEPTED" && ME.commish) btn = '<button class="b" data-act="negate" data-id="' + o.id + '">Negate</button><button class="b pri" data-act="approve" data-id="' + o.id + '">Approve</button>';
+    else if (o.status === "APPROVED" && ME.commish) btn = '<button class="b" data-act="reverse" data-id="' + o.id + '">↩️ Reverse</button>'; // review F7: undo a mistaken approval
     if (mineOffer && chatOn()) btn += '<button class="b" data-chat-room="' + esc(dmRoom(o.from, o.to)) + '">💬 Chat</button>';
     if (btn) h += '<div class="btns">' + btn + '</div>';
     if (o.status === "ACCEPTED" && mineOffer) h += '<p class="meta" style="margin-top:8px">Next: send the player side on ESPN. Credits move when the commish approves.</p>';
@@ -2860,7 +2866,7 @@
     if (!SUM_OK) return '<div class="card">' + sumWait("Loading trades…") + '</div>';
     var all = offersFor(ME), dead = new Date(SUM.deadline || "2026-12-02T17:00:00Z"), days = Math.ceil((dead - Date.now()) / 864e5);
     var waitingMe = all.filter(needsMe), waitingThem = all.filter(function (o) { return o.status === "PROPOSED" && isMe(o.from); });
-    var review = all.filter(function (o) { return o.status === "ACCEPTED" && !needsMe(o); }), done = all.filter(function (o) { return ["APPROVED", "NEGATED", "DECLINED", "WITHDRAWN"].indexOf(o.status) >= 0; }).slice(-8).reverse();
+    var review = all.filter(function (o) { return o.status === "ACCEPTED" && !needsMe(o); }), done = all.filter(function (o) { return ["APPROVED", "NEGATED", "DECLINED", "WITHDRAWN", "REVERSED"].indexOf(o.status) >= 0; }).slice(-8).reverse();
     var block = Object.keys(SUM.block || {}).filter(function (k) { return k.indexOf(ME.tier + ":") === 0 && !isMe(SUM.block[k].owner); });
     var h = '<div class="tstart"><button class="b pri" data-newtrade="1" data-tour="newtrade">＋ Start a trade</button><small>' + (days > 0 ? '⏰ Deadline in ' + days + ' day' + (days === 1 ? '' : 's') : 'Deadline passed') + '</small></div>';
     function sec(t, list) { return list.length ? '<div class="sh" style="padding-left:0"><h2>' + t + '</h2><small>' + list.length + '</small></div>' + list.map(function (o) { return offerCard(o); }).join("") : ''; }
@@ -2903,7 +2909,7 @@
     if (!API_URL) return "Needs the league server";
     return availCredits(ME.owner) < PERK_BY[k].cost ? "Need " + PERK_BY[k].cost + " free credits" : "";
   }
-  var PST = { REQUESTED: ["Waiting on commish", "gold"], APPROVED: ["Approved ✓", "ok"], DENIED: ["Denied by commish", "bad"], CANCELED: ["Withdrawn by owner", ""] };
+  var PST = { REQUESTED: ["Waiting on commish", "gold"], APPROVED: ["Approved ✓", "ok"], DENIED: ["Denied by commish", "bad"], CANCELED: ["Withdrawn by owner", ""], REVERSED: ["Reversed by commish", "bad"] };
   function perkLine(p) {
     return p.perk === "faab" ? "+$" + 20 * p.qty + " FAAB" : p.perk === "double" ? "Wk " + p.week + " · " + esc(p.player) + (p.pos ? " (" + esc(p.pos) + ")" : "")
       : p.perk === "swap" ? "Wk " + p.week + " · swap opponents with " + esc(teamOf(p.swapWith).team) : p.perk === "insurance" ? "2026 season" : "";
@@ -2915,7 +2921,7 @@
       '<div class="row" style="padding:6px 0"><span class="pos p-CR">' + P.ic + '</span><div><div class="nm">' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + '</div></div></div>';
     if (p.note) h += '<p class="meta">“' + esc(p.note) + '”</p>';
     if (p.reason) h += '<p class="meta">Commish: ' + esc(p.reason) + '</p>';
-    var btn = p.status !== "REQUESTED" ? "" : (mine ? '<button class="b" data-pact="cancel" data-id="' + p.id + '">Cancel' + (ME.commish ? '' : ' request') + '</button>' : '') +
+    var btn = p.status === "APPROVED" && ME.commish ? '<button class="b" data-pact="reverse" data-id="' + p.id + '">↩️ Reverse</button>' : p.status !== "REQUESTED" ? "" : (mine ? '<button class="b" data-pact="cancel" data-id="' + p.id + '">Cancel' + (ME.commish ? '' : ' request') + '</button>' : '') +
       (ME.commish ? '<button class="b" data-pact="deny" data-id="' + p.id + '">Deny</button><button class="b pri" data-pact="approve" data-id="' + p.id + '">Approve</button>' : '');
     if (ME.commish && p.status === "REQUESTED") { var left = (teamOf(p.owner).credits || 0) - committedCredits(p.owner) - perkCredits(p.owner);
       h += '<p class="meta">' + (left < 0 ? '⚠️ ' : '') + esc(p.owner) + ': ' + teamOf(p.owner).credits + ' credits, ' + left + ' left after open trades and perk holds.</p>'; }
@@ -3126,11 +3132,12 @@
     if ((el = e.target.closest("[data-pact]"))) {
       var pk = (SUM.perks || []).filter(function (x) { return x.id === el.dataset.id; })[0]; if (!pk) return;
       var pa = el.dataset.pact, PT = { cancel: ["Cancel this request?", "Your held credits are freed.", "Cancel it", true], approve: ["Approve this perk?", "Final. The credits post to the official record automatically. You still do the ESPN side (FAAB, scoring adjustment, schedule) until ESPN automation exists.", "Approve", false],
-        deny: ["Deny this perk?", "Give a reason; the owner sees it.", "Deny", true] }[pa];
-      confirmBox(PT[0], '<p class="p">' + esc(PT[1]) + '</p>' + perkCard(pk).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), PT[2], PT[3], pa === "deny").then(function (yes) {
+        deny: ["Deny this perk?", "Give a reason; the owner sees it.", "Deny", true],
+        reverse: ["Reverse this approved perk?", "The credits go back on the official record (an offsetting row; the original stays). Undo the ESPN side yourself if you already did it. Give a reason; the owner and the league see it.", "Reverse", true] }[pa];
+      confirmBox(PT[0], '<p class="p">' + esc(PT[1]) + '</p>' + perkCard(pk).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), PT[2], PT[3], pa === "deny" || pa === "reverse").then(function (yes) {
         if (!yes) return; busy(1);
         api("perkact", Object.assign(creds(), { perk_id: pk.id, decision: pa, reason: typeof yes === "string" ? yes : "" })).then(function (r) {
-          busy(0); if (!r.ok) { toast(r.error); return; } TEAM_SUB = "credits"; afterChange({ cancel: "Request canceled", approve: "Approved ✓", deny: "Denied" }[pa]);
+          busy(0); if (!r.ok) { toast(r.error); return; } TEAM_SUB = "credits"; afterChange({ cancel: "Request canceled", approve: "Approved ✓", deny: "Denied", reverse: "Reversed ↩️" }[pa]);
         }).catch(function () { busy(0); toast("Couldn't reach the league server"); });
       });
       return;
@@ -3168,14 +3175,15 @@
         decline: ["Decline this offer?", teamOf(o.from).team + " will see that you declined.", "Decline", true],
         withdraw: ["Withdraw your offer?", "It disappears for " + teamOf(o.to).team + ".", "Withdraw", true],
         approve: ["Approve this trade?", "Final. Any credits in it post to the official record automatically.", "Approve", false],
-        negate: ["Negate this trade?", "Both legs come back. Give a reason; both teams see it.", "Negate", true] }[act];
+        negate: ["Negate this trade?", "Both legs come back. Give a reason; both teams see it.", "Negate", true],
+        reverse: ["Reverse this approved trade?", "Any credits go back on the official record (offsetting rows, both kept). Players don't move back by themselves: undo it on ESPN. Give a reason; both teams and the league see it.", "Reverse", true] }[act];
       var me2 = isMe(o.from) || isMe(o.to);
-      confirmBox(T[0], '<p class="p">' + esc(T[1]) + '</p>' + offerCard(o, true).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), T[2], T[3], act === "negate").then(function (yes) {
+      confirmBox(T[0], '<p class="p">' + esc(T[1]) + '</p>' + offerCard(o, true).replace(/<div class="btns">[\s\S]*?<\/div><\/div>$/, '</div>'), T[2], T[3], act === "negate" || act === "reverse").then(function (yes) {
         if (!yes) return; busy(1);
-        var call = act === "approve" || act === "negate" ? api("commish", Object.assign(creds(), { offer_id: o.id, decision: act, reason: typeof yes === "string" ? yes : "" }))
+        var call = act === "approve" || act === "negate" || act === "reverse" ? api("commish", Object.assign(creds(), { offer_id: o.id, decision: act, reason: typeof yes === "string" ? yes : "" }))
           : api("respond", Object.assign(creds(), { offer_id: o.id, decision: act }));
         call.then(function (r) { busy(0); if (!r.ok) { toast(r.error); return; } var nudge = act === "accept" || act === "decline";
-          afterChange(nudge ? null : { withdraw: "Withdrawn", approve: "Approved ✓", negate: "Negated" }[act]).then(function () {
+          afterChange(nudge ? null : { withdraw: "Withdrawn", approve: "Approved ✓", negate: "Negated", reverse: "Reversed ↩️" }[act]).then(function () {
           if (nudge) nudgeBox(o.from, nudgeMsg(act === "accept" ? "accepted" : "declined", o.id, listText(o.give, o.giveCredits), listText(o.get, o.getCredits)), act === "accept" ? "Accepted · 24h review started" : "Declined"); }); })
           .catch(function () { busy(0); toast("Couldn't reach the league server"); });
       });
@@ -3363,7 +3371,7 @@
   var CHAT_EMO = ["🔥", "😂", "💀", "👀", "👏"], BOTN = "MAFFL HQ";
   var AVC = ["#1a2e50", "#2f6f9f", "#1d9e75", "#8e5bb5", "#c0603a", "#3a7d8c", "#a8862a", "#6b778d", "#b5476b", "#45629b"];
   var EVT = { PROPOSED: "proposed a trade", COUNTER: "countered", ACCEPTED: "accepted the trade", DECLINED: "declined the trade", WITHDRAWN: "withdrew the offer",
-    REVIEW: "Trade accepted · 24-hour review", REVIEWDONE: "24-hour review is over · approve or negate", APPROVED: "Trade completed ✅", NEGATED: "Trade negated by the commish" };
+    REVIEW: "Trade accepted · 24-hour review", REVIEWDONE: "24-hour review is over · approve or negate", APPROVED: "Trade completed ✅", NEGATED: "Trade negated by the commish", REVERSED: "Trade reversed by the commish ↩️" };
   function chatOn() { return !!(API_URL && ME && store("maffl_lab_pin")); }
   function inboxOf() { return (SUM && SUM.chat) || { rooms: [], unread: 0, mentions: [], mentionsUnread: 0 }; }
   function dmRoom(a, b) { return "dm:" + [norm(a), norm(b)].sort().join("|"); }
@@ -3525,6 +3533,7 @@
     return [["tick", "⏱️", "Trade clock + reminders", "every 15 min", tkAge === null ? "Not running" : "Ran " + ago2(tk.at), tkAge === null || tkAge > 60 ? "bad" : "ok"],
       ["daily", "🌅", "Scores + standings from ESPN", "5 AM + 5 PM", dyAge === null ? "Hasn't run yet" : "Ran " + ago2(dy.at) + ((dy.problems || []).length ? " · " + dy.problems.length + " problem" + (dy.problems.length === 1 ? "" : "s") : ""), dyAge === null ? "warn" : (dy.problems || []).length || dyAge > 14 ? "warn" : "ok"],
       ["lines", "✍️", "Home card headlines", "after each final week", ln[0], ln[1]],
+      ["mail", "✉️", "Email quota", "100 a day (Google)", d.mailLeft == null ? "Unknown" : d.mailLeft + " left today", d.mailLeft != null && d.mailLeft < 20 ? (d.mailLeft < 10 ? "bad" : "warn") : "ok"], // review F4
       ["sync", "💳", "Credits → official log", mode === "live" ? "LIVE" : "TEST (practice until go-live)", ls && ls.ok === false ? "Last push failed" : ls && ls.at ? "Pushed " + ago2(ls.at) : "Nothing pushed yet", ls && ls.ok === false ? "bad" : "ok"]];
   }
   function deskTiles(d) {
@@ -3541,7 +3550,7 @@
   }
   // 🧾 Trade audit (commish 11/9): every step of every offer from the backend's Events tab (DESK.trades), as log rows.
   // Tap one for both sides, the offer ID, where it stands now and its whole timeline. Search covers owners, teams, players, IDs.
-  var TST = { PROPOSED: "offered", ACCEPTED: "accepted", DECLINED: "declined", WITHDRAWN: "withdrew", APPROVED: "approved", NEGATED: "negated" };
+  var TST = { PROPOSED: "offered", ACCEPTED: "accepted", DECLINED: "declined", WITHDRAWN: "withdrew", APPROVED: "approved", NEGATED: "negated", REVERSED: "reversed" };
   function tradeRows() {
     var T = (DESK && DESK.trades) || [], counterOf = {}; T.forEach(function (e) { var m = /^counter (\w+)/.exec(e.meta); if (m) counterOf[m[1]] = e.id; });
     var S = function (o) { return shortOf(o); }, f2 = function (o) { return o.replace(/^./, function (c) { return c.toUpperCase(); }); };
@@ -3590,6 +3599,7 @@
     if (k === "sync") { h = '<h3>💳 Credits → official log · ' + mode + '</h3><p class="p">When you approve something that moves credits (a perk, a trade with credits, a credit award), the backend writes it to the ledger file in the repo and a GitHub robot adds it to the official Credit_Log, updates balances and the credits page.</p>' +
       '<p class="p">' + (mode === "LIVE" ? 'LIVE: approvals change the official record.' : 'TEST: a dry run. Nothing official changes until go-live flips it to LIVE.') + '</p>' +
       '<p class="meta">' + (ls && ls.at ? 'Last ledger push ' + ago2(ls.at) + (ls.ok === false ? ' ⚠️ ' + esc(ls.error || "failed") : ' ✓') : 'No ledger push yet.') + '</p>'; act = "resync"; }
+    if (k === "mail") h = '<h3>✉️ Email quota</h3><p class="p">Google lets this account send email to about 100 people a day. Owner emails stop when 10 are left (those are kept for your alerts), and a 📣 alert skips email below 35. It resets 24 hours after the first send.</p><p class="meta">' + (d.mailLeft == null ? 'Unknown right now.' : d.mailLeft + ' left today.') + '</p>';
     if (k === "backend") h = '<h3>🖥️ Backend v' + esc(d.version || "?") + '</h3><p class="p">The league server (Apps Script + the app Sheet). It loads its code from the repo, so updates go live within about 5 minutes of a push. Nothing to do here.</p>';
     $("cbox").innerHTML = h + '<div class="btns"><button class="b" id="cno">Close</button>' + (act === "resync" ? '<button class="b pri" data-resync="1" id="cyes">Re-send ledger</button>' : act ? '<button class="b pri" data-dact="' + act + '" data-target="" id="cyes">Run it now</button>' : '') + '</div>';
     $("cwrap").classList.add("on"); $("cno").onclick = function () { $("cwrap").classList.remove("on"); };
@@ -3606,11 +3616,12 @@
       '<p class="meta">Trades in review show in To do with Approve / Negate. Trade deadline: Wed Dec 2, 12:00 PM ET.</p></details></div>';
   }
   function deskAccessHTML(d) {
-    var no = {}, lock = {}, req = {}; (d.noPin || []).forEach(function (o) { no[norm(o)] = 1; }); (d.locked || []).forEach(function (o) { lock[norm(o)] = 1; }); (d.access || []).forEach(function (a) { req[norm(a.owner)] = 1; });
+    var no = {}, lock = {}, req = {}, old = {}; (d.oldPin || []).forEach(function (o) { old[norm(o)] = 1; }); (d.noPin || []).forEach(function (o) { no[norm(o)] = 1; }); (d.locked || []).forEach(function (o) { lock[norm(o)] = 1; }); (d.access || []).forEach(function (a) { req[norm(a.owner)] = 1; });
     var owners = TEAMS.filter(function (t) { return !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.team.localeCompare(b.team); });
-    var can = owners.filter(function (t) { return !no[norm(t.owner)]; }).length;
-    return '<div class="dsk"><details><summary>🔑 Owner access · ' + can + ' of ' + owners.length + ' can sign in' + ((d.locked || []).length ? ' · ' + d.locked.length + ' locked' : '') + '</summary>' +
-      owners.map(function (t) { var o = t.owner, st = lock[norm(o)] ? ["🔒", "Locked out"] : no[norm(o)] ? ["⚪", "No passphrase yet"] : ["🟢", "Can sign in"];
+    var can = owners.filter(function (t) { return !no[norm(t.owner)] && (d.legacyPins !== false || !old[norm(t.owner)]); }).length, nOld = owners.filter(function (t) { return old[norm(t.owner)]; }).length;
+    return '<div class="dsk"><details><summary>🔑 Owner access · ' + can + ' of ' + owners.length + ' can sign in' + ((d.locked || []).length ? ' · ' + d.locked.length + ' locked' : '') + (nOld ? ' · ⚠️ ' + nOld + ' on an old passphrase' : '') + '</summary>' +
+      (nOld ? '<p class="meta" style="margin:6px 0">⚠️ ' + nOld + ' owner' + (nOld === 1 ? ' is' : 's are') + ' on an old two-word passphrase (easy to guess). Give ' + (nOld === 1 ? 'it' : 'each') + ' a New passphrase before go-live; then old ones get switched off.</p>' : '') + // review B6
+      owners.map(function (t) { var o = t.owner, st = lock[norm(o)] ? ["🔒", "Locked out"] : no[norm(o)] ? ["⚪", "No passphrase yet"] : old[norm(o)] ? ["🟠", "Old two-word passphrase"] : ["🟢", "Can sign in"];
         return '<div class="ditem"><b>' + esc(t.team) + '</b> <span class="meta">' + esc(o) + ' · ' + st[0] + ' ' + st[1] + (req[norm(o)] ? ' · asked for help' : '') + '</span><div class="btns">' +
           (lock[norm(o)] ? deskBtn("unlock", o, "Unlock") : '') + deskBtn("issue", o, no[norm(o)] ? "🔑 Issue passphrase" : "New passphrase", no[norm(o)] ? 1 : 0) + '</div></div>'; }).join("") +
       '<p class="meta">New passphrase replaces the old one; you see it once, with a button to text it.</p></details></div>';
@@ -4106,7 +4117,8 @@
     BETA = on; $("fbbtn").classList.toggle("on", on);
     if (on && !TAP_T) { TAP_T = setInterval(flushTaps, 60000); tap("open", (navigator.standalone ? "home-screen" : "browser") + " " + innerWidth + "x" + innerHeight); firstLook(CUR_TAB); }
   }
-  function tap(type, what) { if (!BETA) return; TAPS.push([Date.now(), type, String(what || "").slice(0, 80), CUR_TAB + (stackS.length ? ">" + stackS[stackS.length - 1][0] : CH.open ? ">chat" : "")]); if (TAPS.length >= 150) flushTaps(); }
+  function tap(type, what) { if (!BETA) { if (type === "error" && ME && API_URL) { TAPS.push([Date.now(), type, String(what || "").slice(0, 80), CUR_TAB]); clearTimeout(tap.t); tap.t = setTimeout(flushTaps, 5000); } return; } // review F3: every phone reports its app errors
+    TAPS.push([Date.now(), type, String(what || "").slice(0, 80), CUR_TAB + (stackS.length ? ">" + stackS[stackS.length - 1][0] : CH.open ? ">chat" : "")]); if (TAPS.length >= 150) flushTaps(); }
   function flushTaps(beacon) {
     if (!TAPS.length || !API_URL || !ME) return; var ev = TAPS.splice(0, 300);
     var body = JSON.stringify(Object.assign({ action: "taplog", session: TAP_SID, events: ev }, creds()));

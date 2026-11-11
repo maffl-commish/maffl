@@ -27,8 +27,14 @@ function feedback_(me, b) {
   return { ok: true, id: id };
 }
 function tapLog_(me, b) {
-  var o = ownerRow_(me.owner); if (!isBeta_(o)) return { ok: true, skipped: true };
+  var o = ownerRow_(me.owner), beta = isBeta_(o);
   var ev = (Array.isArray(b.events) ? b.events : []).slice(0, 300), sid = String(b.session || "").slice(0, 16);
+  // Review F3: every owner's phone reports its app errors (not just the beta crew's taps), and the desk hears about it
+  // (one note per owner an hour), so a broken screen on someone's phone doesn't stay invisible.
+  var errs = ev.filter(function (e) { return String(e[1] || "") === "error"; });
+  if (errs.length) { var c = CacheService.getScriptCache(), k = "apperr_" + norm_(me.owner).replace(/[^a-z0-9]/g, "");
+    if (!c.get(k)) { c.put(k, "1", 3600); deskPost_("note", "🐞 App error on " + ((o && o.team) || me.owner) + "'s phone: " + String(errs[0][2] || "").slice(0, 120) + (errs.length > 1 ? " (+" + (errs.length - 1) + " more)" : ""), me.owner, "APPERR"); } }
+  if (!beta) ev = errs.slice(0, 5);
   if (!ev.length) return { ok: true, n: 0 };
   var rows = ev.map(function (e) { return cells_([new Date(Number(e[0]) || Date.now()), me.owner, sid, String(e[1] || "").slice(0, 20), String(e[2] || "").slice(0, 80), String(e[3] || "").slice(0, 60)]); });
   var sh = sheet_("TapLog"); sh.getRange(sh.getLastRow() + 1, 1, rows.length, TAP_HEAD.length).setValues(rows);
