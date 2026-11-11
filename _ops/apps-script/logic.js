@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.64";
+var VERSION = "0.65";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -92,7 +92,7 @@ function doPost(e) {
     switch (b.action) {
       case "login":   return json(login_(b.owner, b.pin));
       case "request": return json(request_(b.owner, b.note));
-      case "react":   return json(withAuth_(b, function (o) { return log_(o.owner, "react", b.ref, b.emoji, b.week, b.on ? "on" : "off"); }));
+      case "react":   return json(withAuth_(b, function (o) { return /[<>]/.test(String(b.emoji || "")) ? { ok: false, error: "Pick an emoji" } : log_(o.owner, "react", b.ref, b.emoji, b.week, b.on ? "on" : "off"); })); // the value is shown to other owners: never markup
       case "vote":    return json(withAuth_(b, function (o) { return vote_(o.owner, b.poll, b.choice, b.week); }));
       case "summary": return json(withAuth_(b, function (o) { return summary_(b.week, o.owner); }));
       case "block":   return json(withAuth_(b, function (o) { return log_(o.owner, "block", b.player, b.on ? "on" : "off", "", String(b.note || "").slice(0, 80)); }));

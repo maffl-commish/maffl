@@ -20,7 +20,7 @@ function feedback_(me, b) {
   var mood = rate ? (stars ? stars + "★" : "") : (MOOD[b.mood] ? b.mood : ""), note = String(b.note || "").trim().slice(0, 600), where = String(b.where || "").slice(0, 120);
   if (!mood && !note) return { ok: false, error: rate ? "Pick stars or write a note" : "Pick a thumb or write a note" };
   var id = "F" + Date.now().toString(36), ctx = String(b.ctx || "").slice(0, 1500);
-  sheet_("Feedback").appendRow([id, new Date(), me.owner, o.tier, rate ? "rate" : String(b.kind || "button").slice(0, 20), mood, safe_(where), safe_(note), safe_(ctx)]);
+  sheet_("Feedback").appendRow(cells_([id, new Date(), me.owner, o.tier, rate ? "rate" : String(b.kind || "button").slice(0, 20), mood, where, note, ctx]));
   var head = rate ? "💡 " + (o.team || me.owner) + " · " + (stars ? new Array(stars + 1).join("★") + new Array(6 - stars).join("☆") : "no rating")
     : (MOOD[mood] || "💬") + " " + (o.team || me.owner) + " · " + where;
   deskPost_("feedback", (head + (note ? "\n" + note : "")).slice(0, CHAT_MAX), id, rate ? "rate" : (mood || "NOTE"));
@@ -30,7 +30,7 @@ function tapLog_(me, b) {
   var o = ownerRow_(me.owner); if (!isBeta_(o)) return { ok: true, skipped: true };
   var ev = (Array.isArray(b.events) ? b.events : []).slice(0, 300), sid = String(b.session || "").slice(0, 16);
   if (!ev.length) return { ok: true, n: 0 };
-  var rows = ev.map(function (e) { return [new Date(Number(e[0]) || Date.now()), me.owner, sid, String(e[1] || "").slice(0, 20), safe_(String(e[2] || "").slice(0, 80)), safe_(String(e[3] || "").slice(0, 60))]; });
+  var rows = ev.map(function (e) { return cells_([new Date(Number(e[0]) || Date.now()), me.owner, sid, String(e[1] || "").slice(0, 20), String(e[2] || "").slice(0, 80), String(e[3] || "").slice(0, 60)]); });
   var sh = sheet_("TapLog"); sh.getRange(sh.getLastRow() + 1, 1, rows.length, TAP_HEAD.length).setValues(rows);
   return { ok: true, n: rows.length };
 }
@@ -68,7 +68,7 @@ function canRoom_(me, room) {
 }
 function post_(room, owner, kind, text, ref, event, mentions, replyTo) {
   var id = "M" + Utilities.getUuid().replace(/-/g, "").slice(0, 10).toUpperCase(), now = new Date();
-  sheet_("Chat").appendRow([id, now, room, owner, kind, safe_(String(text || "").slice(0, CHAT_MAX)), ref || "", event || "", JSON.stringify(mentions || []), replyTo || "", "", ""]);
+  sheet_("Chat").appendRow(cells_([id, now, room, owner, kind, safe_(String(text || "").slice(0, CHAT_MAX)), ref || "", event || "", JSON.stringify(mentions || []), replyTo || "", "", ""])); // cells_: every string column is formula-guarded, not just the text
   return { id: id, ts: now };
 }
 function markRead_(owner, room, ts) {
@@ -161,7 +161,8 @@ function chatSend_(meRaw, b) {
   cache.put(rk, "1", 2);
   var mentions = (b.mentions || []).concat(ownersFromText_(text)).slice(0, 12).map(function (n) { return ownerRow_(n); }).filter(function (o) { return o && canRoom_(meOf_(o), room) && norm_(o.owner) !== norm_(me.owner); })
     .map(function (o) { return o.owner; }).filter(function (o, i, a) { return a.indexOf(o) === i; }).slice(0, 8);
-  var m = post_(room, me.owner, "text", text, "", "", mentions, String(b.reply_to || "").slice(0, 20));
+  var replyTo = String(b.reply_to || "").slice(0, 20); if (!/^M[A-Z0-9]+$/.test(replyTo)) replyTo = ""; // a message id or nothing (it comes back to every reader of the room)
+  var m = post_(room, me.owner, "text", text, "", "", mentions, replyTo);
   markRead_(me.owner, room, m.ts);
   chatNotify_(me.owner, room, text, mentions);
   return { ok: true, id: m.id, room: room };
