@@ -69,12 +69,12 @@ function canRoom_(me, room) {
   if (room === "league") return true;
   if (room === "desk") return !!me.commish; // 🛡️ Commish desk: the robots' to-do feed, commish only
   if (room === "tier:U" || room === "tier:L") return String(me.tier) === room.slice(5) || !!me.commish;
-  if (room.indexOf("dm:") === 0) return room.slice(3).split("|").indexOf(norm_(me.owner)) >= 0;
+  if (room.indexOf("dm:") === 0) { var two = room.slice(3).split("|"); return room.length <= 140 && two.length === 2 && two[0] !== two[1] && two.indexOf(norm_(me.owner)) >= 0; } // exactly you + one other (review: no made-up group DMs)
   return false;
 }
-function post_(room, owner, kind, text, ref, event, mentions, replyTo) {
+function post_(room, owner, kind, text, ref, event, mentions, replyTo, pinned) {
   var id = "M" + Utilities.getUuid().replace(/-/g, "").slice(0, 10).toUpperCase(), now = new Date();
-  sheet_("Chat").appendRow(cells_([id, now, room, owner, kind, safe_(String(text || "").slice(0, CHAT_MAX)), ref || "", event || "", JSON.stringify(mentions || []), replyTo || "", "", ""])); // cells_: every string column is formula-guarded, not just the text
+  sheet_("Chat").appendRow(cells_([id, now, room, owner, kind, safe_(String(text || "").slice(0, CHAT_MAX)), ref || "", event || "", JSON.stringify(mentions || []), replyTo || "", "", pinned ? "Y" : ""])); // cells_: every string column is formula-guarded, not just the text
   return { id: id, ts: now };
 }
 function markRead_(owner, room, ts) {

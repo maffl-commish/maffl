@@ -1,6 +1,6 @@
 # REEL — Operations & Architecture Handbook
 
-_Last updated: 2026-11-10 (chat). Living doc: update it in the same commit whenever a part, robot, tab, secret or
+_Last updated: 2026-11-10 (chat, after the pre-launch review fixes; see `_ops/AUDIT_2026-11-10_prelaunch.md`). Living doc: update it in the same commit whenever a part, robot, tab, secret or
 schedule is added, renamed or retired._
 
 **Who this is for:** someone technical who has never seen MAFFL HQ and needs to understand how it is built, how it
@@ -102,7 +102,7 @@ flowchart LR
 | File (repo `_ops/apps-script/`) | Role |
 |---|---|
 | `Code.gs` | **Loader.** The only file pasted into Apps Script. Fetches `logic.js` from `main`, caches 5 min, keeps a 6-h last-good copy. Owns `doGet/doPost`, the Sheet menu, and `tick()`. Changes rarely; changing it = re-paste + Deploy → New version |
-| `logic.js` | **Core** (v0.65): routing, sign-in, settings, summary, Sheet helpers, `safe_()` formula guard, exports. Config constants: `VERSION`, `APP_URL`, `OWNER_EMAILS` |
+| `logic.js` | **Core** (v0.68): routing, sign-in, settings, summary, Sheet helpers, `safe_()` / `cells_()` formula guard, health, exports. Config constants: `VERSION`, `APP_URL`, `OWNER_EMAILS`, `LEGACY_PINS` |
 | `mod_trades.js` | Offers, counters, accept/decline, commish approve/negate, perks, credit balance checks, credit sync push |
 | `mod_espn.js` | ESPN reads: live scores, rosters (30-min cache, 6-h last good), schedule |
 | `mod_social.js` | Chat rooms/DMs, reads, reactions, polls in chat, feedback, tap log |
@@ -111,18 +111,22 @@ flowchart LR
 
 Deployment: Web app, **Execute as: Me (commish)**, **Who has access: Anyone**. Current deployment Version 5 (11/7).
 Every file must stay under ~90 KB (CacheService limit). Bump `VERSION` in `logic.js` when any part changes.
+A part file or `daily.js` that doesn't compile is never cached or run: the backend keeps its 6-h last-good copy and emails
+the commish (once an hour). A `logic.js` that doesn't compile falls back the same way inside `Code.gs`.
 
 **API actions** (`?action=` / POST `action`): `login request react vote summary block offer respond commish perk
 perkact settings savesettings resync chat chatsend chatmod board inbox desk deskact feedback taplog botpost putlines`
-(+ `live`, `rosters`, `daily` GETs). Auth: device token from `login`; commish-only actions check `is_commish` on the
+(+ `live`, `rosters`, `daily`, `ledger`, `owners`, `health` GETs). `commish` / `perkact` take `decision: reverse` (commish, with a
+reason) for APPROVED rows. Lock-free: `summary inbox chat login board settings desk react`; every other write waits on the one
+script lock (10 s, then a JSON "busy"). Auth: device token from `login`; commish-only actions check `is_commish` on the
 server; robot actions (`botpost`, `putlines`) need `DESK_KEY`.
 
 ### 3c. Database: the "MAFFL HQ App" Sheet (tabs)
 
 | Tab | Columns (key ones) | Written by | Notes |
 |---|---|---|---|
-| **Owners** | owner, team, tier, pin_hash, salt, commish, beta, handle, email, phone, notify (JSON), failed_tries, locked, tour | Commish menu, settings, desk | **PII lives only here**, never in the repo |
-| **Offers** | offer_id, ts, from_owner, to_owner, tier, give, get, give_credits, get_credits, note, status, updated_ts, reason, reasons, sync (+ stage) | Trades | Status machine: OPEN → COUNTERED / DECLINED / WITHDRAWN / ACCEPTED → APPROVED / NEGATED |
+| **Owners** | owner, team, tier, pin_hash, salt, is_commish, beta, handle, email, phone, notify (JSON), failed_tries, locked, tour | Commish menu, settings, desk | **PII lives only here**, never in the repo |
+| **Offers** | offer_id, ts, from_owner, to_owner, tier, give, get, give_credits, get_credits, note, status, updated_ts, reason, reasons, sync (+ stage) | Trades | Status machine: PROPOSED → DECLINED (reason "Countered" when a counter replaces it) / WITHDRAWN / ACCEPTED → APPROVED / NEGATED; APPROVED → REVERSED (commish; offsetting ledger rows) |
 | **Perks** | perk_id, ts, owner, tier, perk, cost, qty, week, player, pos, swap_with, affects, note, status, updated_ts, reason, sync (+ stage) | Perk requests | Extra FAAB, Double Player Bonus, Matchup Swap, Relegation Insurance, Division Swap |
 | **Events** | ts, owner, type, ref, value, week, meta | Everything | **Append-only audit log** (reactions, votes, trade steps, block listings, ESPN-step done, espn_when) |
 | **Chat** | msg_id, ts, room, owner, kind, text, ref, event, mentions, reply_to, deleted, pinned (+ stage) | Chat, bots | Rooms: league, tier U/L, DMs, desk |
@@ -144,7 +148,8 @@ Staged (seed) rows: id prefix `TSD`/`PSD`/`MSD` or `stage = seed`; block Events 
 | `GITHUB_TOKEN` | Fine-grained PAT (Contents RW on the repo): credit ledger push + `daily-lines` dispatch | Commish (once; rotate before expiry) |
 | `DESK_KEY` | Shared secret for robots → desk posts (also a GitHub secret) | Commish |
 | `CREDIT_SYNC` | `live` = real ledger; anything else = TEST dry run | Commish at go-live |
-| `PIN_PEPPER` | HMAC pepper for passphrases (auto-created) | Backend — **never rotate casually: invalidates every passphrase** |
+| `PIN_PEPPER` | HMAC pepper for passphrases (auto-created; also cached 6 h in the script cache) | Backend — **never rotate casually: invalidates every passphrase and device token** |
+| `ESPN_S2`, `SWID` | ESPN cookies for live scores, rosters and the daily run (per-tier variants allowed, `mod_espn.js` `cookie_`) | Commish; renew when the desk says ESPN answered 401/403 (same values as the GitHub secrets) |
 | `LAST_DAILY`, `LAST_TICK`, `LAST_SYNC`, `TICK_DAILY`, `TICK_SENT[_n]`, `ELITE5_POSTED`, `SEED_AT`, `WP_PROBE` | Robot state | Backend |
 
 ### 3e. GitHub Actions (`.github/workflows/`)
@@ -152,13 +157,14 @@ Staged (seed) rows: id prefix `TSD`/`PSD`/`MSD` or `stage = seed`; block Events 
 | Workflow | Trigger | Does | Secrets |
 |---|---|---|---|
 | `espn-weekly-pull.yml` | Tue cron ×5 + Wed backstop; dispatched by the Claude scheduled task Tue 5:07 AM ET | `maffl_espn_pull.py` → `_ops/inbox/MAFFL_2026_WeekNN_espn.md` | `ESPN_S2`, `SWID` |
-| `pulse-draft.yml` | After the pull | Windows: gold append, corrections, CE-1, validate. Then Claude drafts the Week in `weekly.html` → PR → auto-merge if `check_pulse_week.py` passes | Anthropic key, `GITHUB_TOKEN` |
-| `card-lines.yml` | `repository_dispatch: daily-lines` from `daily.js` | Claude writes Home card lines → `putlines` to the backend | Anthropic key, `DESK_KEY` |
-| `credit-sync.yml` | Push to `_ops/inbox/credit_ledger*.json` | Ledger → `Credit_Log.csv` → `credits.html` (TEST = dry run) | — |
+| `pulse-draft.yml` | After the pull | Windows: gold append, corrections, CE-1, validate. Then Claude drafts the Week in `weekly.html` → PR → auto-merge if `check_pulse_week.py` and the data contract pass. Claude may only change `weekly.html` and `_ops/inbox/`; anything else is reverted and the run doesn't merge | `CLAUDE_CODE_OAUTH_TOKEN`, `GITHUB_TOKEN`, `DESK_KEY` |
+| `card-lines.yml` | `repository_dispatch: daily-lines` from `daily.js` | Claude writes Home card lines → `putlines` to the backend | `CLAUDE_CODE_OAUTH_TOKEN`, `DESK_KEY` |
+| `backend-check.yml` | Push / PR touching `_ops/apps-script/`, `_ops/tests/` or the six pages the app reads | `node --check`, <90 KB, regression on the frozen fixture, REEL data contract. On `main` it's an alarm (already live); on a PR it's a gate | — |
+| `credit-sync.yml` | Push to `_ops/inbox/credit_ledger*.json` | Ledger → `Credit_Log.csv` → `credits.html` (TEST = dry run); refuses to commit if the data contract breaks | — |
 | `vault-data.yml` | Push to `data/**.csv`, Wed cron | Regenerates `lab/vault-data.js` | — |
-| `desk-notify.yml` | After pull / pulse / sync / lines | Posts each robot's result to the 📥 desk | `DESK_KEY` |
+| `desk-notify.yml` | After pull / pulse / sync / lines / backend check | Posts each robot's result to the 📥 desk (failures only for lines and backend check) | `DESK_KEY` |
 | `build-check.yml` / `build-write.yml` | `build-fix/**` push / manual | Runs `build\*.ps1` on Windows (check / write) for chat sessions | — |
-| `claude-mention.yml` | `@claude` comment | Claude edits that PR/issue branch | Anthropic key |
+| `claude-mention.yml` | `@claude` comment (owner/members only) | Claude edits that PR/issue branch | `CLAUDE_CODE_OAUTH_TOKEN` |
 | `espn-draft-history.yml`, `rehearsal.yml` | Manual | One-offs | `ESPN_S2`, `SWID` |
 
 Outside the repo: **Claude scheduled task "MAFFL Tuesday Pulse kickoff"** (Tue 5:07 AM ET) dispatches the pull,
@@ -170,7 +176,8 @@ watches the chain, retries once, pushes a phone report. **Apps Script time trigg
   gold audits. Run in Actions (Linux) or a chat workspace.
 - `build\*.ps1` — Windows PowerShell 5.1 generators + `validate.ps1` (8 gates). Chat runs them via `build-*.yml`.
 - `_ops/tests/mock.js` + `regress.js` + `regress_expected.txt` — backend regression on a mocked Sheet/ESPN with a
-  frozen clock. **Required before every backend push.** `shoot.py` — headless 390 px screenshots of the app.
+  frozen clock and frozen league data (`_ops/tests/fixtures/`, Week 9). **Required before every backend push** (CI runs it
+  too). `contract.js` — the REEL data contract. `shoot.py` — headless 390 px screenshots of the app.
 
 ### 3g. Data flows (the four that matter)
 
@@ -198,7 +205,13 @@ watches the chain, retries once, pushes a phone report. **Apps Script time trigg
 
 ### 4b. Health checks
 
-- 📥 desk → 🤖 Robots row: each robot's last run and state ("all running").
+- **From your phone, within 5 minutes:** an uptime monitor (free UptimeRobot / Better Stack) polls
+  `<API_URL>?action=health` every 5 min for the keyword `"healthy":true` and pushes/texts you when it's missing.
+  healthy = the code loads and the 15-minute robot ran in the last 40 minutes.
+- Email: desk alerts (sync failed, ESPN cookies, daily run didn't start, guesses paused, nightly credit check) are emailed
+  to you, max 5 per 6 h; a part that won't compile emails you too.
+- 📥 desk → 🤖 Robots row: each robot's last run and state ("all running"), plus ✉️ emails left today. 🐞 notes = an app
+  error on an owner's phone.
 - Apps Script → Executions: failures and timeouts. Triggers: `tick` present, every 15 min.
 - GitHub → Actions: red runs (desk-notify also posts them).
 - App → You → App errors (per phone).
@@ -212,7 +225,9 @@ watches the chain, retries once, pushes a phone report. **Apps Script time trigg
 | New part file | Push the part alone first, then the core that loads it (raw GitHub lag) |
 | Reset a passphrase | Desk → 🔑 Sign-in help → issue (or Sheet menu). Text it to the owner |
 | Unlock an owner | Desk or Sheet menu → Unlock |
-| Roll back the backend | `git revert` the commit and push; the loader picks it up in 5 min. A push that won't compile falls back to the 6-h last-good copy automatically |
+| Roll back the backend | `git revert` the commit and push; the loader picks it up in 5 min. A push that won't compile falls back to the 6-h last-good copy automatically (any file) and emails you. "Load latest logic now" is a Sheet menu: desktop browser only (UNVERIFIED in the Sheets phone app) |
+| Undo a mistaken approval | Team → Trades / Credits → the approved card → ↩️ Reverse (reason required). Offsetting ledger rows; the original stays in Credit_Log. Players / ESPN side: undo by hand on ESPN |
+| Roll back Sheet data | Sheet → File → Version history → named version (name one before launch and before any Wipe) |
 | Rotate `GITHUB_TOKEN` | New fine-grained PAT (repo Contents RW) → Script property. Check desk robots row next run |
 | Stage / clear beta data | Desk → 🚀 Go-live → 🎭 Seed data → Build / Reseed / Tag as staged / Wipe |
 
@@ -227,7 +242,10 @@ watches the chain, retries once, pushes a phone report. **Apps Script time trigg
 - **Runtime coupling to classic pages** (§3a): renaming a variable or class in weekly/credits/prize/rules/
   power-rankings silently breaks the app. Treat those blocks as an API.
 - **Single maintainer / single Google account.** Everything runs as the commish. Document a second admin (§6).
-- **Public repo:** never commit PII, tokens, passphrases or the ESPN zip. Contacts live only in the Sheet.
+- **Public repo:** never commit PII, tokens, passphrases or the ESPN zip. Contacts live in the Sheet, **but** the 21 active
+  owners' emails are also in `rules.html` (owner contact buttons) and `data/MAFFL_Owners_Sheet_revised.csv` (Email column):
+  a decision for the commish (pre-launch review F5).
+- **Email quota:** 100 recipients a day. Owner emails stop at 10 left (kept for alerts); a 📣 alert skips email below 35.
 
 ## 5. Go-live readiness checklist
 
@@ -243,6 +261,8 @@ Status as of 2026-11-10. ✅ done · ⬜ open · 🔶 decision needed.
 - ⬜ Seed rebuilt Wednesday night on current rosters
 - ⬜ `OWNER_EMAILS = "beta"` once the crew has been told
 - ⬜ Commish feel test on his own phone (Home-Screen): sign-in, trade + negate, perk, over-balance block, chat, swipe
+
+**Pre-launch review (11/10) — commish steps:** see `_ops/AUDIT_2026-11-10_prelaunch.md` → "Your action list".
 
 **Hook-ups**
 - ✅ `DESK_KEY` (11/3); `GITHUB_TOKEN` (card lines are running)
@@ -296,7 +316,9 @@ The backend doesn't move at all.
 4. **URLs:** `APP_LINK` (app) and `APP_URL` (logic.js) → root; drop the `maffl_lab_api` override.
 5. **`lab/index.html` → redirect** to `../index.html` keeping `#offer-ID` hashes (testers' bookmarks and texted links).
 6. **Retired pages** (`stats.html`, `overview.html`, later `speakup.html`) → small redirect stubs, never 404s.
-7. **Backend flips:** `CREDIT_SYNC=live`, `OWNER_EMAILS="live"`.
+7. **Backend flips:** `CREDIT_SYNC=live`, `OWNER_EMAILS="live"`, `LEGACY_PINS = false` (after every owner has a new
+   passphrase; the desk's Owner access line shows how many are left). `STAGE = "live"` also stops the app honouring the
+   `maffl_lab_api` test override.
 8. **Robots:** stop `pulse-draft.yml`'s Claude step; keep the data job.
 9. **Announce:** passphrase emails, launch post. Watch desk + Apps Script executions for the first evening.
 

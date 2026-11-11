@@ -140,8 +140,8 @@ function poll_(me, b) {
 // as kind "announce" and pinned there, so it sits on top of each room until he unpins it.
 function announce_(me, b) {
   var text = String(b.text || "").trim().slice(0, CHAT_MAX); if (!text) return { ok: false, error: "Write the alert first" };
-  var rooms = ["league", "tier:U", "tier:L"], sh = sheet_("Chat");
-  rooms.forEach(function (room) { post_(room, me.owner, "announce", text, "", "ALERT", [], ""); setCell_("Chat", sh.getLastRow(), "pinned", "Y"); });
+  var rooms = ["league", "tier:U", "tier:L"];
+  rooms.forEach(function (room) { post_(room, me.owner, "announce", text, "", "ALERT", [], "", true); }); // pinned in the same write (review: pinning "the last row" could pin someone else's message)
   deskPost_("note", "📣 Commish alert sent to " + rooms.length + " group chats: " + text.slice(0, 80), "", "ANNOUNCE");
   var left = mailLeft_(), out = { ok: true, n: rooms.length, mailLeft: left };
   if (left < 35) { out.emailed = false; deskPost_("note", "📣 The alert is in every chat, but NOT emailed: only " + left + " of today's 100 emails are left (Google's limit). It resets 24 h after the first send.", "", "MAILQUOTA"); }
@@ -238,7 +238,7 @@ function tickRun_() {
     if (etHour_(now) >= 8 && Math.floor(now.getTime() / 9e5) % 2 === 0) job("espn", function () { return tickEspnMoves_(sent, now); }); // every 30 min, 8 AM–midnight
     var day = etDay_(now);
     if (etHour_(now) >= 3 && props.getProperty("TICK_DAILY") !== day) { props.setProperty("TICK_DAILY", day); job("reconcile", function () { return tickReconcile_(sent, now); }); }
-    Object.keys(sent).forEach(function (k) { if (now - sent[k] > 60 * 864e5) delete sent[k]; }); // forget after 60 days
+    Object.keys(sent).forEach(function (k) { if (now - sent[k] > 21 * 864e5) delete sent[k]; }); // forget after 21 days (keeps the property chunks small; reminders are for 14-day windows)
     saveTickSent_(sent);
     props.setProperty("LAST_TICK", JSON.stringify({ at: now.toISOString(), log: log.slice(0, 12) }));
     return { ok: true, log: log };

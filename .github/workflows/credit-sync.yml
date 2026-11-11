@@ -74,6 +74,7 @@ jobs:
           $sum += ($g + $g2 + $v | ForEach-Object { ($_ | Out-String).TrimEnd() -replace "`e\[[0-9;]*m", '' }); $sum += '```', '</details>'
           $sum | Out-File $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
           if ($gc -ne 0 -or $vc -ne 0) { Write-Output "::error::credits.html not in sync or validate failed; nothing committed"; exit 1 }
+          node _ops/tests/contract.js; if ($LASTEXITCODE -ne 0) { Write-Output "::error::credits.html would break the REEL app (data contract); nothing committed"; exit 1 }  # review F8
           # Standing rule: data refresh = Last Updated date only (no version bump)
           $d = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::UtcNow, 'Eastern Standard Time')
           $stamp = $d.ToString('MMMM d, yyyy', [Globalization.CultureInfo]::InvariantCulture)

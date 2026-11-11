@@ -903,6 +903,35 @@
 <script src="vault-data.js"></script>
 <script src="../draft-summary-data.js"></script>
 <script>
+// ✨ Update check, in its own script (pre-launch review): if a bad push breaks the main script, phones still find and load the fix.
+(function () {
+  "use strict";
+  // (commish 11/9): a Home-Screen app keeps running the copy it loaded. Fingerprint this copy's own
+  // scripts + styles, compare with a fresh fetch of the page: on boot, on return to the app (≥1 min apart) and every
+  // 10 min. Newer copy → back after 10+ min away with nothing being typed: reload; otherwise a tap-to-refresh pill.
+  (function () {
+    function fp(doc) { var t = ""; Array.prototype.forEach.call(doc.querySelectorAll("script:not([src]),style"), function (e) { t += e.textContent; });
+      var h = 5381; for (var i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return h + ":" + t.length; }
+    var mine = null, last = 0, hiddenAt = 0, ready = false, btn = document.getElementById("upd");
+    function busyTyping() { var a = document.activeElement; return !!(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) || Array.prototype.some.call(document.querySelectorAll("textarea"), function (x) { return x.value.trim(); }); }
+    function show() { ready = true; btn.classList.add("on"); }
+    function check(auto) { if (ready) { if (auto && !busyTyping()) location.reload(); return; }
+      if (Date.now() - last < 6e4) return; last = Date.now();
+      fetch(location.pathname + "?u=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (txt) {
+        if (!txt || txt.indexOf("</html>") < 0) return;
+        if (!mine || fp(new DOMParser().parseFromString(txt, "text/html")) === mine) return;
+        if (auto && !busyTyping()) location.reload(); else show(); }).catch(function () {}); }
+    btn.onclick = function () { location.reload(); };
+    document.addEventListener("DOMContentLoaded", function () { mine = fp(document); }); // every inline script is parsed by then
+    setTimeout(function () { check(false); }, 4000);
+    setInterval(function () { if (!document.hidden) check(false); }, 6e5);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) { hiddenAt = Date.now(); return; }
+      var away = hiddenAt && Date.now() - hiddenAt >= 6e5; if (away) last = 0; check(away); });
+    window._updShow = show; // tests
+  })();
+})();
+</script>
+<script>
 (function () {
   "use strict";
   // ---------- tiny helpers ----------
@@ -920,7 +949,9 @@
   // Backend: Google Apps Script web app bound to the "MAFFL HQ App — TEST backend (lab)" Sheet.
   // Empty = offline demo (pick a team, reactions stay on this phone). See _ops/apps-script/Code.gs.
   var API_URL = "https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec";
-  try { API_URL = localStorage.getItem("maffl_lab_api") || API_URL; } catch (e) {}
+  // "beta" until go-live (APP_DESIGN §9), then "live": hides the beta strip and the practice-run note in More.
+  var STAGE = "beta";
+  if (STAGE !== "live") try { API_URL = localStorage.getItem("maffl_lab_api") || API_URL; } catch (e) {} // test hook (shoot.py); ignored once live (review: beta phones keep the old URL)
   var SUM = { counts: {}, mine: {}, tallies: {}, myVotes: {}, polls: [] };
   // Every league-server call shows the gold bar under the header (after 250 ms, so quick ones don't flicker).
   // Background polls (chat inbox, live auto-refresh, optimistic reactions/votes) pass quiet and stay invisible.
@@ -961,31 +992,7 @@
   function creds() { return { owner: ME && ME.owner, pin: store("maffl_lab_pin") || "" }; }
   // ---------- contacts + nudges (APP_DESIGN §4b): owner email/phone come from the backend, signed-in only ----------
   var APP_LINK = "https://maffl-commish.github.io/maffl/lab/";
-  // "beta" until go-live (APP_DESIGN §9), then "live": hides the beta strip and the practice-run note in More.
-  var STAGE = "beta";
   if (STAGE === "live") { var stageBar = document.getElementById("stagebar"); if (stageBar) stageBar.remove(); }
-  // ✨ Update check (commish 11/9): a Home-Screen app keeps running the copy it loaded. Fingerprint this copy's own
-  // scripts + styles, compare with a fresh fetch of the page: on boot, on return to the app (≥1 min apart) and every
-  // 10 min. Newer copy → back after 10+ min away with nothing being typed: reload; otherwise a tap-to-refresh pill.
-  (function () {
-    function fp(doc) { var t = ""; Array.prototype.forEach.call(doc.querySelectorAll("script:not([src]),style"), function (e) { t += e.textContent; });
-      var h = 5381; for (var i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return h + ":" + t.length; }
-    var mine = fp(document), last = 0, hiddenAt = 0, ready = false, btn = document.getElementById("upd");
-    function busyTyping() { var a = document.activeElement; return !!(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) || Array.prototype.some.call(document.querySelectorAll("textarea"), function (x) { return x.value.trim(); }); }
-    function show() { ready = true; btn.classList.add("on"); }
-    function check(auto) { if (ready) { if (auto && !busyTyping()) location.reload(); return; }
-      if (Date.now() - last < 6e4) return; last = Date.now();
-      fetch(location.pathname + "?u=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (txt) {
-        if (!txt || txt.indexOf("</html>") < 0) return;
-        if (fp(new DOMParser().parseFromString(txt, "text/html")) === mine) return;
-        if (auto && !busyTyping()) location.reload(); else show(); }).catch(function () {}); }
-    btn.onclick = function () { location.reload(); };
-    setTimeout(function () { check(false); }, 4000);
-    setInterval(function () { if (!document.hidden) check(false); }, 6e5);
-    document.addEventListener("visibilitychange", function () { if (document.hidden) { hiddenAt = Date.now(); return; }
-      var away = hiddenAt && Date.now() - hiddenAt >= 6e5; if (away) last = 0; check(away); });
-    window._updShow = show; // tests
-  })();
   function contactOf(owner) { return (SUM.contacts || []).filter(function (c) { return norm(c.owner) === norm(owner); })[0] || {}; }
   function fmtPhone(d) { d = String(d || ""); return d.length === 10 ? "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6) : d; }
   function smsHref(phone, body) { return "sms:" + (phone || "") + "?&body=" + encodeURIComponent(body); } // ?& works on iOS and Android
