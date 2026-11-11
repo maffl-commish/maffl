@@ -250,6 +250,22 @@ jobs:
             TITLE="Weekly Pulse: Week $WEEK draft"; BODY=$(printf "_ops/inbox/MAFFL_2026_Week%02d_pr.md" "$WEEK")
           fi
           git add -A
+          # Pre-launch review B7: Claude (with Bash, reading owner-written ESPN text) may only change weekly.html and the
+          # inbox summary/check files (ROBOT_PULSE_RECIPE.md). Anything else it touched, staged or committed, is put back
+          # to what the data job pushed, and the run won't auto-merge. Pushing _ops/apps-script/ would deploy the backend.
+          SCOPE=""
+          for f in $(git diff --cached --name-only "origin/$BRANCH"); do
+            case "$f" in weekly.html|_ops/inbox/*) ;; *) SCOPE="$SCOPE $f" ;; esac
+          done
+          if [ -n "$SCOPE" ]; then
+            echo "::error::Claude changed files outside its scope; reverted:$SCOPE"
+            for f in $SCOPE; do
+              if git cat-file -e "origin/$BRANCH:$f" 2>/dev/null; then git checkout "origin/$BRANCH" -- "$f"; else git rm -q --cached -f "$f" 2>/dev/null; rm -f "$f"; fi
+            done
+            git reset -q --soft "origin/$BRANCH"; git add -A
+            CHECK_FAILED=true
+          fi
+          node _ops/tests/contract.js || CHECK_FAILED=true   # the app reads WEEKS / SHORT_NAMES from weekly.html (review F8)
           git diff --cached --quiet || git commit -m "$TITLE"
           git push origin HEAD
           if [ ! -f "$BODY" ]; then
@@ -272,6 +288,10 @@ jobs:
             jq -n --arg k "$DESK_KEY" --arg t "$1" --arg x "$2" --arg l "$3" --arg s "$4" '{action:"botpost",key:$k,title:$t,text:$x,link:$l,status:$s}' > desk.json
             curl -sSL --max-time 60 -H "Content-Type: text/plain;charset=utf-8" --data @desk.json "$APP_API" | head -c 200; echo; rm -f desk.json; }
           if [ "$MODE" != "draft" ]; then exit 0; fi
+          if [ -n "$SCOPE" ]; then
+            desk "Week $WEEK Pulse: robot went out of bounds" "Claude changed files it isn't allowed to touch:$SCOPE. They were put back and the Pulse did NOT publish. Look at the run before merging." "$URL" fail
+            exit 0
+          fi
           if [ "$CHECK_FAILED" = "true" ]; then
             desk "Week $WEEK Pulse needs a look" "The automatic check failed, so it did NOT publish. Open the PR and comment @claude fix the check failures (or ask Claude in chat)." "$URL" fail
             exit 0
