@@ -3822,7 +3822,7 @@
       var cnt = (d.counts || {})[ref] || {}, my = (d.mine || {})[ref] || {}, who = (d.who || {})[ref] || {}, names = [];
       Object.keys(who).forEach(function (e) { who[e].forEach(function (o) { names.push(isMe(o) ? "You" : shortOf(o)); }); });
       var live = Object.keys(cnt).filter(function (e) { return cnt[e] > 0; });
-      if (live.length) h += '<div class="crx">' + live.map(function (e) { return '<button class="' + (my[e] ? 'sel' : '') + '" data-creact="' + m.id + '" data-e="' + e + '">' + e + ' ' + cnt[e] + '</button>'; }).join("") +
+      if (live.length) h += '<div class="crx">' + live.map(function (e) { return '<button class="' + (my[e] ? 'sel' : '') + '" data-creact="' + esc(m.id) + '" data-e="' + esc(e) + '">' + esc(e) + ' ' + (Number(cnt[e]) || 0) + '</button>'; }).join("") + // esc: the emoji key comes back from the server as typed (audit 11/10)
         (names.length ? '<span class="whos">' + esc(names.slice(0, 4).join(", ")) + (names.length > 4 ? " +" + (names.length - 4) : "") + '</span>' : '') + '</div>';
       if (CH.picker === m.id) h += '<div class="cpick">' + CHAT_EMO.map(function (e) { return '<button class="' + (my[e] ? 'sel' : '') + '" data-creact="' + m.id + '" data-e="' + e + '">' + e + '</button>'; }).join("") + '</div>';
     }
