@@ -294,7 +294,7 @@ function perks_(owner) {
 //   CREDIT_SYNC   "live" = real credits (credit_ledger.json). Anything else = TEST (credit_ledger_test.json, robot dry run).
 // Rows remember the mode they were approved in, so lab tests never leak into the live ledger.
 // REPO lives in logic.js (the core needs it to load the parts)
-function syncMode_() { return String(PropertiesService.getScriptProperties().getProperty("CREDIT_SYNC") || "").toLowerCase() === "live" ? "live" : "test"; }
+function syncMode_() { return String(prop_("CREDIT_SYNC") || "").toLowerCase() === "live" ? "live" : "test"; }
 function teamName_(owner) { var o = ownerRow_(owner); return o ? o.team : owner; }
 function ledger_(mode) {
   var out = [];

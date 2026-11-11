@@ -3488,6 +3488,8 @@
   function deskPeopleHTML(d) { var h = "";
     if ((d.noPin || []).length) h += '<div class="dsk"><details><summary>👥 ' + d.noPin.length + ' owner' + (d.noPin.length === 1 ? '' : 's') + ' without a passphrase yet</summary>' + d.noPin.map(function (o) {
       return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue passphrase", 1) + '</div></div>'; }).join("") + '</details></div>';
+    if ((d.oldPin || []).length) h += '<div class="dsk"><details' + (d.legacyPins ? '' : ' open') + '><summary>⚠️ ' + d.oldPin.length + ' owner' + (d.oldPin.length === 1 ? '' : 's') + ' on an old two-word passphrase' + (d.legacyPins ? ' (easy to guess: reissue before go-live)' : ' (these no longer work: reissue)') + '</summary>' + d.oldPin.map(function (o) {
+      return '<div class="ditem"><b>' + esc(teamOf(o).team || o) + '</b> <span class="meta">' + esc(o) + '</span><div class="btns">' + deskBtn("issue", o, "🔑 Issue a new one", 1) + '</div></div>'; }).join("") + '</details></div>'; // review B6
     return h; }
   function deskRobotsHTML(d) { var h = "";
     var ls2 = d.sync && d.sync.last, tk = d.tick || {}, tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
@@ -3645,7 +3647,7 @@
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
       '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
-      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + deskSeedHTML(d) +
+      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + (STAGE === "live" || ((d.sync || {}).mode === "live") ? '' : deskSeedHTML(d)) + // seed tools vanish at go-live (review B3)
       '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Trades, robots, owners, notes", today ? today + " today" : "", deskLogHTML());
     DK.secs = DK.secs || {}; Array.prototype.forEach.call(b.querySelectorAll("details"), function (x) { var k = x.dataset.sec || (x.querySelector("summary") || x).textContent.replace(/[\d·]+/g, "").trim().slice(0, 24); x.dataset.sec = k; x.open = !!DK.secs[k]; });
     if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }

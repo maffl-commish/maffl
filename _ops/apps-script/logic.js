@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.65";
+var VERSION = "0.66";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -28,6 +28,9 @@ function perkDeadline_(week) {
   var ymd = d.toISOString().slice(0, 10), hm = week === 12 ? "11:30" : "18:00";
   return new Date(ymd + "T" + hm + ":00" + (dst ? "-04:00" : "-05:00"));
 }
+// Older two-word passphrases (plain SHA-256, ~7,000 possibilities) still verify while this is true. Go-live switch
+// (pre-launch review B6): reissue every owner still listed under "old passphrase" on the desk, then set it to false.
+var LEGACY_PINS = true;
 var MAX_FAILS_PER_HOUR = 60; // league-wide guess limit for passphrase-only sign-in (raised 11/7: phrases now ~6 million, phones use tokens)
 
 // Passphrases are two football words and 3 digits, e.g. GRONK-PISTOL-427 (older ones: two words). Case, spaces and dashes don't matter when typing.
@@ -156,9 +159,14 @@ function ownerRow_(owner) { var n = norm_(owner); return owners_().filter(functi
 // Passphrase hashes. New ones (setPhrase_) are "h2:" + HMAC-SHA256 with a secret pepper kept in Script Properties, so the
 // Sheet alone can't be used to test guesses. Older plain SHA-256 hashes still verify until the commish issues a new phrase.
 function hex_(bytes) { return bytes.map(function (b) { return ("0" + (b & 255).toString(16)).slice(-2); }).join(""); }
+// Script properties, read once per request (Properties reads are capped at 50,000 a day; every poll used to read several).
+var PROPS_ = null;
+function prop_(k) { if (!PROPS_) PROPS_ = PropertiesService.getScriptProperties().getProperties(); return PROPS_[k] == null ? null : PROPS_[k]; }
+function setProp_(k, v) { PropertiesService.getScriptProperties().setProperty(k, v); if (PROPS_) PROPS_[k] = v; }
+// The pepper is also kept in the script cache (6 h), so the chat / inbox polls don't read Properties at all.
 function pepper_(make) {
-  var p = PropertiesService.getScriptProperties(), k = p.getProperty("PIN_PEPPER");
-  if (!k && make) { k = Utilities.getUuid() + Utilities.getUuid(); p.setProperty("PIN_PEPPER", k); }
+  var c = CacheService.getScriptCache(), k = c.get("pin_pepper");
+  if (!k) { k = prop_("PIN_PEPPER"); if (!k && make) { k = Utilities.getUuid() + Utilities.getUuid(); setProp_("PIN_PEPPER", k); } if (k) c.put("pin_pepper", k, 21600); }
   return k || "";
 }
 function hmac_(text, key) { return hex_(Utilities.computeHmacSha256Signature(text, key)); }
@@ -166,7 +174,7 @@ function hashV1_(salt, pin) { return hex_(Utilities.computeDigest(Utilities.Dige
 function hash_(salt, pin) { return "h2:" + hmac_(salt + ":" + normPin_(pin), pepper_(true)); }
 function pinOk_(o, pin) {
   var h = String(o.pin_hash || ""); if (!h || !normPin_(pin)) return false;
-  if (h.indexOf("h2:") !== 0) return hashV1_(o.salt, pin) === h;
+  if (h.indexOf("h2:") !== 0) return LEGACY_PINS && hashV1_(o.salt, pin) === h;
   var k = pepper_(false); return !!k && "h2:" + hmac_(o.salt + ":" + normPin_(pin), k) === h;
 }
 // Device token: handed out at sign-in and kept on the phone instead of the passphrase. Tied to the owner's salt, so a
@@ -331,7 +339,7 @@ function summary_(week, owner) {
     .map(function (p) { return { id: p.poll_id, week: p.week, q: p.question, options: p["options (separate with |)"], closes: p["closes (ISO)"], tier: p.tier || "" }; });
   var t = trades_(owner);
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
-  var last = {}; try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
+  var last = {}; try { last = JSON.parse(prop_("LAST_SYNC") || "{}"); } catch (e) {}
   return { ok: true, handles: (function () { try { return handles_(); } catch (e) { return {}; } })(), contacts: owner ? contacts_() : [], perks: pk.perks, insuranceLeft: pk.insuranceLeft, moves: pendingMoves_(), sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
     commish: !!(meRow && String(meRow.is_commish) === "Y"), beta: isBeta_(meRow), tour: meRow && meRow.tour ? String(meRow.tour) : "", chat: meRow ? inbox_(meRow) : null };
 }
@@ -343,8 +351,8 @@ var DAILY = {}, MODS_ = {};
 function need_(name) {
   if (MODS_[name]) return; var c = CacheService.getScriptCache(), k = "mod_" + name, src = c.get(k);
   if (!src) { var r = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/_ops/apps-script/" + name + ".js?t=" + Date.now(), { muteHttpExceptions: true });
-    if (r.getResponseCode() === 200) { src = r.getContentText(); if (src.length < 95000) { c.put(k, src, 300); c.put("mod_last_" + name, src, 21600); } }
-    else { src = c.get("mod_last_" + name); if (!src) throw new Error("Couldn't load " + name + ".js (" + r.getResponseCode() + ")"); } } // GitHub hiccup: last good copy (6 h)
+    if (r.getResponseCode() === 200 && compiles_(r.getContentText())) { src = r.getContentText(); if (src.length < 95000) { c.put(k, src, 300); c.put("mod_last_" + name, src, 21600); } }
+    else { src = c.get("mod_last_" + name); if (!src) throw new Error("Couldn't load " + name + ".js (" + r.getResponseCode() + ")"); badPush_(name, r); } } // GitHub hiccup or a push that won't compile: last good copy (6 h)
   eval(src); MODS_[name] = 1;
 }
 // ---------------------------------------------------------------- commish menu
@@ -382,14 +390,21 @@ function menuUnlock() {
 // change and the core load together) and a last good copy is kept 6 h, so a GitHub hiccup doesn't take sign-in down.
 // daily.js stays lazy (need_("daily")). Keep every file under ~90 KB.
 var PARTS = ["mod_trades", "mod_espn", "mod_social", "mod_desk"];
+// Pre-launch review B4: a part with a syntax error used to be cached as the "last good" copy and then take sign-in down.
+// Now it's compiled (not run) first; a broken one is skipped and the last good copy (6 h) is used instead.
+function compiles_(src) { try { new Function(src); return true; } catch (e) { return false; } }
+function badPush_(name, r) { // tell the commish once an hour; he can't see Apps Script logs from his phone
+  if (!r || r.getResponseCode() !== 200) return; var c = CacheService.getScriptCache(); if (c.get("badpush_" + name)) return; c.put("badpush_" + name, "1", 3600);
+  try { MailApp.sendEmail(Session.getEffectiveUser().getEmail(), "MAFFL HQ: " + name + ".js on main doesn't compile", "The backend is running the last good copy of " + name + ".js (kept 6 hours). Revert or fix the last push to _ops/apps-script/" + name + ".js."); } catch (e) {}
+}
 function parts_() {
   var c = CacheService.getScriptCache(), out = [];
   PARTS.forEach(function (p) {
     var k = "part_" + p + "@" + VERSION, src = c.get(k);
     if (!src) {
       var r = null; try { r = UrlFetchApp.fetch("https://raw.githubusercontent.com/" + REPO + "/main/_ops/apps-script/" + p + ".js?t=" + Date.now(), { muteHttpExceptions: true }); } catch (e) {}
-      if (r && r.getResponseCode() === 200) { src = r.getContentText(); if (src.length < 95000) { c.put(k, src, 300); c.put("part_last_" + p, src, 21600); } }
-      else { src = c.get("part_last_" + p); if (!src) throw new Error("Couldn't load " + p + ".js (" + (r ? r.getResponseCode() : "network") + ")"); }
+      if (r && r.getResponseCode() === 200 && compiles_(r.getContentText())) { src = r.getContentText(); if (src.length < 95000) { c.put(k, src, 300); c.put("part_last_" + p, src, 21600); } }
+      else { src = c.get("part_last_" + p); if (!src) throw new Error("Couldn't load " + p + ".js (" + (r ? r.getResponseCode() : "network") + ")"); badPush_(p, r); }
     }
     out.push(src);
   });

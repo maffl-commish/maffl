@@ -44,6 +44,7 @@ function desk_(me) {
     access: openRequests_().map(function (r) { var o = ownerRow_(r.owner) || {}; return { owner: r.owner, team: o.team, ts: r.ts, note: String(r.note || ""), hasPin: !!o.pin_hash }; }),
     locked: owners.filter(function (o) { return String(o.locked) === "Y"; }).map(function (o) { return o.owner; }),
     noPin: owners.filter(function (o) { return !o.pin_hash && !/ghost/i.test(String(o.team || "") + String(o.owner || "")); }).map(function (o) { return o.owner; }),
+    oldPin: owners.filter(function (o) { return o.pin_hash && String(o.pin_hash).indexOf("h2:") !== 0; }).map(function (o) { return o.owner; }), legacyPins: LEGACY_PINS, // review B6
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
     moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: tradeAudit_(), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_() };
 }
@@ -86,6 +87,7 @@ function deskAct_(me, b) {
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
     deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }
+  if ((b.op === "seed" || b.op === "adopt" || b.op === "unseed") && syncMode_() === "live") return { ok: false, error: "Seed tools are off after go-live (credits are LIVE): they would tag or wipe real offers, perks and chat." }; // review B3
   if (b.op === "seed") return seedBuild_(me);
   if (b.op === "adopt") { var ad = seedAdopt_(); deskPost_("note", "🏷️ Earlier test data tagged as staged (" + ad.offers + " offers, " + ad.perks + " perk requests, " + ad.msgs + " messages, " + ad.block + " trade-block listings). Wipe seed now takes it out too.", "", "SEED"); return Object.assign({ ok: true }, ad); }
   if (b.op === "unseed") { var w = seedWipe_(); deskPost_("note", "🎭 Seed data wiped (" + w.offers + " offers, " + w.msgs + " messages, " + w.block + " trade-block listings).", "", "SEED"); return Object.assign({ ok: true }, w); }
@@ -340,8 +342,8 @@ function seedKeep_(name, keep) {
   var sh = sheet_(name), v = sh.getDataRange().getValues(), head = v.shift(), kept = [], gone = 0;
   v.forEach(function (row, i) { var o = { _row: i + 2 }; head.forEach(function (h, k) { o[h] = row[k]; }); if (row.join("") === "" ) return; if (keep(o)) kept.push(cells_(row)); else gone++; });
   if (!gone) return 0;
-  if (v.length) sh.getRange(2, 1, v.length, head.length).clearContent();
-  if (kept.length) sh.getRange(2, 1, kept.length, head.length).setValues(kept);
+  if (kept.length) sh.getRange(2, 1, kept.length, head.length).setValues(kept); // write what stays first, then clear the tail:
+  sh.getRange(2 + kept.length, 1, v.length - kept.length, head.length).clearContent(); // a failure in between leaves extra rows, never an empty tab
   delete MEMO_[name]; return gone;
 }
 function seedWipe_() {
