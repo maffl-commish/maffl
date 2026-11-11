@@ -18,12 +18,15 @@
  * Use:   node mock.js [port]         → HTTP server; GET/POST /exec behave like the Apps Script web app.
  *        require("./mock.js").create() → { get(params), post(bodyObj), sheet(name), pin(owner) }
  * Extra: GET /__reset (reseed) · GET /__pins (owner → passphrase) · GET /__sheet?name=Chat (raw rows)
- * Env:   MAFFL_REPO (default: this repo) · MOCK_QUIET=1 · MOCK_DELAY=summary:1500,daily:800 ("*" = every action)
+ * Env:   MAFFL_REPO (default: this repo) · MAFFL_DATA (league data root; default MAFFL_REPO) · MOCK_QUIET=1 · MOCK_DELAY=summary:1500,daily:800 ("*" = every action)
  */
 "use strict";
 const fs = require("fs"), path = require("path"), crypto = require("crypto"), vm = require("vm"), http = require("http");
 const REPO = process.env.MAFFL_REPO || path.resolve(__dirname, "../..");
-const rd = (p) => fs.readFileSync(path.join(REPO, p), "utf8");
+// League data (weekly.html, data/*.csv, ESPN pull files) comes from DATA; backend code always from REPO.
+// regress.js points DATA at _ops/tests/fixtures (a frozen copy) so the regression doesn't move when a new week lands.
+const DATA = process.env.MAFFL_DATA || REPO;
+const rd = (p) => fs.readFileSync(path.join(/^_ops\/apps-script\//.test(p) ? REPO : DATA, p), "utf8");
 const norm = (s) => String(s || "").replace(/\s*\/\s*/g, "/").trim().toLowerCase();
 const r2 = (x) => Math.round(x * 100) / 100;
 const HOUR = 36e5;
@@ -69,7 +72,7 @@ function loadData() {
   // real game results Weeks 1..N from the robot's ESPN pull files
   const games = [];
   const seenG = {};
-  fs.readdirSync(path.join(REPO, "_ops/inbox")).filter((f) => /^MAFFL_2026_Week\d+_espn\.md$/.test(f)).sort().forEach((f) => {
+  fs.readdirSync(path.join(DATA, "_ops/inbox")).filter((f) => /^MAFFL_2026_Week\d+_espn\.md$/.test(f)).sort().forEach((f) => {
     const fw = +/Week(\d+)/.exec(f)[1];
     rd("_ops/inbox/" + f).split(/\r?\n/).forEach((line) => {
       const m = /^2026,(\d+),(Upper|Lower),(True|False),(\w+),/.exec(line); if (!m || +m[1] !== fw) return; // OUTPUT 1 rows of the file's own week only

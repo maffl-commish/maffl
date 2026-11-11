@@ -10,6 +10,8 @@
   class FrozenDate extends Real { constructor(...a) { if (a.length) super(...a); else super(now()); } static now() { return now(); } }
   global.Date = FrozenDate;
 })();
+// League data from the frozen fixture (Week 9, 2026), not the live repo files the robots keep changing.
+process.env.MAFFL_DATA = process.env.MAFFL_DATA || require("path").join(__dirname, "fixtures");
 const mockMod = require("./mock.js");
 const m = mockMod.create({});
 const norm = (o) => JSON.stringify(o, null, 0)

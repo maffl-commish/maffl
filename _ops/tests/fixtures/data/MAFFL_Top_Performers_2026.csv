@@ -1,0 +1,442 @@
+Year,Week,Tier,Team,Owner,Rank,Player,Pos,Points
+2026,3,Upper,Happy Valley Hammer Time,Tony Trozzo,1,B. Purdy,,39.28
+2026,3,Upper,Happy Valley Hammer Time,Tony Trozzo,2,B. Nix,,27.14
+2026,3,Upper,Happy Valley Hammer Time,Tony Trozzo,3,N. Dean,,16.0
+2026,3,Upper,Bad Attitude Gang,Mike Murello,1,T. Shough,,28.8
+2026,3,Upper,Bad Attitude Gang,Mike Murello,2,J. Smith-Njigba,,25.36
+2026,3,Upper,Bad Attitude Gang,Mike Murello,3,W. Anderson Jr.,,18.5
+2026,3,Upper,South Hills FunShiners,BJ Funari,1,B. Robinson,,33.3
+2026,3,Upper,South Hills FunShiners,BJ Funari,2,G. Smith,,31.04
+2026,3,Upper,South Hills FunShiners,BJ Funari,3,K. Cousins,,28.22
+2026,3,Upper,Marco Clair Kardiac Attack,David Murello,1,L. Jackson,,24.44
+2026,3,Upper,Marco Clair Kardiac Attack,David Murello,2,C. Stroud,,13.68
+2026,3,Upper,Marco Clair Kardiac Attack,David Murello,3,D. Davis,,11.5
+2026,3,Upper,Jake's Jagoffs,Jacob Nickman,1,J. Brissett,,29.6
+2026,3,Upper,Jake's Jagoffs,Jacob Nickman,2,G. Kittle,,20.2
+2026,3,Upper,Jake's Jagoffs,Jacob Nickman,3,D. Samuel Sr.,,18.9
+2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,J. Cook III,,18.4
+2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,C. Watson,,15.6
+2026,3,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,B. Young,,14.64
+2026,3,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. London,,20.4
+2026,3,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,K. Walker III,,19.3
+2026,3,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,K. Williams,,15.8
+2026,3,Upper,The Big Bang Theory,Dan Reilly,1,F. Warner,,16.5
+2026,3,Upper,The Big Bang Theory,Dan Reilly,2,J. Williams,,16.3
+2026,3,Upper,The Big Bang Theory,Dan Reilly,3,T. Higgins,,15.0
+2026,3,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,,27.58
+2026,3,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Prescott,,20.94
+2026,3,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,D. Henry,,20.9
+2026,3,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,C. Keenum,,28.48
+2026,3,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,T. Lawrence,,24.78
+2026,3,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,C. Lamb,,13.2
+2026,3,Upper,Turkey Hat Conglomerate,Ed Peters,1,J. Gibbs,,34.4
+2026,3,Upper,Turkey Hat Conglomerate,Ed Peters,2,J. Goff,,23.36
+2026,3,Upper,Turkey Hat Conglomerate,Ed Peters,3,P. Mahomes,,18.94
+2026,3,Upper,Reilly's Reindeer,Joe Reilly,1,J. Love,,21.48
+2026,3,Upper,Reilly's Reindeer,Joe Reilly,2,C. McCaffrey,,17.6
+2026,3,Upper,Reilly's Reindeer,Joe Reilly,3,R. Smith,,12.5
+2026,3,Lower,Camp Kes,Bob Keslar,1,T. Hufanga,,22.5
+2026,3,Lower,Camp Kes,Bob Keslar,2,P. Mahomes,,18.94
+2026,3,Lower,Camp Kes,Bob Keslar,3,N. Dean,,16.0
+2026,3,Lower,Fightin Ferrets,Todd Trozzo,1,L. Jackson,,24.44
+2026,3,Lower,Fightin Ferrets,Todd Trozzo,2,K. Walker III,,19.3
+2026,3,Lower,Fightin Ferrets,Todd Trozzo,3,J. Warren,,17.6
+2026,3,Lower,The Best in The 'Burgh,Ben Funari,1,B. Purdy,,39.28
+2026,3,Lower,The Best in The 'Burgh,Ben Funari,2,J. Smith-Njigba,,25.36
+2026,3,Lower,The Best in The 'Burgh,Ben Funari,3,J. Rodriguez,,17.0
+2026,3,Lower,The V-Unit,Chris Johnson,1,J. Burrow,,27.58
+2026,3,Lower,The V-Unit,Chris Johnson,2,T. Lawrence,,24.78
+2026,3,Lower,The V-Unit,Chris Johnson,3,D. Henry,,20.9
+2026,3,Lower,Sarge's Squad,Nick Yankovich,1,D. Prescott,,20.94
+2026,3,Lower,Sarge's Squad,Nick Yankovich,2,C. McCaffrey,,17.6
+2026,3,Lower,Sarge's Squad,Nick Yankovich,3,M. Golden,,16.0
+2026,3,Lower,Tommy Phamclub,Sam Lavrinc,1,J. Brissett,,29.6
+2026,3,Lower,Tommy Phamclub,Sam Lavrinc,2,J. Cook III,,18.4
+2026,3,Lower,Tommy Phamclub,Sam Lavrinc,3,B. Young,,14.64
+2026,3,Lower,Portly Primates,Charles Lavrinc,1,B. Robinson,,33.3
+2026,3,Lower,Portly Primates,Charles Lavrinc,2,G. Smith,,31.04
+2026,3,Lower,Portly Primates,Charles Lavrinc,3,W. Anderson Jr.,,18.5
+2026,3,Lower,Tony's Talented Team,Tony Brooks,1,J. Gibbs,,34.4
+2026,3,Lower,Tony's Talented Team,Tony Brooks,2,T. Shough,,28.8
+2026,3,Lower,Tony's Talented Team,Tony Brooks,3,B. Bowers,,17.6
+2026,3,Lower,Steel City Champyinz,Dominic Nicastro,1,M. Stafford,,22.9
+2026,3,Lower,Steel City Champyinz,Dominic Nicastro,2,G. Kittle,,20.2
+2026,3,Lower,Steel City Champyinz,Dominic Nicastro,3,D. Samuel Sr.,,18.9
+2026,4,Upper,Bad Attitude Gang,Mike Murello,1,T. McMillan,WR,31.2
+2026,4,Upper,Bad Attitude Gang,Mike Murello,2,C. Hubbard,RB,24.9
+2026,4,Upper,Bad Attitude Gang,Mike Murello,3,J. Allen,QB,19.52
+2026,4,Upper,South Hills FunShiners,BJ Funari,1,B. Robinson,RB,26.7
+2026,4,Upper,South Hills FunShiners,BJ Funari,2,K. Cousins,QB,25.6
+2026,4,Upper,South Hills FunShiners,BJ Funari,3,P. Nacua,WR,18.7
+2026,4,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. Maye,QB,30.16
+2026,4,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,K. Walker III,RB,29.9
+2026,4,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,K. Williams,RB,27.7
+2026,4,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,B. Young,QB,25.46
+2026,4,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,J. Taylor,RB,21.7
+2026,4,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,A. Reese,LB,17.0
+2026,4,Upper,Marco Clair Kardiac Attack,David Murello,1,C. Stroud,QB,27.08
+2026,4,Upper,Marco Clair Kardiac Attack,David Murello,2,L. Jackson,QB,22.88
+2026,4,Upper,Marco Clair Kardiac Attack,David Murello,3,A. Kamara,RB,17.8
+2026,4,Upper,Turkey Hat Conglomerate,Ed Peters,1,K. Monangai,RB,27.0
+2026,4,Upper,Turkey Hat Conglomerate,Ed Peters,2,J. Goff,QB,22.48
+2026,4,Upper,Turkey Hat Conglomerate,Ed Peters,3,P. Mahomes,QB,21.0
+2026,4,Upper,The Big Bang Theory,Dan Reilly,1,J. Williams,RB,26.3
+2026,4,Upper,The Big Bang Theory,Dan Reilly,2,Z. Flowers,WR,17.8
+2026,4,Upper,The Big Bang Theory,Dan Reilly,3,R. Shaheed,WR,16.3
+2026,4,Upper,Reilly's Reindeer,Joe Reilly,1,S. Darnold,QB,16.32
+2026,4,Upper,Reilly's Reindeer,Joe Reilly,2,J. Love,QB,16.08
+2026,4,Upper,Reilly's Reindeer,Joe Reilly,3,C. McCaffrey,RB,13.0
+2026,4,Upper,Happy Valley Hammer Time,Tony Trozzo,1,E. Wilson,RB,25.0
+2026,4,Upper,Happy Valley Hammer Time,Tony Trozzo,2,B. Purdy,QB,23.62
+2026,4,Upper,Happy Valley Hammer Time,Tony Trozzo,3,E. Williams,S,13.0
+2026,4,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,C. Lamb,WR,24.3
+2026,4,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,T. Lawrence,QB,15.08
+2026,4,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,J. Warren,RB,12.6
+2026,4,Upper,Jake's Jagoffs,Jacob Nickman,1,B. Robinson Jr.,RB,24.7
+2026,4,Upper,Jake's Jagoffs,Jacob Nickman,2,N. Collins,WR,23.8
+2026,4,Upper,Jake's Jagoffs,Jacob Nickman,3,D. Samuel Sr.,WR,15.0
+2026,4,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,QB,23.72
+2026,4,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Prescott,QB,20.1
+2026,4,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,B. Bowers,TE,14.6
+2026,4,Lower,Fightin Ferrets,Todd Trozzo,1,K. Walker III,RB,29.9
+2026,4,Lower,Fightin Ferrets,Todd Trozzo,2,L. Jackson,QB,22.88
+2026,4,Lower,Fightin Ferrets,Todd Trozzo,3,J. Allen,QB,19.52
+2026,4,Lower,The V-Unit,Chris Johnson,1,J. Burrow,QB,23.72
+2026,4,Lower,The V-Unit,Chris Johnson,2,T. Lawrence,QB,15.08
+2026,4,Lower,The V-Unit,Chris Johnson,3,S. LaPorta,TE,14.4
+2026,4,Lower,Steel City Champyinz,Dominic Nicastro,1,K. Williams,RB,27.7
+2026,4,Lower,Steel City Champyinz,Dominic Nicastro,2,A. Reese,LB,17.0
+2026,4,Lower,Steel City Champyinz,Dominic Nicastro,3,E. Jones IV,LB,16.0
+2026,4,Lower,Sarge's Squad,Nick Yankovich,1,D. Prescott,QB,20.1
+2026,4,Lower,Sarge's Squad,Nick Yankovich,2,P. Nacua,WR,18.7
+2026,4,Lower,Sarge's Squad,Nick Yankovich,3,S. Darnold,QB,16.32
+2026,4,Lower,Portly Primates,Charles Lavrinc,1,B. Robinson,RB,26.7
+2026,4,Lower,Portly Primates,Charles Lavrinc,2,C. Hubbard,RB,24.9
+2026,4,Lower,Portly Primates,Charles Lavrinc,3,J. Taylor,RB,21.7
+2026,4,Lower,The Best in The 'Burgh,Ben Funari,1,J. Williams,RB,26.3
+2026,4,Lower,The Best in The 'Burgh,Ben Funari,2,B. Purdy,QB,23.62
+2026,4,Lower,The Best in The 'Burgh,Ben Funari,3,T. Edmunds,LB,13.5
+2026,4,Lower,Tommy Phamclub,Sam Lavrinc,1,B. Young,QB,25.46
+2026,4,Lower,Tommy Phamclub,Sam Lavrinc,2,C. Lamb,WR,24.3
+2026,4,Lower,Tommy Phamclub,Sam Lavrinc,3,B. Young,DE,15.0
+2026,4,Lower,Tony's Talented Team,Tony Brooks,1,T. Shough,QB,17.94
+2026,4,Lower,Tony's Talented Team,Tony Brooks,2,Z. Flowers,WR,17.8
+2026,4,Lower,Tony's Talented Team,Tony Brooks,3,J. Hurts,QB,17.52
+2026,4,Lower,Camp Kes,Bob Keslar,1,T. McMillan,WR,31.2
+2026,4,Lower,Camp Kes,Bob Keslar,2,P. Mahomes,QB,21.0
+2026,4,Lower,Camp Kes,Bob Keslar,3,K. Murray,QB,11.48
+2026,5,Upper,Reilly's Reindeer,Joe Reilly,1,J. Love,QB,29.28
+2026,5,Upper,Reilly's Reindeer,Joe Reilly,2,B. Allen,RB,17.6
+2026,5,Upper,Reilly's Reindeer,Joe Reilly,3,T. Warren,TE,14.4
+2026,5,Upper,Bad Attitude Gang,Mike Murello,1,J. Allen,QB,31.5
+2026,5,Upper,Bad Attitude Gang,Mike Murello,2,J. Smith-Njigba,WR,18.8
+2026,5,Upper,Bad Attitude Gang,Mike Murello,3,W. Anderson Jr.,DE,12.5
+2026,5,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,J. Warren,RB,30.8
+2026,5,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,B. Irving,RB,29.5
+2026,5,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,T. Lawrence,QB,24.74
+2026,5,Upper,Jake's Jagoffs,Jacob Nickman,1,J. Daniels,QB,32.26
+2026,5,Upper,Jake's Jagoffs,Jacob Nickman,2,J. Brissett,QB,29.28
+2026,5,Upper,Jake's Jagoffs,Jacob Nickman,3,D. Adams,WR,17.1
+2026,5,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,M. Stafford,QB,33.32
+2026,5,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,C. Watson,WR,26.3
+2026,5,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,P. Washington,WR,25.4
+2026,5,Upper,Happy Valley Hammer Time,Tony Trozzo,1,N. Landman,LB,23.5
+2026,5,Upper,Happy Valley Hammer Time,Tony Trozzo,2,B. Purdy,QB,19.16
+2026,5,Upper,Happy Valley Hammer Time,Tony Trozzo,3,E. Williams,S,11.0
+2026,5,Upper,Marco Clair Kardiac Attack,David Murello,1,T. Huntley,QB,28.04
+2026,5,Upper,Marco Clair Kardiac Attack,David Murello,2,C. Stroud,QB,22.94
+2026,5,Upper,Marco Clair Kardiac Attack,David Murello,3,I. Likely,TE,21.4
+2026,5,Upper,The Big Bang Theory,Dan Reilly,1,M. Willis,QB,17.88
+2026,5,Upper,The Big Bang Theory,Dan Reilly,2,T. McBride,TE,12.6
+2026,5,Upper,The Big Bang Theory,Dan Reilly,3,J. Williams,RB,12.2
+2026,5,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. Maye,QB,47.46
+2026,5,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,M. Evans,WR,19.3
+2026,5,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,D. Bailey,DE,18.0
+2026,5,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,QB,32.6
+2026,5,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Henry,RB,20.0
+2026,5,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,G. Wilson,WR,16.4
+2026,5,Upper,South Hills FunShiners,BJ Funari,1,P. Nacua,WR,20.7
+2026,5,Upper,South Hills FunShiners,BJ Funari,2,M. Nabers,WR,18.1
+2026,5,Upper,South Hills FunShiners,BJ Funari,3,K. Cousins,QB,15.72
+2026,5,Upper,Turkey Hat Conglomerate,Ed Peters,1,J. Goff,QB,34.94
+2026,5,Upper,Turkey Hat Conglomerate,Ed Peters,2,J. Gibbs,RB,32.7
+2026,5,Upper,Turkey Hat Conglomerate,Ed Peters,3,J. Chase,WR,16.2
+2026,5,Lower,The V-Unit,Chris Johnson,1,J. Burrow,QB,32.6
+2026,5,Lower,The V-Unit,Chris Johnson,2,T. Lawrence,QB,24.74
+2026,5,Lower,The V-Unit,Chris Johnson,3,D. Henry,RB,20.0
+2026,5,Lower,Camp Kes,Bob Keslar,1,A. Rodgers,QB,28.0
+2026,5,Lower,Camp Kes,Bob Keslar,2,K. Murray,QB,20.26
+2026,5,Lower,Camp Kes,Bob Keslar,3,D. Adams,WR,17.1
+2026,5,Lower,Fightin Ferrets,Todd Trozzo,1,J. Goff,QB,34.94
+2026,5,Lower,Fightin Ferrets,Todd Trozzo,2,J. Allen,QB,31.5
+2026,5,Lower,Fightin Ferrets,Todd Trozzo,3,J. Warren,RB,30.8
+2026,5,Lower,Portly Primates,Charles Lavrinc,1,M. Nabers,WR,18.1
+2026,5,Lower,Portly Primates,Charles Lavrinc,2,G. Wilson,WR,16.4
+2026,5,Lower,Portly Primates,Charles Lavrinc,3,W. Anderson Jr.,DE,12.5
+2026,5,Lower,Tony's Talented Team,Tony Brooks,1,J. Gibbs,RB,32.7
+2026,5,Lower,Tony's Talented Team,Tony Brooks,2,P. Washington,WR,25.4
+2026,5,Lower,Tony's Talented Team,Tony Brooks,3,N. Landman,LB,23.5
+2026,5,Lower,Steel City Champyinz,Dominic Nicastro,1,M. Stafford,QB,33.32
+2026,5,Lower,Steel City Champyinz,Dominic Nicastro,2,M. Penix Jr.,QB,16.4
+2026,5,Lower,Steel City Champyinz,Dominic Nicastro,3,J. Chase,WR,16.2
+2026,5,Lower,Tommy Phamclub,Sam Lavrinc,1,J. Daniels,QB,32.26
+2026,5,Lower,Tommy Phamclub,Sam Lavrinc,2,J. Brissett,QB,29.28
+2026,5,Lower,Tommy Phamclub,Sam Lavrinc,3,Q. Williams,LB,25.5
+2026,5,Lower,The Best in The 'Burgh,Ben Funari,1,B. Irving,RB,29.5
+2026,5,Lower,The Best in The 'Burgh,Ben Funari,2,B. Purdy,QB,19.16
+2026,5,Lower,The Best in The 'Burgh,Ben Funari,3,J. Smith-Njigba,WR,18.8
+2026,5,Lower,Sarge's Squad,Nick Yankovich,1,C. Stroud,QB,22.94
+2026,5,Lower,Sarge's Squad,Nick Yankovich,2,P. Nacua,WR,20.7
+2026,5,Lower,Sarge's Squad,Nick Yankovich,3,M. Golden,WR,16.3
+2026,6,Upper,South Hills FunShiners,BJ Funari,1,K. Cousins,QB,21.52
+2026,6,Upper,South Hills FunShiners,BJ Funari,2,M. Nabers,WR,17.5
+2026,6,Upper,South Hills FunShiners,BJ Funari,3,G. Smith,QB,12.98
+2026,6,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,D. Prescott,QB,11.02
+2026,6,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Pierce,RB,11.0
+2026,6,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,G. Karlaftis,DE,9.5
+2026,6,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. Maye,QB,29.8
+2026,6,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,K. Walker III,RB,25.9
+2026,6,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,A. Hill Jr.,LB,10.0
+2026,6,Upper,Marco Clair Kardiac Attack,David Murello,1,C. Stroud,QB,27.98
+2026,6,Upper,Marco Clair Kardiac Attack,David Murello,2,I. Likely,TE,17.9
+2026,6,Upper,Marco Clair Kardiac Attack,David Murello,3,T. Huntley,QB,15.4
+2026,6,Upper,Jake's Jagoffs,Jacob Nickman,1,J. Daniels,QB,25.0
+2026,6,Upper,Jake's Jagoffs,Jacob Nickman,2,M. Golden,WR,17.4
+2026,6,Upper,Jake's Jagoffs,Jacob Nickman,3,G. Kittle,TE,12.9
+2026,6,Upper,Happy Valley Hammer Time,Tony Trozzo,1,B. Tuten,RB,20.7
+2026,6,Upper,Happy Valley Hammer Time,Tony Trozzo,2,B. Purdy,QB,19.36
+2026,6,Upper,Happy Valley Hammer Time,Tony Trozzo,3,A. Rodgers,QB,19.02
+2026,6,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,B. Young,QB,23.84
+2026,6,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,J. Cook III,RB,21.3
+2026,6,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,M. Stafford,QB,20.88
+2026,6,Upper,Reilly's Reindeer,Joe Reilly,1,J. Love,QB,21.24
+2026,6,Upper,Reilly's Reindeer,Joe Reilly,2,C. McCaffrey,RB,20.7
+2026,6,Upper,Reilly's Reindeer,Joe Reilly,3,D. Swift,RB,19.0
+2026,6,Upper,The Big Bang Theory,Dan Reilly,1,C. Williams,QB,18.5
+2026,6,Upper,The Big Bang Theory,Dan Reilly,2,B. Okereke,LB,14.5
+2026,6,Upper,The Big Bang Theory,Dan Reilly,3,D. Jones,QB,13.76
+2026,6,Upper,Turkey Hat Conglomerate,Ed Peters,1,T. Tucker,WR,21.7
+2026,6,Upper,Turkey Hat Conglomerate,Ed Peters,2,C. DeJean,CB,11.0
+2026,6,Upper,Turkey Hat Conglomerate,Ed Peters,3,R. Doubs,WR,10.2
+2026,6,Upper,Bad Attitude Gang,Mike Murello,1,T. Shough,QB,32.96
+2026,6,Upper,Bad Attitude Gang,Mike Murello,2,J. Allen,QB,22.3
+2026,6,Upper,Bad Attitude Gang,Mike Murello,3,C. Hubbard,RB,18.1
+2026,6,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,T. Lawrence,QB,34.34
+2026,6,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,J. Noel,WR,19.7
+2026,6,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,T. Hunter,WR,17.9
+2026,6,Lower,Sarge's Squad,Nick Yankovich,1,C. Stroud,QB,27.98
+2026,6,Lower,Sarge's Squad,Nick Yankovich,2,C. McCaffrey,RB,20.7
+2026,6,Lower,Sarge's Squad,Nick Yankovich,3,K. Pitts Sr.,TE,18.0
+2026,6,Lower,Camp Kes,Bob Keslar,1,A. Rodgers,QB,19.02
+2026,6,Lower,Camp Kes,Bob Keslar,2,D. Swift,RB,19.0
+2026,6,Lower,Camp Kes,Bob Keslar,3,J. Simmons,DT,13.5
+2026,6,Lower,The V-Unit,Chris Johnson,1,T. Lawrence,QB,34.34
+2026,6,Lower,The V-Unit,Chris Johnson,2,J. Love,QB,21.24
+2026,6,Lower,The V-Unit,Chris Johnson,3,B. Tuten,RB,20.7
+2026,6,Lower,Portly Primates,Charles Lavrinc,1,C. Williams,QB,18.5
+2026,6,Lower,Portly Primates,Charles Lavrinc,2,J. Taylor,RB,18.1
+2026,6,Lower,Portly Primates,Charles Lavrinc,3,C. Hubbard,RB,18.1
+2026,6,Lower,Fightin Ferrets,Todd Trozzo,1,D. Maye,QB,29.8
+2026,6,Lower,Fightin Ferrets,Todd Trozzo,2,K. Walker III,RB,25.9
+2026,6,Lower,Fightin Ferrets,Todd Trozzo,3,J. Allen,QB,22.3
+2026,6,Lower,Tommy Phamclub,Sam Lavrinc,1,J. Daniels,QB,25.0
+2026,6,Lower,Tommy Phamclub,Sam Lavrinc,2,B. Young,QB,23.84
+2026,6,Lower,Tommy Phamclub,Sam Lavrinc,3,J. Cook III,RB,21.3
+2026,6,Lower,The Best in The 'Burgh,Ben Funari,1,K. Cousins,QB,21.52
+2026,6,Lower,The Best in The 'Burgh,Ben Funari,2,B. Purdy,QB,19.36
+2026,6,Lower,The Best in The 'Burgh,Ben Funari,3,J. Smith-Njigba,WR,13.4
+2026,6,Lower,Steel City Champyinz,Dominic Nicastro,1,M. Penix Jr.,QB,28.1
+2026,6,Lower,Steel City Champyinz,Dominic Nicastro,2,M. Stafford,QB,20.88
+2026,6,Lower,Steel City Champyinz,Dominic Nicastro,3,G. Kittle,TE,12.9
+2026,6,Lower,Tony's Talented Team,Tony Brooks,1,T. Shough,QB,32.96
+2026,6,Lower,Tony's Talented Team,Tony Brooks,2,T. Hunter,WR,17.9
+2026,6,Lower,Tony's Talented Team,Tony Brooks,3,B. Allen,RB,10.4
+2026,7,Upper,Bad Attitude Gang,Mike Murello,1,Q. Judkins,RB,22.4
+2026,7,Upper,Bad Attitude Gang,Mike Murello,2,J. Smith-Njigba,WR,22.3
+2026,7,Upper,Bad Attitude Gang,Mike Murello,3,K. Murray,QB,15.9
+2026,7,Upper,Jake's Jagoffs,Jacob Nickman,1,J. Brissett,QB,18.48
+2026,7,Upper,Jake's Jagoffs,Jacob Nickman,2,A. Jeanty,RB,13.6
+2026,7,Upper,Jake's Jagoffs,Jacob Nickman,3,J. McCarthy,QB,10.18
+2026,7,Upper,Marco Clair Kardiac Attack,David Murello,1,C. Stroud,QB,20.52
+2026,7,Upper,Marco Clair Kardiac Attack,David Murello,2,O. Gordon II,RB,16.3
+2026,7,Upper,Marco Clair Kardiac Attack,David Murello,3,T. Huntley,QB,16.12
+2026,7,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,M. Stafford,QB,22.5
+2026,7,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,J. Taylor,RB,17.0
+2026,7,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,T. Kraft,TE,10.8
+2026,7,Upper,South Hills FunShiners,BJ Funari,1,G. Smith,QB,28.48
+2026,7,Upper,South Hills FunShiners,BJ Funari,2,K. Cousins,QB,24.4
+2026,7,Upper,South Hills FunShiners,BJ Funari,3,P. Nacua,WR,13.8
+2026,7,Upper,Happy Valley Hammer Time,Tony Trozzo,1,B. Nix,QB,28.18
+2026,7,Upper,Happy Valley Hammer Time,Tony Trozzo,2,E. Wilson,RB,17.5
+2026,7,Upper,Happy Valley Hammer Time,Tony Trozzo,3,A. St. Brown,WR,15.2
+2026,7,Upper,Reilly's Reindeer,Joe Reilly,1,M. Penix Jr.,QB,26.42
+2026,7,Upper,Reilly's Reindeer,Joe Reilly,2,A. Singleton,LB,20.5
+2026,7,Upper,Reilly's Reindeer,Joe Reilly,3,J. Love,QB,19.96
+2026,7,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,B. Irving,RB,23.0
+2026,7,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,B. Cashman,LB,21.0
+2026,7,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,C. Lamb,WR,19.4
+2026,7,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. Maye,QB,30.44
+2026,7,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,D. Watson,QB,17.22
+2026,7,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,K. Williams,RB,15.1
+2026,7,Upper,Turkey Hat Conglomerate,Ed Peters,1,T. Pollard,RB,33.5
+2026,7,Upper,Turkey Hat Conglomerate,Ed Peters,2,J. Goff,QB,21.02
+2026,7,Upper,Turkey Hat Conglomerate,Ed Peters,3,T. Tucker,WR,16.3
+2026,7,Upper,The Big Bang Theory,Dan Reilly,1,M. Willis,QB,30.02
+2026,7,Upper,The Big Bang Theory,Dan Reilly,2,C. Williams,QB,26.12
+2026,7,Upper,The Big Bang Theory,Dan Reilly,3,J. Williams,RB,21.5
+2026,7,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,QB,36.88
+2026,7,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Prescott,QB,29.28
+2026,7,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,J. Campbell,LB,11.5
+2026,7,Lower,Portly Primates,Charles Lavrinc,1,G. Smith,QB,28.48
+2026,7,Lower,Portly Primates,Charles Lavrinc,2,C. Williams,QB,26.12
+2026,7,Lower,Portly Primates,Charles Lavrinc,3,J. Taylor,RB,17.0
+2026,7,Lower,Camp Kes,Bob Keslar,1,A. Rodgers,QB,15.08
+2026,7,Lower,Camp Kes,Bob Keslar,2,D. Swift,RB,15.0
+2026,7,Lower,Camp Kes,Bob Keslar,3,C. Loveland,TE,12.9
+2026,7,Lower,Sarge's Squad,Nick Yankovich,1,D. Prescott,QB,29.28
+2026,7,Lower,Sarge's Squad,Nick Yankovich,2,B. Cashman,LB,21.0
+2026,7,Lower,Sarge's Squad,Nick Yankovich,3,C. Stroud,QB,20.52
+2026,7,Lower,Tony's Talented Team,Tony Brooks,1,Z. Flowers,WR,19.7
+2026,7,Lower,Tony's Talented Team,Tony Brooks,2,L. Burden III,WR,19.7
+2026,7,Lower,Tony's Talented Team,Tony Brooks,3,R. Stevenson,RB,17.5
+2026,7,Lower,The V-Unit,Chris Johnson,1,J. Burrow,QB,36.88
+2026,7,Lower,The V-Unit,Chris Johnson,2,T. Higgins,WR,20.8
+2026,7,Lower,The V-Unit,Chris Johnson,3,J. Love,QB,19.96
+2026,7,Lower,Tommy Phamclub,Sam Lavrinc,1,C. Lamb,WR,19.4
+2026,7,Lower,Tommy Phamclub,Sam Lavrinc,2,J. Brissett,QB,18.48
+2026,7,Lower,Tommy Phamclub,Sam Lavrinc,3,A. St. Brown,WR,15.2
+2026,7,Lower,Steel City Champyinz,Dominic Nicastro,1,M. Penix Jr.,QB,26.42
+2026,7,Lower,Steel City Champyinz,Dominic Nicastro,2,M. Stafford,QB,22.5
+2026,7,Lower,Steel City Champyinz,Dominic Nicastro,3,J. Williams,WR,21.1
+2026,7,Lower,Fightin Ferrets,Todd Trozzo,1,D. Maye,QB,30.44
+2026,7,Lower,Fightin Ferrets,Todd Trozzo,2,J. Goff,QB,21.02
+2026,7,Lower,Fightin Ferrets,Todd Trozzo,3,J. Warren,RB,13.7
+2026,7,Lower,The Best in The 'Burgh,Ben Funari,1,K. Cousins,QB,24.4
+2026,7,Lower,The Best in The 'Burgh,Ben Funari,2,B. Irving,RB,23.0
+2026,7,Lower,The Best in The 'Burgh,Ben Funari,3,J. Smith-Njigba,WR,22.3
+2026,8,Upper,Turkey Hat Conglomerate,Ed Peters,1,P. Mahomes,QB,31.44
+2026,8,Upper,Turkey Hat Conglomerate,Ed Peters,2,T. Pollard,RB,25.7
+2026,8,Upper,Turkey Hat Conglomerate,Ed Peters,3,J. Gibbs,RB,22.8
+2026,8,Upper,Jake's Jagoffs,Jacob Nickman,1,J. Daniels,QB,16.98
+2026,8,Upper,Jake's Jagoffs,Jacob Nickman,2,M. Golden,WR,13.9
+2026,8,Upper,Jake's Jagoffs,Jacob Nickman,3,R. White,RB,12.0
+2026,8,Upper,South Hills FunShiners,BJ Funari,1,K. Cousins,QB,34.18
+2026,8,Upper,South Hills FunShiners,BJ Funari,2,G. Smith,QB,21.0
+2026,8,Upper,South Hills FunShiners,BJ Funari,3,A. Hooker,S,17.0
+2026,8,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,J. Cook III,RB,16.1
+2026,8,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,B. Young,QB,12.36
+2026,8,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,F. Oluokun,LB,12.0
+2026,8,Upper,Bad Attitude Gang,Mike Murello,1,J. Allen,QB,29.56
+2026,8,Upper,Bad Attitude Gang,Mike Murello,2,K. Murray,QB,22.9
+2026,8,Upper,Bad Attitude Gang,Mike Murello,3,C. Hubbard,RB,17.9
+2026,8,Upper,The Big Bang Theory,Dan Reilly,1,T. Higgins,WR,27.5
+2026,8,Upper,The Big Bang Theory,Dan Reilly,2,M. Willis,QB,17.64
+2026,8,Upper,The Big Bang Theory,Dan Reilly,3,C. Williams,QB,15.98
+2026,8,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,T. Lawrence,QB,24.4
+2026,8,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,J. Warren,RB,20.3
+2026,8,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,B. Irving,RB,20.0
+2026,8,Upper,Marco Clair Kardiac Attack,David Murello,1,C. Ward,QB,29.26
+2026,8,Upper,Marco Clair Kardiac Attack,David Murello,2,J. Jacobs,RB,17.2
+2026,8,Upper,Marco Clair Kardiac Attack,David Murello,3,J. Parrish,CB,13.5
+2026,8,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,QB,46.48
+2026,8,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Prescott,QB,21.8
+2026,8,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,B. Bowers,TE,21.2
+2026,8,Upper,Reilly's Reindeer,Joe Reilly,1,J. Love,QB,26.52
+2026,8,Upper,Reilly's Reindeer,Joe Reilly,2,D. Swift,RB,25.9
+2026,8,Upper,Reilly's Reindeer,Joe Reilly,3,B. Allen,RB,21.3
+2026,8,Upper,Happy Valley Hammer Time,Tony Trozzo,1,B. Tuten,RB,27.9
+2026,8,Upper,Happy Valley Hammer Time,Tony Trozzo,2,B. Nix,QB,23.28
+2026,8,Upper,Happy Valley Hammer Time,Tony Trozzo,3,D. Lawrence II,DT,15.0
+2026,8,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,D. Maye,QB,26.46
+2026,8,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,Q. Williams,DT,13.5
+2026,8,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,A. Hill Jr.,LB,12.0
+2026,8,Lower,Camp Kes,Bob Keslar,1,P. Mahomes,QB,31.44
+2026,8,Lower,Camp Kes,Bob Keslar,2,D. Swift,RB,25.9
+2026,8,Lower,Camp Kes,Bob Keslar,3,J. Simmons,DT,10.5
+2026,8,Lower,Tony's Talented Team,Tony Brooks,1,J. Gibbs,RB,22.8
+2026,8,Lower,Tony's Talented Team,Tony Brooks,2,B. Allen,RB,21.3
+2026,8,Lower,Tony's Talented Team,Tony Brooks,3,B. Bowers,TE,21.2
+2026,8,Lower,Tommy Phamclub,Sam Lavrinc,1,J. Daniels,QB,16.98
+2026,8,Lower,Tommy Phamclub,Sam Lavrinc,2,J. Cook III,RB,16.1
+2026,8,Lower,Tommy Phamclub,Sam Lavrinc,3,K. Gainwell,RB,15.0
+2026,8,Lower,Portly Primates,Charles Lavrinc,1,G. Smith,QB,21.0
+2026,8,Lower,Portly Primates,Charles Lavrinc,2,M. Wilson,WR,18.8
+2026,8,Lower,Portly Primates,Charles Lavrinc,3,C. Hubbard,RB,17.9
+2026,8,Lower,The Best in The 'Burgh,Ben Funari,1,K. Cousins,QB,34.18
+2026,8,Lower,The Best in The 'Burgh,Ben Funari,2,B. Irving,RB,20.0
+2026,8,Lower,The Best in The 'Burgh,Ben Funari,3,J. Smith-Njigba,WR,17.8
+2026,8,Lower,Sarge's Squad,Nick Yankovich,1,D. Prescott,QB,21.8
+2026,8,Lower,Sarge's Squad,Nick Yankovich,2,S. Darnold,QB,20.52
+2026,8,Lower,Sarge's Squad,Nick Yankovich,3,P. Nacua,WR,14.0
+2026,8,Lower,The V-Unit,Chris Johnson,1,J. Burrow,QB,46.48
+2026,8,Lower,The V-Unit,Chris Johnson,2,T. Higgins,WR,27.5
+2026,8,Lower,The V-Unit,Chris Johnson,3,T. Lawrence,QB,24.4
+2026,8,Lower,Steel City Champyinz,Dominic Nicastro,1,J. Chase,WR,21.1
+2026,8,Lower,Steel City Champyinz,Dominic Nicastro,2,J. Williams,WR,14.0
+2026,8,Lower,Steel City Champyinz,Dominic Nicastro,3,H. Fannin Jr.,TE,12.4
+2026,8,Lower,Fightin Ferrets,Todd Trozzo,1,J. Allen,QB,29.56
+2026,8,Lower,Fightin Ferrets,Todd Trozzo,2,D. Maye,QB,26.46
+2026,8,Lower,Fightin Ferrets,Todd Trozzo,3,T. Pollard,RB,25.7
+2026,9,Upper,Happy Valley Hammer Time,Tony Trozzo,1,B. Purdy,QB,28.28
+2026,9,Upper,Happy Valley Hammer Time,Tony Trozzo,2,B. Nix,QB,18.68
+2026,9,Upper,Happy Valley Hammer Time,Tony Trozzo,3,N. Dean,LB,15.5
+2026,9,Upper,Turkey Hat Conglomerate,Ed Peters,1,J. Chase,WR,21.5
+2026,9,Upper,Turkey Hat Conglomerate,Ed Peters,2,P. Mahomes,QB,19.48
+2026,9,Upper,Turkey Hat Conglomerate,Ed Peters,3,G. Karlaftis,DE,14.0
+2026,9,Upper,Reilly's Reindeer,Joe Reilly,1,J. Love,QB,42.18
+2026,9,Upper,Reilly's Reindeer,Joe Reilly,2,C. McCaffrey,RB,20.7
+2026,9,Upper,Reilly's Reindeer,Joe Reilly,3,M. Penix Jr.,QB,14.48
+2026,9,Upper,South Hills FunShiners,BJ Funari,1,P. Nacua,WR,21.0
+2026,9,Upper,South Hills FunShiners,BJ Funari,2,B. Robinson,RB,20.7
+2026,9,Upper,South Hills FunShiners,BJ Funari,3,J. Coleman,RB,14.8
+2026,9,Upper,Marco Clair Kardiac Attack,David Murello,1,C. Stroud,QB,44.36
+2026,9,Upper,Marco Clair Kardiac Attack,David Murello,2,D. Lock,QB,14.6
+2026,9,Upper,Marco Clair Kardiac Attack,David Murello,3,C. Granderson,DE,14.0
+2026,9,Upper,Jake's Jagoffs,Jacob Nickman,1,M. Golden,WR,22.4
+2026,9,Upper,Jake's Jagoffs,Jacob Nickman,2,J. Daniels,QB,15.56
+2026,9,Upper,Jake's Jagoffs,Jacob Nickman,3,J. Rodriguez,LB,14.5
+2026,9,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,1,B. Irving,RB,24.5
+2026,9,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,2,C. Lamb,WR,22.5
+2026,9,Upper,Southside Shooters,Jon Fetrow/ Casey Trozzo,3,T. Lawrence,QB,15.58
+2026,9,Upper,The Big Bang Theory,Dan Reilly,1,J. Trotter Jr.,LB,18.5
+2026,9,Upper,The Big Bang Theory,Dan Reilly,2,J. Williams,RB,18.4
+2026,9,Upper,The Big Bang Theory,Dan Reilly,3,T. Higgins,WR,15.2
+2026,9,Upper,Bad Attitude Gang,Mike Murello,1,C. Schwesinger,LB,24.0
+2026,9,Upper,Bad Attitude Gang,Mike Murello,2,T. Shough,QB,21.7
+2026,9,Upper,Bad Attitude Gang,Mike Murello,3,N. Cross,S,14.5
+2026,9,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,1,K. Walker III,RB,32.3
+2026,9,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,2,D. Maye,QB,21.26
+2026,9,Upper,Mike Vicks Dog Sitting Co.,Braiden Snyder,3,D. Bailey,DE,18.0
+2026,9,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,1,B. Young,QB,24.34
+2026,9,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,2,C. Watson,WR,23.1
+2026,9,Upper,The Prodigal Sons,Jon Murello/ Rick Simmons,3,A. Reese,LB,22.5
+2026,9,Upper,Hadley's Comets,Brian Murello/ Ron Murello,1,J. Burrow,QB,35.54
+2026,9,Upper,Hadley's Comets,Brian Murello/ Ron Murello,2,D. Prescott,QB,22.5
+2026,9,Upper,Hadley's Comets,Brian Murello/ Ron Murello,3,I. McDuffie,LB,15.5
+2026,9,Lower,Tommy Phamclub,Sam Lavrinc,1,B. Young,QB,24.34
+2026,9,Lower,Tommy Phamclub,Sam Lavrinc,2,C. Lamb,WR,22.5
+2026,9,Lower,Tommy Phamclub,Sam Lavrinc,3,J. Cook III,RB,16.7
+2026,9,Lower,Camp Kes,Bob Keslar,1,P. Mahomes,QB,19.48
+2026,9,Lower,Camp Kes,Bob Keslar,2,N. Dean,LB,15.5
+2026,9,Lower,Camp Kes,Bob Keslar,3,Z. Baun,LB,14.5
+2026,9,Lower,The Best in The 'Burgh,Ben Funari,1,B. Purdy,QB,28.28
+2026,9,Lower,The Best in The 'Burgh,Ben Funari,2,B. Irving,RB,24.5
+2026,9,Lower,The Best in The 'Burgh,Ben Funari,3,J. Williams,RB,18.4
+2026,9,Lower,Tony's Talented Team,Tony Brooks,1,D. Lock,QB,14.6
+2026,9,Lower,Tony's Talented Team,Tony Brooks,2,B. Bowers,TE,14.3
+2026,9,Lower,Tony's Talented Team,Tony Brooks,3,L. Burden III,WR,13.7
+2026,9,Lower,Steel City Champyinz,Dominic Nicastro,1,A. Reese,LB,22.5
+2026,9,Lower,Steel City Champyinz,Dominic Nicastro,2,J. Chase,WR,21.5
+2026,9,Lower,Steel City Champyinz,Dominic Nicastro,3,M. Penix Jr.,QB,14.48
+2026,9,Lower,Portly Primates,Charles Lavrinc,1,B. Robinson,RB,20.7
+2026,9,Lower,Portly Primates,Charles Lavrinc,2,T. Kelce,TE,13.3
+2026,9,Lower,Portly Primates,Charles Lavrinc,3,C. Williams,QB,12.76
+2026,9,Lower,Sarge's Squad,Nick Yankovich,1,C. Stroud,QB,44.36
+2026,9,Lower,Sarge's Squad,Nick Yankovich,2,D. Prescott,QB,22.5
+2026,9,Lower,Sarge's Squad,Nick Yankovich,3,M. Golden,WR,22.4
+2026,9,Lower,Fightin Ferrets,Todd Trozzo,1,K. Walker III,RB,32.3
+2026,9,Lower,Fightin Ferrets,Todd Trozzo,2,C. Schwesinger,LB,24.0
+2026,9,Lower,Fightin Ferrets,Todd Trozzo,3,D. Bailey,DE,18.0
+2026,9,Lower,The V-Unit,Chris Johnson,1,J. Burrow,QB,35.54
+2026,9,Lower,The V-Unit,Chris Johnson,2,C. Watson,WR,23.1
+2026,9,Lower,The V-Unit,Chris Johnson,3,T. Lawrence,QB,15.58

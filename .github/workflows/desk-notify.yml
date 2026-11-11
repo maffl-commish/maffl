@@ -11,7 +11,7 @@ name: Desk notify
 
 on:
   workflow_run:
-    workflows: ["ESPN weekly pull", "Pulse draft", "Credit sync", "Card lines"]
+    workflows: ["ESPN weekly pull", "Pulse draft", "Credit sync", "Card lines", "Backend check"]
     types: [completed]
 
 permissions:
@@ -44,6 +44,8 @@ jobs:
             "Card lines") [ "$status" = ok ] && { echo "Card lines OK; no post (twice a day would be noise)."; exit 0; }
                           hint="Claude couldn't write today's card lines. The app shows plain facts meanwhile." ;;
             "Credit sync") hint=$([ "$status" = ok ] && echo "App-approved credits checked against the official record (TEST runs commit nothing)." || echo "Credits from the app did NOT post. Approvals still stand; open the run.") ;;
+            "Backend check") [ "$status" = ok ] && { echo "Backend check OK; no post."; exit 0; }
+                             hint="A backend file, the regression or the app's data contract failed on the last push. It's probably live already: open the run, then revert or fix." ;;
             *) hint="" ;;
           esac
           jq -n --arg k "$DESK_KEY" --arg t "$WF $word" --arg x "$hint (started by $EVENT)" --arg l "$URL" --arg s "$status" \

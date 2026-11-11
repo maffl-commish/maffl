@@ -1,0 +1,50 @@
+# REEL backend check (pre-launch review B5 + F8). Runs on every push and pull request that touches the backend, its
+# tests, or the classic pages the app reads at runtime. A red run posts to the 📥 Commish desk (desk-notify.yml).
+#
+#   1. node --check on every backend file (a syntax error = sign-in down for everyone)
+#   2. every backend file under 90 KB (Apps Script caches a file only below ~95 KB)
+#   3. the regression: real backend vs the mock, frozen data fixture → must match regress_expected.txt
+#   4. the REEL data contract: the six things the app scrapes from the classic pages still exist
+#
+# A push to main is already live by the time this runs (the loader reads main), so on main this is an alarm, not a
+# gate. On a pull request it IS a gate: don't merge a red one.
+name: Backend check
+
+on:
+  push:
+    branches: [main]
+    paths: ['_ops/apps-script/**', '_ops/tests/**', 'weekly.html', 'credits.html', 'prize.html', 'rules.html', 'power-rankings.html', 'rivalry.html', '.github/workflows/backend-check.yml']
+  pull_request:
+    paths: ['_ops/apps-script/**', '_ops/tests/**', 'weekly.html', 'credits.html', 'prize.html', 'rules.html', 'power-rankings.html', 'rivalry.html', '.github/workflows/backend-check.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Syntax + size
+        run: |
+          fail=0
+          for f in _ops/apps-script/*.js; do
+            node --check "$f" || { echo "::error file=$f::syntax error"; fail=1; }
+            n=$(wc -c < "$f"); [ "$n" -lt 90000 ] || { echo "::error file=$f::$n bytes (keep under 90000)"; fail=1; }
+          done
+          exit $fail
+      - name: Regression (frozen fixture)
+        run: |
+          node _ops/tests/regress.js > /tmp/out.txt 2>/tmp/err.txt || { cat /tmp/err.txt; exit 1; }
+          if ! diff _ops/tests/regress_expected.txt /tmp/out.txt > /tmp/diff.txt; then
+            echo "::error::Backend behaviour changed. If intended, refresh _ops/tests/regress_expected.txt in the same commit."
+            cut -c1-300 /tmp/diff.txt | head -60; exit 1
+          fi
+          echo "Regression: no change"
+      - name: REEL data contract
+        run: node _ops/tests/contract.js
