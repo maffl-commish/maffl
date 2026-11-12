@@ -50,7 +50,11 @@ function betaInfo_() {
       if (!x.last || t > x.last) x.last = t; if (t > day) x.taps++; }); }
   var fsh = SpreadsheetApp.getActive().getSheetByName("Feedback");
   if (fsh) rows_("Feedback").forEach(function (f) { var x = by[norm_(f.owner)]; if (x && new Date(f.ts).getTime() > day) x.fb++; });
-  return { crew: Object.keys(by).map(function (k) { var x = by[k]; if (x.last) x.last = new Date(x.last).toISOString(); return x; }) };
+  // notes (commish 11/11): the last 40 Feedback rows, anyone's (the commish's too), newest first, for the desk's 🧪 Feedback inbox.
+  var notes = fsh ? rows_("Feedback").slice(-40).reverse().map(function (f) { var o = ownerRow_(f.owner) || {};
+    return { id: String(f.fb_id || ""), ts: new Date(f.ts).toISOString(), owner: String(f.owner || ""), team: String(o.team || ""), kind: String(f.kind || ""),
+      mood: MOOD[f.mood] || String(f.mood || ""), where: String(f.where || ""), note: String(f.note || "") }; }) : [];
+  return { notes: notes, crew: Object.keys(by).map(function (k) { var x = by[k]; if (x.last) x.last = new Date(x.last).toISOString(); return x; }) };
 }
 
 // ---------------------------------------------------------------- chat (test Sheet only)

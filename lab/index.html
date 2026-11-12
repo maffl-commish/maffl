@@ -2492,7 +2492,7 @@
       '<div class="kpis"><div class="kpi"><b>' + rec(t) + '</b><small>Record</small></div><div class="kpi"><b>' + sd.v + '</b><small>' + sd.k + '</small></div>' +
       '<div class="kpi"><b>' + t.credits + '</b><small>Credits</small></div><div class="kpi"><b>' + Math.round(t.points) + '</b><small>Pts · ' + ordinal(pRank) + '</small></div></div>' +
       '<p class="kfoot">Seed if the season ended today</p></div>' +
-      '<div class="seg" id="tseg"><button data-sub="roster">Roster</button><button data-sub="trades">Trades' + ((badgeCount() - perkBadge()) ? ' <i class="sb2">' + (badgeCount() - perkBadge()) + '</i>' : '') + '</button><button data-sub="credits">Credits' + (perkBadge() ? ' <i class="sb2">' + perkBadge() + '</i>' : '') + '</button></div>';
+      '<div class="seg" id="tseg"><button data-sub="roster">Roster</button><button data-sub="trades">Trades' + (badgeCount() ? ' <i class="sb2">' + badgeCount() + '</i>' : '') + '</button><button data-sub="credits">Credits</button></div>';
     h += '<div class="sub-v pad" id="s-roster">' + rosterHTML() + '</div>';
     h += '<div class="sub-v pad" id="s-trades">' + tradesHTML() + '</div>';
     var log = (W === LATEST ? movesOf(ME.owner).slice().reverse().map(function (x) { return { season: 2026, amount: Number(x.amount) || 0, creditType: x.type, creditCategory: x.category,
@@ -2889,10 +2889,9 @@
   }
 
   // ---------- offers ----------
-  function offersFor(me) { return (SUM.offers || []).filter(function (o) { return isMe(o.from) || isMe(o.to) || o.tier === ME.tier || ME.commish; }); }
-  function needsMe(o) { return (o.status === "PROPOSED" && isMe(o.to)) || (o.status === "ACCEPTED" && ME.commish); }
-  function badgeCount() { return (SUM.offers || []).filter(needsMe).length + perkBadge(); }
-  function perkBadge() { return ME && ME.commish ? (SUM.perks || []).filter(function (p) { return p.status === "REQUESTED"; }).length : 0; }
+  function offersFor(me) { return (SUM.offers || []).filter(function (o) { return isMe(o.from) || isMe(o.to) || o.tier === ME.tier; }); } // Team = your team only; commish duties live on the 📥 desk (commish 11/11)
+  function needsMe(o) { return o.status === "PROPOSED" && isMe(o.to); }
+  function badgeCount() { return (SUM.offers || []).filter(needsMe).length; }
   function committedCredits(owner) { return (SUM.offers || []).filter(function (o) { return ["PROPOSED", "ACCEPTED"].indexOf(o.status) >= 0 || (o.status === "APPROVED" && (o.giveCredits || o.getCredits) && !logged(o.id) && !Array.isArray(SUM.moves)); }).reduce(function (n, o) {
     return n + (norm(o.from) === norm(owner) ? o.giveCredits : 0) + (norm(o.to) === norm(owner) ? o.getCredits : 0); }, 0); }
   function perkCredits(owner) { return (SUM.perks || []).filter(function (p) { return norm(p.owner) === norm(owner) && (p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id) && !Array.isArray(SUM.moves))); }).reduce(function (n, p) { return n + p.cost; }, 0); }
@@ -2924,8 +2923,6 @@
     var btn = "";
     if (o.status === "PROPOSED" && iAmTo) btn = '<button class="b" data-act="decline" data-id="' + o.id + '">Decline</button><button class="b" data-counter="' + o.id + '">Counter</button><button class="b pri" data-act="accept" data-id="' + o.id + '">Accept</button>';
     else if (o.status === "PROPOSED" && iAmFrom) btn = '<button class="b" data-act="withdraw" data-id="' + o.id + '">Withdraw</button>';
-    else if (o.status === "ACCEPTED" && ME.commish) btn = '<button class="b" data-act="negate" data-id="' + o.id + '">Negate</button><button class="b pri" data-act="approve" data-id="' + o.id + '">Approve</button>';
-    else if (o.status === "APPROVED" && ME.commish) btn = '<button class="b" data-act="reverse" data-id="' + o.id + '">↩️ Reverse</button>'; // review F7: undo a mistaken approval
     if (mineOffer && chatOn()) btn += '<button class="b" data-chat-room="' + esc(dmRoom(o.from, o.to)) + '">💬 Chat</button>';
     if (btn) h += '<div class="btns">' + btn + '</div>';
     if (o.status === "ACCEPTED" && mineOffer) h += '<p class="meta" style="margin-top:8px">Next: send the player side on ESPN. Credits move when the commish approves.</p>';
@@ -2985,35 +2982,33 @@
     return p.perk === "faab" ? "+$" + 20 * p.qty + " FAAB" : p.perk === "double" ? "Wk " + p.week + " · " + esc(p.player) + (p.pos ? " (" + esc(p.pos) + ")" : "")
       : p.perk === "swap" ? "Wk " + p.week + " · swap opponents with " + esc(teamOf(p.swapWith).team) : p.perk === "insurance" ? "2026 season" : "";
   }
-  function perkCard(p) {
+  function perkCard(p, desk) { // desk = commish buttons (Approve / Deny / Reverse); Team shows owner buttons only
     var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = p.status === "APPROVED" ? (logged(p.id) ? ["Logged ✓", "ok"] : ["Approved · posting", "gold"]) : PST[p.status] || [p.status, ""], mine = isMe(p.owner);
     if (p.status === "CANCELED" && mine) st = ["Withdrawn by you", ""];
     var h = '<div class="card offer"><div class="eb" style="display:flex;justify-content:space-between"><span>' + (mine ? "You" : esc(teamOf(p.owner).team)) + ' · −' + p.cost + ' cr</span><span class="stp ' + st[1] + '">' + st[0] + '</span></div>' +
       '<div class="row" style="padding:6px 0"><span class="pos p-CR">' + P.ic + '</span><div><div class="nm">' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + '</div></div></div>';
     if (p.note) h += '<p class="meta">“' + esc(p.note) + '”</p>';
     if (p.reason) h += '<p class="meta">Commish: ' + esc(p.reason) + '</p>';
-    var btn = p.status === "APPROVED" && ME.commish ? '<button class="b" data-pact="reverse" data-id="' + p.id + '">↩️ Reverse</button>' : p.status !== "REQUESTED" ? "" : (mine ? '<button class="b" data-pact="cancel" data-id="' + p.id + '">Cancel' + (ME.commish ? '' : ' request') + '</button>' : '') +
-      (ME.commish ? '<button class="b" data-pact="deny" data-id="' + p.id + '">Deny</button><button class="b pri" data-pact="approve" data-id="' + p.id + '">Approve</button>' : '');
-    if (ME.commish && p.status === "REQUESTED") { var left = (teamOf(p.owner).credits || 0) - committedCredits(p.owner) - perkCredits(p.owner);
+    var cm = desk && ME.commish, btn = p.status === "APPROVED" && cm ? '<button class="b" data-pact="reverse" data-id="' + p.id + '">↩️ Reverse</button>' : p.status !== "REQUESTED" ? "" : (mine && !desk ? '<button class="b" data-pact="cancel" data-id="' + p.id + '">Cancel request</button>' : '') +
+      (cm ? '<button class="b" data-pact="deny" data-id="' + p.id + '">Deny</button><button class="b pri" data-pact="approve" data-id="' + p.id + '">Approve</button>' : '');
+    if (cm && p.status === "REQUESTED") { var left = (teamOf(p.owner).credits || 0) - committedCredits(p.owner) - perkCredits(p.owner);
       h += '<p class="meta">' + (left < 0 ? '⚠️ ' : '') + esc(p.owner) + ': ' + teamOf(p.owner).credits + ' credits, ' + left + ' left after open trades and perk holds.</p>'; }
     return h + (btn ? '<div class="btns">' + btn + '</div>' : '') + '</div>';
   }
   function perksHTML() {
     if (API_URL && !SUM_OK) return '<div class="card">' + sumWait("Loading your perks…") + '</div>';
     var all = SUM.perks || [], mine = all.filter(function (p) { return isMe(p.owner); }).sort(function (a, b) { return new Date(b.ts) - new Date(a.ts); });
-    var queue = ME.commish ? all.filter(function (p) { return p.status === "REQUESTED" && !isMe(p.owner); }) : [];
-    var vs = all.filter(function (p) { return !isMe(p.owner) && (isMe(p.swapWith) || (p.affects || []).some(isMe)) && p.status !== "CANCELED" && p.status !== "DENIED" && (p.week || 0) > W.weekNumber && queue.indexOf(p) < 0; });
+    var vs = all.filter(function (p) { return !isMe(p.owner) && (isMe(p.swapWith) || (p.affects || []).some(isMe)) && p.status !== "CANCELED" && p.status !== "DENIED" && (p.week || 0) > W.weekNumber ; });
     var h = '';
-    if (queue.length) h += '<div class="sh" style="padding-left:0"><h2>🧑‍⚖️ Perk requests to review</h2><small>' + queue.length + '</small></div>' + queue.map(perkCard).join("");
     h += '<div class="sh" style="padding-left:0"><h2>Spend credits</h2><small>' + availCredits(ME.owner) + ' free</small></div><div class="pgrid">' + PERKS.map(function (P) {
       var why = perkBlock(P.k);
       return '<button class="ptile' + (why ? ' off' : '') + '" data-perk="' + P.k + '"><span class="pic">' + P.ic + '</span><b>' + esc(P.name) + '</b><span class="pcost">' + P.cost + ' cr' + (P.unit ? ' ' + P.unit : '') + '</span>' +
         '<small>' + esc(why || (P.k === "double" || P.k === "swap" ? "Wk " + openWeeks()[0] + " locks " + deadlineLabel(openWeeks()[0]) : P.k === "insurance" ? SUM.insuranceLeft + " of 3 left" : "Open")) + '</small></button>'; }).join("") + '</div>' +
       '<p class="meta" style="margin:6px 2px 0">The commish approves every request.</p>';
-    if (vs.length) h += '<div class="sh" style="padding-left:0"><h2>⚠️ Coming at you</h2><small>' + vs.length + '</small></div>' + vs.map(perkCard).join("");
+    if (vs.length) h += '<div class="sh" style="padding-left:0"><h2>⚠️ Coming at you</h2><small>' + vs.length + '</small></div>' + vs.map(function (p) { return perkCard(p); }).join("");
     // Your requests (commish 11/9: keep it from sprawling): waiting or approved-not-yet-logged as cards; done ones folded, one line each.
     var liveR = mine.filter(function (p) { return p.status === "REQUESTED" || (p.status === "APPROVED" && !logged(p.id)); }), pastR = mine.filter(function (p) { return liveR.indexOf(p) < 0; });
-    if (liveR.length) h += '<div class="sh" style="padding-left:0"><h2>Your requests</h2><small>' + liveR.length + '</small></div>' + liveR.map(perkCard).join("");
+    if (liveR.length) h += '<div class="sh" style="padding-left:0"><h2>Your requests</h2><small>' + liveR.length + '</small></div>' + liveR.map(function (p) { return perkCard(p); }).join("");
     if (pastR.length) h += '<details class="card fold"><summary><span>📁 Past requests</span><small>' + pastR.length + '</small></summary>' + pastR.map(function (p) {
       var P = PERK_BY[p.perk] || { ic: "💳", name: p.perk }, st = p.status === "APPROVED" ? "Logged ✓" : p.status === "CANCELED" ? "Withdrawn by you" : (PST[p.status] || [p.status])[0];
       return '<div class="row"><div><div class="nm">' + P.ic + ' ' + esc(P.name) + '</div><div class="meta">' + perkLine(p) + ' · ' + esc(st) + (p.reason ? ' · “' + esc(p.reason) + '”' : '') + ' · ' + new Date(p.updated || p.ts).toLocaleDateString("en-US", { month: "short", day: "numeric" }) + '</div></div><div class="rt">' + (p.status === "APPROVED" ? '−' + p.cost : '0') + '</div></div>'; }).join("") + '</details>';
@@ -3552,7 +3547,7 @@
   function deskTodoHTML(d) {
     var n = deskTodo(), h = "";
     if (!n) h += '<div class="dsk clear">✅ <b>All clear.</b> Nothing waiting on you.</div>';
-    var ps = deskOpenPerks(); if (ps.length) h += acc("perks", "🎟️ Perks to approve", ps.length, ps.map(perkCard).join(""), 1);
+    var ps = deskOpenPerks(); if (ps.length) h += acc("perks", "🎟️ Perks to approve", ps.length, ps.map(function (p) { return perkCard(p, true); }).join(""), 1);
     var rv = deskReview(); if (rv.length) h += acc("review", "🤝 Trades in review", rv.length, rv.map(function (o) { var hrs = (Date.now() - new Date(o.updated || o.ts).getTime()) / 36e5;
       return '<p class="meta" style="margin-top:6px">' + (hrs >= 24 ? '✅ Review over' : '⏳ ' + Math.max(1, Math.ceil(24 - hrs)) + ' h left') + ' · ' + ((d.moved || []).indexOf(o.id) >= 0 ? '✅ moved on ESPN' : 'not moved on ESPN yet') + '</p>' + tradeMini(o, true); }).join(""), 1);
     if ((d.access || []).length) h += acc("access", "🔑 Passphrase requests", d.access.length, d.access.map(function (a) {
@@ -3609,9 +3604,9 @@
       ["sync", "💳", "Credits → official log", mode === "live" ? "LIVE" : "TEST (practice until go-live)", ls && ls.ok === false ? "Last push failed" : ls && ls.at ? "Pushed " + ago2(ls.at) : "Nothing pushed yet", ls && ls.ok === false ? "bad" : "ok"]];
   }
   function deskTiles(d) {
-    var oc = d.offers || {}, crew = (d.beta && d.beta.crew) || [], fb = crew.reduce(function (n, c) { return n + (Number(c.fb) || 0); }, 0);
+    var oc = d.offers || {}, crew = (d.beta && d.beta.crew) || [], fb = fbRecent(d) != null ? fbRecent(d) : crew.reduce(function (n, c) { return n + (Number(c.fb) || 0); }, 0);
     var N = [["review", "⏳", deskReview().length, "Trades to approve", 1], ["perks", "🎟️", deskOpenPerks().length, "Perks to approve", 1], ["espn", "🏈", espnNow().length, "Do on ESPN", 1],
-      ["access", "🔑", (d.access || []).length + (d.locked || []).length, "Sign-in help", 1], ["trades", "🤝", oc.open != null ? oc.open : "–", "Offers out", 0], ["feedback", "🧪", fb, "Beta notes (24 h)", 0]];
+      ["access", "🔑", (d.access || []).length + (d.locked || []).length, "Sign-in help", 1], ["trades", "🤝", oc.open != null ? oc.open : "–", "Offers out", 0], ["feedback", "🧪", fb, fbNotes(d) ? "Feedback (7 days)" : "Beta notes (24 h)", 0]];
     var R = robotRows(d), bad = R.filter(function (r) { return r[5] !== "ok"; }).length;
     return '<div class="dkn">' + N.map(function (t) { var hot = t[4] && t[2] > 0;
         return '<button class="dknt' + (hot ? ' hot' : '') + (!t[2] ? ' zero' : '') + '" data-dkgo="' + t[0] + '"><b>' + t[2] + '</b><span>' + t[1] + ' ' + esc(t[3]) + '</span></button>'; }).join("") + '</div>' +
@@ -3687,6 +3682,24 @@
       (live.length ? live.map(line).join("") : '<p class="meta" style="padding:8px 0">No open or pending trades.</p>') +
       '<p class="meta">Trades in review show in To do with Approve / Negate. Trade deadline: Wed Dec 2, 12:00 PM ET.</p></details></div>';
   }
+  // ↩️ Reverse (review F7) lives here now, not in Team (commish 11/11): approved trades + perks from the last 14 days.
+  function deskUndoHTML() {
+    var since = Date.now() - 14 * 864e5, rec = function (x) { return new Date(x.updated || x.ts).getTime() > since; };
+    var ts = (SUM.offers || []).filter(function (o) { return o.status === "APPROVED" && rec(o); }), ps = (SUM.perks || []).filter(function (p) { return p.status === "APPROVED" && rec(p); });
+    var n = ts.length + ps.length; if (!n) return '';
+    return acc("undo", "↩️ Approved · last 14 days", n, ts.map(function (o) { return tradeMini(o) .replace(/<\/div>$/, '<div class="btns"><button class="b" data-act="reverse" data-id="' + esc(o.id) + '">↩️ Reverse</button></div></div>'); }).join("") +
+      ps.map(function (p) { return perkCard(p, true); }).join("") + '<p class="meta">Reverse undoes a mistaken approval: credits go back on the record, both teams and the league are told.</p>', 0);
+  }
+  // 🧪 Feedback inbox (commish 11/11: "where do I see what I sent?"): every note from the 🧪 button and 💡 Ideas & feedback,
+  // anyone's (yours too), newest first. Backend v0.69 sends them as beta.notes.
+  function fbNotes(d) { return (d && d.beta && d.beta.notes) || null; }
+  function fbRecent(d) { var ns = fbNotes(d), wk = Date.now() - 7 * 864e5; return ns ? ns.filter(function (f) { return new Date(f.ts).getTime() > wk; }).length : null; }
+  function deskFeedbackHTML(d) {
+    var ns = fbNotes(d); if (!ns) return '';
+    return acc("feedback", "🧪 Feedback · newest first", ns.length, ns.length ? ns.map(function (f) {
+      return '<div class="ditem"><b>' + esc(f.mood || (f.kind === "rate" ? "💡" : "💬")) + ' ' + esc(f.team || f.owner) + '</b> <span class="meta">' + esc(f.kind === "rate" ? "Ideas & feedback" : f.where || "Feedback button") + ' · ' + ago(f.ts) + (ago(f.ts) === "now" ? "" : " ago") + '</span>' +
+        (f.note ? '<p class="p" style="margin:4px 0 0">' + esc(f.note) + '</p>' : '') + '</div>'; }).join("") : '<p class="meta" style="padding:8px 0">No feedback yet.</p>', 0);
+  }
   function deskAccessHTML(d) {
     var no = {}, lock = {}, req = {}, old = {}; (d.oldPin || []).forEach(function (o) { old[norm(o)] = 1; }); (d.noPin || []).forEach(function (o) { no[norm(o)] = 1; }); (d.locked || []).forEach(function (o) { lock[norm(o)] = 1; }); (d.access || []).forEach(function (a) { req[norm(a.owner)] = 1; });
     var owners = TEAMS.filter(function (t) { return !/ghost/i.test(t.team) && t.owner !== "—"; }).sort(function (a, b) { return a.team.localeCompare(b.team); });
@@ -3729,8 +3742,8 @@
     var day = new Date().toDateString(), today = (DK.log || []).filter(function (m) { return new Date(m.ts).toDateString() === day; }).length;
     b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
-      '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskAccessHTML(d) +
-      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + betaPanel(d) + deskTourHTML() + (STAGE === "live" || ((d.sync || {}).mode === "live") ? '' : deskSeedHTML(d)) + // seed tools vanish at go-live (review B3)
+      '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskUndoHTML() + deskAccessHTML(d) +
+      '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + deskFeedbackHTML(d) + betaPanel(d) + deskTourHTML() + (STAGE === "live" || ((d.sync || {}).mode === "live") ? '' : deskSeedHTML(d)) + // seed tools vanish at go-live (review B3)
       '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Trades, robots, owners, notes", today ? today + " today" : "", deskLogHTML());
     DK.secs = DK.secs || {}; Array.prototype.forEach.call(b.querySelectorAll("details"), function (x) { var k = x.dataset.sec || (x.querySelector("summary") || x).textContent.replace(/[\d·]+/g, "").trim().slice(0, 24); x.dataset.sec = k; x.open = !!DK.secs[k]; });
     if (!b.dataset.acc) { b.dataset.acc = 1; b.addEventListener("toggle", function (e) { var x = e.target; if (x.tagName === "DETAILS" && x.dataset.sec) DK.secs[x.dataset.sec] = x.open; }, true); }
@@ -3790,8 +3803,8 @@
     if ((el = e.target.closest("[data-dkf]"))) { DK.filter = el.dataset.dkf; DK.openRow = null; drawDesk(); return; }
     if ((el = e.target.closest("[data-dktile]"))) { deskTileBox(el.dataset.dktile); return; }
     if ((el = e.target.closest("[data-dkgo]"))) { var g = el.dataset.dkgo, n = Number((el.querySelector("b") || {}).textContent) || 0;
-      if (!n && g !== "trades") { toast("Nothing waiting"); return; }
-      if (g === "feedback") { DK.filter = "feedback"; g = "log"; }
+      if (!n && g !== "trades" && !(g === "feedback" && fbNotes(DESK))) { toast("Nothing waiting"); return; }
+      if (g === "feedback" && !fbNotes(DESK)) { DK.filter = "feedback"; g = "log"; }
       DK.secs = DK.secs || {}; DK.secs[g] = true; if (g === "access") DK.secs.locked = true; drawDesk();
       var tgt = $("dkbody").querySelector('details[data-sec="' + g + '"]'); if (tgt) $("dkbody").scrollTop = tgt.closest(".dsk").offsetTop - 8; return; }
     if ((el = e.target.closest("[data-dkrow]")) && !e.target.closest("button,a,input")) { DK.openRow = DK.openRow === el.dataset.dkrow ? null : el.dataset.dkrow; drawDesk(); return; }
