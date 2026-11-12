@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-11 by Claude (chat), Team is just your team + desk Feedback inbox
+**Last updated:** 2026-11-12 by Claude (chat), beta feedback → trade direction logged
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-12 · REEL · 📝 Beta feedback logged (Joe by text, Charlie): APP_DESIGN §0 + REEL.md record the direction that owners finish trades in REEL and the commish does the ESPN move (manual first, §10b automation later), plus no new credit-spending options this off-season. Docs only.
 - 2026-11-11 · REEL · 🐛 Trade builder grid: players on the block rendered squished (commish). The grid tagged them with class `blk`, the same name as the 🏷️ On the block carousel (11/7), so they picked up its sideways-scroll / negative-margin styles. Renamed to `onblk`. App only. No version bump.
 - 2026-11-11 · REEL · 🧹 Team is just your team + 🧪 Feedback inbox (commish): Team → Trades no longer lists every trade in the league or carries Approve / Negate / Reverse for the commish (only your offers + your tier, like any owner); Team → Credits drops the perk review queue and its badge. ↩️ Reverse moved to a new desk section "Approved · last 14 days". New desk 🧪 Feedback section (Go-live): every note from the 🧪 button and 💡 Ideas & feedback, yours included, newest first; the 🧪 tile counts the last 7 days and opens it (it used to count only beta-crew notes from the last 24 h). Backend v0.69 (desk `beta.notes`, last 40). No version bump.
 - 2026-11-11 · REEL · 💬 Chat looks like every other tab (commish): the app header now says "Chat" and keeps 📥 desk + your initials (an old rule hid the desk button in Chat and slid the initials next to the title); the extra "Messages" bar is gone from the chat list (it only shows inside a chat, for ‹ back + the chat name); leftover sheet bits removed (grabber, ✕, dead drag-to-close code). Feedback button sits bottom-right on the chat list, as on other tabs. Keyboard handling unchanged. App only. No version bump.

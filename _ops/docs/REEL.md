@@ -104,6 +104,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 **Commish backlog (added 11/6, not built)**
 
 **Beta kit follow-ups (after the first testers)**
+- 11/12 beta feedback (Joe by text, Charlie in 🧪), direction in APP_DESIGN §0: trades finish in REEL, the commish does the ESPN move (desk "Do on ESPN" step + moved-on-ESPN check), automation via §10b later; keep the trade 💬/✉️ buttons front and center; no new credit-spending options this off-season.
 - Desk summary of the tap log (where they spend time, where they drop off); feedback inside the Chat sheet (the button sits under it today).
 - How long the beta runs before go-live; whether prompts are too pushy (tune after the crew's first days).
 
@@ -114,6 +115,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Robot writes weekly-high credit + season awards to the ledger.
 - Nightly reconciliation; email only on mismatch.
 - ESPN writes experiment, Ghost score adjustment first (§10b).
+- Approved trade → commish "Do on ESPN" step (owners stop re-proposing on ESPN); then the ESPN trade write (§10b), found via Claude in Chrome's network log.
 
 **Open questions (§8)**
 - Sync-pattern note for owners.
