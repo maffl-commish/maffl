@@ -1,7 +1,7 @@
 {
  "mode": "test",
- "generated": "2026-11-12T00:46:38.710Z",
- "source": "logic.js v0.68",
+ "generated": "2026-11-12T02:30:33.494Z",
+ "source": "logic.js v0.69",
  "rows": [
   {
    "seed": false,
@@ -13,6 +13,28 @@
    "amount": -10,
    "notes": "Wk 11 · Josh Allen (QB) · app request PDB7899A0",
    "approved": "2026-11-08T02:50:34.829Z"
+  },
+  {
+   "seed": false,
+   "id": "L-T27EF8BCEA",
+   "season": 2026,
+   "owner": "Mike Murello",
+   "category": "Trade",
+   "type": "Trade",
+   "amount": -1,
+   "notes": "to Joe Reilly · trade T27EF8BCE · Mike Murello ↔ Joe Reilly",
+   "approved": "2026-11-12T02:30:32.142Z"
+  },
+  {
+   "seed": false,
+   "id": "L-T27EF8BCEB",
+   "season": 2026,
+   "owner": "Joe Reilly",
+   "category": "Trade",
+   "type": "Trade",
+   "amount": 1,
+   "notes": "from Mike Murello · trade T27EF8BCE · Mike Murello ↔ Joe Reilly",
+   "approved": "2026-11-12T02:30:32.142Z"
   }
  ]
 }
