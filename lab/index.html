@@ -225,8 +225,8 @@
   .gpos{font:700 10px var(--display);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:6px}
   .gp{background:var(--surface);border:1px solid var(--border);border-left:4px solid #6b778d;border-radius:7px;padding:4px 6px}
   .gp.p-QB{border-left-color:#7a3e9d}.gp.p-RB{border-left-color:var(--win)}.gp.p-WR{border-left-color:#3b6fb6}.gp.p-TE{border-left-color:#c46a1b}
-  .gp.blk{background:var(--gold-soft);border-color:var(--gold)}
-  .gp.blk b::after{content:" 🏷️"}
+  .gp.onblk{background:var(--gold-soft);border-color:var(--gold)}
+  .gp.onblk b::after{content:" 🏷️"}
   .gp b{display:block;font:700 13px/1.1 var(--display)}.gp small{font-size:10px;color:var(--muted)}
   .pgrid{display:flex;flex-direction:column;gap:8px}
   .ptile{display:grid;grid-template-columns:40px 1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;width:100%;background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:12px;padding:10px 12px;box-shadow:0 2px 6px var(--navy-shadow)}
@@ -3092,7 +3092,7 @@
       var groups = order.concat(["Other"]).map(function (pos) {
         var ps = r.filter(function (p) { return pos === "Other" ? order.indexOf(p.pos) < 0 : p.pos === pos; }); if (!ps.length) return "";
         return '<div class="gpos">' + pos + ' <small>' + ps.length + '</small></div>' + ps.map(function (p) {
-          return '<div class="gp p-' + esc(String(p.pos).replace("/", "")) + (blockOf(p.tier, p.name, p.owner) ? ' blk' : '') + '"><b>' + esc(p.name) + '</b><small>' + esc(p.nfl || "") + ' · ' + esc(pmeta(p)) + '</small></div>'; }).join("");
+          return '<div class="gp p-' + esc(String(p.pos).replace("/", "")) + (blockOf(p.tier, p.name, p.owner) ? ' onblk' : '') + '"><b>' + esc(p.name) + '</b><small>' + esc(p.nfl || "") + ' · ' + esc(pmeta(p)) + '</small></div>'; }).join("");
       }).join("");
       return '<div class="gcol' + (me ? ' mine' : '') + '">' + (me ? '<div class="ghead me"><b>You</b><small>' + rec(t) + ' · 💳 ' + availCredits(t.owner) + '</small></div>'
         : '<button class="ghead" data-bteam="' + esc(t.owner) + '"><b>' + esc(t.team) + '</b><small>' + rec(t) + ' · #' + t.rank + ' · 💳 ' + availCredits(t.owner) + (nb ? ' · 🏷️' + nb : '') + '</small><span class="gtrade">Trade ›</span></button>') + groups + '</div>'; }).join("") + '</div>';
