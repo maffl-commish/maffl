@@ -4250,18 +4250,24 @@
   function fbSeen() { try { return JSON.parse(store("maffl_lab_fbseen") || "{}"); } catch (e) { return {}; } }
   // ---------- 👋 Welcome tour (commish 11/8 overhaul). First open: a welcome card over the app ("the new and improved
   // MAFFL HQ": it's yours now, ESPN is virtually live, everything but lineups happens here), then one stop per tab: the app
-  // switches to that tab and rings its button. The tab bar stays visible (the scrim stops above it). After that, the first
-  // visit to Team / Match / Chat shows a short tip or two (on-screen targets only). ✕ / Skip end it; You → Show the tour again.
-  var TOUR_TABS = [
+  // switches to that tab and rings its button, with the Team / Match tips and You (settings) folded in (11/11: one tour, not
+  // a welcome tour plus first-visit tips). The tab bar stays visible (the scrim stops above it). ✕ / Skip end it; You → Show the tour again.
+  // One tour (commish 11/11): every tab, the tips inside Team and Match, then You (settings). Each step: [tab to show
+  // (or "" to stay), target, title, text, beta-only]. Tab buttons get a gold ring; anything else a cut-out. A target that
+  // isn't on screen (no live game yet, rosters still loading) is skipped.
+  var TOUR_STEPS = [
     ["home", "[data-tab='home']", "🏠 Home", "Your reel: the latest stories, picked for you. Swipe ← when you're done with a card, → to save it."],
-    ["team", "[data-tab='team']", "🏈 Team", "Your roster, trades and credits. Tap any player for his week by week, or put him on the trade block. Make offers with players and credits."],
+    ["team", "[data-tab='team']", "🏈 Team", "Your team: roster, trades and credits. Make offers with players and credits, and ask for credit perks."],
+    ["team", "#tseg", "Roster · Trades · Credits", "Switch between your roster, your trade offers and your credits here."],
+    ["team", ".rrow", "Every player, one screen", "Tap any player for his week by week, his status, or to put him on the trade block. Wherever a player shows up in the app, tapping him opens the same screen."],
+    ["team", "[data-tour='profile']", "Every owner, one screen", "Your owner profile: power ranking, career record, titles and rivalries. Tap any owner's name anywhere in the app and you get the same profile for them."],
     ["match", "[data-tab='match']", "⚔️ Match", "Your game, virtually live from ESPN: points, lineups and the full scoreboard for both tiers. Step back through every week."],
-    ["chat", "#chattab", "💬 Chat", "League chat, your tier, and DMs with any owner. Commish alerts, trade news and perk moves land here too."],
-    ["league", "[data-tab='league']", "🏆 League", "Standings, the board, rules, dues, the auction, key dates and every season since 2002. Tap League again to come back to the buttons."]];
-  var TOUR = {
-    team: [["#tseg", "Roster, Trades and Credits live here."], [".rrow", "Tap any player: week by week, status, or put him on the trade block."], ["[data-tour='profile']", "Your full profile: career, titles, rivalries."]],
-    match: [[".lpn", "Tap a player to open his screen."], [".lpts", "Tap his points to see how he scored them."]],
-    chat: [["#cnew", "Start a DM or a group message here."]] };
+    ["match", ".lpts", "How he scored", "Tap a player's points to see exactly how he got them."],
+    ["", "#chattab", "💬 Chat", "League chat, your tier, and DMs with any owner (✏️ starts one). Commish alerts, trade news and perk moves land here too."],
+    ["league", "[data-tab='league']", "🏆 League", "Standings, the board, rules, dues, the auction, key dates and every season since 2002. Tap League again to come back to the buttons."],
+    ["", "#chip", "👤 You", "Tap your initials for Settings: pick your @handle (it's how owners tag you everywhere), choose which emails you get, and add your email and mobile so owners can reach you about trades. Only signed-in owners ever see them. Show this tour again from there too."],
+    ["", "#fbbtn", "🧪 You're a beta tester", "Tap Feedback any time, on any screen: a 👍 or 👎 and a few words come straight to the commish. Click everything and try to break it.", 1]];
+  var TOUR = {}; // the per-tab first-visit tips now live inside the one tour above
   var TR = null;
   function tourKey(t) { return "maffl_lab_tour_" + t + "_" + norm(ME && ME.owner); }
   function tourClear() { ["welcome", "home", "league"].concat(Object.keys(TOUR)).forEach(function (t) { store(tourKey(t), ""); }); }
@@ -4275,7 +4281,7 @@
       if (w) { if (!store(tourKey("welcome")) && !CH.open) tourWelcome(); return; }
       if (t === "chat" ? CH.open : CUR_TAB === t && !CH.open) tourStart(t); }, 700); }
   function tourNavTop() { var n = $("tabs"); return n ? n.getBoundingClientRect().top : window.innerHeight; }
-  function tourWelcome() { store(tourKey("welcome"), "1"); if (CUR_TAB !== "home") tab("home"); TR = { t: "welcome", i: null }; tourDraw(); }
+  function tourWelcome() { store(tourKey("welcome"), "1"); if (CUR_TAB !== "home") tab("home"); TR = { t: "welcome", i: null, steps: TOUR_STEPS.filter(function (x) { return !x[4] || BETA; }) }; tourDraw(); }
   function tourCard() { var first = (ME.owner || "").split(" ")[0];
     tourPaint("", '<div class="twel"><img src="../maffl-logo-192.png" alt=""><div class="tkick">' + (first ? 'Welcome, ' + esc(first) : 'Welcome') + '</div>' +
       '<h2>The new and improved MAFFL HQ</h2>' +
@@ -4305,16 +4311,19 @@
   function tourDraw() {
     var o = $("tour"); if (!TR) { o.className = "tour"; o.innerHTML = ""; return; }
     if (TR.t === "welcome" && TR.i == null) return tourCard();
-    if (TR.t === "welcome") { var s = TOUR_TABS[TR.i], el = s && document.querySelector(s[1]);
-      if (!s) return tourEnd(); if (!el) return tourNext();
-      if (s[0] !== "chat" && CUR_TAB !== s[0]) tab(s[0]);
-      return tourSpot(el, s[2], s[3], TR.i + 1, TOUR_TABS.length); }
+    if (TR.t === "welcome") { var s = TR.steps[TR.i]; if (!s) return tourEnd();
+      if (s[0] && CUR_TAB !== s[0]) { tab(s[0]); o.className = "tour"; o.innerHTML = ""; var at = TR.i; setTimeout(function () { if (TR && TR.i === at) tourDraw(); }, 350); return; } // let the tab paint first
+      var el = document.querySelector(s[1]); if (!el || !el.getClientRects().length) return tourNext();
+      var nav = tourNavTop(), r = el.getBoundingClientRect();
+      if (r.top >= nav - 1 && r.top < window.innerHeight && $("tabs").contains(el)) return tourSpot(el, s[2], s[3], TR.i + 1, TR.steps.length); // a tab button
+      if (r.top < 0 || r.top + Math.min(r.height, 60) > nav) { el.scrollIntoView({ block: "center" }); r = el.getBoundingClientRect(); if (r.top < 0 || r.top + Math.min(r.height, 60) > nav) return tourNext(); }
+      return tourSpot(el, s[2], s[3], TR.i + 1, TR.steps.length); }
     var st = TR.steps[TR.i], e2 = document.querySelector(st[0]); if (!e2) return tourNext();
     tourSpot(e2, "", st[1], TR.i + 1, TR.steps.length);
   }
   function tourNext() { if (!TR) return;
     if (TR.t === "welcome" && TR.i == null) { TR.i = 0; return tourDraw(); }
-    TR.i++; if (TR.t === "welcome" ? TR.i >= TOUR_TABS.length : TR.i >= TR.steps.length) tourEnd(); else tourDraw(); }
+    TR.i++; if (TR.i >= TR.steps.length) tourEnd(); else tourDraw(); }
   function tourEnd() { var w = TR && TR.t === "welcome"; TR = null; tourDraw(); if (w && CUR_TAB !== "home") tab("home"); }
   window.addEventListener("resize", function () { if (TR) tourDraw(); });
   function firstLook(t) { tourMaybe(t); if (BETA && FIRST[t]) setTimeout(function () { if (CUR_TAB === t) nudge("first:" + t, FIRST[t]); }, 4000); }
