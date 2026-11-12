@@ -1,9 +1,10 @@
 {
  "mode": "test",
- "generated": "2026-11-08T02:50:36.344Z",
- "source": "logic.js v0.34",
+ "generated": "2026-11-12T00:46:38.710Z",
+ "source": "logic.js v0.68",
  "rows": [
   {
+   "seed": false,
    "id": "L-PDB7899A0",
    "season": 2026,
    "owner": "Mike Murello",
