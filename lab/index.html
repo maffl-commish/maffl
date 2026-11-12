@@ -703,7 +703,8 @@
   body.chaton .app>.chat{display:flex}body.chaton #views{display:none}
   .app>.chat .cpan{flex:1;min-height:0}
   body.typing #tabs{display:none}
-  .chd .grabber,.chd .cx{display:none}
+  /* Chat looks like every other tab (commish 11/11): the app header says "Chat" with 📥 + initials; the chat's own bar only shows inside a chat (‹ back + name) */
+  body.chinbox #chat .chd{display:none}
   .cnew{position:absolute;left:16px;bottom:16px;z-index:2;font:700 16px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#fff;background:var(--navy);border:2px solid var(--gold);border-radius:999px;padding:15px 22px;box-shadow:0 6px 18px rgba(15,29,52,.35)}
   .cbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 14px 14px}
   .cseg{display:flex;background:var(--navy-soft);border-radius:10px;padding:3px;margin:12px 0 4px}
@@ -841,7 +842,7 @@
   /* 🧪 beta feedback kit */
   .fbbtn{position:fixed;right:max(12px,calc(50% - 228px));bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:40;display:none;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--navy);background:var(--gold);border:0;border-radius:999px;padding:10px 14px;box-shadow:0 4px 14px rgba(15,29,52,.25)}
   .fbbtn.on{display:block}
-  body.chaton .fbbtn{bottom:auto;top:calc(env(safe-area-inset-top) + 104px);padding:7px 11px;font-size:11px;opacity:.9}body.chaton .dkbtn{display:none}
+  body.chaton .fbbtn{bottom:auto;top:calc(env(safe-area-inset-top) + 104px);padding:7px 11px;font-size:11px;opacity:.9}body.chaton.chinbox .fbbtn{top:auto;bottom:calc(env(safe-area-inset-bottom) + 76px);padding:10px 14px;font-size:13px;opacity:1}
   #v-team,#v-league,#v-match,#v-more{padding-bottom:84px}
   .fbnudge{position:fixed;left:50%;transform:translate(-50%,140%);bottom:calc(env(safe-area-inset-bottom) + 76px);z-index:41;width:min(92vw,440px);background:var(--navy);color:#fff;border-radius:16px;padding:12px 12px 12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(15,29,52,.35);transition:transform .25s ease,visibility 0s .25s;visibility:hidden;pointer-events:none}
   .fbnudge.on{transform:translate(-50%,0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
@@ -880,7 +881,7 @@
     <section class="view" id="v-league"></section>
     <section class="view" id="v-more"></section>
   </main>
-  <div class="chat" id="chat"><div class="cpan" id="cpan"><div class="chd"><span class="grabber"></span><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div><button class="cx" id="cclose" aria-label="Close">×</button></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New message</button><div id="cfoot"></div></div></div>
+  <div class="chat" id="chat"><div class="cpan" id="cpan"><div class="chd"><button class="cb" id="cback" aria-label="Back">‹</button><div class="ct" id="ctitle">Messages</div></div><div class="cbody" id="cbody"></div><button class="cnew" id="cnew" aria-label="New message">✎ New message</button><div id="cfoot"></div></div></div>
   <nav class="tabs" id="tabs">
     <button data-tab="home"><span>🏠</span>Home</button>
     <button data-tab="team"><span class="tbadge">🏈</span>Team</button>
@@ -4049,19 +4050,19 @@
   function chatHeader() {
     var inThread = CH.view === "thread", info = inThread ? roomInfo(CH.room) : null;
     $("cback").style.visibility = CH.view === "inbox" ? "hidden" : "visible";
-    $("cnew").style.display = CH.view === "inbox" ? "" : "none";
+    $("cnew").style.display = CH.view === "inbox" ? "" : "none"; document.body.classList.toggle("chinbox", CH.view === "inbox");
     $("ctitle").innerHTML = CH.view === "new" ? "New message<small>Any owner, either tier</small>" : inThread ? (info.with ? '<button class="tl2" data-owner="' + esc(info.with) + '">' + esc(info.t) + '</button>' : esc(info.t)) + '<small>' + esc(info.s) + '</small>' : "Messages<small>League · your tier · DMs</small>";
   }
   function openChat(room) {
     if (!chatOn()) { toast(API_URL ? "Sign in with your passphrase to chat" : "Chat needs the league server"); return; }
-    CH.open = true; sizeChat(); $("chat").classList.add("on"); document.body.classList.add("chaton");
+    CH.open = true; sizeChat(); $("chat").classList.add("on"); document.body.classList.add("chaton"); $("ttl").textContent = "Chat";
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.id === "chattab"); });
     if (room) openRoom(room); else { showInbox(); tourMaybe("chat"); }
     refreshInbox(); if (ME.commish) loadDesk();
   }
   function closeChat() {
     var ta = $("cinput"); if (ta && CH.room) CH.draft[CH.room] = ta.value;
-    CH.open = false; CH.room = null; CH.view = "inbox"; $("chat").classList.remove("on"); document.body.classList.remove("chaton"); document.body.classList.remove("typing"); $("cscrim").classList.remove("on"); $("cpan").style.transform = "";
+    CH.open = false; CH.room = null; CH.view = "inbox"; $("chat").classList.remove("on"); document.body.classList.remove("chaton"); document.body.classList.remove("chinbox"); $("ttl").textContent = TITLES[CUR_TAB] || "MAFFL HQ"; document.body.classList.remove("typing"); $("cscrim").classList.remove("on"); $("cpan").style.transform = "";
     document.querySelectorAll("#tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === CUR_TAB); });
     setTimeout(function () { if (!CH.open) $("cfoot").innerHTML = ""; }, 300);
   }
@@ -4104,18 +4105,9 @@
   setInterval(function () { if (!document.hidden) refreshInbox(); }, 30000);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { refreshInbox(); if (CH.open && CH.view === "thread") loadRoom(); } });
   $("chattab").onclick = function () { openChat(); };
-  $("cclose").onclick = closeChat; $("cscrim").onclick = closeChat;
+  $("cscrim").onclick = closeChat;
   $("cback").onclick = function () { showInbox(); refreshInbox(); };
   $("cnew").onclick = function () { CH.view = "new"; CH.q = ""; $("cfoot").innerHTML = ""; chatHeader(); drawNew(); };
-  (function () { return; // Chat is a tab now (commish 11/7): no drag-to-close
-
-    var hd = document.querySelector("#chat .chd"), pan = document.querySelector("#chat .cpan"), y0 = null, dy = 0;
-    pan.id = "cpan";
-    hd.addEventListener("pointerdown", function (e) { if (e.target.closest("button")) return; y0 = e.clientY; dy = 0; pan.style.transition = "none"; });
-    hd.addEventListener("pointermove", function (e) { if (y0 === null) return; dy = Math.max(0, e.clientY - y0); pan.style.transform = "translateY(" + dy + "px)"; });
-    function end() { if (y0 === null) return; y0 = null; pan.style.transition = ""; if (dy > 110) closeChat(); else pan.style.transform = ""; }
-    hd.addEventListener("pointerup", end); hd.addEventListener("pointercancel", end);
-  })();
   document.addEventListener("click", function (e) {
     var el;
     if ((el = e.target.closest("[data-chat-room]"))) { e.preventDefault(); openChat(el.dataset.chatRoom); return; }

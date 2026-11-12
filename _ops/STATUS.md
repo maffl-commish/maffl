@@ -2,7 +2,7 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-10 by Claude (chat), pre-launch review fixes
+**Last updated:** 2026-11-11 by Claude (chat), Chat looks like every other tab
 
 ## Now
 
@@ -31,6 +31,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-11 · REEL · 💬 Chat looks like every other tab (commish): the app header now says "Chat" and keeps 📥 desk + your initials (an old rule hid the desk button in Chat and slid the initials next to the title); the extra "Messages" bar is gone from the chat list (it only shows inside a chat, for ‹ back + the chat name); leftover sheet bits removed (grabber, ✕, dead drag-to-close code). Feedback button sits bottom-right on the chat list, as on other tabs. Keyboard handling unchanged. App only. No version bump.
 - 2026-11-10 · REEL · 👋 One welcome tour (commish): the Team / Match / Chat first-visit tips now run inside the welcome tour, 11 steps: Home, Team, Roster·Trades·Credits, every player one screen, every owner one screen (power ranking, career, titles, rivalries), Match, how he scored, Chat, League, You (initials → @handle, emails, contact info, signed-in only), and 🧪 Feedback for beta testers. Missing targets are skipped. App only. No version bump.
 - 2026-11-10 · REEL · 🏆 League tab is now a 2×5 button grid (commish): Standings · Board · Rules · Dues & Prizes · Auction Draft · Key Dates · Owners · Rivalries · Seasons · Records, each with a live hint ("You're #1 · Upper", "2026 dues paid ✓", "Trade deadline · 22d"). Each opens its own page with ‹ League; tapping League again returns to the grid. Vault retired (card buttons now "Open 2014 ›", "<player> at auction ›"); week scores out (Match has them); Ideas & feedback only in You. New: Dues (this season's paid count, your line, who owes), full Key Dates (upcoming + done), Rivalries (you vs. every active owner, most played first). `shoot.py` now also skips the welcome card. App only.
 - 2026-11-10 · REEL · 🧹 Backend v0.68 + app + docs (pre-launch review, later items): DMs must be exactly you + one other; 📣 alerts are pinned in the same write; the tick forgets sent reminders after 21 days; the app's update check runs in its own script (a broken main script can still self-update); the `maffl_lab_api` test override is ignored once STAGE is live; credit sync refuses to commit if the data contract breaks. Docs: `_ops/AUDIT_2026-11-10_prelaunch.md` (findings, status, commish action list), REEL_OPERATIONS.md corrected (status machine, is_commish, ESPN Script properties, secrets names, rollback, health checks, go-live flips), REEL.md.
