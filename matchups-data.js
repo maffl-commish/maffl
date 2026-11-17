@@ -1,8 +1,8 @@
 ﻿/* =====================================================================
  * MAFFL MATCHUPS DATA  (consolation games already excluded)
  * ---------------------------------------------------------------------
- * Source: data/MAFFL_Matchups_NoConsolation.csv (2,488 rows, 2005-2026).
- * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,479 rows emitted.
+ * Source: data/MAFFL_Matchups_NoConsolation.csv (2,499 rows, 2005-2026).
+ * Ghost rows (Game_Type == "Ghost") are EXCLUDED — 2,489 rows emitted.
  *   MAFFL Ghost is a schedule filler, not a franchise: it earns no credits, wins
  *   no prizes, and does not affect promotion or relegation. Emitting it would put
  *   "MAFFL Ghost" in the rivalry.html owner picker (that roster is built from the
@@ -2496,14 +2496,24 @@ window.MATCHUPS_DATA = [
 [2026,8,"L","Sam Lavrinc",147.44,"Charles Lavrinc",145.4,"R"],
 [2026,8,"L","Ben Funari",169.52,"Nick Yankovich",136.52,"R"],
 [2026,8,"L","Chris Johnson",169.28,"Dominic Nicastro",139.08,"R"],
-[2026,9,"U","Tony Trozzo",148.06,"Ed Peters",134.48,"R"],
-[2026,9,"U","Joe Reilly",157.96,"BJ Funari",126.44,"R"],
-[2026,9,"U","David Murello",152.06,"Jacob Nickman",123.74,"R"],
+[2026,9,"U","Tony Trozzo",148.56,"Ed Peters",134.48,"R"],
+[2026,9,"U","Joe Reilly",157.96,"BJ Funari",127.44,"R"],
+[2026,9,"U","David Murello",152.06,"Jacob Nickman",123.24,"R"],
 [2026,9,"U","Jon Fetrow",144.28,"Dan Reilly",132.18,"R"],
 [2026,9,"U","Mike Murello",163.26,"Braiden Snyder",155.62,"R"],
 [2026,9,"U","Jon Murello/ Rick Simmons",176.76,"Brian Murello/ Ron Murello",153.02,"R"],
-[2026,9,"L","Sam Lavrinc",152.8,"Bob Keslar",123.58,"R"],
+[2026,9,"L","Sam Lavrinc",152.8,"Bob Keslar",124.08,"R"],
 [2026,9,"L","Ben Funari",155.62,"Tony Brooks",131.28,"R"],
-[2026,9,"L","Dominic Nicastro",136.2,"Charles Lavrinc",123.36,"R"],
-[2026,9,"L","Nick Yankovich",194.06,"Todd Trozzo",186.56,"R"]
+[2026,9,"L","Dominic Nicastro",136.2,"Charles Lavrinc",122.86,"R"],
+[2026,9,"L","Nick Yankovich",194.06,"Todd Trozzo",186.56,"R"],
+[2026,10,"U","Ed Peters",227.44,"Mike Murello",204.02,"R"],
+[2026,10,"U","David Murello",164.34,"Joe Reilly",140.14,"R"],
+[2026,10,"U","Jon Murello/ Rick Simmons",150.36,"Dan Reilly",127.64,"R"],
+[2026,10,"U","Jon Fetrow",117.38,"Braiden Snyder",105.4,"R"],
+[2026,10,"U","Jacob Nickman",128.18,"BJ Funari",104.4,"R"],
+[2026,10,"U","Brian Murello/ Ron Murello",205.58,"Tony Trozzo",149.98,"R"],
+[2026,10,"L","Ben Funari",166.34,"Bob Keslar",97.12,"R"],
+[2026,10,"L","Sam Lavrinc",173.36,"Dominic Nicastro",135.7,"R"],
+[2026,10,"L","Tony Brooks",160.58,"Todd Trozzo",152.56,"R"],
+[2026,10,"L","Nick Yankovich",176.86,"Chris Johnson",169.04,"R"]
 ];
