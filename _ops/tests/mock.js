@@ -329,7 +329,7 @@ function create(opts) {
   }
   // Each request evaluates logic.js fresh (like Code.gs does), so MEMO_ / MODS_ never go stale between calls.
   function logic() {
-    const src = rd("_ops/apps-script/logic.js") + "\n;M._need = need_; M._daily = function () { return DAILY; }; M._deskPost = deskPost_; M._post = post_;";
+    const src = rd("_ops/apps-script/logic.js").replace("var REEL_PAUSED = true;", "var REEL_PAUSED = false;") /* tests run the awake robot */ + "\n;M._need = need_; M._daily = function () { return DAILY; }; M._deskPost = deskPost_; M._post = post_;";
     const M = {}; vm.runInContext("(function (M) {" + src + "\n})", ctx, { filename: "logic.js" })(M); return M;
   }
   const bodyOf = (out) => JSON.parse(out.body);

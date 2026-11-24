@@ -2,10 +2,11 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-12 by Claude (chat), beta feedback → trade direction logged
+**Last updated:** 2026-11-24 by Claude (chat), REEL paused until the off-season
 
 ## Now
 
+- **💤 REEL paused until the off-season (11/24).** Finish 2026 strong on classic MAFFL HQ; REEL ideas get sprinkled into the current site where they fit. `REEL_PAUSED` in `logic.js` stops the backend robots; the Tuesday Pulse chain is untouched.
 - **ESPN history inventory ✅ (9/30).** Report: `_ops/inbox/MAFFL_ESPN_Inventory.md` (raw zip is git-ignored: private, keep local). ESPN has Upper 2005–2026 (results, drafts, weekly starters; bench only from 2018) and Lower 2025–26. Old message boards are gone (1 LM note per season survives); no Coach of the Week posts. Next, when wanted: check gold 2005–2025 against ESPN (would settle the quarantined-CSV swaps below).
 - **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card ✅ (`weekly.html` v6.3).
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
@@ -31,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-24 · REEL · 💤 Off-season pause (commish): new `REEL_PAUSED = true` switch in logic.js. The 15-min tick and 5 AM / 5 PM daily run do nothing (so no card-lines Claude runs, desk reminders or robot emails); `?action=health` reports healthy + `paused:true` so UptimeRobot stays quiet. App still opens. Classic site, ESPN pull and Tuesday Pulse unchanged. Backend v0.70 (mock runs the robot awake; baseline refreshed for the version only).
 - 2026-11-12 · REEL · 📝 Beta feedback logged (Joe by text, Charlie): APP_DESIGN §0 + REEL.md record the direction that owners finish trades in REEL and the commish does the ESPN move (manual first, §10b automation later), plus no new credit-spending options this off-season. Docs only.
 - 2026-11-11 · REEL · 🐛 Trade builder grid: players on the block rendered squished (commish). The grid tagged them with class `blk`, the same name as the 🏷️ On the block carousel (11/7), so they picked up its sideways-scroll / negative-margin styles. Renamed to `onblk`. App only. No version bump.
 - 2026-11-11 · REEL · 🧹 Team is just your team + 🧪 Feedback inbox (commish): Team → Trades no longer lists every trade in the league or carries Approve / Negate / Reverse for the commish (only your offers + your tier, like any owner); Team → Credits drops the perk review queue and its badge. ↩️ Reverse moved to a new desk section "Approved · last 14 days". New desk 🧪 Feedback section (Go-live): every note from the 🧪 button and 💡 Ideas & feedback, yours included, newest first; the 🧪 tile counts the last 7 days and opens it (it used to count only beta-crew notes from the last 24 h). Backend v0.69 (desk `beta.notes`, last 40). No version bump.
