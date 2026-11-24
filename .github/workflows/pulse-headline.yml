@@ -1,0 +1,75 @@
+# 📰 Pulse headline pick (commish 11/24). The commish taps a different headline on the desk → the app backend sends
+# repository_dispatch "pulse-headline" {week, pick (0-based)} → this swaps that option's headline + subhead into the
+# Week's object in weekly.html (from _ops/inbox/MAFFL_2026_WeekWW_headlines.json, written by the Pulse robot),
+# checks the page, pushes to main and posts the result to the 📥 desk. Run workflow by hand: pick = option number (1-3).
+name: Pulse headline
+
+on:
+  repository_dispatch:
+    types: [pulse-headline]
+  workflow_dispatch:
+    inputs:
+      week:
+        description: "Week"
+        required: true
+      pick:
+        description: "Option number (1 = the robot's own)"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: pulse-headline
+  cancel-in-progress: false
+
+jobs:
+  swap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Swap the headline, check, push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DESK_KEY: ${{ secrets.DESK_KEY }}
+          APP_API: https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec
+          D_WEEK: ${{ github.event.client_payload.week }}
+          D_PICK: ${{ github.event.client_payload.pick }}
+          I_WEEK: ${{ inputs.week }}
+          I_PICK: ${{ inputs.pick }}
+        run: |
+          desk() { [ -z "$DESK_KEY" ] && return 0
+            jq -n --arg k "$DESK_KEY" --arg t "$1" --arg x "$2" --arg l "$3" --arg s "$4" '{action:"botpost",key:$k,title:$t,text:$x,link:$l,status:$s}' > desk.json
+            curl -sSL --max-time 60 -H "Content-Type: text/plain;charset=utf-8" --data @desk.json "$APP_API" | head -c 200; echo; rm -f desk.json; }
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then WEEK="$D_WEEK"; PICK=$((D_PICK + 1)); else WEEK="$I_WEEK"; PICK="$I_PICK"; fi
+          case "$WEEK$PICK" in *[!0-9]*|"") echo "::error::bad week/pick"; exit 1 ;; esac
+          RUN="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          OPEN=$(gh api "repos/${{ github.repository }}/pulls?state=open" --jq '[.[] | select(.title | test("Weekly Pulse"))] | length')
+          if [ "$OPEN" != "0" ]; then
+            desk "Week $WEEK headline NOT swapped" "A Weekly Pulse PR is open, so weekly.html can't change right now. Merge or close it, then pick again." "$RUN" fail; exit 1; fi
+          if ! python3 _ops/scripts/pulse_headline.py "$WEEK" "$PICK" > swap.txt; then
+            cat swap.txt; desk "Week $WEEK headline NOT swapped" "$(cat swap.txt | head -c 300)" "$RUN" fail; exit 1; fi
+          cat swap.txt
+          if git diff --quiet; then desk "Week $WEEK headline" "Option $PICK was already live." "https://maffl-commish.github.io/maffl/weekly.html" ok; exit 0; fi
+          CODE=0; python3 _ops/scripts/check_pulse_week.py "$WEEK" > check.txt || CODE=$?
+          python3 - <<'PY'
+          import re
+          s = open("weekly.html", encoding="utf-8").read()
+          open("/tmp/weekly.js", "w").write("\n;\n".join(re.findall(r"<script(?![^>]*src)[^>]*>(.*?)</script>", s, re.S)))
+          PY
+          if [ $CODE -ne 0 ] || ! node --check /tmp/weekly.js || ! node _ops/tests/contract.js; then
+            grep -E "❌|Result" check.txt | head -5
+            desk "Week $WEEK headline NOT swapped" "The page check failed after the swap, so nothing was published. $(grep -E '❌' check.txt | head -2 | tr '\n' ' ' | head -c 200)" "$RUN" fail; exit 1; fi
+          rm -f swap.txt check.txt
+          git config user.name "maffl-pulse-robot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qam "Pulse Week $WEEK: headline option $PICK (commish pick)"
+          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done
+          desk "Week $WEEK headline swapped ✓" "Option $PICK is live on the Pulse." "https://maffl-commish.github.io/maffl/weekly.html" ok

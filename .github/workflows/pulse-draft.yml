@@ -298,6 +298,12 @@ jobs:
           fi
           if gh pr merge "$URL" --merge --delete-branch; then
             desk "Week $WEEK is in the books" "Scores, gold history and the classic Pulse published themselves. Nothing to merge." "https://maffl-commish.github.io/maffl/weekly.html" ok
+            # 📰 Headline pick (commish 11/24): send the robot's 3 options to the desk; the commish can swap in 2 or 3.
+            HL=$(printf "_ops/inbox/MAFFL_2026_Week%02d_headlines.json" "$WEEK")
+            if [ -n "$DESK_KEY" ] && [ -f "$HL" ] && jq -e '.options | length >= 2' "$HL" > /dev/null 2>&1; then
+              jq -c --arg k "$DESK_KEY" --argjson w "$WEEK" '{action:"pulseopts",key:$k,week:$w,options:[.options[] | {headline,subhead}]}' "$HL" > hl.json
+              curl -sSL --max-time 60 -H "Content-Type: text/plain;charset=utf-8" --data @hl.json "$APP_API" | head -c 200; echo; rm -f hl.json
+            fi
           else
             desk "Week $WEEK Pulse didn't auto-publish" "The check passed but the merge failed (conflict or branch rule). Open the PR to merge it." "$URL" fail
           fi

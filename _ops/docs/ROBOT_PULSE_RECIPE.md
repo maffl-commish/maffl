@@ -106,6 +106,12 @@ with `},`. Mirror the previous week's object field for field.
   from OUTPUT 2c. **Waiver claims carry ESPN's processing time: never present that as when a
   team picked someone up** (editorial §4 "Waiver times"). "Bench beat every starter" facts
   (OUTPUT 2d) are good Can You Believe This? material.
+- **📰 Headline options → `_ops/inbox/MAFFL_2026_WeekWW_headlines.json`** (commish 11/24: he picks on his desk after
+  the Pulse publishes). Exactly this shape: `{"week": W, "options": [{"headline": "…", "subhead": "…"}, …]}` with **3
+  options**. Option 1 is **exactly** the headline and subhead you put in the page. Options 2 and 3 lead with a
+  **different story** (another team or tier, a record, a Survivor exit, a Coach of the Week), not a reworded option 1.
+  Same rules as the page's headline: facts and numbers only from the facts file, editorial §3, similar length, no team
+  in the lead of all three. If he picks 2 or 3, a robot swaps that headline + subhead into the page as written.
 - **matchupPreviews** (Week W+1): the pairings in the facts file, away team first, **3 Upper + 2 Lower**
   with `highlight: true` (editorial §8), picked for stakes. Featured notes use the head-to-head
   facts. Never repeat the bare series score, since the page adds the ⚔️ strip itself. Every other game
@@ -124,7 +130,9 @@ with `},`. Mirror the previous week's object field for field.
 - Editorial guide §9 checklist, item by item.
 - JavaScript still parses: copy every inline `<script>` block of `weekly.html` (without the tags)
   into one temp `.js` file outside the repo and run `node --check` on it. It must pass.
-- `git status` shows only `weekly.html` and the summary file changed by you. Anything else: undo it.
+- The headlines file parses (`python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert len(d['options'])==3" <file>`) and option 1
+  matches the page's headline and subhead character for character.
+- `git status` shows only `weekly.html`, the summary file and the headlines file changed by you. Anything else: undo it.
 
 ## 6. Summary for the commissioner → `_ops/inbox/MAFFL_2026_WeekWW_pr.md`
 
