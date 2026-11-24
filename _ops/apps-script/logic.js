@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.70";
+var VERSION = "0.71";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -31,11 +31,13 @@ function perkDeadline_(week) {
 // Older two-word passphrases (plain SHA-256, ~7,000 possibilities) still verify while this is true. Go-live switch
 // (pre-launch review B6): reissue every owner still listed under "old passphrase" on the desk, then set it to false.
 var LEGACY_PINS = true;
-// 💤 Off-season pause (commish 11/24: REEL waits for the off-season; finish 2026 on classic MAFFL HQ). While true the
-// 15-minute tick and the 5 AM / 5 PM daily run (and so the Claude card-lines workflow) do nothing, no robot emails go
-// out, and ?action=health still reports healthy (with paused:true) so the uptime monitor stays quiet. The app still
-// opens and reads. Set to false to wake it.
-var REEL_PAUSED = true;
+// 💤 REEL mode (commish 11/24: REEL waits for the off-season; finish 2026 on classic MAFFL HQ).
+//   "live" = everything (owners' app, robots, card lines).
+//   "desk" = commish desk only: the tick + daily run do commish jobs (👻 Ghost step, 📰 Pulse headline pick, robot
+//            status) and email the commish; nothing posts to owners' chat, no card lines, no owner reminders. The app
+//            opens straight to the desk for the commish and shows owners a "resting" screen.
+//   "off"  = nothing runs; ?action=health still reports healthy (paused:true) so the uptime monitor stays quiet.
+var REEL_MODE = "desk";
 var MAX_FAILS_PER_HOUR = 60; // league-wide guess limit for passphrase-only sign-in (raised 11/7: phrases now ~6 million, phones use tokens)
 
 // Passphrases are two football words and 3 digits, e.g. GRONK-PISTOL-427 (older ones: two words). Case, spaces and dashes don't matter when typing.
@@ -83,7 +85,7 @@ function health_() {
   var age = function (k) { try { var a = JSON.parse(prop_(k) || "{}").at; return a ? Math.round((Date.now() - new Date(a).getTime()) / 6e4) : null; } catch (e) { return null; } };
   var tick = age("LAST_TICK"), daily = age("LAST_DAILY"), sync = {}; try { sync = JSON.parse(prop_("LAST_SYNC") || "{}"); } catch (e) {}
   var mail = null; try { mail = MailApp.getRemainingDailyQuota(); } catch (e) {}
-  if (REEL_PAUSED) return { ok: true, healthy: true, paused: true, version: VERSION, tickMin: tick, dailyMin: daily };
+  if (REEL_MODE === "off") return { ok: true, healthy: true, paused: true, version: VERSION, tickMin: tick, dailyMin: daily };
   return { ok: true, healthy: tick !== null && tick <= 40, version: VERSION, tickMin: tick, dailyMin: daily, syncOk: sync.ok !== false, mailLeft: mail };
 }
 
@@ -140,6 +142,7 @@ function route_(b) {
       case "taplog":   return (withAuth_(b, function (o) { return tapLog_(o, b); }));
       case "botpost":  return (botPost_(b));
       case "putlines": return (putLines_(b));
+      case "pulseopts": return (pulseOpts_(b));
       default:        return { ok: false, error: "unknown action" };
     }
 }
@@ -360,7 +363,7 @@ function summary_(week, owner) {
   var meRow = owner ? ownerRow_(owner) : null, pk = perks_(owner);
   var last = {}; try { last = JSON.parse(prop_("LAST_SYNC") || "{}"); } catch (e) {}
   return { ok: true, handles: (function () { try { return handles_(); } catch (e) { return {}; } })(), contacts: owner ? contacts_() : [], perks: pk.perks, insuranceLeft: pk.insuranceLeft, moves: pendingMoves_(), sync: { mode: syncMode_(), last: last }, counts: counts, mine: mine, who: who, tallies: tallies, myVotes: myVotes, polls: polls, offers: t.offers, block: t.block, deadline: TRADE_DEADLINE.toISOString(),
-    commish: !!(meRow && String(meRow.is_commish) === "Y"), beta: isBeta_(meRow), tour: meRow && meRow.tour ? String(meRow.tour) : "", chat: meRow ? inbox_(meRow) : null };
+    mode: REEL_MODE, commish: !!(meRow && String(meRow.is_commish) === "Y"), beta: isBeta_(meRow), tour: meRow && meRow.tour ? String(meRow.tour) : "", chat: meRow ? inbox_(meRow) : null };
 }
 
 // ---------------------------------------------------------------- extra modules (room past the 95 KB cache limit)
@@ -438,4 +441,4 @@ M.doPost = doPost;
 M.menuSetPin = menuSetPin;
 M.menuRequestDone = menuRequestDone;
 M.menuUnlock = menuUnlock;
-M.tick = function () { return REEL_PAUSED ? { ok: true, paused: true } : tick(); };
+M.tick = function () { return REEL_MODE === "off" ? { ok: true, paused: true } : tick(); };

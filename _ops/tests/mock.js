@@ -329,7 +329,7 @@ function create(opts) {
   }
   // Each request evaluates logic.js fresh (like Code.gs does), so MEMO_ / MODS_ never go stale between calls.
   function logic() {
-    const src = rd("_ops/apps-script/logic.js").replace("var REEL_PAUSED = true;", "var REEL_PAUSED = false;") /* tests run the awake robot */ + "\n;M._need = need_; M._daily = function () { return DAILY; }; M._deskPost = deskPost_; M._post = post_;";
+    const src = rd("_ops/apps-script/logic.js").replace(/var REEL_MODE = "\w+";/, 'var REEL_MODE = "' + ((opts || {}).mode || "live") + '";') /* tests run the full robot unless create({ mode }) */ + "\n;M._need = need_; M._daily = function () { return DAILY; }; M._deskPost = deskPost_; M._post = post_;";
     const M = {}; vm.runInContext("(function (M) {" + src + "\n})", ctx, { filename: "logic.js" })(M); return M;
   }
   const bodyOf = (out) => JSON.parse(out.body);
@@ -483,12 +483,17 @@ function create(opts) {
   return {
     get(params) { const t = Date.now(), out = bodyOf(logic().doGet({ parameter: params || {} })); log("GET", params.action || "(version)", params.tier || "", Date.now() - t + "ms", out.ok === false ? "→ " + out.error : ""); return out; },
     post(body) { const t = Date.now(), out = bodyOf(logic().doPost({ postData: { contents: JSON.stringify(body || {}) } })); if (body.action !== "taplog") log("POST", body.action, Date.now() - t + "ms", out.ok === false ? "→ " + out.error : ""); return out; },
-    reset: seed, pins: () => PINS, prop: (k, v) => { props[k] = String(v); }, daily: () => { const M = logic(); M._need("daily"); return M._daily(); }, sheet: (n) => (sheets[n] ? sheets[n].data : null), mail: () => mail,
+    reset: seed, pins: () => PINS, tick: () => logic().tick(), prop: (k, v) => { props[k] = String(v); }, daily: () => { const M = logic(); M._need("daily"); return M._daily(); }, sheet: (n) => (sheets[n] ? sheets[n].data : null), mail: () => mail,
   };
 }
 
 function serve(port) {
-  let mock = create();
+  let mock = create({ mode: process.env.MOCK_MODE }); // MOCK_MODE=desk: desk-only mode, cleaned, with a sample headline pick
+  if (process.env.MOCK_MODE === "desk") { mock.prop("DESK_KEY", "k"); mock.tick();
+    mock.post({ action: "pulseopts", key: "k", week: 11, options: [
+      { headline: "Sarge's Squad (Nick) scored 215.26, the highest Lower score since 2025, and took Lower's points lead.", subhead: "Turkey Hat Conglomerate (Ed) is the last team standing in Upper's Survivor." },
+      { headline: "Turkey Hat Conglomerate (Ed) is the last team standing in Upper's Survivor.", subhead: "Sarge's Squad (Nick) put up 215.26 and grabbed Lower's points lead." },
+      { headline: "215.26: Nick's Sarge's Squad posts Lower's best week since 2025.", subhead: "Ed outlasts Fetrow in Upper's Survivor." }] }); }
   const DELAY = {}; String(process.env.MOCK_DELAY || "").split(",").forEach((x) => { const [k, v] = x.split(":"); if (k && v) DELAY[k.trim()] = +v; });
   const server = http.createServer((req, res) => {
     const u = new URL(req.url, "http://x"), send = (code, obj) => { res.writeHead(code, { "Content-Type": "application/json; charset=utf-8", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "*", "Cache-Control": "no-store" }); res.end(typeof obj === "string" ? obj : JSON.stringify(obj)); };

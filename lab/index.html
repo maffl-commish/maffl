@@ -805,6 +805,13 @@
   .dkbtn i{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--loss);color:#fff;font:700 11px var(--body);font-style:normal;text-align:center;padding:0 4px;box-shadow:0 0 0 2px var(--surface)}
   .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
   .dk.on{display:flex}
+  body.deskmode #dkclose{display:none}
+  .rest{position:fixed;inset:0;z-index:80;background:var(--navy);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;gap:14px}
+  body.resting .rest{display:flex}.rest h2{font:700 30px var(--display);letter-spacing:.02em;color:var(--gold);margin:0}.rest p{font:500 16px/1.45 var(--body);max-width:320px;margin:0;color:rgba(255,255,255,.85)}
+  .rest a{margin-top:8px;background:var(--gold);color:var(--navy);font:700 16px var(--body);padding:12px 22px;border-radius:999px;text-decoration:none}
+  .hlo{border:1px solid var(--line,#ddd);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fff}.hlo.live{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset}
+  .hlo b{display:block;font:700 15px/1.35 var(--body)}.hlo small{display:block;font:500 13px/1.4 var(--body);color:#555;margin-top:4px}.hlo .btns{margin-top:8px}
+  .hlo .lv{display:inline-block;margin-top:8px;font:700 12px var(--body);color:#7a5a00;background:#fff3c4;border-radius:999px;padding:3px 10px}
   details.fold{padding:4px 14px}details.fold>summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;font:700 15px var(--display);color:var(--navy);padding:10px 0}details.fold>summary span{flex:1}
   details.fold>summary::-webkit-details-marker,details.fold2>summary::-webkit-details-marker{display:none}details.fold>summary::after{content:"›";font-size:20px;color:var(--muted);transition:transform .15s}details.fold[open]>summary::after{transform:rotate(90deg)}
   details.fold2>summary{list-style:none;cursor:pointer;font:700 13px var(--display);text-transform:uppercase;letter-spacing:.06em;color:#9a6a00;padding:10px 0 4px;text-align:center}details.fold2[open]>summary{display:none}
@@ -901,6 +908,7 @@
 <div class="undo" id="undo"><span id="undot"></span><button id="undob">Undo</button></div>
 <div class="tour" id="tour" role="dialog" aria-live="polite"></div>
 <button class="fbbtn" id="fbbtn" aria-label="Send feedback">🧪 Feedback</button>
+<div class="rest" id="rest"><h2>REEL is resting</h2><p>The new MAFFL HQ app is back in the off-season. Everything for the rest of 2026 is on MAFFL HQ.</p><a href="https://maffl-commish.github.io/maffl/">Open MAFFL HQ</a></div>
 <div class="dk" id="desk"><div class="dkhead"><div><div class="ct">Commish desk</div><small id="dkupd"></small></div><button class="cb" id="dkref" aria-label="Refresh">↻</button><button class="cb dkx" id="dkclose" aria-label="Close">✕</button></div><div class="dkbody" id="dkbody"></div></div>
 <div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
@@ -1272,7 +1280,7 @@
     (early || api("summary", creds())).then(function (r) {
       if (!r.ok) { if (!SUM_OK) { SUM_OK = true; refreshTeam(); } return; }
       if (r.token) { store("maffl_lab_pin", r.token); delete r.token; } // older phones swap their passphrase for a device token
-      SUM = r; SUM_OK = true; saveSum(r); movesSync(); ME.commish = !!r.commish; betaOn(!!r.beta); tourStampCheck(r.tour); deskBadge(); if (ME.commish) loadDesk(); loadBoard(); renderHome(); refreshTeam(); paint(); chatBadge();
+      SUM = r; SUM_OK = true; saveSum(r); movesSync(); ME.commish = !!r.commish; betaOn(!!r.beta); tourStampCheck(r.tour); deskBadge(); if (ME.commish) loadDesk(); deskMode(r.mode); loadBoard(); renderHome(); refreshTeam(); paint(); chatBadge();
       if (CH.open && CH.view === "inbox") drawInbox();
       if (DEEP_OFFER) { var el = document.querySelector('[data-oid="' + DEEP_OFFER + '"]'); DEEP_OFFER = null;
         if (el) { el.scrollIntoView({ block: "center" }); el.style.outline = "3px solid var(--gold)"; setTimeout(function () { el.style.outline = ""; }, 2500); } else toast("That offer isn't open to you anymore"); }
@@ -3518,10 +3526,29 @@
     return '<div class="ditem"><b class="dstep">' + esc(espnStep(p)) + '</b><div class="meta">' + sub + ' · <label class="dwhen">📅 ' + dayName(espnDue(p)) + '<input type="date" data-espnwhen="' + esc(p.id) + '" value="' + espnDue(p) + '" aria-label="Change the day"><span>Change</span></label></div><div class="btns">' +
       '<a class="b sm" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"').replace('class="b pri"', 'class="b sm pri"') + '</div></div>';
   }
+  // 📥 Desk-only mode (commish 11/24): REEL rests until the off-season. The commish lands on the desk (no ✕); owners see a resting screen.
+  var DESKMODE = false;
+  function deskMode(m) { DESKMODE = m === "desk"; document.body.classList.toggle("deskmode", DESKMODE);
+    document.body.classList.toggle("resting", DESKMODE && !(ME && ME.commish));
+    if (DESKMODE && ME && ME.commish && !DK.open) { openDesk(); DK.secs.pulse = DK.secs.espn = true; drawDesk(); } }
+  function pulseOpen(d) { var p = (d || {}).pulse; return p && p.status === "open" && Date.now() - new Date(p.at).getTime() < 3 * 864e5 ? p : null; }
+  function pulseHTML(d) { var p = (d || {}).pulse; if (!p || !p.options) return "";
+    var waiting = !!pulseOpen(d), title = "📰 Week " + p.week + " headline" + (waiting ? ": keep it or pick another" : "");
+    var inner = '<p class="meta" style="margin-top:6px">' + (waiting ? 'Headline ' + (p.live + 1) + ' is live. Do nothing and it stays.' : p.status === "picked" ? 'You picked headline ' + (p.live + 1) + '.' : 'You kept headline ' + (p.live + 1) + '.') + '</p>' +
+      p.options.map(function (o, i) { return '<div class="hlo' + (i === p.live ? ' live' : '') + '"><b>' + esc(o.headline) + '</b>' + (o.subhead ? '<small>' + esc(o.subhead) + '</small>' : '') +
+        (i === p.live ? '<span class="lv">✅ Live now</span>' : '<div class="btns"><button class="b pri" data-pulsepick="' + i + '" data-week="' + p.week + '">Use this one</button></div>') + '</div>'; }).join("") +
+      (waiting ? '<div class="btns"><button class="b" data-pulsekeep="' + p.week + '">Keep ' + (p.live + 1) + '</button></div>' : '');
+    return acc("pulse", title, waiting ? 1 : "", inner, waiting); }
+  document.addEventListener("click", function (e) { var el = e.target.closest("[data-pulsepick],[data-pulsekeep]"); if (!el) return;
+    var keep = el.hasAttribute("data-pulsekeep"), wk = +(keep ? el.dataset.pulsekeep : el.dataset.week), i = keep ? null : +el.dataset.pulsepick;
+    (keep ? Promise.resolve(true) : confirmBox("Swap in headline " + (i + 1) + "?", '<p class="p">The robot puts it in the Week ' + wk + ' Pulse. Live on MAFFL HQ in about 3 minutes.</p>', "Swap it in")).then(function (yes) { if (!yes) return; busy(1);
+      api("deskact", Object.assign(creds(), keep ? { op: "pulsekeep", target: "", week: wk } : { op: "pulsepick", target: "", week: wk, pick: i })).then(function (r) { busy(0);
+        toast(r.ok ? (keep ? "Kept ✓" : "📰 Swapping it in… live in ~3 min") : (r.error || "Didn't work")); DESK = null; loadDesk().then(drawDesk); loadDeskLog(); })
+        .catch(function () { busy(0); toast("Couldn't reach the league server"); }); }); });
   function deskTodo() {
     if (!ME || !ME.commish) return 0; var d = DESK || {};
     return deskOpenPerks().length + deskReview().length + (d.access || []).length + (d.locked || []).length + espnNow().length + (d.sync && d.sync.last && d.sync.last.ok === false ? 1 : 0) +
-      (d.awards || []).filter(function (a) { return a.status === "PENDING"; }).length;
+      (d.awards || []).filter(function (a) { return a.status === "PENDING"; }).length + (pulseOpen(d) ? 1 : 0);
   }
   function deskLine(l) {
     if (l.kind === "offer") return "🤝 Trade waiting for your review";
@@ -3547,6 +3574,7 @@
   function deskTodoHTML(d) {
     var n = deskTodo(), h = "";
     if (!n) h += '<div class="dsk clear">✅ <b>All clear.</b> Nothing waiting on you.</div>';
+    h += pulseHTML(d);
     var ps = deskOpenPerks(); if (ps.length) h += acc("perks", "🎟️ Perks to approve", ps.length, ps.map(function (p) { return perkCard(p, true); }).join(""), 1);
     var rv = deskReview(); if (rv.length) h += acc("review", "🤝 Trades in review", rv.length, rv.map(function (o) { var hrs = (Date.now() - new Date(o.updated || o.ts).getTime()) / 36e5;
       return '<p class="meta" style="margin-top:6px">' + (hrs >= 24 ? '✅ Review over' : '⏳ ' + Math.max(1, Math.ceil(24 - hrs)) + ' h left') + ' · ' + ((d.moved || []).indexOf(o.id) >= 0 ? '✅ moved on ESPN' : 'not moved on ESPN yet') + '</p>' + tradeMini(o, true); }).join(""), 1);
@@ -3602,6 +3630,16 @@
       ["lines", "✍️", "Home card headlines", "after each final week", ln[0], ln[1]],
       ["mail", "✉️", "Email quota", "100 a day (Google)", d.mailLeft == null ? "Unknown" : d.mailLeft + " left today", d.mailLeft != null && d.mailLeft < 20 ? (d.mailLeft < 10 ? "bad" : "warn") : "ok"], // review F4
       ["sync", "💳", "Credits → official log", mode === "live" ? "LIVE" : "TEST (practice until go-live)", ls && ls.ok === false ? "Last push failed" : ls && ls.at ? "Pushed " + ago2(ls.at) : "Nothing pushed yet", ls && ls.ok === false ? "bad" : "ok"]];
+  }
+  function deskTilesLite(d) { // desk-only mode: just what's on your plate + the robots that still run
+    var N = [["espn", "🏈", espnNow().length, "Do on ESPN"], ["pulse", "📰", pulseOpen(d) ? 1 : 0, "Headline pick"]];
+    var R = robotRows(d).filter(function (r) { return r[0] === "tick" || r[0] === "daily" || r[0] === "mail"; }), bad = R.filter(function (r) { return r[5] !== "ok"; }).length;
+    R.forEach(function (r) { if (r[0] === "tick") { r[2] = "Desk robot"; r[3] = "every 15 min · emails you"; } });
+    return '<div class="dkn">' + N.map(function (t) { return '<button class="dknt' + (t[2] ? ' hot' : ' zero') + '" data-dkgo="' + t[0] + '"><b>' + t[2] + '</b><span>' + t[1] + ' ' + esc(t[3]) + '</span></button>'; }).join("") + '</div>' +
+      '<p class="dknm">REEL is resting until the off-season. This desk keeps your weekly commish jobs.</p>' +
+      '<div class="dsk acc"><details data-sec="robots"><summary><span>' + (bad ? '⚠️ Robots · ' + bad + ' need' + (bad === 1 ? 's' : '') + ' a look' : '🤖 Robots · all running') + '</span></summary>' +
+      R.map(function (r) { return '<button class="dkrb ' + r[5] + '" data-dktile="' + r[0] + '"><span>' + r[1] + '</span><div><b>' + esc(r[2]) + '</b><small>' + esc(r[3]) + '</small></div><i>' + esc(r[4]) + ' ›</i></button>'; }).join("") +
+      '<p class="meta">Tap one for what it does and a Run it now button. League server v' + esc(d.version || "?") + '.</p></details></div>';
   }
   function deskTiles(d) {
     var oc = d.offers || {}, crew = (d.beta && d.beta.crew) || [], fb = fbRecent(d) != null ? fbRecent(d) : crew.reduce(function (n, c) { return n + (Number(c.fb) || 0); }, 0);
@@ -3740,7 +3778,9 @@
     var todo = deskTodoHTML(d) + awardsPanel(d, "todo");
     if (n && /dsk clear/.test(todo)) todo = todo.replace(/<div class="dsk clear">[\s\S]*?<\/div>/, "");
     var day = new Date().toDateString(), today = (DK.log || []).filter(function (m) { return new Date(m.ts).toDateString() === day; }).length;
-    b.innerHTML = deskTiles(d) +
+    if (DESKMODE) { b.innerHTML = deskTilesLite(d) + '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
+      '<div class="dkh"><h3>Log</h3><small>Newest first</small></div>' + acc("log", "🗒️ Robots and notes", today ? today + " today" : "", deskLogHTML()); }
+    else b.innerHTML = deskTiles(d) +
       '<div class="dkh"><h3>To do</h3>' + (n ? '<span class="stp gold">' + n + '</span>' : '') + '</div>' + todo +
       '<div class="dkh"><h3>League</h3></div>' + deskAlertHTML() + (awardsPanel(d, "earned") || '<div class="dsk"><div class="meta">💳 Credits: no awards earned yet.</div></div>') + deskTradesHTML() + deskUndoHTML() + deskAccessHTML(d) +
       '<div class="dkh"><h3>Go-live</h3><small>Beta + launch tools</small></div>' + deskFeedbackHTML(d) + betaPanel(d) + deskTourHTML() + (STAGE === "live" || ((d.sync || {}).mode === "live") ? '' : deskSeedHTML(d)) + // seed tools vanish at go-live (review B3)

@@ -1,15 +1,17 @@
 # REEL — the new MAFFL HQ app (front door)
 
-Last updated: 2026-11-24 (chat) · 💤 Paused until the off-season
+Last updated: 2026-11-24 (chat) · 💤 Resting until the off-season; 📥 desk-only mode
 
 **"REEL" is the name for the whole redesign:** the phone-first app now in `lab/` (Home reel, Match, Team,
 League, More), its passphrase login, trades, credit perks, the Apps Script backend and the robots behind it.
 When a chat message starts with **REEL**, it's about this. Read this page first, then `APP_DESIGN.md`.
 
-> **💤 Paused 2026-11-24 (commish).** No mid-season launch: beta feedback was that a second app on top of ESPN is
+> **💤 Resting since 2026-11-24 (commish).** No mid-season launch: beta feedback was that a second app on top of ESPN is
 > too much for most owners. 2026 finishes on classic MAFFL HQ; REEL resumes in the off-season (ideas: trades done
-> only in REEL with the ESPN side automated). `REEL_PAUSED = true` in `logic.js` stops the tick, the daily run and
-> card lines (so no robot emails or Claude runs); the app still opens. To wake it: set it to `false`, push.
+> only in REEL with the ESPN side automated). `REEL_MODE` in `logic.js`: **"desk"** (now) = the commish keeps the 📥 desk
+> (👻 Ghost steps emailed, 📰 Pulse headline pick, robot status); the app opens straight to it for him and shows owners
+> a "resting" screen; nothing posts to owners, no card lines. A one-time clean slate wiped all beta/seed/test offers,
+> perks, chat and trade-block listings (owners, passphrases, credit awards kept). "off" = nothing runs; "live" = full REEL.
 
 This page is the map. `APP_DESIGN.md` stays the governing doc for decisions (§0 Journal) and details; if the
 two disagree, APP_DESIGN wins and this page gets fixed.

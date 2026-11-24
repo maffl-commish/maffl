@@ -37,16 +37,21 @@ function openRequests_() { // Requests tab: ts, owner, note, status, done_ts (by
 function closeRequests_(owner) {
   var sh = sheet_("Requests"); openRequests_().forEach(function (r) { if (norm_(r.owner) === norm_(owner)) sh.getRange(r.row, 4, 1, 2).setValues([["DONE", new Date()]]); });
 }
+// 👻 Ghost score steps (commish 11/8, the job the Pulse robot used to flag): every final week where ESPN's Ghost score isn't the par yet.
+function ghostSteps_(done, when) {
+  var out = [];
+  try { need_("daily"); var sn = DAILY.snapshot(), c2 = function (x) { return Math.round((Number(x) || 0) * 100); }; Object.keys(sn.tiers || {}).forEach(function (t) { var s = sn.tiers[t];
+    (s.ghost || []).forEach(function (g) { var id = "ghost:" + t + ":" + g.wk + "@" + c2(g.par); if (c2(g.espn) === c2(g.par) || done[id]) return; // par in the id: a stat correction that moves the par brings the step back, even after ✓ Done (commish 11/8: past weeks get re-set regularly)
+      out.push({ id: id, owner: "", tier: t, perk: "ghost", qty: 1, week: g.wk, player: "", pos: "", swapWith: "", approved: sn.at, when: when[id] || "",
+        par: g.par, espnPts: g.espn, vs: ((s.teams || {})[g.vs] || {}).team || "", vsPts: g.vsPts }); }); }); } catch (e) {}
+  return out;
+}
 function desk_(me) {
   var done = {}, when = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = e.meta || "Y"; if (e.type === "espn_when") when[e.ref] = String(e.value).replace(/^when:/, ""); });
   var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id] && !isSeedRow_(r); }).map(function (r) {
     return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts, when: when[r.perk_id] || "" };
   });
-  // 👻 Ghost score steps (commish 11/8, the job the Pulse robot used to flag): every final week where ESPN's Ghost score isn't the par yet.
-  try { need_("daily"); var sn = DAILY.snapshot(), c2 = function (x) { return Math.round((Number(x) || 0) * 100); }; Object.keys(sn.tiers || {}).forEach(function (t) { var s = sn.tiers[t];
-    (s.ghost || []).forEach(function (g) { var id = "ghost:" + t + ":" + g.wk + "@" + c2(g.par); if (c2(g.espn) === c2(g.par) || done[id]) return; // par in the id: a stat correction that moves the par brings the step back, even after ✓ Done (commish 11/8: past weeks get re-set regularly)
-      espn.push({ id: id, owner: "", tier: t, perk: "ghost", qty: 1, week: g.wk, player: "", pos: "", swapWith: "", approved: sn.at, when: when[id] || "",
-        par: g.par, espnPts: g.espn, vs: ((s.teams || {})[g.vs] || {}).team || "", vsPts: g.vsPts }); }); }); } catch (e) {}
+  ghostSteps_(done, when).forEach(function (g) { espn.push(g); });
   var owners = owners_(), last = {};
   try { last = JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_SYNC") || "{}"); } catch (e) {}
   return { ok: true, version: VERSION,
@@ -56,7 +61,7 @@ function desk_(me) {
     oldPin: owners.filter(function (o) { return o.pin_hash && String(o.pin_hash).indexOf("h2:") !== 0; }).map(function (o) { return o.owner; }), legacyPins: LEGACY_PINS, // review B6
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
     mailLeft: mailLeft_(), // review F4
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: tradeAudit_(), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_() };
+    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: tradeAudit_(), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_(), mode: REEL_MODE, pulse: pulsePick_() };
 }
 // Desk dashboard counts (commish 11/9): every offer in the league, not just the commish's own. Numbers only (offers stay private).
 function offerCounts_() {
@@ -86,7 +91,10 @@ function tradeAudit_() {
 }
 function tickInfo_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_TICK") || "{}"); } catch (e) { return {}; } }
 function deskAct_(me, b) {
-  if (b.op === "tick") return tickRun_(); // "Run the robot now" button (doPost already holds the lock)
+  if (b.op === "pulsepick") return pulsePickAct_(me, b);
+  if (b.op === "pulsekeep") { var pp = pulsePick_(); if (!pp || Number(b.week) !== Number(pp.week)) return { ok: false, error: "That week's headlines are gone. Refresh." };
+    pp.status = "kept"; pp.picked = new Date().toISOString(); DAILY.put("pulse_pick", pp); log_(me.owner, "pulse_pick", "W" + pp.week, "keep", "", ""); deskPost_("note", "📰 Week " + pp.week + ": you kept headline " + (pp.live + 1) + ".", "", "PULSEKEEP"); return { ok: true }; }
+  if (b.op === "tick") return REEL_MODE === "desk" ? deskTick_() : tickRun_(); // "Run the robot now" button (doPost already holds the lock)
   if (b.op === "daily") return dailyOnce_("button"); // "Run daily now" (doPost runs this one outside the lock)
   if (b.op === "award" || b.op === "awardall") return awardAct_(b);
   if (b.op === "poll" || b.op === "pollclose") return poll_(me, b);
@@ -222,9 +230,9 @@ function etDay_(d) { return Utilities.formatDate(d || new Date(), "America/New_Y
 function hrs_(ms) { var h = Math.round(ms / HOUR); return h <= 1 ? "1 hour" : h + " hours"; }
 function tick() {
   var lock = LockService.getScriptLock(), r = { ok: false, error: "busy" };
-  if (lock.tryLock(20000)) { try { r = tickRun_(); } finally { lock.releaseLock(); } }
+  if (lock.tryLock(20000)) { try { r = REEL_MODE === "desk" ? deskTick_() : tickRun_(); } finally { lock.releaseLock(); } }
   // In-season daily run, 5 AM + 5 PM ET (daily.js). Outside the lock: it only writes its own tabs, and can take a minute.
-  try { need_("daily"); if (DAILY.due()) r.daily = dailyOnce_("tick"); } catch (e) { r.daily = { ok: false, error: String(e.message || e) }; deskPost_("alert", "Daily run didn't start: " + String(e.message || e).slice(0, 160), "", "DAILY"); }
+  try { need_("daily"); if (DAILY.due()) { r.daily = dailyOnce_("tick"); if (REEL_MODE === "desk") deskGhostMail_(); } } catch (e) { r.daily = { ok: false, error: String(e.message || e) }; deskPost_("alert", "Daily run didn't start: " + String(e.message || e).slice(0, 160), "", "DAILY"); }
   return r;
 }
 // ---------------------------------------------------------------- ⏱️ tick jobs
@@ -326,6 +334,69 @@ function tickReconcile_(sent, now) {
   return problems.length;
 }
 
+
+// ---------------------------------------------------------------- 📥 desk-only mode (commish 11/24)
+// REEL waits for the off-season; the commish keeps the desk. The tick does commish jobs only: a one-time clean slate
+// (every beta/seed/test offer, perk, chat message and trade-block listing goes), then 👻 Ghost steps are emailed as they
+// appear (after each daily run). Owner reminders, trade clock and the credit check are off (no owner activity).
+function deskTick_() {
+  var props = PropertiesService.getScriptProperties(), now = new Date(), log = [];
+  try { if (!props.getProperty("CLEAN_SLATE")) { var c = cleanSlate_(); props.setProperty("CLEAN_SLATE", now.toISOString()); log.push("clean slate " + JSON.stringify(c)); } }
+  catch (e) { log.push("clean slate ERROR " + String(e.message || e).slice(0, 80)); }
+  props.setProperty("LAST_TICK", JSON.stringify({ at: now.toISOString(), log: log.slice(0, 12), mode: "desk" }));
+  return { ok: true, log: log };
+}
+// 🧹 Clean slate (commish 11/24: "wipe all the fake stuff"): tag everything as staged, wipe it, then empty the Chat tab
+// (desk log included, so the desk starts fresh). Owners, passphrases, Awards, Feedback, Events (append-only) stay.
+function cleanSlate_() {
+  if (syncMode_() === "live") return { skipped: "credits are LIVE" };
+  seedAdopt_(); var w = seedWipe_(); w.desklog = seedKeep_("Chat", function () { return false; });
+  var rq = openRequests_(); if (rq.length) { var sh = sheet_("Requests"); rq.forEach(function (r) { sh.getRange(r.row, 4, 1, 2).setValues([["DONE", new Date()]]); }); } w.requests = rq.length; // owners can't use the app in desk mode
+  deskPost_("note", "🧹 Fresh start: desk-only mode. Beta and seed data wiped (" + w.offers + " offers, " + w.perks + " perk requests, " + (w.msgs + w.desklog) + " messages, " + w.block + " trade-block listings, " + w.requests + " passphrase requests). Owners, passphrases and credit awards kept.", "", "CLEAN");
+  return w;
+}
+// One email per new batch of 👻 Ghost steps (each step id once), linking to the desk.
+function deskGhostMail_() {
+  var done = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = 1; });
+  var sent = tickSent_(), fresh = ghostSteps_(done, {}).filter(function (g) { return !sent["mail:" + g.id]; });
+  if (!fresh.length) return 0;
+  var lines = fresh.map(function (g) { return "👻 Week " + g.week + " (" + (g.tier === "L" ? "Lower" : "Upper") + "): set the MAFFL Ghost's score to " + Number(g.par).toFixed(2) + (g.espnPts != null ? " (ESPN shows " + Number(g.espnPts).toFixed(2) + ")" : "") + (g.vs ? " · plays " + g.vs : ""); });
+  if (commishMail_("MAFFL HQ 👻 Ghost score for Week " + fresh.map(function (g) { return g.week; }).join(", "), lines.join("\n") + "\n\nTap ✓ Done on the desk when it's in ESPN:\n" + APP_URL + "#desk")) {
+    fresh.forEach(function (g) { sent["mail:" + g.id] = Date.now(); }); saveTickSent_(sent); }
+  return fresh.length;
+}
+function commishMail_(subject, body) {
+  try { if (mailLeft_() < 5) return false; MailApp.sendEmail(Session.getEffectiveUser().getEmail(), String(subject).slice(0, 120), String(body)); return true; } catch (e) { return false; }
+}
+// 📰 Pulse headline pick (commish 11/24): after the Tuesday Pulse publishes with option 1, the robot sends its 3 headline
+// options (action "pulseopts", DESK_KEY). The commish taps another on the desk → GitHub "pulse-headline" swaps it into
+// weekly.html. No tap = option 1 stays. Stored in Daily key pulse_pick.
+function pulsePick_() { try { need_("daily"); var p = DAILY.get("pulse_pick"); return p && p.options ? p : null; } catch (e) { return null; } }
+function pulseOpts_(b) {
+  var key = PropertiesService.getScriptProperties().getProperty("DESK_KEY");
+  if (!key || String(b.key || "") !== key) return { ok: false, error: "bad key" };
+  var wk = Number(b.week), opts = (Array.isArray(b.options) ? b.options : []).slice(0, 4).map(function (o) { return { headline: String((o || {}).headline || "").slice(0, 300), subhead: String((o || {}).subhead || "").slice(0, 400) }; }).filter(function (o) { return o.headline; });
+  if (!wk || opts.length < 2) return { ok: false, error: "need a week and 2+ options" };
+  need_("daily"); DAILY.put("pulse_pick", { week: wk, options: opts, live: 0, at: new Date().toISOString(), status: "open" });
+  deskPost_("note", "📰 Week " + wk + " Pulse is live with headline 1. Want a different one? Pick it in To do.", "", "PULSEOPTS");
+  commishMail_("MAFFL HQ 📰 Week " + wk + " headline: keep it or pick another?", opts.map(function (o, i) { return (i + 1) + (i === 0 ? " (live now)" : "") + ". " + o.headline; }).join("\n\n") +
+    "\n\nDo nothing and 1 stays. To swap, tap one on the desk:\n" + APP_URL + "#desk");
+  return { ok: true, week: wk, options: opts.length };
+}
+function pulsePickAct_(me, b) {
+  var p = pulsePick_(), i = Number(b.pick);
+  if (!p || Number(b.week) !== Number(p.week)) return { ok: false, error: "That week's headlines are gone. Refresh." };
+  if (!(i >= 0 && i < p.options.length)) return { ok: false, error: "Which headline?" };
+  if (i === p.live) return { ok: false, error: "That one is already live." };
+  var token = PropertiesService.getScriptProperties().getProperty("GITHUB_TOKEN"); if (!token) return { ok: false, error: "GITHUB_TOKEN Script property is missing" };
+  var r = UrlFetchApp.fetch("https://api.github.com/repos/" + REPO + "/dispatches", { method: "post", contentType: "application/json", muteHttpExceptions: true,
+    headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" }, payload: JSON.stringify({ event_type: "pulse-headline", client_payload: { week: p.week, pick: i } }) });
+  if (r.getResponseCode() >= 300) return { ok: false, error: "GitHub said " + r.getResponseCode() + ". Try again in a minute." };
+  p.live = i; p.status = "picked"; p.picked = new Date().toISOString(); DAILY.put("pulse_pick", p);
+  log_(me.owner, "pulse_pick", "W" + p.week, String(i + 1), "", "");
+  deskPost_("note", "📰 Week " + p.week + ": you picked headline " + (i + 1) + ". The robot is swapping it into the Pulse (live in ~3 min).", "", "PULSEPICK");
+  return { ok: true, live: i };
+}
 
 // ---------------------------------------------------------------- 🎭 seed data (commish 11/9, desk → Go-live)
 // Pretend league activity on the real ESPN rosters, so the beta crew opens an app that's already busy (commish 11/9: real

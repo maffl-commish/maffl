@@ -12,7 +12,7 @@
  *   5. health    ESPN reachable, tick running; trouble → desk alert
  * Results live in the Daily tab (key → JSON) and come back from GET ?action=daily for the app.
  */
-DAILY.VER = "15"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
+DAILY.VER = "16"; // bump when a change should re-run at the next tick (not wait for the next 5 AM / 5 PM slot)
 DAILY.HEAD = ["key", "updated", "json"];
 DAILY.MOVE_HEAD = ["ts", "tier", "owner", "team", "type", "player", "pos", "nfl", "other"];
 
@@ -312,6 +312,7 @@ function dDigest_(since) {
 
 // ---- the run ------------------------------------------------------------------------------------------------
 DAILY.run = function (why) {
+  var desk = REEL_MODE === "desk"; // 📥 desk-only mode (11/24): scores, Coach, Ghost par and awards only; nothing posts to owners, no card lines
   var t0 = Date.now(), log = [], problems = [], props = PropertiesService.getScriptProperties(), last = {};
   try { last = JSON.parse(props.getProperty("LAST_DAILY") || "{}"); } catch (e) {}
   var snap = { at: new Date().toISOString(), tiers: {} };
@@ -329,22 +330,22 @@ DAILY.run = function (why) {
       var prevLast = (last.weeks || {})[tier] || 0;
       if (s.last > prevLast && prevLast) { log.push((tier === "U" ? "Upper" : "Lower") + " week " + s.last + " is final");
         // 📊 the league room gets the week's wrap: Coach of the Week + high score for this tier (commish 11/7)
-        try { var cw = (coach[s.last] || {}).winner, hi = (s.highs || []).filter(function (h) { return h.wk === s.last; })[0], tn = function (id) { return ((s.teams || {})[id] || {}).team || "?"; };
+        if (!desk) try { var cw = (coach[s.last] || {}).winner, hi = (s.highs || []).filter(function (h) { return h.wk === s.last; })[0], tn = function (id) { return ((s.teams || {})[id] || {}).team || "?"; };
           post_("league", BOT, "text", "📊 " + (tier === "U" ? "Upper" : "Lower") + " Week " + s.last + " is final." + (cw != null ? "\n🏆 Coach of the Week: " + tn(cw) : "") + (hi ? "\n🚀 High score: " + tn(hi.id) + ", " + hi.pts : ""), "", "", [], ""); } catch (e) {} }
     } catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " scores: " + e.message); }
-    try { var m = dMoves_(tier); if (m) log.push(m + " roster move" + (m === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); }
+    if (!desk) try { var m = dMoves_(tier); if (m) log.push(m + " roster move" + (m === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); }
     catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " rosters: " + e.message); }
-    try { if (snap.tiers[tier]) { var fb = dFaab_(tier, snap.tiers[tier]); if (fb) log.push(fb + " waiver bid" + (fb === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); } }
+    if (!desk) try { if (snap.tiers[tier]) { var fb = dFaab_(tier, snap.tiers[tier]); if (fb) log.push(fb + " waiver bid" + (fb === 1 ? "" : "s") + " (" + (tier === "U" ? "Upper" : "Lower") + ")"); } }
     catch (e) { problems.push((tier === "U" ? "Upper" : "Lower") + " waivers: " + e.message); }
   });
   if (Object.keys(snap.tiers).length) dPut_("snapshot", snap);
-  try { var mg = DAILY.mathDrop(); if (mg) log.push("🧮 tonight's math: " + mg + " game" + (mg === 1 ? "" : "s") + " alive"); } catch (e) { problems.push("Tonight's math: " + e.message); }
+  if (!desk) try { var mg = DAILY.mathDrop(); if (mg) log.push("🧮 tonight's math: " + mg + " game" + (mg === 1 ? "" : "s") + " alive"); } catch (e) { problems.push("Tonight's math: " + e.message); }
   try { var na = Object.keys(snap.tiers).length === 2 ? dAwards_(snap) : 0; if (na) log.push(na + " credit award" + (na === 1 ? "" : "s") + " earned (issued after Wk 17)"); } catch (e) { problems.push("Awards: " + e.message); }
-  var digest = []; try { digest = dDigest_(last.at ? new Date(last.at).getTime() : Date.now() - 864e5); } catch (e) {}
+  var digest = []; if (!desk) try { digest = dDigest_(last.at ? new Date(last.at).getTime() : Date.now() - 864e5); } catch (e) {}
   var tk = tickInfo_(), tkAge = tk.at ? (Date.now() - new Date(tk.at).getTime()) / 6e4 : null;
   if (why === "tick" ? false : tkAge === null || tkAge > 60) problems.push("the 15-minute robot hasn't run in " + (tkAge === null ? "ever" : Math.round(tkAge) + " min"));
   var weeks = {}; Object.keys(snap.tiers).forEach(function (t) { weeks[t] = snap.tiers[t].last; });
-  var lines = "skipped"; if (Object.keys(snap.tiers).length) { try { lines = DAILY.afterRun(); } catch (e) { lines = "error: " + e.message; } }
+  var lines = desk ? "off: desk-only mode" : "skipped"; if (Object.keys(snap.tiers).length && !desk) { try { lines = DAILY.afterRun(); } catch (e) { lines = "error: " + e.message; } }
   props.setProperty("LAST_DAILY", JSON.stringify({ at: snap.at, why: why || "", slot: DAILY.slot(), ver: DAILY.VER, lines: lines, weeks: Object.keys(weeks).length ? weeks : (last.weeks || {}), log: log.slice(0, 20), problems: problems.slice(0, 20), secs: Math.round((Date.now() - t0) / 1000) }));
   if (log.length || digest.length) deskPost_("robot", ("🌅 Daily run" + (log.length ? ": " + log.join(" · ") : "") + (digest.length ? "\n🧪 Beta: " + digest.join(" · ") : "")).slice(0, CHAT_MAX), "", "OK");
   if (problems.length) deskPost_("alert", "Daily run trouble: " + problems.join(" · "), "", "DAILY");

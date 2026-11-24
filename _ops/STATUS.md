@@ -2,11 +2,11 @@
 
 _Read first. Keep it short. Newest entries on top in each section._
 
-**Last updated:** 2026-11-24 by Claude (chat), REEL paused until the off-season
+**Last updated:** 2026-11-24 by Claude (chat), REEL resting; desk-only mode + headline pick
 
 ## Now
 
-- **💤 REEL paused until the off-season (11/24).** Finish 2026 strong on classic MAFFL HQ; REEL ideas get sprinkled into the current site where they fit. `REEL_PAUSED` in `logic.js` stops the backend robots; the Tuesday Pulse chain is untouched.
+- **💤 REEL resting until the off-season; 📥 desk-only mode (11/24).** Finish 2026 strong on classic MAFFL HQ; REEL ideas get sprinkled into the current site where they fit. `REEL_MODE = "desk"` in `logic.js`: the commish keeps the desk (👻 Ghost steps by email, 📰 Tuesday headline pick); owners see a resting screen. Test: `node _ops/tests/desk_mode.js`.
 - **ESPN history inventory ✅ (9/30).** Report: `_ops/inbox/MAFFL_ESPN_Inventory.md` (raw zip is git-ignored: private, keep local). ESPN has Upper 2005–2026 (results, drafts, weekly starters; bench only from 2018) and Lower 2025–26. Old message boards are gone (1 LM note per season survives); no Coach of the Week posts. Next, when wanted: check gold 2005–2025 against ESPN (would settle the quarantined-CSV swaps below).
 - **Coach of the Week is back (bragging rights, from Week 4).** Fewest points left on the bench, per tier; a bye, empty slot or 0-point starter knocks you out. ESPN pull v0.5.1 computes it plus 🔄 Could have won (lost by less than you left on the bench) (OUTPUT 2e), editorial §8b, recipe v0.3 (chat, 9/30). Page card ✅ (`weekly.html` v6.3).
 - **Weeks 1–2 validated vs ESPN (9/30):** gold, `matchups-data.js` and the Pulse all match ESPN's current scores.
@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-24 · REEL · 📥 Desk-only mode (commish: keep the desk through the season): `REEL_MODE = "desk"` replaces the pause switch. Tick does a one-time 🧹 clean slate (all beta/seed/test offers, perks, chat incl. the old desk log, trade-block listings, open passphrase requests; owners, passphrases, credit awards kept), then the daily run does scores / Coach / 👻 Ghost par / awards only (no league posts, moves, waivers, math, card lines) and emails new Ghost steps once. 📰 Headline pick: `pulseopts` (DESK_KEY) stores the Pulse's 3 options + emails the commish; desk To do shows them, Use this one → `pulse-headline` dispatch, Keep 1 closes it. App: commish lands on a lite desk (no ✕; Do on ESPN · Headline pick tiles, To do, Log); owners see "REEL is resting". Backend v0.71, daily VER 16; new `_ops/tests/desk_mode.js`; mock `create({ mode })`, `MOCK_MODE=desk`. No version bump (app has no pill).
 - 2026-11-24 · REEL · 💤 Off-season pause (commish): new `REEL_PAUSED = true` switch in logic.js. The 15-min tick and 5 AM / 5 PM daily run do nothing (so no card-lines Claude runs, desk reminders or robot emails); `?action=health` reports healthy + `paused:true` so UptimeRobot stays quiet. App still opens. Classic site, ESPN pull and Tuesday Pulse unchanged. Backend v0.70 (mock runs the robot awake; baseline refreshed for the version only).
 - 2026-11-12 · REEL · 📝 Beta feedback logged (Joe by text, Charlie): APP_DESIGN §0 + REEL.md record the direction that owners finish trades in REEL and the commish does the ESPN move (manual first, §10b automation later), plus no new credit-spending options this off-season. Docs only.
 - 2026-11-11 · REEL · 🐛 Trade builder grid: players on the block rendered squished (commish). The grid tagged them with class `blk`, the same name as the 🏷️ On the block carousel (11/7), so they picked up its sideways-scroll / negative-margin styles. Renamed to `onblk`. App only. No version bump.
