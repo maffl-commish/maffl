@@ -806,6 +806,7 @@
   .dk{position:fixed;inset:0;z-index:70;background:var(--page-bg);display:none;flex-direction:column;max-width:480px;margin:0 auto}
   .dk.on{display:flex}
   body.deskmode #dkclose{display:none}
+  body.fastdesk #boot{display:none!important}
   .rest{position:fixed;inset:0;z-index:80;background:var(--navy);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;gap:14px}
   body.resting .rest{display:flex}.rest h2{font:700 30px var(--display);letter-spacing:.02em;color:var(--gold);margin:0}.rest p{font:500 16px/1.45 var(--body);max-width:320px;margin:0;color:rgba(255,255,255,.85)}
   .rest a{margin-top:8px;background:var(--gold);color:var(--navy);font:700 16px var(--body);padding:12px 22px;border-radius:999px;text-decoration:none}
@@ -912,6 +913,21 @@
 <div class="dk" id="desk"><div class="dkhead"><div><div class="ct">Commish desk</div><small id="dkupd"></small></div><button class="cb" id="dkref" aria-label="Refresh">↻</button><button class="cb dkx" id="dkclose" aria-label="Close">✕</button></div><div class="dkbody" id="dkbody"></div></div>
 <div class="fbnudge" id="fbnudge" role="dialog" aria-live="polite"></div>
 
+<script>/* 📥 Desk fast start (commish 11/24: the desk took a while behind the reel). In desk-only mode this runs before the
+   league data scripts: it asks the server for the summary + desk at once and paints this phone's last desk right away. */
+(function () { try {
+  var L = localStorage, o = L.getItem("maffl_lab_owner"), p = L.getItem("maffl_lab_pin");
+  if (!o || !p || L.getItem("maffl_lab_mode") !== "desk") return;
+  var u = L.getItem("maffl_lab_api") || "https://script.google.com/macros/s/AKfycbx4FPhfh6Gyn8Uh06idINdn-r_0tgXcd7ypwH7NpTA29zCAK-sWhjV8V7qGBJri-6fnvQ/exec";
+  var call = function (a, x) { return fetch(u, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ action: a, owner: o, pin: p }, x || {})) }).then(function (r) { return r.json(); }); };
+  window.__EARLY = { desk: call("desk"), sum: call("summary"), log: call("chat", { room: "desk" }) };
+  document.body.classList.add("deskmode", "fastdesk");
+  var d = document.getElementById("desk"), h = L.getItem("maffl_lab_deskhtml");
+  d.classList.add("on"); document.body.style.overflow = "hidden";
+  document.getElementById("dkbody").innerHTML = h || '<div class="ld"><span class="spin"></span><span>Opening the desk…</span></div>';
+  document.getElementById("dkupd").textContent = "Updating…";
+} catch (e) {} })();
+</script>
 <script src="../schedule-data.js"></script>
 <script src="../matchups-data.js"></script>
 <script src="../key-dates-data.js"></script>
@@ -1000,7 +1016,7 @@
   function sumWait(msg) { return SUM_FAIL ? '<div class="pad" style="text-align:center"><p class="p"><b>Couldn\'t reach the league server.</b></p><p class="meta" style="margin:4px 0 12px">Check your signal, then try again.</p><button class="b pri sumRetry" style="display:block;margin:0 auto">Try again</button></div>' : ld(msg); }
   (function () {
     var o = store("maffl_lab_owner"), pin = store("maffl_lab_pin"); if (!API_URL || !o || !pin) return;
-    EARLY_SUM = api("summary", { owner: o, pin: pin });
+    EARLY_SUM = window.__EARLY ? window.__EARLY.sum : api("summary", { owner: o, pin: pin });
     try { var c = JSON.parse(localStorage.getItem(SUM_KEY) || "null");
       if (c && c.owner === o && Date.now() - c.at < 3 * 864e5 && c.sum && c.sum.ok) { SUM = c.sum; SUM_OK = true; } } catch (e) {}
   })();
@@ -3529,6 +3545,8 @@
   // 📥 Desk-only mode (commish 11/24): REEL rests until the off-season. The commish lands on the desk (no ✕); owners see a resting screen.
   var DESKMODE = false;
   function deskMode(m) { DESKMODE = m === "desk"; document.body.classList.toggle("deskmode", DESKMODE);
+    store("maffl_lab_mode", DESKMODE && ME && ME.commish ? "desk" : "");
+    if (!DESKMODE || !(ME && ME.commish)) { try { localStorage.removeItem("maffl_lab_deskhtml"); } catch (e) {} if (FASTDESK) { location.reload(); return; } }
     document.body.classList.toggle("resting", DESKMODE && !(ME && ME.commish));
     if (DESKMODE && ME && ME.commish && !DK.open) { openDesk(); DK.secs.pulse = DK.secs.espn = true; drawDesk(); } }
   function pulseOpen(d) { var p = (d || {}).pulse; return p && p.status === "open" && Date.now() - new Date(p.at).getTime() < 3 * 864e5 ? p : null; }
@@ -3790,6 +3808,7 @@
     b.scrollTop = st;
     var dq = $("dkq"); if (dq) dq.oninput = function () { var at = dq.selectionStart; DK.q = dq.value; drawDesk(); var d2 = $("dkq"); if (d2) { d2.focus(); d2.setSelectionRange(at, at); } };
     var mo = $("dkmore"); if (mo) mo.onclick = function () { DK.days = (DK.days || 2) + 7; drawDesk(); };
+    if (DESKMODE && DESK && DK.log) try { var hh = b.innerHTML; if (hh.length < 300000) localStorage.setItem("maffl_lab_deskhtml", hh); } catch (e) {}
   }
   // 📣 Commish alert (desk): one announcement into every group chat (league + both tiers), pinned on top of each.
   function deskAlertHTML() { return '<div class="dsk"><div class="dkpoll"><span>📣 Commish alert</span><button class="b sm pri" id="dkalert">＋ New alert</button></div><div class="meta">Posts to League chat and both tier chats, pinned on top.</div></div>'; }
@@ -3826,7 +3845,8 @@
     if (e.target.closest("#dkalert")) { alertForm(); return; }
     if ((el = e.target.closest("[data-pollclose]"))) { busy(1); api("deskact", Object.assign(creds(), { op: "pollclose", target: el.dataset.pollclose })).then(function (r) { busy(0); toast(r.ok ? "Poll closed" : r.error || "Didn't close"); afterChange("").then(function () { if (CH.open && CH.view === "inbox") drawInbox(); }); }).catch(function () { busy(0); }); } });
   function loadDeskLog() {
-    return api("chat", Object.assign(creds(), { room: "desk" }), true).then(function (r) { if (r && r.ok) { DK.log = r.messages; drawDesk(); } }).catch(function () {});
+    var early = window.__EARLY && window.__EARLY.log; if (early) window.__EARLY.log = null;
+    return (early || api("chat", Object.assign(creds(), { room: "desk" }), true)).then(function (r) { if (r && r.ok) { DK.log = r.messages; drawDesk(); } }).catch(function () {});
   }
   function deskRefresh() { if (!DK.open) return; DESK = null; loadDesk().then(drawDesk); loadDeskLog(); }
   function openDesk() {
@@ -3866,7 +3886,8 @@
   }
   function loadDesk() {
     if (!ME || !ME.commish || CH.deskBusy) return Promise.resolve(); CH.deskBusy = true;
-    return api("desk", creds()).then(function (r) { CH.deskBusy = false; if (!r.ok) return; var sig = JSON.stringify(r) !== JSON.stringify(DESK); DESK = r; deskBadge(); if (sig && DK.open) drawDesk();
+    var early = window.__EARLY && window.__EARLY.desk; if (early) window.__EARLY.desk = null;
+    return (early || api("desk", creds())).then(function (r) { CH.deskBusy = false; if (r && r.ok) store("maffl_lab_deskjson", JSON.stringify(r)); if (!r.ok) return; var sig = JSON.stringify(r) !== JSON.stringify(DESK); DESK = r; deskBadge(); if (sig && DK.open) drawDesk();
       if (sig && CH.open && CH.room === "desk") drawThread(); if (CH.open && CH.view === "inbox") drawInbox(); }).catch(function () { CH.deskBusy = false; });
   }
   function issueBox(r) {
@@ -4573,7 +4594,19 @@
     if (bad.length) toast(bad.join(", ") + " hit a snag. Tap it to retry.");
     if (/^chat/.test(h)) setTimeout(function () { openChat(decodeURIComponent(h.split("=")[1] || "") || null); }, 400); // #chat or #chat=<room> deep link
   }
-  loadPulse().then(function () { guard("daily", function () { applyDaily(dailyCached()); }); buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); loadDaily(); })
+  var FASTDESK = false;
+  function fastDesk() { // desk-only mode on the commish's phone: the desk is all he needs, so skip the league pages and the reel
+    var o = store("maffl_lab_owner"); if (!window.__EARLY || !o) return false;
+    FASTDESK = true; ME = BY_OWNER[norm(o)] || { owner: o, team: o }; ME.commish = true; DESKMODE = true;
+    try { DESK = JSON.parse(store("maffl_lab_deskjson") || "null"); } catch (e) {}
+    DK.open = true; DK.secs = { pulse: true, espn: true }; DK.days = 2; drawDesk(); loadDesk().then(function () { $("dkupd").textContent = "Updated " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); }); loadDeskLog();
+    EARLY_SUM.then(function (r) { if (!r || !r.ok) return; if (r.token) { store("maffl_lab_pin", r.token); delete r.token; } SUM = r; saveSum(r); ME.commish = !!r.commish; deskMode(r.mode); deskBadge(); })
+      .catch(function () { $("dkupd").textContent = "Couldn't reach the league server"; });
+    return true;
+  }
+  var fd = false; guard("fastdesk", function () { fd = fastDesk(); });
+  if (!fd) { FASTDESK = false; document.body.classList.remove("fastdesk"); }
+  if (!fd) loadPulse().then(function () { guard("daily", function () { applyDaily(dailyCached()); }); buildTeams(); $("boot").style.display = "none"; if (!guard("start", start)) tab("home"); loadDaily(); })
     .catch(function (e) { // no league data, no app: say so plainly and offer a reload (a Home-Screen app has no reload button)
       $("boot").innerHTML = '<img alt="" src="../maffl-logo-192.png"><b>Couldn\'t load the league</b><small>Check your signal, then try again.</small>' +
         '<button class="b pri" style="margin-top:14px;min-width:160px" onclick="location.reload()">Try again</button><small style="margin-top:10px;opacity:.6">' + esc(String((e && e.message) || "")) + '</small>'; });

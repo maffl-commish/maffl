@@ -47,6 +47,7 @@ function ghostSteps_(done, when) {
   return out;
 }
 function desk_(me) {
+  var lite = REEL_MODE === "desk"; // desk-only mode (11/24): no trades, beta or seed panels, so skip reading them (faster open)
   var done = {}, when = {}; rows_("Events").forEach(function (e) { if (e.type === "espn_done") done[e.ref] = e.meta || "Y"; if (e.type === "espn_when") when[e.ref] = String(e.value).replace(/^when:/, ""); });
   var espn = rows_("Perks").filter(function (r) { return r.status === "APPROVED" && r.perk !== "insurance" && !done[r.perk_id] && !isSeedRow_(r); }).map(function (r) {
     return { id: r.perk_id, owner: r.owner, tier: r.tier, perk: r.perk, qty: Number(r.qty) || 1, week: Number(r.week) || null, player: r.player, pos: r.pos, swapWith: r.swap_with, approved: r.updated_ts, when: when[r.perk_id] || "" };
@@ -61,7 +62,7 @@ function desk_(me) {
     oldPin: owners.filter(function (o) { return o.pin_hash && String(o.pin_hash).indexOf("h2:") !== 0; }).map(function (o) { return o.owner; }), legacyPins: LEGACY_PINS, // review B6
     espn: espn, sync: { mode: syncMode_(), last: last }, tick: tickInfo_(), daily: (function () { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty("LAST_DAILY") || "{}"); } catch (e) { return {}; } })(),
     mailLeft: mailLeft_(), // review F4
-    moved: rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: tradeAudit_(), beta: betaInfo_(), awards: awardsPending_(), seed: seedInfo_(), offers: offerCounts_(), mode: REEL_MODE, pulse: pulsePick_() };
+    moved: lite ? [] : rows_("Events").filter(function (e) { return e.type === "espn_moved"; }).map(function (e) { return e.ref; }), trades: lite ? [] : tradeAudit_(), beta: lite ? {} : betaInfo_(), awards: awardsPending_(), seed: lite ? {} : seedInfo_(), offers: lite ? {} : offerCounts_(), mode: REEL_MODE, pulse: pulsePick_() };
 }
 // Desk dashboard counts (commish 11/9): every offer in the league, not just the commish's own. Numbers only (offers stay private).
 function offerCounts_() {
