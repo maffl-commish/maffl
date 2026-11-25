@@ -411,6 +411,17 @@ Plan: commish does one Ghost score adjustment in Chrome while Claude records the
 the Ghost adjustment, then reads it back and reports. No retries (a retry can apply twice), confirm step first season.
 Candidates after that: approved Extra FAAB, Double Player Bonus adjustment, Matchup Swap schedule edit.
 
+**Experiment 1 (11/25, Claude in Chrome, test league "Testing MAFFL HQ" 1722387564, commish signed in):** all three LM writes
+work as plain JSON POSTs to `lm-api-writes.fantasy.espn.com/apis/v3/games/ffl/seasons/2026/segments/0/leagues/<id>/…`, and each was
+**replayed from code** (fetch with the session cookies) with a 200 and a matching read-back. No password prompt on any of them (ESPN
+did ask for the password once, on a league-settings save).
+- **Score adjustment (Ghost):** `POST …/schedule` body `[{"id":<matchupId>,"away":{"teamId":T,"adjustment":133.37,"adjustmentReason":"…"},"home":{"teamId":U,"adjustment":0,"adjustmentReason":""}}]`. Read back: `view=mMatchupScore` → `schedule[].away.adjustment`. Matchup ids are league-wide (not per week); a note is required in the UI.
+- **Commish trade:** `POST …/transactions/` body `{"isLeagueManager":true,"teamId":<from>,"type":"TRADE_PROPOSAL","memberId":"<commish SWID>","scoringPeriodId":<wk>,"executionType":"EXECUTE","items":[{"playerId":P,"type":"TRADE","fromTeamId":A,"toTeamId":B},…],"expirationDate":null,"comment":"…","isActingAsTeamOwner":false,"skipTransactionCounters":false}`. Executes at once (no review period); several players in one call; both directions in one call.
+- **Commish add (FAAB-free):** same endpoint, `"type":"FREEAGENT"`, items `[{"playerId":P,"type":"ADD","toTeamId":T}]`.
+- Offline draft release: `POST …/draftDetail` (setup only).
+Open: (1) prove the same calls from Apps Script with the stored espn_s2/SWID (test league only, guarded by league id); (2) the
+Tuesday Ghost write on MAFFL Lower with read-back + desk report; (3) approved REEL trades → commish trade call. No retries (a retry can apply twice).
+
 ### 10d. 📥 Commish desk (built 11/3, backend v0.15)
 
 **Where.** Chat → first row, "Commish desk" (room `desk`, only `is_commish = Y`; the server refuses anyone else). A For-you reel card
