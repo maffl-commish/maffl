@@ -421,6 +421,7 @@ did ask for the password once, on a league-settings save).
 - Offline draft release: `POST …/draftDetail` (setup only).
 **Experiment 2 (11/25, backend v0.73):** `espnWriteTest_` in mod_espn.js runs once from the tick (Script property `ESPN_WTEST` = tag, set before any write): read → score adjustment on matchup 24 → commish trade of team 1's players, each read back; result at public `GET ?action=espntest` + a 🧪 desk note. `espnW_` refuses any league but 1722387564.
 **Result 11/25 13:30 UTC: ✅ all three steps** (score 133.37 → 120.55 read back; trade moved both players 1 → 2, read back). Apps Script writes to ESPN with the stored cookies: no browser, no password prompt.
+**Step 3 (11/25, backend v0.74): 👻 Send to ESPN.** Each Lower Ghost step on the desk gets **🤖 Send to ESPN** (the tap is the first-season confirm). `ghostWrite_` finds the Ghost's game that week, sets only the Ghost's adjustment so ESPN's total = par (keeps the opponent's side), reads back, logs `ghost_write` + `espn_done` (by robot) and posts ✓ / an alert to the desk. No retries; 2-min double-tap guard; par 40–260 sanity check. `espnW_` now allows real-league writes only for this (`/schedule` on Lower, flagged `ghost`). First live use: Week 12 (Tue 12/1).
 Open: (1) ✅ done above; prove the same calls from Apps Script with the stored espn_s2/SWID (test league only, guarded by league id); (2) the
 Tuesday Ghost write on MAFFL Lower with read-back + desk report; (3) approved REEL trades → commish trade call. No retries (a retry can apply twice).
 

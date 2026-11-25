@@ -175,7 +175,9 @@ function rosters_(tier) {
 // ESPN_WTEST = tag, set BEFORE any write, so a crash never repeats a write), from the tick. Result: GET ?action=espntest.
 var TEST_LEAGUE = 1722387564, WTEST = "t1";
 function espnW_(lid, path, body) {
-  if (lid !== TEST_LEAGUE) throw new Error("ESPN writes are test-league only for now");
+  // Real leagues: only the 👻 Ghost score adjustment on MAFFL Lower (ghostWrite_), nothing else (APP_DESIGN §10b).
+  if (lid !== TEST_LEAGUE && !(lid === LEAGUES.L && path === "/schedule" && body && body.ghost === true)) throw new Error("ESPN writes: only the Ghost score on Lower, or the test league");
+  if (body && body.ghost === true) body = body.rows;
   var all = PropertiesService.getScriptProperties().getProperties(), s2 = cookie_(all, "ESPNS2", "U", lid), swid = cookie_(all, "SWID", "U", lid);
   if (!s2 || !swid) throw new Error("SETUP: no ESPN cookies");
   var r = UrlFetchApp.fetch("https://lm-api-writes.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "/segments/0/leagues/" + lid + path,
@@ -216,4 +218,36 @@ function espnWriteTest_(force) {
   props.setProperty("ESPN_WTEST_RESULT", JSON.stringify(out).slice(0, 8000));
   try { deskPost_("note", "🧪 ESPN write test (test league): " + out.steps.map(function (x) { return x.name + " " + (x.ok ? "✅" : "❌"); }).join(" · "), "", "ESPNTEST"); } catch (e) {}
   return out;
+}
+
+// ---------------------------------------------------------------- 👻 Ghost score → ESPN (commish taps "Send to ESPN" on the desk)
+// The tap IS the confirm (first season: never on its own). Sets only the Ghost's side of its game that week so ESPN's total
+// equals the par (adjustment = par − the Ghost's points without adjustment), keeps the opponent's side as it was, then reads
+// ESPN back. One try per tap, no retries; a 2-minute guard stops a double tap. ✓ read-back logs espn_done (the step clears).
+function ghostWrite_(me, stepId) {
+  var step = ghostSteps_({}, {}).filter(function (g) { return g.id === stepId; })[0];
+  if (!step) return { ok: false, error: "That Ghost step is gone (already on ESPN?). Refresh." };
+  if (step.tier !== "L") return { ok: false, error: "Ghost writes are Lower only" };
+  var par = Math.round(Number(step.par) * 100) / 100, wk = Number(step.week);
+  if (!(par > 40 && par < 260) || !(wk >= 1 && wk <= 18)) return { ok: false, error: "Par " + par + " / week " + wk + " looks wrong. Do this one by hand." };
+  var c = CacheService.getScriptCache(), gk = "gw:" + stepId; if (c.get(gk)) return { ok: false, error: "Already sent a minute ago. Refresh in 2 minutes." }; c.put(gk, "1", 120);
+  function game(d) {
+    var gid = ((d.teams || []).filter(function (t) { return /ghost/i.test(t.name || ((t.location || "") + " " + (t.nickname || ""))); })[0] || {}).id;
+    var m = (d.schedule || []).filter(function (x) { return x.matchupPeriodId === wk && x.home && x.away && (x.home.teamId === gid || x.away.teamId === gid); })[0];
+    return gid && m ? { gid: gid, m: m, side: m.home.teamId === gid ? "home" : "away" } : null;
+  }
+  var g = game(espn_(LEAGUES.L, "view=mMatchupScore&view=mTeam"));
+  if (!g) return { ok: false, error: "Couldn't find the Ghost's Week " + wk + " game on ESPN. Do this one by hand." };
+  var other = g.side === "home" ? "away" : "home", gs = g.m[g.side], os = g.m[other];
+  var base = Math.round(((Number(gs.totalPoints) || 0) - (Number(gs.adjustment) || 0)) * 100) / 100, adj = Math.round((par - base) * 100) / 100;
+  var row = { id: g.m.id }; row[g.side] = { teamId: g.gid, adjustment: adj, adjustmentReason: "Ghost par (MAFFL HQ)" };
+  row[other] = { teamId: os.teamId, adjustment: Number(os.adjustment) || 0, adjustmentReason: os.adjustmentReason || "" };
+  var w = espnW_(LEAGUES.L, "/schedule", { ghost: true, rows: [row] });
+  var g2 = game(espn_(LEAGUES.L, "view=mMatchupScore&view=mTeam")), now = g2 ? Number(g2.m[g2.side].totalPoints) : NaN, oNow = g2 ? Number(g2.m[other].adjustment) || 0 : NaN;
+  var ok = w.code === 200 && Math.round(now * 100) === Math.round(par * 100) && Math.round(oNow * 100) === Math.round((Number(os.adjustment) || 0) * 100);
+  log_(me.owner, "ghost_write", stepId, ok ? "ok" : "fail", wk, JSON.stringify({ code: w.code, par: par, adj: adj, readBack: now }).slice(0, 200));
+  if (ok) { log_(me.owner, "espn_done", stepId, "Y", "", "robot");
+    deskPost_("note", "👻 Week " + wk + ": MAFFL HQ set the Ghost to " + par.toFixed(2) + " on ESPN ✓ (read back " + now.toFixed(2) + ").", "", "GHOSTOK"); return { ok: true, par: par, readBack: now }; }
+  deskPost_("alert", "👻 Week " + wk + ": sending the Ghost score to ESPN didn't check out (ESPN said " + w.code + ", shows " + (isNaN(now) ? "?" : now.toFixed(2)) + ", par " + par.toFixed(2) + "). Please set it by hand.", "", "GHOSTFAIL");
+  return { ok: false, error: "ESPN didn't take it (" + w.code + "). Set it by hand; the desk has the details." };
 }

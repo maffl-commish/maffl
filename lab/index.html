@@ -3540,7 +3540,8 @@
   function espnItem(p) {
     var sub = p.perk === "ghost" ? (p.vs ? "vs " + esc(p.vs) + " " + Number(p.vsPts).toFixed(2) + (p.vsPts > p.par ? " · beats it" : " · loses") : "Lower") : "approved " + ago(p.approved);
     return '<div class="ditem"><b class="dstep">' + esc(espnStep(p)) + '</b><div class="meta">' + sub + ' · <label class="dwhen">📅 ' + dayName(espnDue(p)) + '<input type="date" data-espnwhen="' + esc(p.id) + '" value="' + espnDue(p) + '" aria-label="Change the day"><span>Change</span></label></div><div class="btns">' +
-      '<a class="b sm" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", 1, ' data-pid="' + esc(p.id) + '"').replace('class="b pri"', 'class="b sm pri"') + '</div></div>';
+      (p.perk === "ghost" && p.tier === "L" ? deskBtn("ghostwrite", p.id, "🤖 Send to ESPN", 1, ' data-pid="' + esc(p.id) + '" data-par="' + f2(p.par) + '" data-wk="' + p.week + '"').replace('class="b pri"', 'class="b sm pri"') : '') +
+      '<a class="b sm" href="https://fantasy.espn.com/football/league?leagueId=' + (p.tier === "L" ? "1587593698" : "34467") + '" target="_blank" rel="noopener">Open ESPN</a>' + deskBtn("espn", p.id, "✓ Done", p.perk !== "ghost", ' data-pid="' + esc(p.id) + '"').replace('class="b pri"', 'class="b sm pri"').replace('class="b"', 'class="b sm"') + '</div></div>';
   }
   // 📥 Desk-only mode (commish 11/24): REEL rests until the off-season. The commish lands on the desk (no ✕); owners see a resting screen.
   var DESKMODE = false;
@@ -3905,7 +3906,12 @@
   });
   document.addEventListener("click", function (e) {
     var el = e.target.closest("[data-dact]"); if (!el) return;
-    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "tick" || op === "daily" || /^award/.test(op) ? null : teamOf(who).team || who;
+    var op = el.dataset.dact, who = el.dataset.target, t = op === "espn" || op === "ghostwrite" || op === "tick" || op === "daily" || /^award/.test(op) ? null : teamOf(who).team || who;
+    if (op === "ghostwrite") { // 👻 the tap is the confirm (first season); the backend writes, then reads ESPN back
+      confirmBox("Send the Week " + el.dataset.wk + " Ghost score to ESPN?", '<p class="p">MAFFL HQ sets the MAFFL Ghost to <b>' + esc(el.dataset.par) + '</b> on ESPN (Lower), then reads ESPN back to check it. It shows in ESPN\'s Recent Activity like when you do it. If it doesn\'t check out, nothing is retried and you set it by hand.</p>', "Send it", false).then(function (yes) { if (!yes) return; busy(1);
+        api("deskact", Object.assign(creds(), { op: "ghostwrite", perk_id: el.dataset.pid })).then(function (r) { busy(0);
+          toast(r.ok ? "👻 On ESPN ✓ " + Number(r.readBack).toFixed(2) : (r.error || "Didn't work")); DESK = null; loadDesk(); if (DK.open) loadDeskLog(); })
+          .catch(function () { busy(0); toast("Couldn't reach the league server. Check ESPN before trying again."); }); }); return; }
     if (op === "awardok" || op === "awardno" || op === "awardall") {
       var A = { awardok: ["Issue this credit?", "Posts it to the official ledger through credit sync.", "Approve", false], awardno: ["Deny this award?", "It won't be issued. You can add it by hand later.", "Deny", true],
         awardall: ["Issue all waiting awards?", "Posts every one to the official ledger through credit sync.", "Approve all", false] }[op];

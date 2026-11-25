@@ -103,6 +103,7 @@ function deskAct_(me, b) {
   if (b.op === "espnwhen") { // 📅 the day the commish plans to do an ESPN step (commish 11/8); "when:" keeps the Sheet from turning it into a date
     if (!b.perk_id || !/^\d{4}-\d{2}-\d{2}$/.test(String(b.when || ""))) return { ok: false, error: "Pick a date" };
     log_(me.owner, "espn_when", b.perk_id, "when:" + b.when, "", ""); return { ok: true }; }
+  if (b.op === "ghostwrite") return ghostWrite_(me, String(b.perk_id || "")); // 👻 Send to ESPN (APP_DESIGN §10b)
   if (b.op === "espn") { if (!b.perk_id) return { ok: false, error: "Which perk?" }; log_(me.owner, "espn_done", b.perk_id, "Y", "", "Y"); return { ok: true }; }
   if (b.op === "tour" && b.target === "*") { var n = 0; owners_().forEach(function (x) { if (!/ghost/i.test(String(x.team || "") + String(x.owner || ""))) { tourStamp_(x); n++; } });
     deskPost_("note", "👋 Welcome tour reset for everyone (" + n + " owners; replays on their next open).", "", "TOUR"); return { ok: true, n: n }; }
@@ -363,7 +364,7 @@ function deskGhostMail_() {
   var sent = tickSent_(), fresh = ghostSteps_(done, {}).filter(function (g) { return !sent["mail:" + g.id]; });
   if (!fresh.length) return 0;
   var lines = fresh.map(function (g) { return "👻 Week " + g.week + " (" + (g.tier === "L" ? "Lower" : "Upper") + "): set the MAFFL Ghost's score to " + Number(g.par).toFixed(2) + (g.espnPts != null ? " (ESPN shows " + Number(g.espnPts).toFixed(2) + ")" : "") + (g.vs ? " · plays " + g.vs : ""); });
-  if (commishMail_("MAFFL HQ 👻 Ghost score for Week " + fresh.map(function (g) { return g.week; }).join(", "), lines.join("\n") + "\n\nTap ✓ Done on the desk when it's in ESPN:\n" + APP_URL + "#desk")) {
+  if (commishMail_("MAFFL HQ 👻 Ghost score for Week " + fresh.map(function (g) { return g.week; }).join(", "), lines.join("\n") + "\n\nOn the desk: 🤖 Send to ESPN does it for you (and checks it), or ✓ Done if you entered it yourself:\n" + APP_URL + "#desk")) {
     fresh.forEach(function (g) { sent["mail:" + g.id] = Date.now(); }); saveTickSent_(sent); }
   return fresh.length;
 }

@@ -32,6 +32,7 @@ _Read first. Keep it short. Newest entries on top in each section._
 - **History year cards on phones:** long owner names (e.g. Jon Murello/Rick Simmons) overlap the era pill (pre-existing).
 
 ## Recently shipped
+- 2026-11-25 · REEL · 👻 **Send to ESPN** (backend v0.74 + desk): each Lower Ghost step on the desk has 🤖 Send to ESPN; one tap (with a confirm) sets the Ghost's score to the par on ESPN, reads it back, ticks the step off and logs ✓ on the desk (or an alert to do it by hand; no retries). Real-league writes are limited to this. First live use: Week 12. Ghost email mentions the button. Regression: version only. No version bump (app has no pill).
 - 2026-11-25 · REEL · ✅ ESPN writes experiment 2 passed: Apps Script set a score adjustment and executed a commish trade in the test league, both read back (no browser). Next: Tuesday Ghost write on MAFFL Lower with read-back. Docs only.
 - 2026-11-25 · REEL · 🧪 ESPN writes experiment 2 (backend v0.73): one-shot test from the 15-min tick sends a score adjustment and a commish trade to the test league from Apps Script and reads both back; result at `?action=espntest` + desk note. Writes refuse any other league. Regression: version only.
 - 2026-11-25 · REEL · 🧪 ESPN writes experiment 1 (APP_DESIGN §10b): in a throwaway test league, the Ghost score adjustment, a commish trade and a commish add were captured in Chrome and replayed from code (200 + read-back each). Next: the same calls from Apps Script. Docs only.
