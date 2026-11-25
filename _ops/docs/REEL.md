@@ -121,7 +121,7 @@ Lab: `lab/index.html` (hidden, noindex). Backend: Apps Script loader `Code.gs` +
 - Perk ESPN to-do list for the commish (until ESPN writes exist).
 - Robot writes weekly-high credit + season awards to the ledger.
 - Nightly reconciliation; email only on mismatch.
-- ESPN writes experiment, Ghost score adjustment first (§10b).
+- ESPN writes experiment (§10b): exp. 1 ✅ in Chrome (11/25); exp. 2 = same calls from Apps Script, test league only (backend v0.73). Then Ghost on MAFFL, then approved trades.
 - Approved trade → commish "Do on ESPN" step (owners stop re-proposing on ESPN); then the ESPN trade write (§10b), found via Claude in Chrome's network log.
 
 **Open questions (§8)**

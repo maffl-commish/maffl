@@ -233,6 +233,7 @@ function tick() {
   var lock = LockService.getScriptLock(), r = { ok: false, error: "busy" };
   if (lock.tryLock(20000)) { try { r = REEL_MODE === "desk" ? deskTick_() : tickRun_(); } finally { lock.releaseLock(); } }
   // In-season daily run, 5 AM + 5 PM ET (daily.js). Outside the lock: it only writes its own tabs, and can take a minute.
+  try { r.espntest = espnWriteTest_(); } catch (e) {} // one-shot, test league only (APP_DESIGN §10b)
   try { need_("daily"); if (DAILY.due()) { r.daily = dailyOnce_("tick"); if (REEL_MODE === "desk") deskGhostMail_(); } } catch (e) { r.daily = { ok: false, error: String(e.message || e) }; deskPost_("alert", "Daily run didn't start: " + String(e.message || e).slice(0, 160), "", "DAILY"); }
   return r;
 }

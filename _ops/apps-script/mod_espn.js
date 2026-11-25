@@ -6,7 +6,7 @@
  */
 // ---------------------------------------------------------------- LIVE scoring (ESPN → compact JSON, 45 s cache)
 // Needs Script Properties ESPN_S2 and SWID (Apps Script → Project Settings → Script properties). Same cookies
-// the Tuesday robot uses. Read-only: nothing here writes anywhere.
+// the Tuesday robot uses. Reads only, except the ESPN write test at the bottom (test league only, APP_DESIGN §10b).
 var LEAGUES = { U: 34467, L: 1587593698 }, SEASON = 2026;
 var POS = { 1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 7: "P", 9: "DT", 10: "DE", 11: "LB", 12: "CB", 13: "S", 14: "HC", 16: "D/ST" };
 var PRO = { 1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: "DEN", 8: "DET", 9: "GB", 10: "TEN", 11: "IND", 12: "KC", 13: "LV", 14: "LAR", 15: "MIA", 16: "MIN", 17: "NE", 18: "NO", 19: "NYG", 20: "NYJ", 21: "PHI", 22: "ARI", 23: "PIT", 24: "LAC", 25: "SF", 26: "SEA", 27: "TB", 28: "WSH", 29: "CAR", 30: "JAX", 33: "BAL", 34: "HOU" };
@@ -168,3 +168,52 @@ function rosters_(tier) {
   return out;
 }
 
+
+// ---------------------------------------------------------------- 🧪 ESPN writes, experiment 2 (APP_DESIGN §10b)
+// Proves the commish writes captured in Chrome (11/25) also work from Apps Script with the stored espn_s2 / SWID.
+// HARD-LIMITED to the throwaway "Testing MAFFL HQ" league: espnW_ refuses any other league id. Runs ONCE (Script property
+// ESPN_WTEST = tag, set BEFORE any write, so a crash never repeats a write), from the tick. Result: GET ?action=espntest.
+var TEST_LEAGUE = 1722387564, WTEST = "t1";
+function espnW_(lid, path, body) {
+  if (lid !== TEST_LEAGUE) throw new Error("ESPN writes are test-league only for now");
+  var all = PropertiesService.getScriptProperties().getProperties(), s2 = cookie_(all, "ESPNS2", "U", lid), swid = cookie_(all, "SWID", "U", lid);
+  if (!s2 || !swid) throw new Error("SETUP: no ESPN cookies");
+  var r = UrlFetchApp.fetch("https://lm-api-writes.fantasy.espn.com/apis/v3/games/ffl/seasons/" + SEASON + "/segments/0/leagues/" + lid + path,
+    { method: "post", contentType: "application/json", payload: JSON.stringify(body), headers: { Cookie: "espn_s2=" + s2 + "; SWID=" + swid }, muteHttpExceptions: true });
+  return { code: r.getResponseCode(), text: String(r.getContentText()).slice(0, 300) };
+}
+function espnWriteTest_(force) {
+  var props = PropertiesService.getScriptProperties();
+  if (!force && props.getProperty("ESPN_WTEST") === WTEST) return null;
+  props.setProperty("ESPN_WTEST", WTEST); // before any write: no retries, ever
+  var out = { ok: false, tag: WTEST, at: new Date().toISOString(), league: TEST_LEAGUE, steps: [] };
+  function step(name, fn) { try { var x = fn(); x.name = name; out.steps.push(x); return x; } catch (e) { out.steps.push({ name: name, ok: false, error: String(e.message || e).slice(0, 200) }); return null; } }
+  var st = step("read", function () {
+    var d = espn_(TEST_LEAGUE, "view=mMatchupScore&view=mRoster&view=mStatus");
+    var m = (d.schedule || []).filter(function (x) { return x.id === 24; })[0];
+    var teams = (d.teams || []).map(function (t) { return { id: t.id, players: ((t.roster || {}).entries || []).map(function (e) { return e.playerId; }) }; });
+    return { ok: !!m, sp: (d.status || {}).latestScoringPeriod || d.scoringPeriodId, m: m && { away: m.away.teamId, home: m.home.teamId, adj: m.away.adjustment, hadj: m.home.adjustment || 0, hrs: m.home.adjustmentReason || "" }, teams: teams };
+  });
+  if (st && st.ok) {
+    step("score", function () {
+      var target = st.m.adj === 120.55 ? 121.55 : 120.55;
+      var w = espnW_(TEST_LEAGUE, "/schedule", [{ id: 24, away: { teamId: st.m.away, adjustment: target, adjustmentReason: "MAFFL HQ backend test" }, home: { teamId: st.m.home, adjustment: st.m.hadj, adjustmentReason: st.m.hrs } }]);
+      var back = ((espn_(TEST_LEAGUE, "view=mMatchupScore").schedule || []).filter(function (x) { return x.id === 24; })[0] || {}).away || {};
+      return { ok: w.code === 200 && back.adjustment === target, code: w.code, before: st.m.adj, target: target, readBack: back.adjustment, resp: w.code === 200 ? "" : w.text };
+    });
+    step("trade", function () {
+      var from = st.teams.filter(function (t) { return t.players.length; })[0]; if (!from) return { ok: false, error: "no team has players" };
+      var to = st.teams.filter(function (t) { return t.id !== from.id; })[0], moving = from.players.slice(0, 2);
+      var swid = cookie_(PropertiesService.getScriptProperties().getProperties(), "SWID", "U", TEST_LEAGUE); if (swid.charAt(0) !== "{") swid = "{" + swid + "}";
+      var w = espnW_(TEST_LEAGUE, "/transactions/", { isLeagueManager: true, teamId: from.id, type: "TRADE_PROPOSAL", memberId: swid, scoringPeriodId: st.sp, executionType: "EXECUTE",
+        items: moving.map(function (p) { return { playerId: p, type: "TRADE", fromTeamId: from.id, toTeamId: to.id }; }), expirationDate: null, comment: "MAFFL HQ backend test", isActingAsTeamOwner: false, skipTransactionCounters: false });
+      var now = (espn_(TEST_LEAGUE, "view=mRoster").teams || []).filter(function (t) { return t.id === to.id; })[0] || {};
+      var ids = ((now.roster || {}).entries || []).map(function (e) { return e.playerId; });
+      return { ok: w.code === 200 && moving.every(function (p) { return ids.indexOf(p) >= 0; }), code: w.code, from: from.id, to: to.id, moved: moving, resp: w.code === 200 ? "" : w.text };
+    });
+  }
+  out.ok = out.steps.length === 3 && out.steps.every(function (x) { return x.ok; });
+  props.setProperty("ESPN_WTEST_RESULT", JSON.stringify(out).slice(0, 8000));
+  try { deskPost_("note", "🧪 ESPN write test (test league): " + out.steps.map(function (x) { return x.name + " " + (x.ok ? "✅" : "❌"); }).join(" · "), "", "ESPNTEST"); } catch (e) {}
+  return out;
+}

@@ -419,6 +419,7 @@ did ask for the password once, on a league-settings save).
 - **Commish trade:** `POST …/transactions/` body `{"isLeagueManager":true,"teamId":<from>,"type":"TRADE_PROPOSAL","memberId":"<commish SWID>","scoringPeriodId":<wk>,"executionType":"EXECUTE","items":[{"playerId":P,"type":"TRADE","fromTeamId":A,"toTeamId":B},…],"expirationDate":null,"comment":"…","isActingAsTeamOwner":false,"skipTransactionCounters":false}`. Executes at once (no review period); several players in one call; both directions in one call.
 - **Commish add (FAAB-free):** same endpoint, `"type":"FREEAGENT"`, items `[{"playerId":P,"type":"ADD","toTeamId":T}]`.
 - Offline draft release: `POST …/draftDetail` (setup only).
+**Experiment 2 (11/25, backend v0.73):** `espnWriteTest_` in mod_espn.js runs once from the tick (Script property `ESPN_WTEST` = tag, set before any write): read → score adjustment on matchup 24 → commish trade of team 1's players, each read back; result at public `GET ?action=espntest` + a 🧪 desk note. `espnW_` refuses any league but 1722387564.
 Open: (1) prove the same calls from Apps Script with the stored espn_s2/SWID (test league only, guarded by league id); (2) the
 Tuesday Ghost write on MAFFL Lower with read-back + desk report; (3) approved REEL trades → commish trade call. No retries (a retry can apply twice).
 

@@ -7,7 +7,7 @@
  * export doGet, doPost and the menu handlers on M (see the bottom). Keep it under ~90 KB.
  * Rules: passphrases stored only as salted hashes; Events is append-only; never writes league gold.
  */
-var VERSION = "0.72";
+var VERSION = "0.73";
 var REPO = "maffl-commish/maffl"; // GitHub repo the backend loads its parts (and daily.js) from
 var TRADE_DEADLINE = new Date("2026-12-02T12:00:00-05:00");
 var OFFER_HEAD = ["offer_id","ts","from_owner","to_owner","tier","give","get","give_credits","get_credits","note","status","updated_ts","reason","reasons","sync"];
@@ -73,6 +73,7 @@ function doGet(e) {
     if (p.action === "rosters") { try { return json(rosters_(p.tier)); } catch (err) { return json({ ok: false, setup: /^SETUP/.test(String(err.message)), error: String(err.message).replace(/^SETUP: /, "") }); } } // what ESPN shows on each roster (public to the league anyway)
     if (p.action === "daily") { need_("daily"); return json(DAILY.view()); } // scores, standings, Coach, Survivor, moves, card lines (league-public)
     if (p.action === "ledger") return json({ ok: true, mode: syncMode_(), rows: ledger_(p.mode === "live" ? "live" : p.mode === "test" ? "test" : syncMode_()) }); // credit moves are public anyway
+    if (p.action === "espntest") return json(JSON.parse(PropertiesService.getScriptProperties().getProperty("ESPN_WTEST_RESULT") || '{"ok":false,"pending":true}')); // ESPN write test result (test league only)
     if (p.action === "health") return json(health_()); // uptime monitor: keyword "healthy":true (review §6)
     if (p.action === "owners") return json({ ok: true, owners: owners_().map(function (o) { return { owner: o.owner, team: o.team, tier: o.tier, hasPin: !!o.pin_hash }; }) });
     return json({ ok: true, version: VERSION, logic: "repo" });
