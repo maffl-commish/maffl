@@ -420,7 +420,8 @@ did ask for the password once, on a league-settings save).
 - **Commish add (FAAB-free):** same endpoint, `"type":"FREEAGENT"`, items `[{"playerId":P,"type":"ADD","toTeamId":T}]`.
 - Offline draft release: `POST …/draftDetail` (setup only).
 **Experiment 2 (11/25, backend v0.73):** `espnWriteTest_` in mod_espn.js runs once from the tick (Script property `ESPN_WTEST` = tag, set before any write): read → score adjustment on matchup 24 → commish trade of team 1's players, each read back; result at public `GET ?action=espntest` + a 🧪 desk note. `espnW_` refuses any league but 1722387564.
-Open: (1) prove the same calls from Apps Script with the stored espn_s2/SWID (test league only, guarded by league id); (2) the
+**Result 11/25 13:30 UTC: ✅ all three steps** (score 133.37 → 120.55 read back; trade moved both players 1 → 2, read back). Apps Script writes to ESPN with the stored cookies: no browser, no password prompt.
+Open: (1) ✅ done above; prove the same calls from Apps Script with the stored espn_s2/SWID (test league only, guarded by league id); (2) the
 Tuesday Ghost write on MAFFL Lower with read-back + desk report; (3) approved REEL trades → commish trade call. No retries (a retry can apply twice).
 
 ### 10d. 📥 Commish desk (built 11/3, backend v0.15)
